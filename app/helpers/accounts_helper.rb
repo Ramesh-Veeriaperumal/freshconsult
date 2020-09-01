@@ -101,7 +101,7 @@ module AccountsHelper
   end
 
   def fetch_precreated_account
-    return unless redis_key_exists?(PRECREATE_ACCOUNT_ENABLED)
+    return unless redis_key_exists?(PRECREATE_ACCOUNT_ENABLED) && omni_precreated_signup_enabled?
 
     account_id = get_others_redis_rpop(format(PRECREATED_ACCOUNTS_SHARD, current_shard: ActiveRecord::Base.current_shard_selection.shard.to_s))
     if account_id.present?
@@ -113,5 +113,9 @@ module AccountsHelper
   rescue StandardError => e
     Rails.logger.error "Error in mapping precreated account - #{e.message}"
     nil
+  end
+
+  def omni_precreated_signup_enabled?
+    omni_signup? ? redis_key_exists?(PRECREATE_OMNI_SIGNUP_ENABLED) : true
   end
 end

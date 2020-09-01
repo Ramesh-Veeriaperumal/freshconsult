@@ -14,11 +14,9 @@
   	<%= render :partial => partial %>
   <% end %>
 <% end %>
-<% if current_account.launched?(:multifile_attachments)  %>
-	<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
- <% else %>
-  <%= render "helpdesk/shared/single_attachment_template" %>
-<% end %>
+
+<%= render "helpdesk/tickets/ticket_widget/multifile_template_generator" %>
+
 <%= form_for @tkt_template, :url => helpdesk_ticket_template_path, :html => { :method => :put, :multipart => true, :rel => "validate", :class => 'ticket_template_form template_form', :id => "ticket_template", :"data-parent-template" => @tkt_template.parent_template? }  do |f| %>
 	<div class='page-header-sticky <%= check_for_parent_child_feature? ? 'parent-header-sticky' : '' %>' rel='sticky' >
 		<div class='sticky-header-wrapper'>

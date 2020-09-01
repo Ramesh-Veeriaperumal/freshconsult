@@ -99,7 +99,7 @@ class Mobile::SettingsController < ApplicationController
     features_list = current_account.features_list
     account_configs = {:add_watcher => features_list.include?(:add_watcher), :sla_management => features_list.include?(:sla_management),
                        :traffic_cop => features_list.include?(:traffic_cop)}
-    render :json => {userdetail: current_user.as_config_json.merge(current_account.as_config_json),ff_nodeurl: FreshfoneConfig['node_url'], agent_collision_url: agent_collision_url, freshfone_new_notifications: current_account.launched?(:freshfone_new_notifications), account_configs: account_configs, iris_notification_host: iris_notification_host}
+    render :json => { userdetail: current_user.as_config_json.merge(current_account.as_config_json), ff_nodeurl: FreshfoneConfig['node_url'], agent_collision_url: agent_collision_url, freshfone_new_notifications: true, account_configs: account_configs, iris_notification_host: iris_notification_host }
   end
 
   def iris_notification_host

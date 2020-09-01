@@ -192,8 +192,8 @@
       :all_notify_by_custom_server: 188
       :freshfone_gv_forward: 189
       :advanced_automations: 190
-      :decepticons_9: 191
-      :decepticons_10: 192
+      :freddy_self_service: 191
+      :freddy_ultimate: 192
       :agent_scope: 193
       :social_tab: 194
       :public_url_toggle: 195
@@ -400,6 +400,7 @@
       :quality_management_system: 396
       :kb_allow_base64_images: 397
       :triage_ultimate: 398
+      :autofaq_eligible: 399
 :selectable_features:
   :redis_display_id: true
   :branding: true

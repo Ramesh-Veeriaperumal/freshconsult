@@ -1,10 +1,19 @@
 class HomeController < ApplicationController
+  before_filter :add_security_headers, only: [:index_html]
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter { @hash_of_additional_params = { format: 'html' } }
   before_filter :set_content_scope, :set_mobile, only: [:index]
   skip_before_filter :check_account_state, :set_locale, :check_day_pass_usage, only: [:index_html]
 
+  include Redis::OthersRedis
+  include Redis::Keys::Others
+
+  CONTENT_SECURITY_POLICY_AGENT_PORTAL_LOCAL_CACHE = 'CONTENT_SECURITY_POLICY_AGENT_PORTAL_LOCAL_CACHE'.freeze
+  CSP_DIRECTIVES = {
+    production: "default-src 'self'; script-src https://*.cloudfront.net cdn.headwayapp.co *.freshcloud.io https://assets.freshdesk.com https://cdn.heapanalytics.com ; style-src https://wchat.freshchat.com; img-src https://*.cloudfront.net https://heapanalytics.com; connect-src https://*.freshworksapi.com https://support.freshdesk.com; report-uri /api/_/cspreports",
+    staging: "default-src 'self'; script-src https://*.cloudfront.net cdn.headwayapp.co *.freshcloud.io https://assets.freshpo.com https://cdn.heapanalytics.com; style-src https://wchat.freshchat.com; img-src https://*.cloudfront.net https://heapanalytics.com; connect-src https://*.freshworksapi.com https://*.freshpo.com; report-uri /api/_/cspreports"
+  }.freeze
   def index
     # redirect_to MOBILE_URL
     if can_redirect_to_mobile?
@@ -34,6 +43,16 @@ class HomeController < ApplicationController
 
   def index_html
     render text: Assets::IndexPage.html_content, content_type: 'text/html'
+  end
+
+  def add_security_headers
+    response.headers['Content-Security-Policy-Report-Only'] = csp_policy if Account.current.launched?(:csp_reports)
+  end
+
+  def csp_policy
+    (Rails.cache.fetch(CONTENT_SECURITY_POLICY_AGENT_PORTAL_LOCAL_CACHE, race_condition_ttl: 10.seconds, expires_in: 15.minutes) do
+      get_others_redis_key(CONTENT_SECURITY_POLICY_AGENT_PORTAL)
+    end).presence || CSP_DIRECTIVES[:"#{Rails.env}"]
   end
 
   protected

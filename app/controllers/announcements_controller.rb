@@ -4,7 +4,7 @@ class AnnouncementsController < ApplicationController
   ACCOUNT_URL = PRODUCT_UPDATES['account_url']
   ACCOUNT_SHARED_SECRET = PRODUCT_UPDATES['shared_secret']
   
-  before_filter :check_feature, :load_variables
+  before_filter :load_variables
   before_filter :validate_params, only: [:account_login_url]
 
   def account_login_url
@@ -18,11 +18,7 @@ class AnnouncementsController < ApplicationController
     @plan_name = current_account.plan_name
   end
 
-  private 
-
-    def check_feature
-      current_account.announcements_tab_enabled?
-    end
+  private
 
     def load_variables
       @user_name  = current_user.try(:name).to_s

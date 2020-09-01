@@ -122,9 +122,6 @@
 </script>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h5 class="lead"><%= t("tickets_filter.title") %></h5>
-    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
-      <div class="sloading loading-small loading-block filter-loading"></div>
-    <% end %>
     <%= itil_ticket_filters.html_safe %>
     <form id="FilterOptions" action="#">
       <input type="hidden" name="data_hash" value="" />
@@ -463,18 +460,6 @@
       jQuery('#export_tickets').hide();
       jQuery('#empty_trash').hide();
     }
-
-    <% if Account.current.launched?(:ticket_list_page_filters_cache) %>
-      var fieldMap = <%= raw(TicketConstants::DASHBOARD_FILTER_MAPPING.to_json) %>;
-      PopulateData.I18n_text.me = '<%= t("helpdesk.tickets.add_watcher.me") %>'
-      PopulateData.I18n_text.mygroups = '<%= t("filter_options.mygroups") %>'
-      PopulateData.I18n_text.unassigned = '<%= t("filter_options.unassigned") %>'
-      TicketListSidebar.getParams(fieldMap,function(params){
-          params.defaultDateRange = "<%= TicketConstants.created_date_range_default%>";
-          params.sharedOwnershipFlag = <%= shared_ownership_enabled %>;
-          PopulateFormData.init(params);
-      });
-    <% end %>
 
   });
 

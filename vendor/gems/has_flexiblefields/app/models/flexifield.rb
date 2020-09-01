@@ -145,7 +145,7 @@ class Flexifield < ActiveRecord::Base
   end
 
   def nested_field_correction
-    NestedFieldCorrection.new(self).clear_child_levels if Account.current.dependent_field_validation_enabled?
+    NestedFieldCorrection.new(self).clear_child_levels
   end
 
   private

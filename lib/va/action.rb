@@ -14,6 +14,7 @@ class Va::Action
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
   ACTION_ERROR = 'ACTION_FAILED'.freeze
+  SPECIAL_CHARACTERS_TO_IGNORE = ['hyphen', 'exclamation'].freeze
 
   attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule, :skip_record_action, :logger_actions
 
@@ -383,7 +384,8 @@ class Va::Action
     def substitute_placeholders act_on, content_key
       act_on = @original_ticket.present? ? @original_ticket : act_on
       content           = act_hash[content_key].to_s
-      content           = RedCloth.new(content).to_html unless content_key == :email_subject
+      # checking whether words are surrouned by hyphen
+      content = convert_content_to_html(content, content_key)
 
       placeholder_hash  = {'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name,
                            'comment' => act_on.notes.visible.exclude_source(Account.current.helpdesk_sources.note_exclude_sources).last}
@@ -394,9 +396,7 @@ class Va::Action
       # Template Engine codes are not convertable to textile, RedCloth coverts them to html tags assuming it is a textile codes.
       # So when we parse the content using Liquid::Template parser (Basically it will evaluate the Template Engine codes and make html out of it)
       # it throws exception. To avoind this issue, applying RedCloth on Liquid::Template parsed output which will be in pure textile format.
-      parsed_content = Liquid::Template.parse(content).render(placeholder_hash)
-      skip_parsing_fields = Account.current.trim_special_characters_enabled? ? %i[email_subject fwd_note_body note_body email_body] : %i[email_subject]
-      skip_parsing_fields.include?(content_key) ? parsed_content : RedCloth.new(parsed_content).to_html
+      Liquid::Template.parse(content).render(placeholder_hash)
     end
 
     def assign_custom_field act_on, field, value
@@ -424,5 +424,22 @@ class Va::Action
       note.build_note_and_sanitize
       UnicodeSanitizer.encode_emoji(note.note_body, 'body', 'full_text')
       note.build_note_schema_less_associated_attributes
+    end
+
+    def replace_html_tags_with_spl_characters(con, replace_type)
+      if replace_type.include? SPECIAL_CHARACTERS_TO_IGNORE[0]
+        con.gsub!(/<del>|<\/del>/, '-') # hyphens get converted to del and &#8212; we are retriving it back
+        con.gsub!(/&#8212;/, '--') if con.scan(/&#8212;/).present?
+      end
+      con.gsub!(/<img.*?src="(.*?)".*?\>/) { |cont| $1.include?('inline/attachment?token=') ? cont : "!#{$1}!" } if replace_type.include? SPECIAL_CHARACTERS_TO_IGNORE[1]
+      con
+    end
+
+    def convert_content_to_html(content, content_key)
+      replace_type = []
+      replace_type.push(SPECIAL_CHARACTERS_TO_IGNORE[0]) if content.scan(/(-+\p{L}+.+)|(-+\s+\p{L}+.+)|(\p{L}+-+)|(\p{L}+\s+-+)/u).present?
+      replace_type.push(SPECIAL_CHARACTERS_TO_IGNORE[1]) if content.scan(/(!+\p{L}+.+)/).present?
+      content = RedCloth.new(content).to_html unless content_key == :email_subject
+      Account.current.trim_special_characters_enabled? ? replace_html_tags_with_spl_characters(content, replace_type) : content
     end
 end

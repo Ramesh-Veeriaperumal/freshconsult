@@ -80,27 +80,20 @@
 
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
-	<% if current_account.launched?(:onboarding_inlinemanual) %>
-		<script>window.inlineManualOptions = { language: "<%= I18n.locale %>" } ;</script>
-		<% if Rails.env.production? %>
-			<script src="https://inlinemanual.com/embed/player.<%=INLINE_MANUAL_TOKENS['access_key']%>.js" async ></script>
-		<% else %>
-			<script>!function(){var e=document.createElement("script"),t=document.getElementsByTagName("script")[0];e.async=1,e.src="https://inlinemanual.com/embed/player.<%=INLINE_MANUAL_TOKENS['access_key']%>.js",e.charset="UTF-8",t.parentNode.insertBefore(e,t)}();</script>
-		<% end %>
-		<script type="text/javascript" >
-			window.inlineManualTracking = <%= inline_manual_people_tracing.to_json.html_safe %>
-      window.im_option = {}
-		</script>
-		<%= javascript_include_tag :'cdn/inline_manual_trigger' %>
-		<div class="hide" id="inline-manual-meta">
-			<span class="<%= inline_manual_classes_for_multilingual %>" id="multilingual-meta-info"></span>
-		</div>
+	<script>window.inlineManualOptions = { language: "<%= I18n.locale %>" } ;</script>
+	<% if Rails.env.production? %>
+		<script src="https://inlinemanual.com/embed/player.<%=INLINE_MANUAL_TOKENS['access_key']%>.js" async ></script>
+	<% else %>
+		<script>!function(){var e=document.createElement("script"),t=document.getElementsByTagName("script")[0];e.async=1,e.src="https://inlinemanual.com/embed/player.<%=INLINE_MANUAL_TOKENS['access_key']%>.js",e.charset="UTF-8",t.parentNode.insertBefore(e,t)}();</script>
 	<% end %>
-
-<% if current_user.falcon_invite_eligible? %>
-	<%= javascript_include_tag :'cdn/falcon_invite' %>
-	<%= render partial: "admin_onboarding/falcon_invite" %>
-<% end %>
+	<script type="text/javascript" >
+		window.inlineManualTracking = <%= inline_manual_people_tracing.to_json.html_safe %>
+	window.im_option = {}
+	</script>
+	<%= javascript_include_tag :'cdn/inline_manual_trigger' %>
+	<div class="hide" id="inline-manual-meta">
+		<span class="<%= inline_manual_classes_for_multilingual %>" id="multilingual-meta-info"></span>
+	</div>
 
 <script >
 	//TODO: Migrate to i18n Js
@@ -141,7 +134,7 @@
       });
       heap.identify("<%= current_user.id %>");
       heap.addUserProperties({
-      	'account_id' : "<%= current_account.id %>"
+      	'account_id' : "<%= current_account.id %>",
         'account_name': "<%= current_account.name %>",
         'agent_name': "<%= current_user.name %>",
 		<% subscription = current_account.subscription %>

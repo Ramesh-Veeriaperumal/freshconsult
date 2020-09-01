@@ -375,6 +375,65 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_equal @account.domain, new_domain
   end
 
+  def test_customize_domain_fluffy
+    @account.make_current
+    fluffy_email_account = Fluffy::AccountV2.new(account_id: @account.id,
+                                                 name: @account.full_domain,
+                                                 limit: 100,
+                                                 granularity: 'MINUTE')
+    fluffy_api_account = Fluffy::Account.new(name: @account.full_domain,
+                                             limit: 100,
+                                             granularity: 'MINUTE')
+    @account.stubs(:fluffy_integration_enabled?).returns(true)
+    @account.stubs(:fluffy_email_enabled?).returns(true)
+    @account.stubs(:current_fluffy_limit).returns(fluffy_api_account)
+    @account.stubs(:current_fluffy_email_limit).returns(fluffy_email_account)
+    @account.stubs(:destroy_fluffy_account).returns(true)
+    Fluffy::FRESHDESK.stubs(:fluffy_add_account).returns(true)
+    Fluffy::FRESHDESK_EMAIL.stubs(:fluffy_add_account).returns(true)
+    @account.expects(:destroy_fluffy_account).once
+    @account.expects(:destroy_fluffy_email_account).once
+    Fluffy::FRESHDESK.expects(:fluffy_add_account).once
+    Fluffy::FRESHDESK_EMAIL.expects(:fluffy_add_account).once
+    new_domain = Faker::Internet.domain_word
+    put :customize_domain, construct_params(version: 'private', subdomain: new_domain)
+    assert_response 200
+    assert_equal @account.domain, new_domain
+  ensure
+    @account.unstub(:fluffy_integration_enabled?)
+    @account.unstub(:fluffy_email_enabled?)
+    @account.unstub(:current_fluffy_limit)
+    @account.unstub(:current_fluffy_email_limit)
+    @account.unstub(:destroy_fluffy_account)
+    Fluffy::FRESHDESK_EMAIL.unstub(:fluffy_add_account)
+    Fluffy::FRESHDESK.unstub(:fluffy_add_account)
+  end
+
+  def test_customize_domain_fluffy_without_fluffy_account
+    @account.make_current
+    @account.stubs(:fluffy_integration_enabled?).returns(true)
+    @account.stubs(:fluffy_email_enabled?).returns(true)
+    @account.stubs(:current_fluffy_email_limit).returns(nil)
+    @account.stubs(:current_fluffy_limit).returns(nil)
+    @account.stubs(:create_fluffy_email_account).returns(true)
+    @account.stubs(:create_fluffy_account).returns(true)
+    @account.expects(:create_fluffy_email_account).once
+    @account.expects(:create_fluffy_account).once
+    new_domain = Faker::Internet.domain_word
+    put :customize_domain, construct_params(version: 'private', subdomain: new_domain)
+    assert_response 200
+    assert_equal @account.domain, new_domain
+  ensure
+    @account.unstub(:fluffy_integration_enabled?)
+    @account.unstub(:fluffy_email_enabled?)
+    @account.unstub(:current_fluffy_email_limit)
+    @account.unstub(:current_fluffy_limit)
+    @account.unstub(:create_fluffy_email_account)
+    @account.unstub(:create_fluffy_account)
+
+    Fluffy::FRESHDESK_EMAIL.unstub(:fluffy_add_account)
+  end
+
   def test_anonymous_to_trial_already_trial
     admin_email = Faker::Internet.email
     post :anonymous_to_trial, construct_params(version: 'private', admin_email: admin_email)

@@ -38,9 +38,10 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show]
+      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show, :create, :update, :destroy]
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
+      get 'holidays/:id', to: 'holidays#show'
 
       resource :freshcaller_account, controller: 'freshcaller_account', only: [:show, :create, :update, :destroy] do
         collection do
@@ -50,6 +51,12 @@ Helpkit::Application.routes.draw do
         member do
           put :enable
           put :disable
+        end
+      end
+
+      resources :security, controller: 'api_security', only: [:show] do
+        collection do
+          get :show
         end
       end
     end
@@ -1011,6 +1018,7 @@ Helpkit::Application.routes.draw do
         post 'agents/sync', to: 'channel/v2/agents#sync'
       end
     end
+    match '/notes/sync', to: 'channel/v2/conversations#sync', via: [:post]
     post '/canned_responses', to: 'channel/v2/canned_responses#create'
     post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
@@ -1018,18 +1026,24 @@ Helpkit::Application.routes.draw do
     match '/authenticate', to: 'channel/v2/iam/authentication#authenticate', via: [:get, :post, :put, :delete]
     post '/iam/token', to: 'channel/v2/iam/authentication#iam_authenticate_token'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
-    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index, :update]
     resources :fbms, controller: 'channel/v2/fbms' do
       collection do
         post :update_post_id
       end
     end
     resources :central_resync, controller: 'channel/v2/central_resync', only: [:show]
+    resources :ticket_fields, controller: 'channel/v2/ticket_fields' do
+      collection do
+        post 'sync', to: 'channel/v2/ticket_fields#sync'
+      end
+    end
 
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
     get '/solutions/categories/:id/folders', to: 'channel/v2/api_solutions/folders#category_folders'
     get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
+    get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
   end

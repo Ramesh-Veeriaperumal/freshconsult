@@ -1,0 +1,1 @@
+@items.map { |holiday| { name: holiday[1], date: holiday[0] } }.to_json

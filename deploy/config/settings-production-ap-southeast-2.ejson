@@ -649,6 +649,10 @@
             "_sqs_queue": "fd_scheduler_downgrade_policy_reminder_queue_production",
             "_priority": 1
           },
+          "switch_to_annual_notification": {
+            "_sqs_queue": "switch_to_annual_notification_queue_production",
+            "_priority": 1
+          },
           "suspended_account_cleanup": {
             "_sqs_queue": "suspended_account_cleanup_queue_production",
             "_priority": 1
@@ -723,6 +727,10 @@
           },
           "custom_mailbox_status": {
             "_sqs_queue": "custom_mailbox_notification",
+            "_priority": 1
+          },
+          "freddy_consumed_session_reminder_queue": {
+            "_sqs_queue": "freddy_consumed_session_reminder_production",
             "_priority": 1
           },
           "email_rate_limiting_queue": {
@@ -983,10 +991,12 @@
         "_spam_trash_delete_free_acc_queue": "spam_trash_delete_free_acc_queue_production",
         "_spam_trash_delete_paid_acc_queue": "spam_trash_delete_paid_acc_queue_production",
         "_fd_scheduler_downgrade_policy_reminder_queue": "fd_scheduler_downgrade_policy_reminder_queue_production",
+        "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_production",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_production",
         "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance",
+        "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_production",
         "_email_rate_limiting_queue": "email_rate_limiting_production"
       },
       "archive_sqs_queues": {
@@ -1352,6 +1362,22 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:lK89Q5d1JlnZEKXVhwhb+7vIj3qJzx/Qz3I92ujHc0k=:52ROvYZBvYqYcE/lzHSedHbVqn7/jLXu:SNuyUrLc7XjjODaLUM80yNWk3qWnsHK47Xd0isbwT4YBRCrKsGpvIeI9JSM+i0RW8DVUvw==]"]
+        },
+        "kbservice": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:Oa+pjMLmQ4Bg/NwxGeOxT0me0lSUYJxwwyN1dHIsEiw=:uuAmacIwHDgtIXBDorXykWJ99PM8l+6G:cSzMu/jFm3+V4ETOhgnMIQB52PsJ3J7fAlaTu4zQ9gbzfR1QTk4Wa9zzm0SuND7r]"]
+        },
+        "analytics": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:yLlDn6Li0A28jR2LnZVQ1LNXL3sxHzTJoeLJ6+Veni8=:fNUU17OPnbqt1lQ7Vm2Jg7jBkWm96Kb7:pSqulwqmMt11p78AthiJWHdLVAVasoJ746dSzcFCQkCQ4Xr07mSItlSQqU+i9n+OiKwCx1IoGzw=]"]
+        },
+        "freshdesk": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:yLlDn6Li0A28jR2LnZVQ1LNXL3sxHzTJoeLJ6+Veni8=:nI7r8zD0nuEb6i9WsYW3UzBiCvD74yqN:c28+CAFjKwa9ujckRDRf0a4PtWV86Yxq+GdFqBkCIbZzbKyEpvFrCFWBgUJSix5X7kjsAFBjl3g=]"]
+        },
+        "search": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:yLlDn6Li0A28jR2LnZVQ1LNXL3sxHzTJoeLJ6+Veni8=:y2IW/AtDdsf7w64sCM2x2JkQmvWOnJz8:oQo0FC6Fljzkmg/AK6KKGMwY44BEbmLlC1J8YALwiGPas470cIBC5qWYqQd/BcCaWa4hZykv2w4=]"]
         }
       },
       "scheduler_client_keys": {
@@ -1359,6 +1385,7 @@
         "_end_point": "http://scheduler.freshworksapi.com/schedules",
         "_todo_group_name": "helpkit_todo_reminder",
         "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder",
+        "_monthly_to_annual_group_name": "monthly_to_annual_notification",
         "_account_cleanup_group_name": "helpkit_suspended_account_cleanup",
         "_export_group_name": "helpkit_export_cleanup",
         "_ticket_delete_group_name": "helpkit_ticket_delete"
@@ -1510,7 +1537,9 @@
       "fluffy": {
         "_host": "fluffy-aus.internal.podapsoutheast2.freshdesk.com",
         "username": "EJ[1:qRk7aIgpI41FeY7WJVoIMpPNhPvcNJoR5Ntxrpal6xA=:5t8kl0ZyrUp5NXQX6qsCP5i1DRMjptGJ:/brbK8wK8aSYXSxD3BIPMp+vWE2xvuHDRw==]",
-        "password": "EJ[1:qRk7aIgpI41FeY7WJVoIMpPNhPvcNJoR5Ntxrpal6xA=:ZnnWDegIFk5HE1a/+CBwWV3QbW7n4wDg:yeBwrfsZidl5V8Y6xpOndxUua4GRe0KJ5TnKZKjiz60214rU8pZyOwOFtXAz4w3MLNToqA==]"
+        "password": "EJ[1:qRk7aIgpI41FeY7WJVoIMpPNhPvcNJoR5Ntxrpal6xA=:ZnnWDegIFk5HE1a/+CBwWV3QbW7n4wDg:yeBwrfsZidl5V8Y6xpOndxUua4GRe0KJ5TnKZKjiz60214rU8pZyOwOFtXAz4w3MLNToqA==]",
+        "fd_email_username": "EJ[1:P10D8hzRQZztdTVle92cj05WaF6oHScaTmlFj+1tDA0=:70u5ZEphcprQkszrjDL9Br6Y3nr9dUhA:XRsN++Vqmn8WDfF56Vv7kD9CB0LYfrzO99MU4vrKyA==]",
+        "fd_email_password": "EJ[1:P10D8hzRQZztdTVle92cj05WaF6oHScaTmlFj+1tDA0=:KkzKIZ9uupOCYOc5YxIOJVJOIPyfPM3G:VzM6tOJSh9kNuD7BiADr1Ua8nHl4iDhiHbC6LN72dMpfZv0d3OJ2wIoJgMdRxanFqPe19w==]"
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
@@ -1552,6 +1581,11 @@
           "_demo_email": "support@frsshdesk.com",
           "_timeout": 5,
           "_onboard_timeout": 5        
+        },
+        "freddy_consumed_session": {
+          "_url": "http://au-fbots-freddy-acct-usage-elb-61669193.ap-southeast-2.elb.amazonaws.com/api/v1/accounts",
+          "_app_name": "freshdesk",
+          "_timeout": 3
         }
        },
       "shift_config": {
@@ -1727,6 +1761,7 @@
         "saml.pem",
         "iam.pem",
         "iam_public.pem",
+        "freddy_sessions.pem",
         "jwe_encryption_key.pem"
       ],
       "_bucket": "freshops-admin",

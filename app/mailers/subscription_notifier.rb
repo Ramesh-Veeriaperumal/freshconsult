@@ -119,8 +119,8 @@ class SubscriptionNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def subscription_downgraded(subscription, old_subscription, requested_subscription)
-    setup_email(AppConfig['cs_email'], "Downgrade request from #{subscription.account.full_domain}", subscription.account_id, 'Subscription Downgraded')
+  def subscription_downgraded(subscription, old_subscription, requested_subscription, from_email)
+    setup_email(AppConfig['cs_email'], "Downgrade request from #{subscription.account.full_domain}", from_email, subscription.account_id, 'Subscription Downgraded')
     @old_subscription = downgrade_notification_fields(old_subscription)
     @current_subscription = if requested_subscription.present?
                               downgrade_notification_fields(requested_subscription)
@@ -149,10 +149,11 @@ class SubscriptionNotifier < ActionMailer::Base
     end.deliver
   end
 
-  def account_cancellation_requested(feedback)
+  def account_cancellation_requested(feedback, current_user)
     period = { 1 => "Monthly", 3 => "Quarterly", 6 => "Half Yearly", 12 => "Annual" }
-    setup_email(AppConfig['cs_email'], "Cancellation request from #{Account.current.full_domain}.", Account.current.id, "Cancellation Request")
     @account = Account.current
+    from_email = current_user.present? ? current_user.email : @account.admin_email
+    setup_email(AppConfig['cs_email'], "Cancellation request from #{Account.current.full_domain}.", from_email, Account.current.id, 'Cancellation Request')
     customer_details = @account.subscription.billing.retrieve_subscription(@account.id)
     @billing_start_date = Time.zone.at(customer_details.subscription.current_term_start).to_date.to_s(:db)
     @reason  = feedback

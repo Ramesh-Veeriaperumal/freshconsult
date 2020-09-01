@@ -205,6 +205,22 @@
         "silkroad": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:EU6zcLO6p5JoZprRiGNbINV4uzapgx+kTX8gsQTuHjw=:EW0L5JDosLKuaN4jzHWzt5MckZDil/vt:AuIZ9Szz6O2CKivZHRJe8tYy6oKUkuDdaDGZp4mzXyUmESrsY+qMY1IDqRE0U854pg+an+lWjA==]", "EJ[1:EU6zcLO6p5JoZprRiGNbINV4uzapgx+kTX8gsQTuHjw=:dPY1u4Pz9BxauNHqebQ1ykc/1YW7qxKk:5mFP+DjHLQ8Fwfezc56LEdp8ESmfGCofBIyWaSyevqCZyqgFbeyA1UoICT/cJw+gdi2JhMdxlw==]"]
+        },
+        "kbservice": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:tf2VCJ4eKbLaWZts+Q0w9QQa8uxEKv0J9FaZTYjTS1Q=:qXDO9TNhdX4kupTnsVoxI/J4rwu5RPwP:jhmjXDdQoo7Gq14/xwyzoEuoVyUnYu2bSrCX31nUb73MY5jLb+K390K+hWjRGMIm]"]
+        },
+        "analytics": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:8vwdYL+QxUXS6FYVjjHYuRl3Lz2owrsUTVbNmeRxfDA=:dycQLFMnyWhp88ReQmBX99/ZC8bn2uEa:m21LcRPKH42bTOhRGcLEppxIkCAdL+HqdKAZLrK8isCm5rTgd1hrHdGVC4wGt04HLVT3PRK5tZ4=]"]
+        },
+        "freshdesk": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:8vwdYL+QxUXS6FYVjjHYuRl3Lz2owrsUTVbNmeRxfDA=:y9x2LoWxcaI7r82RF25FnEz1DyfFHy6O:DKl+HN5tjdvA60U+bpvT6MUBfrrqB3XeFCeS71hx4LRl7yilyJSoGdM/OeN/uk2mpVXdzLxjMcE=]"]
+        },
+        "search": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:8vwdYL+QxUXS6FYVjjHYuRl3Lz2owrsUTVbNmeRxfDA=:F4VfYkA9vBg9cIisSce/kirpgr0n4BJB:Ok+Tw/Ec5177PWhXzqaVgooVzMbxOq31/JlYyoIkV4xIOEcsVlq+I5CQ0/2ACm6NEWtOticfVsY=]"]
         }
       },
       "channel_v2_api": {
@@ -1363,6 +1379,7 @@
         "_todo_group_name": "helpkit_todo_reminder",
         "_account_cleanup_group_name": "helpkit_suspended_account_cleanup",
         "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder",
+        "_monthly_to_annual_group_name": "monthly_to_annual_notification",
         "_export_group_name": "helpkit_export_cleanup",
         "_ticket_delete_group_name": "helpkit_ticket_delete"
       },
@@ -1416,6 +1433,10 @@
           },
           "downgrade_policy_reminder": {
             "_sqs_queue": "fd_scheduler_downgrade_policy_reminder_queue_staging",
+            "_priority": 1
+          },
+          "switch_to_annual_notification": {
+            "_sqs_queue": "switch_to_annual_notification_queue_staging",
             "_priority": 1
           },
           "suspended_account_cleanup": {
@@ -1493,6 +1514,10 @@
           "trial_email": {
             "_priority": 1,
             "_sqs_queue": "main_staging_trial_email"
+          },
+          "freddy_consumed_session_reminder_queue": {
+            "_sqs_queue": "freddy_consumed_session_reminder_queue",
+            "_priority": 1
           },
           "email_rate_limiting_queue": {
              "_priority": 1,
@@ -1596,10 +1621,12 @@
         "_fd_scheduler_export_cleanup_queue": "main_staging_fd_scheduler_export_cleanup_queue",
         "_analytics_etl_queue": "analytics_etl_queue-stagingvpc-staging",
         "_fd_scheduler_downgrade_policy_reminder_queue": "fd_scheduler_downgrade_policy_reminder_queue_staging",
+        "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_staging",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_staging",
         "_search_etlqueue_maintenance": "search-etlqueue-stagingvpc-staging_new_maintenance",
         "_count_etl_queue_maintenance": "count_etl_queue-stagingvpc-staging_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance",
+        "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_queue",
         "_email_rate_limiting_queue": "email_rate_limiting_staging"
       },
       "archive_sqs_queues": {
@@ -1614,6 +1641,12 @@
         "_activities_export_host": "activities-export-elb.internal-freshpo.com",
         "_activities_host": "activities-elb.internal-freshpo.com",
         "_port": "80"
+      },
+      "tracing": {
+        "_service_name": "freshdesk_helpkit",
+        "_tracing_host_port": 6831,
+        "_span_batch_size": 20,
+        "_sampler_probability": 0.1
       },
       "twitter": {
         "consumer_secret": "EJ[1:8exvi2D7SfEJxmn+Br7CeoKsCDfXy1gOfUh5hGbLsSw=:1GEjNUdnyGNCmC2AHo5M3oZ15HG5ej8o:HgTyKLuiPrWqhpbgJ5kwCJBPcItExu8LwguJQrvkQ7s+S6VP9XVzLR3/l/lDJ+Ih5UO4eCZ+XuBuO5IrGBHlYu5u]",
@@ -1742,7 +1775,9 @@
       "fluffy": {
         "_host": "vpce-0b247209ae0145d88-4fa54j71.vpce-svc-0874c1e9512bd57dc.us-east-1.vpce.amazonaws.com",
         "username": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:qrgtap1okUwcx0qIs/bPJ5t1x/mkm0Oe:9NvC+DrZtADYb8l0Pe8j5orfiVJYIYAiNg==]",
-        "password": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:G0hLjfcT/xDslPM+IvgoZHOPC4qbuw9S:32COF4bZOIdTS+LeAL3pj0TROw/wYUK1qQ==]"
+        "password": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:G0hLjfcT/xDslPM+IvgoZHOPC4qbuw9S:32COF4bZOIdTS+LeAL3pj0TROw/wYUK1qQ==]",
+        "fd_email_username": "EJ[1:q5V06hqsIrKN2tulzpbNviFzUMwxFL16TX4OLJ+znCo=:DixTfL/y7bLwvGPLFexZcnEvY4jBehFZ:O6sWK5pkFPdX049IoNrjPE3CrPUVHT9PekGqU/vglg==]",
+        "fd_email_password": "EJ[1:q5V06hqsIrKN2tulzpbNviFzUMwxFL16TX4OLJ+znCo=:FMuEil75mWEGLUSXE+pfS5LV5KMvwrzm:aM414Jlzdh3OCic1BndsdHEPdF+JGzscDrL5Z2Xmvw==]"
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
@@ -1784,6 +1819,11 @@
           "_demo_email": "support@freshdesk.com",
           "_timeout": 5,
           "_onboard_timeout": 5
+        },
+        "freddy_consumed_session": {
+          "_url": "http://freddyacctusage.stagfreshbots.com/api/v1/accounts",
+          "_app_name": "freshdesk",
+          "_timeout": 3
         }
       },
       "shift_config": {
@@ -1963,6 +2003,7 @@
         "saml.pem",
         "iam.pem",
         "jwe_encryption_key.pem",
+        "freddy_sessions.pem",
         "iam_public.pem"
       ],
       "_path": "certificates/common",

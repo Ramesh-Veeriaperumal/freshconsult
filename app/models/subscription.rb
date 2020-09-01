@@ -63,6 +63,8 @@ class Subscription < ActiveRecord::Base
     :class_name => "Subscription::Addon",
     :through => :subscription_addon_mappings,
     :source => :subscription_addon,
+    :before_add => :cache_old_addons,
+    :before_remove => :cache_old_addons,
     :foreign_key => :subscription_addon_id
 
   belongs_to :currency,
@@ -76,6 +78,7 @@ class Subscription < ActiveRecord::Base
   before_update :cache_old_model, :cache_old_addons
   before_update :clear_loyalty_upgrade_banner, if: :plan_changed?
   before_update :create_omni_bundle, if: :omni_plan_conversion?
+  before_update :mark_switch_annual_notification, if: :switch_annual_notification_eligible?
 
   after_update :add_to_crm, unless: [:anonymous_account?, :disable_freshsales_api_integration?]
   after_update :update_reseller_subscription, unless: :anonymous_account?
@@ -90,9 +93,10 @@ class Subscription < ActiveRecord::Base
   after_commit :update_sandbox_subscription, on: :update, if: :account_has_sandbox?
   after_commit :complete_onboarding, on: :update, if: :upgrade_from_trial?
   after_commit :launch_downgrade_policy, unless: :policy_applied_account?
+  after_commit :trigger_switch_to_annual_notification_scheduler, on: :update, if: :trigger_switch_annual_notification?
   after_commit :enqueue_omni_account_creation_workers, if: [:omni_plan_conversion?, :enqueue_omni_account_creation?]
 
-  attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start
+  attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start, :lock_old_addons
   attr_reader :response
   serialize :additional_info, Hash
 
@@ -300,8 +304,6 @@ class Subscription < ActiveRecord::Base
   end
 
   def classic?
-    return SubscriptionPlan::JAN_2020_PLAN_NAMES.exclude?(subscription_plan.name) if account.force_2020_plan?
-
     subscription_plan.classic
   end
 
@@ -346,6 +348,11 @@ class Subscription < ActiveRecord::Base
     additional_info = self.additional_info || {}
     additional_info[:auto_collection] = AUTO_COLLECTION[auto_collection]
     update(additional_info: additional_info)
+  end
+
+  def mark_switch_annual_notification
+    additional_info = self.additional_info || {}
+    additional_info[:annual_notification_triggered] = true
   end
 
   def applicable_addons(addons, plan)
@@ -543,6 +550,28 @@ class Subscription < ActiveRecord::Base
     save
   end
 
+  def freddy_sessions=(value)
+    self.additional_info ||= {}
+    self.additional_info[:freddy_sessions] = value
+  end
+
+  def freddy_sessions
+    self.additional_info.try(:[], :freddy_sessions).to_i
+  end
+
+  def freddy_session_packs
+    self.additional_info.try(:[], :freddy_session_packs).to_i
+  end
+
+  def freddy_session_packs=(session_packs)
+    self.additional_info ||= {}
+    self.additional_info[:freddy_session_packs] = session_packs
+  end
+
+  def freddy_billing_model
+    self.additional_info.try(:[], :freddy_billing_model)
+  end
+
   def remove_addon(addon_name)
     attempt = 0
     no_of_retries = 3
@@ -607,7 +636,7 @@ class Subscription < ActiveRecord::Base
     (account.launched?(:downgrade_policy) && active? &&
       !present_subscription.subscription_plan.amount.zero? &&
       present_subscription.agent_limit > present_subscription.free_agents &&
-      (plan_downgrade? || omni_plan_dowgrade? || term_reduction? || agent_limit_reduction? || fsm_downgrade?))
+      (plan_downgrade? || omni_plan_dowgrade? || term_reduction? || agent_limit_reduction? || fsm_downgrade? || freddy_downgrade?))
   end
 
   def plan_downgrade?
@@ -629,6 +658,18 @@ class Subscription < ActiveRecord::Base
   def fsm_downgrade?
     present_subscription.field_agent_limit.to_i > 0 && (field_agent_limit.blank? ||
       present_subscription.field_agent_limit > field_agent_limit)
+  end
+
+  def freddy_downgrade?
+    (present_subscription.freddy_sessions > 0 && (freddy_sessions.blank? ||
+      present_subscription.freddy_sessions > freddy_sessions)) ||
+      (present_subscription.freddy_session_packs > 0 && (freddy_session_packs.blank? ||
+        present_subscription.freddy_session_packs > freddy_session_packs)) || compare_addon_and_plan_sessions
+  end
+
+  def compare_addon_and_plan_sessions
+    (present_subscription.freddy_sessions - (present_subscription.freddy_session_packs * SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_session_packs])) / present_subscription.renewal_period >
+      (freddy_sessions - (freddy_session_packs * SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_session_packs])) / renewal_period
   end
 
   def cost_per_agent(plan_period = renewal_period)
@@ -733,8 +774,9 @@ class Subscription < ActiveRecord::Base
       @old_subscription = Subscription.find id
     end
 
-    def cache_old_addons
-      @old_addons = Subscription.find(id).addons.dup
+    def cache_old_addons(*)
+      @old_addons = addons.dup unless self.lock_old_addons
+      self.lock_old_addons = true
     end
 
     def validate_errors_on_update
@@ -816,7 +858,8 @@ class Subscription < ActiveRecord::Base
     def save_subscription(params)
       self.renewal_period = params[:renewal_period] if params[:renewal_period].present?
       self.agent_limit = params[:agent_seats] if params[:agent_seats]
-      updated_addons = self.addons
+      # If in future when we get the addon params in this subscription api, we have to handle the addons
+      updated_addons = update_billing_based_addon(self.addons, self.renewal_period) || self.addons
       if params[:plan_id].present? && params[:plan_id] != plan_id
         new_plan = SubscriptionPlan.current.find_by_id(params[:plan_id])
         self.plan = new_plan
@@ -824,6 +867,7 @@ class Subscription < ActiveRecord::Base
         self.free_agents = new_plan.free_agents
         convert_to_free if new_sprout?
       end
+      self.freddy_sessions = calculate_freddy_session(updated_addons, self, self.subscription_plan.name.parameterize.underscore.to_sym, self.renewal_period) if account.launched?(:freddy_subscription)
       return false if validate_errors_on_update
 
       applicable_coupon = verify_coupon(present_subscription.coupon)
@@ -847,6 +891,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def construct_subscription_request(updated_addons, next_renewal_at)
+      is_freddy_downgrade = freddy_downgrade?
       downgrade_request = subscription_request.nil? ? build_subscription_request : subscription_request
       downgrade_request.plan_id = plan_id
       downgrade_request.renewal_period = renewal_period
@@ -855,6 +900,11 @@ class Subscription < ActiveRecord::Base
       downgrade_request.next_renewal_at = Time.at(next_renewal_at).to_datetime.utc
       downgrade_request.from_plan = present_subscription.subscription_plan_from_cache
       downgrade_request.fsm_downgrade = present_subscription.field_agent_limit.present? && field_agent_limit.blank?
+      downgrade_request.additional_info = downgrade_request.additional_info || {}
+      downgrade_request.additional_info[:freddy_downgrade] = is_freddy_downgrade
+      downgrade_request.additional_info[:freddy_session_packs] = freddy_session_packs
+      downgrade_request.additional_info[:freddy_self_service_requested] = is_addon_enabled(updated_addons, Subscription::Addon::FREDDY_SELF_SERVICE_ADDON) && !is_addon_enabled(updated_addons, Subscription::Addon::FREDDY_ULTIMATE_ADDON)
+      downgrade_request.additional_info[:freddy_ultimate_requested] = is_addon_enabled(updated_addons, Subscription::Addon::FREDDY_ULTIMATE_ADDON)
       downgrade_request
     end
 
@@ -987,7 +1037,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def omni_plan_conversion?
-      account.launched?(:explore_omnichannel_feature) && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan?
+      account.launched?(:explore_omnichannel_feature) && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan? && !account.not_eligible_for_omni_conversion?
     end
 
     def enqueue_omni_account_creation?
@@ -1025,6 +1075,19 @@ class Subscription < ActiveRecord::Base
       @old_subscription.subscription_plan_id != subscription_plan_id
     end
 
+    def switch_annual_notification_eligible?
+      !@old_subscription.additional_info[:annual_notification_triggered] && renewal_period != SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] && \
+        amount > 0 && first_time_paid_non_annual_plan? && !offline_subscription? && !reseller_paid_account?
+    end
+
+    def first_time_paid_non_annual_plan?
+      active? && subscription_payments.reject { |payment| payment.meta_info.present? && payment.meta_info[:renewal_period] == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] }.count.zero?
+    end
+
+    def trigger_switch_annual_notification?
+      !@old_subscription.additional_info[:annual_notification_triggered] && additional_info[:annual_notification_triggered]
+    end
+
     def update_features
       SAAS::SubscriptionEventActions.new(account, @old_subscription, @old_addons).change_plan
       account.active_trial.update_result!(@old_subscription, self) if account.active_trial.present?
@@ -1034,6 +1097,7 @@ class Subscription < ActiveRecord::Base
       args = { account_id: account_id,
                subscription_id: id,
                subscription_hash: subscription_info(@old_subscription) }
+      args.merge!(current_user_id: User.current.id) if User.current.present?
       if account.launched?(:downgrade_policy)
         args[:requested_subscription_hash] = subscription_info(self)
         args[:requested_subscription_hash][:is_downgrade] = downgrade?

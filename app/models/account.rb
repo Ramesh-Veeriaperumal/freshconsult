@@ -926,17 +926,6 @@ class Account < ActiveRecord::Base
     Community::SolutionBinarizeSync.perform_async
   end
 
-  # TODO: Remove force_2020_plan?() after 2020 plan launched
-  # START
-  def force_2020_plan?
-    !redis_key_exists?(NEW_2020_PRICING_ENABLED) && ismember?(NEW_2020_PRICING_TEST_USERS, admin_email)
-  end
-
-  def new_2020_pricing_enabled?
-    redis_key_exists?(NEW_2020_PRICING_ENABLED) || ismember?(NEW_2020_PRICING_TEST_USERS, admin_email)
-  end
-  # END
-
   def field_agents_count
     return @field_agents_count if @field_agents_count.present?
     return @field_agents_count = 0 if AgentType.agent_type_id(Agent::FIELD_AGENT).blank?
@@ -1045,7 +1034,19 @@ class Account < ActiveRecord::Base
   end
 
   def show_omnichannel_banner?
-    User.current.privilege?(:manage_account) && launched?(:explore_omnichannel_feature) && freshid_org_v2_enabled? && verified? && !(omni_bundle_account? || subscription.subscription_plan.omni_plan? || subscription.suspended? || account_cancellation_requested?)
+    User.current.privilege?(:manage_account) && launched?(:explore_omnichannel_feature) && freshid_org_v2_enabled? && verified? && !not_eligible_for_omni_conversion?
+  end
+
+  def omni_accounts_present_in_org?
+    organisation && organisation.omni_accounts_present?
+  end
+
+  def integrated_account?
+    freshcaller_account_present? || freshchat_account_present?
+  end
+
+  def not_eligible_for_omni_conversion?
+    omni_bundle_account? || subscription.subscription_plan.omni_plan? || subscription.suspended? || account_cancellation_requested? || integrated_account? || omni_accounts_present_in_org? || reseller_paid_account? || subscription.offline_subscription?
   end
 
   def freshcaller_billing_url

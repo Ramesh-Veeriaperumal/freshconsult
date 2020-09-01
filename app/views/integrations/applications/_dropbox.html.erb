@@ -6,20 +6,12 @@
   </li>
 <% end %>
 
-<% unless current_account.launched?(:multifile_attachments) %>
-  <script type="text/javascript">
-    function setFormChangedFlagMultifile(inp){
-      jQuery(inp).parents('form').data("formChanged","true");
-    }
-  </script>
-<% else %>
-  <script type="text/javascript">
-    function setFormChangedFlagMultifile(inp){
-      // Do nothing
-      // Function is needed so that error does not occur
-    }
-  </script>
-<% end %>
+<script type="text/javascript">
+  function setFormChangedFlagMultifile(inp){
+    // Do nothing
+    // Function is needed so that error does not occur
+  }
+</script>
 
 <% unless dropbox_app_key.blank? %>
   <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js"></script>

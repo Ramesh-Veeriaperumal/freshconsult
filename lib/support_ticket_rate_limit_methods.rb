@@ -13,7 +13,6 @@ module SupportTicketRateLimitMethods
   end
 
   def check_and_increment_usage
-    return unless current_account.support_ticket_rate_limit_enabled?
     return unless current_user && current_user.customer?
     redis_key_exists?(limit_key) ? increment_others_redis(limit_key, 1) : set_key_with_expiry(limit_key)
   end

@@ -10,7 +10,6 @@ module Freshfone
 
     skip_before_filter :check_privilege, :verify_authenticity_token, only: [:disconnect_browser_agent, :remove_notification_recovery]
     before_filter :validate_request_from_node, :only => [:disconnect_browser_agent, :remove_notification_recovery]
-    before_filter :validate_new_notifications_feature, only: [:disconnect_browser_agent, :agent_response]
     before_filter :load_ringing_calls, only: [:agent_response, :disconnect_browser_agent]
 
     attr_accessor :current_call, :current_number, :available_agents,
@@ -58,10 +57,6 @@ module Freshfone
           !call.meta.agent_pinged_and_no_response?(params[:agent].to_i)) ||
         			!call.ringing?) &&
         				call.supervisor_controls.warm_transfer_initiated_calls.blank?
-      end
-
-      def validate_new_notifications_feature
-        return render json: { status: :failure } unless new_notifications?
       end
 
       def load_ringing_calls

@@ -99,7 +99,6 @@ module Widget
     end
 
     def test_create_predictive_ticket_without_login
-      @account.launch :help_widget_login
       @widget.settings[:contact_form][:require_login] = true
       @widget.settings[:components][:contact_form] = true
       @widget.settings[:components][:predictive_support] = true

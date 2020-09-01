@@ -84,8 +84,8 @@ class Account < ActiveRecord::Base
     clear_account_data
   end
 
-  def schedule_account_cancellation_request(feedback)
-    SubscriptionNotifier.send_later(:deliver_account_cancellation_requested, feedback) if Rails.env.production?
+  def schedule_account_cancellation_request(feedback, current_user)
+    SubscriptionNotifier.send_later(:deliver_account_cancellation_requested, feedback, current_user) if Rails.env.production?
     unless account_cancellation_requested?
       if launched?(:downgrade_policy)
         result = Billing::Subscription.new.cancel_subscription(self, end_of_term: true)
@@ -144,6 +144,14 @@ class Account < ActiveRecord::Base
     to_email = []
     technicians.each do |agent|
       to_email << agent.email if agent.privilege?(:admin_tasks)
+    end
+    to_email
+  end
+
+  def fetch_all_account_admin_email
+    to_email = []
+    technicians.each do |agent|
+      to_email << agent.email if agent.privilege?(:manage_account)
     end
     to_email
   end

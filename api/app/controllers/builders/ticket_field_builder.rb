@@ -10,7 +10,7 @@ module TicketFieldBuilder
   def create_without_adding_choices
     # clear picklist values
     @item.picklist_values.reload
-    @item.field_options = { update_in_progress: true }
+    @item.field_options[:update_in_progress] = true
     save_and_process_choices
     render_201_with_location
   end

@@ -16,9 +16,12 @@ class Aloha::SignupController < ApplicationController
 
   def callback
     seeder_product = params['product_name'].downcase
+    Rails.logger.info "Aloha - Bundle Linking API - account #{@current_account.id} :: #{seeder_product} :: #{@current_account.omni_bundle_id}"
     if safe_send("create_#{seeder_product}_record")
+      Rails.logger.info "Aloha - Bundle Linking API success #{@current_account.id} :: #{seeder_product}"
       render json: { status: 200, message: "#{seeder_product} record created successfully" }
     else
+      Rails.logger.info "Aloha - Bundle Linking API failed #{@current_account.id} :: #{seeder_product}"
       render json: { status: 500, message: "#{seeder_product} record creation failed" }
     end
   end
@@ -43,9 +46,9 @@ class Aloha::SignupController < ApplicationController
     def create_freshcaller_record
       freshcaller_params = params['account']
       freshcaller_misc_params = params['misc'].is_a?(Hash) ? params['misc'] : JSON.parse(params['misc'])
+      Freshcaller::Account.create(account_id: @current_account.id, freshcaller_account_id: freshcaller_params['id'], domain: freshcaller_params['domain'])
       @current_account.add_feature(:freshcaller)
       @current_account.add_feature(:freshcaller_widget)
-      Freshcaller::Account.create(account_id: @current_account.id, freshcaller_account_id: freshcaller_params['id'], domain: freshcaller_params['domain'])
       enable_freshcaller_agent(@current_account.account_managers.first, freshcaller_misc_params['user']['freshcaller_account_admin_id'])
       link_params = freshcaller_bundle_linking_params(@current_account, @current_account.admin_email, admin_access_token, params)
       send_access_token_to_caller(params['account']['domain'], link_params)
@@ -53,7 +56,10 @@ class Aloha::SignupController < ApplicationController
 
     def select_account(&block)
       params[:freshdesk_account_id] = get_account_id(params['organisation']['id'])
-      render json: { message: 'Account ID Not Found!' }, status: 500 and return if params[:freshdesk_account_id].nil?
+      if params[:freshdesk_account_id].nil?
+        aloha_linking_error_logs ORG_ACC_MAP_MISSING_CODE
+        render json: { message: 'Account ID Not Found!' }, status: 500 and return
+      end
       begin
         Sharding.select_shard_of(params[:freshdesk_account_id]) do
           @current_account = Account.find(params[:freshdesk_account_id])
@@ -77,8 +83,9 @@ class Aloha::SignupController < ApplicationController
     def send_access_token_to_chat
       fc_acc = Account.current.freshchat_account
       return if fc_acc.nil?
-    
-      update_access_token(@current_account.domain, admin_access_token, fc_acc, freshchat_jwt_token)
+      response = update_access_token(@current_account.domain, admin_access_token, fc_acc, freshchat_jwt_token)
+      aloha_linking_error_logs UPDATE_FRESHCHAT_ACCESS_TOKEN_CODE if response.code != 200
+      response
     end
 
     def enable_freshchat_agent
@@ -89,10 +96,16 @@ class Aloha::SignupController < ApplicationController
         additional_settings.merge!(freshchat: { enabled: true })
         agent.update_attribute(:additional_settings, additional_settings)
         Rails.logger.info "Enabled Freshchat from signup for Account #{@current_account.id} and for Agent #{agent.id}"
+      else
+        aloha_linking_error_logs ENABLE_FRESHCHAT_AGENT_CODE
       end
     end
 
     def admin_access_token
       @current_account.users.find_by_email(@current_account.admin_email).single_access_token
+    end
+
+    def aloha_linking_error_logs(errorcode)
+      Rails.logger.info "Aloha - Bundle Linking API error - #{errorcode} :: #{@current_account.id} :: #{@current_account.omni_bundle_id}"
     end
 end

@@ -1367,8 +1367,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                             in_portal,
                                             required)
     when 'template_source_dropdown' then
-      allowed_choices = [TicketConstants.source_names[2]] + Helpdesk::Source.visible_custom_sources.map { |ch| [ch.name, ch.account_choice_id] }
-      element = label + select(object_name, field_name, allowed_choices, { selected: field_value }, class: element_class + ' select2', 'data-domhelper-name': 'ticket-properties-' + field_name)
+      default_sources = TicketConstants.source_names
+      allowed_choices = [default_sources[2]] + [default_sources[9]] + Helpdesk::Source.visible_custom_sources.map { |ch| [ch.name, ch.account_choice_id] }
+      element = label + select(object_name, field_name, allowed_choices, { include_blank: '...', selected: field_value }, class: element_class + ' select2', 'data-domhelper-name': 'ticket-properties-' + field_name)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -1747,9 +1748,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
 
     def inm_tour_button(text,topic_id)
-      if current_account.launched?(:onboarding_inlinemanual)
-        link_to(text, '#', :rel => 'guided-inlinemanual', "data-topic-id" => topic_id, :class=> 'inm_tour_button')
-      end
+      link_to(text, '#', rel: 'guided-inlinemanual', 'data-topic-id': topic_id, class: 'inm_tour_button')
     end
 
   def check_fb_reauth_required
@@ -1772,22 +1771,6 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       return
     end
   end
-        
-  def old_ui_deprecation
-    content_tag('div', "<a href='javascript:void(0)'></a> #{t('old_ui_deprecation')} <a href='/enable_falcon' data-method='post' > #{t('old_ui_migraton')} </a>".html_safe, class: "alert-message block-message warning full-width") if !current_account.disable_banners_enabled? && current_account.falcon_enabled?
-  end
-
-    def live_chat_phone_deprecation
-      unless current_account.disable_banners_enabled?
-        if current_account.freshfone_enabled? && current_account.livechat_enabled? && !(current_account.freshcaller_enabled? || freshchat_enabled?)
-          content_tag('div', "<a href='javascript:void(0)'></a> #{t('live_chat_phone_deprecation')} <a href='https://support.freshdesk.com/support/solutions/folders/274807' target='_blank'> #{t('live_chat_phone_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
-        elsif current_account.livechat_enabled? && !freshchat_enabled?
-          content_tag('div', "<a href='javascript:void(0)'></a> #{t('live_chat_deprecation')} <a href='https://support.freshdesk.com/support/solutions/articles/236834' target='_blank'> #{t('live_chat_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
-        elsif current_account.freshfone_enabled? && !current_account.freshcaller_enabled?
-          content_tag('div', "<a href='javascript:void(0)'></a> #{t('freshfone_deprecation')} <a href='https://support.freshdesk.com/support/solutions/articles/236833' target='_blank'> #{t('freshfone_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
-        end
-      end
-    end
 
   #Checks if Email was disabled by Freshpipe for running migrations
   def check_email_disabled_by_pipe
@@ -2157,12 +2140,13 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def falcon_enabled?
-    current_account && current_account.falcon_ui_enabled? &&
-      current_user && current_user.is_falcon_pref?
+    Rails.logger.warn "FALCON HELPER METHOD :: falcon_enabled? :: #{caller[0..2]}"
+    true
   end
 
   def admin_only_falcon_enabled?
-    !current_account.disable_old_ui_enabled? && !current_account.falcon_enabled? && current_account.check_admin_mint?
+    Rails.logger.warn "FALCON HELPER METHOD :: admin_only_falcon_enabled? :: #{caller[0..2]}"
+    false
   end
 
   def year_in_review_enabled?
@@ -2174,14 +2158,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def freshcaller_enabled_agent?
-    return if current_user.blank? || !current_user.agent?
-    agent = current_user.agent
-    freshcaller_agent = agent.freshcaller_agent if agent.present?
-
-    !falcon_enabled? &&
-      current_account.freshcaller_enabled? &&
-      current_account.has_feature?(:freshcaller_widget) &&
-      agent.present? && freshcaller_agent.present? && freshcaller_agent.fc_enabled?
+    # this method mainly for old ui. Need to revisit while removing code files for OLD UI deprecation.
+    false
   end
 
   def sandbox_production_notification

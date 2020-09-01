@@ -426,6 +426,95 @@ module Ember
       @account.revoke_feature(:undo_send)
     end
 
+    def test_reply_template_quoted_text_with_language_and_time_zone
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      get :reply_template, construct_params({ version: 'private', id: test_ticket.display_id }, false)
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: :'ja-JP')} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: :'ja-JP'))
+      assert_response 200
+    ensure
+      EmailNotification.any_instance.unstub(:get_reply_template)
+      test_ticket.destroy
+      customer.destroy
+    end
+
+    def test_reply_template_quoted_text_with_language_when_null
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      customer.language = nil
+      customer.save
+      customer.reload
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      get :reply_template, construct_params({ version: 'private', id: test_ticket.display_id }, false)
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: Account.current.language)} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: Account.current.language))
+      assert_response 200
+    ensure
+      EmailNotification.any_instance.unstub(:get_reply_template)
+      test_ticket.destroy
+      customer.destroy
+    end
+
+    def test_latest_note_forward_template_quoted_text_with_language_and_time_zone
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      note = create_note(user_id: @agent.id, ticket_id: test_ticket.id, source: 2)
+      Helpdesk::Ticket.any_instance.stubs(:current_cc_emails).returns([Faker::Internet.email])
+      Helpdesk::Ticket.any_instance.stubs(:reply_to_all_emails).returns([Faker::Internet.email])
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :latest_note_forward_template, controller_params(version: 'private', id: test_ticket.display_id)
+      assert_response 200
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: :'ja-JP')} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: :'ja-JP'))
+    ensure
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      Helpdesk::Ticket.any_instance.unstub(:current_cc_emails)
+      Helpdesk::Ticket.any_instance.unstub(:reply_to_all_emails)
+      test_ticket.destroy
+      customer.destroy
+    end
+
+    def test_note_forward_template_with_language_and_time_zone
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      note = create_note(user_id: @agent.id, ticket_id: test_ticket.id, source: 2)
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :note_forward_template, controller_params(version: 'private', id: note.id)
+      assert_response 200
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: :'ja-JP')} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: :'ja-JP'))
+    ensure
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      test_ticket.destroy
+      customer.destroy
+    end
+
+    def test_forward_template_with_language_and_time_zone
+      customer = add_new_user(@account, time_zone: 'Tokyo', language: 'ja-JP')
+      test_ticket = create_ticket(requester_id: customer.id, responder_id: @agent.id)
+      notification_template = '<div>{{test_ticket.id}}</div>'
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+      get :forward_template, construct_params({ version: 'private', id: test_ticket.display_id }, false)
+      assert_response 200
+      quoted_text = JSON.parse(response.body)['quoted_text']
+      time_format = "%a, %-d %b #{I18n.t('at', locale: :'ja-JP')} %l:%M %p"
+      assert_equal true, quoted_text.include?(I18n.l(test_ticket.created_at.in_time_zone('Tokyo'), format: time_format, locale: :'ja-JP'))
+    ensure
+      EmailNotification.any_instance.unstub(:get_forward_template)
+      test_ticket.destroy
+      customer.destroy
+    end
+
     def test_reply_template_after_undo_no_quoted_text
       @account.add_feature(:undo_send)
       remove_wrap_params
@@ -691,6 +780,54 @@ module Ember
       assert latest_note.attachments.count == 1
     end
 
+    def test_facebook_reply_with_shared_attachments
+      canned_response = create_response(
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
+      )
+      ticket = create_ticket_from_fb_direct_message
+      sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
+      Koala::Facebook::API.any_instance.stubs(:put_object).returns(sample_reply_dm)
+      canned_response_attachments = canned_response.shared_attachments.map(&:attachment_id)
+      params_hash = { msg_type: 'dm', attachment_ids: canned_response_attachments }
+      stub_attachment_to_io do
+        post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      end
+    ensure
+      Koala::Facebook::API.any_instance.unstub(:put_object)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      assert latest_note.attachments.size == canned_response_attachments.size
+    end
+
+    def test_tweet_reply_with_shared_attachments
+      canned_response = create_response(
+        title: Faker::Lorem.sentence,
+        content_html: Faker::Lorem.paragraph,
+        visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
+        attachments: { resource: fixture_file_upload('files/image4kb.png', 'image/png') }
+      )
+      canned_response_attachments = canned_response.shared_attachments.map(&:attachment_id)
+      ticket = create_twitter_ticket
+      dm_text = Faker::Lorem.paragraphs(5).join[0..500]
+      @account = Account.current
+      reply_id = get_social_id
+      dm_reply_params = { id: reply_id, id_str: reply_id.to_s, recipient_id_str: rand.to_s[2..11], text: dm_text, created_at: Time.zone.now.to_s }
+      with_twitter_dm_stubbed(Twitter::DirectMessage.new(dm_reply_params)) do
+        params_hash = twitter_dm_reply_params_hash.merge(attachment_ids: canned_response_attachments)
+        stub_attachment_to_io do
+          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+        end
+        assert_response 201
+        latest_note = Helpdesk::Note.last
+        match_json(private_note_pattern(params_hash, latest_note))
+        assert latest_note.attachments.size == canned_response_attachments.size
+      end
+      ticket.destroy
+    end
+
     def test_reply_with_inapplicable_survey_option
       survey = Account.current.survey
       survey.send_while = rand(1..3)
@@ -815,7 +952,6 @@ module Ember
     end
 
     def test_facebook_reply_with_survey_to_fb_direct_message_ticket
-      Account.any_instance.stubs(:csat_for_social_surveymonkey_enabled?).returns(true)
       Social::FacebookSurveyWorker.jobs.clear
       ticket = create_ticket_from_fb_direct_message
       sample_reply_dm = { 'id' => Time.now.utc.to_i + 5 }
@@ -837,7 +973,6 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
     ensure
-      Account.any_instance.unstub(:csat_for_social_surveymonkey_enabled)
       Integrations::SurveyMonkey.unstub(:sm_installed_app)
       Koala::Facebook::API.any_instance.unstub(:put_object)
     end
@@ -1003,7 +1138,6 @@ module Ember
       dm_text = Faker::Lorem.paragraphs(5).join[0..500]
       @account = Account.current
       Social::TwitterSurveyWorker.jobs.clear
-      Account.any_instance.stubs(:csat_for_social_surveymonkey_enabled?).returns(true)
       reply_id = get_social_id
       params_hash = twitter_dm_reply_params_hash.merge(include_surveymonkey_link: 1)
       app_config = { inputs: { 'survey_link' => 'https://www.surveymonkey.com/r/NMWK2SF', 'survey_text' => 'Please fill the survey' } }
@@ -1029,7 +1163,6 @@ module Ember
       match_json(private_note_pattern(params_hash, latest_note))
       ticket.destroy
     ensure
-      Account.unstub(:csat_for_social_surveymonkey_enabled?)
       Integrations::SurveyMonkey.unstub(:sm_installed_app)
     end
 
@@ -1593,7 +1726,6 @@ module Ember
     end
 
     def test_agent_reply_template_with_xss_payload
-      Account.current.launch(:escape_liquid_for_reply)
       remove_wrap_params
       t = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
 
@@ -1612,7 +1744,6 @@ module Ember
     end
 
     def test_agent_signature_in_agent_reply_template_with_xss
-      Account.current.launch(:escape_liquid_for_reply)
       remove_wrap_params
       t = create_ticket(:subject => '<svg/onload=alert(document.domain)>;')
 
@@ -1699,7 +1830,6 @@ module Ember
     end
 
     def test_agent_forward_template_with_xss_payload
-      Account.current.launch(:escape_liquid_for_reply) 
       remove_wrap_params
       t = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
 
@@ -1717,7 +1847,6 @@ module Ember
     end
 
     def test_agent_signature_in_agent_forward_template_with_xss
-      Account.current.launch(:escape_liquid_for_reply) 
       remove_wrap_params
       t = create_ticket(:subject => '<svg/onload=alert(document.domain)>;')
 

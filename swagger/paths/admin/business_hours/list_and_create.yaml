@@ -1,0 +1,42 @@
+get:
+  tags: [admin business calendars]
+  summary: List all
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          business_calendars:
+            type: array
+            items:
+              $ref: '#/definitions/business_hours_response'
+          meta:
+            $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+post:
+  tags: [admin business calendars]
+  description: Create business hours
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/business_hours_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/business_hours_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

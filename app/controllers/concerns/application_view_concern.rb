@@ -24,6 +24,7 @@ module Concerns::ApplicationViewConcern
     unless options[:include_weekday]
       time_format = time_format.gsub(/\A(%a|A),\s/, "")
     end
+    time_format = time_format.sub('at', I18n.t('at'))
     final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
   end
 
@@ -55,6 +56,10 @@ module Concerns::ApplicationViewConcern
 
   def custom_mailbox_error?
     Account.current.check_custom_mailbox_status
+  end
+
+  def mailbox_oauth_reauthorization_required?
+    Account.current.check_mailbox_oauth_status || false
   end
 
   def freshfone_deprecation?

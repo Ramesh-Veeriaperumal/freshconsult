@@ -14,7 +14,7 @@ class SlaPolicyDecorator < ApiDecorator
     return_hash = {}
     record.conditions.each do |key, value|
       # temporary hack for UI to handle company names instead of IDs
-      if key == 'company_id' && private_api? && Account.current.sla_policy_revamp_enabled?
+      if key == 'company_id' && private_api?
         company_names = Account.current.companies.where('id IN (?)', value).pluck('name')
         return_hash[key.to_s.pluralize] = company_names
       else
@@ -55,7 +55,7 @@ class SlaPolicyDecorator < ApiDecorator
 
   def sla_target_hash(input_hash)
     hash = {}
-    if private_api? && Account.current.sla_policy_revamp_enabled?
+    if private_api?
       hash[:first_response_time] = input_hash.sla_target_time[:first_response_time]
       hash[:resolution_due_time] = input_hash.sla_target_time[:resolution_due_time]
       hash[:every_response_time] = input_hash.sla_target_time[:every_response_time] if Account.current.next_response_sla_enabled?
@@ -94,7 +94,7 @@ class SlaPolicyDecorator < ApiDecorator
   end
 
   def visual_position
-    private_api? && current_account.sla_policy_revamp_enabled? ? sla_rules_position.index(record.position) + 1 : record.position    
+    private_api? ? sla_rules_position.index(record.position) + 1 : record.position
   end
 
   def sla_rules_position

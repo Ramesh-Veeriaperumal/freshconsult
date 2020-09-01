@@ -191,6 +191,8 @@ class AccountsController < ApplicationController
     @signup = PrecreatedSignup.new(input_params)
     @signup.account.fs_cookie_signup_param = params[:fs_cookie]
     @signup.save!
+    @signup.user.publish_agent_update_central_payload
+    true
   rescue StandardError => e
     Rails.logger.error "Error in mapping precreated account - error - #{e.message} backtrace - #{e.backtrace}"
     NewRelic::Agent.notice_error(e, custom_params: { description: "Error occoured while mapping precreated account for Account #{Account.current.id}" })
@@ -380,13 +382,13 @@ class AccountsController < ApplicationController
         locale: nil,
         timezone: nil,
         alternate_url: '',
-        description: '',
-        token: perishable_token
+        description: ''
       },
       misc: {
         bundle_name: bundle_name,
         bundle_id: bundle_id,
-        account_domain: @signup.account.full_domain
+        account_domain: @signup.account.full_domain,
+        token: perishable_token
       }
     }
   end
@@ -635,10 +637,15 @@ class AccountsController < ApplicationController
         params[:signup][:bundle_id] = params[:misc][:bundle_id]
         params[:signup][:bundle_name] = params[:misc][:bundle_name]
       end
+      Rails.logger.info "Aloha signup :: #{params[:signup][:aloha_signup]}. Bundle signup :: #{params[:signup][:bundle_id].present?}"
     end
 
     def is_aloha_signup?
       params[:signup][:aloha_signup]
+    end
+
+    def omni_signup?
+      params[:signup][:bundle_id].present? && params[:signup][:bundle_name].present?
     end
 
     def assign_language

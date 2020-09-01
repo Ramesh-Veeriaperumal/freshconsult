@@ -45,4 +45,7 @@ else
   response_hash[:avatar] = nil
 end
 
+channel_v2_attributes = @item.channel_v2_attributes
+response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
+
 response_hash.to_json

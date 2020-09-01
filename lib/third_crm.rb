@@ -7,7 +7,8 @@ class ThirdCRM
   }
 
   FRESHMARKETER_EVENTS = {
-    goal_completed: 'fdesk trial goal completed'
+    goal_completed: 'fdesk trial goal completed',
+    fdesk_event: 'fdesk trial events'
   }.freeze
   PRODUCT_NAME = "Freshdesk"
 
@@ -71,10 +72,11 @@ class ThirdCRM
   end
 
   def publish_event(account, args)
-    event_data =
-      {
-        'GoalName': args[:goal_name]
-      }
+    if args[:event_name].present?
+      event_data = { args[:event_name] => true, 'Trial Day' => ((Time.now.to_i - account.subscription.created_at.to_i) / 86400).to_i }
+    else
+      event_data = { 'GoalName': args[:goal_name] }
+    end
     add_event(event_data, account, args)
   end
 

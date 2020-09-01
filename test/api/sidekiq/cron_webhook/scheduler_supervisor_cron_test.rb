@@ -9,7 +9,13 @@ class SchedulerSupervisorCronTest < ActionView::TestCase
   def setup
     create_test_account if Account.first.nil?
     Account.stubs(:current).returns(Account.first)
+    Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
     @account = Account.current
+  end
+
+  def teardown
+    Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
+    super
   end
 
   def test_trail_supervisor_scheduler

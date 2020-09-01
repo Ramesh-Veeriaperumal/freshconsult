@@ -131,7 +131,7 @@ class Export::Ticket < Struct.new(:export_params)
           build_file(items, file)
         end
       else
-        Account.current.tickets.permissible(User.current).find_in_batches(export_query) do |items|
+        Account.current.tickets.ignore_primary_key.permissible(User.current).find_in_batches(export_query) do |items|
           build_file(items, file)
         end
       end

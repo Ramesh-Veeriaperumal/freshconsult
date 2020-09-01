@@ -1,4 +1,5 @@
 module EmailRateLimitTestHelper
+  include Redis::Keys::RateLimit
   def get_email_rate_limit_payload(time)
     {
       data: {
@@ -21,6 +22,34 @@ module EmailRateLimitTestHelper
           collected_at: time * 1000
         }
       }
+    }
+  end
+
+  def fluffy_email_path_limit
+    {
+      "limit": 200,
+      "granularity": :minute,
+      "account_paths": [
+        {
+          "method": 'GET',
+          "path": '/email_service',
+          "limit": 100,
+          "granularity": 'MINUTE'
+        },
+        {
+          "method": 'GET',
+          "path": '/email_service_spam',
+          "limit": 100,
+          "granularity": 'MINUTE'
+        }
+      ]
+    }
+  end
+
+  def default_limit
+    {
+      "limit": 400,
+      "granularity": :minute
     }
   end
 end

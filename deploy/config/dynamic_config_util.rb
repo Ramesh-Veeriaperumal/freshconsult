@@ -496,6 +496,7 @@ HEREDOC
     @pool_size = opsworks.get_pool_size()
 
     @envoy_egress_allowed = envoy_egress_allowed?
+    @tracing_allowed = open_telemetry_allowed?
 
     if ENV["HELPKIT_TEST_SETUP_ENABLE"] == "1"
       rename_sqs_queues_for_test_setup(node)
@@ -749,6 +750,11 @@ HEREDOC
     ENV['ENVOY_EGRESS'] == "true"
   end
 
+  def self.open_telemetry_allowed?
+    STDERR.puts("Checking opentelemetry ruby is allowed and the passed value is ENV['OPENTELEMETRY_RUBY_ENABLE'] => #{ENV['OPENTELEMETRY_RUBY_ENABLE']}")
+    ENV['OPENTELEMETRY_RUBY_ENABLE'] == 'true'
+  end
+
   def self.generate_newrelic_config(node, opsworks)
     STDERR.puts("Generating newrelic configuration")
     # puts JSON.pretty_generate(node[:opsworks])
@@ -856,7 +862,9 @@ HEREDOC
       :fd_scheduler_export_cleanup_queue,
       :fd_scheduler_downgrade_policy_reminder_queue,
       :analytics_etl_queue,
-      :email_rate_limiting_queue
+      :email_rate_limiting_queue,
+      :freddy_consumed_session_reminder_queue,
+      :switch_to_annual_notification_queue
     ]
 
     sqs_shoryken = {
@@ -872,7 +880,8 @@ HEREDOC
       "search_etl_queue": "search_etlqueue",
       "trial_customer_email_queue": "trial_email",
       'fd_scheduler_downgrade_policy_reminder_queue': 'downgrade_policy_reminder',
-      'suspended_account_cleanup_queue': 'suspended_account_cleanup'
+      'suspended_account_cleanup_queue': 'suspended_account_cleanup',
+      'switch_to_annual_notification_queue': 'switch_to_annual_notification'
     }
 
     queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]

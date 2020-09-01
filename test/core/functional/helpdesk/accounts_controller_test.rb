@@ -59,4 +59,18 @@ class AccountsControllerTest < ActionController::TestCase
     assert_response 422
   end
 
+  def test_email_signup_fluffy_email_enabled
+    email = Faker::Internet.email
+    $redis_others.perform_redis_op('hset', 'CONDITION_BASED_LAUNCHPARTY_FEATURES', 'fluffy_email_signup', true)
+    Fluffy::AccountsV2Api.any_instance.stubs(:add_application).returns(true)
+    post :email_signup, email_signup_params(:email => email)
+    assert_response 200
+    assert Account.current.fluffy_email_signup_enabled?
+    assert Account.current.fluffy_email_enabled?
+  ensure
+    $redis_others.perform_redis_op('hdel', 'CONDITION_BASED_LAUNCHPARTY_FEATURES', 'fluffy_email_signup')
+    Account.current.rollback(:fluffy_email_signup)
+    Account.current.rollback(:fluffy_email)
+    Fluffy::AccountsV2Api.any_instance.unstub(:add_application)
+  end
 end

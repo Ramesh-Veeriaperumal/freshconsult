@@ -27,10 +27,9 @@ class Freshfone::CallObserver < ActiveRecord::Observer
     trigger_disconnect_job(call) if disconnected?(call)
     if call.call_status_changed?
       publish_new_call_status(call)
-      
-      initiate_tracker(call) if
-        account.launched?(:freshfone_call_tracker) && !trial?
-      update_pinged_agent_status(call) if ongoing_child_call? call 
+
+      initiate_tracker(call) unless trial?
+      update_pinged_agent_status(call) if ongoing_child_call? call
       if call.call_ended?
         resolve_acw(call) if call.agent.present? && account.features?(:freshfone_acw)
         trigger_cost_job(call)

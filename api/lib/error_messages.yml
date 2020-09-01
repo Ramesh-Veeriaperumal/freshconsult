@@ -376,6 +376,7 @@ api_error_messages:
 
   field_validation_for_email: "It should not be blank as this is a mandatory field for sending email"
   somebody_editing: "%{name} is currently editing this article."
+  comma_separated_values: "It should be a string. Syntax:  String 1,String 2"
 
   portal_language_not_supported: "Portal language is not a supported language"
   supported_language_primary: "supported language is already a primary language"
@@ -512,6 +513,7 @@ api_error_messages:
   redundant_parameter: "Redundant parameter in %{section_id} is not allowed"
   duplicate_label_ticket_field: "Ticket field with label %{label} already exist"
   ticket_field_exceeded_limit: "You can create %{limit} fields of type %{field_type} and you've reached its limit."
+  ticket_choices_exceeded_limit: "You can create %{limit} active choices of type %{field_type} and you've reached its limit."
   ticket_field_choice_condition: "Choices is only available for dropdown or nested field only."
   invalid_value_for_icon_id: "Icon id should be from %{range} inclusive"
   invalid_position_for_choices: "Position should be from %{range} inclusive"
@@ -573,7 +575,7 @@ api_error_messages:
 
   bulk_api_limit_exceed: "Total %{resource} params size is %{current}, it should not exceed %{max}"
   invalid_ticket_reply: "Something went wrong while replying. Please refresh the page."
-
+  default_business_hour_destroy_not_allowed: 'You are not allowed to delete the default business calendar'
   contribution_group_not_allowed_fsm: "Contribution group is not allowed for FSM agent"
   contribution_group_is_not_available_for_global_access: "Contribution group is only present for group access"
   uniq_group_and_contribution_error_message: "The same group cannot have both read and write access for an agent"
@@ -583,3 +585,14 @@ api_error_messages:
   require_group_id: "The group_id param is required along with the channel"
   require_channel: "The channel param is required along with the group_id"
   require_availability: "only=availability param is required for the given %{param} param"
+
+  invalid_date_for_holidays: "Day should be from %{range} inclusive in {D, DD} format"
+  invalid_start_end_business_time: "HH should be between 0 and 23 inclusive and MM should one of the '00, 30, 59'"
+  invalid_minute_on_24_hours: "MM as 59 should be only present if the HH is 23, otherwise please use MM as 00 or 30"
+  invalid_time_slot: "Please enter a valid time slot"
+  time_slot_count_for_channel_error: "Too many time slots for '%{value}' channel in '%{name}'"
+  duplicate_holiday_date: "Duplicate holiday date is present"
+  duplicate_business_day: "Duplicate business day is present"
+
+  require_filter_params: "Anyone of the following filter attributes is mandatory: %{attributes}."
+  invalid_date_time_period: "Datetime range can only be a maximum of 2 days"

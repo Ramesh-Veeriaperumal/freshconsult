@@ -57,4 +57,9 @@ class TrialWidgetValidationTest < ActionView::TestCase
     trial_widget_validator = TrialWidgetValidation.new({ goals: ['manage_field_workforce'] }, nil)
     assert trial_widget_validator.valid?(:complete_step)
   end
+
+  def test_freshmarketer_event_name
+    trial_widget_validator = TrialWidgetValidation.new({ steps: ['fdesk_tickets_view'] }, nil)
+    assert trial_widget_validator.valid?(:complete_step)
+  end
 end

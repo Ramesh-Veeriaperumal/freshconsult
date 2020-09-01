@@ -342,6 +342,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def check_mailbox_oauth_status
+    if features_included?('mailbox')
+      key = format(OAUTH_MAILBOX_STATUS_CHECK, account_id: id)
+      MemcacheKeys.fetch(key) { imap_mailboxes.oauth_errors.present? || smtp_mailboxes.oauth_errors.present? }
+    end
+  end
+
   def custom_mailbox_errors_present
     key = CUSTOM_MAILBOX_STATUS_CHECK % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.imap_mailboxes.errors.present? }

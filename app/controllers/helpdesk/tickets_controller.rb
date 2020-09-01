@@ -64,8 +64,8 @@ class Helpdesk::TicketsController < ApplicationController
   layout :choose_layout
 
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario, :unspam, :restore]
-  before_filter :validate_bulk_scenario, :only => [:execute_bulk_scenario], :if => :close_validation_enabled?
-  before_filter :validate_ticket_close, :only => [:close_multiple], :if => :close_validation_enabled?
+  before_filter :validate_bulk_scenario, :only => [:execute_bulk_scenario]
+  before_filter :validate_ticket_close, :only => [:close_multiple]
 
   #Set Native mobile is above scoper ticket actions, because, we send mobile response in scoper ticket actions, and
   #the nmobile format has to be set. Else we will get a missing template error.
@@ -109,8 +109,8 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
               :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all, :fetch_errored_email_details, :suppression_list_alert]
 
-  before_filter :validate_scenario, :only => [:execute_scenario], :if => :close_validation_enabled?
-  before_filter :validate_quick_assign_close, :only => [:quick_assign], :if => :close_validation_enabled?
+  before_filter :validate_scenario, :only => [:execute_scenario]
+  before_filter :validate_quick_assign_close, :only => [:quick_assign]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv, :reply_to_forward]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv, :reply_to_forward]
@@ -1560,7 +1560,7 @@ class Helpdesk::TicketsController < ApplicationController
     @email_config = current_account.primary_email_config
     @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
-    @ticket.escape_liquid_attributes = current_account.launched?(:escape_liquid_for_reply)
+    @ticket.escape_liquid_attributes = true
     @signature = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.helpdesk_name)
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end

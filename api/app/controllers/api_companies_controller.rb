@@ -1,11 +1,14 @@
 class ApiCompaniesController < ApiApplicationController
   decorate_views
 
+  before_filter :check_if_company_exists, only: [:create, :update]
+
   def create
     delegator_params = construct_delegator_params
     company_delegator = CompanyDelegator.new(@item, delegator_params)
     given_avatar_id = delegator_params[:avatar_id]
     @item.avatar = company_delegator.draft_attachments.first if given_avatar_id.present?
+    assign_uniqueness_validated
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
     elsif @item.save
@@ -18,6 +21,7 @@ class ApiCompaniesController < ApiApplicationController
   def update
     delegator_params = construct_delegator_params
     @item.assign_attributes(validatable_delegator_attributes)
+    assign_uniqueness_validated
     company_delegator = CompanyDelegator.new(@item, delegator_params)
     if !company_delegator.valid?
       render_custom_errors(company_delegator, true)
@@ -31,6 +35,19 @@ class ApiCompaniesController < ApiApplicationController
     def load_objects(filter = nil)
       # preload(:flexifield, :company_domains) will avoid n + 1 query to company field data & company domains
       super (filter || scoper).preload(preload_options).order(:name)
+    end
+
+    def check_if_company_exists
+      company = Account.current.companies.where(name: cname_params[:name]).first
+      if company && company.id.to_s != params[:id]
+        @item.errors[:name] << :"has already been taken"
+        @additional_info = { company_id: company.id }
+        render_custom_errors
+      end
+    end
+
+    def assign_uniqueness_validated
+      @item.uniqueness_validated = true
     end
 
     def validatable_delegator_attributes

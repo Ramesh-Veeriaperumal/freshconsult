@@ -7,7 +7,7 @@ class ApiContactsDependencyTest < ActionView::TestCase
                         :set_default_locale, :set_locale, :set_msg_id, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
                         :check_account_state, :check_agent_deleted_forever, :set_time_zone, :check_day_pass_usage, :force_utf8_params,
                         :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
-                        :set_affiliate_cookie, :verify_authenticity_token, :build_item, :load_multiple_items,
+                        :set_affiliate_cookie, :verify_authenticity_token, :build_item, :load_multiple_items, :log_old_ui_path,
                         :redirect_to_mobile_url, :clean_params, :check_demo_site, :set_selected_tab, :load_item,
                         :can_change_password?, :load_password_policy, :check_agent_limit, :can_make_agent, :run_on_slave, :set_mobile,
                         :init_user_email, :load_companies, :check_parent, :fetch_contacts, :set_native_mobile, :set_required_fields,
@@ -22,9 +22,9 @@ class ApiContactsDependencyTest < ActionView::TestCase
   def test_validations_contact
     actual = User.validators.map { |x| [x.class, x.attributes, x.options] }
     expected = [
-      [ActiveRecord::Validations::UniquenessValidator, [:twitter_id], { case_sensitive: true, scope: :account_id, allow_nil: true, allow_blank: true }],
+      [ActiveRecord::Validations::UniquenessValidator, [:twitter_id], { case_sensitive: true, scope: :account_id, allow_nil: true, allow_blank: true, unless: :uniqueness_validated }],
       [ActiveRecord::Validations::UniquenessValidator, [:external_id], { case_sensitive: true, scope: :account_id, allow_nil: true, allow_blank: true }],
-      [ActiveRecord::Validations::UniquenessValidator, [:unique_external_id], { case_sensitive: false, scope: :account_id, allow_nil: true }],
+      [ActiveRecord::Validations::UniquenessValidator, [:unique_external_id], { case_sensitive: false, scope: :account_id, allow_nil: true, unless: :uniqueness_validated }],
       [ActiveModel::Validations::NumericalityValidator, [:login_count], { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }],
       [ActiveModel::Validations::NumericalityValidator, [:failed_login_count], { only_integer: true, greater_than_or_equal_to: 0, allow_nil: true }],
       [ActiveModel::Validations::LengthValidator, [:password], { on: :update, minimum: 4, if: :has_no_credentials? }],

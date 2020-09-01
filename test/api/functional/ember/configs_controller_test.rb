@@ -40,6 +40,8 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
   end
   
   def test_omni_freshvisuals_config_response
+    time_now = Time.now
+    Time.stubs(:now).returns(time_now)
     Account.any_instance.stubs(:omni_bundle_account?).returns(true)
     Account.any_instance.stubs(:omni_reports_enabled?).returns(true)
     Account.any_instance.stubs(:omni_bundle_id).returns('178040553247198293')
@@ -66,6 +68,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:organisation)
     Organisation.any_instance.unstub(:organisation_id)
     Freshid::V2::Models::User.unstub(:find_by_email)
+    Time.unstub(:now)
   end
 
   def test_config_response_with_null_user_language

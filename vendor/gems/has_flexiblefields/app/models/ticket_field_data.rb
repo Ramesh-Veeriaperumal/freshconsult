@@ -108,7 +108,7 @@ class TicketFieldData < ActiveRecord::Base
   end
 
   def nested_field_correction
-    NestedFieldCorrection.new(self, read_transformer).clear_child_levels if Account.current.dependent_field_validation_enabled?
+    NestedFieldCorrection.new(self, read_transformer).clear_child_levels
   end
 
   private

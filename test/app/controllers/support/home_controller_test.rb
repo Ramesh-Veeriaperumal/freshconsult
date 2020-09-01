@@ -90,4 +90,23 @@ class Support::HomeControllerTest < ActionController::TestCase
       get :index
       assert_match "<meta property=\"og:image\"", response.body
     end
+
+    def test_when_deny_iframe_not_set
+      Account.any_instance.stubs(:multilingual?).returns(false)
+      get :index
+      assert_response 200
+      assert_nil response.headers['X-Frame-Options']
+    ensure
+      Account.any_instance.unstub(:multilingual?)
+    end
+
+    def test_when_deny_iframe_is_set
+      Account.any_instance.stubs(:multilingual?).returns(false)
+      AccountAdditionalSettings.any_instance.stubs(:security).returns(deny_iframe_embedding: true)
+      get :index
+      assert_response 200
+      assert_equal response.headers['X-Frame-Options'], 'SAMEORIGIN'
+    ensure
+      Account.any_instance.unstub(:multilingual?)
+    end
 end

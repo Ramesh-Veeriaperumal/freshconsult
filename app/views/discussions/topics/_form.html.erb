@@ -66,8 +66,7 @@
         		:id => :topic_forums_description,
         		:data => {
           		:"remove-cursor" => true,
-          		:"toolbar-external" => '#sticky_redactor_toolbar',
-          		:"new-editor" => current_account.launched?(:froala_editor_forums)
+          		:"toolbar-external" => '#sticky_redactor_toolbar'
         		} 
         	%>
         </div>
@@ -80,7 +79,6 @@
 					cloud_files =  @topic.posts.empty? ? [] : @topic.posts.first.cloud_files
 				end 
 				%>
-          <% if current_account.launched?(:multifile_attachments) %>
 			<%= render :partial=> "discussions/topics/multi_attachment_form", :locals => {
 									:attachments => {
 										:regular => regular_attachments,
@@ -89,16 +87,6 @@
 									},
 									:show_delete => true
 									}%>
-	      <% else %>
-	          <%= render :partial=> "discussions/topics/single_attachment_form", :locals => {
-									:attachments => {
-										:regular => regular_attachments,
-										:cloud_files => cloud_files,
-										:forward => true
-									},
-									:show_delete => true
-									}%>
-	      <% end %>								
 		</div>
 	</div>
 

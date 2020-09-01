@@ -179,14 +179,20 @@ class BusinessCalendar < ActiveRecord::Base
 
   def channel_bussiness_hour_data
     channel_business_hours = []
-    freshdesk_hash = {}
-    freshdesk_hash[:channel_name] = ApiBusinessCalendarConstants::FRESHDESK_CHANNEL
-    freshdesk_hash[:business_hours_type] = business_time_data[:fullweek] ? ApiBusinessCalendarConstants::ALL_TIME_AVAILABLE : ApiBusinessCalendarConstants::CUSTOM_AVAILABLE
-    freshdesk_hash[:business_hours] = business_time_data[:weekdays].each_with_object([]) do |day, array|
-      array << { day: BusinessCalenderConstants::WEEKDAY_HUMAN_LIST[day - 1], time_slots: time_slots(day) }
-    end
-    channel_business_hours << freshdesk_hash
+    channel_business_hours << freshdesk_business_hour_data
     channel_business_hours
+  end
+
+  def freshdesk_business_hour_data
+    data = {}.with_indifferent_access
+    data[:channel] = ApiBusinessCalendarConstants::TICKET_CHANNEL
+    data[:business_hours_type] = business_time_data[:fullweek] ? ApiBusinessCalendarConstants::ALL_TIME_AVAILABLE : ApiBusinessCalendarConstants::CUSTOM_AVAILABLE
+    if data[:business_hours_type] == ApiBusinessCalendarConstants::CUSTOM_AVAILABLE
+      data[:business_hours] = business_time_data[:weekdays].each_with_object([]) do |day, array|
+        array << { day: BusinessCalenderConstants::WEEKDAY_HUMAN_LIST[day - 1], time_slots: time_slots(day) }
+      end
+    end
+    data
   end
 
   def time_slots(day)
@@ -201,7 +207,7 @@ class BusinessCalendar < ActiveRecord::Base
     end
 
     def time_in_24hr_format(time)
-      DateTime.parse(time).utc.strftime('%H:%M:%S')
+      DateTime.parse(time).utc.strftime('%H:%M')
     end
 
     def valid_working_hours?

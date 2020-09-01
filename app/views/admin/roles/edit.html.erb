@@ -62,12 +62,13 @@ jQuery(window).on('load', function(){
     $(document).ready(function() {
       $('input:checked').editFormShowChildren();
       $('input:radio:unchecked').editFormRadioSpecial();
-
+      $('.option_permanent_disabled').prop('disabled', true);
       <% if @role.default_role? %>
         $('#role_form :input').prop('disabled',true)
       <% end %>
 
     });
+
 
   })(jQuery);
 

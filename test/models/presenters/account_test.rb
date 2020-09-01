@@ -125,7 +125,6 @@ class AccountTest < ActiveSupport::TestCase
   def test_account_publish_for_account_additional_settings_portal_languages_with_help_widget_enabled
     Account.stubs(:current).returns(Account.first || create_test_account)
     @account.reload
-    @account.launch(:help_widget)
     @account.add_feature(:help_widget)
     CentralPublishWorker::AccountWorker.jobs.clear
     account_additional_settings = @account.account_additional_settings
@@ -139,7 +138,6 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal 'account_update', job['args'][0]
     assert_equal(expected_model_change, job['args'][1]['model_changes'])
   ensure
-    @account.rollback(:help_widget)
     @account.revoke_feature(:help_widget)
     Account.unstub(:current)
   end

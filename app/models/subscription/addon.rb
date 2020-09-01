@@ -26,11 +26,22 @@ class Subscription::Addon < ActiveRecord::Base
     agent_quantity:        2,
     portal_quantity:       3,
     for_account:           4,
-    field_agent_quantity:  5
+    field_agent_quantity:  5,
+    session_packs:         6
   }.freeze
 
   FSM_ADDON = 'Field Service Management'.freeze
   FSM_ADDON_2020 = 'Field Service Management 20'.freeze
+
+  FREDDY_SELF_SERVICE_ADDON = 'Freddy Self Service'.freeze
+  FREDDY_ULTIMATE_SESSION_ADDON = 'Freddy Ultimate Session'.freeze
+  FREDDY_ULTIMATE_ADDON = 'Freddy Ultimate'.freeze
+  FREDDY_SESSION_PACKS_ADDON = 'Freddy Session Packs'.freeze
+
+  FREDDY_MONTHLY_SESSION_PACKS_ADDON = 'Freddy Session Packs Monthly'.freeze
+  FREDDY_QUARTERLY_SESSION_PACKS_ADDON = 'Freddy Session Packs Quarterly'.freeze
+  FREDDY_HALF_YEARLY_SESSION_PACKS_ADDON = 'Freddy Session Packs Half Yearly'.freeze
+  FREDDY_ANNUAL_SESSION_PACKS_ADDON = 'Freddy Session Packs Annual'.freeze
 
   def self.fetch_addon(addon_id)
     find_by_name(addon_id.tr('_', ' ').titleize) 
@@ -51,6 +62,8 @@ class Subscription::Addon < ActiveRecord::Base
       1
     when ADDON_TYPES[:field_agent_quantity]
       subscription.field_agent_limit
+    when ADDON_TYPES[:session_packs]
+      subscription.freddy_session_packs
     end
   end
 

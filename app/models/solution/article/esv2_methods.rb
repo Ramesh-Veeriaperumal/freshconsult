@@ -1,4 +1,5 @@
 class Solution::Article < ActiveRecord::Base
+  include SolutionHelper
 
   def to_esv2_json
     json_object = as_json({
@@ -47,11 +48,15 @@ class Solution::Article < ActiveRecord::Base
     helpdesk_approval.present? ? { approvers: helpdesk_approval.approver_mappings.pluck(:approver_id) } : { approvers: [] }
   end
 
+  def platform_attributes
+    solution_article_meta.solution_platform_mapping.present? ? solution_article_meta.solution_platform_mapping.enabled_platforms : []
+  end
+
   # _Note_: If these attributes will be delegated in future,
   # no need to do this way
   #
   def meta_referenced_attributes
-    {
+    meta_referenced_attributes = {
       art_type: solution_article_meta.art_type,
       position: solution_article_meta.position,
       folder_id: solution_folder_meta.id,
@@ -61,6 +66,8 @@ class Solution::Article < ActiveRecord::Base
       contact_filter_ids: solution_folder_meta.folder_visibility_mapping.where(mappable_type: 'ContactFilter').pluck(:mappable_id),
       company_filter_ids: solution_folder_meta.folder_visibility_mapping.where(mappable_type: 'CompanyFilter').pluck(:mappable_id)
     }
+    meta_referenced_attributes[:platforms] = platform_attributes if allow_chat_platform_attributes?
+    meta_referenced_attributes
   end
 
   ##########################

@@ -121,7 +121,7 @@ class Helpdesk::Ticketfields::PicklistValueTransformer::StringToId < Helpdesk::T
       parent_field = ticket_field.parent_field
       parent_value = (@ticket.custom_fields_hash.present? &&
                       @ticket.custom_fields_hash[parent_field.name].try(:downcase)) ||
-                     (parent_field.try(:name) && @ticket.safe_send(parent_field.name).try(:downcase))
+                     (parent_field.try(:name) && @ticket.custom_field_value(parent_field.name).try(:downcase))
       [parent_field, base_val && base_val[parent_value]]
     end
 end

@@ -18,6 +18,7 @@ class Signup < ActivePresenter::Base
   after_save :create_freshid_org_and_account, if: :freshid_signup_allowed?
   after_save :create_freshid_v2_org_and_account, if: [:freshid_v2_signup_allowed?, :direct_signup]
   after_save :enable_fluffy, if: :fluffy_signup_allowed?
+  after_save :enable_fluffy_email, if: :fluffy_email_signup_allowed?
   after_save :set_signup_completed
 
   MAX_ACCOUNTS_COUNT = 10
@@ -74,6 +75,10 @@ class Signup < ActivePresenter::Base
     redis_key_exists?(FLUFFY_HOUR_SIGNUP_ENABLED) ? account.enable_fluffy : account.enable_fluffy_min_level
   end
 
+  def enable_fluffy_email
+    account.enable_fluffy_for_email
+  end
+
   private
     def build_primary_email
       account.build_primary_email_config(
@@ -121,10 +126,8 @@ class Signup < ActivePresenter::Base
     def build_subscription
       plan_name = if aloha_signup && bundle_id && bundle_name
                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_20]
-                  elsif redis_key_exists?(NEW_2020_PRICING_ENABLED) || ismember?(NEW_2020_PRICING_TEST_USERS, user_email)
-                    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_20]
                   else
-                    SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19]
+                    SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_20]
                   end
       account.plan = SubscriptionPlan.find_by_name(plan_name)
     end
@@ -195,6 +198,10 @@ class Signup < ActivePresenter::Base
 
     def fluffy_signup_allowed?
       redis_key_exists?(FLUFFY_HOUR_SIGNUP_ENABLED) || redis_key_exists?(FLUFFY_MINUTE_SIGNUP_ENABLED)
+    end
+
+    def fluffy_email_signup_allowed?
+      account.fluffy_email_signup_enabled? || user.email.include?(Fluffy::Constants::FLUFFY_EMAIL_TEST_ACCOUNT_EMAIL)
     end
 
     # * * * POD Operation Methods Begin * * *

@@ -24,11 +24,10 @@ module Search
         payload.symbolize_keys!
         model_class = payload[:klass_name]
         document_id = payload[:document_id]
-        delete_from_analytics_cluster(document_id) if analytics_index && Account.current.launched?(:count_service_es_writes)
+        delete_from_analytics_cluster(document_id) if analytics_index
       end
 
       def alias_name
-        return "es_count_#{account_id}" unless Account.current.dashboard_new_alias?
         if Rails.env.production?
           "es_filters_count_#{es_shard_name}_alias"
         else
@@ -105,7 +104,7 @@ module Search
           version_type: 'external',
           version: version_stamp
         }
-        write_to_analytics_cluster(model_object, version_stamp) if analytics_index && Account.current.launched?(:count_service_es_writes)
+        write_to_analytics_cluster(model_object, version_stamp) if analytics_index
       end
 
       def write_to_analytics_cluster(model_object, version_stamp)

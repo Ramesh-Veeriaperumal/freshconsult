@@ -120,9 +120,8 @@ class Freshfone::Initiator::AgentCallLeg
     end
 
     def browser_leg?
-      new_notifications? && params[:forward].blank? &&
-        params[:external_number].blank? && params[:external_transfer].blank? &&
-        params[:forward_call].blank? #&& params[:warm_transfer_forward].blank? # checking forward cases alone
+      params[:forward].blank? && params[:external_number].blank? &&
+        params[:external_transfer].blank? && params[:forward_call].blank? # checking forward cases alone
     end
 
     def browser_agent_leg

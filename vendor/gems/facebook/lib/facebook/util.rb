@@ -19,43 +19,80 @@ module Facebook
     def get_koala_comment(comment)
       koala_comment = Facebook::KoalaWrapper::Comment.new(@fan_page)
       koala_comment.comment = comment
-      koala_comment.parse 
+      koala_comment.parse
       koala_comment
     end
-    
+
     def user_blocked?(user_id)
       Account.current.users.find_by_fb_profile_id(user_id).try(:blocked?)
-    end     
-    
+    end
+
     #via_comment - When the call to convert a post to a ticket is made by a comment
-    def convert_post_to_ticket?(core_obj, via_comment = false) 
+    def convert_post_to_ticket?(core_obj, via_comment = false)
       core_obj.fetch_parent_data if via_comment
         return false if user_blocked?(core_obj.koala_post.requester_fb_id)
         if via_comment
           # Skipping optimal check(last argument: false) if its comment and convert_post_to_ticket. Refer: FD-16831.
-          core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?, core_obj.koala_post.by_company?, core_obj.koala_comment.by_visitor?, '' , true)
+          return false unless core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?, core_obj.koala_post.by_company?, core_obj.koala_comment.by_visitor?, '' , true)
+
+          return true unless filter_mentions_rule_enabled?(core_obj)
+
+          comment_has_data_excluding_mentions?(core_obj)
+
         else
           core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?)
         end
-    end  
-    
-    # convert_company_commment_too. When true creates a ticket for company comment. Happens when a user replies to a company comment. 
+    end
+
+    def comment_has_data_excluding_mentions?(core_obj)
+      return true if VALID_ATTACHMENTS_WHEN_FILTER_MENTIONS_ENABLED.include?(core_obj.koala_comment.feed_type)
+
+      core_obj.koala_comment.comment_has_text_excluding_mentions?
+    end
+
+    def check_includes?(core_obj)
+      core_obj.fan_page.default_ticket_rule.apply(core_obj.koala_comment.description, SOURCE[:facebook])
+    end
+
+    def filter_mentions_rule_enabled?(core_obj)
+      core_obj.fan_page.default_ticket_rule.filter_mentions?
+    end
+
+    # convert_company_commment_too. When true creates a ticket for company comment. Happens when a user replies to a company comment.
     def convert_comment_to_ticket?(core_obj, convert_company_comment_to_ticket = false)
+      return false if user_blocked?(core_obj.koala_post.requester_fb_id)
+
       core_obj.fetch_parent_data
-      core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(false, core_obj.koala_post.by_company?, (core_obj.koala_comment.by_visitor? || convert_company_comment_to_ticket), core_obj.koala_comment.description) && !user_blocked?(core_obj.koala_comment.requester_fb_id)
+      return false unless core_obj.fan_page.default_ticket_rule.convert_fb_comment_to_ticket?(core_obj.koala_post.by_company?, (core_obj.koala_comment.by_visitor? || convert_company_comment_to_ticket))
+
+      return check_includes?(core_obj) unless filter_mentions_rule_enabled?(core_obj)
+
+      comment_has_data_excluding_mentions?(core_obj)
     end
 
     def convert_cover_photo_comment_to_ticket?(core_obj)
-      core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(false, false, core_obj.koala_comment.by_visitor?, core_obj.koala_comment.description, false, true) && !user_blocked?(core_obj.koala_comment.requester_fb_id)
+      return false if user_blocked?(core_obj.koala_post.requester_fb_id)
+
+      return false unless core_obj.fan_page.default_ticket_rule.convert_fb_comment_to_ticket?(false, core_obj.koala_comment.by_visitor?, true)
+
+      return check_includes?(core_obj) unless filter_mentions_rule_enabled?(core_obj)
+
+      comment_has_data_excluding_mentions?(core_obj)
     end
-    
+
+    def check_filter_mention_tags?(core_obj)
+      return true unless filter_mentions_rule_enabled?(core_obj)
+
+      comment_has_data_excluding_mentions?(core_obj)
+    end
+
     #Parse the feed content from facebook post
     def html_content_from_feed(feed, item, original_post = nil)
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]
       if "video".eql?(feed[:type])
         desc = feed[:description] || ""
         thumbnail, inline_attachment = create_inline_attachment_and_get_url(feed[:picture], item, 0)
-        html_content = FEED_VIDEO % { :target_url => feed[:link], :thumbnail => thumbnail, 
+        html_content = FEED_VIDEO % { :target_url => feed[:link], :thumbnail => thumbnail,
           :att_url => feed[:link], :name => feed[:name], :html_content => html_content, :desc => desc } if thumbnail.present?
 
       elsif "photo".eql?(feed[:type])
@@ -80,7 +117,7 @@ module Facebook
       if "video".eql?(feed[:type])
         desc = feed[:description] || ""
         thumbnail, inline_attachment = create_inline_attachment_and_get_url(feed[:picture], item, 0)
-        html_content = FEED_VIDEO_WITH_ORIGINAL_POST % { :target_url => feed[:link], :thumbnail => thumbnail, 
+        html_content = FEED_VIDEO_WITH_ORIGINAL_POST % { :target_url => feed[:link], :thumbnail => thumbnail,
           :att_url => feed[:link], :name => feed[:name], :html_content => html_content, :desc => desc, :page_name => page_name } if thumbnail.present?
 
       elsif "photo".eql?(feed[:type])
@@ -98,12 +135,12 @@ module Facebook
       item.inline_attachments = [inline_attachment].compact
       html_content
     end
-    
+
     #Parse the feed content from facebook comment
     def html_content_from_comment(feed, item, original_post = nil)
-      html_content =  CGI.escapeHTML(feed[:message]) if feed[:message] 
+      html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]
       unless feed[:attachment]
-        return original_post.present? ? ( COMMENT_WITH_ORIGINAL_POST % {comment: html_content, original_post: original_post} ) : html_content 
+        return original_post.present? ? ( COMMENT_WITH_ORIGINAL_POST % {comment: html_content, original_post: original_post} ) : html_content
       end
       
       begin

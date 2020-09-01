@@ -2,7 +2,7 @@ module ApiSolutions
   class FoldersController < ApiApplicationController
     include SolutionConcern
     include Solution::LanguageControllerMethods
-    decorate_views(decorate_objects: [:category_folders])
+    decorate_views(decorate_objects: [:category_folders, :folder_filter])
     SLAVE_ACTIONS = %w[index category_folders].freeze
     before_filter :validate_filter_params, only: [:category_folders]
 
@@ -115,7 +115,7 @@ module ApiSolutions
         language_params = params[cname].slice(:name, :description)
         params[cname][language_scoper] = language_params unless language_params.empty?
         params[cname][category] = params[:id]
-        params[cname][:icon] = params[cname][:icon].to_s
+        params[cname][:icon] = params[cname][:icon].to_s if params.key?(:icon)
         ParamsHelper.assign_and_clean_params({ company_ids: :customer_folders_attributes, contact_segment_ids: :contact_folders_attributes, company_segment_ids: :company_folders_attributes, tags: :tag_attributes, icon: :icon_attribute }, params[cname])
         @folder_params = params[cname].except!(:name, :description)
       end

@@ -1,8 +1,12 @@
 require_relative '../../../../test_helper'
+require Rails.root.join('test', 'models', 'helpers', 'tag_use_test_helper.rb')
 class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::TestCase
   include JweTestHelper
   include SolutionsTestHelper
   include SolutionsArticlesTestHelper
+  include CoreSolutionsTestHelper
+  include SolutionsPlatformsTestHelper
+  include TagUseTestHelper
   SUPPORT_BOT = 'frankbot'.freeze
   FRESHCONNECT_SRC = 'freshconnect'.freeze
 
@@ -132,6 +136,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   end
 
   def test_show_article_support_bot_source
+    @enrich_response = true
     set_jwe_auth_header(SUPPORT_BOT)
     sample_article = get_article
     get :show, controller_params(id: sample_article.parent_id)
@@ -139,6 +144,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   end
 
   def test_show_published_article_without_draft_freshconnect_source
+    @enrich_response = true
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
     CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
     set_jwt_auth_header(FRESHCONNECT_SRC)
@@ -153,6 +159,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   end
 
   def test_show_published_article_multilingual_without_draft_freshconnect_source
+    @enrich_response = true
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
     CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
     set_jwt_auth_header(FRESHCONNECT_SRC)
@@ -167,6 +174,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   end
 
   def test_show_article_with_draft_freshconnect_source
+    @enrich_response = true
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
     CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
     set_jwt_auth_header(FRESHCONNECT_SRC)
@@ -181,6 +189,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   end
 
   def test_show_article_with_approval_flow_freshconnect_source
+    @enrich_response = true
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
     CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
     Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
@@ -197,6 +206,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   end
 
   def test_show_article_with_default_folder_category_freshconnect_source
+    @enrich_response = true
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
     CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
     set_jwt_auth_header(FRESHCONNECT_SRC)
@@ -215,6 +225,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   end
 
   def test_show_article_only_published
+    @enrich_response = true
     set_jwe_auth_header(SUPPORT_BOT)
     sample_article = get_article
     create_draft(article: sample_article)
@@ -223,7 +234,250 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     assert_not_equal '<b>draft body</b>', JSON.parse(response.body)[:description]
   end
 
-  def get_article
-    @account.solution_article_meta.map{ |x| x.children }.flatten.reject(&:blank?).first
+  def test_return_not_found_for_draft_article_with_status_published
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    article_meta = create_article(status: '1')
+    article = article_meta.solution_articles.first
+    create_draft(article: article)
+    get :show, controller_params(id: article.parent_id, prefer_published: true, status: 2)
+    assert_response 404
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_only_published_articles_returned_with_status
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    category_meta = create_category
+    folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category_meta.id)
+    article_meta = create_article(folder_meta_id: folder_meta.id, status: '1')
+    article = article_meta.solution_articles.first
+    create_draft(article: article)
+    get :folder_articles, controller_params(id: folder_meta.id, prefer_published: true, status: 2)
+    assert_response 200
+    assert_equal '[]', response.body
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_channeel_folder_articles_with_invalid_status
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwe_auth_header(SUPPORT_BOT)
+    category_meta = create_category
+    folder_meta = create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category_meta.id)
+    get :folder_articles, controller_params(id: folder_meta.id, prefer_published: true, status: '3')
+    assert_response 400
+    expected = { description: 'Validation failed', errors: [{ field: 'status', message: "It should be one of these values: '1,2'", code: 'invalid_value' }] }
+    assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_articles_with_language_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    translated_article = get_article(language = Language.find_by_code('ru-RU'))
+    folder = translated_article.solution_folder_meta.solution_folders.where(language_id: Language.find_by_code('ru-RU').id).first
+    get :folder_articles, controller_params(version: 'channel', id: folder.id, language: 'ru-RU')
+    assert_response 200
+    articles = folder.parent.solution_articles.where(language_id: Language.find_by_code('ru-RU').id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[folder.parent.article_order]).limit(30)
+    pattern = articles.map { |article| channel_api_solution_article_pattern(article) }
+    match_json(pattern.ordered!)
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_articles_with_portal_id_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    create_article_in_portal
+    articles = get_articles_by_portal_id(@account.main_portal.id, @account.language_object.id)
+    folder = articles.first.parent.solution_folder_meta.solution_folders.first
+    get :folder_articles, controller_params(id: folder.id, language: @account.language_object.code, portal_id: @account.main_portal.id)
+    assert_response 200
+    articles = articles.select { |article| article.parent.solution_folder_meta.solution_folders.where(language_id: article.language.id).first.id == folder.id }
+    pattern = articles.map { |art| channel_api_solution_article_pattern(art) }
+    match_json(pattern.ordered!)
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_articles_with_platforms_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    article_new = get_article_with_platform_mapping(ios: true, web: true, android: false)
+    folder_meta = article_new.solution_folder_meta
+    sample_folder = folder_meta.solution_folders.where(language_id: article_new.language.id).first
+    get :folder_articles, controller_params(id: sample_folder.id, platforms: 'ios')
+    assert_response 200
+    articles = folder_meta.solution_articles.where(language_id: article_new.language.id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[folder_meta.article_order])
+    articles_with_platforms = articles.select { |article| article.parent.solution_platform_mapping.present? && article.parent.solution_platform_mapping.enabled_platforms.include?('ios') }
+    pattern = articles_with_platforms.map { |art| channel_api_solution_article_pattern(art) }
+    match_json(pattern.ordered!)
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_articles_with_allow_language_fallback_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    article_new = get_article_with_platform_mapping(ios: true, web: true, android: false)
+    folder_meta = article_new.solution_folder_meta
+    sample_folder = folder_meta.solution_folders.where(language_id: article_new.language.id).first
+    get :folder_articles, controller_params(id: sample_folder.id, allow_language_fallback: 'true')
+    assert_response 200
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_articles_with_tags_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    article_meta = create_article
+    article = article_meta.solution_articles.first
+    tag = Faker::Lorem.characters(7)
+    create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag, allow_skip: true)
+    folder_meta = article.solution_folder_meta
+    sample_folder = folder_meta.solution_folders.where(language_id: article.language.id).first
+    get :folder_articles, controller_params(id: sample_folder.id, tags: tag)
+    assert_response 200
+    articles = folder_meta.solution_articles.where(language_id: article.language.id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[folder_meta.article_order])
+    article_with_tags = articles.select { |arti| arti.tags.present? && arti.tags.collect(&:name).include?(tag) }
+    pattern = article_with_tags.map { |art| channel_api_solution_article_pattern(art) }
+    match_json(pattern.ordered!)
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_articles_with_tags_null_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    article_meta = create_article
+    article = article_meta.solution_articles.first
+    tag = Faker::Lorem.characters(7)
+    create_tag_use(@account, taggable_type: 'Solution::Article', taggable_id: article.id, name: tag, allow_skip: true)
+    folder_meta = article.solution_folder_meta
+    sample_folder = folder_meta.solution_folders.where(language_id: article.language.id).first
+    get :folder_articles, controller_params(id: sample_folder.id, tags: '')
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern('tags', :comma_separated_values, prepend_msg: :input_received, given_data_type: DataTypeValidator::DATA_TYPE_MAPPING[NilClass], code: :invalid_value)))
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_articles_with_platforms_null_param
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    article_new = get_article_with_platform_mapping(ios: true, web: true, android: false)
+    folder_meta = article_new.solution_folder_meta
+    sample_folder = folder_meta.solution_folders.where(language_id: article_new.language.id).first
+    get :folder_articles, controller_params(id: sample_folder.id, platforms: '')
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern('platforms', :comma_separated_values, prepend_msg: :input_received, given_data_type: DataTypeValidator::DATA_TYPE_MAPPING[NilClass], code: :invalid_value)))
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_folder_index_with_platforms_with_omni_disabled
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    article_new = get_article_with_platform_mapping(ios: true, web: true, android: false)
+    folder_meta = article_new.solution_folder_meta
+    sample_folder = folder_meta.solution_folders.where(language_id: article_new.language.id).first
+    get :folder_articles, controller_params(id: sample_folder.id, platforms: 'ios')
+    assert_response 403
+    match_json(validation_error_pattern(bad_request_error_pattern('platforms', :require_feature, feature: :omni_bundle_2020, code: :access_denied)))
+  ensure
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_invalid_allow_language_fallback_params
+    @enrich_response = false
+    CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+    Account.current.launch(:kbase_omni_bundle)
+    set_jwt_auth_header(FRESHCONNECT_SRC)
+    translated_article = get_article(language = Language.find_by_code('ru-RU'))
+    folder = translated_article.solution_folder_meta.solution_folders.where(language_id: Language.find_by_code('ru-RU').id).first
+    get :folder_articles, controller_params(version: 'channel', id: folder.id, language: 'ru-RU', allow_language_fallback: 'invalid')
+    assert_response 400
+    expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "It should be one of these values: 'true,false'", code: 'invalid_value' }] }
+    assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+  end
+
+  def get_articles_by_portal_id(portal_id, language = Account.current.language_object)
+    @account.solution_articles.joins(solution_folder_meta: [solution_category_meta: :portal_solution_categories]).where('portal_solution_categories.portal_id = ? AND language_id = ?', portal_id, language)
+  end
+
+  def create_article_in_portal
+    category = create_category(portal_id: Account.current.main_portal.id, lang_codes: [@account.language_object.code])
+    folder = create_folder(visibility: 1, category_id: category.id, lang_codes: [@account.language_object.code])
+    article_meta = create_article(folder_id: folder.id, lang_codes: [@account.language_object.code])
+    article_meta
   end
 end

@@ -116,7 +116,11 @@ def self.plan_price
 			"ZAR" => 339.0,
 			"GBP" => 19.0,
 			"AUD" => 33.0,
-			"BRL" => 55.0
+			"BRL" => 55.0,
+			:FREDDY => {
+				:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+				:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+			}
 		},
 		:garden_jan_17 => {
 			"EUR" => 42.0,
@@ -125,7 +129,11 @@ def self.plan_price
 			"ZAR" => 599.0,
 			"GBP" => 35.0,
 			"AUD" => 55.0,
-			"BRL" => 110.0
+			"BRL" => 110.0,
+			:FREDDY => {
+				:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+				:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+			}
 		},
 		:estate_jan_17 => {
 			"EUR" => 58.0,
@@ -134,7 +142,11 @@ def self.plan_price
 			"ZAR" => 809.0,
 			"GBP" => 46.0,
 			"AUD" => 75.0,
-			"BRL" => 170.0
+			"BRL" => 170.0,
+			:FREDDY => {
+				:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+				:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+			}
 		},
 		:forest_jan_17 => {
 			"EUR" => 96.0,
@@ -143,7 +155,13 @@ def self.plan_price
 			"ZAR" => 1379.0,
 			"GBP" => 79.0,
 			"AUD" => 125.0,
-			"BRL" => 270.0
+			"BRL" => 270.0,
+			:FREDDY => {
+				:SELF_SERVICE => { EUR: 500.0, INR: 36000.0, USD: 500.0, ZAR: 7500.0, GBP: 375.0, AUD: 725.0, BRL: 2600.0 },
+				:ULTIMATE => { EUR: 75.0, INR: 5400.0, USD: 75.0, ZAR: 1100.0, GBP: 55.0, AUD: 110.0, BRL: 390.0 },
+				:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+				ULTIMATE_SESSION: { EUR: 500.0, INR: 36000.0, USD: 500.0, ZAR: 7500.0, GBP: 375.0, AUD: 725.0, BRL: 2600.0 },
+		}
         },
         sprout_jan_19: {
           'EUR' => 0.0,
@@ -162,7 +180,11 @@ def self.plan_price
           'GBP' => 11.0,
           'AUD' => 19.0,
           'BRL' => 39.0,
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
         },
         garden_jan_19: {
           'EUR' => 29.0,
@@ -172,7 +194,11 @@ def self.plan_price
           'GBP' => 21.0,
           'AUD' => 39.0,
           'BRL' => 109.0,
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
         },
         estate_jan_19: {
           'EUR' => 49.0,
@@ -182,7 +208,11 @@ def self.plan_price
           'GBP' => 35.0,
           'AUD' => 69.0,
           'BRL' => 139.0,
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
         },
         garden_omni_jan_19: {
           'EUR' => 29.0,
@@ -193,7 +223,11 @@ def self.plan_price
           'AUD' => 39.0,
           'BRL' => 109.0,
           :OMNI => { EUR: 10.0, INR: 700.0, USD: 10.0, ZAR: 140.0, GBP: 9.0, AUD: 15.0, BRL: 40.0 },
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
          },
         estate_omni_jan_19: {
           'EUR' => 49.0,
@@ -204,7 +238,11 @@ def self.plan_price
           'AUD' => 69.0,
           'BRL' => 139.0,
           :OMNI => { EUR: 20.0, INR: 1500.0, USD: 20.0, ZAR: 285.0, GBP: 15.0, AUD: 25.0, BRL: 75.0 },
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
          },
         forest_jan_19: {
           'EUR' => 109.0,
@@ -234,7 +272,11 @@ def self.plan_price
           'GBP' => 11.0,
           'AUD' => 19.0,
           'BRL' => 39.0,
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
         },
         garden_jan_20: {
           'EUR' => 29.0,
@@ -244,7 +286,11 @@ def self.plan_price
           'GBP' => 21.0,
           'AUD' => 39.0,
           'BRL' => 109.0,
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
         },
         garden_omni_jan_20: {
           'EUR' => 29.0,
@@ -255,7 +301,11 @@ def self.plan_price
           'AUD' => 39.0,
           'BRL' => 109.0,
           :OMNI => { EUR: 30.0, INR: 2100.0, USD: 30.0, ZAR: 425.0, GBP: 25.0, AUD: 40.0, BRL: 115.0 },
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
         },
         estate_jan_20: {
           'EUR' => 49.0,
@@ -265,7 +315,11 @@ def self.plan_price
           'GBP' => 35.0,
           'AUD' => 69.0,
           'BRL' => 139.0,
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
         },
         estate_omni_jan_20: {
           'EUR' => 49.0,
@@ -276,7 +330,11 @@ def self.plan_price
           'AUD' => 69.0,
           'BRL' => 139.0,
           :OMNI => { EUR: 30.0, INR: 2100.0, USD: 30.0, ZAR: 425.0, GBP: 25.0, AUD: 40.0, BRL: 115.0 },
-          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 }
+          :FSM => { EUR: 29.0, INR: 1999.0, USD: 39.0, ZAR: 399.0, GBP: 25.0, AUD: 39.0, BRL: 99.0 },
+					:FREDDY => {
+						:SELF_SERVICE => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+						:ADDITIONAL_PACKS => { EUR: 100.0, INR: 7200.0, USD: 100.0, ZAR: 1500.0, GBP: 75.0, AUD: 145.0, BRL: 520.0 },
+					}
          },
         forest_jan_20: {
           'EUR' => 109.0,
@@ -561,26 +619,40 @@ unless Account.current
     a.addon_type = addon_types[:agent_quantity]
   end
 
+	freddy_self_service = Subscription::Addon.seed(:name) do |a|
+		a.name = 'Freddy Self Service'
+		a.amount = 100.0
+		a.renewal_period = 1
+		a.addon_type = addon_types[:on_off]
+  end
+
+	freddy_session_packs = Subscription::Addon.seed(:name) do |a|
+		a.name = 'Freddy Session Packs Monthly'
+		a.amount = 500.0
+		a.renewal_period = 1
+		a.addon_type = addon_types[:session_packs]
+	end
+
 	all_addons = [ agent_collision, custom_ssl, custom_roles, gamification, layout_customization,
 	               multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
 	               custom_slas, custom_mailbox, whitelisted_ips, chat_routing, dynamic_sections,
 	               custom_surveys, call_center_advanced, helpdesk_restriction,
 	               ticket_templates, round_robin_load_balancing, one_contact_multiple_companies, unique_external_id, sandbox ]
 
-	estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin, field_service_management]
-	garden_addons  = all_addons + [shared_ownership_toggle, field_service_management] - [multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates, sandbox]
+	estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin, field_service_management, freddy_self_service, freddy_session_packs]
+	garden_addons  = all_addons + [shared_ownership_toggle, field_service_management, freddy_self_service, freddy_session_packs] - [multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates, sandbox]
   blossom_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle, field_service_management] - [custom_domain, sandbox]
 
 	estate_17_addons  = estate_addons + [sandbox]
-	garden_17_addons  = all_addons + [shared_ownership_toggle, field_service_management] - [custom_domain, custom_surveys, ticket_templates, sandbox]
-  blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle, field_service_management] - [custom_domain, one_contact_multiple_companies, sandbox]
+	garden_17_addons  = all_addons + [shared_ownership_toggle, field_service_management, freddy_self_service, freddy_session_packs] - [custom_domain, custom_surveys, ticket_templates, sandbox]
+  blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle, field_service_management, freddy_self_service, freddy_session_packs] - [custom_domain, one_contact_multiple_companies, sandbox]
 	sprout_17_addons  = [custom_domain, call_center_advanced]
 
 	estate_jan_19 = estate_17_addons + [fluffy_forest, fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4]
 
-	forest_jan_19 = [fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4, field_service_management]
+	forest_jan_19 = [fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4, field_service_management, freddy_ultimate, freddy_self_service, freddy_session_packs]
 
-  forest_jan_20 = forest_jan_19 + [freddy_ultimate]
+  forest_jan_20 = forest_jan_19
 
   SubscriptionPlan.seed_many(:name, plan_list(all_addons, estate_addons, garden_addons, blossom_addons, estate_17_addons, garden_17_addons, blossom_17_addons, sprout_17_addons, estate_jan_19, forest_jan_19, forest_jan_20))
 

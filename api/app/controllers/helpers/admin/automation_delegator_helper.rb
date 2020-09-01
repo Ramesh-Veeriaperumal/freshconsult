@@ -234,7 +234,7 @@ module Admin::AutomationDelegatorHelper
         internal_agent_id: all_agents,
         internal_group_id: group_ids,
         ticket_type: ticket_types,
-        source: SOURCE_BY_ID,
+        source: ticket_sources,
         priority: ApiTicketConstants::PRIORITIES,
         created_at: VAConfig::CREATED_DURING_NAMES_BY_KEY.values,
         note_type: EVENT_NOTE_TYPE,
@@ -423,6 +423,10 @@ module Admin::AutomationDelegatorHelper
 
   def ticket_statuses
     @ticket_statuses ||= current_account.ticket_statuses.collect(&:status_id)
+  end
+
+  def ticket_sources
+    @ticket_sources ||= Helpdesk::Source.source_choices(:all_ids)
   end
 
   def product_ids

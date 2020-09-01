@@ -82,7 +82,7 @@ class PostObserver < ActiveRecord::Observer
 	end
 
 	def enqueue_post_for_spam_check(post)
-    if !post.account.launched?(:forum_post_spam_whitelist) && ( (post.account.created_at >= (Time.zone.now - 90.days)) || (post.account.subscription.present? && post.account.subscription.free?))
+    if (post.account.created_at >= (Time.zone.now - 90.days)) || (post.account.subscription.present? && post.account.subscription.free?)
       Rails.logger.debug "Comes inside enqueue_post_for_spam_check loop for account : #{post.account} and post #{post.id}"
       Forum::CheckContentForSpam.perform_async({:post_id => post.id, :topic_id =>post.topic.id})
     end

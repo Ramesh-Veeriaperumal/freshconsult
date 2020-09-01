@@ -25,10 +25,7 @@ module ConversationsTestHelper
   end
 
   def archive_note_pattern(expected_output, archive_note)
-    body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
-    {
-      body: body_html || archive_note.body_html,
-      body_text: expected_output[:body] || archive_note.body,
+    response_hash = {
       id: Fixnum,
       incoming: (expected_output[:incoming] || archive_note.incoming).to_s.to_bool,
       private: (expected_output[:private] || archive_note.private).to_s.to_bool,
@@ -40,6 +37,7 @@ module ConversationsTestHelper
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+    construct_note_body_hash(expected_output, archive_note).merge(response_hash)
   end
 
   def v2_note_pattern(expected_output, note)
@@ -317,9 +315,10 @@ module ConversationsTestHelper
 
   def default_body_hash(expected_output, note)
     body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
+    body = note.class == Helpdesk::ArchiveNote ? (expected_output[:body] || note.body) : note.body
     {
       body: body_html || note.body_html,
-      body_text: note.body
+      body_text: body
     }
   end
 
@@ -352,5 +351,23 @@ module ConversationsTestHelper
       description: 'Validation failed',
       errors: [value]
     }
+  end
+
+  def create_new_user_and_ticket(source_id)
+    @user = add_new_user(@account)
+    @ticket = create_ticket(source: source_id, requester_id: @user.id, sender_email: @user.email)
+  end
+
+  def update_email_and_save(user = @user, email = Faker::Internet.email)
+    user.email = email
+    user.save!
+    email
+  end
+
+  def create_ticket_with_secondary_contact
+    @user = add_user_with_multiple_emails(@account, 1)
+    secondary_user = @user.user_emails.where(primary_role: false).first # contains UserEmail object of secondary user
+    @ticket = create_ticket(requester_id: @user.id, source: TicketConstants::SOURCE_KEYS_BY_TOKEN_1[:email], sender_email: secondary_user.email)
+    secondary_user
   end
 end

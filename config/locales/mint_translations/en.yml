@@ -1,4 +1,7 @@
 en:
+  time:
+    am: AM
+    pm: PM
   attach_file: Attach a file
   edit_forum_category: Edit Forum Category
   total: Total
@@ -139,8 +142,8 @@ en:
   undo_toggle: Undo send
   reorder: Reorder
   email_command_settings_heading: Email Command Settings
-  billing_address: Billing Address
-  view_invoices: 'View Invoices: '
+  billing_address: Billing address
+  view_invoices: 'View invoices: '
   reported_by: 'Reported by '
   requesting: Requesting...
   save: Save
@@ -1744,6 +1747,8 @@ en:
             Learn more about authentication in the widget <a
             href='https://support.freshdesk.com/support/solutions/articles/50000000978'
             target='_blank'>here</a>.
+        deny_iframe_enabled: Allow Portals to be embedded as iframes
+        deny_iframe_enabled_info: Authorize access for third-party sites to embed portal pages as iframes.
       password_security:
         passwords: passwords
         session_expiry: User session expires in
@@ -6044,7 +6049,7 @@ en:
     customer_journey_desc: Customer journey
     agent_group_pf_report: Agent and group performance report
     customer_360_desc: Customer 360
-    omni_channel_option: omni channel option
+    omni_channel_option: Omnichannel option
     chat_message: Triggered chat messages
     omni_routing: Omnichannel Routing
     custom_apps: Custom apps
@@ -8215,8 +8220,8 @@ en:
     current_fsm_limit: '%{current_fsm_limit} field technicians'
     current_plan_name: '%{current_plan_name} plan'
     agents_and_product: >-
-        As per request, please maintain %{requested_agents_and_product_count} 
-        by %{next_renewal_at} or you will be charged as 
+        As per request, please maintain %{requested_agents_and_product_count}
+        by %{next_renewal_at} or you will be charged as
         for %{current_agents_and_plan}, as usual.
     current_plan: 'Plan: %{plan}'
     agents: 'Agents: %{agents}'
@@ -8228,26 +8233,27 @@ en:
     word_connector: ' and '
   downgrade:
     upgrade_info: >-
-      Once you hit 'Confirm' your existing request will be deleted and your
-      latest request will be updated instantly.
+      Once you hit 'Confirm' your change request will replace the existing subscription instantly.
     existing_request: Existing request
     confirm_btn: Confirm
     info: >-
-      You can still make changes to your current subscription from below. Any
-      other change request will replace this existing one.
+      You can make changes to your current subscription below. Any change request will replace the existing one.
     Field_technicians: Field technicians
     subscription_change: Subscription change
     agents: Agents
-    header_txt: Do you want to replace the existing request with the latest one?
+    header_txt: Subscription change
     latest_request: Latest request
     plan: Plan
     omnichannel: Omnichannel
     to: to
     fsm: FSM
+    freddy_self_service: Freddy Self-service
+    freddy_ultimate: Freddy Ultimate
+    freddy_additional_packs: Additional Freddy Packs
     billing_next_renewal: Effective from next renewal on
     billing_request_on: Subscription change requested on
     billing_cycle: Billing Cycle
-  omni_enabled: Omni channel - included
+  omni_enabled: <span class='freddy-semi-bold'>Omnichannel</span> - included
   omni_warning: >-
     All omni-channel settings will be removed permanently expect the ability to
     convert chats and calls to tickets
@@ -8264,8 +8270,8 @@ en:
     service groups from your account. Are you sure you want to proceed?
   fsm_content_highlight: Blossom
   tax_inclusion: (Inclusive of tax)
-  omni_channel: Omni-channel
-  omni_disabled: Omni channel - not included
+  omni_channel: Omnichannel
+  omni_disabled: <span class='freddy-semi-bold'>Omnichannel</span> - not included
   unique_external_id:
     helpcard:
       title: Unique External ID
@@ -8300,9 +8306,13 @@ en:
     try_freshsales: Try Freshsales CRM
     discount_text_2: Get 40% off on Freshsales CRM if you buy in the next 21 days
     integrate_freshsales: Integrate Freshsales
+  annual_save:
+    primary_text: Save %{amount}/year on your subscription.
+    primary_link: Switch to annual billing.
   omni_channel_experience:
-    experience_omnichannel: Experience Omnichannel
-    omnichannel_description: Switch to our new Omnichannel plan to unify all conversations across email, chat, call, and other channels into one single solution.
+    experience_omnichannel: Experience Freshdesk Omnichannel
+    omnichannel_title: Manage omnichannel support effortlessly
+    omnichannel_description: From agent onboarding to reporting, orchestrating workflows across channels is centralized on the new Omnichannel platform.
   subscription_change_confirm_header: You're on the right path ;)
   focus_mode_toggle_tip: 'On closing a ticket, quickly move to the next available ticket in your queue'
   focus_mode_toggle: Focus Mode
@@ -8314,7 +8324,7 @@ en:
     page_message_subject: "%{from_name} has contacted %{to_name}"
   fd_channel: Freshdesk Omnichannel
   add_phone_credits: Add phone credits
-  fd_omni_channel_experience: omni channel experience
+  fd_omni_channel_experience: Omnichannel experience
   phone_credits: Phone credits
   auto_recharge:
     enabled: Auto recharge for
@@ -8326,6 +8336,22 @@ en:
     landing_subheading: 'We’re sorry to see you go! If you unsubscribe now, we will no longer be able to send you any more updates. You can click on ‘unsubscribe’ button below to confirm your unsubscription.'
     success_heading: 'Successfully unsubscribed.'
     success_subheading: 'You have successfully unsubscribed from our updates and notifications mailing lists.'
+  freddy:
+    title: Freddy AI for CX
+    self_service: Self-service
+    ultimate: Ultimate
+    f_cx_self_service: Freddy CX - Self-service
+    additional_session_packs: "Additional Freddy Packs <p class='freddy-pack'>(1000 sessions/pack)</p>"
+    warning_title: Are you sure you want to disable Freddy AI for CX?
+    warning_content_from_self_service: You will lose your Freddy Self-service account - and the chatbots you’ve built on disabling this add on.
+    warning_content_from_ultimate: You will lose all the AI features (customer-facing and agent-facing AI) on disabling this add on.
+    session_packs: <p class="size-12">You’ll get <span class='session-pack'>%{freddy_sessions}</span> Freddy sessions <span class="session-pack-cycle">%{cycle}</span></p>
+    sessions_consumed: Freddy sessions consumed
+    total_session_consumption: %{consumed} of %{total}
+    percentage_session_consumed: %{percentage}% sessions consumed
+  freddy_self_service_enabled: "<span class='freddy-semi-bold'>Freddy Self-service</span> - included"
+  freddy_ultimate_enabled: "<span class='freddy-semi-bold'>Freddy Ultimate</span> - included"
+  buy_more_sessions: "Buy more sessions"
   omni_dashboard:
     freshchat_volume_tooltip: 'Conversation that have been unassigned or assigned & not replied for 15 mins'
     omni_availability_detail_title: 'View details'
@@ -8343,3 +8369,11 @@ en:
     freshcaller_active_calls_title: "CALLS - ACTIVE"
   common_js_translations:
     of: "of"
+  whatsapp: "Whatsapp"
+  freddy_consumed_session_mailer:
+    consumed_sessions_subject: "Your Freddy session consumption has exceeded %{sessions_consumed}% for the billing cycle"
+    consumed_sessions_body: "We’d like to let you know that your account has already consumed %{session_count} sessions which is more than %{sessions_consumed}% of allotted sessions for this billing cycle."
+    buy_more_sessions_body: >-
+      To continue deflecting incoming requests, you can buy more sessions for your account by visiting your account’s <a
+      href="%{billing_url}">Plans & Billing</a> page.
+    additional_sessions_note_body: "Please note that additional freddy sessions bought are valid for the current billing cycle."

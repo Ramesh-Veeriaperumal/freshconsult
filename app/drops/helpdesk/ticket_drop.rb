@@ -110,7 +110,11 @@ class Helpdesk::TicketDrop < BaseDrop
   end
 
   def source
-    TicketConstants.source_list[@source.source]
+    if @source.account.ticket_source_revamp_enabled?
+      @source.source_name
+    else
+      TicketConstants.source_list[@source.source]
+    end
   end
 
   def source_id
@@ -211,7 +215,7 @@ class Helpdesk::TicketDrop < BaseDrop
 
   def public_comments
     # source.notes.public.exclude_source('meta').newest_first
-    @source.public_notes.exclude_source(Account.current.helpdesk_sources.note_exclude_sources)
+    @source.public_notes.exclude_source(Account.current.helpdesk_sources.note_exclude_sources).oldest_first
   end
 
   def billable_hours

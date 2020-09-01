@@ -331,7 +331,7 @@ class Freshfone::ForwardController < FreshfoneBaseController
     end
 
     def new_notification_accepted_call?
-      new_notifications? && (params[:action] == 'initiate' ||
+      (params[:action] == 'initiate' ||
                              custom_forward_accept?)
     end
 end

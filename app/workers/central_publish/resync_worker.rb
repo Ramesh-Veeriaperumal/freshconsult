@@ -15,22 +15,18 @@ module CentralPublish
     # => conditions: Where condition, (Eg: ['display_ids in (1, 2, 3, 4, 5) and deleted = false and spam = false'])
     # => primary_key_offset: ID of the record from which the publish should start, (Eg: 76344628)
     def perform(args)
-      @args = args.symbolize_keys!
+      args.symbolize_keys!
 
-      configure_redis_and_execute(@args[:source]) do
-        publish_entity_to_central
-        update_resync_job_information(@args[:source], @args[:job_id], status: RESYNC_JOB_STATUSES[:completed])
-      end
+      Sharding.run_on_slave { sync_entity(args) }
+      update_resync_job_information(args[:source], args[:job_id], status: RESYNC_JOB_STATUSES[:completed])
+      # Once the job is completed set the job information expiry as 3 days
+      set_others_redis_expiry(resync_job_status_key(args[:source], args[:job_id]), RESYNC_COMPLETED_JOB_EXPIRY)
+    rescue StandardError => e
+      update_resync_job_information(args[:source], args[:job_id], status: RESYNC_JOB_STATUSES[:failed])
+      Rails.logger.error "Publishing Entity FAILED => #{e.inspect}"
+      NewRelic::Agent.notice_error(e, description: "Error publishing Job: #{args[:job_id]} for Account: #{Account.current.id}, Service: #{args[:source]}")
+    ensure
+      decrement_redis_key_on_job_end(args[:source])
     end
-
-    private
-
-      def publish_entity_to_central
-        sync_entity(@args)
-      rescue StandardError => e
-        update_resync_job_information(@args[:source], @args[:job_id], status: RESYNC_JOB_STATUSES[:failed])
-        Rails.logger.error "Publishing Entity FAILED => #{e.inspect}"
-        NewRelic::Agent.notice_error(e, description: "Error publishing entity #{@args[:model_name]} for Account: #{Account.current.id}, Service: #{@args[:source]}")
-      end
   end
 end

@@ -43,6 +43,19 @@ module Ember
         match_json(@agent.agent.preferences)
         assert_equal result['show_loyalty_upgrade'], @agent.agent.show_loyalty_upgrade
       end
+
+      def test_preferencs_update_with_monthly_to_annual_notification
+        updated_agent = put :update, construct_params(
+          { version: 'private' },
+          show_monthly_to_annual_notification: true
+        )
+
+        result = JSON.parse(updated_agent.body)
+        assert_response 200, result
+
+        match_json(@agent.agent.preferences)
+        assert_equal result['show_monthly_to_annual_notification'], @agent.agent.show_monthly_to_annual_notification
+      end
     end
   end
 end

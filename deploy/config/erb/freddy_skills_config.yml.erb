@@ -38,4 +38,9 @@
     demo_email: <%= node[:ymls][:freddy_skills_config][:agent_assist][:demo_email] %>
     timeout: <%= node[:ymls][:freddy_skills_config][:agent_assist][:timeout] %>    
     onboard_timeout: <%= node[:ymls][:freddy_skills_config][:agent_assist][:onboard_timeout] %>
+
+  freddy_consumed_session:
+    url: <%= node[:ymls][:freddy_skills_config][:freddy_consumed_session][:url] %>
+    app_name: <%= node[:ymls][:freddy_skills_config][:freddy_consumed_session][:app_name] %>
+    timeout: <%= node[:ymls][:freddy_skills_config][:freddy_consumed_session][:timeout] %>
     

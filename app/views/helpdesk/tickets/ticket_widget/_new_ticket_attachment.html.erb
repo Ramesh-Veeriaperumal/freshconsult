@@ -1,18 +1,9 @@
-<% if current_account.launched?(:multifile_attachments) %>
 <%= render(:partial => "/helpdesk/tickets/ticket_widget/widget_attachment_form", :formats => [:html], :locals => { 
 		:attach_id => "ticket" , 
 		:nsc_param => object_name,
 		:template => true
 		}) %>
-<% else %>
-<%= render(:partial => "/helpdesk/tickets/show/single_attachment_form", :formats => [:html], :locals => { 
-		:attach_id => "ticket" , 
-		:nsc_param => object_name,
-		:template => true,
-		:rowfluid => true
-		}) %>
-<% end %>
-<div class="attachments-wrap clearfix  <%= current_account.launched?(:multifile_attachments) ? "hide" : "" %> " id="prev-attachments">
+<div class="attachments-wrap clearfix hide" id="prev-attachments">
 	<ul class="attachment_list">
 
 		<% if object_name == "template_data" 
@@ -20,7 +11,7 @@
 			priv = true
 			obj = "ticket_template"	
 			#  fix for clone cloud files 
-			if params[:action] == "clone" and current_account.launched?(:multifile_attachments)
+			if params[:action] == "clone"
 				item.cloud_files = @cloud_files
 			end 	
     else 
@@ -38,30 +29,29 @@
 		<% end %>
 	</ul>
 </div>
-<% if current_account.launched?(:multifile_attachments) %>
-       <% 
-	    item.cloud_files.each do |cloud| 
-          cloud[:provider] = cloud.provider
-        end
-	   %>
-	<script>
-	   var template = false;
-	   var nsc_param = "";
-	   if (App.namespace == "helpdesk/ticket_templates/clone")  {
-	     template = true;
-	     nsc_param = "template_data";
-	      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'),template,nsc_param,true);
-	   }
-	   if(App.namespace == "helpdesk/ticket_templates/edit" || App.namespace == "helpdesk/ticket_templates/edit_child") {
-	     template = true;
-	     nsc_param = "helpdesk_ticket";
-	      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon').data('iconCount'),template,nsc_param);
-	      jQuery('[name="[cloud_file_attachments][]"]').remove();
-	   }
-	     if(App.namespace == "helpdesk/tickets/edit") {
-	     	 // template = true;
-		     // nsc_param = "helpdesk_ticket";
-		      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'));
-	     }
-	</script>
-<% end %>
+
+<%
+  item.cloud_files.each do |cloud|
+    cloud[:provider] = cloud.provider
+  end
+%>
+<script>
+  var template = false;
+  var nsc_param = "";
+  if (App.namespace == "helpdesk/ticket_templates/clone")  {
+    template = true;
+    nsc_param = "template_data";
+    Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'),template,nsc_param,true);
+  }
+  if(App.namespace == "helpdesk/ticket_templates/edit" || App.namespace == "helpdesk/ticket_templates/edit_child") {
+    template = true;
+    nsc_param = "helpdesk_ticket";
+    Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon').data('iconCount'),template,nsc_param);
+    jQuery('[name="[cloud_file_attachments][]"]').remove();
+  }
+    if(App.namespace == "helpdesk/tickets/edit") {
+      // template = true;
+      // nsc_param = "helpdesk_ticket";
+      Helpdesk.MultipleFileUpload.renderExistingFiles(<%= item.all_attachments.to_json.html_safe%>,<%=item.cloud_files.to_json.html_safe %>,jQuery('.attachment-icon:visible').data('iconCount'));
+    }
+</script>
