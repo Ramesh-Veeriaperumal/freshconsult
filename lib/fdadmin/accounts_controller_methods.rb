@@ -126,10 +126,6 @@ module Fdadmin::AccountsControllerMethods
 	def active_account_details(ff_credit)
 		{ available_credit: ff_credit.present? ? ff_credit.available_credit : 0.00 }
 	end
-
-	def freshfone_activation_requested?(account)
-	  get_key(FRESHFONE_ACTIVATION_REQUEST % { account_id: account.id }).present?
-	end
 	
 	def validate_new_currency
 		subscription = Account.current.subscription

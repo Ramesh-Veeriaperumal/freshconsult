@@ -64,14 +64,10 @@ module Account::Setup
 
 	# For each feature listed in CONDITION_BASED_SETUP_KEYS, add a method that has the corresponding
 	# condition checks. The naming convention for the method would be "#{setup_key}_eligible?".
-	# For eg., freshfone_number_eligible?
+	# For eg., twitter_eligible?
 
   def current_condition_based_keys
     CONDITION_BASED_SETUP_KEYS.keys.select { |setup_key| safe_send("#{setup_key}_eligible?") }
-  end
-
-  def freshfone_number_eligible?
-    has_feature?(:freshcaller) && phone_channel_enabled?
   end
 
   def twitter_eligible?

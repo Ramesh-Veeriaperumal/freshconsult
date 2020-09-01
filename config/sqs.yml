@@ -16,10 +16,8 @@ development:
   activity_queue: fd_activities_dev
   activity_export_queue: fd_activities_export_dev
   reports_service_export_queue: reports_service_export_dev
-  freshfone_call_tracker: freshfone_call_tracker_development
   cti_screen_pop: cti_screen_pop_dev
   fb_message_realtime_queue: social_fb_messenger_dev
-  freshfone_call_notifier_queue: freshfone_call_notifier_development
   collab_agent_update_queue: collab_dev
   collab_ticket_update_queue: collab_dev
   auto_refresh_queue: auto_refresh_new_dev
@@ -69,11 +67,9 @@ staging:
   activity_queue: fd_activities_staging
   activity_export: fd_activities_export_staging
   reports_service_export_queue: reports_service_export_staging
-  freshfone_call_tracker: freshfone_call_tracker_staging
   cti_screen_pop: cti_screen_pop_staging
   cti_call_queue: cti_call_staging
   fb_message_realtime_queue: social_fb_messenger_staging
-  freshfone_call_notifier_queue: freshfone_call_notifier_staging
   collab_agent_update_queue: collab_agent_update_staging
   collab_ticket_update_queue: collab_ticket_update_staging
   auto_refresh_queue: auto_refresh_new_staging
@@ -115,11 +111,9 @@ production:
   iris_etl_msg_queue: iris_etl_msgs_production
   activity_queue: fd_activities_production
   reports_service_export_queue: reports_service_export_production
-  freshfone_call_tracker: freshfone_call_tracker_production
   cti_screen_pop: cti_screen_pop_production
   cti_call_queue: cti_call_production
   fb_message_realtime_queue: social_fb_messenger_prod
-  freshfone_call_notifier_queue: freshfone_call_notifier_production
   collab_agent_update_queue: collab_agent_update_production
   collab_ticket_update_queue: collab_ticket_update_production
   auto_refresh_queue: auto_refresh_new_production
@@ -161,11 +155,9 @@ test:
   iris_etl_msg_queue: iris_etl_msgs_test
   activity_queue: fd_activities_test
   reports_service_export_queue: reports_service_export_test
-  freshfone_call_tracker: freshfone_call_tracker_test
   cti_screen_pop: cti_screen_pop_test
   cti_call_queue: cti_call_test
   fb_message_realtime_queue: social_fb_messenger_dev
-  freshfone_call_notifier_queue: freshfone_call_notifier_test
   collab_agent_update_queue: collab_agent_update_test
   collab_ticket_update_queue: collab_ticket_update_test
   auto_refresh_queue: auto_refresh_new_test

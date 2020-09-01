@@ -63,7 +63,7 @@
       :whitelisted_ips: 58
       :branding: 59
       :toggle_branding: 60
-      :freshfone_vm_transcription: 61
+      :unused_61: 61
       :basic_dkim: 62
       :advanced_dkim: 63
       :shared_ownership_toggle: 64
@@ -126,7 +126,7 @@
       :suicide_squad_10: 122
       :sandbox: 123
       :call_quality_metrics: 124
-      :freshfone_conference: 125
+      :unused_125: 125
       :agent_collision: 126
       :id_less_tickets: 127
       :no_list_view_count_query: 128
@@ -156,9 +156,9 @@
       :wild_cards_10: 152
       :contact_company_notes: 153
       :undo_send: 154
-      :freshfone_onboarding: 155
+      :unused_155: 155
       :archive_tickets: 156
-      :freshfone_custom_forwarding: 157
+      :unused_157: 157
       :tokenize_emoji: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
@@ -173,24 +173,24 @@
       :es_v2_writes: 169
       :fluffy_higher_plan3: 170
       :fluffy_higher_plan4: 171
-      :freshfone_call_metrics: 172
+      :unused_172: 172
       :custom_translations: 173
       :cobrowsing: 174
       :threading_without_user_check: 175
-      :freshfone_call_monitoring: 176
-      :freshfone_caller_id_masking: 177
+      :unused_176: 176
+      :unused_177: 177
       :agent_conference: 178
-      :freshfone_warm_transfer: 179
+      :unused_179: 179
       :canned_forms: 180
       :shadow_fax9: 181
       :shadow_fax10: 182
       :audit_logs_central_publish: 183
       :audit_log_ui: 184
       :restricted_helpdesk: 185
-      :freshfone_acw: 186
+      :unused_186: 186
       :cti: 187
       :all_notify_by_custom_server: 188
-      :freshfone_gv_forward: 189
+      :unused_189: 189
       :advanced_automations: 190
       :decepticons_9: 191
       :decepticons_10: 192
@@ -428,11 +428,8 @@
   :enable_multilingual: false
   :countv2_writes: false
   :countv2_reads: false
-  :freshfone_onboarding: false
   :archive_tickets: false
   :call_quality_metrics: false
-  :freshfone_conference: false
-  :freshfone_custom_forwarding: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :undo_send: false
@@ -458,18 +455,12 @@
   :domain_restricted_access: false
   :limit_mobihelp_results: false
   :ecommerce: false
-  :freshfone_call_metrics: false
   :cobrowsing: false
   :threading_without_user_check: false
-  :freshfone_call_monitoring: false
-  :freshfone_caller_id_masking: false
   :agent_conference: false
-  :freshfone_warm_transfer: false
   :restricted_helpdesk: false
-  :freshfone_acw: false
   :cti: false
   :all_notify_by_custom_server: false
-  :freshfone_gv_forward: false
   :chat: false
   :freshreports_analytics: false
   :disable_old_reports: false

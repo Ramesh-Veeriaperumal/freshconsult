@@ -73,29 +73,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by API V2 Search
     resource :"api_search/ticket", :only => [:index]
-
-    #Freshfone
-    resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
-    resource :"freshfone/user"
-    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings, :agent_leg ]
-    resource :"freshfone/conference", :only => [:initiate, :notify ]
-    resource :"freshfone/agent_leg", :only => [:agent_response, :disconnect_browser_agent, :remove_notification_recovery]
-    resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
-    resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
-    resource :"freshfone/warm_transfer", :only => [:initiate, :unhold, :cancel, :resume]
-    resource :"freshfone/conference_call", :only => [:load_notable, :save_notable, :save_call_quality_metrics, :wrap_call]
-    resource :"freshfone/hold", :only => [ :add, :remove ]
-    resource :"freshfone/call_history"
-    resource :"freshfone/autocomplete"
-    resource :"search/v2/freshfone/autocomplete"
-    resource :"freshfone/call_transfer", :only => [:initiate, :available_agents, :available_external_numbers]
-    resource :"freshfone/device", :only => [:recorded_greeting]
-    resource :"freshfone/queue", :only => [:bridge]
-    resource :"freshfone/addres"
-    resource :"freshfone/caller"
-    resource :"freshfone/caller_id"
-    resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton, :mute]
-
+    
     resource :"helpdesk/conversation", :only => [:note, :full_text, :broadcast]
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"

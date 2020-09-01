@@ -14,7 +14,7 @@ module Mobile::Actions::Account
 
   CONFIG_JSON_INCLUDE = {
       only: [:id], 
-      :methods => [:plan_name,:portal_name, :full_domain, :social_feature, :timesheets_feature, :freshfone_feature, :freshfone_activated,   :freshfone_conference]
+      :methods => [:plan_name,:portal_name, :full_domain, :social_feature, :timesheets_feature]
   }
 
 	def to_mob_json(deep=false)
@@ -49,18 +49,6 @@ module Mobile::Actions::Account
 
   def timesheets_feature
     Account.current.timesheets_enabled?
-  end
-
-  def freshfone_feature
-    freshfone_enabled?
-  end
-
-  def freshfone_activated
-    freshfone_numbers.present?
-  end
-
-  def freshfone_conference
-    features?(:freshfone_conference)
   end
   
   def social_feature

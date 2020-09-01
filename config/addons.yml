@@ -66,12 +66,6 @@ Whitelisted Ips 19:
   - :whitelisted_ips
 Custom Surveys:
   - :custom_surveys
-Call Center Advanced:
-  - :freshfone_call_metrics
-  - :freshfone_call_monitoring
-  - :freshfone_caller_id_masking
-  - :agent_conference
-  - :freshfone_warm_transfer
 Unique External Id:
   - :unique_contact_identifier
 Unique External Id 19:
