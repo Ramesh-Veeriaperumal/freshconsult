@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
   include InstalledApplicationsTestHelper
-  APP_NAMES = ['zohocrm', 'harvest', 'dropbox', 'salesforce', 'salesforce_v2', 'freshsales', 'shopify']
+  APP_NAMES = ['zohocrm', 'harvest', 'dropbox', 'salesforce', 'salesforce_v2', 'freshsales', 'shopify', 'freshworkscrm']
 
   def setup
     super
@@ -294,6 +294,109 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     match_json data
   ensure
     IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_autocomplete_results
+    app_id = get_installed_app('freshworkscrm').id
+    response = "[{\"id\":\"2009495244\", \"type\": \"contact\", \"name\": \"testtest\", \"email\": \"test@test.com\", \"_id\":\"2009495244\"}]"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource
+      .any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_autocomplete_results',
+                             payload: { url: '/search?per_page=5&include=contact,sales_account,deal&q=test' })
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = JSON.parse(response)
+    match_json ({ 'results' => data })
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_dropdown_choices
+    app_id = get_installed_app('freshworkscrm').id
+    response = "{\"users\": [{\"id\":2000067945,\"display_name\":\"Test user\",\"email\":\"test.user@freshworks.com\",\"is_active\":true,\"work_number\":null,\"mobile_number\":null}]}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource
+      .any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_dropdown_choices', payload: { url: '/selector/owners' })
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = JSON.parse(response).values.first
+    match_json ({ 'results' => data })
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_create_contact
+    app_id = get_installed_app('freshworkscrm').id
+    response = "{\"contact\":{\"id\": 2009497816, \"first_name\": \"Sample\",\"last_name\": \"Contact\", \"display_name\": \"Sample Contact\"}}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource
+      .any_instance.stubs(:http_post).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'create_contact',
+                             payload: { entity: { first_name: 'Sample', last_name: 'Contact' } })
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = JSON.parse(response)
+    match_json data
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_fetch_form_fields
+    app_id = get_installed_app('freshworkscrm').id
+    response = "{\"forms\":[{\"id\":2000022765,\"name\":\"DefaultContactForm\",\"field_class\":\"Contact\",
+                \"fields\":[{\"id\":\"ead353bc-031b-4012-86b1-cd055f807c99\",\"name\":\"basic_information\",
+                \"label\":\"Basicinformation\",\"fields\":[{\"id\":\"7e0b636d\",
+                \"name\":\"first_name\",\"label\":\"Firstname\",\"fields\":[],\"form_id\":2000022765,
+                \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                {\"id\":\"7e0basd636d\", \"name\":\"emails\",\"type\":\"email\",\"label\":\"Emails\",\"fields\":[],
+                \"form_id\":2000022765,\"field_class\":\"Contact\",\"visible\":\"true\",
+                \"field_options\":{\"show_in_import\":true}},{\"id\":\"c94aae94-7424-498f-863c-02bb7350724e\",
+                \"name\":\"system_information\",\"label\":\"Systeminformation\",\"fields\":[{\"id\":\"7aee054f\",
+                \"name\":\"last_contacted\",\"label\":\"Lastcontactedtime\",\"fields\":[],
+                \"form_id\":2000022765,\"field_class\":\"Contact\"}],\"form_id\":2000022765,
+                \"field_class\":\"Contact\"}],\"form_id\":2000022765,\"field_class\":\"Contact\"}]}]}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource
+      .any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_form_fields')
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = form_fields_result
+    match_json data
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_fetch_form_fields_with_nested_emails
+    app_id = get_installed_app('freshworkscrm').id
+    response = fetch_nested_emails_response
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource
+      .any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_form_fields')
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = nested_emails_form_fields_result
+    match_json data
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
   end
 
   def test_fetch_for_404_on_invalid_installed_application_id
