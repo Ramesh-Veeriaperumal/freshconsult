@@ -235,7 +235,7 @@ class Account < ActiveRecord::Base
     ticket_field_revamp: true, new_timeline_view: false,
     requester_widget_timeline: false,
     enable_secure_login_check: false,
-    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
+    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
