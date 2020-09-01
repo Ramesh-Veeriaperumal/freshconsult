@@ -22,29 +22,13 @@ module Email::Mailbox::Oauth2Helper
   end
 
   def add_valid_access_token_key(mailbox)
-    set_others_redis_with_expiry(
-      format(
-        OAUTH_ACCESS_TOKEN_VALIDITY,
-        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox)],
-        account_id: mailbox.account_id,
-        server_name: mailbox.server_name,
-        mailbox_id: mailbox.id
-      ),
-      true,
-      ex: Email::Mailbox::Constants::ACCESS_TOKEN_EXPIRY
-    )
+    set_others_redis_with_expiry(valid_access_token_key(mailbox),
+                                 true,
+                                 ex: Email::Mailbox::Constants::ACCESS_TOKEN_EXPIRY)
   end
 
   def access_token_expired?(mailbox)
-    !redis_key_exists?(
-      format(
-        OAUTH_ACCESS_TOKEN_VALIDITY,
-        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox)],
-        account_id: mailbox.account_id,
-        server_name: mailbox.server_name,
-        mailbox_id: mailbox.id
-      )
-    )
+    !redis_key_exists?(valid_access_token_key(mailbox))
   end
 
   def update_mailbox_error(mailbox, error_type = nil)
@@ -58,18 +42,20 @@ module Email::Mailbox::Oauth2Helper
   end
 
   def delete_valid_access_token_key(mailbox)
-    remove_others_redis_key(
-      format(
-        OAUTH_ACCESS_TOKEN_VALIDITY,
-        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox)],
-        account_id: mailbox.account_id,
-        server_name: mailbox.server_name,
-        mailbox_id: mailbox.id
-      )
-    )
+    remove_others_redis_key(valid_access_token_key(mailbox))
   end
 
   def server_key(mailbox)
     mailbox.server_name.include?(Email::Mailbox::Constants::GMAIL) ? Email::Mailbox::Constants::GMAIL : Email::Mailbox::Constants::OFFICE365
+  end
+
+  def valid_access_token_key(mailbox)
+    format(
+      OAUTH_ACCESS_TOKEN_VALIDITY,
+      provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox)],
+      account_id: mailbox.account_id,
+      server_name: mailbox.server_name,
+      mailbox_id: mailbox.id
+    )
   end
 end

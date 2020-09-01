@@ -16,13 +16,11 @@ class Email::MailboxDelegator < BaseDelegator
   end
 
   def imap_mailbox
-    Rails.logger.info ">>>args record imap #{@record.imap_mailbox.attributes.inspect}"
     verified_result = verify_imap_mailbox(@record.imap_mailbox)
     errors[:incoming] = verified_result[:msg] unless verified_result[:success]
   end
 
   def smtp_mailbox
-    Rails.logger.info ">>>args record smtp #{@record.smtp_mailbox.attributes.inspect}"
     verified_result = verify_smtp_mailbox(@record.smtp_mailbox)
     unless verified_result[:success]
       errors[:outgoing] = verified_result[:msg]
