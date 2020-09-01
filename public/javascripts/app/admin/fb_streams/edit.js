@@ -164,8 +164,6 @@ window.App.Admin = window.App.Admin || {};
           case 'same_ticket_threading':
             $import_visitor_post_checkbox.prop('checked', true).prop('disabled', true);
             $('#import_visitor_posts_text').addClass('muted');
-            // $('#new_ticket_filter_mentions_container').hide()
-            // $('#same_ticket_filter_mentions_container').show()
             $ticket_rule_type.val(_this.BROAD_RULE_TYPE);
             $('#toggle_keywords').prop('checked', false);
             $('.optimal-rules-container #s2id_social_ticket_rule__includes').select2('val', '').hide();

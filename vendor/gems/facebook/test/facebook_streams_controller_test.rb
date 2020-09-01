@@ -67,5 +67,4 @@ class Admin::Social::FacebookStreamsControllerTest < ActionController::TestCase
   ensure
     fb_page.destroy
   end
-
 end

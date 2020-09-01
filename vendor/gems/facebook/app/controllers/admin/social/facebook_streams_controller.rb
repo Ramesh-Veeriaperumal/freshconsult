@@ -104,12 +104,12 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
       }
 
       if rule[:rule_type] == "#{RULE_TYPE[:optimal]}"
-        filter_data.merge!({
-         :import_company_comments  =>  "#{rule[:import_company_comments]}".to_bool,
-         :import_visitor_posts     =>  "#{rule[:import_visitor_posts]}".to_bool
-         })
+        filter_data.merge!(
+          import_company_comments: rule[:import_company_comments].to_s.to_bool,
+          import_visitor_posts: rule[:import_visitor_posts].to_s.to_bool
+        )
         filter_data.merge!({:includes => rule[:includes].split(',').flatten}) if filter_data[:import_company_comments]
-        filter_data.merge!(filter_mentions:  params[:new_ticket_filter_mentions].to_s.to_bool)
+        filter_data.merge!(filter_mentions: params[:new_ticket_filter_mentions].to_s.to_bool)
       elsif rule[:rule_type] == RULE_TYPE[:strict].to_s
         @facebook_page.ad_post_stream.delete_rules
       elsif rule[:rule_type] == RULE_TYPE[:broad].to_s
