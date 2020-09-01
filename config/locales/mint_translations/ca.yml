@@ -1067,8 +1067,6 @@ ca:
         only_agents: Agents
         remote_login_url_info: >-
           Aquest és l'URL a la que Freshdesk encaminarà als usuaris per a que s'autentiquin quan vulguin accedir a Freshdesk.
-        customer_portal_ssl_warning: >-
-          Un cop es configuri l'URL personalitzat del teu Help desk seràs encaminat cap a 
         saml_cert_fingerprint: Empremta del certificat de seguretat
         success_message: >-
           La teva sol·licitud d'un certificat SSL personalitzat s'ha iniciat i es processarà en breu. Rebràs un correu de confirmació del nostre proveïdor abans de la seva aprovació. Si us plau, revisa la safata d'entrada per a les actualitzacions.
@@ -2146,6 +2144,7 @@ ca:
         all_tickets: Tots els tiquets
         due_today: Tiquets que s'han de fer avui
         resolved: Tiquets resolts
+        visible_and_resolved: Tickets resolts
       friendly_status:
         customer_responded: Client respost
         elapsed: Temps límit resposta
@@ -3750,6 +3749,9 @@ ca:
       created_at: Creat
       skill: Destresa
       description: Descripció
+    field_service_fields:
+      cf_fsm_contact_name: Contacte
+      cf_fsm_phone_number: Número de telèfon
     formfield_props:
       behavior: Comportament
       customer_edit: El client pot modificar
@@ -5732,6 +5734,7 @@ ca:
       sign_up_text: 'Comença a xatejar amb els clients de la teva pàgina web, portal o aplicació per a mòbils.'
       enable_chat_in_portal_info: >-
         Fes més fàcil que els teus clients puguin xerrar amb tu quan accedeixin al teu portal de suport.
+      topics_title: Temes
       app_id_placeholder: 'Exemple: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Per convertir les converses de Freshchat a tickets, vés a <a href='%{url}' target='_blank'>aquesta pàgina</a>, copia i enganxa els detalls a continuació. Si necessites més ajuda, fes un cop d'ull a <a href='%{article_url}' target='_blank'>aquest article</a>.

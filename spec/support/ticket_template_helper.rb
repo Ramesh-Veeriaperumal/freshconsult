@@ -15,9 +15,12 @@ module TicketTemplateHelper
     options = template_default_options.merge(options)
     tkt_template = FactoryGirl.build(:ticket_templates, :name=>options[:name], :description=>Faker::Lorem.sentence(2),
                           :template_data => {"subject" => options[:subject], "status" => options[:status], "ticket_type" => options[:ticket_type],
-                                             "group_id" => options[:group_id], "responder_id" => options[:responder_id], "priority" => options[:priority], "product_id" => options[:product_id], "tags" => options[:tags]},
+                                             "group_id" => options[:group_id], "responder_id" => options[:responder_id], "priority" => options[:priority], "product_id" => options[:product_id], "tags" => options[:tags]
+                                              },
                           :account_id=>options[:account_id],
                           :association_type => options[:association_type])
+
+    tkt_template[:template_data][:source] = options[:source] if options[:source].present?
     (options[:attachments] || []).each do |att|
       tkt_template.attachments.build(:content => att[:resource],:description => Faker::Lorem.characters(10),:account_id => tkt_template.account_id)
     end
@@ -48,7 +51,8 @@ module TicketTemplateHelper
                         account_id: @account.id,
                         accessible_attributes: {
                                                 access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
-                                              })
+                                              },
+                                         )
     count.times { @child_templates << create_child_template(@parent_template) }
   end
 
@@ -59,7 +63,8 @@ module TicketTemplateHelper
                     account_id: @account.id,
                     accessible_attributes: {
                     access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
-                                          })
+                                          },
+                                          )
     child_template.build_parent_assn_attributes(parent_templ.id)
     child_template.save
     return child_template

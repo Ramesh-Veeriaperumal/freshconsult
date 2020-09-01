@@ -188,10 +188,10 @@ class Account < ActiveRecord::Base
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,
     gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
-    meta_read: false, most_viewed_articles: false, multifile_attachments: true,
-    new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
+    meta_read: false, most_viewed_articles: false,
+    new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false,
-    skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
+    skip_hidden_tkt_identifier: false, agent_collision_alb: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
@@ -199,7 +199,7 @@ class Account < ActiveRecord::Base
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false,
     kbase_spam_whitelist: false, enable_qna: false, enable_insights: false,
-    whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
+    whitelist_supervisor_sla_limitation: false,
     service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
@@ -211,7 +211,7 @@ class Account < ActiveRecord::Base
     incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
     auto_complete_off: false, freshworks_omnibar: false,
-    euc_migrated_twitter: false, new_ticket_recieved_metric: false, es_msearch: true,
+    new_ticket_recieved_metric: false, es_msearch: true,
     canned_forms: false, attachment_virus_detection: false, old_link_back_url_validation: false,
     stop_contacts_count_query: false, undo_send: false,
     bot_email_channel: false, archive_ticket_fields: true,
@@ -233,9 +233,9 @@ class Account < ActiveRecord::Base
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
-    freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
+    requester_widget_timeline: false,
     enable_secure_login_check: false,
-    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
+    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
@@ -243,7 +243,7 @@ class Account < ActiveRecord::Base
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, mailbox_ms365_oauth: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false, mailbox_ms365_oauth: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

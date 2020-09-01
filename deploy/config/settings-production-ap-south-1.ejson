@@ -148,7 +148,7 @@
         "domains": {
           "_podeuwest1": "podeuwest1route.freshdesk.com",
           "_podeucentral1": "podeucentral1route.freshdesk.com",
-          "_podapsoutheast2": "podapsoutheast2route.freshdesk.com",
+          "_podapsoutheast2": "edge-aus-lb.freshdesk.com",
           "_podapsouth1": "podapsouth1route.freshdesk.com"
         },
         "hosted_zone": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:QAjUMal42lAoOKAT29ZhPkQ8Uig8+waY:OLdd/nYjvKofyYa5llLFhtkaTsIIIM+b8WBZzOjc]"
@@ -1542,9 +1542,9 @@
         "_early_expiration": 60
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:Pmgh/NGuV5EtuT9StciVOlZ5sETNZLqrK6R05gN7y3E=:dayzxylIVhkoQnqzkoEmV53FNw6Hy+KW:rU1IlKX1hLee/OKHnt8CFg==]",
-        "_end_point": "",
-        "_bu_name": "",
+        "secret_key": "EJ[1:mYgUU+OFqAEPpMzLXE7+TdWejoutojSHoneEoJQQrQs=:IKWNMynuXWCdM/KTItbvKLuZG1bQgP14:J7qOJNVg2VtWgU2VYmtn45bOl90PAYxBPjlmshuK9Q+x8VGfMbNHaftK+n61C3JWV11+G89iUXRrAl8G]",
+        "_end_point": "https://freshdesk-ind.freshreports.com",
+        "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
         "_timeout_for_pricing_api": 10,

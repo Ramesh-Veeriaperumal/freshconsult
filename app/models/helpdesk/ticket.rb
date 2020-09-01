@@ -1579,6 +1579,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.save
   end
 
+  def custom_field_value(field_name)
+    safe_send(field_name)
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

@@ -194,7 +194,7 @@ class Helpdesk::Tag < ActiveRecord::Base
     
     def update_taggables
       SearchV2::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features_included?(:es_v2_writes)
-      CountES::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.count_es_writes_enabled?
+      CountES::IndexOperations::UpdateTaggables.perform_async(tag_id: self.id)
       CentralPublish::UpdateTaggables.perform_async({ :tag_id => self.id, :changes => @model_changes })
     end
     

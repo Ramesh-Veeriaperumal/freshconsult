@@ -4,6 +4,7 @@ require 'webmock/minitest'
 module ArchiveTicketTestHelper
   include GroupHelper
   ARCHIVE_BODY = JSON.parse(File.read("#{Rails.root}/test/api/fixtures/archive_ticket_body.json"))['archive_ticket_association']
+  ARCHIVE_TICKET = 'Helpdesk::ArchiveTicket'.freeze
 
   def enable_archive_tickets
     @account.enable_ticket_archiving(0)
@@ -56,10 +57,10 @@ module ArchiveTicketTestHelper
     Helpdesk::ArchiveTicket.any_instance.unstub(:read_from_s3)
   end
 
-  def convert_ticket_to_archive(ticket)
+  def convert_ticket_to_archive(ticket, archive_days = 0)
     freno_stub = stub_request(:get, 'http://freno.freshpo.com/check/ArchiveWorker/mysql/shard_1')
                  .to_return(status: 404, body: '', headers: {})
-    Archive::TicketWorker.new.perform(account_id: @account.id, ticket_id: ticket.id)
+    Archive::TicketWorker.new.perform(account_id: @account.id, ticket_id: ticket.id, archive_days: archive_days)
     remove_request_stub(freno_stub)
   end
 
@@ -140,6 +141,23 @@ module ArchiveTicketTestHelper
                     group_id: @create_group.id, created_at: params[:created_at] || 120.days.ago, account_id: @account.id }
     params_hash[:company_id] = params[:company_id] if params[:company_id]
     params_hash[:requester_id] = params[:requester_id] if params[:requester_id]
+    params_hash[:reports_hash] = params[:reports_hash] if params[:reports_hash]
+    params_hash[:header_info] = params[:header_info] if params[:header_info]
+    params_hash[:association_type] = params[:association_type] if params[:association_type]
+    params_hash[:associates_rdb] = params[:associates_rdb] if params[:associates_rdb]
+    params_hash[:import_id] = params[:import_id] if params[:import_id]
+    params_hash[:sl_skill_id] = params[:sl_skill_id] if params[:sl_skill_id]
+    params_hash[:sl_escalation_level] = params[:sl_escalation_level] if params[:sl_escalation_level]
+    params_hash[:subscriptions] = params[:subscriptions] if params[:subscriptions]
+    params_hash[:nr_due_by] = params[:nr_due_by] if params[:nr_due_by]
+    params_hash[:nr_escalated] = params[:nr_escalated] if params[:nr_escalated]
+    params_hash[:nr_reminded] = params[:nr_reminded] if params[:nr_reminded]
+    params_hash[:ticket_states] = params[:ticket_states] if params[:ticket_states]
+    params_hash[:custom_field_value] = params[:custom_field_value] if params[:custom_field_value]
+    params_hash[:custom_file_field_value] = params[:custom_file_field_value] if params[:custom_file_field_value]
+    params_hash[:custom_dependent_parent] = params[:custom_dependent_parent] if params[:custom_dependent_parent]
+    params_hash[:custom_dependent_child1] = params[:custom_dependent_child1] if params[:custom_dependent_child1]
+    params_hash[:custom_dependent_child2] = params[:custom_dependent_child2] if params[:custom_dependent_child2]
     params_hash[:tweet_type] = params[:tweet_type] if params[:tweet_type]
     params_hash
   end
@@ -182,12 +200,20 @@ module ArchiveTicketTestHelper
             'subject' => params[:subject],
             'owner_id' => nil,
             'group_id' => params[:group_id] || nil,
+            'nr_due_by' => params[:nr_due_by] || nil,
+            'nr_escalated' => params[:nr_escalated] || nil,
+            'nr_reminded' => params[:nr_reminded] || nil,
             'due_by' => params[:due_by],
             'frDueBy' => params[:frDueBy],
             'isescalated' => false,
             'priority' => params[:priority] || 1,
             'fr_escalated' => false,
             'to_email' => nil,
+            'association_type' => params[:association_type] || nil,
+            'associates_rdb' => params[:associates_rdb] || nil,
+            'import_id' => params[:import_id] || nil,
+            'sl_skill_id' => params[:sl_skill_id] || nil,
+            'sl_escalation_level' => params[:sl_escalation_level] || nil,
             'email_config_id' => nil,
             'cc_email' => {
               'cc_emails' => params[:cc_emails] || [],
@@ -200,7 +226,9 @@ module ArchiveTicketTestHelper
           'helpdesk_tickets_association' => {
             'schema_less_ticket' => {
               'account_id' => params[:account_id] || 1,
-              'product_id' => nil
+              'product_id' => nil,
+              'text_tc01' => params[:header_info] || nil,
+              'text_tc02' => params[:reports_hash] || {}
             },
             'flexifield' => {
               "id":40883277,
@@ -211,14 +239,18 @@ module ArchiveTicketTestHelper
               "updated_at":"2014-11-24T09:50:02Z",
               "ffs_01":"No",
               "ffs_04":"Technical support question",
+              'ffs_05': params[:custom_field_value] || nil, # for custom_dropdown
               "ffs_06":"No",
-              "ffs_07":"No",
-              "ffs_08":"Others",
+              'ffs_07': params[:custom_dependent_parent] || 'No',
+              'ffs_08': params[:custom_dependent_child1] || 'Others',
+              'ffs_09': params[:custom_dependent_child2] || 'Other',
               "ff_boolean03":false,
               "ff_boolean04":false,
+              "dn_slt_001": params[:custom_file_field_value] || nil,
               "account_id":1
             },
-            'ticket_states' => {}
+            'ticket_states' => params[:ticket_states] || {},
+            'subscriptions' => params[:subscriptions] || []
           }
         },
         'description' => params[:description],

@@ -36,7 +36,6 @@ class Channel::Freshcaller::MigrationController < ApiApplicationController
     @errors = []
     @errors << "Numbers still not migrated" if @account.freshfone_numbers.present?
     @errors << "Credits not ported" unless @account.freshfone_credit.available_credit.zero?
-    @errors << "Falcon feature not added" unless @account.has_feature?(:falcon)
     @errors << "Freshcaller feature not added" unless @account.has_feature?(:freshcaller)
     @errors << "Freshcaller widget feature not added" unless @account.has_feature?(:freshcaller_widget)
   end
