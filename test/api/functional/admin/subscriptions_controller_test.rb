@@ -105,6 +105,29 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('key', :invalid_field)])
   end
 
+  def test_specific_plan_for_account_default_currency
+    stub_plans
+    get :fetch_plan, controller_params(version: 'private', id: 1)
+    assert_response 200
+    match_json(plans_response.first)
+    unstub_plans
+  end
+
+  def test_specific_plan_with_given_currency_value
+    stub_plans('INR')
+    get :fetch_plan, controller_params(version: 'private', currency: 'INR', id: 1)
+    assert_response 200
+    match_json(plans_response('INR').first)
+    unstub_plans
+  end
+
+  def test_specific_plan_invalid_plan
+    stub_plans
+    get :fetch_plan, controller_params(version: 'private', id: 100)
+    assert_response 404
+    unstub_plans
+  end
+
   def test_plans_for_account_default_currency
     stub_plans
     get :plans, controller_params(version: 'private')
@@ -531,6 +554,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
       2.times {
         mock_subscription_plan.expect :name, plan_name
         mock_subscription_plan.expect :id, id
+        mock_subscription_plan.expect :nil?, false
       }
       mock_subscription_plan
     end
@@ -555,6 +579,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     def stub_plans(currency='USD')
       mock_plans = [mock_plan(1, 'Sprout'), mock_plan(20, 'Estate')]
       SubscriptionPlan.stubs(:cached_current_plans).returns(mock_plans)
+      SubscriptionPlan.stubs(:subscription_plans_from_cache).returns(mock_plans)
       SubscriptionPlan.stubs(:current).returns(mock_plans)
       RestClient::Request.stubs(:execute).with({
         method: :get,
@@ -572,6 +597,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     def unstub_plans
       SubscriptionPlan.unstub(:current)
       RestClient::Request.unstub(:execute)
+      SubscriptionPlan.unstub(:subscription_plans_from_cache)
     end
 
     def plans_response(currency='USD')

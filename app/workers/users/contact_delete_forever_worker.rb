@@ -111,6 +111,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       @user.string_uc03 = nil
       @user.string_uc05 = nil
       @user.string_uc06 = nil
+      @user.string_uc07 = nil
       @user.crypted_password = nil
       @user.password_salt = nil
       @user.persistence_token = nil

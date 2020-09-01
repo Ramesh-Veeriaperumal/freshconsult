@@ -679,6 +679,8 @@ subscription_response:
   $ref: ./response/subscription/show.yaml
 plans:
   $ref: ./response/subscription/plans.yaml
+fetch_plan:
+  $ref: ./response/subscription/fetch_plan.yaml
 subscription_update_request:
   $ref: ./request/subscription/update.yaml
 subscription_estimate:

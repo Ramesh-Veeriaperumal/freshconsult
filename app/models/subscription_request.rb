@@ -24,7 +24,7 @@ class SubscriptionRequest < ActiveRecord::Base
   end
 
   def plan_name
-    subscription.subscription_plans_from_cache.find { |plan| plan.id == plan_id }.name
+    SubscriptionPlan.subscription_plans_from_cache.find { |plan| plan.id == plan_id }.name
   end
 
   def fsm_enabled?

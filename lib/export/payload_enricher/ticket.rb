@@ -25,7 +25,6 @@ class Export::PayloadEnricher::Ticket < Export::PayloadEnricher::Base
   end
 
   def latest_ticket_change?
-    return true unless Account.current.scheduled_export_fix_enabled?
     action_epoch = @sqs_msg["action_epoch"]
     return true if Time.now.utc >= Time.at(action_epoch).utc + LAG_TIME_DIFFERENCE
     fetch_object

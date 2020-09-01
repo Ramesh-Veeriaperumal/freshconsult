@@ -10287,13 +10287,36 @@
           "plans"
         ],
         "description": "Endpoint to list all Freshdesk plans and its pricing details",
-        "summary": "Endpoint to list all Freshdesk plans and its pricing details",
+        "summary": "List all",
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/plans"
             }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/plans/id": {
+      "get": {
+        "tags": [
+          "plans"
+        ],
+        "description": "Endpoint to fetch a Freshdesk plan and its pricing details",
+        "summary": "Fetch plan",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/fetch_plan"
+            }
+          },
+          "404": {
+            "description": "Not found"
           },
           "403": {
             "description": "Access denied"
@@ -27770,6 +27793,39 @@
                     "cost_per_agent": {
                       "type": "string"
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fetch_plan": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "currency": {
+              "type": "string"
+            },
+            "pricings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "billing_cycle": {
+                    "type": "string"
+                  },
+                  "cost_per_agent": {
+                    "type": "string"
                   }
                 }
               }

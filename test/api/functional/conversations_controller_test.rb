@@ -1188,6 +1188,7 @@ class ConversationsControllerTest < ActionController::TestCase
         latest_note.user.twitter_id = 'support'
         match_json(v2_reply_note_pattern(params_hash, latest_note))
         match_json(v2_reply_note_pattern({}, latest_note))
+        assert_equal nil, latest_note.user.twitter_requester_handle_id
       end
     end
   ensure
@@ -1580,7 +1581,7 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(result_pattern)
   end
 
-  def test_ticket_conversation_with_restricted_tweet_content
+  def test_ticket_conversations_with_restricted_tweet_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
     CustomRequestStore.store[:private_api_request] = false
     @twitter_handle = get_twitter_handle
@@ -1602,7 +1603,7 @@ class ConversationsControllerTest < ActionController::TestCase
     CustomRequestStore.store[:private_api_request] = true
   end
 
-  def test_ticket_conversation_with_restricted_twitter_dm_content
+  def test_ticket_conversations_with_restricted_twitter_dm_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
     CustomRequestStore.store[:private_api_request] = false
     @twitter_handle = get_twitter_handle
@@ -1624,7 +1625,7 @@ class ConversationsControllerTest < ActionController::TestCase
     CustomRequestStore.store[:private_api_request] = true
   end
 
-  def test_ticket_conversation_with_unrestricted_tweet_content
+  def test_ticket_conversations_with_unrestricted_tweet_content
     CustomRequestStore.store[:private_api_request] = false
     @twitter_handle = get_twitter_handle
     @default_stream = @twitter_handle.default_stream
@@ -1644,7 +1645,7 @@ class ConversationsControllerTest < ActionController::TestCase
     CustomRequestStore.store[:private_api_request] = true
   end
 
-  def test_ticket_conversation_with_unrestricted_twitter_dm_content
+  def test_ticket_conversations_with_unrestricted_twitter_dm_content
     CustomRequestStore.store[:private_api_request] = false
     @twitter_handle = get_twitter_handle
     @default_stream = @twitter_handle.default_stream
@@ -1661,6 +1662,31 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(result_pattern)
   ensure
     ticket.destroy
+    CustomRequestStore.store[:private_api_request] = true
+  end
+
+  def test_ticket_conversations_with_restricted_dm_content_with_requester_handle_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    User.any_instance.stubs(:twitter_requester_handle_id).returns(twitter_requester_handle_id)
+    CustomRequestStore.store[:private_api_request] = false
+    @twitter_handle = get_twitter_handle
+    @default_stream = @twitter_handle.default_stream
+    ticket = create_twitter_ticket(tweet_type: 'dm')
+    with_twitter_update_stubbed do
+      create_twitter_note(ticket, 'dm')
+    end
+    get :ticket_conversations, controller_params(id: ticket.display_id)
+    result_pattern = []
+    ticket.notes.visible.exclude_source('meta').each do |n|
+      result_pattern << index_note_pattern(n)
+    end
+    assert_response 200
+    match_json(result_pattern)
+  ensure
+    ticket.destroy
+    User.any_instance.unstub(:twitter_requester_handle_id)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
     CustomRequestStore.store[:private_api_request] = true
   end
 

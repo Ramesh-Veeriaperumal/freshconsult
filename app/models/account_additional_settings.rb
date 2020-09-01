@@ -285,7 +285,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   def enable_freshdesk_freshsales_bundle
     metric = Account.current.conversion_metric
     freshdesk_brand_websites = GrowthHackConfig[:freshdesk_brand_websites]
-    if Account.current.launched?(:freshdesk_freshsales_bundle) && metric.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] && freshdesk_brand_websites.include?(metric.referrer) || metric.referrer.blank?) || freshdesk_brand_websites.include?(metric.current_session_url))
+    if metric.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] && freshdesk_brand_websites.include?(metric.referrer) || metric.referrer.blank?) || freshdesk_brand_websites.include?(metric.current_session_url))
       self.additional_settings ||= {}
       self.additional_settings[:freshdesk_freshsales_bundle] = true
     end
