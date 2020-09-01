@@ -128,8 +128,8 @@ class SAAS::SubscriptionEventActions
       Rails.logger.debug "List of features to reset for account #{account.id} :: #{features_list.inspect}"
       Rails.logger.debug "account add ons :: #{account_add_ons}"
       features_list.each do |feature|
-        unless(plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature))
-          
+        unless (plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature))
+
           account.reset_feature(feature)
           reset_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
         end
@@ -158,7 +158,7 @@ class SAAS::SubscriptionEventActions
     end
 
     def add_settings_dependent_on_feature(feature)
-      AccountSettings::FeatureToSettingsMapping[key].each do |setting|
+      AccountSettings::FeatureToSettingsMapping[feature].each do |setting|
         account.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
       end
     end
