@@ -375,15 +375,15 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     post :fetch, param
     assert_response 200
     assert response_mock.verify
-    data = form_fields_result
-    match_json data.delete('Lead')
+    data = form_fields_result_for_freshworkscrm
+    match_json data
   ensure
     IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
   end
 
   def test_freshworkscrm_fetch_form_fields_with_nested_emails
     app_id = get_installed_app('freshworkscrm').id
-    response = fetch_nested_emails_response
+    response = fetch_nested_emails_response_for_freshworkscrm
     response_mock = Minitest::Mock.new
     response_mock.expect :body, response
     response_mock.expect :status, 200
@@ -393,8 +393,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     post :fetch, param
     assert_response 200
     assert response_mock.verify
-    data = nested_emails_form_fields_result
-    match_json data.delete('Lead')
+    data = nested_emails_form_fields_result_for_freshworkscrm
+    match_json data
   ensure
     IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
   end

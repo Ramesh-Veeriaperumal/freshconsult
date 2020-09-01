@@ -166,18 +166,17 @@ module InstalledApplicationsTestHelper
   def freshworkscrm_config
     { inputs:
       {
-        "contact_fields"=> "display_name,mobile_number,contact_status_id,has_authority,do_not_disturb,time_zone,address,city,state,zipcode",
-        "account_fields"=> "name,parent_sales_account_id,owner_id,number_of_employees,annual_revenue,website,phone,industry_type_id,business_type_id,territory_id",
-        "contact_labels" => "Full name,Mobile,Status,Has authority,Do not disturb,Time zone,Address,City,State,Zipcode",
-        "account_labels"=> "Name,Parent account,Owner,Number of employees,Annual revenue,Website,Phone,Industry type,Business type,Territory",
-        "deal_view" => "1",
-        "domain" => "https://sample.freshsales.io",
-        "auth_token" => "dTetw4iu9JbVBsBfxeJ6xQ",
-        "deal_fields" => "name,amount,deal_stage_id,owner_id,deal_pipeline_id,deal_reason_id,sales_account_id,contacts,deal_product_id,deal_payment_status_id",
-        "deal_labels" => "Name,Deal value,Deal stage,Owner,Deal pipeline,Lost reason,Account name,Related contacts,Product,Payment status",
-        "agent_settings" => "0"
-      }
-    }
+        'contact_fields' => 'display_name,mobile_number,contact_status_id,has_authority,do_not_disturb,time_zone,address,city,state,zipcode',
+        'account_fields' => 'name,parent_sales_account_id,owner_id,number_of_employees,annual_revenue,website,phone,industry_type_id,business_type_id,territory_id',
+        'contact_labels' => 'Full name,Mobile,Status,Has authority,Do not disturb,Time zone,Address,City,State,Zipcode',
+        'account_labels' => 'Name,Parent account,Owner,Number of employees,Annual revenue,Website,Phone,Industry type,Business type,Territory',
+        'deal_view' => '1',
+        'domain' => 'https://sample.freshworks.com/crm/sales',
+        'auth_token' => 'dTetw4iu9JbVBsBfxeJ6xQ',
+        'deal_fields' => 'name,amount,deal_stage_id,owner_id,deal_pipeline_id,deal_reason_id,sales_account_id,contacts,deal_product_id,deal_payment_status_id',
+        'deal_labels' => 'Name,Deal value,Deal stage,Owner,Deal pipeline,Lost reason,Account name,Related contacts,Product,Payment status',
+        'agent_settings' => '0'
+      } }
   end
 
   def create_integ_user_credentials(options = {})
@@ -233,6 +232,42 @@ module InstalledApplicationsTestHelper
       response_hash["records"].push(hash)
     end
     response_hash
+  end
+
+  def form_fields_result_for_freshworkscrm
+    {
+      'Contact' => {
+        'id' => 2_000_022_765,
+        'name' => 'DefaultContactForm',
+        'field_class' => 'Contact',
+        'fields' => [{
+          'id' => 'ead353bc-031b-4012-86b1-cd055f807c99',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => '7e0b636d',
+            'name' => 'first_name',
+            'label' => 'Firstname',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'field_options' => { 'show_in_import' => true }
+          }, {
+            'id' => '7e0basd636d',
+            'name' => 'emails',
+            'label' => 'Emails',
+            'type' => 'email',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'visible' => 'true',
+            'field_options' => { 'show_in_import' => true }
+          }],
+          'form_id' => 2_000_022_765,
+          'field_class' => 'Contact'
+        }]
+      }
+    }
   end
 
   def form_fields_result
@@ -295,6 +330,52 @@ module InstalledApplicationsTestHelper
             'field_options' => { 'show_in_import' => true }
           }],
           'form_id' => 2_000_022_765,
+          'field_class' => 'Contact'
+        }]
+      }
+    }
+  end
+
+  def nested_emails_form_fields_result_for_freshworkscrm
+    {
+      'Contact' => {
+        'id' => 2_000_022_746,
+        'name' => 'DefaultContactForm',
+        'field_class' => 'Contact',
+        'fields' => [{
+          'id' => '3d16cb19',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => 'aae7d8ed',
+            'name' => 'telephone_numbers',
+            'label' => 'TelephoneNumbers',
+            'fields' => [{
+              'id' => 'aeda1254',
+              'name' => 'emails',
+              'type' => 'email',
+              'label' => 'Emails',
+              'fields' => [],
+              'form_id' => 2_000_022_746,
+              'field_class' => 'Contact',
+              'visible' => 'true',
+              'field_options' => { 'show_in_import' => true }
+            }, {
+              'id' => 'a65154ae',
+              'name' => 'work_number',
+              'type' => 'phone_number',
+              'label' => 'Work',
+              'fields' => [],
+              'form_id' => 2_000_022_746,
+              'field_class' => 'Contact',
+              'visible' => 'true',
+              'field_options' => { 'show_in_import' => true }
+            }],
+            'form_id' => 2_000_022_746,
+            'field_class' => 'Contact',
+            'type' => 'section'
+          }],
+          'form_id' => 2_000_022_746,
           'field_class' => 'Contact'
         }]
       }
@@ -404,6 +485,21 @@ module InstalledApplicationsTestHelper
                   \"field_class\":\"Lead\",\"type\":\"section\"}],
                   \"form_id\":2000022747,\"field_class\":\"Lead\"}]},
                   {\"id\":2000022746,\"name\":\"DefaultContactForm\",
+                  \"field_class\":\"Contact\",\"fields\":[{\"id\":\"3d16cb19\",
+                  \"name\":\"basic_information\",\"label\":\"Basicinformation\",
+                  \"fields\":[{\"id\":\"aae7d8ed\",\"name\":\"telephone_numbers\",
+                  \"label\":\"TelephoneNumbers\",\"fields\":[{\"id\":\"aeda1254\",\"name\":\"emails\",\"type\":\"email\",
+                  \"label\":\"Emails\",\"fields\":[],\"form_id\":2000022746,\"visible\":\"true\",
+                  \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                  {\"id\":\"a65154ae\",\"name\":\"work_number\",\"type\":\"phone_number\",
+                  \"label\":\"Work\",\"fields\":[],\"form_id\":2000022746,\"visible\":\"true\",
+                  \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}}],\"form_id\":2000022746,
+                  \"field_class\":\"Contact\",\"type\":\"section\"}],
+                  \"form_id\":2000022746,\"field_class\":\"Contact\"}]}]}"
+    end
+
+    def fetch_nested_emails_response_for_freshworkscrm
+      "{\"forms\":[{\"id\":2000022746,\"name\":\"DefaultContactForm\",
                   \"field_class\":\"Contact\",\"fields\":[{\"id\":\"3d16cb19\",
                   \"name\":\"basic_information\",\"label\":\"Basicinformation\",
                   \"fields\":[{\"id\":\"aae7d8ed\",\"name\":\"telephone_numbers\",
