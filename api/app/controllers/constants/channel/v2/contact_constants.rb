@@ -7,5 +7,5 @@ module Channel::V2::ContactConstants
                         last_seen_at delta].freeze
 
   CHANNEL_CREATE_FIELDS = CHANNEL_UPDATE_FIELDS = (ContactConstants::CONTACT_FIELDS + PROTECTED_FIELDS +
-                            %w[deleted import_id facebook_id preferences parent_id twitter_profile_status twitter_followers_count]).freeze
+                            %w[deleted import_id facebook_id preferences parent_id twitter_profile_status twitter_followers_count twitter_requester_handle_id]).freeze
 end

@@ -1067,8 +1067,6 @@ ms:
         only_agents: Ejen
         remote_login_url_info: >-
           Ini adalah URL yang mana Freshdesk akan mengarahkan pengguna untuk pengesahan apabila mereka cuba mengakses Freshdesk.
-        customer_portal_ssl_warning: >-
-          Oleh kerana URL helpdesk khusus dikonfigurasikan untuk akaun anda, anda akan diarahkan ke 
         saml_cert_fingerprint: Cap jari Sijil Keselamatan
         success_message: >-
           Permintaan untuk sijil SSL Custom telah dimulakan dan akan diproses tidak lama lagi. Anda akan menerima e-mel pengesahan daripada pembekal kami sebelum diluluskan. Sila semak peti masuk anda untuk kemas kini.
@@ -2146,6 +2144,7 @@ ms:
         all_tickets: Semua Tiket
         due_today: Tickets Due Today
         resolved: Tiket yang diselesaikan
+        visible_and_resolved: Tiket yang diselesaikan
       friendly_status:
         customer_responded: Menjawab Pelanggan
         elapsed: Respons Respons Due
@@ -3740,6 +3739,9 @@ ms:
       created_at: Dibuat
       skill: Kemahiran
       description: Penerangan
+    field_service_fields:
+      cf_fsm_contact_name: Hubungi
+      cf_fsm_phone_number: Nombor telefon
     formfield_props:
       behavior: Kelakuan
       customer_edit: Pelanggan boleh mengedit
@@ -5719,6 +5721,7 @@ ms:
       sign_up_text: 'Mula berbual dengan pelanggan di tapak web, portal atau apl mudah alih anda.'
       enable_chat_in_portal_info: >-
         Jadikannya mudah bagi pelanggan anda untuk bersembang dengan anda, apabila mereka mendarat di portal sokongan anda.
+      topics_title: Topik
       app_id_placeholder: 'Contohnya: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Untuk menukar perbualan Chatting baru ke tiket, sila pergi ke halaman <a href='%{url}' target='_blank'>ini</a>, salin dan tampal butiran yang disenaraikan di bawah. Jika anda memerlukan lebih banyak bantuan, silakan lihat <a href='%{article_url}' target='_blank'>artikel ini</a>.

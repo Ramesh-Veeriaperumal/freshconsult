@@ -145,7 +145,7 @@
         "domains": {
           "_podeuwest1": "podeuwest1route.freshdesk.com",
           "_podeucentral1": "podeucentral1route.freshdesk.com",
-          "_podapsoutheast2": "podapsoutheast2route.freshdesk.com",
+          "_podapsoutheast2": "edge-aus-lb.freshdesk.com",
           "_podapsouth1": "podapsouth1route.freshdesk.com"
         },
         "hosted_zone": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:oCikbjANdCwFwoP7jU+kgkFaCnBkOyuO:gPbUuKwB9TKCP5LObhdX73f3S4azrLz7LTYtQUdl]"

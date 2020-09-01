@@ -1,6 +1,7 @@
 module Freshchat
   module AgentUtil
     include Freshchat::JwtAuthentication
+    include Freshchat::Util
 
     SUCCESS_CODES = (200..204).freeze
     ACTION_MAPPINGS = {
@@ -30,6 +31,27 @@ module Freshchat
           Rails.logger.info "Freshchat Agent Request:: #{request.inspect} and connection #{connection.url_prefix.inspect} for Account #{account.id} and for Agent #{@agent.id}"
         end
       end
+    end
+
+    def fetch_freshchat_agent_emails
+      agent_emails = []
+      agents = fetch_freshchat_agents
+      agents.deep_symbolize_keys!
+      loop do
+        agent_emails += agents[:agents].map { |agent_data| agent_data[:email] }
+        break if agents[:links][:next_page].nil?
+
+        agents = fetch_freshchat_agents(agents[:links][:next_page][:href])
+        agents.deep_symbolize_keys!
+      end
+
+      agent_emails
+    end
+
+    def fetch_freshchat_agents(url = nil)
+      fch_url = url.nil? ? "#{agent_host_url}?sort_by=email&items_per_page=30&sort_order=asc&page=1" : "https://#{freshchat_domain}#{url}"
+      response = freshchat_request(fch_url)
+      response.body
     end
 
     private

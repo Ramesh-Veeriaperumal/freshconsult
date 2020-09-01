@@ -1067,8 +1067,6 @@ is:
         only_agents: Starfsmenn
         remote_login_url_info: >-
           Þetta er slóðin sem Freshdesk mun beina notendum til staðfestingar þegar þeir reyna að komast í Freshdesk.
-        customer_portal_ssl_warning: >-
-          Þar sem sérsniðin veffang þjónustusíðunnar er stillt fyrir reikninginn þinn verður þér vísað þangað 
         saml_cert_fingerprint: Fingrafar öryggisvottorðs
         success_message: >-
           Beiðni þín um sérsniðið SSL vottorð er hafin og verður afgreidd innan skamms. Þú munt fá staðfestingu í tölvupósti frá veitunni okkar áður en þú samþykkir það. Vinsamlegast athugaðu uppfærslur í pósthólfinu þínu.
@@ -2146,6 +2144,7 @@ is:
         all_tickets: Allir miðar
         due_today: Miðar með skiladag í dag
         resolved: Leystir miðar
+        visible_and_resolved: Leystir miðar
       friendly_status:
         customer_responded: Viðskiptavinur svaraði
         elapsed: Svar fyrir
@@ -3750,6 +3749,9 @@ is:
       created_at: Búið til
       skill: Hæfni
       description: Lýsing
+    field_service_fields:
+      cf_fsm_contact_name: Tengiliður
+      cf_fsm_phone_number: Símanúmer
     formfield_props:
       behavior: Hegðun
       customer_edit: Viðskiptavinur getur breytt
@@ -5729,6 +5731,7 @@ is:
       sign_up_text: 'Byrjaðu að spjalla við viðskiptavini á vefsíðu þinni, vefgáttinni eða farsímaforritinu.'
       enable_chat_in_portal_info: >-
         Gerðu viðskiptavinum þínum auðvelt að spjalla við þig þegar þeir lenda á stuðningsgáttinni þinni.
+      topics_title: Efni
       app_id_placeholder: 'Td: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Til að umbreyta Freshchat samtölum í miða, vinsamlegast farðu á þessa <a href='%{url}' target='_blank'>síðu</a>, afritaðu og límdu upplýsingarnar hér fyrir neðan. Ef þú þarft meiri hjálp, vinsamlegast kíktu á <a href='%{article_url}' target='_blank'>þessa grein</a>.

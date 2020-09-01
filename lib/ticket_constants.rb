@@ -33,6 +33,8 @@ module TicketConstants
     receiver.extend ClassMethods
   end
 
+  FSM_DATE_TIME_FIELDS = { start_time: 'cf_fsm_appointment_start_time', end_time: 'cf_fsm_appointment_end_time' }.freeze
+
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
 
   SERVICE_TASK_NAME = "Service Task"

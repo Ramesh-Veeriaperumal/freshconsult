@@ -325,12 +325,15 @@ class ApplicationController < ActionController::Base
       unless @falcon_redirection_check.present? || OLD_UI_PATHS_TO_IGNORE.any? { |path| request.path.include?(path) }
         FalconRedirection.log_referer(falcon_redirection_options)
       end
+    rescue Exception => e
+      Rails.logger.error "Exception while logging referer :: #{e.message}"
+      NewRelic::Agent.notice_error(e, description: "Exception while logging referer :: Accept Header #{request.headers['Accept']} ")
     end
 
     def falcon_redirection_options
       {
         request_referer: request.referer,
-        not_html: !request.format.html?,
+        not_html: !request.format.try(:html?),
         path_info: request.path_info,
         is_ajax: request.xhr?,
         env_path: env['PATH_INFO'],

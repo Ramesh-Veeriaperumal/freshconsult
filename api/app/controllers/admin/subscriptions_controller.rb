@@ -1,7 +1,7 @@
 class Admin::SubscriptionsController < ApiApplicationController
   include HelperConcern
-  decorate_views(decorate_objects: [:plans], decorate_object: [:estimate, :update_payment])
-  before_filter :validate_query_params, only: [:plans, :estimate, :estimate_feature_loss]
+  decorate_views(decorate_objects: [:plans], decorate_object: [:estimate, :update_payment, :fetch_plan])
+  before_filter :validate_query_params, only: [:plans, :estimate, :estimate_feature_loss, :fetch_plan]
   before_filter -> { validate_delegator(nil, cname_params) }, only: [:update]
 
   ADMIN_SUBSCRIPTION_CONSTANTS_CLASS = 'AdminSubscriptionConstants'.freeze
@@ -9,6 +9,11 @@ class Admin::SubscriptionsController < ApiApplicationController
   def plans
     @items = SubscriptionPlan.cached_current_plans
     response.api_root_key = :plans
+  end
+
+  def fetch_plan
+    response.api_root_key = :plans
+    head 404 if @item.nil?
   end
 
   def update
@@ -68,7 +73,11 @@ class Admin::SubscriptionsController < ApiApplicationController
     end
 
     def load_object
-      @item = current_account.subscription
+      @item = if action_name.to_sym == :fetch_plan
+                SubscriptionPlan.subscription_plans_from_cache.find { |plan| plan.id == params[:id].to_i }
+              else
+                current_account.subscription
+              end
     end
 
     def fetch_agent_limit
@@ -83,12 +92,12 @@ class Admin::SubscriptionsController < ApiApplicationController
       options = {}
       if show? && sideload_options.present?
         options[:update_payment_site] = @item.fetch_update_payment_site if sideload_options.include?('update_payment_site')
-      elsif action_name.to_sym == :plans
+      elsif [:plans, :fetch_plan].include?(action_name.to_sym)
         currency = params[:currency].blank? ? current_account.subscription.currency
           : Subscription::Currency.currency_by_name(params[:currency]).first
         options[:currency] = currency.name
         options[:plans_to_agent_cost] =
-          Billing::Subscription.current_plans_costs_per_agent_from_cache(currency)
+          Billing::Subscription.all_plans_costs_per_agent_from_cache(currency)
       elsif action_name.to_sym == :estimate
         options.merge!(fetch_estimate_details_from_chargebee)
       end

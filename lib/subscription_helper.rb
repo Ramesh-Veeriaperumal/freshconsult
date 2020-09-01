@@ -70,8 +70,8 @@ module SubscriptionHelper
     Scheduler::PostMessage.perform_async(payload: payload)
   end
 
-  def product_loss_in_new_plan?(account, plan)
-    account.has_feature?(:unlimited_multi_product) && !plan.unlimited_multi_product? &&
+  def product_loss_in_new_plan?(account, plan, account_addon_features)
+    account.has_feature?(:unlimited_multi_product) && !plan.unlimited_multi_product? && account_addon_features.exclude?(:unlimited_multi_product) &&
       plan.multi_product? && account.products.count > AccountConstants::MULTI_PRODUCT_LIMIT
   end
 end

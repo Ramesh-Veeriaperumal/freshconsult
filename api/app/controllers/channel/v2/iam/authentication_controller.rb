@@ -2,12 +2,27 @@ module Channel::V2::Iam
   class AuthenticationController < ApiApplicationController
     include Iam::AuthToken
     include HelperConcern
+    include ChannelAuthentication
 
     skip_before_filter :load_object, :check_privilege, :ensure_proper_protocol
+
+    skip_before_filter :ensure_proper_fd_domain, only: [:authenticate]
 
     before_filter :sanitize_params, :validate_body_params, :validate_user, only: [:iam_authenticate_token]
 
     def authenticate
+      # if channel auth token exists in headers, verify the token and return x-fwi-client-token and x-fwi-client-id in headers
+      channel_token = request.headers['X-Channel-Auth']
+      if channel_token && channel_api?
+        # verify_channel_client_token calls render_request_error internally if token validation fails.
+        source = verify_channel_client_token(channel_token)
+        if source.present?
+          response.headers['x-fwi-client-token'] = construct_channel_jwt_with_bearer(source)
+          response.headers['x-fwi-client-id'] = source
+        end
+        return
+      end
+
       fetch_current_user
       return render_request_error(:invalid_credentials, 401) if @current_user.blank?
 
@@ -46,6 +61,12 @@ module Channel::V2::Iam
         return false if request.params['url'].blank?
 
         request.params['url'].starts_with?('/api/_/')
+      end
+
+      def channel_api?
+        return false if request.params['url'].blank?
+
+        request.params['url'].starts_with?('/api/channel/')
       end
 
       def validate_user

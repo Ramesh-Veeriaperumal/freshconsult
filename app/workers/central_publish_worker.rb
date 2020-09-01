@@ -85,4 +85,12 @@ module CentralPublishWorker
   class SolutionArticleWorker < CentralPublisher::Worker
     sidekiq_options queue: 'solution_article_central_publish', retry: 5, dead: true, failures: :exhausted
   end
+
+  class ArchiveTicketWorker < CentralPublisher::Worker
+    def scoper
+      Account.current.archive_tickets.unscope_progress
+    end
+
+    sidekiq_options queue: 'archive_ticket_central_publish', retry: 5, dead: true, failures: :exhausted
+  end
 end
