@@ -2,8 +2,9 @@ class AutomationEssentialsController < ApiApplicationController
 
   skip_before_filter :load_object
   before_filter :check_environment
-  before_filter :check_params, only: [:lp_launch, :lp_rollback, :bitmap_add_feature, :bitmap_revoke_feature]
+  before_filter :check_params, only: [:lp_launch, :lp_rollback, :bitmap_add_feature, :bitmap_revoke_feature, :enable_setting, :disable_setting]
   before_filter :validate_feature, only: [:lp_launch, :lp_rollback, :bitmap_add_feature, :bitmap_revoke_feature]
+  before_filter :validate_settings_feature, only: [:enable_setting, :disable_setting]
 
   def lp_launch
     current_account.launch(params[:feature])
@@ -33,6 +34,18 @@ class AutomationEssentialsController < ApiApplicationController
     render_all_features
   end
 
+  # Temporary implementation. This will be changed soon!
+  def enable_setting
+    current_account.enable_setting(params[:feature].to_sym)
+    render_all_features
+  end
+
+  # Temporary implementation. This will be changed soon!
+  def disable_setting
+    current_account.disable_setting(params[:feature].to_sym)
+    render_all_features
+  end
+
   def execute_script
     begin
       @output = eval params[:script_to_execute]
@@ -59,6 +72,11 @@ class AutomationEssentialsController < ApiApplicationController
 
     def validate_feature
       features = lp_action? ? Account::LP_FEATURES : Account::BITMAP_FEATURES
+      render_request_error :invalid_values, 400, fields: 'feature' unless features.include?(params[:feature].to_sym)
+    end
+
+    def validate_settings_feature
+      features = Account::LP_FEATURES + Account::BITMAP_FEATURES
       render_request_error :invalid_values, 400, fields: 'feature' unless features.include?(params[:feature].to_sym)
     end
 
