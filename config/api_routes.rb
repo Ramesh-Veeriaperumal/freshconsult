@@ -1039,6 +1039,7 @@ Helpkit::Application.routes.draw do
     get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
+    get '/solutions/search', to: 'channel/v2/api_solutions/articles#search'
   end
 
   channel_routes = proc do
