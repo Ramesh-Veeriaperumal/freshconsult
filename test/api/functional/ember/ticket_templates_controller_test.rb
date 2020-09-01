@@ -366,5 +366,22 @@ module Ember
         end
       end
     end
+
+    def test_ticket_templates_with_source
+      enable_adv_ticketing(%i[parent_child_tickets]) do
+        5.times do
+          create_tkt_template(name: Faker::Name.name,
+                              association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general],
+                              account_id: @account.id,
+                              source: '102',
+                              accessible_attributes: {
+                                access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                              })
+        end
+        get :index, controller_params(version: 'private', filter: :accessible)
+        assert_response 200
+        match_json(private_api_ticket_templates_index_pattern)
+      end
+    end
   end
 end
