@@ -8,7 +8,7 @@ module Channel::V2
     include CentralLib::CentralResyncConstants
     include Redis::OthersRedis
 
-    SOURCE = 'silkroad'.freeze
+    SOURCE = 'analytics'.freeze
 
     def setup
       super
