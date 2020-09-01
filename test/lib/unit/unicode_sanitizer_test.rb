@@ -15,7 +15,6 @@ class UnicodeSanitizerTest < ActionView::TestCase
     create_test_account
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
-    @account.launch(:encode_emoji)
     create_ticket_with_attachments
   end
 
