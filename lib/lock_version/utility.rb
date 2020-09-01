@@ -30,6 +30,10 @@ module LockVersion::Utility
 
     def update_on_lock
       retry_changes = attribute_changes # override attribute_changes method in the concerned model and that should return serialised and non-serialised changes
+      # This acquires the lock on spectfic row, So if the record is change during the 'reapply_values' then the
+      # update will fail again with stale object error, So in that case we have to do reapply and update in same transaction.
+      # If we want the transaction should always be successful then we have to follow the steps from this confluence
+      # https://confluence.freshworks.com/display/FDCORE/Optimistic+locking+and+StaleObjectError+handling
       lock!
       reapply_values(retry_changes) # override reapply_values method in the concerned model
     end

@@ -385,7 +385,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     attributes_was, attributes_is = column_name ? [schema_less_was["#{column_name}"], attributes["#{column_name}"]] : [schema_less_was, attributes]
     change_hash = {}
     if attributes_was.present? && attributes_is.present? && attributes_was != attributes_is
-      new_hash = attributes_was.merge(attributes_is)
+      # We should not consider the locking_column changes as attribute changes
+      new_hash = attributes_was.merge(attributes_is).tap { |hash_body| hash_body.delete(self.class.locking_column) }
       new_hash.keys.each do |key|
         change_hash[key] = [attributes_was[key], attributes_is[key]] if attributes_was[key] != attributes_is[key]
       end
