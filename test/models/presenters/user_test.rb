@@ -168,7 +168,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 'contact_update', job['args'][0]
     assert_includes job['args'][0], job['args'][1]['event']
     assert_equal [nil, company.id], job['args'][1]['model_changes']['company_id']
-    assert_equal true, job['args'][1]['event_info']['app_update']
+    assert_equal false, job['args'][1]['event_info']['app_update']
 
     # add other user_companies
     company = create_company
@@ -186,7 +186,6 @@ class UserTest < ActiveSupport::TestCase
     # remove default company
     CentralPublishWorker::UserWorker.jobs.clear
     deleted_company_id = default_user_company.id
-    p "deleted_company_id :: #{deleted_company_id} :: #{default_user_company.inspect}"
     default_user_company.destroy
     payload = user.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_user_pattern(user))
@@ -196,14 +195,17 @@ class UserTest < ActiveSupport::TestCase
       company_id_changes = central_job['args'][1]['model_changes']['company_id']
       customer_id_changes = central_job['args'][1]['model_changes']['customer_id']
       assert_equal 'contact_update', central_job['args'][0]
-      assert_includes job['args'][0], central_job['args'][1]['event']
+      assert_includes central_job['args'][0], central_job['args'][1]['event']
       if company_id_changes.present? && company_id_changes[1].nil?
         assert_equal [default_user_company.company_id, nil], central_job['args'][1]['model_changes']['company_id']
+        assert_equal false, central_job['args'][1]['event_info']['app_update']
       elsif company_id_changes.present? && company_id_changes[0].nil? # other company to default company
         assert_equal [nil, other_user_company.company_id], central_job['args'][1]['model_changes']['company_id']
         assert_equal [other_user_company.company_id], central_job['args'][1]['model_changes']['other_company_ids']['removed']
+        assert_equal false, central_job['args'][1]['event_info']['app_update']
       elsif customer_id_changes.present?
         assert_equal [nil, other_user_company.company_id], central_job['args'][1]['model_changes']['customer_id']
+        assert_equal true, central_job['args'][1]['event_info']['app_update']
       end
     end
 
