@@ -141,7 +141,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   def update_ad_rule(ad_post_args)
     ad_post_args = ad_post_args.symbolize_keys
     ad_stream = @facebook_page.ad_post_stream
-    if ad_post_args[:import_ad_posts].to_bool
+    if ad_post_args[:import_ad_posts].to_s.to_bool
       begin
         ad_stream = ad_stream.facebook_ticket_rules.present? ? update_ad_ticket_rules(ad_post_args, ad_stream) : build_ad_ticket_rule(ad_post_args, ad_stream)
       rescue StandardError => error

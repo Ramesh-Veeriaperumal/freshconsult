@@ -24,7 +24,8 @@ window.App.Admin = window.App.Admin || {};
         $enable_threading_radio = $doc.find('#same_ticket_threading'),
         $disable_threading_radio = $doc.find('#new_ticket_threading'),
         $keyword_container = $doc.find('.keyword_container'),
-        $threading_container = $doc.find('.threading_container');
+        $threading_container = $doc.find('.threading_container'),
+        $ad_posts_import_ad_posts_checkbox = $doc.find('#ad_posts_import_ad_posts');
 
       const CURRENT_RULE = $doc.find('#social_ticket_rule__rule_type').val();
 
@@ -86,6 +87,12 @@ window.App.Admin = window.App.Admin || {};
         $('.keyword_wrapper').fadeOut('slow', 'linear');
       }
 
+      if($ad_posts_import_ad_posts_checkbox.prop('checked')) {
+        $('#ad_post_filter_mentions').fadeIn('slow','linear');
+      } else {
+        $('#ad_post_filter_mentions').fadeOut('slow','linear');
+      }
+
     },
 
     bindEvents: function () {
@@ -140,6 +147,14 @@ window.App.Admin = window.App.Admin || {};
         } else {
           $import_visitor_post_checkbox.prop('disabled', false);
           $keyboard_wrapper.fadeOut('slow', 'linear');
+        }
+      });
+
+      $doc.on('change.fbAdminEvents', '#ad_posts_import_ad_posts', function () {
+        if(this.checked) {
+          $('#ad_post_filter_mentions').fadeIn('slow','linear');
+        } else {
+          $('#ad_post_filter_mentions').fadeOut('slow','linear');
         }
       });
 

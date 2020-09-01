@@ -27,9 +27,11 @@
                   &nbsp;<%= t(".fb_thread_same_ticket") %>
                 </label>
                 <div class="threading_container pl20">
-                  <label>
-                    <%= check_box_tag 'same_ticket_filter_mentions', true, ticket_rule.broad? && ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
-                  </label>
+                  <% if Account.current.filter_facebook_mentions_enabled? %>
+                    <label>
+                      <%= check_box_tag 'same_ticket_filter_mentions', true, ticket_rule.broad? && ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
+                    </label>
+                  <% end %>
                 </div>
                 <label id="new_ticket_threading_container">
                   <input type="radio" id="new_ticket_threading" name="threading" class="threading">
@@ -44,9 +46,11 @@
                   <%= text_field_tag "social_ticket_rule[][includes]",
                     ticket_rule.include_keys,
                     :class => 'text social_ticket_rule_includes form-control span12 pl20' %>
-                  <label>
-                    <%= check_box_tag 'new_ticket_filter_mentions', true, ticket_rule.optimal? && ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
-                  </label>
+                  <% if Account.current.filter_facebook_mentions_enabled? %>
+                    <label>
+                      <%= check_box_tag 'new_ticket_filter_mentions', true, ticket_rule.optimal? && ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
+                    </label>
+                  <% end %>
                 </div>
               </div>
 
@@ -66,8 +70,8 @@
           <% ad_posts_filter_mentions = ad_post_ticket_rule.present? ? ad_post_ticket_rule.filter_data[:filter_mentions] : false %>
             <div class="mb15 bold-text"><%= t(".ad_posts_label") %></div>
             <label>
-              <%= hidden_field_tag 'ad_posts[import_ad_posts]]', "false" %>
-              <%= check_box_tag 'ad_posts[import_ad_posts]', "true", is_ad_post_enabled %>
+
+              <%= check_box_tag 'ad_posts[import_ad_posts]', true, is_ad_post_enabled %>
               <span id="import_visitor_posts_text">
                 &nbsp;<%= t(".convert_ad_post_to_ticket") %>
               </span>
@@ -77,11 +81,12 @@
               <%= t(".convert_ad_post_helptext") %>
             </label>
 
-            <label>
-              <%= check_box_tag 'ad_posts_filter_mentions', true, ad_posts_filter_mentions %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
-            </label>
-
             <div class="control-group mt10">
+              <% if Account.current.filter_facebook_mentions_enabled? %>
+                <label id="ad_post_filter_mentions">
+                  <%= check_box_tag 'ad_posts_filter_mentions', true, ad_posts_filter_mentions %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
+                </label>
+              <% end %>
               <label class="mt10 pl5">
                 <%= t('.assign_to_gp')%>
                 <%= select_tag "ad_posts[group_id]", options_for_select(current_account.support_agent_groups_from_cache.collect{ |c| [c.name, c.id]}.insert(0, '...'), ad_post_group_id), {:class => "select2-container span4 ml10"} %>
