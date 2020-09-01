@@ -1,8 +1,10 @@
 require_relative '../api/unit_test_helper'
+require_relative '../api/helpers/email_mailbox_test_helper.rb'
 require 'faker'
 
 class MailboxValidatorTest < ActionView::TestCase
   include MailboxValidator
+  include EmailMailboxTestHelper
 
   def construct_args
     @args = {
@@ -226,5 +228,173 @@ class MailboxValidatorTest < ActionView::TestCase
     AwsWrapper::SqsV2.stubs(:send_message).returns(message_id: '1')
   ensure
     AwsWrapper::SqsV2.unstub(:send_message)
+  end
+
+  def test_verify_smtp_mailbox_with_tls_port
+    mailbox = create_email_config(
+        smtp_mailbox_attributes: {
+            smtp_authentication: 'plain'
+        }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).returns(true)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], true
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_with_ssl_port
+    mailbox = create_email_config(
+        smtp_mailbox_attributes: {
+            smtp_authentication: 'plain',
+            smtp_port: 465
+        }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).returns(true)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], true
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_ssl)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_imap_mailbox
+    mailbox = create_email_config(
+        imap_mailbox_attributes: {
+            imap_authentication: 'plain'
+        }
+    )
+    Net::IMAP.any_instance.stubs(:authenticate).returns(true)
+    Net::IMAP.any_instance.stubs(:logout).returns(true)
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], true
+  ensure
+    Net::IMAP.any_instance.unstub(:authenticate)
+    Net::IMAP.any_instance.unstub(:logout)
+  end
+
+  def test_verify_imap_mailbox_with_login_authentication_type
+    mailbox = create_email_config(
+        imap_mailbox_attributes: {
+            imap_authentication: 'login'
+        }
+    )
+    Net::IMAP.any_instance.stubs(:authenticate).returns(true)
+    Net::IMAP.any_instance.stubs(:logout).returns(true)
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], true
+  ensure
+    Net::IMAP.any_instance.unstub(:authenticate)
+    Net::IMAP.any_instance.unstub(:logout)
+  end
+
+  def test_verify_imap_mailbox_on_idle_not_supported_error
+    mailbox = create_email_config(
+        imap_mailbox_attributes: {
+            imap_authentication: 'plain'
+        }
+    )
+    Net::IMAP.any_instance.stubs(:login).returns(true)
+    Net::IMAP.any_instance.stubs(:capability).returns([Faker::Lorem.word])
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], false
+    assert_equal verified_result[:msg], 'Specified IMAP mail server is not supported. Please use a different one'
+  ensure
+    Net::IMAP.any_instance.unstub(:login)
+    Net::IMAP.any_instance.unstub(:capability)
+  end
+
+  def test_verify_imap_mailbox_on_imap_socket_error
+    mailbox = create_email_config(
+        imap_mailbox_attributes: {
+            imap_authentication: 'plain'
+        }
+    )
+    Net::IMAP.any_instance.stubs(:login).raises(SocketError)
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], false
+    assert_equal verified_result[:msg], 'Could not connect to the imap server. Please verify server name, port and credentials'
+  ensure
+    Net::IMAP.any_instance.unstub(:login)
+  end
+
+  def test_verify_imap_mailbox_on_imap_exceptions
+    mailbox = create_email_config(
+        imap_mailbox_attributes: {
+            imap_authentication: 'plain'
+        }
+    )
+    Net::IMAP.any_instance.stubs(:login).raises(StandardError)
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], false
+    assert_equal verified_result[:msg], 'Error while verifying the mailbox imap details. Please verify server name, port and credentials'
+  ensure
+    Net::IMAP.any_instance.unstub(:login)
+  end
+
+  def test_verify_smtp_mailbox_with_timeout_error
+    mailbox = create_email_config(
+        smtp_mailbox_attributes: {
+            smtp_authentication: 'plain'
+        }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).raises(Timeout::Error)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_on_smtp_socket_error
+    mailbox = create_email_config(
+        smtp_mailbox_attributes: {
+            smtp_authentication: 'plain'
+        }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).raises(SocketError)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+    assert_equal verified_result[:msg], 'Could not connect to the smtp server. Please verify server name, port and credentials'
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_on_smtp_authentication_error
+    mailbox = create_email_config(
+        smtp_mailbox_attributes: {
+            smtp_authentication: 'plain'
+        }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).raises(Net::SMTPAuthenticationError)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+    assert_equal verified_result[:msg], 'Error while authenticating the smtp server. Please make sure your user name and password are correct'
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_on_smtp_exception
+    mailbox = create_email_config(
+        smtp_mailbox_attributes: {
+            smtp_authentication: 'plain'
+        }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).raises(StandardError)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+    assert_equal verified_result[:msg], 'Error while verifying the mailbox smtp details - StandardError'
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
   end
 end

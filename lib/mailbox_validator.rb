@@ -1,6 +1,14 @@
 module MailboxValidator
+  include Email::Mailbox::Constants
+  include Email::Mailbox::Oauth2Helper
+
   class IdleNotSupportedError < StandardError
   end
+
+  class RefreshAccessTokenError < StandardError
+  end
+
+  MAILBOX_ATTRIBUTES = %w[server_name port use_ssl delete_from_server authentication user_name password].freeze
 
   def validate_mailbox_details
     verify_result = verify_mailbox_details
@@ -28,7 +36,9 @@ module MailboxValidator
       { success: verified, msg: msg }
     end
 
-    def verify_imap_mailbox(args)
+    def verify_imap_mailbox(mailbox)
+      Rails.logger.info ">>>mailbox imap #{mailbox.inspect}"
+      args = mailbox.attributes.slice(*MAILBOX_ATTRIBUTES).with_indifferent_access
       verified = false
       msg = ""
       begin
@@ -36,14 +46,23 @@ module MailboxValidator
 
         if 'plain'.casecmp(args[:authentication]).zero?
           imap.login(args[:user_name], args[:password])
+        elsif Email::Mailbox::Constants::OAUTH.casecmp(args[:authentication]).zero?
+          if mailbox.error_type.nil? || mailbox.error_type.zero?
+            refresh_access_token(mailbox) if access_token_expired?(mailbox)
+            raise RefreshAccessTokenError, 'Error refreshing access token' unless mailbox.error_type.nil? || mailbox.error_type.zero?
+          end
+          imap.authenticate(args[:authentication], args[:user_name], mailbox.access_token)
         else
-          imap.authenticate(args[:authentication], args[:user_name], args[:password]) 
+          imap.authenticate(args[:authentication], args[:user_name], args[:password])
         end
 
         raise IdleNotSupportedError, "Mailbox server does not support IDLE" unless imap.capability.include?("IDLE")
 
         imap.logout()
         verified = true
+      rescue RefreshAccessTokenError => error
+        msg = :refresh_access_token_error
+        Rails.logger.debug "error while verifying the imap details : #{error}"
       rescue IdleNotSupportedError => error
         msg = :imap_idle_not_supported
         Rails.logger.debug "error while verifying the imap details : #{error}"
@@ -57,7 +76,9 @@ module MailboxValidator
       { success: verified, msg: msg }    
     end
 
-    def verify_smtp_mailbox(args)
+    def verify_smtp_mailbox(mailbox)
+      Rails.logger.info ">>>mailbox smtp #{mailbox.inspect}"
+      args = mailbox.attributes.slice(*MAILBOX_ATTRIBUTES).with_indifferent_access
       verified = false
       msg = ''
       options = ''
@@ -68,9 +89,20 @@ module MailboxValidator
         elsif args[:port].to_i == 587
           smtp.enable_starttls
         end
-        smtp.start(args[:server_name], args[:user_name], args[:password], args[:authentication]) do |smtp|         
+        password = args[:password]
+        if 'xoauth2'.casecmp(args[:authentication]).zero?
+          if mailbox.error_type.nil? || mailbox.error_type.zero?
+            refresh_access_token(mailbox) if access_token_expired?(mailbox)
+            raise RefreshAccessTokenError, 'Error refreshing access token' unless mailbox.error_type.nil? || mailbox.error_type.zero?
+          end
+          password = mailbox.access_token
+        end
+        smtp.start(args[:server_name], args[:user_name], password, args[:authentication]) do |smtp|
         end
         verified = true
+      rescue RefreshAccessTokenError => error
+        msg = :refresh_access_token_error
+        Rails.logger.debug "error while verifying the imap details : #{error}"
       rescue Timeout::Error => error
         msg = :smtp_timed_out
         Rails.logger.debug "error while verifying the smtp details : #{error}"

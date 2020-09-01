@@ -3,6 +3,7 @@ class ImapMailboxObserver < ActiveRecord::Observer
   include Mailbox::HelperMethods
   include Cache::Memcache::EmailConfig
   include EmailHelper
+  include Email::Mailbox::Oauth2Helper
 
   def before_create mailbox
     set_account mailbox
@@ -18,13 +19,16 @@ class ImapMailboxObserver < ActiveRecord::Observer
   
   def after_commit(mailbox)
     if mailbox.safe_send(:transaction_include_action?, :create)
+      add_valid_access_token_key(mailbox) if mailbox.authentication == OAUTH
       commit_on_create mailbox
     elsif mailbox.safe_send(:transaction_include_action?, :update)
+      add_valid_access_token_key(mailbox) if changed_credentials?(mailbox) && mailbox.authentication == OAUTH
       clear_cache mailbox
       check_error_and_send_mail(mailbox)
       # Send if error_type is not present. else, send if error_type is 0.
       commit_on_update(mailbox) if !mailbox.respond_to?(:error_type) || mailbox.error_type.to_i == 0
     elsif mailbox.safe_send(:transaction_include_action?, :destroy)
+      delete_valid_access_token_key(mailbox)
       clear_cache mailbox
       commit_on_destroy mailbox
     end
