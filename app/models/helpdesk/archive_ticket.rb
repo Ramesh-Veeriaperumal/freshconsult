@@ -285,7 +285,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def parent
-    helpdesk_tickets_association["schema_less_ticket"]
+    helpdesk_tickets_association["schema_less_ticket"] || {}
   end
 
   SCHEMA_LESS_FIELDS.each do |alias_attribute, field_name|
@@ -375,7 +375,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
   
   def flexifield_data
-    helpdesk_tickets_association['flexifield']
+    helpdesk_tickets_association['flexifield'] || {}
   end
   
   def subscription_data
@@ -384,7 +384,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def ticket_states
     return Helpdesk::TicketState.new(archive_ticket_state) if archive_ticket_state
-    archive_ticket_state = archive_ticket_association.association_data["helpdesk_tickets_association"]["ticket_states"]
+    archive_ticket_state = archive_ticket_association.association_data["helpdesk_tickets_association"]["ticket_states"] || {}
     archive_ticket_state.delete(:id)
     archive_ticket_state.delete(:ticket_id)
     Helpdesk::TicketState.new(archive_ticket_state)
