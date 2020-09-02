@@ -398,12 +398,6 @@ var fetchMoreAndRender = function(ev, cb) {
 		trigger_event("ticket_show_more",{})
 
 		try {
-			freshfonePlayerSettings();
-		} catch (e) { 
-			console.log("freshfonePlayerSettings not loaded");
-		}
-
-		try {
 			// retries remaining annotations after more notes are loaded
 			if(!!App && !!App.CollaborationModel && !!App.CollaborationModel.restoreAnnotations) {
 				App.CollaborationModel.restoreAnnotations();

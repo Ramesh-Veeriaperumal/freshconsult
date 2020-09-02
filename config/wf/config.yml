@@ -79,14 +79,6 @@ defaults: &defaults
          tags:               [tags]
          date:               [date]
          datetime:           [date_time]
-    freshfone_calls:
-         datetime:           [created_at, date_time_range]
-         int:                [numeric, numeric_delimited]
-         bigint:             [numeric, numeric_delimited]
-         varchar:            [text]
-         float:              [numeric, numeric_range]
-         text:               [text]
-         tinyint:            [nil, boolean]
 
   operators:              # operators precedence
     is:                   100
