@@ -41,9 +41,7 @@ class InstalledApplicationValidation < FilterValidation
   end
 
   def validate_freshsales_freshworkscrm_only_events
-    unless (@item.application.name == 'freshsales' || @item.application.name == 'freshworkscrm')
-      errors[:event] << :"is invalid"
-    end
+    errors[:event] << :"is invalid" if @item.application.name != 'freshsales' && @item.application.name != 'freshworkscrm'
   end
 
   private
