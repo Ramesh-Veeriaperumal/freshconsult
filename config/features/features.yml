@@ -401,6 +401,7 @@
       :kb_allow_base64_images: 397
       :triage_ultimate: 398
       :autofaq_eligible: 399
+      :solutions_agent_metrics: 400
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -511,3 +512,4 @@
   :field_service_geolocation: false
   :location_tagging: false
   :kb_allow_base64_images: false
+  :solutions_agent_metrics: false
