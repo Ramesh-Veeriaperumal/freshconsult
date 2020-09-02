@@ -60,8 +60,19 @@ module Helpdesk::AccessibleElements
       visible_elmts = recent_ids.map {|id| visible_elmts[id].first if visible_elmts[id]}
       visible_elmts.compact!
     end
-    visible_elmts.map { |t| {:name => t.name, :id => t.id, :assoc_type => t.association_type,
-        :type => (@access_types[t.id] == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]) ? 'personal' : 'shared' }}
+    visible_elmts.map do |t|
+      {
+        name: t.name,
+        id: t.id,
+        assoc_type: t.association_type,
+        type: accessible_by_users(t.id) ? 'personal' : 'shared',
+        source: t.template_data.try(:[], :source)
+      }
+    end
+  end
+
+  def accessible_by_users(id)
+    @access_types[id] == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
   end
 
   def search_query?

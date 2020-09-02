@@ -17,7 +17,7 @@ module Helpdesk::DashboardV2Helper
     widget_type.each do |widget|
        widgets << widget if widget_privilege[widget.first.to_sym]
     end
-    
+
     widgets
   end
 
@@ -36,9 +36,8 @@ module Helpdesk::DashboardV2Helper
     }
   end
 
-
-  def dashboardv2_available? 
-    (current_account.launched?(:admin_dashboard) || current_account.launched?(:agent_dashboard) || current_account.launched?(:supervisor_dashboard)) && current_account.features?(:countv2_reads)
+  def dashboardv2_available?
+    current_account.features?(:countv2_reads)
   end
 
 end

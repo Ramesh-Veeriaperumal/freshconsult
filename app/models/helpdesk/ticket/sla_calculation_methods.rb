@@ -39,11 +39,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def calculate_next_response
     if current_note_id.present?
       note = self.notes.find_by_id(current_note_id)
+      return if note.private?
+
       if set_nr_dueBy?(note)
         self.last_customer_note_id = current_note_id
         self.nr_updated_at = note.created_at
         note.on_state_time = 0
-        set_nr_dueBy if !ticket_status.stop_sla_timer
+        set_nr_dueBy unless ticket_status.stop_sla_timer
       elsif reset_nr_dueBy?(note)
         self.nr_due_by = self.nr_updated_at = self.last_customer_note_id = nil
         note.on_state_time = 0
@@ -59,7 +61,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     business_calendar = Group.default_business_calendar(group)
     set_sla_calculation_time_at_with_zone if update_sla
     self.due_by = sla_detail.calculate_due_by(created_time, sla_calculation_time, total_time_worked, business_calendar)
-    self.frDueBy = sla_detail.calculate_frDue_by(created_time, sla_calculation_time, total_time_worked, business_calendar) if self.ticket_states.first_response_time.nil?
+    self.frDueBy = sla_detail.calculate_frDue_by(created_time, sla_calculation_time, total_time_worked, business_calendar) if calculate_fr_dueby?
   end
 
   def set_nr_dueBy(sla_detail = nil)
@@ -74,6 +76,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Rails.logger.debug "Finished nr_due_by calculation :: Nr_due_by ::#{self.nr_due_by}"
   end
 
+  def calculate_fr_dueby?
+    ticket_states.first_response_time.nil? || (changed_to_sla_timer_calculated_status? && ticket_states.sla_timer_stopped_at < ticket_states.first_response_time)
+  end
+
   def calculate_nr_dueBy?
     self.account.next_response_sla_enabled? && first_response_time.present?
   end
@@ -83,7 +89,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def reset_nr_dueBy?(note)
-    !note.private? && agent_performed?(note.user)
+    agent_performed?(note.user)
   end
 
   def calculate_dueby_and_frdueby?

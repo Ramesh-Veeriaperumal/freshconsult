@@ -668,8 +668,10 @@ module Helpdesk
 				ticket_params = {
 					:account_id => account.id,
 					:subject => params[:subject],
-					:ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
-						:description_html => cleansed_html || ""},
+					:ticket_body_attributes => {
+						description:      params[:text] || '',
+						description_html: cleansed_html || ''
+					},
 					:requester => user,
 					:to_email => to_email[:email],
 					:to_emails => parse_to_emails,
@@ -1000,10 +1002,10 @@ module Helpdesk
 					:private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user) or hide_response_from_customer),
 					:incoming => true,
 					:note_body_attributes => {
-						:body => tokenize_emojis(body) || "",
-						:body_html => body_html || "",
-						:full_text => tokenize_emojis(full_text),
-						:full_text_html => full_text_html || ""
+						body:           body || '',
+						body_html:      body_html || '',
+						full_text:      full_text,
+						full_text_html: full_text_html || ''
 					},
 					:source => Account.current.helpdesk_sources.note_source_keys_by_token["email"],
 					:user => user, #by Shan temp

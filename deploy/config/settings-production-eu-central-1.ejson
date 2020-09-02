@@ -1634,9 +1634,9 @@
         "_early_expiration": 60
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:C4DKG0cenJQY56wuBNMqpN8c5wVak0fOhs0DOqqewmM=:SDZJ42KJoknYHqcrmDxhqFeioGURO06T:yQ3oxX2qe6/7QsuLeUlRzA==]",
-        "_end_point": "",
-        "_bu_name": "",
+        "secret_key": "EJ[1:Sn/aKDZHXTCPWVH49syD2xK1kT0Iph7fRJkjGgsdDws=:v9vVulyTBGZohqKDtQRJpCRWpsumSXmF:lwaA8iHy/ZqG77mrmvBNC2hCxUyBkem2jeTjE+5qHX6Wg9BHF54Y+jN3BGyUFHVBXduhn7BhlVsr9hp7]",
+        "_end_point": "https://freshdesk-euc.freshreports.com",
+        "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
         "_timeout_for_pricing_api": 10,

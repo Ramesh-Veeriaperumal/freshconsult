@@ -54,9 +54,10 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :security, controller: 'api_security', only: [:show] do
+      resources :security, controller: 'api_security' do
         collection do
           get :show
+          put :update
         end
       end
     end
@@ -230,6 +231,8 @@ Helpkit::Application.routes.draw do
         put :bitmap_add_feature
         put :bitmap_revoke_feature
         put :execute_script
+        put :enable_setting
+        put :disable_setting
       end
     end
 
@@ -1039,6 +1042,7 @@ Helpkit::Application.routes.draw do
     get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
+    get '/solutions/search', to: 'channel/v2/api_solutions/articles#search'
   end
 
   channel_routes = proc do

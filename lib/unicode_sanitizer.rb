@@ -3,7 +3,6 @@ module UnicodeSanitizer
   EMOJI_ENCODING_TIMEOUT = 5
 
   def self.encode_emoji(item, *elements)
-    return unless Account.current.launched?(:encode_emoji)
     Timeout.timeout(EMOJI_ENCODING_TIMEOUT) do
       elements.flatten!
       elements.each do |body|
@@ -17,7 +16,8 @@ module UnicodeSanitizer
   end
 
   def self.encode_emoji_hash(attributes, key, *elements)
-    return attributes if attributes.blank? || !Account.current.launched?(:encode_emoji)
+    return attributes if attributes.blank?
+
     begin
       Timeout.timeout(EMOJI_ENCODING_TIMEOUT) do
         elements.each do |ele|

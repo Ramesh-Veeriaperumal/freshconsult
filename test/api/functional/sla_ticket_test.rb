@@ -131,6 +131,41 @@ class TicketsControllerTest < ActionController::TestCase
     BusinessCalendar.any_instance.unstub(:holiday_data)
   end
 
+  def test_fr_dueBy_when_sla_off_to_on
+    sla_policy
+    freeze_time_now(get_datetime('10:00', '28 Jul 2020')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    agent = add_agent(@account)
+    freeze_time_now(get_datetime('11:00', '28 Jul 2020')) do
+      ticket.update_attributes(status: 3)
+      ticket.ticket_states.update_column(:sla_timer_stopped_at, Time.zone.now)
+      ticket.update_dueby
+      ticket.update_on_state_time
+    end
+    freeze_time_now(get_datetime('12:00', '28 Jul 2020')) do
+      params_hash = {
+          ticket_id: ticket.id,
+          user_id: agent.id,
+          created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.current_note_id = note.id
+      ticket.ticket_states.update_column(:first_response_time, note.created_at)
+      ticket.update_dueby
+    end
+    freeze_time_now(get_datetime('13:00', '28 Jul 2020')) do
+      ticket.update_attributes(status: 2)
+      ticket.update_dueby
+      ticket.update_on_state_time
+      assert ticket.ticket_states.sla_timer_stopped_at < ticket.first_response_time
+    end
+  ensure
+    ticket.destroy
+  end
+
   def test_nr_dueBy
     Account.current.stubs(:next_response_sla_enabled?).returns(true)
     sla_policy

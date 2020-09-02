@@ -19,7 +19,6 @@ class UsersController < ApplicationController
   before_filter :assume_allowed?, :only => [:assume_identity]
   before_filter :load_items, :only => :block
   before_filter :has_access_to_enable_falcon?, :only => [:enable_falcon_for_all]
-  before_filter :has_access_to_disable_old_ui?, :only => [:disable_old_helpdesk]
   before_filter :req_feature, :only => [:set_conversation_preference]
 
   ##redirect to contacts
@@ -241,10 +240,6 @@ class UsersController < ApplicationController
 
     def has_access_to_enable_falcon?
       head(403)
-    end
-
-    def has_access_to_disable_old_ui?
-      return head(403) if current_account.disable_old_ui_enabled?
     end
 
     def req_feature

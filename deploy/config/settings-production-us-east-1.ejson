@@ -2383,6 +2383,14 @@
             "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:/0hay1VzxMOGNs9Xlg8vYZC/oDf7WK5r:na593n1PjUaBxueYSpGJx5hiJ/pyasYftMA=]",
             "_slave2_host": "shard39slave2.internal.poduseast1.freshdesk.com",
             "_slave1_host": "shard39slave1.internal.poduseast1.freshdesk.com"
+          },
+          "shard_40": {
+            "_database": "helpkit_shard37_1",
+            "_username": "dbuser",
+            "_host": "shard40.internal.poduseast1.freshdesk.com",
+            "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:/0hay1VzxMOGNs9Xlg8vYZC/oDf7WK5r:na593n1PjUaBxueYSpGJx5hiJ/pyasYftMA=]",
+            "_slave2_host": "shard40slave2.internal.poduseast1.freshdesk.com",
+            "_slave1_host": "shard40slave1.internal.poduseast1.freshdesk.com"
           }
         },
         "semian": {
@@ -3125,9 +3133,9 @@
         "_early_expiration": 60
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:vG9HW1yk8OL0J4kdYmO1EfdCl4WTLF6V1zupJyqQeUQ=:fGFpG1X7Mpe2rFaMin3MFjsdtJt1HMPq:ScppM+bKpd50RhYmbF5biQ==]",
-        "_end_point": "",
-        "_bu_name": "",
+        "secret_key": "EJ[1:WT6Dm819BC8u2LShSL7lWWKoysI5cM+Y7y9W1MHvzDo=:E7s1SCc0Y4/7t9ojSMUdlRGqroM5WtzQ:6RxeBylq6kRPo/MElcx8md8R1CskLfE5Q5mwMGRhz87Q3AT+AGas39dXu7EOh/CBp6eJ2nYxQgE8tueC]",
+        "_end_point": "https://freshdesk-us.freshreports.com",
+        "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
         "_timeout_for_pricing_api": 10,

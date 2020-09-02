@@ -181,8 +181,7 @@ class Account < ActiveRecord::Base
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
   LAUNCHPARTY_FEATURES = {
-    hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
-    api_search_beta: false, autoplay: false, bi_reports: false,
+    hide_og_meta_tags: false, agent_conference: false, api_search_beta: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_caller_id_masking: false,
@@ -190,7 +189,7 @@ class Account < ActiveRecord::Base
     gamification_quest_perf: false, lambda_exchange: false, meta_read: false, most_viewed_articles: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false,
-    skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
+    skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
@@ -234,7 +233,7 @@ class Account < ActiveRecord::Base
     ticket_field_revamp: true, new_timeline_view: false,
     requester_widget_timeline: false,
     enable_secure_login_check: false,
-    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
+    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,

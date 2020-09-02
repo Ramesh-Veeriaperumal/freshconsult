@@ -20,12 +20,14 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
     @account = Account.current
     EmailNotification.any_instance.stubs(:agent_notification).returns(true)
     Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
+    Billing::Subscription.any_instance.stubs(:update_admin).returns(true)
   end
 
   def teardown
     EmailNotification.any_instance.unstub(:agent_notification)
     Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
     Account.unstub(:current)
+    Billing::Subscription.any_instance.unstub(:update_admin)
     super
   end
 
