@@ -190,7 +190,7 @@
         </div>
   </div>
   </div> <!-- left section -->
-  <% if feature?(:enterprise_reporting) && enable_insights? %>
+  <% if feature?(:enterprise_reporting) %>
     <div class="insights">
           <div class="insights-title">
               <div class="pull-left">
@@ -249,7 +249,7 @@
       'show_agent_metrics_feature': !<%= @hide_agent_metrics_feature %>
     }
     HelpdeskReports.locals.qna_feature_enabled = true;
-    HelpdeskReports.locals.insights_feature_enabled = <%= enable_insights? %>;
+    HelpdeskReports.locals.insights_feature_enabled = true;
     HelpdeskReports.locals.is_new_ticket_recieved_metric_enabled = <%= enable_new_ticket_recieved_metric? %>;
     HelpdeskReports.locals.is_trail_account = <%= @is_trial_account %>;
 
