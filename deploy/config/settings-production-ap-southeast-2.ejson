@@ -1508,9 +1508,9 @@
         "_early_expiration": 60
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:Y9yqjJg6nW26pxd4TXUFCgYHHLWrCVCKoIDtqix1nC8=:NybmTUlc6EyQF0PSXZowNX6mbh0QKr5o:w9v8sfKsBq5Id9rWtXsUjg==]",
-        "_end_point": "",
-        "_bu_name": "",
+        "secret_key": "EJ[1:1Eo7pwRT7j2khmcijbFAOGDAt3cG+77OUuDZ33hwjVc=:7HKI9tqsrYlUdXDz13Y4T6mocgD6MbnO:80fGi/+L7/rNhFfDwCwUBDwCvz2XxviezUZoCD93v786iTehBm6ytZ0yy9Jmpv2CtPwviP8mXUP2rZJK]",
+        "_end_point": "https://freshdesk-au.freshreports.com",
+        "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
         "_timeout_for_pricing_api": 10,

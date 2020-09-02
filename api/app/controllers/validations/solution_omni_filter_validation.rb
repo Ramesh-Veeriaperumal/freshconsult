@@ -2,9 +2,8 @@
 
 class SolutionOmniFilterValidation < FilterValidation
   include SolutionHelper
-
-  CHECK_PARAMS_SET_FIELDS = %w[portal_id tags platforms status prefer_published].freeze
-  attr_accessor :portal_id, :platforms, :tags, :status, :prefer_published, :allow_language_fallback
+  CHECK_PARAMS_SET_FIELDS = %w[portal_id tags platforms status prefer_published term].freeze
+  attr_accessor :portal_id, :platforms, :tags, :status, :prefer_published, :allow_language_fallback, :term
 
   validate :validate_omni_channel_feature
   validates :portal_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
@@ -20,6 +19,10 @@ class SolutionOmniFilterValidation < FilterValidation
   validates :status, custom_inclusion: { in: proc { |x| x.allowed_statuses }, ignore_string: :allow_string_param }
 
   validates :prefer_published, data_type: { rules: 'Boolean' }
+
+  validates :term, required: true, data_type: { rules: String, allow_nil: false }, if: :search_action
+
+  SEARCH_ACTION = %i[search].freeze
 
   def initialize(request_params, item = nil, allow_string_param = true)
     super(request_params, item, allow_string_param)
@@ -54,5 +57,9 @@ class SolutionOmniFilterValidation < FilterValidation
 
   def allowed_statuses
     [SolutionConstants::STATUS_FILTER_BY_TOKEN[:draft], SolutionConstants::STATUS_FILTER_BY_TOKEN[:published]]
+  end
+
+  def search_action
+    SEARCH_ACTION.include?(validation_context)
   end
 end
