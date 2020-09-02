@@ -197,7 +197,7 @@ class Account < ActiveRecord::Base
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false,
-    kbase_spam_whitelist: false, enable_qna: false, enable_insights: false,
+    kbase_spam_whitelist: false, enable_insights: false,
     whitelist_supervisor_sla_limitation: false,
     service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
