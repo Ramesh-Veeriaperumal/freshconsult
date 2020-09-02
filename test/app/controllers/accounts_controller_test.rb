@@ -342,7 +342,7 @@ class AccountsControllerTest < ActionController::TestCase
     ensure
       AdminEmail::AssociatedAccounts.unstub(:find)
       remove_member_from_redis_set(INCREASE_DOMAIN_FOR_EMAILS, user_email)
-  end  
+  end
 
   def test_domain_existence
     get :check_domain, domain: "#{Faker::Lorem.word}.com", callback: '', format: 'json'

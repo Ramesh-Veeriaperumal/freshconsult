@@ -21,6 +21,7 @@ class TicketNotifierTest < ActionMailer::TestCase
     @ticket = create_ticket
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
+    super
   end
 
   def teardown
