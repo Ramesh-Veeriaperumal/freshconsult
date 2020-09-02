@@ -1,8 +1,6 @@
 # encoding: utf-8
 module Mobile::Actions::Note
-  
-  include Mobile::Actions::Push_Notifier
-  
+
   def body_mobile
     body_html.index(">\n<div class=\"freshdesk_quote\">").nil? ? 
     body_html : body_html.slice(0..body_html.index(">\n<div class=\"freshdesk_quote\">"))

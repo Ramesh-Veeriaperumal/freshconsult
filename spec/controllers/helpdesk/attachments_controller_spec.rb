@@ -78,22 +78,6 @@ describe Helpdesk::AttachmentsController do
     response.body.should =~ /attachment.txt/
   end
 
-  it "should show a freshfone call's attachment" do
-    create_test_freshfone_account
-    call = create_freshfone_call
-    attachment = call.create_recording_audio(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
-                                            :description => Faker::Lorem.characters(10), 
-                                            :account_id => @account.id)
-    user = add_new_user(@account)
-    ticket = create_ticket(:requester_id => user.id)
-    call.update_attributes(:customer_id => user.id, :notable_id => ticket.id, :notable_type => 'Helpdesk::Ticket')
-    log_in(user)
-    get :show, :id => attachment.id
-    response.should be_redirect
-    response.body.should =~ /#{S3_CONFIG[:access_key_id]}/
-    response.body.should =~ /attachment.txt/
-  end
-
   it "should show a data export's attachment" do
     data_export = FactoryGirl.build(:data_export, :account_id => @account.id, :user_id => @agent.id)
     data_export.create_attachment(:content => fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), 
