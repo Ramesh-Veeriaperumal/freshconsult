@@ -437,6 +437,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   def test_update_plain_to_oauth_mailbox
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     email_config = create_email_config(
       imap_mailbox_attributes: { imap_server_name: 'imap.gmail.com' },
       smtp_mailbox_attributes: { smtp_server_name: 'smtp.gmail.com' }
@@ -453,7 +454,8 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
   ensure
     Account.any_instance.unstub(:has_features?)
-    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox) 
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
     $redis_others.perform_redis_op('del', redis_key)
@@ -462,6 +464,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   def test_update_oauth_mailbox_to_different_account
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     email_config = create_email_config(
       support_email: 'test@test3.com',
       imap_mailbox_attributes: {
@@ -490,12 +493,14 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: 'google_oauth2',
       account_id: Account.current.id,
-      smtp_mailbox_id: email_config.smtp_mailbox.id
+      server_name: 'smtp.gmail.com',
+      mailbox_id: email_config.smtp_mailbox.id
     )
     assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure
     Account.any_instance.unstub(:has_features?)
-    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox) 
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
     $redis_others.perform_redis_op('del', redis_key)
@@ -505,6 +510,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
   def test_update_oauth_mailbox_from_incoming_to_both
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     email_config = create_email_config(
       support_email: 'test@test3.com',
       imap_mailbox_attributes: {
@@ -528,12 +534,14 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: 'google_oauth2',
       account_id: Account.current.id,
-      smtp_mailbox_id: email_config.smtp_mailbox.id
+      server_name: 'smtp.gmail.com',
+      mailbox_id: email_config.smtp_mailbox.id
     )
     assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure
     Account.any_instance.unstub(:has_features?)
-    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox) 
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
     $redis_others.perform_redis_op('del', access_token_key)
@@ -541,7 +549,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
 
   def test_update_oauth_mailbox_from_incoming_to_outgoing
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
-    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     email_config = create_email_config(
       support_email: 'test@test3.com',
       imap_mailbox_attributes: {
@@ -565,12 +573,13 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: 'google_oauth2',
       account_id: Account.current.id,
-      smtp_mailbox_id: email_config.smtp_mailbox.id
+      server_name: 'smtp.gmail.com',
+      mailbox_id: email_config.smtp_mailbox.id
     )
     assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure
     Account.any_instance.unstub(:has_features?)
-    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
     $redis_others.perform_redis_op('del', access_token_key)
@@ -793,6 +802,8 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     redis_key = 'GMAIL::test:xyz'
     value = {
       oauth_token: 'ya29.Il-vB0K5x3',
@@ -821,6 +832,8 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:has_features?)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Rails.env.unstub(:test?)
     $redis_others.perform_redis_op('del', redis_key)
   end
@@ -877,6 +890,8 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     redis_key = 'GMAIL::test:xyz'
     value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
@@ -888,13 +903,16 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: 'google_oauth2',
       account_id: Account.current.id,
-      smtp_mailbox_id: Account.current.smtp_mailboxes.last.id
+      server_name: 'smtp.gmail.com',
+      mailbox_id: Account.current.smtp_mailboxes.last.id
     )
     assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure
     Account.any_instance.unstub(:has_features?)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     $redis_others.perform_redis_op('del', redis_key)
     $redis_others.perform_redis_op('del', access_token_key)
   end
@@ -903,6 +921,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
     redis_key = 'GMAIL::test:xyz'
     value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
@@ -914,6 +933,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:has_features?)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     $redis_others.perform_redis_op('del', redis_key)
   end
 
@@ -921,6 +941,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:has_features?).with(:mailbox).returns(true)
     Email::MailboxValidation.any_instance.stubs(:private_api?).returns(true)
     Email::MailboxesController.any_instance.stubs(:private_api?).returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
     redis_key = 'GMAIL::test:xyz'
     value = redis_hash
     $redis_others.perform_redis_op('mapped_hmset', redis_key, value)
@@ -932,6 +953,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:has_features?)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     $redis_others.perform_redis_op('del', redis_key)
   end
 
