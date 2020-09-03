@@ -480,7 +480,7 @@ class Account < ActiveRecord::Base
           # Adding the settings that are under the feature
           next unless self.launched?(:feature_based_settings)
 
-          AccountSettings::FeatureToSettingsMapping[key].each do |setting|
+          (AccountSettings::FeatureToSettingsMapping[key] || []).each do |setting|
             bitmap_value = self.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
           end
         end
