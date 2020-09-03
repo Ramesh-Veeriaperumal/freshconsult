@@ -164,6 +164,4 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     Account.unstub(:current)
     @account.unstub(:fluffy_email_enabled?)
   end
-
-
 end

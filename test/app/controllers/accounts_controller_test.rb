@@ -50,6 +50,63 @@ class AccountsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_default_account_settings_when_new_signup_with_feature_based_settings_enabled
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    landing_url = Faker::Internet.url
+    user_name = Faker::Name.name
+    session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    assert_not_nil resp['account_id'], resp
+    account = Account.find(resp['account_id'])
+    assert account.has_feature?(:untitled_setting_3)
+    assert account.has_feature?(:untitled_setting_4)
+    assert_equal account.has_feature?(:untitled_setting_1), false
+  ensure
+    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    unstub_signup_calls    
+  end
+
+  def test_default_account_settings_when_new_signup_with_feature_based_settings_disabled
+    stub_signup_calls
+    Account.any_instance.stubs(:launched?).with(:feature_based_settings).returns(false)
+    Signup.any_instance.unstub(:save)
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    landing_url = Faker::Internet.url
+    user_name = Faker::Name.name
+    session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    assert_not_nil resp['account_id'], resp
+    account = Account.find(resp['account_id'])
+    assert_equal account.has_feature?(:untitled_setting_3), false
+    assert_equal account.has_feature?(:untitled_setting_4), false
+    assert_equal account.has_feature?(:untitled_setting_1), false
+  ensure
+    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    unstub_signup_calls    
+  end
+
   def test_new_signup_with_precreated_account
     populate_plans
     AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
