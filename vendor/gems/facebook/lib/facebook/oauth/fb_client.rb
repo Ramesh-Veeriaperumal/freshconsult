@@ -89,11 +89,9 @@ module Facebook
         fb_pages     = Array.new
         page_ids     = []
         pages.each { |page| page_ids.push(page['id'].to_s) }
-        if Account.current.fb_page_api_improvement_enabled?
-          pages_info = {}
-          page_ids.each_slice(50) do |page_ids_sub_list|
-            pages_info.merge!(graph.get_objects(page_ids_sub_list, fields: PAGE_FIELDS))
-          end
+        pages_info = {}
+        page_ids.each_slice(50) do |page_ids_sub_list|
+          pages_info.merge!(graph.get_objects(page_ids_sub_list, fields: PAGE_FIELDS))
         end
         fd_linked_pages = Hash.new []
 
@@ -137,12 +135,8 @@ module Facebook
               page_id = nil
             end
           end
-          page_info = if Account.current.fb_page_api_improvement_enabled? && pages_info[page[:id].to_s].present?
-            pages_info[page[:id].to_s]
-          else
-            graph.get_object(page[:id], fields: PAGE_FIELDS)
-          end
-          page_info    = page_info.deep_symbolize_keys
+          page_info = pages_info[page[:id].to_s].presence || graph.get_object(page[:id], fields: PAGE_FIELDS)
+          page_info = page_info.deep_symbolize_keys
           fb_pages << {
             :profile_id      => profile["id"] ,
             :access_token    => oauth_access_token,

@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
     :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
-    :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry, :contact_company_split,
+    :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
