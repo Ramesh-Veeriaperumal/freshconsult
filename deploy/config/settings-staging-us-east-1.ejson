@@ -500,6 +500,7 @@
             "_proxy_enabled": true,
             "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
+            "slave2_proxy": { "_username": "shard_1_slave" },
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
               "_host": "usrds1slave1.internal-freshpo.com",
@@ -534,6 +535,7 @@
             "_proxy_enabled": true,
             "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5RScK29IZfMnTfJHFGAZ0HG+07bYZnKl:gB1Fs1Zf+ZdRuSGvALXSRR7jUloU3aln]",
+            "slave2_proxy": { "_username": "shard_7_slave" },
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5jJeIuFcW+6JwsA7A8HgMNAimEqCRD99:uQwKG+XiTovPT4AXn0Bhr5GALukhzwBZ]",
               "_host": "usrds7slave1.internal-freshpo.com",
