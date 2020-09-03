@@ -128,9 +128,10 @@ class SAAS::SubscriptionEventActions
       Rails.logger.debug "List of features to reset for account #{account.id} :: #{features_list.inspect}"
       Rails.logger.debug "account add ons :: #{account_add_ons}"
       features_list.each do |feature|
-        unless (plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature))
+        unless plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature)
 
           next if AccountSettings::SettingsConfig[feature] && plan_features.include?(AccountSettings::SettingsConfig[feature][:feature_dependency])
+
           account.reset_feature(feature)
         end
       end

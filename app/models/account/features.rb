@@ -461,8 +461,8 @@ class Account < ActiveRecord::Base
   end
 
   def can_admin_enable_setting?(setting)
-    settingsHash = AccountSettings::Settings[setting]
-    settingsHash && !settingsHash[:internal] && has_feature?(settingsHash[:feature_dependency])
+    settings_hash = AccountSettings::Settings[setting]
+    settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end
 
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
