@@ -149,6 +149,10 @@ gem 'clamav-client', '3.1.0', require: 'clamav/client'
 gem 'braintree','2.10.0'
 gem 'chargebee', '~> 1.5.1'
 
+gem 'resque','~> 1.24.0'
+gem 'resque-scheduler', '2.2.0', require: 'resque_scheduler'
+# gem 'resque-status', '0.4.1'
+
 # reports
 gem 'spreadsheet', '0.6.8'
 gem 'wkhtmltopdf-binary', git: 'git://github.com/freshdesk/wkhtmltopdf_binary_gem.git', branch: 'ruby_2.3'
