@@ -65,6 +65,7 @@ class TicketsExportTest < ActionView::TestCase
   def test_ticket_export_with_closed_service_tasks
     enable_adv_ticketing([:field_service_management]) do
       begin
+        Account.stubs(:current).returns(Account.first)
         User.stubs(:current).returns(User.first)
         ticket_fields = @ticket_fields
         @ticket_fields = nil
@@ -108,6 +109,7 @@ class TicketsExportTest < ActionView::TestCase
       ensure
         User.unstub(:current)
         cleanup_fsm
+        Account.unstub(:current)
         Tickets::Export::TicketsExport.any_instance.unstub(:send_to_silkroad?)
         Export::Util.unstub(:build_attachment)
       end
@@ -117,6 +119,7 @@ class TicketsExportTest < ActionView::TestCase
   def test_ticket_export_with_open_service_tasks
     enable_adv_ticketing([:field_service_management]) do
       begin
+        Account.stubs(:current).returns(Account.first)
         User.stubs(:current).returns(User.first)
         ticket_fields = @ticket_fields
         @ticket_fields = nil
@@ -160,6 +163,7 @@ class TicketsExportTest < ActionView::TestCase
         cleanup_fsm
         Tickets::Export::TicketsExport.any_instance.unstub(:send_to_silkroad?)
         Export::Util.unstub(:build_attachment)
+        Account.unstub(:current)
       end
     end
   end
