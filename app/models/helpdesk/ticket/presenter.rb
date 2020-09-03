@@ -22,6 +22,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SLA_ESCALATION_ATTRIBUTES = Hash[*SLA_ATTRIBUTES.map { |i| [i[0], i[1]] }.flatten]
   SLA_REMINDER_ATTRIBUTES = Hash[*SLA_ATTRIBUTES.map { |i| [i[0], i[2]] }.flatten]
 
+  api_accessible :central_publish do |at|
+    at.add :parent_ticket, as: :parent_id
+  end
+
   api_accessible :central_publish_destroy do |t|
     t.add :id
     t.add :display_id
