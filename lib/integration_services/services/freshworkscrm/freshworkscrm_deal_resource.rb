@@ -19,9 +19,6 @@ module IntegrationServices::Services
         deal_response = fetch_by_account_id value[:account_id]
         return { 'deals' => [], 'type' => 'deal' } if deal_response['deals'].blank?
 
-        deal_response = integrated_remote_resource(value[:account_id], deal_response)
-        return { 'deals' => [], 'type' => 'deal' } if deal_response['deals'].blank?
-
         deal_response = filter_deals_by_status(deal_response)
         fields = fields.split(',')
         relational_fields = fields & RELATIONAL_FIELDS.keys
@@ -45,33 +42,6 @@ module IntegrationServices::Services
           end
         end
         deals.first(limit)
-      end
-
-      def integrated_remote_resource(account_id, deal_response)
-        link_status = nil
-        linked_deal = nil
-        if @service.payload[:ticket_id].present?
-          integrated_resource = @service.installed_app.integrated_resources.where(local_integratable_id: @service.payload[:ticket_id], local_integratable_type: 'Helpdesk::Ticket').first
-          link_status = false
-          if integrated_resource.present?
-            link_status = true
-            deals = deal_response['deals']
-            linked_deal = deals.detect do |deal|
-              deal['id'].to_s == integrated_resource.remote_integratable_id
-            end
-            if linked_deal.present?
-              linked_deal['link_status'] = link_status
-              linked_deal['unlink_status'] = link_status
-              deal_response['deals'] = [linked_deal]
-              deal_response['linked'] = true
-              return deal_response
-            end
-          end
-          deal_response['deals'].each do |deal|
-            deal['link_status'] = link_status
-          end
-        end
-        deal_response
       end
 
       def filter_deals_by_status(deal_response, limit = 5)
@@ -143,14 +113,6 @@ module IntegrationServices::Services
           end
         end
         result
-      end
-
-      def create(request_body)
-        request_url = "#{server_url}/deals"
-        response = http_post request_url, request_body.to_json
-        process_response(response, 200) do |deal|
-          return deal
-        end
       end
     end
   end
