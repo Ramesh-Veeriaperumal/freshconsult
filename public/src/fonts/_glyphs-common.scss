@@ -363,54 +363,6 @@ span.fb_add
 		visibility:hidden;
 	}
 }
-// -----------------------------------------------------------------------------------------------
-// 												Freshfone & customer details page
-// -----------------------------------------------------------------------------------------------
-
-.phone-icons,.user_phone{@extend .#{$font-class}ff-phone; font-size:14px;}
-.mobile-icons { @extend .#{$font-class}mobile; }
-.phone-icons, .mobile-icons { &:before{@include padding-right(10px); color:$default_txt_color;}}
-.recent_calls_call_user .can-call, .fresfone-call-history .call_user .can-make-calls{
-		@extend .#{$font-class}phone;
-}
-
-.recent_calls_call_user, .call_user {
-	.restrict-call{
-		@extend .#{$font-class}phone-disable-thin;
-		
-		color:#eee;
-		&:hover{
-			color:#eee;
-		}
-	}
-}
-
-.recent_call_entry:hover .recent_calls_call_user .can-call,
-.fresfone-call-history .call_user .can-make-calls:hover {
-		@extend .#{$font-class}ff-phone;
-		&:before{
-			color:#196019;
-		} 
-}
-
-.fresfone-call-history .blacklist-toggle.blacklist{
-	@extend .#{$font-class}block;
-	color: #999;
-	background: white;
-}
-
-.fresfone-call-history .blacklist-toggle.blacklisted{
-	@extend .#{$font-class}block;
-	color: #B44632;
-	background: white;
-}
-
-
-.recording_deleted{
-	&:before{
-		@extend .#{$font-class-name}deleted;
-	}
-}
 
 // -----------------------------------------------------------------------------------------------
 // 										Ticket Details Page

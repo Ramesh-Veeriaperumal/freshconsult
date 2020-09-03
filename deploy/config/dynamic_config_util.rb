@@ -768,7 +768,6 @@ HEREDOC
       "fc-app-support" => "-support",
       "fc-app-support-theme" => "-support-theme",
       "fc-app-solution" => "-solution",
-      "fc-app-freshfone" => "-freshfone",
       "fc-app-api-contacts" => "-api-contacts",
       "fc-app-suggest" => "-suggest",
       "fc-app-http-request" => "-integrations",

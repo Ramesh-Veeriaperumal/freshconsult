@@ -39,7 +39,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"mobile/ticket"
     resource :"mobile/automation"
     resource :"mobile/notification"
-    resource :"mobile/freshfone"
     resource :"mobile/setting"
     resource :"mobile_app_download"
     # Social - Twitter
@@ -139,7 +138,6 @@ Authority::Authorization::PrivilegeList.build do
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index]
-    resource :"api_freshfone/call_history", :only => [:export, :export_status]
     resource :"announcement", :only => [:index, :account_login_url]
     resource :"email_preview"
     resource :"doorkeeper/authorize"
@@ -472,7 +470,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"reports/helpdesk_report"
     resource :"reports/survey_report"
     resource :"reports/custom_survey_report"
-    resource :"reports/freshfone/summary_report"
     resource :"reports/freshchat/summary_report"
     resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter, :time_entries_list]
     resource :"reports/report_filter"
@@ -499,7 +496,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"reports/v2/tickets/report", :only => [:configure_export, :export_tickets, :export_report, :email_reports,  :download_file]
     resource :"reports/timesheet_report", :only => [:export_csv, :generate_pdf, :export_pdf]
     resource :"reports/freshchat/summary_report", :only => [:export_pdf]
-    resource :"reports/freshfone/summary_report", :only => [:export_pdf, :export_csv]
   end
 
   # ************** ADMIN **************************
@@ -599,9 +595,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]
     resource :"integrations/fullcontact", :only => [:new, :edit, :update]
-    resource :"admin/freshfone"
-    resource :"admin/freshfone/number"
-    resource :"freshfone/ivr"
     resource :"admin/freshcaller"
     resource :"admin/freshcaller/signup"
     resource :"admin/gamification"
@@ -638,7 +631,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"doorkeeper/authorization"
     resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"
-    resource :"freshfone/dashboard", :only => [:index]
     resource :"integrations/marketplace_app"
     resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
     resource :"integrations/microsoft_team", :only => [:oauth, :install]
@@ -674,7 +666,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"
-    resource :"admin/freshfone/credit"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
     resource :"rake_task", only: [:run_rake_task]

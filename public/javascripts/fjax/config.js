@@ -40,10 +40,6 @@ window.Fjax = window.Fjax || {};
 			"/account/update_languages": 'admin',
 
 			"/search": 'search',
-			"/phone/call_history": 'freshfonecallhistory',
-			"/phone/dashboard": 'freshfonedashboard',
-
-			"/reports/phone/summary_reports": 'freshfonereports',
 			"/reports/scheduled_export": 'ticketschedule',
 			"/reports": 'helpdeskreports',
 			"/reports/v2": 'helpdeskreports',
@@ -56,7 +52,6 @@ window.Fjax = window.Fjax || {};
 			"/helpdesk/tickets": 'tickets',
 			"/helpdesk/ticket_templates": 'parentchildtemplates',
 			"/helpdesk/parent_template": 'parentchildtemplates',
-			"/helpdesk/dashboard/agent_status": 'freshfoneagents',
 			"/helpdesk/tickets/compose_email": 'tickets',
 			"/helpdesk/dashboard/unresolved_tickets": 'unresolvedtickets',
 			"/helpdesk" : 'realtime_dashboard' ,

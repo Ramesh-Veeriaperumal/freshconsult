@@ -419,10 +419,6 @@ var updatePagination = function() {
 	$('#show_more').on('click.ticket_details', fetchMoreAndRender);
 }
 
-$('body').on('click.ticket_details','#checkfreshfoneaudio',function(ev){
-		ev.preventDefault();
-		window.location.reload(true);
-});
 // ----- END FOR REVERSE PAGINATION ------ //
 
 changeStatusTo = function(status) {
