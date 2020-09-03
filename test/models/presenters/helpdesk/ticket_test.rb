@@ -23,7 +23,13 @@ class TicketTest < ActiveSupport::TestCase
   def setup
     super
     @account = Account.current
+    ChargeBee::Customer.stubs(:update).returns(true)
     before_all
+  end
+
+  def teardown
+    ChargeBee::Customer.unstub(:update)
+    super
   end
 
   @@before_all_run = false

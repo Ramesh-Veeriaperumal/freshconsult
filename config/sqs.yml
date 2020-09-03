@@ -4,7 +4,6 @@ development:
   search_etl_queue: search_etl_queue_dev
   spam_trash_delete_free_acc_queue: spam_trash_delete_free_acc_queue_dev
   spam_trash_delete_paid_acc_queue: spam_trash_delete_paid_acc_queue_dev
-  count_etl_queue: count_etl_queue_dev
   analytics_etl_queue: analytics_etl_queue_dev
   sqs_es_index_queue: sqs_es_index_queue_dev
   custom_mailbox_realtime_queue: custom_mailbox_dev
@@ -47,7 +46,6 @@ development:
   fd_scheduler_export_cleanup_queue: fd_scheduler_export_cleanup_queue_dev
   fd_scheduler_downgrade_policy_reminder_queue: fd_scheduler_downgrade_policy_reminder_queue_dev
   search_etlqueue_maintenance: search_etl_queue_dev_maintenance
-  count_etl_queue_maintenance: count_etl_queue_dev_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_dev_maintenance
   suspended_account_cleanup_queue: suspended_account_cleanup_queue_dev
   email_rate_limiting_queue: email_rate_limiting_dev
@@ -59,7 +57,6 @@ staging:
   search_etl_queue: search_etl_queue_staging
   spam_trash_delete_free_acc_queue: spam_trash_delete_free_acc_queue_staging
   spam_trash_delete_paid_acc_queue: spam_trash_delete_paid_acc_queue_staging
-  count_etl_queue: count_etl_queue_staging
   analytics_etl_queue: analytics_etl_queue_staging
   custom_mailbox_realtime_queue: custom_mailbox_staging
   forums_moderation_queue: forum_moderation_staging_rails3
@@ -95,7 +92,6 @@ staging:
   scheduled_company_export_queue: scheduled_company_export_queue_staging
   bot_feedback_queue: bot_feedback_staging
   search_etlqueue_maintenance: search_etl_queue_staging_maintenance
-  count_etl_queue_maintenance: count_etl_queue_staging_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_staging_maintenance
   email_rate_limiting_queue: email_rate_limiting_staging
   freddy_consumed_session_reminder_queue: freddy_consumed_session_reminder_queue
@@ -106,7 +102,6 @@ production:
   search_etl_queue: search_etl_queue_production
   spam_trash_delete_free_acc_queue: spam_trash_delete_free_acc_queue_production
   spam_trash_delete_paid_acc_queue: spam_trash_delete_paid_acc_queue_production
-  count_etl_queue: count_etl_queue_procution
   analytics_etl_queue: analytics_etl_queue_procution
   custom_mailbox_realtime_queue: custom_mailbox_production
   forums_moderation_queue: forum_moderation_production
@@ -141,7 +136,6 @@ production:
   scheduled_company_export_queue: scheduled_company_export_queue_production
   bot_feedback_queue: bot_feedback_production
   search_etlqueue_maintenance: search_etl_queue_production_maintenance
-  count_etl_queue_maintenance: count_etl_queue_production_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_production_maintenance
   email_rate_limiting_queue: email_rate_limiting_production
   freddy_consumed_session_reminder_queue: freddy_consumed_session_reminder_production
@@ -152,7 +146,6 @@ test:
   search_etl_queue: search_etl_queue_test
   spam_trash_delete_free_acc_queue: spam_trash_delete_free_acc_queue_test
   spam_trash_delete_paid_acc_queue: spam_trash_delete_paid_acc_queue_test
-  count_etl_queue: count_etl_queue_test
   analytics_etl_queue: analytics_etl_queue_test
   custom_mailbox_realtime_queue: custom_mailbox_test
   forums_moderation_queue: forum_moderation_test
@@ -188,7 +181,6 @@ test:
   fd_scheduler_export_cleanup_queue: fd_scheduler_export_cleanup_queue_test
   fd_scheduler_downgrade_policy_reminder_queue: fd_scheduler_downgrade_policy_reminder_queue_test
   search_etlqueue_maintenance: search_etl_queue_test_maintenance
-  count_etl_queue_maintenance: count_etl_queue_test_maintenance
   analytics_etl_queue_maintenance: analytics_etl_queue_test_maintenance
   suspended_account_cleanup_queue: suspended_account_cleanup_queue_test
   email_rate_limiting_queue: email_rate_limiting_test

@@ -647,10 +647,6 @@
             "_sqs_queue": "eu-central-1_social_gnip_2_0_tweet_production",
             "_priority": 1
           },
-          "count_etl_queue": {
-            "_sqs_queue": "count_etl_queue_production",
-            "_priority": 1
-          },
           "analytics_etl_queue": {
             "_priority": 1,
             "_sqs_queue": "analytics_etl_queue_production"
@@ -753,10 +749,6 @@
             "_sqs_queue": "search-etlqueue-archive-production",
             "_priority": 1
           },
-          "count_etl_queue": {
-            "_priority": 1,
-            "_sqs_queue": "count_etl_queue_archive_production"
-          },
           "analytics_etl_queue": {
             "_priority": 1,
             "_sqs_queue": "analytics_etl_queue_archive_production"
@@ -765,10 +757,6 @@
         "maintenance": {
           "search_etlqueue_maintenance": {
             "_sqs_queue": "search-etlqueue-production_maintenance",
-            "_priority": 1
-          },
-          "count_etl_queue_maintenance": {
-            "_sqs_queue": "count_etl_queue_production_maintenance",
             "_priority": 1
           },
           "analytics_etl_queue_maintenance": {
@@ -953,7 +941,6 @@
       "sqs_queues": {
         "_twitter_realtime_queue": "eu-central-1_social_gnip_2_0_tweet_production",
         "_facebook_realtime_queue": "social_fb_feed_production",
-        "_count_etl_queue": "count_etl_queue_production",
         "_free_customer_email_queue": "free_customer_email_queue_production",
         "_active_customer_email_queue": "active_customer_email_queue_production",
         "_trial_customer_email_queue": "trial_customer_email_queue_production",
@@ -1002,14 +989,12 @@
         "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_production",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_production",
         "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
-        "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance",
         "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_production",
         "_email_rate_limiting_queue": "email_rate_limiting_production"
       },
       "archive_sqs_queues": {
         "_search_etl_queue": "search-etlqueue-archive-production",
-        "_count_etl_queue": "count_etl_queue_archive_production",
         "_analytics_etl_queue": "analytics_etl_queue_archive_production"
       },
       "freshid": {
@@ -1634,9 +1619,9 @@
         "_early_expiration": 60
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:C4DKG0cenJQY56wuBNMqpN8c5wVak0fOhs0DOqqewmM=:SDZJ42KJoknYHqcrmDxhqFeioGURO06T:yQ3oxX2qe6/7QsuLeUlRzA==]",
-        "_end_point": "",
-        "_bu_name": "",
+        "secret_key": "EJ[1:Sn/aKDZHXTCPWVH49syD2xK1kT0Iph7fRJkjGgsdDws=:v9vVulyTBGZohqKDtQRJpCRWpsumSXmF:lwaA8iHy/ZqG77mrmvBNC2hCxUyBkem2jeTjE+5qHX6Wg9BHF54Y+jN3BGyUFHVBXduhn7BhlVsr9hp7]",
+        "_end_point": "https://freshdesk-euc.freshreports.com",
+        "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
         "_timeout_for_pricing_api": 10,

@@ -6,6 +6,7 @@ module AccountTestHelper
   def create_test_account(_name = 'test_account', _domain = 'test@freshdesk.local')
     subscription = Subscription.where("state != 'suspended'").first
     @account = Account.find_by_id(subscription.account_id) unless subscription.nil?
+    ChargeBee::Customer.stubs(:update).returns(true)
     if @account.nil?
       ENV['SEED'] = 'global/002_subscription_plans'
       ENV['FIXTURE_PATH'] = 'db/fixtures/global'
@@ -18,10 +19,13 @@ module AccountTestHelper
       @account.make_current
     end
     create_dummy_customer
+  ensure
+    ChargeBee::Customer.unstub(:update)
   end
 
   def create_new_account(domain = 'localhost', user_email = Helpdesk::EMAIL[:sample_email])
     Account.reset_current_account
+    ChargeBee::Customer.stubs(:update).returns(true)
     signup = Signup.new(
       account_name: 'Test Account',
       account_domain: domain,
@@ -35,12 +39,14 @@ module AccountTestHelper
       new_plan_test: true
     )
     signup.save
-
     PopulateGlobalBlacklistIpsTable.create_default_record
     @account = signup.account.make_current
+  ensure
+    ChargeBee::Customer.unstub(:update)
   end
 
   def create_sample_account(domain = 'localhost', user_email = Helpdesk::EMAIL[:sample_email])
+    ChargeBee::Customer.stubs(:update).returns(true)
     ENV['SEED'] = 'global/002_subscription_plans'
     ENV['FIXTURE_PATH'] = 'db/fixtures/global'
     SeedFu::PopulateSeed.populate
@@ -63,6 +69,8 @@ module AccountTestHelper
     PopulateGlobalBlacklistIpsTable.create_default_record
     @account = signup.account.make_current
     update_currency
+  ensure
+    ChargeBee::Customer.unstub(:update)
   end
 
   def populate_plans

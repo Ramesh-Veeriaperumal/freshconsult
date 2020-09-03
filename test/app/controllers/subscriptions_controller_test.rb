@@ -16,6 +16,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
     Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
+    Billing::Subscription.any_instance.stubs(:update_admin).returns(true)
     super
   end
 
@@ -23,6 +24,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     Account.any_instance.unstub(:omni_accounts_present_in_org?)
     Subscription.any_instance.unstub(:reseller_paid_account?)
+    Billing::Subscription.any_instance.unstub(:update_admin)
     super
   end
 
@@ -387,7 +389,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     to_plan =  SubscriptionPlan.find(params_plan_id)
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1, addons: { field_service_management: { enabled: 'true', value: '1' } } }
     Account.any_instance.stubs(:launched?).returns(false)
-    @account.revoke_feature(:unlimited_multi_product)
+    Account.any_instance.stubs(:has_feature).with(:unlimited_multi_product).returns(false)
     @account.subscription.additional_info[:field_agent_limit] = 3
     @account.subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
@@ -400,6 +402,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
     unstub_fsm_field_agents
     Account.any_instance.unstub(:launched?)
+    Account.any_instance.unstub(:has_feature?)
   end
 
   def test_handle_subscription_with_agent_and_product_reduction

@@ -28,11 +28,7 @@ module Solution::ArticleFilters
 
     private
       def es_for_filter?
-        search_articles? && es_filters_enabled?
-      end
-
-      def es_filters_enabled?
-        Account.current.launched?(:article_es_search_by_filter)
+        search_articles?
       end
 
       def reconstruct_params
@@ -71,12 +67,10 @@ module Solution::ArticleFilters
       def construct_es_params
         super.tap do |es_params|
           es_params[:article_category_ids] = @category_ids
-          if es_filters_enabled?
-            es_params[:article_category_ids] = params[:category] if params[:category].present?
-            es_params[:article_tags] = params[:tags].join('","') if params[:tags].present?
-            es_query = construct_es_query
-            es_params[:query] = es_query unless es_query.empty?
-          end
+          es_params[:article_category_ids] = params[:category] if params[:category].present?
+          es_params[:article_tags] = params[:tags].join('","') if params[:tags].present?
+          es_query = construct_es_query
+          es_params[:query] = es_query unless es_query.empty?
           es_params[:language_id] = @language_id || Language.for_current_account.id
           es_params[:size]  = @size
           es_params[:from]  = @offset

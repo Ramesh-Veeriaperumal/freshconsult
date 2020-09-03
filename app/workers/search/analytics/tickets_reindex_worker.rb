@@ -7,8 +7,6 @@ module Search
         return if args.blank?
 
         account = Account.current
-        legacy = false
-        analytics = true
         execute_on_db('run_on_master') do
           args.each do |ticket|
             search_payload = {
@@ -18,7 +16,7 @@ module Search
               'account_id' => account.id,
               'version' => ticket[1]
             }
-            Search::Dashboard::Count.new(search_payload).index_es_count_document(legacy, analytics)
+            Search::Dashboard::Count.new(search_payload).index_es_count_document
           end
         end
       rescue StandardError => e

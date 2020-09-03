@@ -314,11 +314,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def check_dashboard_privilege
-    @type = if dashboardv2_launched?
-              params[:view].presence || 'standard'
-            else
-              'standard'
-            end
+    @type = params[:view].presence || 'standard'
     access_denied if @type == "admin" and admin_dashboard_not_available?
     access_denied if @type == "supervisor" and supervisor_dashboard_not_available?
     access_denied if @type == "agent" and agent_dashboard_not_available?
@@ -326,7 +322,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def admin_dashboard_not_available?
-    !(current_user.privilege?(:admin_tasks) and current_account.launched?(:admin_dashboard))
+    !current_user.privilege?(:admin_tasks)
   end
 
   def supervisor_dashboard_not_available?
@@ -334,12 +330,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def agent_dashboard_not_available?
-    !(!current_user.privilege?(:view_reports) and current_account.launched?(:agent_dashboard))
-  end
-
-
-  def dashboardv2_launched?
-    current_account.launched?(:admin_dashboard) || current_account.launched?(:supervisor_dashboard) || current_account.launched?(:agent_dashboard)
+    current_user.privilege?(:view_reports)
   end
 
   #### Functions for new dashboard end here

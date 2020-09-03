@@ -8,7 +8,7 @@ module ApiBusinessCalendarConstants
   HOLIDAYS_PERMITTED_PARAMS = %w[date name].freeze
   VALID_CHANNEL_PARAMS = %w[ticket].freeze
   TIME_SLOTS_PARAMS = %w[start_time end_time].freeze
-  VALID_MINUTES_DATA = [0, 30, 59].freeze
+  VALID_MINUTES_DATA = (00..59).to_a.freeze
   CHANNEL_BUSINESS_HOURS_PARAMS = %w[channel business_hours_type business_hours].freeze
   BUSINESS_HOURS_TYPE_ALLOWED = %w[24_7_availability custom].freeze
   TIMEZONES = ActiveSupport::TimeZone.all.map(&:name).freeze
