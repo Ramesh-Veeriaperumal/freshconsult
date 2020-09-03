@@ -75,7 +75,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.has_feature?(:untitled_setting_1), false
   ensure
     Account.find(resp['account_id']).destroy if resp['account_id'].present?
-    unstub_signup_calls    
+    unstub_signup_calls
   end
 
   def test_default_account_settings_when_new_signup_with_feature_based_settings_disabled
@@ -104,7 +104,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.has_feature?(:untitled_setting_1), false
   ensure
     Account.find(resp['account_id']).destroy if resp['account_id'].present?
-    unstub_signup_calls    
+    unstub_signup_calls
   end
 
   def test_new_signup_with_precreated_account
