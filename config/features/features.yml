@@ -223,7 +223,7 @@
       :portal_cc: 219
       :disable_rr_toggle: 220
       :count_es_writes: 221
-      :round_robin_revamp: 222
+      :XX_unused_222: 222
       :analytics_landing_search: 223
       :analytics_landing_data_schedules: 224
       :analytics_landing_new_report: 225
@@ -497,7 +497,6 @@
   :portal_cc: false
   :disable_rr_toggle: false
   :count_es_writes: false
-  :round_robin_revamp: false
   :social_revamp: true
   :activity_revamp: true
   :hide_first_response_due: false
