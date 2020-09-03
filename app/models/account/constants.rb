@@ -175,7 +175,7 @@ class Account < ActiveRecord::Base
     cascade_dispatchr: :cascade_dispatcher
   }.freeze
 
-  DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :dynamics_v2, :marketplace_app]
+  DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :marketplace_app]
 
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
@@ -235,7 +235,7 @@ class Account < ActiveRecord::Base
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
-    salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
+    salesforce_sync: false, salesforce_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
