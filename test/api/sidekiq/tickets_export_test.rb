@@ -141,7 +141,7 @@ class TicketsExportTest < ActionView::TestCase
                  contact_fields: {},
                  company_fields: {},
                  filter_name: 'all_tickets',
-                 export_fields: {resolution_status: 'Resolution status'}.merge(fsm_export_fields),
+                 export_fields: { resolution_status: 'Resolution status' }.merge(fsm_export_fields),
                  data_hash: [{ condition: 'created_at', operator: 'is_greater_than', value: 'last_month' }, { condition: 'spam', operator: 'is', value: false }, { condition: 'deleted', operator: 'is', value: false }],
                  current_user_id: @agent.user_id,
                  portal_url: 'localhost.freshdesk-dev.com' }
