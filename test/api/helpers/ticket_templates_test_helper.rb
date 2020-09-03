@@ -19,7 +19,8 @@ module TicketTemplatesTestHelper
       id: template.id,
       name: template.name,
       assoc_type: template.association_type,
-      type: 'shared'
+      type: 'shared',
+      source: template.template_data.try(:[], :source)
     }
   end
 

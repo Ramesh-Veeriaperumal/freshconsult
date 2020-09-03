@@ -360,6 +360,8 @@ class User < ActiveRecord::Base
       elsif self.default_user_company.present?
         self.customer_id = !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
       end
+      @model_changes[:customer_id] = changes[:customer_id] if changes.key?(:customer_id)
+      true
     end
   end
 

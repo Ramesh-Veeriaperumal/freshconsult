@@ -1,7 +1,7 @@
 module DashboardControllerMethods
 
   def self.included(base)
-    base.send :before_filter, :check_dashboard_feature, :only => [:unresolved_tickets_dashboard, :overdue, :due_today, :unresolved_tickets_workload, :my_performance, :my_performance_summary, :agent_performance, :agent_performance_summary, :group_performance, :group_performance_summary, :admin_glance, :channels_workload, :top_customers_open_tickets, :top_agents_old_tickets]
+    base.send :before_filter, :only => [:unresolved_tickets_dashboard, :overdue, :due_today, :unresolved_tickets_workload, :my_performance, :my_performance_summary, :agent_performance, :agent_performance_summary, :group_performance, :group_performance_summary, :admin_glance, :channels_workload, :top_customers_open_tickets, :top_agents_old_tickets]
     base.send :before_filter, :process_filter_params, :only => [:unresolved_tickets_dashboard, :overdue, :due_today, :trend_count, :unresolved_tickets_workload]
     base.send :before_filter, :filter_group_id, :only => [:agent_performance, :agent_performance_summary, :top_agents_old_tickets]
     base.send :before_filter, :check_supervisor_privilege, :only => [:unresolved_tickets_workload, :agent_performance, :agent_performance_summary, :top_agents_old_tickets]
@@ -52,10 +52,6 @@ module DashboardControllerMethods
   def survey_info
     widget_count = Dashboard::SurveyWidget.new.fetch_records
     render :json => {:survey => widget_count}.to_json
-  end
-
-  def check_dashboard_feature
-    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless current_account.launched?(:admin_dashboard) || current_account.launched?(:supervisor_dashboard) || current_account.launched?(:agent_dashboard)
   end
 
   def available_agents

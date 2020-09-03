@@ -838,7 +838,6 @@ HEREDOC
       :active_customer_email_queue,
       :bot_feedback_queue,
       :channel_framework_services,
-      :count_etl_queue,
       :custom_mailbox_realtime_queue,
       :custom_mailbox_status,
       :default_email_queue,

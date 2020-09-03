@@ -78,23 +78,6 @@ module Ember
         end
       end
 
-      def search_articles
-        @klasses        = ['Solution::Article']
-        @sort_direction = 'desc'
-        @search_sort    = 'relevance'
-        @search_context = :filtered_solution_search
-        @category_ids   = portal_catagory_ids if portal_catagory_ids.present?
-        @language_id    = @lang_id
-        if es_for_filter?
-          @count_request = true
-          @results = esv2_query_results(esv2_agent_article_model)
-          @results_count = @results.total_entries
-          @results = (@results.records['results'].presence || {}).map { |result| result['id'] }
-          return @results
-        end
-        @results = esv2_query_results(esv2_agent_article_model)
-      end
-
       def untranslated_articles
         @items = apply_article_scopes(untranslated_language_articles)
         paginate_filter_items

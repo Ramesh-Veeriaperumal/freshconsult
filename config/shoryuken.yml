@@ -9,7 +9,6 @@
   - <%= ES_V2_QUEUE_KEY % { cluster: 'cluster1-archive' } %>
   - <%= SQS[:facebook_realtime_queue] %>
   - <%= SQS[:fb_message_realtime_queue] %>
-  - <%= SQS[:count_etl_queue] %>
   - <%= SQS[:analytics_etl_queue] %>
   - <%= SQS[:free_customer_email_queue] %>
   - <%= SQS[:trial_customer_email_queue] %>
@@ -27,10 +26,8 @@
   - <%= SQS[:spam_trash_delete_paid_acc_queue] %>
   - <%= SQS[:fd_scheduler_downgrade_policy_reminder_queue] %>
   - <%= SQS[:search_etlqueue_maintenance] %>
-  - <%= SQS[:count_etl_queue_maintenance] %>
   - <%= SQS[:analytics_etl_queue_maintenance] %>
   - <%= SQS[:suspended_account_cleanup_queue] %>
   - <%= SQS[:email_rate_limiting_queue] %>
   - <%= SQS[:freddy_consumed_session_reminder_queue] %>
   - <%= SQS[:switch_to_annual_notification_queue] %>
-

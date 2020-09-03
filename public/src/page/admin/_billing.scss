@@ -523,7 +523,6 @@ dt.vertical-top {
 }
 
 .features-billing-edit {
-	margin:0 10px;
 
   &__toggle {
 		padding: 14px 16px;
@@ -1026,9 +1025,6 @@ input[type=text].input-agent-count{
 					}
 					.agents-count {
 						font-weight: 600;
-					}
-					&.plan-addon {
-						width: 34%;
 					}
 					&.plan-addon {
 						width: 34%;

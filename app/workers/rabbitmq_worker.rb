@@ -20,7 +20,6 @@ class RabbitmqWorker
     if count_routing_key?(exchange_key, rounting_key)
       parsed_message = JSON.parse(message)
       publish_to_analytics_cluster(parsed_message, rounting_key, exchange_key)
-      publish_to_legacy_count_cluster(parsed_message, rounting_key, exchange_key)
     end
 
     # Publish to Search-v2
@@ -251,18 +250,7 @@ class RabbitmqWorker
       end
     end
 
-    def publish_to_legacy_count_cluster(message, rounting_key, exchange_key)
-      message[:legacy] = true
-      message[:analytics] = false
-      sqs_msg_obj = enqueue_legacy_count_sqs(message.to_json)
-      Rails.logger.info "CountES Legacy SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
-    rescue Exception => e
-      Rails.logger.debug "Error while publishing to legacy count cluster :: #{e.message}"
-    end
-
     def publish_to_analytics_cluster(message, rounting_key, exchange_key)
-      message[:legacy] = false
-      message[:analytics] = true
       sqs_msg_obj = enqueue_analytics_sqs(message.to_json)
       Rails.logger.info "CountES Analytics SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     rescue Exception => e
@@ -271,10 +259,6 @@ class RabbitmqWorker
 
     def enqueue_search_sqs(message)
       Ryuken::SearchSplitter.perform_async(message)
-    end
-
-    def enqueue_legacy_count_sqs(message)
-      Ryuken::LegacyCountPerformer.perform_async(message)
     end
 
     def enqueue_analytics_sqs(message)
