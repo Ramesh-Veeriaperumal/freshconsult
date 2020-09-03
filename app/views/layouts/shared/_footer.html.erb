@@ -145,7 +145,7 @@
       });
   </script>
 <% end %>
-<% if current_user && current_user.is_falcon_pref? %>
+<% if current_user %>
   <script type="text/javascript">
     jQuery(document).ready(function() {
       window.App = window.App || {};
