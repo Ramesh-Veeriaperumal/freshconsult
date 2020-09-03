@@ -16854,9 +16854,6 @@
                     "livechat_deprecation": {
                       "type": "boolean"
                     },
-                    "freshfone_deprecation": {
-                      "type": "boolean"
-                    },
                     "downgrade_policy_reminder": {
                       "type": "boolean"
                     },
@@ -20902,24 +20899,6 @@
         }
       }
     },
-    "freshfone_call": {
-      "type": "object",
-      "description": "freshfone call",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "duration": {
-          "type": "integer",
-          "format": "int64",
-          "description": "duration is in seconds"
-        },
-        "recording": {
-          "$ref": "#/definitions/attachment"
-        }
-      }
-    },
     "ticket_topic": {
       "type": "object",
       "description": "ticket topic",
@@ -21840,9 +21819,6 @@
                 "tweet": {
                   "$ref": "#/definitions/tweet_post"
                 },
-                "freshfone_call": {
-                  "$ref": "#/definitions/freshfone_call"
-                },
                 "survey_result": {
                   "$ref": "#/definitions/survey_result"
                 },
@@ -22325,9 +22301,6 @@
             {
               "type": "object",
               "properties": {
-                "freshfone_call": {
-                  "$ref": "#/definitions/freshfone_call"
-                },
                 "fb_post": {
                   "allOf": [
                     {
@@ -22404,9 +22377,6 @@
             {
               "type": "object",
               "properties": {
-                "freshfone_call": {
-                  "$ref": "#/definitions/freshfone_call"
-                },
                 "fb_post": {
                   "allOf": [
                     {
@@ -22487,9 +22457,6 @@
         {
           "type": "object",
           "properties": {
-            "freshfone_call": {
-              "$ref": "#/definitions/freshfone_call"
-            },
             "fb_post": {
               "allOf": [
                 {
