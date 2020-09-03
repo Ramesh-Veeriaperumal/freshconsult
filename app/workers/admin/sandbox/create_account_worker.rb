@@ -71,7 +71,8 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
         user_email: @user.email,
         user_helpdesk_agent: true,
         account_account_type: Account::ACCOUNT_TYPES[:sandbox],
-        time_zone: @account.time_zone
+        time_zone: @account.time_zone,
+        direct_signup: true
       }
       params.merge!(freshid_v2_signup_params) if @account.freshid_org_v2_enabled?
       Thread.current[:create_sandbox_account] = true

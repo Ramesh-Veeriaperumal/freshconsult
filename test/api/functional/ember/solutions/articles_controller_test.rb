@@ -2133,7 +2133,6 @@ module Ember
       end
 
       def test_article_filters_with_search_term_status_approved_and_approver_with_es_filter_privilege
-        Account.current.launch(:article_es_search_by_filter)
         user = add_new_user(@account, active: true)
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         approver = add_test_agent
@@ -2154,13 +2153,11 @@ module Ember
         pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       ensure
-        Account.current.rollback(:article_es_search_by_filter)
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
         add_privilege(User.current, :publish_solution)
       end
 
       def test_article_filters_with_search_term_platforms_with_es_filter_privilege
-        Account.current.launch(:article_es_search_by_filter)
         Account.any_instance.stubs(:omni_bundle_account?).returns(true)
         Account.current.launch(:kbase_omni_bundle)
         article = get_article_with_platform_mapping
@@ -2177,7 +2174,6 @@ module Ember
         pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
       ensure
-        Account.current.rollback(:article_es_search_by_filter)
         Account.any_instance.stubs(:omni_bundle_account?).returns(true)
         Account.current.launch(:kbase_omni_bundle)
       end
@@ -2243,19 +2239,6 @@ module Ember
       def test_article_filters_with_search_term
         article_title = Faker::Lorem.characters(10)
         article = create_article(article_params(title: article_title)).primary_article
-        stub_private_search_response([article]) do
-          get :filter, controller_params(version: 'private', portal_id: @portal_id, term: article_title)
-        end
-        article.reload
-        assert_response 200
-        pattern = private_api_solution_article_pattern(article, action: :filter)
-        match_json([pattern])
-      end
-
-      def test_article_filters_with_search_term_with_es_filter_privilege
-        Account.current.launch(:article_es_search_by_filter)
-        article_title = Faker::Lorem.characters(10)
-        article = create_article(article_params(title: article_title)).primary_article
         base_struct = Struct.new(:records, :total_entries)
         records_struct = Struct.new(:results)
         result_struct = Struct.new(:id)
@@ -2268,8 +2251,6 @@ module Ember
         assert_response 200
         pattern = private_api_solution_article_pattern(article, action: :filter)
         match_json([pattern])
-      ensure
-        Account.current.rollback(:article_es_search_by_filter)
       end
 
       def test_article_filters_with_default_article
