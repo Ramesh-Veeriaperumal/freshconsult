@@ -326,7 +326,7 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def supervisor_dashboard_not_available?
-    !(current_user.privilege?(:view_reports) and !current_user.privilege?(:admin_tasks) and current_account.launched?(:supervisor_dashboard))
+    !(current_user.privilege?(:view_reports) && !current_user.privilege?(:admin_tasks))
   end
 
   def agent_dashboard_not_available?
