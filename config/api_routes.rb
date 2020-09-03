@@ -38,7 +38,7 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show, :create, :destroy]
+      resources :business_calendars, controller: 'api_business_calendars', only: [:index, :show, :create, :update, :destroy]
       put '/custom_translations', to: 'custom_translations#upload'
       get '/custom_translations', to: 'custom_translations#download'
       get 'holidays/:id', to: 'holidays#show'
@@ -54,9 +54,10 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :security, controller: 'api_security', only: [:show] do
+      resources :security, controller: 'api_security' do
         collection do
           get :show
+          put :update
         end
       end
     end
@@ -221,6 +222,8 @@ Helpkit::Application.routes.draw do
         put :bitmap_add_feature
         put :bitmap_revoke_feature
         put :execute_script
+        put :enable_setting
+        put :disable_setting
       end
     end
 
@@ -924,6 +927,7 @@ Helpkit::Application.routes.draw do
     resource :rts, controller: 'ember/rts', only: [:show]
 
     get '/plans', to: 'admin/subscriptions#plans'
+    get '/plans/:id', to: 'admin/subscriptions#fetch_plan'
 
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'
@@ -1029,6 +1033,7 @@ Helpkit::Application.routes.draw do
     get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
+    get '/solutions/search', to: 'channel/v2/api_solutions/articles#search'
   end
 
   channel_routes = proc do

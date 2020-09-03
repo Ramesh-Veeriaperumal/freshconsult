@@ -52,6 +52,7 @@ class TicketValidation < ApiValidation
   validates :template_text, data_type: { rules: String, required: true }, on: :parse_template
 
   validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true, allow_nil: true }, on: :create
+  validates :source, custom_inclusion: { in: proc { |x| x.sources }, ignore_string: :allow_string_param, detect_type: true }, on: :compose_email
   validates :source, custom_inclusion: { in: proc { |x| x.update_sources }, ignore_string: :allow_string_param, detect_type: true }, unless: :private_api?, on: :update
   validates :requester_id, :email_config_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
@@ -343,7 +344,9 @@ class TicketValidation < ApiValidation
   end
 
   def sources
-    if Account.current.compose_email_enabled?
+    if Account.current.compose_email_enabled? && validation_context == :compose_email
+      [Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
+    elsif Account.current.compose_email_enabled?
       Account.current.helpdesk_sources.api_sources | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
     else
       Account.current.helpdesk_sources.api_sources

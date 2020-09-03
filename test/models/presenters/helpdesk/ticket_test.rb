@@ -23,7 +23,13 @@ class TicketTest < ActiveSupport::TestCase
   def setup
     super
     @account = Account.current
+    ChargeBee::Customer.stubs(:update).returns(true)
     before_all
+  end
+
+  def teardown
+    ChargeBee::Customer.unstub(:update)
+    super
   end
 
   @@before_all_run = false
@@ -894,5 +900,26 @@ class TicketTest < ActiveSupport::TestCase
   ensure
     t.destroy
     Account.any_instance.unstub(:shared_ownership_enabled?)
+  end
+
+  def test_for_ticket_custom_dependent_fields
+    names = Faker::Lorem.words(3).map { |x| "nf_stoid_one_#{x}" }
+    nested_value_level1 = Faker::Lorem.word
+    nested_value_level11 = Faker::Lorem.word
+    nested_value_level12 = Faker::Lorem.word
+    nested_value_level111 = Faker::Lorem.word
+    nested_value_level121 = Faker::Lorem.word
+    nested_values = [[nested_value_level1, '0', [[nested_value_level11, '0', [[nested_value_level111, 0]]], [nested_value_level12, '0', [[nested_value_level121, 0]]]]]]
+    nested_field_level1 = create_dependent_custom_field(names, nil, nil, nil, nested_values)
+    custom_fields_hash = { "#{names[0]}_#{@account.id}" => nested_value_level1, "#{names[1]}_#{@account.id}" => nested_value_level11, "#{names[2]}_#{@account.id}" => nested_value_level111 }
+    ticket = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
+    transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(ticket)
+    Account.find(Account.current.id).make_current
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+    assert_equal true, transformer.transform(nested_value_level111, 'ffs_09').present?
+  ensure
+    ticket.destroy
+    nested_field_level1.destroy
   end
 end

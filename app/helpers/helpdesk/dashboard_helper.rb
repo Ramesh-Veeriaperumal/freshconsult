@@ -119,11 +119,11 @@ module Helpdesk::DashboardHelper
     options = [default_dashboard[0]]
     return options if !dashboardv2_available? || current_account.launched?(:es_down) #Show only Standard Dashboard if ES is down. This ideally shouldn't occur, fingers crossed.
     if current_user.privilege?(:admin_tasks)
-      options << default_dashboard[3] if current_account.launched?(:admin_dashboard)
+      options << default_dashboard[3]
     elsif current_user.privilege?(:view_reports)
-      options << default_dashboard[2] if current_account.launched?(:supervisor_dashboard)
+      options << default_dashboard[2]
     else
-      options << default_dashboard[1] if current_account.launched?(:agent_dashboard)
+      options << default_dashboard[1]
     end
     options
   end

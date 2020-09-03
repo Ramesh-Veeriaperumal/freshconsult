@@ -1267,8 +1267,6 @@ nl:
         only_agents: Agents
         remote_login_url_info: >-
           Naar deze URL worden gebruikers voor de verificatie doorgestuurd wanneer ze zich aanmelden bij Freshdesk.
-        customer_portal_ssl_warning: >-
-          Omdat voor uw account een aangepaste helpdesk-URL is geconfigureerd, wordt u doorgestuurd naar 
         saml_cert_fingerprint: Vingerafdruk beveiligingscertificaat
         success_message: >-
           Uw aanvraag voor een aangepast SSL-certificaat is gestart en wordt binnenkort verwerkt. Voor de goedkeuring ontvangt u een bevestigings-e-mail van onze provider. Controleer uw postvak IN op updates.
@@ -2385,6 +2383,7 @@ nl:
         unassigned_service_tasks: Niet-toegewezen servicetaken
         service_tasks_starting_today: Servicetaken die vandaag beginnen
         unresolved_service_tasks: Onopgeloste servicetaken
+        visible_and_resolved: Opgeloste tickets
       friendly_status:
         customer_responded: Klant heeft geantwoord
         elapsed: Vervaltijd
@@ -3822,6 +3821,9 @@ nl:
       description: Omschrijving
       fsm_fields_edit: Dit standaardveld kan niet bewerkt worden
       fsm_fields_moved_out: Standaardvelden in deze sectie kunnen niet verplaatst worden uit de sectie.
+    field_service_fields:
+      cf_fsm_contact_name: Contactpersoon
+      cf_fsm_phone_number: Telefoonnummer
     formfield_props:
       behavior: Gedrag
       customer_edit: Klant mag bewerken
@@ -5911,6 +5913,7 @@ nl:
       sign_up_text: 'Chat met klanten op uw website, portaal of mobiele app.'
       enable_chat_in_portal_info: >-
         Maak het makkelijk voor uw klanten om met u te chatten, als ze op uw ondersteuningsportaal terecht komen.
+      topics_title: Onderwerpen
       app_id_placeholder: 'Bijv.: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Ga, om Freshchat gesprekken te converteren naar tickets, naar deze <a href='%{url}' target='_blank'>pagina</a> en kopieer onderstaande gegevens. Lees <a href='%{article_url}' target='_blank'>dit artikel</a> als u meer hulp nodig hebt.
@@ -6062,12 +6065,6 @@ nl:
     cancel_final_message: >-
       Met minder dan 24 uur over wilden we nog een laatste keer contact met u opnemen om te zien of u deze kans wilde benutten om uw Freshdesk-account te behouden. Zodra uw annuleringsverzoek verwerkt is zullen al uw helpdeskgegevens, inclusief alle klantgegevens en gesprekken, onherstelbaar verwijderd worden. Als u uw account wilt behouden kunt u ons een reactie sturen, wij zullen dan uw annuleringsverzoek verwijderen.
     current_subscription: 'Uw huidige abonnement: '
-    agent_reduction: >-
-      Wij verzoeken u om %{requested_agents} full-time agents of minder te behouden per %{next_renewal_at} of er zullen, zoals gewoonlijk,%{current_agents} agents in rekening worden gebracht.
-    agent_field_reduction: >-
-      Wij verzoeken u om %{requested_field_agents} buitendienst technici of minder te behouden per %{next_renewal_at} of er zullen, zoals gewoonlijk,%{current_field_agents} buitendienst technici in rekening worden gebracht.
-    agent_and_agent_field_reduction: >-
-      Wij verzoeken u om %{requested_agents} full-time agents of minder en %{requested_field_agents} buitendienst technici te behouden per %{next_renewal_at} of er zullen, zoals gewoonlijk,%{current_agents} agents en %{current_field_agents} buitendienst technici in rekening worden gebracht.
     current_plan: 'Abonnement: %{plan}'
     agents: 'Agents: %{agents}'
     billing_cycle: 'Facturering: %{billing_cycle}'
@@ -6116,8 +6113,6 @@ nl:
       info: >-
         Importeer de unieke ID's van uw klanten en vind hun gesprekken eenvoudig in Freshdesk. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me een extern ID in te stellen</a>
   fsm_warning_title: Weet u zeker dat u Beheer buitendienst wilt uitschakelen?
-  fsm_content: >-
-    Maak contact en werk samen met uw buitendienstmedewerkers om ter plaatse een productieve en uitzonderlijke klantenservice te bieden. Verkrijgbaar bij
   fsm_title: Buitendienstbeheer
   subscription_change_confirm_body: >-
     U heeft een bestaand verzoek om uw account te annuleren. Klik op 'Doorgaan' om dit verzoek te verwijderen en uw abonnement aan te passen.

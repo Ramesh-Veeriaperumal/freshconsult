@@ -181,6 +181,24 @@ gem 'dogstatsd-ruby'
 gem 'rbtrace', require: false
 gem 'prometheus_exporter', git: 'git@github.com:freshdesk/prometheus_exporter.git', tag: 'v1.1.0'
 
+# Gems for Distributed Tracing
+group :production, :staging, :test, :development do
+  # TODO: In Rails 4 modify the syntax to use `glob` attribute like below example:
+  # gem 'opentelemetry-instrumentation-net_http', git: "git@github.com:freshdesk/opentelemetry-ruby.git",  glob: 'instrumentation/net_http/*.gemspec', branch: 'v0.4.0-ruby-2.3-compatible'
+  gem 'opentelemetry-api', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'api'
+  gem 'opentelemetry-sdk', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'sdk'
+  gem 'opentelemetry-exporters-jaeger', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'exporter-jaeger'
+  gem 'opentelemetry-instrumentation-rails', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'rails'
+  gem 'opentelemetry-instrumentation-active_support', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'active-support'
+  gem 'opentelemetry-instrumentation-action_pack', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'action-pack'
+  gem 'opentelemetry-instrumentation-rack', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'rack'
+  gem 'opentelemetry-instrumentation-active_record', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'active-record'
+  gem 'opentelemetry-instrumentation-dalli', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'dalli'
+  gem 'opentelemetry-instrumentation-redis', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'redis'
+  gem 'opentelemetry-instrumentation-ethon', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'ethon'
+  gem 'opentelemetry-instrumentation-net_http', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'net-http'
+end
+
 # Freshdesk
 gem 'rate-limiting', git:'git://github.com/freshdesk/rate-limiting.git', tag: 'v2.0'
 gem 'time_bandits', git: 'git@github.com:freshdesk/fd_time_bandits', tag: 'v1.3' # for instrumenting cache-performance

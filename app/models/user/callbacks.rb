@@ -55,6 +55,7 @@ class User < ActiveRecord::Base
   
   #after_commit :discard_contact_field_data, on: :update, :if => [:helpdesk_agent_updated?, :agent?]
   after_commit :delete_forum_moderator, on: :update, :if => :helpdesk_agent_updated?
+  after_commit :propagate_api_key_to_seeder_accounts, on: :update, if: :admin_api_key_updated?
   after_commit :deactivate_monitorship, on: :update, :if => :blocked_deleted?
   after_commit :sync_to_export_service, on: :update, :if => [:agent?, :time_zone_updated?]
 
@@ -68,10 +69,16 @@ class User < ActiveRecord::Base
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
-  include RabbitMq::Publisher 
+  include RabbitMq::Publisher
+  include Aloha::Util
 
   def tag_update_central_publish
     CentralPublish::UpdateTag.perform_async(tag_update_model_changes)
+  end
+
+  def publish_agent_update_central_payload
+    changes = model_changes.slice(:name, :email, :phone)
+    agent.publish_update_central_payload(changes)
   end
 
   def tag_update_model_changes
@@ -304,6 +311,12 @@ class User < ActiveRecord::Base
     forum_moderator.destroy if forum_moderator
   end
 
+  def propagate_api_key_to_seeder_accounts
+    current_account = Account.current
+    send_updated_access_token_to_chat if current_account.freshchat_account_present?
+    send_updated_access_token_to_caller if current_account.freshcaller_account_present?
+  end
+
   def clear_agent_caches
     clear_agent_list_cache
     clear_agent_details_cache
@@ -343,6 +356,8 @@ class User < ActiveRecord::Base
       elsif self.default_user_company.present?
         self.customer_id = !self.default_user_company.marked_for_destruction? ? self.default_user_company.company_id : nil
       end
+      @model_changes[:customer_id] = changes[:customer_id] if changes.key?(:customer_id)
+      true
     end
   end
 

@@ -1040,8 +1040,6 @@ hu:
         only_agents: Ügyintézők
         remote_login_url_info: >-
           Ez annak az oldalnak az URL-je, amire a Freshdesk rendszere átirányít azonosításra, amikor az ügyfél be akar lépni a rendszerbe.
-        customer_portal_ssl_warning: >-
-          Mivel az Ön fiókja egyedileg konfigurált helpdesk URL-el rendelkezik, fiókját átirányítjuk ide 
         saml_cert_fingerprint: Biztonsági Tanúsítvány Ujjlenyomat
         success_message: >-
           Egyedi SSL-tanúsítványra vonatkozó kérésnek feldolgozása megkezdődött és hamarosan elkészül. Az engedélyezés előtt szolgáltatónktól egy megerősítő e-mailt fog kapni. További információkat beérkezett levelei között talál.
@@ -2118,6 +2116,7 @@ hu:
         all_tickets: Összes Ticket
         due_today: Ma Esedékes Ticketek
         resolved: Megoldott ticketek
+        visible_and_resolved: Megoldott ticketek
       friendly_status:
         customer_responded: Ügyfél válaszolt
         elapsed: Válasz esedékes
@@ -3543,6 +3542,9 @@ hu:
       created_at: Létrehozva
       skill: Képzettség
       description: Leírás
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Telefonszám
     formfield_props:
       behavior: Viselkedés
       customer_edit: Ügyfél módosíthatja
@@ -5522,6 +5524,7 @@ hu:
       sign_up_text: 'Kezdeményezzen beszélgetéseket ügyfeleivel weboldalon, telefonon, portálon vagy telefonos applikáción keresztül.'
       enable_chat_in_portal_info: >-
         Könnyítse meg ügyfelei számára az Önnel való chatelést, amikor a portáljára érkeznek.
+      topics_title: Témák
       app_id_placeholder: 'Pl: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         A Freshchat beszélgetés ticketté való konvertálásához kérjük, menjen a(z) <a href='%{url}' target='_blank'>oldalra</a>, és másolja át a lenti részleteket. Ha további segítségre van szüksége kérjük, nézze át az alábbi <a href='%{article_url}' target='_blank'>cikket</a>.

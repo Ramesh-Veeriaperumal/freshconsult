@@ -1039,8 +1039,6 @@ ro:
         only_agents: Agenti
         remote_login_url_info: >-
           Acesta este URL-ul catre care Freshdesk va redirectiona utilizatorii pentru a se autentifica atunci cand doresc sa acceseze Freshdesk.
-        customer_portal_ssl_warning: >-
-          Deoarece helpdesk URL personalizat este configurat pentru contul dvs., veti fi redirectionat catre 
         saml_cert_fingerprint: Certificat de securitate cu amprentă digitală
         success_message: >-
           A fost initiata cererea dvs. pentru certificatul personalizat SSL si va fi procesata in cel mai scurt timp. Vei primi un email de confirmare de la furnizorul nostru inainte de aprobare. Vă rugăm să verificați inbox-ul pentru actualizări.
@@ -2119,6 +2117,7 @@ ro:
         all_tickets: Toate tichetele
         due_today: Tichete care expira azi
         resolved: Tichete rezolvate
+        visible_and_resolved: Tichete rezolvate
       friendly_status:
         customer_responded: Clientul a raspuns
         elapsed: Termen raspuns
@@ -3553,6 +3552,9 @@ ro:
       created_at: Creat
       skill: Competență
       description: Descriere
+    field_service_fields:
+      cf_fsm_contact_name: Contact
+      cf_fsm_phone_number: Număr de telefon
     formfield_props:
       behavior: Comportament
       customer_edit: Clientul poate edita
@@ -5536,6 +5538,7 @@ ro:
       sign_up_text: 'Începeți să discutați cu clienții de pe site-ul, portalul sau aplicația dvs. mobilă.'
       enable_chat_in_portal_info: >-
         Faceți mai ușor pentru clienții dvs. să discute cu dvs. atunci când ajung pe portalul dvs. de asistență.
+      topics_title: Subiecte
       app_id_placeholder: 'Ex: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Pentru a converti conversațiile Freshchat în tichete, vă rugăm să accesați această <a href='%{url}' target='_blank'>pagina </a>, și să copiați și lipiți detaliile enumerate mai jos. Dacă aveți nevoie de mai mult ajutor, vă rugăm să aruncați o privire la <a href='%{article_url}' target='_blank'>acest articol </a>.

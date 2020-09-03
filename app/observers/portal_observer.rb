@@ -97,7 +97,7 @@ class PortalObserver < ActiveRecord::Observer
       domain_mapping.destroy if domain_mapping
 
       account = portal.account
-      if Fdadmin::APICalls.non_global_pods? && account.launched?(:trigger_domain_mapping_deletion) && @old_object.portal_url.present?
+      if Fdadmin::APICalls.non_global_pods? && @old_object.portal_url.present?
         Rails.logger.info "Triggering domain_mapping deletion from non-US pod: #{account.id} #{@old_object.portal_url}"
         remove_custom_domain_from_global(@old_object)
       end

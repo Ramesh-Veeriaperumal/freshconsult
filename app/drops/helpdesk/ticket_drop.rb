@@ -161,6 +161,16 @@ class Helpdesk::TicketDrop < BaseDrop
     Time.at(@source.nr_due_by - Time.zone.now.utc).utc.strftime("%H hr %M min %S sec") if @source.nr_due_by.present?
   end
 
+  def cf_fsm_appointment_start_time
+    start_time = "#{FSM_DATE_TIME_FIELDS[:start_time]}_#{@source.account.id}"
+    in_portal_time_zone(@source.custom_field[start_time]).strftime('%B %e %Y at %I:%M %p %Z')
+  end
+
+  def cf_fsm_appointment_end_time
+    end_time = "#{FSM_DATE_TIME_FIELDS[:end_time]}_#{@source.account.id}"
+    in_portal_time_zone(@source.custom_field[end_time]).strftime('%B %e %Y at %I:%M %p %Z')
+  end
+
   def sla_policy_name
     @source.sla_policy_name.to_s
   end
@@ -211,7 +221,7 @@ class Helpdesk::TicketDrop < BaseDrop
 
   def public_comments
     # source.notes.public.exclude_source('meta').newest_first
-    @source.public_notes.exclude_source(Account.current.helpdesk_sources.note_exclude_sources)
+    @source.public_notes.exclude_source(Account.current.helpdesk_sources.note_exclude_sources).oldest_first
   end
 
   def billable_hours
@@ -239,6 +249,10 @@ class Helpdesk::TicketDrop < BaseDrop
   def in_user_time_zone(time)
     portal_user_or_account = (portal_user || portal_account)
     portal_user_or_account.blank? ? time : time.in_time_zone(portal_user_or_account.time_zone)
+  end
+
+  def in_portal_time_zone(time)
+    time.in_time_zone(portal_account.time_zone)
   end
 
   def created_on

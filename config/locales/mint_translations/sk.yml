@@ -506,8 +506,6 @@ sk:
         only_agents: Agenti
         remote_login_url_info: >-
           Na túto adresu bude Freshdesk presmerovávať užívateľov k autentifikácii v prípade, že sa budú prihlasovať do Freshdesku.
-        customer_portal_ssl_warning: >-
-          Keďže má Váš účet nakonfigurovanú vlastnú adresu URL helpdesku, budete presmerovaný na
         success_message: >-
           Vaša požiadavka o uživatelský certifikát SSL bola prijatá a bude spracovaná v najkratšom možnom termíne. Pred schválením obdržíte potvrdzujúci mail od nášho providera. Prosím skontrolujte si maily.
         saml_logout_url: URL pre odhlásenie
@@ -1760,6 +1758,9 @@ sk:
       created_at: Vytvoril
       skill: Skúsenosť
       description: Popis
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Telefónny kontakt
     formfield_props:
       behavior: Správanie
       customer_edit: Zákazník môže upravovať
@@ -2382,6 +2383,7 @@ sk:
         success_message: Nastavenia boli aktualizované
       admin_apikey: 'Kľúč API:'
       title_text: Freshchat
+      topics_title: Témy
       portal_url: 'Adresa portálu:'
       app_id: ID aplikácie
   suspended_plan_info: Váš účet bol pozastavený!

@@ -134,8 +134,7 @@ class Helpdesk::AttachmentsController < ApplicationController
     end
 
     def check_download_permission
-      visible = current_account.launched?(:attachments_scope) ? @attachment.visible_to_me? : can_download?
-      access_denied unless visible
+      access_denied unless @attachment.visible_to_me?
     end
 
     def can_download?

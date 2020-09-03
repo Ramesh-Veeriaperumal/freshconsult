@@ -625,7 +625,6 @@ class Account < ActiveRecord::Base
     end
 
     def enable_count_es
-      self.launch(:count_service_es_writes)
       self.launch(:count_service_es_reads)
     end
 

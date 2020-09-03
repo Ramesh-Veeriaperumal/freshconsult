@@ -20,7 +20,7 @@ module ApiTicketConstants
   BULK_UPDATE_FIELDS = (UPDATE_FIELDS - ['attachments']).freeze
   BULK_ARCHIVE_FIELDS = %w[archive_days].freeze
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
-  COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
+  COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w[product_id responder_id requester_id phone twitter_id facebook_id]).freeze
   SHOW_FIELDS = ['include'].freeze
   PERMITTED_ARCHIVE_FIELDS = SHOW_FIELDS
   FSM_FIELDS = [:cf_fsm_appointment_start_time, :cf_fsm_appointment_end_time].freeze

@@ -1039,8 +1039,6 @@ th:
         only_agents: เจ้าหน้าที่
         remote_login_url_info: >-
           นี่คือ URL ที่ Freshdesk จะเปลี่ยนเส้นทางผู้ใช้สำหรับการตรวจสอบสิทธิ์เมื่อพวกเขาเข้าใช้งาน Freshdesk
-        customer_portal_ssl_warning: >-
-          เนื่องจากมีการตั้งค่า URL ระบบให้ความช่วยเหลือที่กำหนดเองสำหรับบัญชีของคุณ คุณจะถูกเปลี่ยนเส้นทางไป 
         saml_cert_fingerprint: Security Certificate Fingerprint
         success_message: >-
           คำขอของคุณสำหรับใบรับรอง SSL ที่กำหนดเองได้เริ่มต้นแล้วและจะถูกดำเนินการเร็ว ๆ นี้ คุณจะได้รับอีเมลยืนยันจากผู้ให้บริการของเราก่อนการอนุมัติ กรุณาตรวจสอบกล่องจดหมายของคุณสำหรับการอัปเดต
@@ -2120,6 +2118,7 @@ th:
         all_tickets: ทิคเก็ตทั้งหมด
         due_today: ทิคเก็ตครบกำหนดวันนี้
         resolved: ทิคเก็ตที่แก้ไขแล้ว
+        visible_and_resolved: ทิคเก็ตที่แก้ไขแล้ว
       friendly_status:
         customer_responded: ลูกค้าตอบกลับ
         elapsed: กำหนดเวลาตอบกลับ
@@ -3534,6 +3533,9 @@ th:
       created_at: สร้าง
       skill: ทักษะ
       description: คำอธิบาย
+    field_service_fields:
+      cf_fsm_contact_name: ผู้ติดต่อ
+      cf_fsm_phone_number: หมายเลขโทรศัพท์
     formfield_props:
       behavior: พฤติกรรม
       customer_edit: ลูกค้าสามารถแก้ไข
@@ -5532,6 +5534,7 @@ th:
       sign_up_text: 'เริ่มแชทกับลูกค้าในเว็บไซต์, พอร์ทัลหรือแอปบนมือถือของคุณ'
       enable_chat_in_portal_info: >-
         ช่วยให้ลูกค้าของคุณแชทกับคุณได้ง่ายขึ้นเมื่อพวกเขาอยู่บนหน้าซัพพอร์ตพอร์ทัลของคุณ
+      topics_title: หัวข้อ
       app_id_placeholder: 'เช่น 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         หากต้องการแปลงการสนทนา Freshchat เป็นทิคเก็ต โปรดไปที่ <a href='%{url}' target='_blank'>หน้านี้</a> แล้วคัดลอกและวางรายละเอียดด้านล่าง หากคุณต้องการความช่วยเหลือเพิ่มเติมโปรดดู <a href='%{article_url}' target='_blank'>บทความนี้</a>

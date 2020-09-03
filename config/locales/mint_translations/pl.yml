@@ -1039,8 +1039,6 @@ pl:
         only_agents: Konsultanci
         remote_login_url_info: >-
           Jest to adres URL, do którego system Freshdesk będzie przekierowywał użytkowników w celu dokonania uwierzytelnienia, gdy będą próbować uzyskać dostęp do systemu Freshdesk.
-        customer_portal_ssl_warning: >-
-          Z uwagi na to, że dla twojego konta określony został niestandardowy adres URL centrum pomocy, zostaniesz przekierowany do
         saml_cert_fingerprint: Odcisk palca certyfikatu bezpieczeństwa
         success_message: >-
           Twój wniosek o przyznanie niestandardowego certyfikatu SSL został przyjęty i wkrótce rozpocznie się jego przetwarzanie. Przed zatwierdzeniem otrzymasz wiadomość e-mail z potwierdzeniem od swojego dostawcy. Sprawdzaj na bieżąco skrzynkę pocztową.
@@ -2118,6 +2116,7 @@ pl:
         all_tickets: Wszystkie zgłoszenia
         due_today: Zgłoszenia z terminem na dziś
         resolved: Zgłoszenia rozwiązane
+        visible_and_resolved: Zgłoszenia rozwiązane
       friendly_status:
         customer_responded: Odpowiedź od klienta
         elapsed: Czas do odpowiedzi
@@ -3562,6 +3561,9 @@ pl:
       created_at: Utworzone
       skill: Umiejętność
       description: Opis
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Nr telefonu
     formfield_props:
       behavior: Zachowanie
       customer_edit: Klient może edytować
@@ -5540,6 +5542,7 @@ pl:
       sign_up_text: 'Rozpocznij rozmowę z klientami na ich witrynie, w portalu lub aplikacji mobilnej.'
       enable_chat_in_portal_info: >-
         Ułatw swoim klientom rozmowę, gdy trafią do Twojego portalu obsługi.
+      topics_title: Wątki
       app_id_placeholder: 'Np.: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Aby przekształcić rozmowy z Freshchat w zgłoszenia, przejdź do tej <a href='%{url}' target='_blank'>strony</a>, skopiuj i wklej informacje wymienione poniżej. Jeśli potrzebujesz pomocy, zapoznaj się z <a href='%{article_url}' target='_blank'>tym artykułem</a>.

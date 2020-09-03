@@ -1039,8 +1039,6 @@ sv-SE:
         only_agents: Handläggare
         remote_login_url_info: >-
           Detta är URL-länken till vilken Freshdesk dirigerar användare för autentisering när de försöker få åtkomst till Freshdesk.
-        customer_portal_ssl_warning: >-
-          Eftersom en anpassad helpdesk-URL har konfigurerats för ditt konto kommer du att omdirigeras till 
         saml_cert_fingerprint: Säkerhetscertifikatets fingeravtryck
         success_message: >-
           Din förfrågan om ett anpassat SSL-certifikat har initierats och kommer att bearbetas inom kort. Du kommer att få en bekräftelse via e-post från vår leverantör innan din förfrågan godkänns. Håll utkik i inkorgen efter uppdateringar.
@@ -2117,6 +2115,7 @@ sv-SE:
         all_tickets: Alla ärenden
         due_today: Ärenden som förfaller idag
         resolved: Lösta ärenden
+        visible_and_resolved: Lösta ärenden
       friendly_status:
         customer_responded: Kunden har svarat
         elapsed: Deadline för svar
@@ -3541,6 +3540,9 @@ sv-SE:
       created_at: Skapad
       skill: Kompetens
       description: Beskrivning
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Telefonnummer
     formfield_props:
       behavior: Beteende
       customer_edit: Kunden kan redigera
@@ -5519,6 +5521,7 @@ sv-SE:
       sign_up_text: 'Börja chatta med kunderna på din webbplats, portal eller mobilapp.'
       enable_chat_in_portal_info: >-
         Gör det enkelt för dina kunder att chatta med dig när de landar i din supportportal.
+      topics_title: Ämnen
       app_id_placeholder: 'T ex: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         För att konvertera konversationer i Freshchat till ärenden besöker du den här <a href='%{url}' target='_blank'>sidan</a>. Kopiera och klistra in informationen du ser nedan. Om du behöver vidare hjälp kan du ta en titt på den här <a href='%{article_url}' target='_blank'>artikeln</a>.

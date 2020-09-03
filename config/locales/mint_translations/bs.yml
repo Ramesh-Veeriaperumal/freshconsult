@@ -1039,8 +1039,6 @@ bs:
         only_agents: Agenti
         remote_login_url_info: >-
           Ovo je URL na koji će Freshdesk preusmjeriti korisnike za provjeru autentičnosti kada probaju pristupiti Freshdesku.
-        customer_portal_ssl_warning: >-
-          Budući da je prilagođeni URL odjela za pomoć konfiguriran za vaš račun, bit ćete preusmjereni na 
         saml_cert_fingerprint: Otisak sertifikata za bezbjednost
         success_message: >-
           Vaš zahtjev za prilagođeni SSL sertifikat je pokrenut i bit će uskoro obrađen. Primit ćete e-poštu potvrde od našeg davaoca usluga prije odobrenja. Provjerite pristiglu poštu za ažuriranja.
@@ -2118,6 +2116,7 @@ bs:
         all_tickets: Svi tiketi
         due_today: Tiketi za danas
         resolved: Riješeni tiketi
+        visible_and_resolved: Riješeni tiketi
       friendly_status:
         customer_responded: Klijent koji je odgovorio
         elapsed: Rok za odgovor
@@ -3552,6 +3551,9 @@ bs:
       created_at: Kreirano
       skill: Vještina
       description: Opis
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Telefonski broj
     formfield_props:
       behavior: Ponašanje
       customer_edit: Klijent može uređivati
@@ -5532,6 +5534,7 @@ bs:
       sign_up_text: 'Počnite razgovarati s klijentima na svom web sajtu, portalu ili mobilnoj aplikaciji.'
       enable_chat_in_portal_info: >-
         Olakšajte svojim klijentima da razgovaraju sa vama kada dođu na vaš portal za podršku.
+      topics_title: Teme
       app_id_placeholder: 'Npr.: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Za pretvaranje Freshchat razgovora u tikete, idite na ovu <a href='%{url}' target='_blank'>stranicu</a>, kopirajte i zalijepite detalje navedene dolje. Ako vam je potrebna dodatna pomoć, pogledajte <a href='%{article_url}' target='_blank'>ovaj članak</a>.

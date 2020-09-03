@@ -1039,8 +1039,6 @@ he:
         only_agents: סוכנים
         remote_login_url_info: >-
           זו כתובת ה- URL שפרשדסק יפנו משתמשים לאימות כניסה למערכת
-        customer_portal_ssl_warning: >-
-          מאחר שכתובת URL מותאמת אישית של מערכת התמיכה מוגדרת עבור החשבון שלך, תנותב מחדש אל 
         saml_cert_fingerprint: טביעת אצבע לאישור אבטחה
         success_message: >-
           בקשתך לקבלת אישור SSL מותאם אישית התקבלה ותעובד בקרוב. לפני האישור תקבל הודעת דוא"ל לאישור מהספק שלנו. בדוק אם יש עדכונים בתיבת הדואר הנכנס שלך.
@@ -2117,6 +2115,7 @@ he:
         all_tickets: כל הכרטיסים
         due_today: כרטיסים אשר מועד סיומם הוא היום
         resolved: כרטיסים שנפתרו
+        visible_and_resolved: כרטיסים שנפתרו
       friendly_status:
         customer_responded: הלקוח הגיב
         elapsed: מועד יעד לתגובה
@@ -3561,6 +3560,9 @@ he:
       created_at: נוצר
       skill: מיומנות
       description: תיאור
+    field_service_fields:
+      cf_fsm_contact_name: איש קשר
+      cf_fsm_phone_number: טלפון
     formfield_props:
       behavior: התנהגות
       customer_edit: הלקוח יכול לערוך
@@ -5538,6 +5540,7 @@ he:
       sign_up_text: 'התחל לשוחח עם לקוחות באתר שלך, בפורטל או באפליקציה לנייד.'
       enable_chat_in_portal_info: >-
         הקל על הלקוחות שלך לשוחח איתך בצ'אט כשהם נוחתים בפורטל התמיכה שלך.
+      topics_title: נושאים
       app_id_placeholder: 'Eg: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         כדי להמיר שיחות של Freshchat לכרטיסים, אנא עבור אל <a href='%{url}' target='_blank'>עמוד</a> זה, העתק והדבק את הפרטים המפורטים להלן. אם אתה זקוק לעזרה נוספת, אנא הסתכל על <a href='%{article_url}' target='_blank'>מאמר זה</a>.

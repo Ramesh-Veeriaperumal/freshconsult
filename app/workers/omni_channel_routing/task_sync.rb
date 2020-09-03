@@ -9,7 +9,7 @@ module OmniChannelRouting
       account = Account.current
       payload = { attributes: args[:attributes], changes: args[:changes] }
       Rails.logger.debug "***** OCR payload #{payload.inspect}"
-      response = request_ocr(:freshdesk, :put, OCR_PATHS[:update_ticket] % { ticket_id: args[:id].to_s }, payload.to_json)
+      response = request_service(:freshdesk, :put, service_paths[:update_ticket] % { ticket_id: args[:id].to_s }, payload.to_json)
       Rails.logger.info "Task changes sync successful. A=#{account.id} T=#{args[:id]} Response:: #{response}"
     rescue Exception => e
       Rails.logger.error "Error while syncing task changes #{e.message} :: #{e.backtrace[0..10].inspect}"

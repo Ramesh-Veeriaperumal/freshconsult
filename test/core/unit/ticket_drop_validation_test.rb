@@ -1,12 +1,21 @@
-require_relative '../test_helper' 
+require_relative '../test_helper'
+
+require Rails.root.join('spec', 'support', 'ticket_helper.rb')
 
 class TicketDropValidationTest < ActiveSupport::TestCase
 
 include AccountTestHelper
+include TicketHelper
+include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def setup
     current_account
+    perform_fsm_operations
     create_canned_form
+  end
+
+  def teardown
+    cleanup_fsm
   end
 
   # Validate dynamic liquid method - Using valid liquid method name
@@ -50,6 +59,26 @@ include AccountTestHelper
     cf_id = 1
     result = td.canned_form(cf_id)
     assert(result.present?)
+  end
+
+  def test_cf_fsm_appointment_start_time
+    time = Time.now.utc
+    ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '9912345678',
+                                        fsm_appointment_start_time: time.iso8601, fsm_appointment_end_time: (Time.now + 1.hour).utc.iso8601)
+    new_time = time.in_time_zone(@account.time_zone).strftime('%B %e %Y at %I:%M %p %Z')
+    td = Helpdesk::TicketDrop.new(ticket)
+    result = td.cf_fsm_appointment_start_time
+    assert(result, new_time)
+  end
+
+  def test_cf_fsm_appointment_end_time
+    time = (Time.now + 1.hour).utc
+    ticket = create_service_task_ticket(fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '9912345678',
+                                        fsm_appointment_start_time: Time.now.utc.iso8601, fsm_appointment_end_time: time.iso8601)
+    new_time = time.in_time_zone(@account.time_zone).strftime('%B %e %Y at %I:%M %p %Z')
+    td = Helpdesk::TicketDrop.new(ticket)
+    result = td.cf_fsm_appointment_end_time
+    assert(result, new_time)
   end
 
   # Verify the functionality of using the existing canned form handle if the previous is unused

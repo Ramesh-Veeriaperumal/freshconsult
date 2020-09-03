@@ -342,7 +342,7 @@ class AccountsControllerTest < ActionController::TestCase
     ensure
       AdminEmail::AssociatedAccounts.unstub(:find)
       remove_member_from_redis_set(INCREASE_DOMAIN_FOR_EMAILS, user_email)
-  end  
+  end
 
   def test_domain_existence
     get :check_domain, domain: "#{Faker::Lorem.word}.com", callback: '', format: 'json'
@@ -1170,32 +1170,6 @@ class AccountsControllerTest < ActionController::TestCase
   ensure
     unstub_signup_calls
     AccountAdditionalSettings.any_instance.unstub(:get_onboarding_version)
-  end
-
-  def test_new_signup_with_new_pricing_enabled
-    stub_signup_calls
-    Signup.any_instance.unstub(:save)
-    $redis_others.perform_redis_op('set', NEW_2020_PRICING_ENABLED, true)
-    account_name = Faker::Lorem.word
-    domain_name = Faker::Lorem.word
-    user_email = Faker::Internet.email
-    user_name = Faker::Name.name
-    referrer = Faker::Internet.url
-    landing_url = Faker::Internet.url
-    session = { current_session: { referrer: referrer, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
-                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' } }.to_json
-    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
-                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
-                     user_email: user_email, user_helpdesk_agent: true }
-    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
-    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
-    resp = JSON.parse(response.body)
-    assert_response 200, resp
-    account = Account.last
-    assert account.subscription.plan_name, 'Estate Jan 20'
-  ensure
-    unstub_signup_calls
-    $redis_others.perform_redis_op('del', NEW_2020_PRICING_ENABLED)
   end
 
   def test_new_signup_should_set_perishable_token_expiry_redis

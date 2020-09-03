@@ -126,8 +126,7 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
     :bi_reports => false, :contact_merge_ui => false, :social_revamp => true, :multiple_user_emails => false,
-    round_robin_revamp: false,
-    :facebook_realtime => false, :autorefresh_node => false, :tokenize_emoji => false,
+    :facebook_realtime => false, :tokenize_emoji => false,
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false, :reports_regenerate_data => false,
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
@@ -176,30 +175,28 @@ class Account < ActiveRecord::Base
     cascade_dispatchr: :cascade_dispatcher
   }.freeze
 
-  DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :dynamics_v2, :marketplace_app]
+  DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :marketplace_app]
 
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
   LAUNCHPARTY_FEATURES = {
-    hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
-    api_search_beta: false, autoplay: false, bi_reports: false,
+    hide_og_meta_tags: false, agent_conference: false, api_search_beta: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false,
     gamification_perf: false,
     gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
-    meta_read: false, most_viewed_articles: false, multifile_attachments: true,
-    new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
-    supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false,
-    skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
+    meta_read: false, most_viewed_articles: false,
+    new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
+    support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
-    skip_ticket_threading: false, attachments_scope: false,
-    kbase_spam_whitelist: false, enable_qna: false, enable_insights: false,
-    whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
+    skip_ticket_threading: false,
+    kbase_spam_whitelist: false,
+    whitelist_supervisor_sla_limitation: false,
     service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
@@ -211,7 +208,7 @@ class Account < ActiveRecord::Base
     incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
     auto_complete_off: false, freshworks_omnibar: false,
-    euc_migrated_twitter: false, new_ticket_recieved_metric: false, es_msearch: true,
+    new_ticket_recieved_metric: false, es_msearch: true,
     canned_forms: false, attachment_virus_detection: false, old_link_back_url_validation: false,
     stop_contacts_count_query: false, undo_send: false,
     bot_email_channel: false, archive_ticket_fields: true,
@@ -225,7 +222,7 @@ class Account < ActiveRecord::Base
     recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
-    supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
+    asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
     hide_mailbox_error_from_agents: false,
     jira_onpremise_reporter: false, sidekiq_logs_to_central: false,
@@ -233,17 +230,17 @@ class Account < ActiveRecord::Base
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
-    freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
+    requester_widget_timeline: false,
     enable_secure_login_check: false,
-    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
+    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
-    salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
+    salesforce_sync: false, salesforce_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

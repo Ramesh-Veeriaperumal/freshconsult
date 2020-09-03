@@ -33,8 +33,8 @@ module Helpdesk::Email::TicketMethods
         :account_id => account.id,
         :subject => email[:subject],
         :ticket_body_attributes => {
-                      :description => tokenize_emojis(email[:text]),
-                      :description_html => email[:description_html]
+            description:      email[:text],
+            description_html: email[:description_html]
         },
         :requester => user,
         :to_email => email[:to][:email],

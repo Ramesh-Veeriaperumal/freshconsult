@@ -1048,8 +1048,6 @@ ja-JP:
         only_agents: エージェント
         remote_login_url_info: >-
           Freshdeskをアクセスするためにユーザーが認証のために移動するURLリンクです。
-        customer_portal_ssl_warning: >-
-          カスタム・ヘルプデスクのリンクがアカウント用に設定されているため、ここへ飛びます：
         saml_cert_fingerprint: セキュリティ認証指紋
         success_message: >-
           あなたのカスタムSSL証明書リクエストがイニシエートされ、間もなく処理されます。承認前に当社のプロバイダから確認のメールがあなたに届きます。更新を受信箱でチェックしてください。
@@ -2143,6 +2141,7 @@ ja-JP:
         unassigned_service_tasks: 未割り当てのサービスタスク
         service_tasks_starting_today: 本日開始のサービスタスク
         unresolved_service_tasks: 未解決のサービスタスク
+        visible_and_resolved: 解消されたチケット
       friendly_status:
         customer_responded: 顧客返信済み
         elapsed: 返信の期限
@@ -3554,6 +3553,9 @@ ja-JP:
       created_at: 作成日
       skill: スキル
       description: 本文
+    field_service_fields:
+      cf_fsm_contact_name: 連絡先
+      cf_fsm_phone_number: 電話番号
     formfield_props:
       behavior: 動作
       customer_edit: 顧客が編集可能
@@ -5568,6 +5570,7 @@ ja-JP:
       sign_up_text: 'ウェブサイト・ポータル・モバイルアプリで顧客とチャットを開始しましょう。'
       enable_chat_in_portal_info: >-
         サポートポータル上から顧客が手軽にチャットを行えるようにします。
+      topics_title: トピック
       app_id_placeholder: '例：09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Freshchatの会話をチケットへ変換するには、この<a href='%{url}' target='_blank'>ページ</a>へ移動し、以下の詳細一覧をコピー＆ペーストします。不明点等がある場合、<a href='%{article_url}' target='_blank'>この記事</a>をご参照ください。
@@ -5678,8 +5681,6 @@ ja-JP:
       title: ユニーク外部ID
       info: >-
         顧客のユニークな（一意の）IDをインポートし、Freshdeskでの会話を簡単に特定します。<br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">外部IDの設定方法はこちら</a>
-  fsm_content: >-
-    現場の従業員とつながり共同作業することで、生産性の高い卓越した顧客サービスを現場で提供します。次で利用可能：
   fsm_title: フィールドサービスマネージメント
   per_field_agent_per_month: /フィールド技術者あたりの月額
   focus_mode_toggle_tip: 'チケットクローズに際し、自分の案件の次の可能なチケットに素早く移動する'

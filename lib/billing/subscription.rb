@@ -39,10 +39,10 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     Hash[*MAPPED_PLANS.map { |i| [i[0], i[2]] }.flatten]
   end
 
-  def self.current_plans_costs_per_agent_from_cache(currency)
+  def self.all_plans_costs_per_agent_from_cache(currency)
     MemcacheKeys.fetch(format(MemcacheKeys::PLANS_AGENT_COSTS_BY_CURRENCY,
       currency_name: currency.name)) do
-      Billing::Subscription.new.current_plans_costs_per_agent(currency)
+      Billing::Subscription.new.all_plans_costs_per_agent(currency)
     end
   end
 
@@ -157,18 +157,20 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     raise error unless error.error_code == 'no_scheduled_changes'
   end
 
-  def current_plans_costs_per_agent(currency)
+  def all_plans_costs_per_agent(currency)
     chargebee_id_to_subscription_plan_name = {}
     plans_to_agent_cost = {}
-    SubscriptionPlan.current_plan_names_from_cache.each do |plan_name|
+    SubscriptionPlan.subscription_plans_from_cache.map(&:name).each do |plan_name|
       plans_to_agent_cost[plan_name] = {}
       Billing::Subscription::BILLING_PERIOD.keys.each do |billing_period|
         chargebee_plan_id = chargebee_plan_id(plan_name, billing_period)
         chargebee_id_to_subscription_plan_name[chargebee_plan_id] = plan_name
       end
     end
-    plans = retrieve_plans_by_id(chargebee_id_to_subscription_plan_name.keys,
-      currency.billing_site, currency.billing_api_key)
+    plans = []
+    chargebee_id_to_subscription_plan_name.keys.each_slice(100) do |plan_ids|
+      plans += retrieve_plans_by_id(plan_ids, currency.billing_site, currency.billing_api_key)
+    end
     plans.each do |plan|
       amt = (plan[:price]/plan[:period])/100
       plans_to_agent_cost[chargebee_id_to_subscription_plan_name[
@@ -248,13 +250,13 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
     def addon_billing_params(subscription, addon)
       data = { :id => addon.billing_addon_id }
-      data.merge!(:quantity => addon.billing_quantity(subscription))
+      data.merge!(:quantity => addon.billing_quantity(subscription)) unless addon.addon_type == Subscription::Addon::ADDON_TYPES[:on_off]
       data
     end
 
     def merge_addon_data(data, subscription, addons)
       addon_list = addons.inject([]) do |result, addon|
-        result << addon_billing_params(subscription, addon) if addon.billing_quantity(subscription).to_i > 0
+        result << addon_billing_params(subscription, addon) if addon.billing_quantity(subscription).to_i > 0 || addon.addon_type == Subscription::Addon::ADDON_TYPES[:on_off]
         result
       end
       addon_list = addon_list + marketplace_addons(subscription)

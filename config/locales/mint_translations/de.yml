@@ -1268,8 +1268,6 @@ de:
         only_agents: Agenten
         remote_login_url_info: >-
           Das ist die URL (Link), an die Freshdesk nicht authentifizierte Benutzer weiterleitet, wenn sie versuchen auf Freshdesk zuzugreifen.
-        customer_portal_ssl_warning: >-
-          Da für Ihr Konto eine benutzerdefinierte Helpdesk-URL konfiguriert ist, werden Sie weitergeleitet an 
         saml_cert_fingerprint: Fingerabdruck für Sicherheitszertifikat
         success_message: >-
           Ihre Anfrage für ein benutzerdefiniertes SSL-Zertifikat wurde initiiert und wird in Kürze verarbeitet. Vor der Genehmigung werden Sie eine Bestätigungs-E-Mail von unserem Provider erhalten. Bitte prüfen Sie Ihren Posteingang auf neue E-Mails
@@ -2387,6 +2385,7 @@ de:
         unassigned_service_tasks: Nicht zugewiesene Serviceaufgaben
         service_tasks_starting_today: Heute beginnende Serviceaufgaben
         unresolved_service_tasks: Ungelöste Serviceaufgaben
+        visible_and_resolved: Gelöste Tickets
       friendly_status:
         customer_responded: Kunde hat geantwortet
         elapsed: Antwort fällig
@@ -3824,6 +3823,9 @@ de:
       description: Beschreibung
       fsm_fields_edit: Dieses Standardfeld kann nicht bearbeitet werden
       fsm_fields_moved_out: Standardfelder dieses Abschnitts können nicht aus dem Abschnitt verschoben werden.
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Telefonnummer
     formfield_props:
       behavior: Verhalten
       customer_edit: Kunde kann bearbeiten
@@ -5913,6 +5915,7 @@ de:
       sign_up_text: 'Starten Sie auf Ihrer Webseite, in Ihrem Portal oder Ihrer mobilen App Chats mit Kunden.'
       enable_chat_in_portal_info: >-
         Erleichtern Sie Ihren Kunden das Chatten mit Ihnen, wenn diese auf Ihr Support-Portal gelangen.
+      topics_title: Themen
       app_id_placeholder: 'Beispiel: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Bitte rufen Sie zum Umwandeln von Freshchat-Gesprächen in Tickets diese <a href='%{url}' target='_blank'>Seite</a> auf, kopieren Sie die nachfolgend aufgeführten Details und fügen Sie diese ein. Wenn Sie weitere Unterstützung benötigen, lesen Sie bitte <a href='%{article_url}' target='_blank'>diesen Artikel</a>.
@@ -6065,12 +6068,6 @@ de:
     cancel_final_message: >-
       Da nur noch 24 Stunden verbleiben, möchten wir Sie ein letztes Mal kontaktieren, um zu sehen, ob Sie diese Chance nutzen möchten, Ihr Freshdesk-Konto zu behalten. Alle Ihre Helpdesk-Daten, inklusive aller Kundendaten und -gespräche, werden unwiderruflich gelöscht werden, wenn die Stornierungsanfrage bearbeitet wird. Wenn Sie Ihr Konto behalten möchten, senden Sie uns eine Antwort und wir werden Ihre Stornierungsanfrage löschen.
     current_subscription: 'Ihr aktuelles Abonnement: '
-    agent_reduction: >-
-      Gemäß Ihrer Anfrage, behalten Sie bitte max. %{requested_agents} Vollzeitagenten ab %{next_renewal_at} oder Ihnen werden, wie gewöhnlich, %{current_agents} Agenten verrechnet werden.
-    agent_field_reduction: >-
-      Gemäß Ihrer Anfrage, behalten Sie bitte max. %{requested_field_agents} Außendiensttechniker ab %{next_renewal_at} oder Ihnen werden, wie gewöhnlich, %{current_field_agents} Außendiensttechnikrer verrechnet werden.
-    agent_and_agent_field_reduction: >-
-      Gemäß Ihrer Anfrage, behalten Sie bitte max. %{requested_agents} Vollzeitagenten und max. %{requested_field_agents} Außendiensttechniker ab %{next_renewal_at} oder Ihnen werden, wie gewöhnlich, %{current_agents} Agenten und %{current_field_agents} Außendiensttechnikrer verrechnet werden.
     current_plan: 'Plan: %{plan}'
     agents: 'Agenten %{agents}'
     billing_cycle: 'Abrechnungszyklus: %{billing_cycle}'
@@ -6119,8 +6116,6 @@ de:
       info: >-
         Importieren Sie die eindeutigen IDs Ihrer Kunden und identifizieren Sie leicht deren Gespräche in Freshdesk. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Hilfe beim Einrichten der externen ID</a>
   fsm_warning_title: Möchten Sie Außendienstmanagement wirklich deaktivieren?
-  fsm_content: >-
-    Verbinden Sie sich und arbeiten Sie mit Ihrem Außendienst zusammen, um produktiven und außergewöhnlichen Kundenservice vor Ort zu erbringen. Verfügbar von
   fsm_title: Außendienst-Management
   subscription_change_confirm_body: >-
     Sie haben eine bestehende Anfrage, Ihr Konto zu stornieren. Klicken Sie auf 'Fortfahren', um diese Anfrage zu löschen und Ihr Abonnement zu ändern.

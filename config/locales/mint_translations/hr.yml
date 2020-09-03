@@ -1039,8 +1039,6 @@ hr:
         only_agents: Agenti
         remote_login_url_info: >-
           To je URL na koji će Freshdesk preusmjeriti korisnike za provjeru autentičnosti kad pokušaju pristupiti Freshdesku.
-        customer_portal_ssl_warning: >-
-          Budući da je prilagođeni URL službe za pomoć konfiguriran za Vaš račun, bit ćete preusmjereni na 
         saml_cert_fingerprint: Otisak sigurnosnog certifikata
         success_message: >-
           Vaš je zahtjev za prilagođeni SSL certifikat pokrenut i uskoro će biti obrađen. Prije odobrenja primit ćete e-poruku potvrde od našeg davatelja usluge. Provjerite pristiglu poštu za ažuriranja.
@@ -2114,6 +2112,7 @@ hr:
         all_tickets: Sve poruke
         due_today: Poruke kojima je rok danas
         resolved: Riješene poruke
+        visible_and_resolved: Riješene poruke
       friendly_status:
         customer_responded: Korisnik je odgovorio
         elapsed: Rok za odgovor
@@ -3548,6 +3547,9 @@ hr:
       created_at: Stvoreno
       skill: Vještina
       description: Opis
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Broj telefona
     formfield_props:
       behavior: Ponašanje
       customer_edit: Korisnik može uređivati
@@ -5527,6 +5529,7 @@ hr:
       sign_up_text: 'Počnite razgovarati s korisnicima na svojoj mrežnoj stranici, portalu ili mobilnoj aplikaciji.'
       enable_chat_in_portal_info: >-
         Olakšajte svojim korisnicima da razgovaraju s Vama kada dođu na vaš portal za podršku.
+      topics_title: Teme
       app_id_placeholder: 'Npr .: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Za pretvaranje Freshchat razgovora u poruke, idite na ovu <a href='%{url}' target='_blank'>stranicu</a>, kopirajte i zalijepite podatke navedene u nastavku. Ako Vam je potrebna dodatna pomoć, pogledajte <a href='%{article_url}' target='_blank'>ovaj članak</a>.

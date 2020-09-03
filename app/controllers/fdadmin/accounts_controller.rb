@@ -55,7 +55,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:spam_details] = ehawk_spam_details
     account_summary[:disable_emails] = account.launched?(:disable_emails)
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
-    account_summary[:falcon_enabled] = account.has_feature?(:falcon)
     account_summary[:account_cancellation_requested] = account.account_cancellation_requested?
     account_summary[:clone_status] = account.account_additional_settings.clone_status
     account_summary[:fluffy_info] = fetch_fluffy_details(account)
@@ -98,7 +97,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:mailbox] = account.features?(:mailbox)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
-    feature_info[:falcon] = account.has_feature?(:falcon)
     feature_info[:launch_party] = account.all_launched_features
     feature_info[:bitmap_list] = account.features_list
     feature_info[:db_feature_list] = account.features.map(&:to_sym)
@@ -1157,7 +1155,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def check_freshconnect_migrate
       account = Account.current
-      render :json => {:status => "notice"}.to_json and return unless account.freshid_integration_enabled? && account.falcon_enabled? && !account.freshconnect_account.present?
+      render :json => { status: 'notice' }.to_json && return unless account.freshid_integration_enabled? && account.freshconnect_account.blank?
     end
 
     def check_create_organisation(account)

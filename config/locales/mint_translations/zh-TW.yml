@@ -1040,8 +1040,6 @@ zh-TW:
         only_agents: 處理人
         remote_login_url_info: >-
           這是當使用者試圖進入Freshdesk時，將會被導向到進行身份驗證的URL的地址。
-        customer_portal_ssl_warning: >-
-          由於自訂的服務支援網址被配置為您的帳戶，將被重新導向到
         saml_cert_fingerprint: 安全認證指紋識別
         success_message: >-
           您的要求自訂的SSL認證已經啟動，並將很快進行處理。您將在核准前，會從供應商那收到一封確認的電子郵件。請檢查您的收件匣以便更新。
@@ -2117,6 +2115,7 @@ zh-TW:
         all_tickets: 所有工單
         due_today: 今天到期的工單
         resolved: 已解決工單
+        visible_and_resolved: 已解決工單
       friendly_status:
         customer_responded: 客戶回應
         elapsed: 回應到期時間
@@ -3531,6 +3530,9 @@ zh-TW:
       created_at: 創建
       skill: 技能
       description: 描述
+    field_service_fields:
+      cf_fsm_contact_name: 聯絡人
+      cf_fsm_phone_number: 電話號碼
     formfield_props:
       behavior: 行為; 特性
       customer_edit: 客戶可以進行編輯
@@ -5512,6 +5514,7 @@ zh-TW:
       sign_up_text: '開始在您的網頁、入口網站或是行動應用程式與您的顧客聊天。'
       enable_chat_in_portal_info: >-
         當您的顧客登陸支援網站時，可以讓他們輕鬆與您聊天。
+      topics_title: 主題
       app_id_placeholder: '例如：09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         要將Freshchat轉換成工單，請前往<a href='%{url}' target='_blank'>頁面</a>，複製和貼上下面列出的詳細訊息。如果您需要更多支援，請查看<a href='%{article_url}' target='_blank'>此篇文章</a>。

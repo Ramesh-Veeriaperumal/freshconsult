@@ -1711,7 +1711,6 @@ module Ember
     end
 
     def test_agent_reply_template_with_xss_payload
-      Account.current.launch(:escape_liquid_for_reply)
       remove_wrap_params
       t = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
 
@@ -1730,7 +1729,6 @@ module Ember
     end
 
     def test_agent_signature_in_agent_reply_template_with_xss
-      Account.current.launch(:escape_liquid_for_reply)
       remove_wrap_params
       t = create_ticket(:subject => '<svg/onload=alert(document.domain)>;')
 
@@ -1817,7 +1815,6 @@ module Ember
     end
 
     def test_agent_forward_template_with_xss_payload
-      Account.current.launch(:escape_liquid_for_reply) 
       remove_wrap_params
       t = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
 
@@ -1835,7 +1832,6 @@ module Ember
     end
 
     def test_agent_signature_in_agent_forward_template_with_xss
-      Account.current.launch(:escape_liquid_for_reply) 
       remove_wrap_params
       t = create_ticket(:subject => '<svg/onload=alert(document.domain)>;')
 

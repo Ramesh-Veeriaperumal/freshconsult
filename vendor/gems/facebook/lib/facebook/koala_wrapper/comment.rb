@@ -3,7 +3,7 @@ module Facebook
     class Comment < Facebook::KoalaWrapper::Feed
 
       attr_accessor :feed_id, :feed_type, :description_html, :comments_count, :post_type,
-                :object_link, :parent, :parent_post_id, :can_comment
+                    :object_link, :parent, :parent_post_id, :can_comment, :message_tags
 
                  
       alias_attribute :comment,     :feed
@@ -26,7 +26,9 @@ module Facebook
                                       "#{@fan_page.page_id}_#{@feed[:id].split('_').first}"
         @can_comment       =  @feed[:can_comment]
         @post_type         =  @parent.blank? ? POST_TYPE_CODE[:comment] : POST_TYPE_CODE[:reply_to_comment]
+
         @object_link       =  @feed[:attachment][:media][:image][:src] if @feed[:attachment] and @feed[:attachment][:media]
+        @message_tags      =  @feed[:message_tags]
       end
 
       #Returns a if the feed type is a post?, video? or status? or link?
@@ -38,6 +40,19 @@ module Facebook
 
       def type
         COMMENT
+      end
+
+      def comment_has_text_excluding_mentions?
+        message = @feed[:message].to_s
+        if @feed[:message_tags]
+          @feed[:message_tags].each do |tags|
+            message = message.gsub(tags[:name].to_s, '')
+          end
+          message = message.gsub(EMOJI_UNICODE_REGEX, '')
+          message = message.gsub(Regexp.union(EMOJI_SPECIAL_CHARS_ARRAY), '')
+          message = message.gsub(WHITELISTED_SPECIAL_CHARS_REGEX, '')
+        end
+        message.present?
       end
     end
 

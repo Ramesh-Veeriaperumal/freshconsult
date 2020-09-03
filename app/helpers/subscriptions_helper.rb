@@ -190,7 +190,7 @@ module SubscriptionsHelper
 
   def fsm_supported_plan?(plan)
     features = PLANS_FEATURES["#{plan.name.downcase}"]
-    Account.current.disable_old_ui_enabled? && (features || []).include?('fsm_option')
+    (features || []).include?('fsm_option')
   end
 
   def previous_plan?(plan)
@@ -230,6 +230,46 @@ module SubscriptionsHelper
 
   def get_omni_features(plan_name)
     IMPORTANT_OMNI_FEATURES["#{plan_name}"] || []
+  end
+
+  def calculate_freddy_session(addons, subscription, plan_name, billing_cycle)
+    freddy_session_packs_count = addons.collect { |addon| addon.billing_quantity(subscription) if SubscriptionConstants::FREDDY_SESSION_PACK_ADDONS.include?(addon.name) }.compact.first
+    self_service_addon = addons.detect { |addon| addon.name == Subscription::Addon::FREDDY_SELF_SERVICE_ADDON }
+    ultimate_addon = addons.detect { |addon| addon.name == Subscription::Addon::FREDDY_ULTIMATE_ADDON }
+    freddy_plan_session = PLANS[:subscription_plans][plan_name].present? ? PLANS[:subscription_plans][plan_name][:freddy_sessions] : 0
+    total_sessions = 0
+    total_sessions += freddy_plan_session * billing_cycle.to_i if freddy_plan_session.present?
+    total_sessions += get_default_addon_sessions(ultimate_addon, self_service_addon, billing_cycle)
+    total_sessions + SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_session_packs] * freddy_session_packs_count.to_i
+  end
+
+  def get_default_addon_sessions(ultimate_addon, self_service_addon, billing_period)
+    addon_sessions = if ultimate_addon.present?
+                       SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_ultimate]
+                     elsif self_service_addon.present?
+                       SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_self_service]
+                     end
+    addon_sessions.to_i * billing_period.to_i
+  end
+
+  def is_addon_enabled(addons, addon_name)
+    addons ||= {}
+    addons.detect { |addon| addon.name == addon_name }.present?
+  end
+
+  def update_billing_based_addon(addons, billing_period)
+    session_pack_addon = SubscriptionConstants::FREDDY_SESSION_PACK_ADDONS.detect { |addon| is_addon_enabled(addons, addon)}
+    return unless session_pack_addon.present?
+
+    if construct_session_packs_addon_name(billing_period) != session_pack_addon
+      addons.reject! { |addon| addon.name == session_pack_addon }
+      addons.push(*Subscription::Addon.where(name: construct_session_packs_addon_name(billing_period)))
+    end
+    addons
+  end
+
+  def construct_session_packs_addon_name(billing_period)
+    Subscription::Addon::FREDDY_SESSION_PACKS_ADDON + ' ' + SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[billing_period]
   end
 
   def fetch_consumed_freddy_sessions

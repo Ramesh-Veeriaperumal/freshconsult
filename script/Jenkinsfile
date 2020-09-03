@@ -4,6 +4,9 @@ node_label = "spot_backend";
 backendImage = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend:ruby-2.3.8"
 prontoImage = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fworks/pronto:rubcop-0.68.0" // Branch - https://github.com/freshdesk/pronto/tree/fd-branch
 
+timeout = (env.TIMEOUT ?: 60).toInteger()
+echo "timeout : ${timeout}"
+
 isPR = (env.JOB_NAME.contains("pullrequest")) ? true : false
 branch = isPR ? params.ghprbSourceBranch : params.BRANCH
 
@@ -125,7 +128,7 @@ def getCategoryRun(category) {
                             docker.image(backendImage).inside("--name $sub_category") {
                                 println "$sub_category :: container :: " + getContainerID()
 
-                                timeout(time: 90, unit: 'MINUTES') {
+                                timeout(time: timeout, unit: 'MINUTES') {
                                     println "$sub_category :: started :: " + getTimeStamp()
                                     exitSuiteIfNotPresent("temp_${sub_category}_suite.rb")
                                     startServices()
@@ -283,7 +286,7 @@ def executeTestCase(category) {
                 export RUBOCOP_CONFIG
                 PRONTO_RUBOCOP_TITLE='rubocop_rails'
                 export PRONTO_RUBOCOP_TITLE
-                PRONTO_GITHUB_ACCESS_TOKEN="${params.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -r=rubocop -f github_status github_pr -c origin/falcon-prestaging
+                PRONTO_GITHUB_ACCESS_TOKEN="${env.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -r=rubocop -f github_status github_pr -c origin/falcon-prestaging
             """
         }
 

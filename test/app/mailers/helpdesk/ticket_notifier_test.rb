@@ -21,6 +21,7 @@ class TicketNotifierTest < ActionMailer::TestCase
     @ticket = create_ticket
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
+    super
   end
 
   def teardown
@@ -30,6 +31,7 @@ class TicketNotifierTest < ActionMailer::TestCase
 
   def test_email_gets_sent_without_no_agent_when_responder_is_nil
     Account.any_instance.stubs(:features?).returns(true)
+    Mail::Message.any_instance.expects(:deliver!).once
     email = Helpdesk::TicketNotifier.deliver_notify_outbound_email(@ticket)
     Account.any_instance.unstub(:features?)
     assert_equal true, email[:from].value[0].include?("Test Account")
@@ -39,6 +41,7 @@ class TicketNotifierTest < ActionMailer::TestCase
     user = User.first
     @ticket.responder = user
     Account.any_instance.stubs(:features?).returns(true)
+    Mail::Message.any_instance.expects(:deliver!).once
     email = Helpdesk::TicketNotifier.deliver_notify_outbound_email(@ticket)
     Account.any_instance.unstub(:features?)
     assert_equal true, email[:from].value[0].include?(user.name)
@@ -74,6 +77,7 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.schema_less_note.save
     @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
+    Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.reply(ticket, note, options)
     assert_equal mail_message.to.first, to_email.first
     html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
@@ -112,6 +116,7 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.schema_less_note.save
     @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
+    Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.forward(ticket, note, options)
     assert_equal mail_message.to.first, to_emails.first
     html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
@@ -146,6 +151,7 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.schema_less_note.save
     @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
+    Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.deliver_reply_to_forward(ticket, note)
     assert_equal mail_message.to.first, to_email.first
     html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
@@ -174,6 +180,7 @@ class TicketNotifierTest < ActionMailer::TestCase
     ticket = create_ticket_with_multiple_attachments(num_of_files: num_of_files, requester_id: agent.id)
     @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
+    Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.notify_outbound_email(ticket)
     assert_equal mail_message.to.first, agent.email
     html_part = mail_message.html_part ? mail_message.html_part.body.decoded : nil
@@ -230,7 +237,6 @@ class TicketNotifierTest < ActionMailer::TestCase
   end
 
   def test_email_reply_call_deliver_bang_method
-    Account.current.launch(:retry_emails)
     agent = add_test_agent(@account)
     ticket = create_ticket(responder_id: agent.id)
     note = create_note
@@ -248,12 +254,9 @@ class TicketNotifierTest < ActionMailer::TestCase
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.reply(ticket, note, options)
     assert_equal mail_message.to.first, to_email.first
-  ensure
-    Account.current.rollback(:retry_emails)
   end
 
   def test_email_forward_call_deliver_bang_method
-    Account.current.launch(:retry_emails)
     agent = add_test_agent(@account)
     ticket = create_ticket(responder_id: agent.id)
     note = create_note
@@ -271,12 +274,9 @@ class TicketNotifierTest < ActionMailer::TestCase
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.forward(ticket, note, options)
     assert_equal mail_message.to.first, to_emails.first
-  ensure
-    Account.current.rollback(:retry_emails)
   end
 
   def test_email_reply_to_forward_call_deliver_bang_method
-    Account.current.launch(:retry_emails)
     agent = add_test_agent(@account)
     ticket = create_ticket(responder_id: agent.id)
     note = create_note
@@ -288,18 +288,13 @@ class TicketNotifierTest < ActionMailer::TestCase
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.deliver_reply_to_forward(ticket, note)
     assert_equal mail_message.to.first, to_email.first
-  ensure
-    Account.current.rollback(:retry_emails)
   end
 
   def test_email_notify_outbound_call_deliver_bang_method
-    Account.current.launch(:retry_emails)
     agent = add_test_agent(@account)
     ticket = create_ticket(requester_id: agent.id)
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.notify_outbound_email(ticket)
     assert_equal mail_message.to.first, agent.email
-  ensure
-    Account.current.rollback(:retry_emails)
   end
 end

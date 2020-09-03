@@ -1,7 +1,7 @@
 module Archive
   class TicketWorker < BaseWorker
     include Utils::Freno
-    sidekiq_options queue: ::ArchiveSikdekiqConfig['archive_ticket'], retry: 0,  failures: :exhausted
+    sidekiq_options queue: ::ArchiveSikdekiqConfig['archive_ticket'], retry: 2, failures: :exhausted
     APPLICATION_NAME="ArchiveWorker"
 
     def perform(args)
@@ -26,7 +26,9 @@ module Archive
           delete_ticket_with_dependencies
         end
       end
-
+      rescue MissionAssociationError => e
+        Rails.logger.debug("Error while archiving ticket :: #{e.message} :: #{@args.inspect} :: #{e.backtrace[0..5].inspect}")
+        raise e
       rescue Exception => e
         Rails.logger.debug("Error while archiving ticket :: #{e.message} :: #{@args.inspect} :: #{e.backtrace}")
     end

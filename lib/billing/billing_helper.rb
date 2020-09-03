@@ -1,4 +1,5 @@
 module Billing::BillingHelper
+  include SubscriptionsHelper
   include Billing::Constants
   private
 
@@ -7,7 +8,7 @@ module Billing::BillingHelper
         Billing::Subscription.helpkit_plan[plan_id].to_sym != account.plan_name ||
         new_addons.present? && account.subscription.addons.any? do |addon|
           matched_new_addon = new_addons.find { |new_addon| new_addon[:id].to_sym == addon.billing_addon_id }
-          matched_new_addon.present? && matched_new_addon[:quantity] != addon.billing_quantity(account.subscription)
+          matched_new_addon.present? && addon.addon_type != Subscription::Addon::ADDON_TYPES[:on_off] && matched_new_addon[:quantity] != addon.billing_quantity(account.subscription)
         end
     end
 
@@ -81,6 +82,32 @@ module Billing::BillingHelper
       result
     end
 
+    def update_freddy_details(account, subscription_hash, billing_subscription)
+      subscription_hash[:freddy_session_packs] = account.subscription.freddy_session_packs if update_freddy_session_packs(account.subscription, billing_subscription)
+      subscription_hash[:freddy_sessions] = account.subscription.freddy_sessions if account.launched?(:freddy_subscription) && update_freddy_sessions(account.subscription, billing_subscription)
+      subscription_hash
+    end
+
+    def update_freddy_session_packs(subscription, billing_subscription)
+      result = false
+      session_pack_addon = subscription.addons.find { |addon| SubscriptionConstants::FREDDY_SESSION_PACK_ADDONS.include?(addon.name) }
+      if session_pack_addon
+        session_packs = billing_subscription.addons.find { |addon| addon.id == session_pack_addon.billing_addon_id.to_s }.quantity
+        subscription.freddy_session_packs = session_packs
+        result = true
+      else
+        subscription.additional_info = subscription.additional_info.except(:freddy_session_packs)
+      end
+      result
+    end
+
+    def update_freddy_sessions(subscription, billing_subscription)
+      chargebee_plan_id = billing_subscription.plan_id
+      sub_plan_name = Billing::Subscription.helpkit_plan[chargebee_plan_id].to_sym
+      sub_renewal_period = billing_period(chargebee_plan_id)
+      subscription.freddy_sessions = calculate_freddy_session(subscription.addons, subscription, sub_plan_name, sub_renewal_period)
+    end
+
     def agent_quantity_exceeded?(billing_subscription)
       billing_subscription.plan_quantity && billing_subscription.plan_quantity < @account.full_time_support_agents.count
     end
@@ -142,5 +169,33 @@ module Billing::BillingHelper
     def construct_subscription_data(event_data)
       Rails.logger.debug event_data
       subscription_info(event_data.subscription, event_data.customer)
+    end
+
+    def event_eligible_to_process?
+      (not_api_source? || sync_for_all_sources?) && INVOICE_EVENTS.exclude?(params[:event_type])
+    end
+
+    def not_api_source?
+      params[:source] != EVENT_SOURCES[:api]
+    end
+
+    def sync_for_all_sources?
+      SYNC_EVENTS_ALL_SOURCE.include?(params[:event_type])
+    end
+
+    def trigger_omni_subscription_callbacks
+      if omni_bundle_account?
+        Rails.logger.info "Pushing event data for Freshcaller/Freshchat product account-id: #{@account.id}"
+        Billing::FreshcallerSubscriptionUpdate.perform_async(params)
+        Billing::FreshchatSubscriptionUpdate.perform_async(params)
+      end
+    end
+
+    def live_chat_setting_enabled?
+      @account&.chat_setting && @account&.subscription && @account.chat_setting.site_id
+    end
+
+    def omni_bundle_account?
+      @account.present? && @account.make_current && @account.omni_bundle_account?
     end
 end

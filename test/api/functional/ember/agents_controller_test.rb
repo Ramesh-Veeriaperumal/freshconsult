@@ -766,6 +766,36 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
+  def test_user_changes_update_with_avatar_id
+    AgentValidation.any_instance.stubs(:private_api?).returns(true)
+    user = get_or_create_agent
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    attachment_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+    params_hash = { avatar_id: attachment_id }
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    Agent.any_instance.stubs(:user_avatar_changes).returns(:upsert)
+    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
+    assert_response 200
+    assert_equal user.avatar.content_file_name, 'image33kb.jpg'
+  ensure
+    Agent.any_instance.unstub(:user_avatar_changes)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    AgentValidation.any_instance.unstub(:private_api?)
+  end
+
+  def test_user_changes_update_with_avatar_id_null_removes_avatar_correctly
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    user = get_or_create_agent
+    params_hash = { avatar_id: nil }
+    Agent.any_instance.stubs(:user_avatar_changes).returns(:destroy)
+    put :update, construct_params({ version: 'private', id: user.id }, params_hash)
+    assert_nil user.avatar
+    assert_response 200
+  ensure
+    Agent.any_instance.unstub(:user_avatar_changes)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+  end
+
   def test_update_with_invalid_avatar_id
     AgentValidation.any_instance.stubs(:private_api?).returns(true)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
@@ -896,7 +926,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     }
     fd_name = Faker::Lorem.characters(5)
     status_id = Faker::Number.number(3)
-    Ember::AgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: { freshdesk_user.id.to_s => channels_data }, name: fd_name, status_id: status_id))
+    Ember::AgentsController.any_instance.stubs(:request_service).returns(ocr_agents_response(channel: { freshdesk_user.id.to_s => channels_data }, name: fd_name, status_id: status_id))
     group = create_group_with_agents(@account, agent_list: [freshdesk_user.id])
     get :index, controller_params(version: 'private', only: 'availability', channel: 'freshdesk', group_id: group.id, search_term: 'First')
     assert_response 200
@@ -910,7 +940,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   def test_private_no_ata_enabled_agents_across_channels
     @account.stubs(:omni_channel_routing_enabled?).returns(true)
     @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
-    Ember::AgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: {}))
+    Ember::AgentsController.any_instance.stubs(:request_service).returns(ocr_agents_response(channel: {}))
     get :index, controller_params(version: 'private', only: 'availability')
     assert_response 200
     match_json([])

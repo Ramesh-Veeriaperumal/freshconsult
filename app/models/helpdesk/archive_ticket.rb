@@ -6,7 +6,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include Helpdesk::TicketCustomFields
   include Search::ElasticSearchIndex
   include ArchiveTicketExportParams
-  
+  include Helpdesk::TicketActivities
+
+  HELPDESK_TICKET_ATTRIBUTES = ['due_by', 'frDueBy', 'email_config_id', 'fr_escalated', 'nr_due_by', 'nr_escalated', 'nr_reminded', 'isescalated', 'spam', 'associates_rdb', 'urgent', 'trained', 'import_id', 'sl_skill_id', 'association_type'].freeze
+
   self.primary_key = :id
   belongs_to_account
   belongs_to :requester, :class_name => 'User'
@@ -76,14 +79,18 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?,
     :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
 
+  delegate :first_assigned_at, :on_state_time, to: :ticket_states
+
   attr_protected :account_id
-  attr_accessor :highlight_subject, :highlight_description, :archive_ticket_state
+  attr_accessor :highlight_subject, :highlight_description, :archive_ticket_state, :custom_fields_hash
 
   alias_attribute :company_id, :owner_id
 
-  concerned_with :rabbitmq, :attributes, :s3, :esv2_methods
+  concerned_with :rabbitmq, :attributes, :s3, :esv2_methods, :presenter
 
   belongs_to :ticket_source, class_name: 'Helpdesk::Source', foreign_key: 'source', primary_key: 'account_choice_id', inverse_of: :archive_tickets
+  belongs_to :internal_group, class_name: 'Group'
+  belongs_to :internal_agent, class_name: 'User', conditions: { helpdesk_agent: true }, inverse_of: :archive_tickets
 
   SORT_FIELDS = [
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
@@ -91,12 +98,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     [ :priority   , "tickets_filter.sort_fields.priority"      ]
   ]
   SCHEMA_LESS_FIELDS = {
-    :sla_policy_id => "long_tc01",
-    :merge_ticket => "long_tc02",
-    :reports_hash => "text_tc02",
-    :sender_email => "string_tc03",
-    :trashed      => 'boolean_tc02',
-    :product_id   => 'product_id'
+    sla_policy_id: 'long_tc01',
+    merge_ticket: 'long_tc02',
+    reports_hash: 'text_tc02',
+    sender_email: 'string_tc03',
+    trashed: 'boolean_tc02',
+    product_id: 'product_id',
+    header_info: 'text_tc01',
+    sla_response_reminded: 'boolean_tc04',
+    sla_resolution_reminded: 'boolean_tc05',
+    escalation_level: 'int_tc02'
   }
   NON_TEXT_FIELDS = ["custom_text", "custom_paragraph"]
 
@@ -183,6 +194,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     responder ? :reply : :new
   end
 
+  def skill
+    return @skill if defined?(@skill)
+
+    @skill = account.skills.where(id: sl_skill_id).last
+  end
+
+  def email?
+    source == account.helpdesk_sources.ticket_source_keys_by_token[:email]
+  end
+
   def twitter?
     source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] and (tweet) and (tweet.twitter_handle)
   end
@@ -263,7 +284,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def parent
-    helpdesk_tickets_association["schema_less_ticket"]
+    helpdesk_tickets_association["schema_less_ticket"] || {}
   end
 
   SCHEMA_LESS_FIELDS.each do |alias_attribute, field_name|
@@ -353,7 +374,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
   
   def flexifield_data
-    helpdesk_tickets_association['flexifield']
+    helpdesk_tickets_association['flexifield'] || {}
   end
   
   def subscription_data
@@ -362,7 +383,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def ticket_states
     return Helpdesk::TicketState.new(archive_ticket_state) if archive_ticket_state
-    archive_ticket_state = archive_ticket_association.association_data["helpdesk_tickets_association"]["ticket_states"]
+    archive_ticket_state = archive_ticket_association.association_data["helpdesk_tickets_association"]["ticket_states"] || {}
     archive_ticket_state.delete(:id)
     archive_ticket_state.delete(:ticket_id)
     Helpdesk::TicketState.new(archive_ticket_state)
@@ -425,7 +446,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     self.sender_email.present? ? self.sender_email : requester.email
   end
 
-  ['due_by', 'frDueBy', 'fr_escalated', 'nr_due_by', 'nr_escalated', 'isescalated', 'spam'].each do |attribute|
+  HELPDESK_TICKET_ATTRIBUTES.each do |attribute|
     define_method "#{attribute}" do
       attr_value = archive_ticket_association.association_data['helpdesk_tickets'][attribute]
       if Helpdesk::Ticket.columns_hash[attribute].type == :boolean && !attr_value.nil?
@@ -596,6 +617,10 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   def shred_inline_images
     DeletedBodyObserver.write_to_s3(self.description_html, 'Helpdesk::ArchiveTicket', self.id)
     InlineImageShredder.perform_async({model_name: 'Helpdesk::ArchiveTicket', model_id: self.id})
+  end
+
+  def self.unscope_progress
+    unscoped.where(account_id: Account.current.id)
   end
 
   private

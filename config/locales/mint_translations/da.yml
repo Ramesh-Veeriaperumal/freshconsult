@@ -403,7 +403,7 @@ da:
     all_apps: Alle apps
     api_error: Vi kunne ikke behandle din anmodning. Prøv venligst efter nogen tid.
     help_and_support: Hjælp og support
-    settings: Innstillinger
+    settings: Indstillinger
     app_gallery: Markedsplads
     reauthorize_oauth_app: >-
       Hvis din app er stoppet med at fungere, kan du prøve at godkende appen for at få adgang til oplysninger fra tredjepartsapplikationer.
@@ -901,7 +901,7 @@ da:
         default_portal_language: Standardsprog for portal
         ago: siden
         portal_customization: Portaltilpasning
-        settings: Innstillinger
+        settings: Indstillinger
         customer_portal: Kundeportal
         last_published: Din portal blev sidst udgivet
         edit_branding: Redigér branding
@@ -1039,8 +1039,6 @@ da:
         only_agents: Agenter
         remote_login_url_info: >-
           Dette er adressen som Freshdesk vil sende brugere til for bekræftelse, når de forsøger at tilgå Freshdesk.
-        customer_portal_ssl_warning: >-
-          Da en tilpasset helpdesk-URl er konfigureret for din konto, vil du blive omdirigeret til 
         saml_cert_fingerprint: Fingerprint for sikkerhedscertifikat
         success_message: >-
           Din anmodning om et tilpasset SSL-certifikat er blevet igangsat og vil blive behandlet inden for kort tid. Du modtager en bekræftelsesmail fra vores leverandør før godkendelse. Tjek din indbakke for opdateringer.
@@ -2119,6 +2117,7 @@ da:
         all_tickets: Alle supportsager
         due_today: Supportsager der forfalder i dag
         resolved: Løste supportsager
+        visible_and_resolved: Løste supportsager
       friendly_status:
         customer_responded: Kunde svarede
         elapsed: Svar forfalder
@@ -2153,7 +2152,7 @@ da:
   import_solution_article: Konvertér Artikelforum til løsning
   solutions:
     status:
-      published: Købt
+      published: Udgivet
       draft: Kladde
     company:
       add_existing: Tilføj til eksisterende
@@ -2505,7 +2504,7 @@ da:
     configure_addon: Konfigurer denne app
     tooltip:
       edit: Redigér
-      settings: Innstillinger
+      settings: Indstillinger
     enable: Aktiver
     enabled: Aktiveret
     confirm_disable: Er du sikker på, at du vil deaktivere denne app?
@@ -3543,6 +3542,9 @@ da:
       created_at: Oprettet
       skill: Færdighed
       description: Beskrivelse
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Telefonnummer
     formfield_props:
       behavior: Adfærd
       customer_edit: Kunde kan redigere
@@ -5525,6 +5527,7 @@ da:
       sign_up_text: 'Begynd at chatte med kunder på din hjemmeside, portal eller mobilapp.'
       enable_chat_in_portal_info: >-
         Gør det nemt for dine kunder at chatte med dig, når de lander på din supportportal.
+      topics_title: Emner
       app_id_placeholder: 'F.eks.: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         For at konvertere Freshchat-samtaler til supportsager, skal du gå til denne <a href='%{url}' target='_blank'>side</a>, kopiere og indsætte nedenstående oplysninger. Hvis du har brug for mere hjælp, kan du læse <a href='%{article_url}' target='_blank'>denne artikel</a>.

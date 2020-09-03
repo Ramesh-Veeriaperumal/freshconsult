@@ -51,7 +51,7 @@
   shards:
     <% node[:ymls][:database][:shards].each do |shard_name, db_config| %>
     <%= shard_name %>:
-      <%if ENV['PROXYSQL_MASTER_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_master_enabled] == true%>
+      <%if ENV['PROXYSQL_MASTER_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_master_enabled] == true && !@is_migration_layer%>
       username: <%= db_config[:master_proxy][:username] %>
       password: <%= db_config[:master_proxy][:password] %>
       database: <%= db_config[:database] %>
@@ -88,16 +88,30 @@
       slave:
       <% if @is_resque_layer || @is_sidekiq_layer || node[:opsworks][:instance][:hostname].include?("utility") || node[:opsworks][:instance][:hostname].include?("freshops") %>
         <% if node[:opsworks][:environment] == "production" %>
-        host: <%= db_config[:slave2_host] %>
+        <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true && !@is_migration_layer %>
+        host: <%= db_config[:slave_proxy][:host] %>
+        username: <%= db_config[:slave2_proxy][:username] %>
+        password: <%= db_config[:slave_proxy][:password] %>
+        port: <%= db_config[:slave_proxy][:port] %>
         <% else %>
+        host: <%= db_config[:slave2_host] %>
+        <% end %>
+        <% else %>
+        <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true && !@is_migration_layer%>
+        host: <%= db_config[:slave_proxy][:host] %>
+        username: <%= db_config[:slave2_proxy][:username] %>
+        password: <%= db_config[:slave_proxy][:password] %>
+        port: <%= db_config[:slave_proxy][:port] %>
+        <%else %>
         host: <%= db_config[:slave2][:host] %>
         username: <%= db_config[:slave2][:username] %>
         password: <%= db_config[:slave2][:password] %>
         port: <%= db_config[:slave2][:port] %>
         <% end %>
+        <% end %>
       <% else %>
         <% if node[:opsworks][:environment] == "production" %>
-        <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
+        <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true && !@is_migration_layer%>
         host: <%= db_config[:slave_proxy][:host] %>
         username: <%= db_config[:slave_proxy][:username] %>
         password: <%= db_config[:slave_proxy][:password] %>
@@ -106,7 +120,7 @@
         host: <%= db_config[:slave1_host] %>
         <% end %>
         <% else %>
-        <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true %>
+        <% if ENV['PROXYSQL_SHELL_ENABLE'] == "1" && node[:ymls][:database][:shards][shard_name][:proxy_enabled] == true && !@is_migration_layer%>
         host: <%= db_config[:slave_proxy][:host] %>
         username: <%= db_config[:slave_proxy][:username] %>
         password: <%= db_config[:slave_proxy][:password] %>

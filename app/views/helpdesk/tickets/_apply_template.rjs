@@ -11,25 +11,11 @@ if @template.present?
   end
 
   attachment_dom = ""
-  # multifile enabled
-  if current_account.launched?(:multifile_attachments) 
-     @cloud_files.each do |cloud| 
-      cloud[:provider] = cloud.provider
-    end
-      page << "Helpdesk.MultipleFileUpload.renderExistingFiles(#{@all_attachments.to_json.html_safe},#{@cloud_files.to_json.html_safe},jQuery('.attachment-icon:visible').data('iconCount'),true,'helpdesk_ticket',true)"
-  # if not 
-  else
-    if @all_attachments.present?
-      @all_attachments.each do |att|
-        attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
-      end
-    end
-    if @cloud_files.present?
-      @cloud_files.each do |att|
-        attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.filename)}", :value => "#{att.serialize}", :name => "[cloud_file_attachments][]"})
-      end
-    end
+  @cloud_files.each do |cloud| 
+    cloud[:provider] = cloud.provider
   end
+  page << "Helpdesk.MultipleFileUpload.renderExistingFiles(#{@all_attachments.to_json.html_safe},#{@cloud_files.to_json.html_safe},jQuery('.attachment-icon:visible').data('iconCount'),true,'helpdesk_ticket',true)"
+
   if @all_attachments.present? or @cloud_files.present?
     page << "jQuery('#ticket-attachments').html('#{escape_javascript(attachment_dom)}')"
   end

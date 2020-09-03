@@ -16,6 +16,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
     Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
     Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
+    Billing::Subscription.any_instance.stubs(:update_admin).returns(true)
     super
   end
 
@@ -23,6 +24,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:freshdesk_freshsales_bundle_enabled?)
     Account.any_instance.unstub(:omni_accounts_present_in_org?)
     Subscription.any_instance.unstub(:reseller_paid_account?)
+    Billing::Subscription.any_instance.unstub(:update_admin)
     super
   end
 
@@ -387,7 +389,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     to_plan =  SubscriptionPlan.find(params_plan_id)
     params = { plan_id: params_plan_id, agent_limit: @account.full_time_support_agents.count - 1, addons: { field_service_management: { enabled: 'true', value: '1' } } }
     Account.any_instance.stubs(:launched?).returns(false)
-    @account.revoke_feature(:unlimited_multi_product)
+    Account.any_instance.stubs(:has_feature).with(:unlimited_multi_product).returns(false)
     @account.subscription.additional_info[:field_agent_limit] = 3
     @account.subscription.save!
     post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id, :agent_limit)))
@@ -400,6 +402,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
     unstub_fsm_field_agents
     Account.any_instance.unstub(:launched?)
+    Account.any_instance.unstub(:has_feature?)
   end
 
   def test_handle_subscription_with_agent_and_product_reduction
@@ -1140,6 +1143,77 @@ class SubscriptionsControllerTest < ActionController::TestCase
     cleanup_fsm
     SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
     Subscription.any_instance.unstub(:add_to_crm)
+    unstub_chargebee_requests
+  end
+
+  def test_subscription_change_when_adding_freddy_addons
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, agent_limit: '10', addons: { freddy_self_service: { enabled: 'true' }, freddy_session_packs: { enabled: 'true', value: '1' } } }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.additional_info[:freddy_sessions] = 0
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.launch(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_response 302
+    assert @account.subscription.addons.where(name: Subscription::Addon::FREDDY_SELF_SERVICE_ADDON).present?
+    assert @account.subscription.addons.where(name: Subscription::Addon::FREDDY_MONTHLY_SESSION_PACKS_ADDON).present?
+    assert_equal @account.subscription.freddy_sessions, 7000
+  ensure
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    unstub_chargebee_requests
+  end
+
+  def test_subscription_change_when_removing_freddy_addons
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, agent_limit: '10', addons: { freddy_self_service: { enabled: 'false' }, freddy_session_packs: { enabled: 'false', value: '0' } } }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.addons = Subscription::Addon.where(name: [Subscription::Addon::FREDDY_SELF_SERVICE_ADDON, Subscription::Addon::FREDDY_MONTHLY_SESSION_PACKS_ADDON])
+    current_subscription.freddy_sessions = 7000
+    current_subscription.freddy_session_packs = 5
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.launch(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    current_subscription_request = @account.reload.subscription.subscription_request
+    assert_response 302
+    refute current_subscription_request.nil?
+    refute current_subscription_request.freddy_self_service_requested
+    refute current_subscription_request.freddy_ultimate_requested
+    assert current_subscription_request.freddy_downgrade
+    assert_equal current_subscription_request.freddy_session_packs, 0
+  ensure
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    unstub_chargebee_requests
+  end
+
+  def test_subscription_change_when_adding_freddy_addons_without_lp
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, agent_limit: '10', addons: { freddy_ultimate: { enabled: 'true' }, freddy_session_packs: { enabled: 'true', value: '1' } } }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.additional_info[:freddy_sessions] = 0
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_response 302
+    assert_equal @account.subscription.freddy_sessions, 0
+  ensure
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
     unstub_chargebee_requests
   end
 

@@ -1365,8 +1365,9 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
                                             in_portal,
                                             required)
     when 'template_source_dropdown' then
-      allowed_choices = [TicketConstants.source_names[2]] + Helpdesk::Source.visible_custom_sources.map { |ch| [ch.name, ch.account_choice_id] }
-      element = label + select(object_name, field_name, allowed_choices, { selected: field_value }, class: element_class + ' select2', 'data-domhelper-name': 'ticket-properties-' + field_name)
+      default_sources = TicketConstants.source_names
+      allowed_choices = [default_sources[2]] + [default_sources[9]] + Helpdesk::Source.visible_custom_sources.map { |ch| [ch.name, ch.account_choice_id] }
+      element = label + select(object_name, field_name, allowed_choices, { include_blank: '...', selected: field_value }, class: element_class + ' select2', 'data-domhelper-name': 'ticket-properties-' + field_name)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -2036,8 +2037,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def falcon_enabled?
-    current_account && current_account.falcon_ui_enabled? &&
-      current_user && current_user.is_falcon_pref?
+    Rails.logger.warn "FALCON HELPER METHOD :: falcon_enabled? :: #{caller[0..2]}"
+    true
   end
 
   def admin_only_falcon_enabled?
@@ -2054,14 +2055,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def freshcaller_enabled_agent?
-    return if current_user.blank? || !current_user.agent?
-    agent = current_user.agent
-    freshcaller_agent = agent.freshcaller_agent if agent.present?
-
-    !falcon_enabled? &&
-      current_account.freshcaller_enabled? &&
-      current_account.has_feature?(:freshcaller_widget) &&
-      agent.present? && freshcaller_agent.present? && freshcaller_agent.fc_enabled?
+    # this method mainly for old ui. Need to revisit while removing code files for OLD UI deprecation.
+    false
   end
 
   def sandbox_production_notification
@@ -2093,7 +2088,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def show_sandbox_notification
-    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled? && current_user.is_falcon_pref?
+    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled?
   end
 
   def support_mint_applicable?

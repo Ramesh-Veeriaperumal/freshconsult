@@ -51,10 +51,6 @@ module Admin::BusinessCalendarHelper
     end
 
     def valid_time_period?(key_name, start_hh, start_mm, end_hh, end_mm)
-      if (start_mm == 59 && start_hh != 23) || (end_hh != 23 && end_mm == 59)
-        errors[key_name] << :invalid_minute_on_24_hours
-        return
-      end
       errors[key_name] << :invalid_time_slot if start_hh > end_hh || (start_hh == end_hh && start_mm == end_mm)
     end
 

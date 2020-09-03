@@ -146,7 +146,7 @@
         "domains": {
           "_podeuwest1": "podeuwest1route.freshdesk.com",
           "_podeucentral1": "podeucentral1route.freshdesk.com",
-          "_podapsoutheast2": "podapsoutheast2route.freshdesk.com",
+          "_podapsoutheast2": "edge-aus-lb.freshdesk.com",
           "_podapsouth1": "podapsouth1route.freshdesk.com"
         },
         "hosted_zone": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:3W9xOn2kA2kzeMtC+wuwP6tXAgkLm4Ev:mF/gKjm2xZ/CV05+6tufwL2AuJR4qoz0wrtuz8jr]"
@@ -622,10 +622,6 @@
             "_sqs_queue": "social_gnip_2_0_tweet_production",
             "_priority": 1
           },
-          "count_etl_queue": {
-            "_sqs_queue": "count_etl_queue_production",
-            "_priority": 1
-          },
           "analytics_etl_queue": {
             "_priority": 1,
             "_sqs_queue": "analytics_etl_queue_production"
@@ -728,10 +724,6 @@
               "_sqs_queue": "search-etlqueue-archive-production",
               "_priority": 1
           },
-          "count_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "count_etl_queue_archive_production"
-          },
           "analytics_etl_queue": {
               "_priority": 1,
               "_sqs_queue": "analytics_etl_queue_archive_production"
@@ -740,10 +732,6 @@
         "maintenance": {
           "search_etlqueue_maintenance": {
             "_sqs_queue": "search-etlqueue-production_maintenance",
-            "_priority": 1
-          },
-          "count_etl_queue_maintenance": {
-            "_sqs_queue": "count_etl_queue_production_maintenance",
             "_priority": 1
           },
           "analytics_etl_queue_maintenance": {
@@ -930,7 +918,6 @@
       "sqs_queues": {
         "_twitter_realtime_queue": "social_gnip_2_0_tweet_production",
         "_facebook_realtime_queue": "social_fb_feed_production",
-        "_count_etl_queue": "count_etl_queue_production",
         "_free_customer_email_queue": "free_customer_email_queue_production",
         "_active_customer_email_queue": "active_customer_email_queue_production",
         "_trial_customer_email_queue": "trial_customer_email_queue_production",
@@ -977,14 +964,12 @@
         "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_production",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_production",
         "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
-        "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance",
         "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_production",
         "_email_rate_limiting_queue": "email_rate_limiting_production"
       },
       "archive_sqs_queues": {
         "_search_etl_queue": "search-etlqueue-archive-production",
-        "_count_etl_queue": "count_etl_queue_archive_production",
         "_analytics_etl_queue": "analytics_etl_queue_archive_production"
       },
       "freshid": {
@@ -1491,9 +1476,9 @@
         "_early_expiration": 60
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:Y9yqjJg6nW26pxd4TXUFCgYHHLWrCVCKoIDtqix1nC8=:NybmTUlc6EyQF0PSXZowNX6mbh0QKr5o:w9v8sfKsBq5Id9rWtXsUjg==]",
-        "_end_point": "",
-        "_bu_name": "",
+        "secret_key": "EJ[1:1Eo7pwRT7j2khmcijbFAOGDAt3cG+77OUuDZ33hwjVc=:7HKI9tqsrYlUdXDz13Y4T6mocgD6MbnO:80fGi/+L7/rNhFfDwCwUBDwCvz2XxviezUZoCD93v786iTehBm6ytZ0yy9Jmpv2CtPwviP8mXUP2rZJK]",
+        "_end_point": "https://freshdesk-au.freshreports.com",
+        "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
         "_timeout_for_pricing_api": 10,

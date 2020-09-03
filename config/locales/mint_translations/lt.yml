@@ -1039,8 +1039,6 @@ lt:
         only_agents: Agentai
         remote_login_url_info: >-
           Tai yra autentifikavimo URL, į kurį „Freshdesk“ nukreips naudotojus, kai jie bandys pasiekti „Freshdesk“.
-        customer_portal_ssl_warning: >-
-          Kadangi priskirtas pagalbos tarnybos URL yra sukurtas jūsų paskyrai, būsite nukreipti į 
         saml_cert_fingerprint: Apsaugos sertifikato kontrolinis kodas
         success_message: >-
           Jūsų prašymas gauti pasirinktą SSL sertifikatą buvo priimtas ir netrukus bus pradėtas vykdyti. Prieš įvykdant, iš mūsų tiekėjo gausite el. laišką su patvirtinimu. Prašome patikrinti savo pašto dėžutę.
@@ -2118,6 +2116,7 @@ lt:
         all_tickets: Visos užklausos
         due_today: Užklausos šiandien
         resolved: Išspręstos užklausos
+        visible_and_resolved: Išspręstos užklausos
       friendly_status:
         customer_responded: Klientas atsakė
         elapsed: Atsakymas iki
@@ -3562,6 +3561,9 @@ lt:
       created_at: Sukurta
       skill: Įgūdis
       description: Aprašymas
+    field_service_fields:
+      cf_fsm_contact_name: Kontaktai
+      cf_fsm_phone_number: Telefono numeris
     formfield_props:
       behavior: Elgesys
       customer_edit: Klientas gali redaguoti
@@ -5542,6 +5544,7 @@ lt:
       sign_up_text: 'Bendraukite su klientais savo svetainėje, portale ar mobilioje programėlėje.'
       enable_chat_in_portal_info: >-
         Palengvinti klientų bendravimą su jumis, jiems atėjus į jūsų pagalbos portalą.
+      topics_title: Temos
       app_id_placeholder: 'Pvz .: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Jei norite konvertuoti „Freshchat“ pokalbius į užklausas, eikite į šį <a href='%{url}' target='_blank'>puslapį</a>, nukopijuokite ir įklijuokite toliau pateiktus duomenis. Jei jums reikia daugiau pagalbos, skaitykite <a href='%{article_url}' target='_blank'>šį straipsnį</a>.

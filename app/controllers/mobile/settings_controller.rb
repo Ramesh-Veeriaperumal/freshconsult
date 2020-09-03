@@ -111,7 +111,7 @@ class Mobile::SettingsController < ApplicationController
 
   def agent_collision_url
     if current_account.features?(:collision)
-      current_account.launched?(:agent_collision_alb) ? NodeConfig["socket_host_new"] : NodeConfig["socket_host"]
+      NodeConfig['socket_host_new']
     end
   end 
 end

@@ -27,7 +27,8 @@ module Freshid::V2::EventProcessorExtensions
   end
 
   def migrate_to_freshconnect(account)
-    return unless account.falcon_enabled? && account.freshconnect_account.nil?
+    return unless account.freshconnect_account.nil?
+
     begin
       if account.collab_settings.nil?
         Freshconnect::RegisterFreshconnect.perform_async

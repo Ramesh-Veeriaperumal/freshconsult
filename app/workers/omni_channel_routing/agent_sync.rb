@@ -10,7 +10,7 @@ module OmniChannelRouting
       user_id = args[:user_id]      
       availability = args[:availability]
       payload = { freshdesk_availability: availability }
-      response = request_ocr(:freshdesk, :put, OCR_PATHS[:update_agent] % { user_id: user_id.to_s }, payload.to_json)
+      response = request_service(:freshdesk, :put, service_paths[:update_agent] % { user_id: user_id.to_s }, payload.to_json)
       Rails.logger.info "Agent availability sync to ocr Agent_id:::: #{user_id} :::: #{response}"    
     rescue Exception => e
       Rails.logger.error "Error while sync Agent availability changes #{e.message}"

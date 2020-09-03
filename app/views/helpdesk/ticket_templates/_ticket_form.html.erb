@@ -1,5 +1,5 @@
 <% current_portal.ticket_fields_including_nested_fields.each do |field|
-    next if field.section_field? || field.shared_ownership_field? || (field.field_name.eql?("source") && !current_account.ticket_source_revamp_enabled?) || (field.field_name.eql?("email") && !@parent_id)
+    next if field.section_field? || field.shared_ownership_field? || (field.field_name.eql?("source") && !(current_account.custom_source_enabled? && current_account.ticket_source_revamp_enabled?)) || (field.field_name.eql?("email") && !@parent_id)
     @ticket ||= current_account.tickets.new
     if is_edit
       field_value = field.field_type == "nested_field" ? nested_ticket_field_value(@tkt_template, field) : @tkt_template.template_data[field.field_name]
