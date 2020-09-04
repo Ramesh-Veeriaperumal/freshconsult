@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
-    :skip_invoice_due_warning, :archive_ticket_fields, :compact_lang_detection, :custom_fields_search, :disable_rabbitmq_iris,
+    :skip_invoice_due_warning, :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first,
@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
-    :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry, :contact_company_split,
+    :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
@@ -79,7 +79,7 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips
+    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -441,6 +441,10 @@ class Account < ActiveRecord::Base
 
   def omni_channel_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_dashboard)
+  end
+
+  def solutions_agent_metrics_enabled?
+    launched?(:solutions_agent_metrics)
   end
 
   def features

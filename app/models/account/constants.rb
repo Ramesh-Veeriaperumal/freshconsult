@@ -126,8 +126,7 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
     :bi_reports => false, :contact_merge_ui => false, :social_revamp => true, :multiple_user_emails => false,
-    round_robin_revamp: false,
-    :facebook_realtime => false, :autorefresh_node => false, :tokenize_emoji => false,
+    :facebook_realtime => false, :tokenize_emoji => false,
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false, :reports_regenerate_data => false,
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
@@ -176,7 +175,7 @@ class Account < ActiveRecord::Base
     cascade_dispatchr: :cascade_dispatcher
   }.freeze
 
-  DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :dynamics_v2, :marketplace_app]
+  DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :marketplace_app]
 
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
@@ -188,15 +187,14 @@ class Account < ActiveRecord::Base
     freshfone_onboarding: false, gamification_perf: false,
     gamification_quest_perf: false, lambda_exchange: false, meta_read: false, most_viewed_articles: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
-    supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false,
-    skip_hidden_tkt_identifier: false,
+    support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false,
-    kbase_spam_whitelist: false, enable_qna: false, enable_insights: false,
+    kbase_spam_whitelist: false,
     whitelist_supervisor_sla_limitation: false,
     service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
@@ -236,7 +234,7 @@ class Account < ActiveRecord::Base
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
-    salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
+    salesforce_sync: false, salesforce_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, shopify_api_revamp: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,

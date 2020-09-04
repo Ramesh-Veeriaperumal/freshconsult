@@ -5141,6 +5141,20 @@
             "type": "integer",
             "description": "Per page limit",
             "x-example": 20
+          },
+          {
+            "name": "available_in",
+            "in": "query",
+            "type": "string",
+            "description": "Filter the available agents based on the given channel value",
+            "x-enum": [
+              "ticket",
+              "chat",
+              "phone",
+              "any",
+              "none"
+            ],
+            "x-example": "ticket"
           }
         ],
         "responses": {

@@ -7,10 +7,6 @@ class ManualPublishWorker < RabbitmqWorker
       Ryuken::DelayedSearchSplitter.perform_async(message)
     end
 
-    def enqueue_legacy_count_sqs(message)
-      Ryuken::DelayedLegacyCountPerformer.perform_async(message)
-    end
-
     def enqueue_analytics_sqs(message)
       Ryuken::DelayedAnalyticsCountPerformer.perform_async(message)
     end

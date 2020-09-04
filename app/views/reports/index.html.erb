@@ -1,13 +1,13 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/reports' %>
 <div class="report-home report ">
-  <div class="left-section <%= enable_qna? ? '' : 'active' %>">
+  <div class="left-section">
   <div class="admin-header">
     <% if year_in_review_enabled? %>
       <%= render :partial => "/helpdesk/realtime_dashboard/year_in_review", :locals => { :close_btn => false } %>
     <% end %>
 
     <div class="report-head report">
-      <% if feature?(:enterprise_reporting) && enable_qna? %>
+      <% if feature?(:enterprise_reporting) %>
         <div class="qna-search-bar">
             <div class="search-field-holder">
                 <div class="selected-queries"></div>
@@ -190,7 +190,7 @@
         </div>
   </div>
   </div> <!-- left section -->
-  <% if feature?(:enterprise_reporting) && enable_insights? %>
+  <% if feature?(:enterprise_reporting) %>
     <div class="insights">
           <div class="insights-title">
               <div class="pull-left">
@@ -248,8 +248,8 @@
       'freshchat' : false,//<%= chat_activated? %>,
       'show_agent_metrics_feature': !<%= @hide_agent_metrics_feature %>
     }
-    HelpdeskReports.locals.qna_feature_enabled = <%= enable_qna? %>;
-    HelpdeskReports.locals.insights_feature_enabled = <%= enable_insights? %>;
+    HelpdeskReports.locals.qna_feature_enabled = true;
+    HelpdeskReports.locals.insights_feature_enabled = true;
     HelpdeskReports.locals.is_new_ticket_recieved_metric_enabled = <%= enable_new_ticket_recieved_metric? %>;
     HelpdeskReports.locals.is_trail_account = <%= @is_trial_account %>;
 

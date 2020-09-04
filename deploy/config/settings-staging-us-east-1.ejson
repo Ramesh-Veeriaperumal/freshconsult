@@ -500,6 +500,7 @@
             "_proxy_enabled": true,
             "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
+            "slave2_proxy": { "_username": "shard_1_slave" },
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
               "_host": "usrds1slave1.internal-freshpo.com",
@@ -534,6 +535,7 @@
             "_proxy_enabled": true,
             "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5RScK29IZfMnTfJHFGAZ0HG+07bYZnKl:gB1Fs1Zf+ZdRuSGvALXSRR7jUloU3aln]",
+            "slave2_proxy": { "_username": "shard_7_slave" },
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5jJeIuFcW+6JwsA7A8HgMNAimEqCRD99:uQwKG+XiTovPT4AXn0Bhr5GALukhzwBZ]",
               "_host": "usrds7slave1.internal-freshpo.com",
@@ -1411,10 +1413,6 @@
             "_priority": 1,
             "_sqs_queue": "main_staging_social_gnip_tweets_queue"
           },
-          "count_etl_queue": {
-            "_priority": 1,
-            "_sqs_queue": "count_etl_queue-stagingvpc-staging"
-          },
           "analytics_etl_queue": {
             "_priority": 1,
             "_sqs_queue": "analytics_etl_queue-stagingvpc-staging"
@@ -1519,10 +1517,6 @@
               "_sqs_queue": "search-etlqueue-archive-staging",
               "_priority": 1
           },
-          "count_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "count_etl_queue_archive_staging"
-          },
           "analytics_etl_queue": {
               "_priority": 1,
               "_sqs_queue": "analytics_etl_queue_archive_staging"
@@ -1531,10 +1525,6 @@
         "maintenance": {
           "search_etlqueue_maintenance": {
             "_sqs_queue": "search-etlqueue-stagingvpc-staging_new_maintenance",
-            "_priority": 1
-          },
-          "count_etl_queue_maintenance": {
-            "_sqs_queue": "count_etl_queue-stagingvpc-staging_maintenance",
             "_priority": 1
           },
           "analytics_etl_queue_maintenance": {
@@ -1571,7 +1561,6 @@
         "_channel_framework_services": "main_staging_channel_framework_services",
         "_collab_agent_update_queue": "collab_agent_update_staging",
         "_collab_ticket_update_queue": "collab_ticket_update_staging",
-        "_count_etl_queue": "count_etl_queue-stagingvpc-staging",
         "_cti_call_queue": "cti_call_staging",
         "_cti_screen_pop": "cti_screen_pop_staging",
         "_custom_mailbox_realtime_queue": "https://sqs.us-east-1.amazonaws.com/206535303787/imap-conf-data-sqs",
@@ -1612,14 +1601,12 @@
         "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_staging",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_staging",
         "_search_etlqueue_maintenance": "search-etlqueue-stagingvpc-staging_new_maintenance",
-        "_count_etl_queue_maintenance": "count_etl_queue-stagingvpc-staging_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance",
         "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_queue",
         "_email_rate_limiting_queue": "email_rate_limiting_staging"
       },
       "archive_sqs_queues": {
         "_search_etl_queue": "search-etlqueue-archive-staging",
-        "_count_etl_queue": "count_etl_queue_archive_staging",
         "_analytics_etl_queue": "analytics_etl_queue_archive_staging"
       },
       "statsd": {

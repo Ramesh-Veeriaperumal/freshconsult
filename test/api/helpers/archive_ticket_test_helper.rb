@@ -159,6 +159,7 @@ module ArchiveTicketTestHelper
     params_hash[:custom_dependent_child1] = params[:custom_dependent_child1] if params[:custom_dependent_child1]
     params_hash[:custom_dependent_child2] = params[:custom_dependent_child2] if params[:custom_dependent_child2]
     params_hash[:tweet_type] = params[:tweet_type] if params[:tweet_type]
+    params_hash[:parent_ticket_id] = params[:parent_ticket_id] if params[:parent_ticket_id]
     params_hash
   end
 
@@ -228,7 +229,8 @@ module ArchiveTicketTestHelper
               'account_id' => params[:account_id] || 1,
               'product_id' => nil,
               'text_tc01' => params[:header_info] || nil,
-              'text_tc02' => params[:reports_hash] || {}
+              'text_tc02' => params[:reports_hash] || {},
+              'long_tc02' => params[:parent_ticket_id] || nil
             },
             'flexifield' => {
               "id":40883277,
