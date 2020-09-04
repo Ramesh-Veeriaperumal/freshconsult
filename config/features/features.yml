@@ -402,6 +402,8 @@
       :triage_ultimate: 398
       :autofaq_eligible: 399
       :solutions_agent_metrics: 400
+      :forums_agent_portal: 401
+      :solutions_agent_portal: 402
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -510,3 +512,5 @@
   :location_tagging: false
   :kb_allow_base64_images: false
   :solutions_agent_metrics: false
+  :forums_agent_portal: false
+  :solutions_agent_portal: false
