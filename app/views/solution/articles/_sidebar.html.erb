@@ -24,9 +24,17 @@
 				</ul>
 			</div>
 			<div class="section view-all-feed">
-		      <%= link_to t('solution.view_feedback'), 
-		        "/a/tickets/filters/article_feedback?articleId=#{@article.id}",
-		        :class => 'article-feedback-list', :"data-article-id" => "#{@article.id}" if @article.tickets.unresolved.size > 3 %>
+        <% if current_user.is_falcon_pref? %>
+          <%= link_to t('solution.view_feedback'), 
+            "/a/tickets/filters/article_feedback?articleId=#{@article.id}",
+            :class => 'article-feedback-list', :"data-article-id" => "#{@article.id}" if @article.tickets.unresolved.size > 3 %>
+        <% else %>
+          <%= pjax_link_to t('solution.view_feedback'), "#{helpdesk_filter_view_default_path('article_feedback')}?article_id=#{@article.id}", 
+          { 
+            :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=article_feedback", 
+            :"data-parallel-placeholder" => "#ticket-leftFilter"
+          } if @article.tickets.unresolved.size > 3 %>
+        <% end %>
 			</div>
 		</div>
 	<% end %>

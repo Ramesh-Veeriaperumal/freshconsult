@@ -501,7 +501,6 @@ class User < ActiveRecord::Base
   end
 
   def is_falcon_pref?
-    Rails.logger.warn "FALCON HELPER METHOD :: is_falcon_pref? :: #{caller[0..2]}"
     true
   end
 
