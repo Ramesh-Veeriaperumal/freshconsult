@@ -60,7 +60,7 @@ module Ember
           @items = privilege_scoper
         else
           super
-          @items_count = @parsed_ocr_response.try(:[], 'meta').try(:[], 'count') || 0 if @only_omni_channel_availability
+          @items_count = @parsed_omni_agents_count || 0 if @only_omni_channel_availability
         end
       end
 

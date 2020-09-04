@@ -1,6 +1,7 @@
 module OmniChannelRouting
   module Constants
     OCR_BASE_URL = OCR_CONFIG[:api_endpoint]
+    MARS_BASE_URL = ShiftConfig['shift_service_host']
 
     OCR_CLIENT_CONFIGS = [
       [:freshdesk, 'freshdesk', :jwt_secret],
@@ -17,6 +18,11 @@ module OmniChannelRouting
       [:get_agents, 'ocr_agents']
     ].freeze
     OCR_PATHS = Hash[*OCR_PATHS_ARRAY.map { |i| [i[0], i[1]] }.flatten]
+
+    MARS_PATHS_ARRAY = [
+      [:get_agents, 'api/v1/agents']
+    ].freeze
+    MARS_PATHS = Hash[*MARS_PATHS_ARRAY.map { |i| [i[0], i[1]] }.flatten]
 
     OCR_JWT_SIGNING_ALG = 'HS256'.freeze
     OCR_JWT_HEADER = { 'alg' => OCR_JWT_SIGNING_ALG, 'typ' => 'JWT' }.freeze

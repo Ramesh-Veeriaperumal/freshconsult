@@ -14,7 +14,7 @@ class Account < ActiveRecord::Base
     :skip_portal_cname_chk, :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
-    :compact_lang_detection, :custom_fields_search, :disable_rabbitmq_iris,
+    :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first,
@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
     :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
     :freshid_org_v2, :hide_agent_login,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
-    :recalculate_daypass, :fb_page_api_improvement, :attachment_redirect_expiry, :contact_company_split,
+    :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
@@ -44,7 +44,7 @@ class Account < ActiveRecord::Base
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
-    :security_revamp
+    :security_revamp, :archive_on_missing_associations
   ].freeze
 
   BITMAP_FEATURES = [
@@ -80,7 +80,7 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips
+    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -100,7 +100,7 @@ class Account < ActiveRecord::Base
   ].freeze
 
   BITMAP_FEATURES_TO_LOG = [
-    :falcon
+    :falcon, :disable_old_ui
   ].freeze
 
   def launched?(*feature_name)
@@ -285,10 +285,6 @@ class Account < ActiveRecord::Base
     ismember?(DASHBOARD_DISABLED, self.id)
   end
 
-  def dashboardv2_enabled?
-    launched?(:admin_dashboard) || launched?(:supervisor_dashboard) || launched?(:agent_dashboard)
-  end
-
   def restricted_compose_enabled?
     ismember?(RESTRICTED_COMPOSE, self.id)
   end
@@ -342,8 +338,7 @@ class Account < ActiveRecord::Base
   end
 
   def falcon_ui_enabled?(current_user = :no_user)
-    valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
-    valid_user && disable_old_ui_enabled?
+    true
   end
 
   def falcon_support_portal_theme_enabled?
@@ -447,6 +442,10 @@ class Account < ActiveRecord::Base
 
   def omni_channel_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_dashboard)
+  end
+
+  def solutions_agent_metrics_enabled?
+    launched?(:solutions_agent_metrics)
   end
 
   def features

@@ -212,9 +212,9 @@
       :api_v2: 208
       :bi_reports: 209
       :contact_merge_ui: 210
-      :multiple_user_emails: 211
+      :unused_211: 211
       :facebook_realtime: 212
-      :autorefresh_node: 213
+      :XX_unused_213: 213
       :updated_twilio_client: 214
       :count_es_reads: 215
       :reports_regenerate_data: 216
@@ -223,7 +223,7 @@
       :portal_cc: 219
       :disable_rr_toggle: 220
       :count_es_writes: 221
-      :round_robin_revamp: 222
+      :XX_unused_222: 222
       :analytics_landing_search: 223
       :analytics_landing_data_schedules: 224
       :analytics_landing_new_report: 225
@@ -401,6 +401,7 @@
       :kb_allow_base64_images: 397
       :triage_ultimate: 398
       :autofaq_eligible: 399
+      :solutions_agent_metrics: 400
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -487,16 +488,13 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :contact_merge_ui: false
-  :multiple_user_emails: false
   :facebook_realtime: false
-  :autorefresh_node: false
   :updated_twilio_client: false
   :count_es_reads: false
   :sandbox_account: false
   :portal_cc: false
   :disable_rr_toggle: false
   :count_es_writes: false
-  :round_robin_revamp: false
   :social_revamp: true
   :activity_revamp: true
   :hide_first_response_due: false
@@ -511,3 +509,4 @@
   :field_service_geolocation: false
   :location_tagging: false
   :kb_allow_base64_images: false
+  :solutions_agent_metrics: false

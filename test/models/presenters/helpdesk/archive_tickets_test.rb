@@ -219,4 +219,25 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
       archive_ticket.destroy
     end
   end
+
+  def test_central_publish_payload_with_parent_ticket
+    ticket = create_ticket
+    create_archive_ticket_with_assoc(
+      created_at: @ticket_update_date,
+      updated_at: @ticket_update_date,
+      create_association: true,
+      parent_ticket_id: ticket.id,
+      header_info: { received_at: Time.now.utc.iso8601 }
+    )
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.where(ticket_id: @archive_ticket.id).first
+      payload = archive_ticket.central_publish_payload.to_json
+      payload.must_match_json_expression(central_payload_archive_ticket_pattern(archive_ticket))
+      assoc_payload = archive_ticket.associations_to_publish.to_json
+      assoc_payload.must_match_json_expression(central_publish_assoc_archive_ticket_pattern(archive_ticket))
+      archive_ticket.destroy
+    end
+  ensure
+    ticket.destroy
+  end
 end

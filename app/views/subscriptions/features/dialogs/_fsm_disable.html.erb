@@ -1,4 +1,4 @@
-<%if current_account.disable_old_ui_enabled? && current_account.field_service_management_enabled? %>
+<%if current_account.field_service_management_enabled? %>
 	<button data-target="#warning-<%= identifier %>" rel="freshdialog" id="warning-btn-<%= identifier %>"
 	  title="<%= t('fsm_warning_title') %>" data-submit-label="<%= t('disable') %>" data-close-label="<%= t('cancel') %>" data-close-on-submit="true" data-backdrop="static" data-keyboard="false" class="hide">
 	  FSM disable
