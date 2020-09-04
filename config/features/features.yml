@@ -212,7 +212,7 @@
       :api_v2: 208
       :bi_reports: 209
       :contact_merge_ui: 210
-      :multiple_user_emails: 211
+      :unused_211: 211
       :facebook_realtime: 212
       :XX_unused_213: 213
       :updated_twilio_client: 214
@@ -488,7 +488,6 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :contact_merge_ui: false
-  :multiple_user_emails: false
   :facebook_realtime: false
   :updated_twilio_client: false
   :count_es_reads: false
