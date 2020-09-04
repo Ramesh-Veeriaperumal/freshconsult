@@ -14,7 +14,7 @@ class Account < ActiveRecord::Base
     :skip_portal_cname_chk, :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :automation_revamp, :archive_ticket_fields,
-    :compact_lang_detection, :custom_fields_search, :disable_rabbitmq_iris,
+    :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :fetch_ticket_from_ref_first,
