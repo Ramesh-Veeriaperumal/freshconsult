@@ -213,7 +213,7 @@
       :bi_reports: 209
       :contact_merge_ui: 210
       :unused_211: 211
-      :facebook_realtime: 212
+      :unused_212: 212
       :XX_unused_213: 213
       :updated_twilio_client: 214
       :count_es_reads: 215
@@ -490,7 +490,6 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :contact_merge_ui: false
-  :facebook_realtime: false
   :updated_twilio_client: false
   :count_es_reads: false
   :sandbox_account: false
