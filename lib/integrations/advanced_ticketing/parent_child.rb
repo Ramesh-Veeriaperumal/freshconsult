@@ -13,6 +13,7 @@ class Integrations::AdvancedTicketing::ParentChild
   end
 
   def disable_parent_child(inst_app)
-    Rails.logger.warn "Removed ParentChild :: #{caller[0..2]}"
+    return if current_account.disable_old_ui_enabled?
+    remove_feature(:parent_child_tickets)
   end
 end
