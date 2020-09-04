@@ -6,7 +6,7 @@ class TrialSubscriptionActions::PlanDowngrade < TrialSubscriptionActions::Base
       features_list.each do |feature| 
         unless account_add_ons.include?(feature)
           account.reset_feature(feature) 
-          reset_settings_dependent_on_feature(feature)
+          reset_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
         end
       end
       Rails.logger.info "Trial subscriptions : #{account.id} : 
