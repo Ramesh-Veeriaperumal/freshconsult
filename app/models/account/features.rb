@@ -459,7 +459,7 @@ class Account < ActiveRecord::Base
   end
 
   def can_admin_enable_setting?(setting)
-    settings_hash = AccountSettings::Settings[setting]
+    settings_hash = AccountSettings::SettingsConfig[setting]
     settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end
 
