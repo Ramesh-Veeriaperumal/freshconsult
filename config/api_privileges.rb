@@ -193,7 +193,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/ticket_field", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/section", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/security_key", only: [:regenerate_widget_key]
-    resource :"admin/api_security", only: [:update, :show]
+    resource :"admin/api_security", only: [:show]
     resource :"admin/freshcaller_account", only: [:show, :create, :link, :update, :enable, :disable, :destroy, :credit_info]
     resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/shift", only: [:index, :show, :create, :update, :destroy]

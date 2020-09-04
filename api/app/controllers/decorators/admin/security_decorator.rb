@@ -14,18 +14,18 @@ module Admin
     end
 
     api_accessible :security_api do |u|
-      u.add :whitelisted_ip_settings, if: proc { Account.current.whitelisted_ips_enabled? }, as: :whitelisted_ip
+      u.add :whitelisted_ips, if: proc { Account.current.whitelisted_ips_enabled? }
       u.add :help_widget, if: proc { Account.current.help_widget_enabled? }
       u.add :notification_emails
       u.add :contact_password_policy_hash, if: proc { Account.current.custom_password_policy_enabled? }, as: :contact_password_policy
       u.add :agent_password_policy_hash, if: proc { |obj| obj.show_agent_password_policy? }, as: :agent_password_policy
     end
 
-    def whitelisted_ip_settings
-      whitelisted_ip.present? ? show_whitelisted_ip : WHITELISTED_IP_NOT_CONFIGURED
+    def whitelisted_ips
+      whitelisted_ip.present? ? show_whitelisted_ips : WHITELISTED_IP_NOT_CONFIGURED
     end
 
-    def show_whitelisted_ip
+    def show_whitelisted_ips
       {
         enabled: whitelisted_ip.enabled,
         applies_only_to_agents: whitelisted_ip.applies_only_to_agents,
@@ -45,7 +45,7 @@ module Admin
 
     def fetch_password_policy(type)
       password_policy = safe_send("#{type}_password_policy")
-      password_policy.policy_config_mapping
+      password_policy.policy_config_mapping.merge!(type: password_policy.password_policy_type)
     end
 
     def show_agent_password_policy?

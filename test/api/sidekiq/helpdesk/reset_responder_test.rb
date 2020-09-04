@@ -17,7 +17,6 @@ class ResetResponderTest < ActionView::TestCase
 
   def setup
     Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
-    Billing::Subscription.any_instance.stubs(:update_admin).returns(true)
     super
     before_all
   end
@@ -31,7 +30,6 @@ class ResetResponderTest < ActionView::TestCase
   def teardown
     Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
     Account.unstub(:current)
-    Billing::Subscription.any_instance.unstub(:update_admin)
     super
   end
 

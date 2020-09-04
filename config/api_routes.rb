@@ -54,10 +54,9 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :security, controller: 'api_security' do
+      resources :security, controller: 'api_security', only: [:show] do
         collection do
           get :show
-          put :update
         end
       end
     end
