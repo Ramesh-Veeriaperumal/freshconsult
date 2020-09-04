@@ -23,16 +23,11 @@ class NERWorker < BaseWorker
 
     obj = account.safe_send(args[:obj_type]).find(args[:obj_id])
 
-    user_email = obj.user.email || fetch_pii(obj)
-
     timezone = fetch_tzinfo(obj)
 
     text =  exclude_quoted_text?(obj) ? exclude_quoted_text(args[:html]) : args[:text]
 
     req_body = {  text: text.to_s.first(MAXIMUM_LENGTH), #Sending only first 3000 characters to api because the api response time is more than 4sec for the string length >3000
-                  user_id: encrypt_pii(user_email),
-                  client_id: encrypt_pii(obj.account.full_domain),
-                  username: NER_API_TOKENS['username'],
                   timezone: timezone }.to_json
 
     response = RestClient.safe_send("post", NER_API_TOKENS['datetime'], req_body, {"Content-Type"=>"application/json"})
@@ -55,10 +50,6 @@ class NERWorker < BaseWorker
     obj.user.email ||  obj.user.phone|| obj.user.mobile || obj.user.twitter_id || Helpdesk::EMAIL[:default_requester_email]
     rescue
       Helpdesk::EMAIL[:default_requester_email]
-  end
-
-  def encrypt_pii(key)
-    Encryptor.encrypt(value: key, key: NER_API_TOKENS['secret_key'], iv: NER_API_TOKENS['iv']).encode(::Encoding::UTF_8, undef: :replace)
   end
 
   # If it's a note & body & full_text length are same, it is possible that body will have quoted_text in it. 
