@@ -32,10 +32,8 @@ module IntegrationServices::Services
       def process_response(response, *success_codes, &block)
         if success_codes.include?(response.status)
           yield parse(response.body)
-        elsif response.status.between?(400, 499)
-          raise RemoteError, "Error: #{response.body}", response.status.to_s
         else
-          raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
+          raise RemoteError, "Error: #{response.body}", response.status.to_s
         end
       end
 
