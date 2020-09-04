@@ -32,7 +32,6 @@ api_error_messages:
   method_not_allowed: "%{fired_method} method is not allowed. It should be one of these method(s): %{methods}"
   require_feature: "The %{feature} feature(s) is/are not supported in your plan. Please upgrade your account to use it."
   require_any_feature : "Atleast one of the features required: %{feature}"
-  unwanted_feature_for_attribute: " The %{feature} feature(s) is/are should be disabled for accessing %{attribute} attribute"
   require_fsm_feature: "The Field Service Management module is not enabled in your account. Please enable it to use."
   invalid_credentials: "You have to be logged in to perform this action."
   credentials_required: "Authentication header is needed to log in."

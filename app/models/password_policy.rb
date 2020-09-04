@@ -154,36 +154,34 @@ class PasswordPolicy < ActiveRecord::Base
     config.is_a?(String) ? config.to_i : config
   end
 
-  private
+  def password_policy_type
+    advanced_policy? ? POLICY_TYPE[:advanced] : POLICY_TYPE[:default]
+  end
 
-    def validate_configs
-      input_policies = policies.map(&:to_sym)
-      configs.with_indifferent_access.each do |key, value|
-        if CONFIG_REQUIRED_POLICIES.exclude?(key.to_sym)
-          errors.add(:base, I18n.t('password_policy.invalid_config'))
-        elsif input_policies.exclude?(key.to_sym)
-          # check if the configs given has the corresponding policy checked.
-          configs[key] = DEFAULT_CONFIGS[key]
-        elsif value.present?
-          validate_config_values(key, value)
-        end
-      end
-    end
+	private
+		def validate_configs
+			input_policies = self.policies.map(&:to_sym)
+			self.configs.each do |key,value|
+				if CONFIG_REQUIRED_POLICIES.exclude?(key.to_sym)
+					errors.add(:base, I18n.t("password_policy.invalid_config"))
+				elsif input_policies.exclude?(key.to_sym)
+					#check if the configs given has the corresponding policy checked.
+					self.configs[key] = DEFAULT_CONFIGS[key]
+				elsif value.present?
+					case key
+					when "minimum_characters"
+						errors.add(:base, I18n.t("password_policy.wrong_password_length")) unless value.in? minimum_character_values
+					when "cannot_be_same_as_past_passwords"
+						errors.add(:base, I18n.t("password_policy.wrong_no_of_past_password")) unless value.in? password_history_match_values
+					when "password_expiry"
+						errors.add(:base, I18n.t("password_policy.wrong_expiry_days")) unless value.in? password_expiry_days_values
+					when "session_expiry"
+						errors.add(:base, I18n.t("password_policy.wrong_expiry_days")) unless value.in? session_expiry_days_values
+					end
+				end
 
-    def validate_config_values(policy, value)
-      case policy
-      when 'minimum_characters'
-        errors.add(:base, I18n.t('password_policy.wrong_password_length')) unless value.to_s.in? minimum_character_values
-      when 'cannot_be_same_as_past_passwords'
-        errors.add(:base, I18n.t('password_policy.wrong_no_of_past_password')) unless value.to_s.in? password_history_match_values
-      when 'password_expiry'
-        errors.add(:base, I18n.t('password_policy.wrong_expiry_days')) unless value.to_s.in? password_expiry_days_values
-      when 'session_expiry'
-        errors.add(:base, I18n.t('password_policy.wrong_expiry_days')) unless value.to_s.in? session_expiry_days_values
-      else
-        errors.add(:base, I18n.t('password_policy.invalid_config'))
-      end
-    end
+			end
+		end
 
 		def password_policies_changed
 			configs_changed? or policies_changed?
