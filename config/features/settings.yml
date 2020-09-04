@@ -1,17 +1,37 @@
 settings:
-  :untitled_setting_1:
+  :signup_link:
+    default: true
+    internal: false
+    feature_dependency: :default_settings_feature
+  :anonymous_tickets:
+    default: true
+    internal: false
+    feature_dependency: :default_settings_feature
+  :auto_suggest_solutions:
+    default: true
+    internal: false
+    feature_dependency: :allow_auto_suggest_solutions
+  :public_ticket_url:
     default: false
     internal: false
-    feature_dependency: :untitled_feature_1_dependency_toggle # from blossom plan.Rename to actual feature
-  :untitled_setting_2:
-    default: true
-    internal: true
-    feature_dependency: :untitled_feature_1_dependency_toggle
-  :untitled_setting_3:
+    feature_dependency: :default_settings_feature
+  :open_solutions:
     default: true
     internal: false
-    feature_dependency: :untitled_feature_2_dependency_toggle # from estate plan.Rename to actual feature
-  :untitled_setting_4:
+    feature_dependency: :default_settings_feature
+  :open_forums:
+    default: false
+    internal: false
+    feature_dependency: :forums
+  :forum_captcha_disable:
+    default: false
+    internal: false
+    feature_dependency: :forums
+  :moderate_posts_with_links:
     default: true
     internal: false
-    feature_dependency: :untitled_sprout_feature_dependency_toggle
+    feature_dependency: :forums
+  :moderate_all_posts:
+    default: false
+    internal: false
+    feature_dependency: :forums

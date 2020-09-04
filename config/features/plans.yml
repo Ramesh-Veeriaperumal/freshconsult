@@ -21,7 +21,7 @@
       - :personal_canned_response
       - :api_v2
       - :help_widget
-      - :untitled_sprout_feature_dependency_toggle
+      - :default_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -165,7 +165,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
-      - :untitled_sprout_feature_dependency_toggle
+      - :default_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_19:
@@ -384,7 +384,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
-      - :untitled_sprout_feature_dependency_toggle
+      - :default_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_20:
