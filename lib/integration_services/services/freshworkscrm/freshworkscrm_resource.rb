@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmResource < IntegrationServices::GenericResource
-      RESOURCE_MAPPER = { 'contact': 'contact', 'sales_account': 'sales_accounts', 'deal': 'deals' }.freeze
+      RESOURCE_MAPPER = { 'contact' => 'contact', 'sales_account' => 'sales_accounts', 'deal' => 'deals' }.freeze
 
       def self.default_http_options
         super
