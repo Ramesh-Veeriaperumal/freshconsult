@@ -11,7 +11,7 @@ class Integrations::FreshworkscrmController < Admin::AdminController
 
   def settings_update
     @installed_app = Integrations::InstalledApplication.new
-    @installed_app.set_configs get_api_params
+    @installed_app.set_configs api_params
     @freshworkscrm_config = {}
     return unless verify_api_credentials
 
@@ -53,7 +53,7 @@ class Integrations::FreshworkscrmController < Admin::AdminController
     def verify_api_credentials
       begin
         @freshworkscrm_config['contact_fields'] = service_obj.receive(:contact_fields)
-        install_or_update default_configs.merge(get_api_params)
+        install_or_update default_configs.merge(api_params)
       rescue IntegrationServices::Errors::RemoteError
         flash.now[:error] = t(:'integrations.freshworkscrm.form.error').to_s
         render_settings
@@ -70,7 +70,7 @@ class Integrations::FreshworkscrmController < Admin::AdminController
       @installed_app = Integrations::Application.install_or_update(app_name, current_account.id, config_params)
     end
 
-    def get_api_params
+    def api_params
       { 'domain' => "https://#{params['configs']['domain']}", 'auth_token' => params['configs']['auth_token'], 'ghostvalue' => params['configs']['ghostvalue'] }
     end
 

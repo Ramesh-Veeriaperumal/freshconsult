@@ -2,7 +2,6 @@ module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmResource < IntegrationServices::GenericResource
       RESOURCE_MAPPER = { 'contact' => 'contact', 'sales_account' => 'sales_accounts', 'deal' => 'deals' }.freeze
-
       def self.default_http_options
         super
         @@default_http_options[:ssl] = { verify: true, verify_depth: 5 }
