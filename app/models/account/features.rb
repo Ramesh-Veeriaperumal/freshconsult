@@ -66,7 +66,7 @@ class Account < ActiveRecord::Base
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
-    :canned_forms, :customize_table_view, :public_url_toggle, :solutions_templates,
+    :canned_forms, :customize_table_view, :solutions_templates,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
@@ -460,6 +460,7 @@ class Account < ActiveRecord::Base
   end
 
   def can_admin_modify_setting?(setting)
+    return true unless launched?(:feature_based_settings)
     settings_hash = AccountSettings::SettingsConfig[setting]
     settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end

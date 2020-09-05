@@ -92,7 +92,7 @@
 		</div>
 	</div>
 
-	<% if current_account.public_url_toggle_enabled? && !current_account.falcon_and_encrypted_fields_enabled? %>
+	<% if current_account.can_admin_modify_setting?(:public_ticket_url) && !current_account.falcon_and_encrypted_fields_enabled? %>
 		<div class="control-group sub-section">
 			<div class="control-label"><%= t('.public_ticket_urls_label') %></div>
 			<div class="controls">

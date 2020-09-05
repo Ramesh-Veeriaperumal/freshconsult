@@ -9,7 +9,7 @@ class SAAS::SubscriptionEventActions
                            :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
                            :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier,
                            :support_bot, :custom_dashboard, :round_robin, :round_robin_load_balancing,
-                           :hipaa, :agent_scope, :public_url_toggle, :custom_password_policy,
+                           :hipaa, :agent_scope, :custom_password_policy,
                            :scenario_automation, :personal_canned_response, :marketplace,
                            :custom_domain, :css_customization, :field_service_management, :field_service_management_toggle,
                            :custom_roles, :dynamic_sections, :custom_survey, :mailbox,
