@@ -30,13 +30,13 @@ module IntegrationServices::Services
           end
         end
         result = get_custom_fields('deals', fields, 'deals' => deal_response['deals'])
-        result = { 'deals' => result['deals'], 'type' => 'deal' }
+        { 'deals' => result['deals'], 'type' => 'deal' }
       end
 
       def sort_by_close_date(deals, field1, field2, limit)
         deals = deals.sort do |a, b|
           if a[field1[:name]] && b[field1[:name]]
-            [date_time(a[field1[:name]], field1[:order]), date_time(a[field2[:name]], field2[:order])] <=> [ date_time(b[field1[:name]], field1[:order]), date_time(b[field2[:name]], field2[:order])]
+            [date_time(a[field1[:name]], field1[:order]), date_time(a[field2[:name]], field2[:order])] <=> [date_time(b[field1[:name]], field1[:order]), date_time(b[field2[:name]], field2[:order])]
           else
             [a[field1] ? -1 : 1, date_time(a[field2[:name]], field2[:order])] <=> [b[field1] ? -1 : 1, date_time(b[field2[:name]], field2[:order])]
           end

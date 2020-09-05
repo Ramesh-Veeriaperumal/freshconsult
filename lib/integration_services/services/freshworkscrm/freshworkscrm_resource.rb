@@ -52,9 +52,7 @@ module IntegrationServices::Services
           next unless resource[key]
 
           resource[key].each do |relational_option|
-            if relational_option['id'] == result[RESOURCE_MAPPER[resource_type]].first[relational_field]
-              result[RESOURCE_MAPPER[resource_type]].first[relational_field] = relational_option['name'] || relational_option['display_name']
-            end
+            result[RESOURCE_MAPPER[resource_type]].first[relational_field] = relational_option['name'] || relational_option['display_name'] if relational_option['id'] == result[RESOURCE_MAPPER[resource_type]].first[relational_field]
           end
         end
         result['type'] = resource_type
