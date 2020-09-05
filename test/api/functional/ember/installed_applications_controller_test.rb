@@ -457,6 +457,10 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'deal', value: { account_id: '15000767664', ticket_id: '3' } })
     post :fetch, param
     assert_response 200
+    response_hash = JSON.parse response
+    assert_equal response_hash['deals'].size, 2
+    assert_equal response_hash['deals'][0]['id'], 15_000_087_766
+    assert_equal response_hash['deals'][1]['id'], 15_000_085_358
   ensure
     IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
   end
