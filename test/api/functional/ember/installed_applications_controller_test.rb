@@ -407,7 +407,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
 
   def test_freshworkscrm_fetch_contacts
     app_id = get_installed_app('freshworkscrm').id
-    response = "{\"contact\":{\"id\":15001322339,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"job_title\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"time_zone\":null,\"work_number\":null,\"mobile_number\":\"1000\",\"address\":null,\"last_seen\":null,\"lead_score\":90,\"last_contacted\":null,\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"links\":{\"conversations\":\"/contacts/15001322339/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuser\u0026per_page=3\",\"timeline_feeds\":\"/contacts/15001322339/timeline_feeds\",\"document_associations\":\"/contacts/15001322339/document_associations\",\"notes\":\"/contacts/15001322339/notes?include=creater\",\"tasks\":\"/contacts/15001322339/tasks?include=creater,owner,updater,targetable,users,task_type\",\"reminders\":\"/contacts/15001322339/reminders?include=creater,owner,updater,targetable\",\"appointments\":\"/contacts/15001322339/appointments?include=creater,owner,updater,targetable,appointment_attendees\",\"duplicates\":\"/contacts/15001322339/duplicates\",\"connections\":\"/contacts/15001322339/connections\"},\"last_contacted_sales_activity_mode\":null,\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"keyword\":null,\"medium\":null,\"last_contacted_mode\":null,\"recent_note\":null,\"won_deals_count\":0,\"last_contacted_via_sales_activity\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"web_form_ids\":null,\"open_deals_count\":1,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"tags\":[],\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"is_deleted\":false,\"team_user_ids\":null,\"subscription_status\":0,\"customer_fit\":0,\"has_duplicates\":true,\"duplicates_searched_today\":true,\"has_connections\":true,\"connections_searched_today\":true,\"phone_numbers\":[]} }"
+    response = "{\"contact_status\":[{\"id\":9000047558,\"name\":\"Qualified Lead\",\"position\":1}], \"contact\":{\"id\":15001322339,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"job_title\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"time_zone\":null,\"work_number\":null,\"mobile_number\":\"1000\",\"address\":null,\"last_seen\":null,\"lead_score\":90,\"last_contacted\":null,\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"links\":{\"conversations\":\"/contacts/15001322339/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuser\u0026per_page=3\",\"timeline_feeds\":\"/contacts/15001322339/timeline_feeds\",\"document_associations\":\"/contacts/15001322339/document_associations\",\"notes\":\"/contacts/15001322339/notes?include=creater\",\"tasks\":\"/contacts/15001322339/tasks?include=creater,owner,updater,targetable,users,task_type\",\"reminders\":\"/contacts/15001322339/reminders?include=creater,owner,updater,targetable\",\"appointments\":\"/contacts/15001322339/appointments?include=creater,owner,updater,targetable,appointment_attendees\",\"duplicates\":\"/contacts/15001322339/duplicates\",\"connections\":\"/contacts/15001322339/connections\"},\"last_contacted_sales_activity_mode\":null,\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"keyword\":null,\"medium\":null,\"last_contacted_mode\":null,\"recent_note\":null,\"won_deals_count\":0,\"last_contacted_via_sales_activity\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"web_form_ids\":null,\"open_deals_count\":1,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"tags\":[],\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"is_deleted\":false,\"team_user_ids\":null,\"subscription_status\":0,\"customer_fit\":0,\"has_duplicates\":true,\"duplicates_searched_today\":true,\"has_connections\":true,\"connections_searched_today\":true,\"phone_numbers\":[], \"contact_status_id\":9000047558, \"custom_field\":{\"time_zone\":\"CST\"}} }"
     response_mock = Minitest::Mock.new
     response_mock.expect :body, response
     response_mock.expect :status, 200
@@ -423,8 +423,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     response_hash = JSON.parse response
     assert_equal response_hash['contact']['email'], 'matt.rogers@freshdesk.com'
   ensure
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_post)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_post)
   end
 
   def test_freshworkscrm_fetch_contacts_with_exception
@@ -443,8 +443,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     post :fetch, param
     assert_response 502
   ensure
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_post)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_post)
   end
 
   def test_freshworkscrm_fetch_accounts_from_email
@@ -465,8 +465,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     response_hash = JSON.parse response
     assert_equal response_hash['sales_account']['id'], 15_000_767_664
   ensure
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_post)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.unstub(:http_post)
   end
 
   def test_freshworkscrm_fetch_accounts_from_company
@@ -487,8 +487,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     response_hash = JSON.parse response
     assert_equal response_hash['sales_account']['name'], 'Flipkart'
   ensure
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_post)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.unstub(:http_post)
   end
 
   def test_freshworkscrm_fetch_deals
@@ -506,7 +506,7 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_equal response_hash['deals'][0]['id'], 15_000_087_766
     assert_equal response_hash['deals'][1]['id'], 15_000_085_358
   ensure
-    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmDealResource.any_instance.unstub(:http_get)
   end
 
   def test_freshworkscrm_fetch_form_fields_with_nested_emails

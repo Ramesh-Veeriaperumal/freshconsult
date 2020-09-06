@@ -8,6 +8,15 @@ module IntegrationServices::Services
                             'contact_status_id' => ['contact_status', 'contact_status'],
                             'creater_id' => ['creater', 'users'], 'updater_id' => ['updater', 'users'] }.freeze
 
+      def create(payload, web_meta)
+        request_url = "#{server_url}/contacts"
+        request_body = { contact: payload[:entity] }
+        response = http_post request_url, request_body.to_json
+        process_create_response(response, web_meta, 200, 201) do |contact|
+          return contact
+        end
+      end
+
       def get_selected_fields(fields, value)
         return { 'contacts' => [], 'type' => 'contact' } if value[:email].blank?
 
@@ -39,15 +48,6 @@ module IntegrationServices::Services
         response = http_get request_url
         opt_fields = { 'display_name' => 'Full name' }
         process_response(response, 200, &format_fields_block(opt_fields))
-      end
-
-      def create(payload, web_meta)
-        request_url = "#{server_url}/contacts"
-        request_body = { contact: payload[:entity] }
-        response = http_post request_url, request_body.to_json
-        process_create_response(response, web_meta, 200, 201) do |contact|
-          return contact
-        end
       end
 
       private
