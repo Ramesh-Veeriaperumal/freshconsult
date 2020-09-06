@@ -25,10 +25,6 @@ module IntegrationServices::Services
       deal_resource.get_fields
     end
 
-    def receive_deal_stage_choices
-      deal_resource.stage_dropdown_values
-    end
-
     def receive_fetch_form_fields
       common_resource.fetch_form_fields
     end

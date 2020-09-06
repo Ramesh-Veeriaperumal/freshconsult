@@ -84,24 +84,6 @@ module IntegrationServices::Services
         end
       end
 
-      def find(id)
-        url = "#{server_url}/deals/#{id}.json"
-        response = http_get url
-        process_response(response, 200, 404) do |deal|
-          return deal
-        end
-      end
-
-      def stage_dropdown_values
-        request_url = "#{server_url}/selector/deal_stages"
-        response = http_get request_url
-        process_response(response, 200) do |deal_stages|
-          deal_stages['deal_stages'].map do |deal_stage|
-            [deal_stage['name'], deal_stage['id'].to_s]
-          end
-        end
-      end
-
       def get_custom_fields(resource_type, fields, result)
         result[resource_type].each do |resource|
           resource_custom_fields = resource['custom_field']
