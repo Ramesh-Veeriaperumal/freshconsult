@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmContactResource < FreshworkscrmResource
@@ -6,7 +8,7 @@ module IntegrationServices::Services
                             'contact_status_id' => ['contact_status', 'contact_status'],
                             'creater_id' => ['creater', 'users'], 'updater_id' => ['updater', 'users'] }.freeze
 
-      def get_fields
+      def fetch_fields
         request_url = "#{server_url}/settings/contacts/fields.json"
         response = http_get request_url
         opt_fields = { 'display_name' => 'Full name' }

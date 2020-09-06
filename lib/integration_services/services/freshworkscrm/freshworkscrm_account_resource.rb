@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmAccountResource < FreshworkscrmResource
@@ -7,7 +9,7 @@ module IntegrationServices::Services
                             'parent_sales_account_id' => ['parent_sales_account', 'parent_sales_accounts'],
                             'creater_id' => ['creater', 'users'], 'updater_id' => ['updater', 'users'] }.freeze
 
-      def get_fields
+      def fetch_fields
         request_url = "#{server_url}/settings/sales_accounts/fields.json"
         response = http_get request_url
         process_response(response, 200, &format_fields_block)

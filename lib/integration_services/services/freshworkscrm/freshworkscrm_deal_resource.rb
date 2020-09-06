@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module IntegrationServices::Services
   module Freshworkscrm
     class FreshworkscrmDealResource < FreshworkscrmResource
@@ -7,7 +9,7 @@ module IntegrationServices::Services
                             'deal_product_id' => 'deal_products', 'deal_payment_status_id' => 'deal_payment_statuses',
                             'sales_account_id' => 'sales_accounts', 'territory_id' => 'territories' }.freeze
 
-      def get_fields
+      def fetch_fields
         request_url = "#{server_url}/settings/deals/fields.json"
         response = http_get request_url
         process_response(response, 200, &format_fields_block)
@@ -88,10 +90,10 @@ module IntegrationServices::Services
         result[resource_type].each do |resource|
           resource_custom_fields = resource['custom_field']
           selected_custom_fields = resource_custom_fields.keys & fields if resource_custom_fields.present?
-          if selected_custom_fields.present?
-            selected_custom_fields.each do |selected_custom_field|
-              resource[selected_custom_field] = resource_custom_fields[selected_custom_field]
-            end
+          next if selected_custom_fields.blank?
+
+          selected_custom_fields.each do |selected_custom_field|
+            resource[selected_custom_field] = resource_custom_fields[selected_custom_field]
           end
         end
         result

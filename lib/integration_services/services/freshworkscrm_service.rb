@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 module IntegrationServices::Services
   class FreshworkscrmService < IntegrationServices::Service
     include InstalledApplicationConstants
@@ -10,19 +12,19 @@ module IntegrationServices::Services
     end
 
     def receive_contact_fields
-      contact_resource.get_fields
+      contact_resource.fetch_fields
     end
 
     def receive_account_fields
-      account_resource.get_fields
+      account_resource.fetch_fields
     end
 
     def self.construct_default_integration_params(params)
-      INSTALL_DEFAULT_FIELD_HASH.merge!('domain' => INSTALLATION_DOMAIN % { domain_url: params['domain'] }, 'auth_token' => params['auth_token'], 'ghostvalue' => params['ghostvalue'])
+      INSTALL_DEFAULT_FIELD_HASH.merge!('domain' => format(INSTALLATION_DOMAIN, domain_url: params['domain']), 'auth_token' => params['auth_token'], 'ghostvalue' => params['ghostvalue'])
     end
 
     def receive_deal_fields
-      deal_resource.get_fields
+      deal_resource.fetch_fields
     end
 
     def receive_fetch_form_fields

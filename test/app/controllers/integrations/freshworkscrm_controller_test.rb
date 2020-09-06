@@ -43,7 +43,7 @@ class Integrations::FreshworkscrmControllerTest < ActionController::TestCase
   def test_freshworkscrm_update_intial_settings
     post :settings_update, format: 'html', 'configs' => { 'auth_token' => 'abcdjhdjs', 'domain' => 'freshworkscrm/crm/sales', 'ghostvalue' => 'khakdaksdhk' }
     assert_response 200
-    assert_not_nil @account.installed_applications.find { |app| app.application_id == 53 }
+    assert_not_nil (@account.installed_applications.find { |app| app.application_id == 53 })
   end
 
   def test_freshworkscrm_edit_exiting_settings
