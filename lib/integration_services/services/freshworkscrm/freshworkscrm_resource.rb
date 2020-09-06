@@ -28,7 +28,7 @@ module IntegrationServices::Services
         end
       end
 
-      def process_response(response, *success_codes, &block)
+      def process_response(response, *success_codes, &_block)
         if success_codes.include?(response.status)
           yield parse(response.body)
         else

@@ -8,13 +8,6 @@ module IntegrationServices::Services
                             'contact_status_id' => ['contact_status', 'contact_status'],
                             'creater_id' => ['creater', 'users'], 'updater_id' => ['updater', 'users'] }.freeze
 
-      def fetch_fields
-        request_url = "#{server_url}/settings/contacts/fields.json"
-        response = http_get request_url
-        opt_fields = { 'display_name' => 'Full name' }
-        process_response(response, 200, &format_fields_block(opt_fields))
-      end
-
       def get_selected_fields(fields, value)
         return { 'contacts' => [], 'type' => 'contact' } if value[:email].blank?
 
@@ -41,18 +34,11 @@ module IntegrationServices::Services
         end
       end
 
-      def filter_by_email(email)
-        request_url = "#{server_url}/filtered_search/contact"
-        filters = [construct_filter('contact_email.email', 'is_in', email)]
-        request_body = filter_request_body filters
-        response = http_post request_url, request_body.to_json
-        process_response(response, 200) do |contact|
-          return contact
-        end
-      end
-
-      def resource_relational_fields
-        RELATIONAL_FIELDS
+      def fetch_fields
+        request_url = "#{server_url}/settings/contacts/fields.json"
+        response = http_get request_url
+        opt_fields = { 'display_name' => 'Full name' }
+        process_response(response, 200, &format_fields_block(opt_fields))
       end
 
       def create(payload, web_meta)
@@ -64,13 +50,29 @@ module IntegrationServices::Services
         end
       end
 
-      def process_create_response(response, web_meta, *success_codes, &block)
-        if success_codes.include?(response.status)
-          parse(response.body)
-        else
-          raise RemoteError, "Error: #{response.body}", response.status.to_s
+      private
+
+        def process_create_response(response, _web_meta, *success_codes, &_block)
+          if success_codes.include?(response.status)
+            yield parse(response.body)
+          else
+            raise RemoteError, "Error: #{response.body}", response.status.to_s
+          end
         end
-      end
+
+        def filter_by_email(email)
+          request_url = "#{server_url}/filtered_search/contact"
+          filters = [construct_filter('contact_email.email', 'is_in', email)]
+          request_body = filter_request_body filters
+          response = http_post request_url, request_body.to_json
+          process_response(response, 200) do |contact|
+            return contact
+          end
+        end
+
+        def resource_relational_fields
+          RELATIONAL_FIELDS
+        end
     end
   end
 end
