@@ -3,7 +3,7 @@ module IntegrationServices::Services
     include InstalledApplicationConstants
 
     INSTALL_DEFAULT_FIELD_HASH = { 'contact_fields' => 'display_name', 'account_fields' => 'name',
-                                   'contact_labels' => 'Full name', 'account_labels' => 'Name', 'deal_view' => '0' }.freeze
+                                   'contact_labels' => 'Full name', 'account_labels' => 'Name', 'deal_view' => '0' }
 
     def instance_url
       self.configs['domain']
