@@ -170,4 +170,32 @@ module Billing::BillingHelper
       Rails.logger.debug event_data
       subscription_info(event_data.subscription, event_data.customer)
     end
+
+    def event_eligible_to_process?
+      (not_api_source? || sync_for_all_sources?) && INVOICE_EVENTS.exclude?(params[:event_type])
+    end
+
+    def not_api_source?
+      params[:source] != EVENT_SOURCES[:api]
+    end
+
+    def sync_for_all_sources?
+      SYNC_EVENTS_ALL_SOURCE.include?(params[:event_type])
+    end
+
+    def trigger_omni_subscription_callbacks
+      if omni_bundle_account?
+        Rails.logger.info "Pushing event data for Freshcaller/Freshchat product account-id: #{@account.id}"
+        Billing::FreshcallerSubscriptionUpdate.perform_async(params)
+        Billing::FreshchatSubscriptionUpdate.perform_async(params)
+      end
+    end
+
+    def live_chat_setting_enabled?
+      @account&.chat_setting && @account&.subscription && @account.chat_setting.site_id
+    end
+
+    def omni_bundle_account?
+      @account.present? && @account.make_current && @account.omni_bundle_account?
+    end
 end

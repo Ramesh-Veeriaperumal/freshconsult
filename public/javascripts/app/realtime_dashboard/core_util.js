@@ -178,10 +178,8 @@ RealtimeDashboard.CoreUtil = RealtimeDashboard.CoreUtil || {};
 					jQuery('.grid-stack').addClass('grid-stack-6');
 			}
 			//Set the page title
-			if(RealtimeDashboard.dashboard_enabled) {
-				var page_title = RealtimeDashboard.snapshot_label + " : " + unescapeHtml(RealtimeDashboard.helpdesk_name);
-				jQuery(document).attr('title',page_title);
-			}
+			var page_title = RealtimeDashboard.snapshot_label + " : " + unescapeHtml(RealtimeDashboard.helpdesk_name);
+			jQuery(document).attr('title',page_title);
 
 			trigger_event("dashboard_visited",{ type : RealtimeDashboard.type });
 			$('#grid-stack').gridstack(options);

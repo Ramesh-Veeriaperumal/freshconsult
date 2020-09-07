@@ -50,17 +50,10 @@ class NERHtmlIndexTransformerTest < ActiveSupport::TestCase
   private
 
   def make_ner_request
-    req_body = {  text: @text.to_s.first(NERWorker::MAXIMUM_LENGTH), #Sending only first 3000 characters to api because the api response time is more than 4sec for the string length >3000
-                  user_id: encrypt_pii("test@freshdesk.com"),
-                  client_id: encrypt_pii("test.freshdesk.com"),
-                  username: NER_API_TOKENS['username'] }.to_json
+    req_body = {  text: @text.to_s.first(NERWorker::MAXIMUM_LENGTH) } # Sending only first 3000 characters to api because the api response time is more than 4sec for the string length >3000
 
     response = RestClient.send("post", NER_API_TOKENS['datetime'], req_body, {"Content-Type"=>"application/json"})
     JSON.parse(response)
-  end
-
-  def encrypt_pii(key)
-    Encryptor.encrypt(value: key, key: NER_API_TOKENS['secret_key'], iv: NER_API_TOKENS['iv'])
   end
 
   def assert_html_indexes

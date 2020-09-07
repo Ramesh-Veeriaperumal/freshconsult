@@ -9,22 +9,22 @@ module Search
         @options = options
       end
 
-      def index_es_count_document(legacy_index = true, analytics_index = true)
+      def index_es_count_document
         payload.symbolize_keys!
         Time.use_zone('UTC') do
           model_class = payload[:klass_name]
           model_object = model_class.constantize.find_by_id(payload[:document_id])
           return if model_object.nil?
 
-          push_document_update(model_object, legacy_index, analytics_index)
+          push_document_update(model_object)
         end
       end
 
-      def remove_es_count_document(legacy_index = true, analytics_index = true)
+      def remove_es_count_document
         payload.symbolize_keys!
         model_class = payload[:klass_name]
         document_id = payload[:document_id]
-        delete_from_analytics_cluster(document_id) if analytics_index
+        delete_from_analytics_cluster(document_id)
       end
 
       def alias_name
@@ -98,13 +98,13 @@ module Search
         model_object.class == Helpdesk::Ticket && (model_object.deleted || model_object.spam)
       end
 
-      def push_document_update(model_object, legacy_index, analytics_index)
+      def push_document_update(model_object)
         version_stamp = payload[:version].to_i
         version = {
           version_type: 'external',
           version: version_stamp
         }
-        write_to_analytics_cluster(model_object, version_stamp) if analytics_index
+        write_to_analytics_cluster(model_object, version_stamp)
       end
 
       def write_to_analytics_cluster(model_object, version_stamp)

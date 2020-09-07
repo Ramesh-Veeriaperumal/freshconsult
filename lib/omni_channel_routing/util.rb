@@ -2,19 +2,27 @@ module OmniChannelRouting
   module Util
     include ::OmniChannelRouting::Constants
 
-    def request_ocr(client_service, http_method, path, payload = {})
+    def request_service(client_service, http_method, path, payload = {}, use_mars = false)
       request_params = {}
       request_params[:method] = http_method.to_sym
-      request_params[:url] = ocr_url(path)
       request_params[:payload] = payload if http_method.to_sym == :put
       request_params[:headers] = ocr_headers(client_service)
       request_params[:timeout] = 10
       request_params[:open_timeout] = 10
+      request_params[:url] = use_mars ? mars_url(path) : ocr_url(path)
       RestClient::Request.execute(request_params)
     end
 
     def ocr_url(path)
       "#{OCR_BASE_URL}#{path}"
+    end
+
+    def mars_url(path)
+      "#{MARS_BASE_URL}#{path}"
+    end
+
+    def service_paths(use_mars = false)
+      use_mars ? MARS_PATHS : OCR_PATHS
     end
 
     def ocr_headers(client_service)

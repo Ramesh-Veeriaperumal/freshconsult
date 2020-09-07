@@ -18,7 +18,8 @@
     consumed_freddy_sessions = fetch_consumed_freddy_sessions.to_i
     show_session_metering_info = current_account.freddy_subscription_enabled? && freddy_addon_count != 0 && (freddy_addon_count > 2 || freddy_enabled) && (is_prepaid ? @subscription.freddy_sessions > 0 : true )
     if is_prepaid
-      percentage_session_consumed = is_prepaid ? (consumed_freddy_sessions*100) / (@subscription.freddy_sessions.nonzero? || 1) : 0
+      actual_percentage = is_prepaid ? (consumed_freddy_sessions*100) / (@subscription.freddy_sessions.nonzero? || 1) : 0
+      percentage_session_consumed = actual_percentage > 100 ? 100 : actual_percentage
       session_color = ''
       if is_prepaid && percentage_session_consumed < 50
         session_color = 'green-bar'
@@ -106,7 +107,8 @@
       <div class="session-metering">
         <h4 class="session-metering-meter">
           <% if is_prepaid %>
-            <%= t('freddy.total_session_consumption', :consumed => consumed_freddy_sessions, :total => @subscription.freddy_sessions) %>
+            <% sessions = consumed_freddy_sessions > @subscription.freddy_sessions ? @subscription.freddy_sessions : consumed_freddy_sessions  %>
+            <%= t('freddy.total_session_consumption', :consumed => sessions, :total => @subscription.freddy_sessions) %>
           <% else %>
             <%= consumed_freddy_sessions %>
           <% end %>

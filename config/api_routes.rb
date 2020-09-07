@@ -230,6 +230,8 @@ Helpkit::Application.routes.draw do
         put :bitmap_add_feature
         put :bitmap_revoke_feature
         put :execute_script
+        put :enable_setting
+        put :disable_setting
       end
     end
 

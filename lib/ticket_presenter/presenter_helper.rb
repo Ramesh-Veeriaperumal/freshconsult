@@ -52,7 +52,6 @@ module TicketPresenter::PresenterHelper
       at.add :archive
       at.add :internal_agent_id
       at.add :internal_group_id
-      at.add :parent_ticket, as: :parent_id
       at.add :outbound_email?, as: :outbound_email
       at.add :subject
       at.add proc { |x| x.description }, as: :description_text
