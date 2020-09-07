@@ -501,7 +501,7 @@ class User < ActiveRecord::Base
   end
 
   def is_falcon_pref?
-    true
+    self.preferences[:agent_preferences][:falcon_ui] || Account.current.disable_old_ui_enabled?
   end
 
   def old_notes_first?

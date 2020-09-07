@@ -13,6 +13,7 @@ class Integrations::AdvancedTicketing::SharedOwnership
   end
 
   def uninstall(inst_app)
-    Rails.logger.warn "Removed SharedOwnership :: #{caller[0..2]}"
+    return if current_account.disable_old_ui_enabled?
+    remove_feature(:shared_ownership)
   end
 end

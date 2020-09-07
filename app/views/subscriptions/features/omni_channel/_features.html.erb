@@ -8,5 +8,7 @@
       <span class="content"><%= t('omni_channel_content') %></span>
     </div>
   </div>
-  <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+  <% if current_account.disable_old_ui_enabled? %>
+    <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+  <% end %>
 </div>
