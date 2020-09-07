@@ -427,6 +427,20 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_post)
   end
 
+  def test_freshworkscrm_fetch_contacts_with_no_filter_results
+    app_id = get_installed_app('freshworkscrm').id
+    filter_response = '{}'
+    filter_response_mock = Minitest::Mock.new
+    filter_response_mock.expect :body, filter_response
+    filter_response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.stubs(:http_post).returns(filter_response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'contact', value: { email: 'matt.rogers@freshdesk.com' } })
+    post :fetch, param
+    assert_response 200
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+  end
+
   def test_freshworkscrm_fetch_contacts_with_exception
     app_id = get_installed_app('freshworkscrm').id
     response = "{\"contact\":{\"id\":15001322339,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"job_title\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"time_zone\":null,\"work_number\":null,\"mobile_number\":\"1000\",\"address\":null,\"last_seen\":null,\"lead_score\":90,\"last_contacted\":null,\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"links\":{\"conversations\":\"/contacts/15001322339/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuser\u0026per_page=3\",\"timeline_feeds\":\"/contacts/15001322339/timeline_feeds\",\"document_associations\":\"/contacts/15001322339/document_associations\",\"notes\":\"/contacts/15001322339/notes?include=creater\",\"tasks\":\"/contacts/15001322339/tasks?include=creater,owner,updater,targetable,users,task_type\",\"reminders\":\"/contacts/15001322339/reminders?include=creater,owner,updater,targetable\",\"appointments\":\"/contacts/15001322339/appointments?include=creater,owner,updater,targetable,appointment_attendees\",\"duplicates\":\"/contacts/15001322339/duplicates\",\"connections\":\"/contacts/15001322339/connections\"},\"last_contacted_sales_activity_mode\":null,\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"keyword\":null,\"medium\":null,\"last_contacted_mode\":null,\"recent_note\":null,\"won_deals_count\":0,\"last_contacted_via_sales_activity\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"web_form_ids\":null,\"open_deals_count\":1,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"tags\":[],\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"is_deleted\":false,\"team_user_ids\":null,\"subscription_status\":0,\"customer_fit\":0,\"has_duplicates\":true,\"duplicates_searched_today\":true,\"has_connections\":true,\"connections_searched_today\":true,\"phone_numbers\":[]} }"

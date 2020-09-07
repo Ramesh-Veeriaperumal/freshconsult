@@ -29,18 +29,10 @@ module IntegrationServices::Services
         contact_id = contact_response['contacts'].first['id']
         url = "#{server_url}/contacts/#{contact_id}.json"
         relational_fields = fields & RELATIONAL_FIELDS.keys
-        request_url = if relational_fields.present?
-                        include_resources = relational_fields.map do |relational_field|
-                          RELATIONAL_FIELDS[relational_field].first
-                        end
-                        encode_path_with_params url, include: include_resources.join(',')
-                      else
-                        url
-                      end
+        include_resources = relational_fields.map { |relational_field| RELATIONAL_FIELDS[relational_field].first } if relational_fields.present?
+        request_url = include_resources.present? ? encode_path_with_params(url, include: include_resources.join(',')) : url
         response = http_get request_url
-        process_response(response, 200) do |contact|
-          return process_result(contact, fields, relational_fields, 'contact')
-        end
+        process_response(response, 200) { |contact| return process_result(contact, fields, relational_fields, 'contact') }
       end
 
       def fetch_fields
