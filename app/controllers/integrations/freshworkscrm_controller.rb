@@ -1,3 +1,5 @@
+# frozen_string_literal: false
+
 class Integrations::FreshworkscrmController < Admin::AdminController
   include Integrations::ControllerMethods
 
