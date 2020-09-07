@@ -211,7 +211,7 @@
       :proactive_spam_detection: 207
       :api_v2: 208
       :bi_reports: 209
-      :contact_merge_ui: 210
+      :XX_unused_210: 210
       :unused_211: 211
       :unused_212: 212
       :XX_unused_213: 213
@@ -489,7 +489,6 @@
   :single_session_per_user: false
   :proactive_spam_detection: true
   :bi_reports: false
-  :contact_merge_ui: false
   :updated_twilio_client: false
   :count_es_reads: false
   :sandbox_account: false
