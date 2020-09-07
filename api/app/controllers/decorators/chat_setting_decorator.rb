@@ -47,7 +47,7 @@ class ChatSettingDecorator < ApiDecorator
        groups: @user.agent_groups.collect{|g| g.group_id},
        language: @user.language,
        time_zone_offset: Time.now.in_time_zone(@user.time_zone).utc_offset,
-       falcon_enabled: true
+       falcon_enabled: @user.is_falcon_pref?
      }
    end 
 
