@@ -78,6 +78,12 @@ class Mobile::SettingsController < ApplicationController
     render :json => response
   end
 
+  # Mobile devices to fetch admin level settings
+  # Deprecated - use configurations
+  def mobile_pre_loader
+    render :json => {view_social: can_view_social? && handles_associated? , portal_name: current_account.portal_name, portal_id: current_account.id, host_name: current_account.host, user_id: current_user.id }
+  end
+
   def deliver_activation_instructions
    #Code Moved to accounts/new_signup_free , so that activation mail is sent without second get request.
    render :json => {result: true}
