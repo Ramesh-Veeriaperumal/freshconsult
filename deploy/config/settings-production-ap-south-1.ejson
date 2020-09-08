@@ -96,10 +96,7 @@
         "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:bz37xkDnEUKPX+5dTEeM7xrNLbzUHbOE:AYjy7L+YxWbjIimmkVdGxu3I7nxMm3nxqdNuxytlEY9b53euxzm/pJuiNF0NryHlMwhGvk+fVP0=]"
       },
       "ner": {
-        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:GYnV1BzAXCKIHekel2xxjISYhUZCTkhv:Z4CXyc6Ysb92llPjzclXR+nLV2UO/+kkXh4w4n1l2wtpztn65ZQ9ioMK7ONfRf3ybG83+d6o/xXzluiRmZNHB5XoahuD8PgAh4HbFVjgYA0=]",
-        "iv": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:HiD1wd5sZIy6BMJoi60QLLL77uj+Osqh:S/DJi3MDCmQNXOr+Ck6KVgIPga1qVlTEzcLj0ekEiY3FqoWj+ka2kIuCiXAiRGbDis0GJ2qGLrorkr7PlE6iktJ4mKkkDXHYAd8xEjkaZaI=]",
-        "_username": "freshdesk",
-        "_datetime": "http://ner.freshworksapi.com/datetime"
+        "_datetime": "https://ner-api.eu-central-1-prod.freddyproject.com/datetime"
       },
       "fdadmin_api": {
         "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:KXl9nuyx7RqWRbTHviWAiCw468ZFogbb:CGhr1Ol5G8kX/x268B50QefSai8gjSfbVMstChQ6iA3XtEVgDodw/D2h4+YCKQTy]",

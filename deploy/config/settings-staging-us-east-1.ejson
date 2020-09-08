@@ -1144,10 +1144,7 @@
         "_notifications_url": "https://mobilepush.freshpo.com"
       },
       "ner": {
-        "iv": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:pjJT9Y/Rh1kYZ3zOYW9yhLbftKivddmS:+4y/cvWelak3VdNMr2VCBueKvhFgb7hUgRW3MGjDsclMO32XTzryz8iF6pgc3uqhjJQIMRJzzwUDUHPu2Iw1CllyX35kcr416HrkaOikAJg=]",
-        "secret_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:l7KX87zHUckMbPULpj1we6sOufKQZbMD:5RVSNVb8qkpt9Da1GrC7iBPU11tRxacibilD/0EdJpyTyFTANmjCUV2MSVaBuP/QTfw927ZVk0F0S0U3NLQxPURi4g9jgeL2Q31wzc3kas8=]",
-        "_datetime": "http://nereuc.freshworksapi.com/datetime",
-        "_username": "freshdesk"
+        "_datetime": "https://ner-api.prod.freddyproject.com/datetime"
       },
       "newrelic": {
         "license_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:aff0bArmLdGr/ONu8djpW1mLzefReCgX:nkym71hrsNPNwtv7rriW/0yfSHAPW3UHd7QabFkJV+TNlloK0Ik6teHW]",

@@ -211,9 +211,9 @@
       :proactive_spam_detection: 207
       :api_v2: 208
       :bi_reports: 209
-      :contact_merge_ui: 210
-      :multiple_user_emails: 211
-      :facebook_realtime: 212
+      :XX_unused_210: 210
+      :unused_211: 211
+      :unused_212: 212
       :XX_unused_213: 213
       :updated_twilio_client: 214
       :count_es_reads: 215
@@ -402,6 +402,8 @@
       :triage_ultimate: 398
       :autofaq_eligible: 399
       :solutions_agent_metrics: 400
+      :forums_agent_portal: 401
+      :solutions_agent_portal: 402
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -487,9 +489,6 @@
   :single_session_per_user: false
   :proactive_spam_detection: true
   :bi_reports: false
-  :contact_merge_ui: false
-  :multiple_user_emails: false
-  :facebook_realtime: false
   :updated_twilio_client: false
   :count_es_reads: false
   :sandbox_account: false
@@ -511,3 +510,5 @@
   :location_tagging: false
   :kb_allow_base64_images: false
   :solutions_agent_metrics: false
+  :forums_agent_portal: false
+  :solutions_agent_portal: false

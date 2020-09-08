@@ -3,10 +3,12 @@ module AdvancedTicketingTestHelper
 
   def disable_feature(feature)
     Account.current.revoke_feature(feature)
+    Account.any_instance.stubs(:disable_old_ui_enabled?).returns(false)
     yield
   ensure
     Account.current.add_feature(feature) unless Account.current.safe_send("#{feature}_enabled?")
     Account.current.installed_applications.with_name(feature).destroy_all
+    Account.any_instance.unstub(:disable_old_ui_enabled?)
   end
 
   def enable_fsm
@@ -31,10 +33,12 @@ module AdvancedTicketingTestHelper
   def create_installed_application(app_name)
     application = Integrations::Application.available_apps(Account.current.id).find_by_name(app_name)
     Account.current.installed_applications.create({application: application})
+    Account.any_instance.stubs(:disable_old_ui_enabled?).returns(false)
     yield
   ensure
     Account.current.installed_applications.find_by_application_id(application.id).try(:destroy)
     Account.current.add_feature(app_name) unless Account.current.safe_send("#{app_name}_enabled?")
+    Account.any_instance.unstub(:disable_old_ui_enabled?)
   end
 
   def create_success_pattern(app)

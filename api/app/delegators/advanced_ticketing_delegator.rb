@@ -40,6 +40,7 @@ class AdvancedTicketingDelegator < BaseDelegator
     return true unless @feature.to_sym == FSM_FEATURE
 
     # Plan based validation was done in validate_params.
+    errors[:name] << :fsm_only_on_mint_ui unless Account.current.has_feature?(:disable_old_ui)
     errors[:name] << :feature_exists if Account.current.has_feature?(:field_service_management)
     errors[:name] << :fsm_custom_fields_not_available unless fsm_artifacts_available?
 

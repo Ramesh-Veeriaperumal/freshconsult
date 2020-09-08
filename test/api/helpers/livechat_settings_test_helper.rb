@@ -27,7 +27,7 @@ module LivechatSettingsTestHelper
               groups: @agent.agent_groups.collect{|g| g.group_id},
               language: @agent.language,
               time_zone_offset: Time.now.in_time_zone(@agent.time_zone).utc_offset,
-              falcon_enabled: true
+              falcon_enabled: @agent.is_falcon_pref?
           },
           CHAT_DEBUG: ChatConfig['chat_debug'],
           LIVECHAT_APP_ID: ChatConfig['app_id'],

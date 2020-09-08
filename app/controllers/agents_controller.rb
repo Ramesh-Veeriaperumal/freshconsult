@@ -300,6 +300,7 @@ class AgentsController < ApplicationController
       else
         flash[:notice] = t(:'flash.agents.to_contact')
       end
+      @user.toggle_ui_preference if @user.is_falcon_pref?
       redirection_url(@user)
     else
       flash[:notice] = t(:'flash.agents.to_contact_failed')

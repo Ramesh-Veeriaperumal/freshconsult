@@ -95,10 +95,7 @@
         "secret_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:FMf75h4tGCtJqKsNz665w1jQTWm6qt91:ngc0xbwZbg/nGrY2rMTXBn7QzVNJ7vrgIAH7dDIScPAzJJNIJ4Oy1COV7QTSyzGzBh9QVDIC9wI=]"
       },
       "ner": {
-        "secret_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:CbMAIw5GsLscKFy1NqiRGoOZhajKs4oT:pMUIelV1sTsnbh5KA+4TIxHBhA==]",
-        "iv": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:xFp3200S5iI+0jv4gb5CTIn5acijRRsG:eFMbPhQHTJ0kUD8YzdF9WnpQbA==]",
-        "_username": "xxx",
-        "_datetime": "xxx"
+        "_datetime": "https://ner-api.prod.freddyproject.com/datetime"
       },
       "fdadmin_api": {
         "secret_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:Qqhs72GzQXFrL5GQ4itU+R6tEcnjoJ+j:cPfkXp6LC5+PwMLllHZJpHwvfoUvhoLUbdXP+jKsxkak0FGaIaHAUKfkA2//fFMD]",
