@@ -12,7 +12,6 @@ defaults: &defaults
     - [freshfone_node]
     - [livechat_worker]
     - [freshfone_trial_worker]
-    - [freshcaller_migration_worker]
     - [natero_worker]
     - [merge_contacts]
     - [sla]

@@ -110,7 +110,6 @@
         ],
         "jwt_token_expiry": 10,
         "_signup_full_domain": "https://signup-au.freshcaller.com",
-        "_migration_s3_bucket_name": "au-fd-fc-migration",
         "_domain_prefix": "",
         "_domain_suffix": ".freshcaller.com"
       },

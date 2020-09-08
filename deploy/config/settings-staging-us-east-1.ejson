@@ -915,7 +915,6 @@
         ],
         "_domain_prefix": "fcstaginguseast-",
         "_domain_suffix": ".freshfonehello.com",
-        "_migration_s3_bucket_name": "helpkit-freshcaller-migration",
         "_region": "us-east-1",
         "_signup_full_domain": "https://fcstaginguseast-test1.freshfonehello.com"
       },

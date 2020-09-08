@@ -102,7 +102,6 @@
         ],
         "jwt_token_expiry": 10,
         "_signup_full_domain": "https://signup-euc.freshcaller.com",
-        "_migration_s3_bucket_name": "euc-fd-fc-migration",
         "_domain_prefix": "",
         "_domain_suffix": ".freshcaller.com",
         "_region": "eu-central-1"
