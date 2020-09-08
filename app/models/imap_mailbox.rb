@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class ImapMailbox < ActiveRecord::Base
   include Email::Mailbox::Constants
   include Mailbox::HelperMethods
 
   include EmailHelper
-  
+
   self.primary_key = :id
 
   belongs_to :email_config
@@ -17,6 +19,11 @@ class ImapMailbox < ActiveRecord::Base
   scope :errors, -> { where('error_type > ? and error_type <> ?', 0, AUTH_ERROR)  }
   scope :oauth_errors, -> { where('error_type = ?', AUTH_ERROR)  }
 
+
+  attr_encrypted :access_token, random_iv: true, compress: true
+  attr_encrypted :refresh_token, random_iv: true, compress: true
+  validates :encrypted_access_token, symmetric_encryption: true, if: :oauth_mailbox?
+  validates :encrypted_refresh_token, symmetric_encryption: true, if: :oauth_mailbox?
 
   def selected_server_profile
     selected_profile = MailboxConstants::MAILBOX_SERVER_PROFILES.select {|server| server_name && server_name.casecmp("imap.#{server[4]}") == 0}
@@ -45,5 +52,9 @@ class ImapMailbox < ActiveRecord::Base
                             domain: account.full_domain,
                             application_id: imap_application_id },
       action: action }.to_json
+  end
+
+  def oauth_mailbox?
+    authentication == Email::Mailbox::Constants::OAUTH
   end
 end

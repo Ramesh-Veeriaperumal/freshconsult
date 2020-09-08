@@ -903,7 +903,9 @@
         "microsoft_teams_secret": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:zBEB+01T5/k6pJq7lRflwQdQ6VF3bgUk:aLXJrH0hc9Sw5BxVFyUvYASjO2Werz69b3Q8gGAvnpzVRyY7i7xx]",
         "google_hangout_chat_token": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:jlFcYlyrrFVuWF6OekIc5wOpnoE6/7Nb:A6n32j4HVQ/Or5OlMXPqTJvsWlnuwtWdo7hl6shPPNyAFQybcqOXY0ouTa70hdGcSZQFr2SbzA==]",
         "google_hangout_chat_secret": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:B9FfZ6u6osycw2kte6xHUBG4B4uF5Vx3:V2MEIrhcm9DIZTNvwmFNunuqG0DOQg5rVctU3VN7Hw4wRKqJWR5fxA==]",
-        "google_oauth2_client_id_iosv4_classic": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:Q9lN3VRkxy6YfYGMCEVwDzpu7DlqToo0:DeAqRR9KLmbhAUt8QABPGwYHvzRkmDrpZFVZGeLsZldqA/byWuXGZ+g+VMjIxj7jCfqxHfJf6DWHT07lIpER2jwhLH22qq1buwffLwOr4Aj1UtK6OHWDpA==]"
+        "google_oauth2_client_id_iosv4_classic": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:Q9lN3VRkxy6YfYGMCEVwDzpu7DlqToo0:DeAqRR9KLmbhAUt8QABPGwYHvzRkmDrpZFVZGeLsZldqA/byWuXGZ+g+VMjIxj7jCfqxHfJf6DWHT07lIpER2jwhLH22qq1buwffLwOr4Aj1UtK6OHWDpA==]",
+        "microsoft_outlook_token": "EJ[1:VL29hIMD4R+osZnE7IrS8nM/Mfp+bQJJtbVCr5t91nA=:Q9zBW8rOBNyq20BXZTgswlFLxoee2qyY:PJ66KX4RjouLRyI0ZtUO+BgHdEcXxQcCKQQBKzXCLfGJMmZ986eIQgfsbfbv6eSDILU9HQ==]",
+        "microsoft_outlook_secret": "EJ[1:VL29hIMD4R+osZnE7IrS8nM/Mfp+bQJJtbVCr5t91nA=:+SRQ5feTf5SXY8TDrk8UVhMUzcng9Rk5:2kKGx6x6AAGnhoRL5oWMqNsgPxEtO6vEk2ivIMXi5DXe/WfFeGuQ3uUhNQkn0L3HOao=]"
       },
       "spam_watcher": {
         "_email": "dev-ops@freshdesk.com,helpdesk@noc-alerts.freshservice.com"

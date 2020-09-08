@@ -847,7 +847,9 @@
         "microsoft_teams_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:H4EROBYyWk3XIzuXa3F9yZ3VDrSzzd57:yWXjegcwAOoQN9TCwtMj7AZq9X9J4o15ZKnqyOqDZNgGqUL83uis]",
         "google_hangout_chat_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:P09xGfXg+yhfOqeW7hc6VgZYmmkZ66Jv:q+JT1rmT8B6Q/PU3BMKrLvqNJSnLZNRFzwcCQbuSeaJKq/MC0TxWeExLbAjr/WrCAlk+hd02FA==]",
         "google_hangout_chat_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:8h5iyMY9JFjurNJcCzhr3kj/vgDJ7/gg:NzIIt/tGX/ZNM3APd8ouNeq7nTKsU3ambU9U1Lp+H5oQhVPhhLXakA==]",
-        "google_oauth2_client_id_iosv4_classic": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:oBh6cQVRi4GAZ1+ru4iVPPsB9ROO+JPm:OhdONrJp1RZxN+003K4z0ENLPnqk+OzvTkE76CozbSaxveOWgENZUbJhdk939bOXqW1GsfC6zKi1z4obv1T021koEzzQEbHpktAyNKqQTifMr+TpkrN5qQ==]"
+        "google_oauth2_client_id_iosv4_classic": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:oBh6cQVRi4GAZ1+ru4iVPPsB9ROO+JPm:OhdONrJp1RZxN+003K4z0ENLPnqk+OzvTkE76CozbSaxveOWgENZUbJhdk939bOXqW1GsfC6zKi1z4obv1T021koEzzQEbHpktAyNKqQTifMr+TpkrN5qQ==]",
+        "microsoft_outlook_token": "EJ[1:FKsJ+qSqv30zl35XDS99QIPFxnTRHkOh3eTsWfhhAw0=:12WhMpXPn+Pstfv4TcJBPpLIvr5L71Ml:tOsP/4YHBYnIRbkoeiJ4iqpWJN00B5f6YrFhkjxwp+OpuFsTCQ3KQu+3JzWsqjwLtS/ypw==]",
+        "microsoft_outlook_secret": "EJ[1:FKsJ+qSqv30zl35XDS99QIPFxnTRHkOh3eTsWfhhAw0=:ethb61ZdP+nCDZxfAMv1LzoqLv5bLDUD:/oPca97/dJvxQaPoAwzPby/B/k3teBcuawl0WjHdrkJ6XsVn7Uuj1ZJULPxUVeBRGyM=]"
       },
       "spam_watcher": {
         "_email": "dev-ops@freshdesk.com,helpdesk@noc-alerts.freshservice.com"
