@@ -458,11 +458,6 @@ class Account < ActiveRecord::Base
     add_feature(setting) if BITMAP_FEATURES.include?(setting)
   end
 
-  def can_admin_enable_setting?(setting)
-    settings_hash = AccountSettings::SettingsConfig[setting]
-    settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
-  end
-
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
   def disable_setting(setting)
     rollback(setting) if LP_FEATURES.include?(setting)
