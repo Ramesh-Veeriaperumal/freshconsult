@@ -34,7 +34,7 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.find_by_name('Garden Jan 19').id, state: 'active', account_id: @account.id))
     old_subscription = @account.subscription.dup
     s = @account.subscription
-    s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 19').id
+    s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
     assert @account.has_feature?(:untitled_setting_3)
@@ -50,7 +50,7 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.find_by_name('Garden Jan 19').id, state: 'active', account_id: @account.id))
     old_subscription = @account.subscription.dup
     s = @account.subscription
-    s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 19').id
+    s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
     assert_equal @account.has_feature?(:untitled_setting_3), false
@@ -66,7 +66,7 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.find_by_name('Forest Jan 19').id, state: 'active', account_id: @account.id))
     old_subscription = @account.subscription.dup
     s = @account.subscription
-    s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 19').id
+    s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
     assert @account.has_feature?(:untitled_feature_2_dependency_toggle)
@@ -83,7 +83,7 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.find_by_name('Estate Jan 19').id, state: 'active', account_id: @account.id))
     old_subscription = @account.subscription.dup
     s = @account.subscription
-    s.subscription_plan_id = SubscriptionPlan.find_by_name('Garden Jan 19').id
+    s.subscription_plan_id = SubscriptionPlan.find_by_name('Garden Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
     assert_equal @account.has_feature?(:untitled_feature_2_dependency_toggle), false
