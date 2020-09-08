@@ -23,11 +23,13 @@ class ImapMailboxObserver < ActiveRecord::Observer
       commit_on_create mailbox
     elsif mailbox.safe_send(:transaction_include_action?, :update)
       clear_cache mailbox
+      update_custom_mailbox_status(mailbox.account_id)
       check_error_and_send_mail(mailbox)
       # Send if error_type is not present. else, send if error_type is 0.
       commit_on_update(mailbox) if !mailbox.respond_to?(:error_type) || mailbox.error_type.to_i == 0
     elsif mailbox.safe_send(:transaction_include_action?, :destroy)
       clear_cache mailbox
+      update_custom_mailbox_status(mailbox.account_id)
       commit_on_destroy mailbox
     end
     true

@@ -247,6 +247,7 @@ module Redis::Keys::Others
 
   SUPPORT_TICKET_LIMIT = "SUPPORT_TICKET_LIMIT:%{account_id}%{user_id}".freeze
 
+  CUSTOM_MAILBOX_STATUS_CHECK = 'CUSTOM_MAILBOX_STATUS_CHECK:%{account_id}'.freeze
   MAILBOX_GMAIL_OAUTH = 'GMAIL_OAUTH:%{account_id}:%{user_id}:%{random_number}'.freeze
   GMAIL_ACCESS_TOKEN_VALIDITY = 'GMAIL_ACCESS_TOKEN:%{account_id}:%{smtp_mailbox_id}'.freeze
 
