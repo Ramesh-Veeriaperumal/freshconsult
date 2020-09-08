@@ -11,12 +11,8 @@ module AuditLog::Translators::AutomationRule
           translate_observer_events(model_changes[attribute])
         end
       when :filter_data
-        next unless supervisor_rule?
-
-        if dispatcher_rule? || supervisor_rule?
+        if supervisor_rule?
           translate_filter_action(model_changes[attribute], :conditions)
-        elsif observer_rule?
-          translate_observer_events(model_changes[attribute], true)
         end
       when :action_data
         translate_filter_action(model_changes[attribute], :actions)
