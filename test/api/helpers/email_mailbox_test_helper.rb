@@ -196,4 +196,29 @@ module EmailMailboxTestHelper
       access_type: 'both'
     }
   end
+
+  def imap_params(mailbox, options = {})
+    imap_params_hash = { mailbox_attributes: { id: mailbox.id,
+                                               user_name: mailbox.user_name,
+                                               password: mailbox.password,
+                                               server_name: mailbox.server_name,
+                                               server_port: mailbox.port,
+                                               authentication: mailbox.authentication,
+                                               delete_from_server: mailbox.delete_from_server,
+                                               folder_list: { 'standard' => ['inbox'] },
+                                               use_ssl: mailbox.use_ssl,
+                                               to_email: options[:to_email],
+                                               account_id: mailbox.account_id,
+                                               time_zone: Account.current.time_zone,
+                                               timeout: mailbox.timeout,
+                                               domain: Account.current.full_domain,
+                                               application_id: imap_application_id },
+                         action: 'create' }
+    if mailbox.authentication == OAUTH
+      imap_params_hash[:mailbox_attributes][:password] = mailbox.refresh_token
+      imap_params_hash[:mailbox_attributes][:email_provider_type] = options[:provider]
+      imap_params_hash[:mailbox_attributes][:password_enc_algorithm] = 'plain'
+    end
+    imap_params_hash
+  end
 end
