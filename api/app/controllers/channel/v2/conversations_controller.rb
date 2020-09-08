@@ -154,7 +154,8 @@ module Channel::V2
           conditions.push("#{SYNC_ATTRIBUTE_MAPPING[field]} >= '#{request_params[field][:start]}' and #{SYNC_ATTRIBUTE_MAPPING[field]} <= '#{request_params[field][:end]}'")
         end
         (SYNC_ARRAY_ATTRIBUTES & request_params.keys).each do |field|
-          conditions.push("#{SYNC_ATTRIBUTE_MAPPING[field]} in #{request_params[field].inspect}")
+          array_values = request_params[field].join(', ')
+          conditions.push("#{SYNC_ATTRIBUTE_MAPPING[field]} in (#{array_values})")
         end
         conditions.join(' and ')
       end
