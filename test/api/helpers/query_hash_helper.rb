@@ -13,7 +13,7 @@ module QueryHashHelper
         { 'condition' => 'due_by', 'operator' => 'due_by_op', 'ff_name' => 'default', 'value' => (feature ? ['1', '2', '3', '4'] : '1,2,3,4') },
         { 'condition' => 'group_id', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => (feature ? ['0', '3'] : '0,3') },
         { 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => (feature ? ['2'] : '2') },
-        { 'condition' => 'created_at', 'operator' => 'is_greater_than', 'ff_name' => 'default', 'value' => '13 Sep 2016 - 23 Feb 2016'}
+        { 'condition' => 'created_at', 'operator' => 'is_greater_than', 'ff_name' => 'default', 'value' => '13 Sep 2016 00:00:00 - 23 Feb 2016 00:00:00' }
       ],
       wf_model: "Helpdesk::Ticket",
       wf_order: "created_at",
@@ -133,7 +133,7 @@ module QueryHashHelper
       {
         'condition' => 'created_at',
         'operator' => 'is_greater_than',
-        'value' => options[:time] || %r{^(\d{2}\s\w{3}\s\d{4})\s-\s(\d{2}\s\w{3}\s\d{4})$},
+        'value' => options[:time] || %r{^(\d{2}\s\w{3}\s\d{4} \d{1,2}:\d{1,2}:\d{1,2})\s-\s(\d{2}\s\w{3}\s\d{4} \d{1,2}:\d{1,2}:\d{1,2})$},
         'ff_name' => 'default'
       }
     ] + [SPAM_CONDITION, DELETED_CONDITION]

@@ -64,7 +64,6 @@ class Account < ActiveRecord::Base
   has_one :account_additional_settings
 
   has_one :account_configuration
-  accepts_nested_attributes_for :account_configuration
 
   delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone,
            :notification_emails, :invoice_emails, :admin_company_name, to: 'account_configuration'

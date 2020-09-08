@@ -3,7 +3,7 @@ class Admin::FreshcallerController < Admin::AdminController
   before_filter :validate_freshcaller_account, only: [:redirect_to_freshcaller]
 
   def index
-    render :freshcaller_settings_index, locals: { freshcaller_domain: current_account.freshcaller_account.domain, old_ui: false }
+    render :freshcaller_settings_index, locals: { freshcaller_domain: current_account.freshcaller_account.domain, old_ui: old_ui? }
   end
 
   def redirect_to_freshcaller
@@ -11,6 +11,10 @@ class Admin::FreshcallerController < Admin::AdminController
   end
 
   private
+
+    def old_ui?
+      !current_user.is_falcon_pref?
+    end
 
     def validate_freshcaller_account
       render_404 if current_account.freshcaller_account.blank?

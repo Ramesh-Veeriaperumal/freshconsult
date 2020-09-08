@@ -149,7 +149,8 @@ module Solution::ArticlesHelper
       op << %(<div class="not-in-portal">)
       op << t('solution.articles.language_not_in_portal') + " - "
       if privilege?(:admin_tasks)
-        op << link_to(t('solution.articles.change_language_settings', language_name: article.language.name), '/a/admin/account/languages', target: '_top', id: 'manage-account-languages')
+        op << (current_user.is_falcon_pref? ? link_to(t('solution.articles.change_language_settings', :language_name => article.language.name), '/a/admin/account/languages', :target => '_top', :id => 'manage-account-languages')
+              : pjax_link_to(t('solution.articles.change_language_settings', :language_name => article.language.name), manage_languages_path) )
       else
         op << t('solution.articles.contact_admin').html_safe
       end
