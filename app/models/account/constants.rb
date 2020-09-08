@@ -236,7 +236,7 @@ class Account < ActiveRecord::Base
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, marketplace_app: false, freshid_sso_sync: true,
-    fw_sso_admin_security: false, shopify_api_revamp: false,
+    fw_sso_admin_security: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,

@@ -23,11 +23,7 @@ module IntegrationServices::Services
           }
         }
         refund_values = {}
-        refund_calculate_url = if Account.current.shopify_api_revamp_enabled?
-          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds/calculate.json"
-        else
-          "#{server_url}/admin/orders/#{order_id}/refunds/calculate.json"
-        end
+        refund_calculate_url = "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds/calculate.json"
         response = http_post refund_calculate_url, refund_calculate_hash.to_json
         process_response(response, 200) do |refund|
           refund_values = refund
@@ -46,11 +42,7 @@ module IntegrationServices::Services
           t["kind"] = "refund"
         end
         refund_hash[:refund][:transactions] = refund_values["refund"]["transactions"]
-        refund_url = if Account.current.shopify_api_revamp_enabled?
-          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds.json"
-        else
-          "#{server_url}/admin/orders/#{order_id}/refunds.json"
-        end
+        refund_url = "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds.json"
         response = http_post refund_url, refund_hash.to_json
         process_response(response, 201) do |refund|
           return refund
@@ -83,11 +75,7 @@ module IntegrationServices::Services
           }
         }
         refund_values = {}
-        refund_calculate_url = if Account.current.shopify_api_revamp_enabled?
-          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds/calculate.json"
-        else
-          "#{server_url}/admin/orders/#{order_id}/refunds/calculate.json"
-        end
+        refund_calculate_url = "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds/calculate.json"
         response = http_post refund_calculate_url, refund_calculate_hash.to_json
         process_response(response, 200) do |refund|
           refund_values = refund
@@ -108,11 +96,7 @@ module IntegrationServices::Services
           t["kind"] = "refund"
         end
         refund_hash[:refund][:transactions] = refund_values["refund"]["transactions"]
-        refund_url = if Account.current.shopify_api_revamp_enabled?
-          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds.json"
-        else
-          "#{server_url}/admin/orders/#{order_id}/refunds.json"
-        end
+        refund_url = "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/refunds.json"
         response = http_post refund_url, refund_hash.to_json
         process_response(response, 201) do |refund|
           return refund
