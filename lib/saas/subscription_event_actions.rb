@@ -130,7 +130,7 @@ class SAAS::SubscriptionEventActions
       features_list.each do |feature|
         unless plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature)
 
-          next if is_a_setting?(feature) && applicable_for_plan?(feature)
+          next if a_setting?(feature) && applicable_for_plan?(feature)
           account.reset_feature(feature)
         end
       end
@@ -310,7 +310,7 @@ class SAAS::SubscriptionEventActions
       end
     end
 
-    def is_a_setting?(feature)
+    def a_setting?(feature)
       AccountSettings::SettingsConfig[feature].present?
     end
 end
