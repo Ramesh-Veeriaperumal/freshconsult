@@ -512,6 +512,7 @@
             "_proxy_enabled": true,
             "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
+            "slave2_proxy": { "_username": "shard_1_slave" },
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
               "_host": "usrds1slave1.internal-freshpo.com",
@@ -546,6 +547,7 @@
             "_proxy_enabled": true,
             "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5RScK29IZfMnTfJHFGAZ0HG+07bYZnKl:gB1Fs1Zf+ZdRuSGvALXSRR7jUloU3aln]",
+            "slave2_proxy": { "_username": "shard_7_slave" },
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5jJeIuFcW+6JwsA7A8HgMNAimEqCRD99:uQwKG+XiTovPT4AXn0Bhr5GALukhzwBZ]",
               "_host": "usrds7slave1.internal-freshpo.com",
@@ -1154,10 +1156,7 @@
         "_notifications_url": "https://mobilepush.freshpo.com"
       },
       "ner": {
-        "iv": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:pjJT9Y/Rh1kYZ3zOYW9yhLbftKivddmS:+4y/cvWelak3VdNMr2VCBueKvhFgb7hUgRW3MGjDsclMO32XTzryz8iF6pgc3uqhjJQIMRJzzwUDUHPu2Iw1CllyX35kcr416HrkaOikAJg=]",
-        "secret_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:l7KX87zHUckMbPULpj1we6sOufKQZbMD:5RVSNVb8qkpt9Da1GrC7iBPU11tRxacibilD/0EdJpyTyFTANmjCUV2MSVaBuP/QTfw927ZVk0F0S0U3NLQxPURi4g9jgeL2Q31wzc3kas8=]",
-        "_datetime": "http://nereuc.freshworksapi.com/datetime",
-        "_username": "freshdesk"
+        "_datetime": "https://ner-api.prod.freddyproject.com/datetime"
       },
       "newrelic": {
         "license_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:aff0bArmLdGr/ONu8djpW1mLzefReCgX:nkym71hrsNPNwtv7rriW/0yfSHAPW3UHd7QabFkJV+TNlloK0Ik6teHW]",
@@ -1423,10 +1422,6 @@
             "_priority": 1,
             "_sqs_queue": "main_staging_social_gnip_tweets_queue"
           },
-          "count_etl_queue": {
-            "_priority": 1,
-            "_sqs_queue": "count_etl_queue-stagingvpc-staging"
-          },
           "analytics_etl_queue": {
             "_priority": 1,
             "_sqs_queue": "analytics_etl_queue-stagingvpc-staging"
@@ -1531,10 +1526,6 @@
               "_sqs_queue": "search-etlqueue-archive-staging",
               "_priority": 1
           },
-          "count_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "count_etl_queue_archive_staging"
-          },
           "analytics_etl_queue": {
               "_priority": 1,
               "_sqs_queue": "analytics_etl_queue_archive_staging"
@@ -1543,10 +1534,6 @@
         "maintenance": {
           "search_etlqueue_maintenance": {
             "_sqs_queue": "search-etlqueue-stagingvpc-staging_new_maintenance",
-            "_priority": 1
-          },
-          "count_etl_queue_maintenance": {
-            "_sqs_queue": "count_etl_queue-stagingvpc-staging_maintenance",
             "_priority": 1
           },
           "analytics_etl_queue_maintenance": {
@@ -1583,7 +1570,6 @@
         "_channel_framework_services": "main_staging_channel_framework_services",
         "_collab_agent_update_queue": "collab_agent_update_staging",
         "_collab_ticket_update_queue": "collab_ticket_update_staging",
-        "_count_etl_queue": "count_etl_queue-stagingvpc-staging",
         "_cti_call_queue": "cti_call_staging",
         "_cti_screen_pop": "cti_screen_pop_staging",
         "_custom_mailbox_realtime_queue": "https://sqs.us-east-1.amazonaws.com/206535303787/imap-conf-data-sqs",
@@ -1624,14 +1610,12 @@
         "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_staging",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_staging",
         "_search_etlqueue_maintenance": "search-etlqueue-stagingvpc-staging_new_maintenance",
-        "_count_etl_queue_maintenance": "count_etl_queue-stagingvpc-staging_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance",
         "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_queue",
         "_email_rate_limiting_queue": "email_rate_limiting_staging"
       },
       "archive_sqs_queues": {
         "_search_etl_queue": "search-etlqueue-archive-staging",
-        "_count_etl_queue": "count_etl_queue_archive_staging",
         "_analytics_etl_queue": "analytics_etl_queue_archive_staging"
       },
       "statsd": {
@@ -1764,8 +1748,8 @@
         "_timeout_for_pricing_api": 10
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:tzR1beNIuQuL2OZPDtIU9jJsqUAJ5N4OVHBBwTwK5HA=:7XpxGCkZIPmXwGIeCRi/W4RKf6bDG8OW:E4DH2ZB5R3V/OwLFlnw+LLWAH7v5CR+/0gYKwyVdmpBu4IZmJd9mUFVSCCGWHNoSCwCrqy5HasUZpykJ]",
-        "_end_point": "https://staging.freshreports.com/",
+        "secret_key": "EJ[1:BPAbyvtU9RiOu0a7VTBO0PXCpi14F6/5Td+KZDCKWA8=:9RRoYEHlKgzoks3gCqVJt0Zaf4wTEHoH:9vYZStnq51M/yPd0PguQGovdH2+TwCcxO/YsrA1WQQREX70y2LW402QOSpHt23V6Er5hzZ+3IX2jQQvE]",
+        "_end_point": "https://staging.freshreports.com",
         "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,

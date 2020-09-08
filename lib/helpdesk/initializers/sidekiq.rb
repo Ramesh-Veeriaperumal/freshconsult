@@ -380,7 +380,8 @@ Sidekiq.configure_server do |config|
       'AuditLogExport',
       'Solution::ApprovalNotificationWorker',
       'Freshcaller::UpdateAgentsWorker',
-      'UpdateAgentStatusAvailability'
+      'UpdateAgentStatusAvailability',
+      'PrivilegesModificationWorker'
     ]
   end
 end

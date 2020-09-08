@@ -15,13 +15,7 @@ class Social::TwitterHandle < ActiveRecord::Base
 
   after_commit ->(obj) { obj.clear_handles_cache }, on: :create
   after_commit ->(obj) { obj.clear_handles_cache }, on: :destroy  
-  after_commit :remove_euc_redis_key, :on => :update, :if => :destroy_euc_redis_key?
-  after_commit :remove_from_eu_redis_set_on_destroy, :on => :destroy, :if => :euc_migrated_account?
   before_destroy :save_deleted_handle_info
-
-  def remove_from_eu_redis_set_on_destroy
-    remove_euc_redis_key
-  end
 
   def construct_avatar
     args = {
@@ -122,23 +116,6 @@ class Social::TwitterHandle < ActiveRecord::Base
           :access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
         }}) if type == TWITTER_STREAM_TYPE[:default]
       stream_params
-    end
-
-    def destroy_euc_redis_key?
-      # When the consumer authorizes the new app access_token will change and when they re-authorize the state will change.
-      euc_migrated_account? && self.previous_changes["access_token"].present?
-    end
-
-    def euc_migrated_account?
-      Account.current.euc_migrated_twitter_enabled?
-    end
-
-    def remove_euc_redis_key
-      twitter_handle_id = self.twitter_user_id
-
-      if remove_member_from_redis_set(EU_TWITTER_HANDLES, "#{Account.current.id}:#{twitter_handle_id}")
-        Rails.logger.debug "Removed the twitter handle ID from the EU redis key, Account ID: #{Account.current.id}, Handle ID: #{twitter_handle_id}"
-      end
     end
 
     def save_deleted_handle_info

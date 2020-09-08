@@ -230,6 +230,8 @@ Helpkit::Application.routes.draw do
         put :bitmap_add_feature
         put :bitmap_revoke_feature
         put :execute_script
+        put :enable_setting
+        put :disable_setting
       end
     end
 
@@ -933,6 +935,7 @@ Helpkit::Application.routes.draw do
     resource :rts, controller: 'ember/rts', only: [:show]
 
     get '/plans', to: 'admin/subscriptions#plans'
+    get '/plans/:id', to: 'admin/subscriptions#fetch_plan'
 
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'
@@ -1045,6 +1048,7 @@ Helpkit::Application.routes.draw do
     get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
+    get '/solutions/search', to: 'channel/v2/api_solutions/articles#search'
   end
 
   channel_routes = proc do

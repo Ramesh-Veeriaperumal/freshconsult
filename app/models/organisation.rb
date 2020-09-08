@@ -103,7 +103,7 @@ class Organisation < ActiveRecord::Base
     Rails.logger.info "Error while fetching organisation accounts :: #{Account.current.id} :: #{e.message}"
     false
   ensure
-    existing_current_user.make_current
+    existing_current_user.make_current if existing_current_user.present?
   end
 
   private

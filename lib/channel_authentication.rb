@@ -34,6 +34,16 @@ module ChannelAuthentication
     end
   end
 
+  def verify_channel_client_token(token)
+    source_name = source(token)
+    config = CHANNEL_API_CONFIG.fetch(source_name, {}) if source_name.present?
+    if config
+      auth_token = { token: token, source: source_name, config: config }
+      payload = config[:jwt_secret].is_a?(Array) ? verify_token_array_format(auth_token, config) : verify_token(auth_token, config)
+      source_name if payload.present?
+    end
+  end
+
   private
 
     def verify_token(auth_token,config)

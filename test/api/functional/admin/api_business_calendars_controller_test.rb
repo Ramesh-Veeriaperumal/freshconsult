@@ -597,28 +597,25 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
   def test_create_business_calendar_with_wrong_minute_in_time_slot
     enable_emberize_business_hours do
       business_hours = { "business_hours": [{ "day": 'sunday', "time_slots": [{ "start_time": '11:59', "end_time": '12:30' }] }] }
-      params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours)
+      params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours).merge(dummy_holiday_data)
       params['channel_business_hours'].first.merge!(business_hours)
       post :create, construct_params(params)
-      error_data = [bad_request_error_pattern(:"channel_business_hours[:business_hours][:time_slots][:start_time/end_time]",
-                                              'MM as 59 should be only present if the HH is 23, otherwise please use MM as 00 or 30',
-                                              code: 'invalid_value')]
-      assert_response 400
-      match_json(description: 'Validation failed', errors: error_data)
+      assert_response 201
+      created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+      match_json(ember_business_hours_create_pattern(created_business_calendar, params.with_indifferent_access))
     end
   end
 
-  def test_create_business_calendar_with_invalid_minute_in_time_slot
+  def test_create_business_calendar_with_valid_minute_in_time_slot
     enable_emberize_business_hours do
       business_hours = { "business_hours": [{ "day": 'sunday', "time_slots": [{ "start_time": '11:08', "end_time": '12:30' }] }] }
-      params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours)
+      params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours).merge(dummy_holiday_data)
       params['channel_business_hours'].first.merge!(business_hours)
       post :create, construct_params(params)
-      error_data = [bad_request_error_pattern(:"channel_business_hours[:business_hours][:time_slots][:start_time/end_time]",
-                                              "HH should be between 0 and 23 inclusive and MM should one of the '00, 30, 59'",
-                                              code: 'invalid_value')]
-      assert_response 400
-      match_json(description: 'Validation failed', errors: error_data)
+
+      assert_response 201
+      created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+      match_json(ember_business_hours_create_pattern(created_business_calendar, params.with_indifferent_access))
     end
   end
 
@@ -629,7 +626,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       params['channel_business_hours'].first.merge!(business_hours)
       post :create, construct_params(params)
       error_data = [bad_request_error_pattern(:"channel_business_hours[:business_hours][:time_slots][:start_time/end_time]",
-                                              "HH should be between 0 and 23 inclusive and MM should one of the '00, 30, 59'",
+                                              "HH should be between 0 and 23 inclusive and MM should be inside the range inclusive of '00..59'",
                                               code: 'invalid_value')]
       assert_response 400
       match_json(description: 'Validation failed', errors: error_data)

@@ -1,5 +1,5 @@
 class AdminSubscriptionValidation < ApiValidation
-  attr_accessor :include, :include_array, :currency, :agent_seats, :renewal_period, :plan_id
+  attr_accessor :include, :include_array, :currency, :agent_seats, :renewal_period, :plan_id, :id
 
   validates :include, data_type: { rules: String }
   validates :currency, custom_inclusion: { in: Subscription::Currency.currency_names_from_cache }
@@ -11,6 +11,7 @@ class AdminSubscriptionValidation < ApiValidation
             custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, on: :update
   validates :agent_seats, required: true,
                           custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, on: :estimate
+  validates :id, required: true, on: :fetch_plan
   validate :validate_include, if: -> { errors[:include].blank? && include }
 
   def validate_include

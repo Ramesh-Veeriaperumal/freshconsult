@@ -32,7 +32,7 @@ module_eval(<<'...end search.y/module_eval...', 'search.y', 20)
     relational_x = "(>|<)"
     date_x = "[\s]*'\\d{4}-\\d{2}-\\d{2}'"
     date_time_x = "[\s]*'\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z'"
-    value_x = "[\s]*([a-zA-Z0-9_\@]+|'[^']+'|[-]?[0-9]+)"
+    value_x = "[\s]*([0-9a-zA-Z_\@]+(?:'[0-9a-zA-Z_\@]+)*|'[^']+'|[-]?[0-9]+)"
     integer_x = "[-]?[0-9]+"
     term_x = "(#{value_x}|#{relational_x}[\s]*(#{date_x}|#{date_time_x}|#{integer_x}))"
     regex_string = /(#{keyword_x}#{seperator_x}#{term_x})/

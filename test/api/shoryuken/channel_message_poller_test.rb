@@ -128,6 +128,170 @@ class ChannelMessagePollerTest < ActionView::TestCase
     Account.reset_current_account
   end
 
+  def test_twitter_mention_convert_as_ticket_and_populate_requester_handle_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    payload, command_payload = twitter_create_ticket_command('mention')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    twitter_requester_handle_id = context[:contact_twitter_user_id]
+    push_to_channel(command_payload)
+    user = @account.users.find(data[:requester_id])
+    assert_equal twitter_requester_handle_id, user.twitter_requester_handle_id
+  ensure
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_twitter_mention_convert_as_ticket_and_not_populate_requester_handle_id_without_values_in_payload
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    payload, command_payload = twitter_create_ticket_command('mention')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    context.delete(:contact_twitter_user_id)
+    push_to_channel(command_payload)
+    user = @account.users.find(data[:requester_id])
+    assert_nil user.twitter_requester_handle_id
+  ensure
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_twitter_mention_convert_as_ticket_and_not_populate_requester_handle_id_without_feature
+    payload, command_payload = twitter_create_ticket_command('mention')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    twitter_requester_handle_id = context[:contact_twitter_user_id]
+    push_to_channel(command_payload)
+    user = @account.users.find(data[:requester_id])
+    assert_nil user.twitter_requester_handle_id
+  end
+
+  def test_twitter_dm_convert_as_ticket_and_populate_requester_handle_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    payload, command_payload = twitter_create_ticket_command('dm')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    twitter_requester_handle_id = context[:contact_twitter_user_id]
+    push_to_channel(command_payload)
+    user = @account.users.find(data[:requester_id])
+    assert_equal twitter_requester_handle_id, user.twitter_requester_handle_id
+  ensure
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_twitter_dm_convert_as_ticket_and_not_populate_requester_handle_id_without_values_in_payload
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    payload, command_payload = twitter_create_ticket_command('dm')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    context.delete(:contact_twitter_user_id)
+    push_to_channel(command_payload)
+    user = @account.users.find(data[:requester_id])
+    assert_nil user.twitter_requester_handle_id
+  ensure
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_twitter_dm_convert_as_ticket_and_not_populate_requester_handle_id_without_feature
+    payload, command_payload = twitter_create_ticket_command('dm')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    twitter_requester_handle_id = context[:contact_twitter_user_id]
+    push_to_channel(command_payload)
+    user = @account.users.find(data[:requester_id])
+    assert_nil user.twitter_requester_handle_id
+  end
+
+  def test_twitter_mention_convert_as_note_and_populate_requester_handle_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    Account.current.launch(:incoming_mentions_in_tms)
+    payload, command_payload = twitter_create_note_command('mention')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    twitter_requester_handle_id = context[:contact_twitter_user_id]
+    ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    user = @account.users.find(data[:user_id])
+    assert_equal twitter_requester_handle_id, user.twitter_requester_handle_id
+  ensure
+    Account.current.rollback(:incoming_mentions_in_tms)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    Account.reset_current_account
+  end
+
+  def test_twitter_mention_convert_as_note_and_not_populate_requester_handle_id_without_values_in_payload
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    Account.current.launch(:incoming_mentions_in_tms)
+    payload, command_payload = twitter_create_note_command('mention')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    context.delete(:contact_twitter_user_id)
+    ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    user = @account.users.find(data[:user_id])
+    assert_nil user.twitter_requester_handle_id
+  ensure
+    Account.current.rollback(:incoming_mentions_in_tms)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    Account.reset_current_account
+  end
+
+  def test_twitter_mention_convert_as_note_and_not_populate_requester_handle_id_without_feature
+    Account.current.launch(:incoming_mentions_in_tms)
+    payload, command_payload = twitter_create_note_command('mention')
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    twitter_requester_handle_id = context[:contact_twitter_user_id]
+    ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    user = @account.users.find(data[:user_id])
+    assert_nil user.twitter_requester_handle_id
+  ensure
+    Account.current.rollback(:incoming_mentions_in_tms)
+    Account.reset_current_account
+  end
+
+  def test_twitter_dm_convert_as_note_and_populate_requester_handle_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    Account.current.launch(:incoming_mentions_in_tms)
+    payload, command_payload = twitter_create_note_command
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    twitter_requester_handle_id = context[:contact_twitter_user_id]
+    ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    user = @account.users.find(data[:user_id])
+    assert_equal twitter_requester_handle_id, user.twitter_requester_handle_id
+  ensure
+    Account.current.rollback(:incoming_mentions_in_tms)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    Account.reset_current_account
+  end
+
+  def test_twitter_dm_convert_as_note_and_not_populate_requester_handle_id_without_values_in_payload
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    Account.current.launch(:incoming_mentions_in_tms)
+    payload, command_payload = twitter_create_note_command
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    context.delete(:contact_twitter_user_id)
+    ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    user = @account.users.find(data[:user_id])
+    assert_nil user.twitter_requester_handle_id
+  ensure
+    Account.current.rollback(:incoming_mentions_in_tms)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    Account.reset_current_account
+  end
+
+  def test_twitter_dm_convert_as_note_and_not_populate_requester_handle_id_without_feature
+    Account.current.launch(:incoming_mentions_in_tms)
+    payload, command_payload = twitter_create_note_command
+    data = command_payload[:payload][:data]
+    context = command_payload[:payload][:context]
+    twitter_requester_handle_id = context[:contact_twitter_user_id]
+    ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    user = @account.users.find(data[:user_id])
+    assert_nil user.twitter_requester_handle_id
+  ensure
+    Account.current.rollback(:incoming_mentions_in_tms)
+    Account.reset_current_account
+  end
+
   # def test_twitter_dm_convert_as_note
   #   payload, command_payload = twitter_create_note_command
   #   push_to_channel(command_payload)
@@ -449,7 +613,8 @@ class ChannelMessagePollerTest < ActionView::TestCase
         "description": Faker::Lorem.characters(100),
         "requester_id": user.id,
         "tweet_type": tweet_type,
-        "tweet_id": Faker::Number.between(1, 999999999).to_s
+        "tweet_id": Faker::Number.between(1, 999_999_999).to_s,
+        "contact_twitter_user_id": Faker::Number.between(1, 999_999_999).to_s
       }
       [payload, sample_twitter_create_ticket_command(@account, @handle, @stream, payload)]
     end
@@ -480,7 +645,8 @@ class ChannelMessagePollerTest < ActionView::TestCase
         "user_id": user.id,
         "ticket_id": ticket_id,
         "tweet_type": tweet_type,
-        "tweet_id": SecureRandom.hex
+        "tweet_id": SecureRandom.hex,
+        "contact_twitter_user_id": Faker::Number.between(1, 999_999_999).to_s
       }
 
       [payload, sample_twitter_create_note_command(@account, @handle, @stream, payload)]

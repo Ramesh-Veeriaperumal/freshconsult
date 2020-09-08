@@ -1,8 +1,8 @@
 class AgentFilterValidation < FilterValidation
   attr_accessor :state, :phone, :mobile, :email, :conditions, :only, :type, :privilege, :group_id, :include, :order_by, :order_type,
-                :channel, :search_term
+                :channel, :search_term, :available_in
 
-  CHECK_PARAMS_SET_FIELDS = ['only', 'channel', 'search_term'].freeze
+  CHECK_PARAMS_SET_FIELDS = ['only', 'channel', 'search_term', 'available_in'].freeze
 
   validates :state, custom_inclusion: { in: AgentConstants::STATES }
   validates :email, data_type: { rules: String }
@@ -18,31 +18,22 @@ class AgentFilterValidation < FilterValidation
   validates :order_by, custom_inclusion: { in: AgentConstants::AGENTS_ORDER_BY }
   validates :order_type, custom_inclusion: { in: AgentConstants::AGENTS_ORDER_TYPE }
   validate :validate_privilege
-  validates :channel, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,
-                                        message_options: { attribute: 'channel', feature: :omni_channel_routing } },
-                      unless: -> { Account.current.omni_channel_routing_enabled? }
-  validates :channel, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,
-                                        message_options: { attribute: 'channel', feature: :omni_agent_availability_dashboard } },
-                      unless: -> { Account.current.omni_agent_availability_dashboard_enabled? }
-  validates :search_term, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,
-                                            message_options: { attribute: 'search_term', feature: :omni_channel_routing } },
-                          unless: -> { Account.current.omni_channel_routing_enabled? }
-  validates :search_term, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,
-                                            message_options: { attribute: 'search_term', feature: :omni_agent_availability_dashboard } },
-                          unless: -> { Account.current.omni_agent_availability_dashboard_enabled? }
-  validates :only, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,
-                                     message_options: { attribute: 'only=availability', feature: :omni_channel_routing } },
-                   if: -> { only_availability? && !Account.current.omni_channel_routing_enabled? }
-  validates :only, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,
-                                     message_options: { attribute: 'only=availability', feature: :omni_agent_availability_dashboard } },
-                   if: -> { only_availability? && !Account.current.omni_agent_availability_dashboard_enabled? }
+  validate :validate_omniroute_params, if: :only_availability?
+  validates :available_in, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,
+                                             message_options: { attribute: 'available_in', feature: :omni_channel_routing } },
+                           unless: -> { Account.current.omni_channel_routing_enabled? }
+  validates :available_in, custom_absence: { message: :require_feature_for_attribute, code: :inaccessible_field,
+                                             message_options: { attribute: 'available_in', feature: :agent_statuses } },
+                           unless: -> { Account.current.agent_statuses_enabled? }
   validates :channel, custom_absence: { message: :require_availability, code: :inaccessible_field,
                                         message_options: { param: :channel } }, unless: :only_availability?
   validates :search_term, custom_absence: { message: :require_availability, code: :inaccessible_field,
                                             message_options: { param: :search_term } }, unless: :only_availability?
+  validates :available_in, custom_absence: { message: :require_availability, code: :inaccessible_field,
+                                             message_options: { param: :available_in } }, unless: :only_availability?
   validates :channel, custom_inclusion: { in: OmniChannelRouting::Constants::OMNI_CHANNELS }, data_type: { rules: String }
+  validates :available_in, custom_inclusion: { in: AgentConstants::CHANNELS_FILTER }, data_type: { rules: String }
   validates :search_term, allow_nil: false, data_type: { rules: String }
-  validate :validate_omniroute_params, if: :only_availability?
 
   def initialize(request_params)
     # Remove unwanted keys from request_params; Also remove the state filter and add the value passed as a filter
@@ -69,7 +60,26 @@ class AgentFilterValidation < FilterValidation
   end
 
   def validate_omniroute_params
+    omni_channel_routing_enabled = Account.current.omni_channel_routing_enabled?
+    omni_agent_dashboard_enabled = Account.current.omni_agent_availability_dashboard_enabled? || Account.current.agent_statuses_enabled?
+    omni_agent_availability_dashboard_enabled = Account.current.omni_agent_availability_dashboard_enabled? && !Account.current.agent_statuses_enabled?
+    [:only, :channel, :search_term].each do |param|
+      param_value = safe_send(param)
+      next unless param_value
+
+      return require_feature_error(param, :omni_channel_routing) unless omni_channel_routing_enabled
+      return require_feature_error(param, 'omni_agent_availability_dashboard or agent_statuses') unless omni_agent_dashboard_enabled
+    end
     errors[:channel] = :require_group_id if @channel && !@group_id
-    errors[:group_id] = :require_channel if @group_id && !@channel
+    errors[:group_id] = :require_channel if omni_agent_availability_dashboard_enabled && @group_id && !@channel
+  end
+
+  def require_feature_error(attribute, feature)
+    errors[attribute] = :require_feature_for_attribute
+    error_options[attribute.to_sym] = {
+      attribute: attribute.to_s,
+      feature: feature,
+      code: :inaccessible_field
+    }
   end
 end
