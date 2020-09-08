@@ -1616,7 +1616,7 @@
         "_port": "80"
       },
       "tracing": {
-        "_service_name": "freshdesk_helpkit",
+        "_service_name": "staging_freshdesk_helpkit",
         "_tracing_host_port": 6831,
         "_span_batch_size": 20,
         "_sampler_probability": 0.1
