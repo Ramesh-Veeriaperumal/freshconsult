@@ -7,11 +7,11 @@ class DataTypeValidator < ApiValidator
   private
 
     def invalid?
-      !valid_type? || blank_when_required?
+      !valid_type? || blank_when_required? || empty_object?
     end
 
     def message
-      if valid_type? && blank_when_required?
+      if valid_type? && (blank_when_required? || empty_object?)
         :blank
       else
         :datatype_mismatch
@@ -25,6 +25,10 @@ class DataTypeValidator < ApiValidator
     def blank_when_required?
       return internal_values[:blank_when_required] if internal_values.key?(:blank_when_required)
       internal_values[:blank_when_required] = valid_type? && options[:rules] == String && options[:required] && !present_or_false?
+    end
+
+    def empty_object?
+      internal_values[:empty_object] = valid_type? && options[:not_empty] && value.blank?
     end
 
     def expected_data_type
