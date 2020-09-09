@@ -124,7 +124,7 @@ class QueryHashTest < ActionView::TestCase
     aq = QueryHash.new(q)
     sq = aq.to_system_format
     oq = aq.to_json
-    formatted_time = "#{from_time.strftime('%d %b %Y')} - #{to_time.strftime('%d %b %Y')}"
+    formatted_time = "#{from_time.strftime('%d %b %Y %T')} - #{to_time.strftime('%d %b %Y %T')}"
     match_custom_json(sq, system_query_created_at_pattern(time: formatted_time))
     match_custom_json(oq, response_query_created_at_pattern({ from: from_time.iso8601, to: to_time.iso8601 }))
   end

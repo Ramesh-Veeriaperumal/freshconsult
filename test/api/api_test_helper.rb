@@ -33,7 +33,6 @@ class ActionController::TestCase
     set_request_params
     set_key(account_key, 1000, nil)
     set_key(default_key, 100, nil)
-
     # Enabling Private API
     @account.launch(:falcon)
     @account.add_feature(:falcon)
@@ -110,7 +109,6 @@ class ActionDispatch::IntegrationTest
     Bullet.add_whitelist type: :n_plus_one_query, class_name: 'ForumCategory', association: :account
     # To prevent DynamoDB errors.
     SpamCounter.stubs(:count).returns(0)
-
     Rails.logger.debug "START #{@test_name}"
   end
 
@@ -118,7 +116,6 @@ class ActionDispatch::IntegrationTest
     reconsider_gc_deferment
     super
     clear_instance_variables
-
     Rails.logger.debug "END #{@test_name}"
   end
 end

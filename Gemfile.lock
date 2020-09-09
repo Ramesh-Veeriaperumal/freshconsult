@@ -169,8 +169,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 58e2bb3403ec79406531100d3b28a1e65492e337
-  tag: v2.0.19
+  revision: 28f5896e537914ebcd8f4ba5ff3aff2da3dd1d9e
+  tag: v2.0.20
   specs:
     central-publisher (2.0.19)
       active_record_shards (>= 3.2.0)
@@ -318,7 +318,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 66ad9d0f35be544c1ff0f4c9d3655bd9538f7c41
+  revision: 46d353515d17fd348f65eb849b534b7afbaef66d
   branch: exporter-jaeger
   specs:
     opentelemetry-exporters-jaeger (0.5.0)
@@ -360,7 +360,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: ed26f753e70732b14e0c659dde560272ec9095f8
+  revision: 5869a25733a7120ae94d962119ae4bf2a6dca79f
   branch: sdk
   specs:
     opentelemetry-sdk (0.5.1)

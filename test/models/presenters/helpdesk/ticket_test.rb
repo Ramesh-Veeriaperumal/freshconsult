@@ -255,6 +255,8 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     assoc_payload = t.associations_to_publish.to_json
     assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+    payload = t.central_publish_preloaded_payload.to_json
+    payload.must_match_json_expression(preload_cp_ticket_pattern(t))
   end
 
   def test_central_publish_payload_group_update

@@ -2,7 +2,7 @@ module Email::Mailbox::Utils
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Email::Mailbox::Constants
-  include Email::Mailbox::GmailOauthHelper
+  include Email::Mailbox::Oauth2Helper
   
   def construct_to_email(to_email, account_full_domain)
      email_split  = to_email.split('@')
@@ -24,11 +24,16 @@ module Email::Mailbox::Utils
     AppConfig['integrations_url'][Rails.env] + 
       Liquid::Template.parse(GMAIL_OAUTH_URL).render(app_config)
   end
-  
-  def populate_redis_gmail_oauth(members_hash, expiry = true)
-    gmail_oauth_redis_obj = Email::Mailbox::GmailOauthRedis.new
-    gmail_oauth_redis_obj.populate_hash(members_hash, expiry)
-    gmail_oauth_redis_obj.redis_key
+
+  def outlook_oauth_url(app_config)
+    AppConfig['integrations_url'][Rails.env] +
+      Liquid::Template.parse(OUTLOOK_OAUTH_URL).render(app_config)
+  end
+
+  def populate_redis_oauth(members_hash, provider, expiry = true)
+    oauth_redis_obj = Email::Mailbox::OauthRedis.new(provider: provider)
+    oauth_redis_obj.populate_hash(members_hash, expiry)
+    oauth_redis_obj.redis_key
   end
 
   def update_mailbox_error_type

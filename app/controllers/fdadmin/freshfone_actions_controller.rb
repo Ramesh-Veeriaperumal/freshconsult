@@ -13,8 +13,7 @@ module Fdadmin
                                                         :launch_feature,
                                                         :activate_trial,
                                                         :launched_feature_details,
-                                                        :activate_onboarding,
-                                                        :freshcaller_migration]
+                                                        :activate_onboarding]
     before_filter :validate_triggers, only: [:update_usage_triggers]
     before_filter :validate_timeout_and_queue,
                   :construct_timeout_and_queue_hash,
@@ -444,16 +443,6 @@ module Fdadmin
         result[feature.titleize] = @account.launched?(feature)
       end
       render json: result
-    end
-
-    def freshcaller_migration
-      Freshfone::FreshcallerMigrationWorker.perform_async(account_id: @account.id, email: params[:email], account_creation: true)
-      result[:status] = 'success'
-      respond_to do |format|
-        format.json do
-          render json: result
-        end
-      end
     end
 
   private

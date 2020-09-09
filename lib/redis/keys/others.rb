@@ -245,8 +245,9 @@ module Redis::Keys::Others
 
   SUPPORT_TICKET_LIMIT = "SUPPORT_TICKET_LIMIT:%{account_id}%{user_id}".freeze
 
-  MAILBOX_GMAIL_OAUTH = 'GMAIL_OAUTH:%{account_id}:%{user_id}:%{random_number}'.freeze
-  GMAIL_ACCESS_TOKEN_VALIDITY = 'GMAIL_ACCESS_TOKEN:%{account_id}:%{smtp_mailbox_id}'.freeze
+  CUSTOM_MAILBOX_STATUS_CHECK = 'CUSTOM_MAILBOX_STATUS_CHECK:%{account_id}'.freeze
+  MAILBOX_OAUTH = 'OAUTH:%{provider}:%{account_id}:%{user_id}:%{random_number}'.freeze
+  OAUTH_ACCESS_TOKEN_VALIDITY = 'OAUTH_ACCESS_TOKEN:%{provider}:%{account_id}:%{smtp_mailbox_id}'.freeze
 
   #Increasing Domains for accounts as per request by the account holder
   INCREASE_DOMAIN_FOR_EMAILS = 'INCREASE_DOMAIN_FOR_EMAILS'.freeze
@@ -301,7 +302,6 @@ module Redis::Keys::Others
   OMNI_AGENT_AVAILABILITY_DASHBOARD = 'OMNI_AGENT_AVAILABILITY_DASHBOARD'.freeze
 
   ADVANCED_TICKET_SCOPES_ON_SIGNUP = 'ADVANCED_TICKET_SCOPES_ON_SIGNUP'.freeze
-  EMAIL_MAILBOX_OAUTH_REQUIRED = 'EMAIL_MAILBOX_OAUTH_REQUIRED:%{account_id}'.freeze
   # Content Security Policy for Agent Portal
   CONTENT_SECURITY_POLICY_AGENT_PORTAL = 'CONTENT_SECURITY_POLICY_AGENT_PORTAL'.freeze
 end

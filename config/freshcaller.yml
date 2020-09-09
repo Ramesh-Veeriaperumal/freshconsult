@@ -3,7 +3,6 @@ development:
   verification_keys: ["iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"]
   jwt_default_expiry: 100000
   signup_domain: 'http://d2badcff.ngrok.io:3000'
-  s3_bucket: 'helpkit-freshcaller-migration'
   region: 'us-east-1'
   domain_prefix: ''
   domain_suffix: ''
@@ -14,6 +13,5 @@ test:
   verification_keys: ["iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"]
   jwt_default_expiry: 100
   signup_domain: 'http://localhost:3000'
-  s3_bucket: 'dummy'
   domain_prefix: ''
   widget_loader_url: '//localhost:8002/fc-widget.js'
