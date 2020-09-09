@@ -54,8 +54,7 @@ module Email::Mailbox::Oauth2Helper
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox)],
       account_id: mailbox.account_id,
-      server_name: mailbox.server_name,
-      mailbox_id: mailbox.id
+      smtp_mailbox_id: mailbox.id
     )
   end
 end

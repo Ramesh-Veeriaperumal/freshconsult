@@ -454,7 +454,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
     match_json(mailbox_pattern({}, EmailConfig.find_by_id(email_config.id)))
   ensure
     Account.any_instance.unstub(:has_features?)
-    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox) 
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
@@ -493,13 +493,12 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: 'google_oauth2',
       account_id: Account.current.id,
-      server_name: 'smtp.gmail.com',
-      mailbox_id: email_config.smtp_mailbox.id
+      smtp_mailbox_id: email_config.smtp_mailbox.id
     )
     assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure
     Account.any_instance.unstub(:has_features?)
-    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox) 
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
@@ -534,13 +533,12 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: 'google_oauth2',
       account_id: Account.current.id,
-      server_name: 'smtp.gmail.com',
-      mailbox_id: email_config.smtp_mailbox.id
+      smtp_mailbox_id: email_config.smtp_mailbox.id
     )
     assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure
     Account.any_instance.unstub(:has_features?)
-    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox) 
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Email::MailboxValidation.any_instance.unstub(:private_api?)
     Email::MailboxesController.any_instance.unstub(:private_api?)
@@ -573,8 +571,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: 'google_oauth2',
       account_id: Account.current.id,
-      server_name: 'smtp.gmail.com',
-      mailbox_id: email_config.smtp_mailbox.id
+      smtp_mailbox_id: email_config.smtp_mailbox.id
     )
     assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure
@@ -903,8 +900,7 @@ class Email::MailboxesControllerTest < ActionController::TestCase
       OAUTH_ACCESS_TOKEN_VALIDITY,
       provider: 'google_oauth2',
       account_id: Account.current.id,
-      server_name: 'smtp.gmail.com',
-      mailbox_id: Account.current.smtp_mailboxes.last.id
+      smtp_mailbox_id: Account.current.smtp_mailboxes.last.id
     )
     assert_equal $redis_others.perform_redis_op('exists', access_token_key), true
   ensure

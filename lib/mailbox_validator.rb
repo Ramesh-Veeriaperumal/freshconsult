@@ -38,7 +38,7 @@ module MailboxValidator
         if 'plain'.casecmp(mailbox.authentication).zero?
           imap.login(mailbox.user_name, mailbox.password)
         elsif 'xoauth2'.casecmp(mailbox.authentication).zero?
-          refresh_access_token_for_mailbox(mailbox) if mailbox.new_record? || access_token_expired?(mailbox)
+          refresh_access_token_for_mailbox(mailbox)
           imap.authenticate(mailbox.authentication, mailbox.user_name, mailbox.access_token)
         else
           imap.authenticate(mailbox.authentication, mailbox.user_name, mailbox.password)
@@ -77,7 +77,7 @@ module MailboxValidator
         end
         password = mailbox.password
         if 'xoauth2'.casecmp(mailbox.authentication).zero?
-          refresh_access_token_for_mailbox(mailbox) if mailbox.new_record? || access_token_expired?(mailbox)
+          refresh_access_token_for_mailbox(mailbox)
           password = mailbox.access_token
         end
         smtp.start(mailbox.server_name, mailbox.user_name, password, mailbox.authentication) do |smtp|
