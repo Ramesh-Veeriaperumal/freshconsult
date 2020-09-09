@@ -179,7 +179,7 @@
       :threading_without_user_check: 175
       :unused_176: 176
       :unused_177: 177
-      :agent_conference: 178
+      :unused_178: 178
       :unused_179: 179
       :canned_forms: 180
       :shadow_fax9: 181
@@ -459,7 +459,6 @@
   :ecommerce: false
   :cobrowsing: false
   :threading_without_user_check: false
-  :agent_conference: false
   :restricted_helpdesk: false
   :cti: false
   :all_notify_by_custom_server: false
