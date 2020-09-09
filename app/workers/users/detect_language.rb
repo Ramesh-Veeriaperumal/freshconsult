@@ -19,11 +19,7 @@ class Users::DetectLanguage < BaseWorker
     @user   = account.all_users.find(args[:user_id])
     @big_text = args[:text]
     @text = (@big_text.first(30) + @big_text[@big_text.length/2, 30] + @big_text.last(30)).squish.split.first(15).join(' ')
-    if account.compact_lang_detection_enabled?
-      detect_lang_from_cld
-    else
-      set_lang_via_email_service
-    end
+    detect_lang_from_cld
   rescue => e
     Rails.logger.error("DetectLanguage: account #{account.id} - #{args} - #{e.message} #{e.backtrace.to_a.join("\n")}")
     NewRelic::Agent.notice_error(e,{:description => "DetectLanguage: account #{account.id} - #{args}"})

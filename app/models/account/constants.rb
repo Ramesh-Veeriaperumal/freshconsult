@@ -125,8 +125,7 @@ class Account < ActiveRecord::Base
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
-    :bi_reports => false, :contact_merge_ui => false, :social_revamp => true, :multiple_user_emails => false,
-    :facebook_realtime => false, :tokenize_emoji => false,
+    :bi_reports => false, :social_revamp => true,
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false, :reports_regenerate_data => false,
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
@@ -200,8 +199,8 @@ class Account < ActiveRecord::Base
     service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
-    sha256_enabled: false, auto_ticket_export: false, select_all: false, facebook_realtime: false,
-    ticket_contact_export: false, custom_apps: false,
+    sha256_enabled: false, auto_ticket_export: false, select_all: false,
+    ticket_contact_export: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
     freshid: false,
@@ -236,11 +235,11 @@ class Account < ActiveRecord::Base
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, marketplace_app: false, freshid_sso_sync: true,
-    fw_sso_admin_security: false, shopify_api_revamp: false,
+    fw_sso_admin_security: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false, mailbox_ms365_oauth: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days

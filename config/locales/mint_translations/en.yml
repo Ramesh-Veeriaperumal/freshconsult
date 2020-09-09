@@ -971,6 +971,7 @@ en:
       help: Help
       login: Login
   enter_payment_details_to_add: Enter payment details to add more agents or to upgrade your current plan
+  explore_higher_plan: Try other plans for free
   current_plan: Current Plan
   settings: settings
   email_notifications_agent_selection_msg: Select agents to notify

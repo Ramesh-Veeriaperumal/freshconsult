@@ -9,7 +9,6 @@ defaults: &defaults
     - [select_all_tickets]
     - [select_all_batcher]
     - [livechat_worker]
-    - [freshcaller_migration_worker]
     - [natero_worker]
     - [merge_contacts]
     - [sla]

@@ -29,18 +29,30 @@
 					<% end %>
 				</div>
 			</div>
-			<div class="falcon-manage-link">
-				<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
-				:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
-			</div>
+			<% if current_user.is_falcon_pref? %>
+				<div class="falcon-manage-link">
+					<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
+					:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
+				</div>
+			<% else %>
+			    <div class="span3 manage-link">
+					<%= pjax_link_to t("accounts.multilingual_support.manage_languages"), manage_languages_path %>
+			    </div>
+			<% end %>
 		<% elsif @account.features_included?(:enable_multilingual) %>
 			<div class="mt5">
 				<%= @account.language_object.name %>
 				<% if @account.multilingual_available? && !@account.supported_languages.present? %>
-					<div class="controls">
-						<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
-						:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
-					</div>
+					<% if current_user.is_falcon_pref?  %>
+						<div class="controls">
+							<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
+							:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
+						</div>
+					<% else %>
+						<span class="ml20 enable-link">
+							<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path %>
+						</span>
+					<% end %>
 				<% end %>
 			</div>
 		<% else %>
@@ -63,10 +75,18 @@
 				<% end %>
 			</div>
 			<% if @account.multilingual_available? %>
-				<div class="falcon-manage-link">
-					<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
-						:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
-				</div>
+				<% if current_user.is_falcon_pref? %>
+					<div class="falcon-manage-link">
+						<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
+							:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
+					</div>
+				<% else %>
+					<div class="span4 enable-link">
+						<div class="mt5">
+							<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path %>
+						</div>
+					</div>
+				<% end %>
 			<% end %>
 		<% end %>
 	</div>

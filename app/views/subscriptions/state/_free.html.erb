@@ -35,6 +35,11 @@
               <span class="free-plan-payment"><%= t('add_more_agents', :amount => fetch_plan_amount(plan)) %></span>
             </li>
             <% end %>
+            <div class="explore-higer-plan">
+              <a href="/a/admin/explore" target="_top">
+                <%= t('explore_higher_plan') %>
+              </a>
+            </div>
             <div class="sprout-new-active"><%= link_to t( is_new_sprout ? 'enter_payment_details_to_add_v2': 'enter_payment_details_to_add').html_safe, billing_subscription_url%></div>
             </li>
           </ul>

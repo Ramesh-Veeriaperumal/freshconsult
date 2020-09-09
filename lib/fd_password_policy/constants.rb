@@ -26,17 +26,4 @@ module FDPasswordPolicy::Constants
     advanced: 2,
     default: 1
   }.freeze
-
-  POLICY_VALUE_RANGE = {
-    minimum_characters: {
-      min: 8,
-      max: 99
-    },
-    cannot_be_same_as_past_passwords: {
-      min: 1,
-      max: 5
-    }
-  }.freeze
-  POLICY_USER_TYPES = [:contact, :agent].freeze
-  PASSWORD_EXPIRY_VALUES = ((1..6).collect { |x| (x * 30) } << NEVER.to_i).freeze
 end

@@ -1,3 +1,0 @@
-# frozen_string_literal: true
-
-@item.to_hash.to_json

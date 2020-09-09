@@ -1761,7 +1761,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def check_custom_mailbox_status
     if feature?(:mailbox)
-      custom_mail_box_faliure = current_account.custom_mailbox_errors_present
+      custom_mail_box_faliure = redis_key_exists?(format(CUSTOM_MAILBOX_STATUS_CHECK, account_id: current_account.id))
       if custom_mail_box_faliure
         return content_tag('div', "<a href='javascript:void(0)'></a> #{t('custom_mailbox_error')} <a href='/admin/email_configs' target='_blank'> #{t('imap_mailbox_error')} </a>".html_safe, :class =>
             "alert-message block-message warning full-width")
@@ -2088,7 +2088,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def show_sandbox_notification
-    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled?
+    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled? && current_user.is_falcon_pref?
   end
 
   def support_mint_applicable?
