@@ -1057,12 +1057,6 @@ Helpkit::Application.routes.draw do
     get '/freshcaller/contacts/:id/activities', to: 'channel/freshcaller/contacts#activities'
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
-    post '/freshcaller/migration/validate', to: 'channel/freshcaller/migration#validate'
-    post '/freshcaller/migration/initiate', to: 'channel/freshcaller/migration#initiate'
-    post '/freshcaller/migration/cross_verify', to: 'channel/freshcaller/migration#cross_verify'
-    post '/freshcaller/migration/revert', to: 'channel/freshcaller/migration#revert'
-    post '/freshcaller/migration/reset_freshfone', to: 'channel/freshcaller/migration#reset_freshfone'
-    post '/freshcaller/migration/fetch_pod_info', to: 'channel/freshcaller/migration#fetch_pod_info'
     put '/admin/data_export/update', to: 'channel/admin/data_export#update'
 
     resources :tickets, controller: 'channel/tickets', only: [:create, :show]

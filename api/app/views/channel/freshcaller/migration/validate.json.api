@@ -1,7 +1,0 @@
-if @errors.length > 0
-  { "errors": @errors, "agent_limit": @agent_limit }.to_hash.to_json
-else
-  { "success": 'Validated, Can proceed with initiation',
-    "credits": @account.freshfone_credit.available_credit.to_i,
-    "agent_limit": @agent_limit }.to_hash.to_json
-end

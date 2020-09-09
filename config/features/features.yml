@@ -159,7 +159,7 @@
       :freshfone_onboarding: 155
       :archive_tickets: 156
       :freshfone_custom_forwarding: 157
-      :tokenize_emoji: 158
+      :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
       :countv2_reads: 161
@@ -477,7 +477,6 @@
   :chat: false
   :freshreports_analytics: false
   :disable_old_reports: false
-  :tokenize_emoji: false
   :report_field_regenerate: false
   :reports_regenerate_data: false
   :saml_old_issuer: false

@@ -1,5 +1,0 @@
-if @errors.length > 0
-  { "errors": @errors }.to_hash.to_json
-else
-  { "success": 'Migration reverted' }.to_hash.to_json
-end

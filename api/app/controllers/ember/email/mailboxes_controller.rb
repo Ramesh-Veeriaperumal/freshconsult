@@ -46,7 +46,7 @@ module Ember
 
         def email_domain_service
           provider = get_email_service_name(mailbox_domain) if mailbox_domain
-          provider && provider == EMAIL_SERVICE_PROVIDER_GMAIL ? EMAIL_SERVICE_PROVIDER_GMAIL : EMAIL_SERVICE_PROVIDER_OTHER
+          provider && provider == EMAIL_SERVICE_PROVIDER_GMAIL || EMAIL_SERVICE_PROVIDER_OUTLOOK ? provider : EMAIL_SERVICE_PROVIDER_OTHER
         end
 
         def mailbox_domain

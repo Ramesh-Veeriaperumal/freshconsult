@@ -29,6 +29,9 @@ oauth_options:
   google_contacts:
     site: https://accounts.google.com
     token_url: /o/oauth2/token
+  outlook:
+    site: https://login.microsoftonline.com
+    token_url: /common/oauth2/v2.0/token
 
 development:
  salesforce:
@@ -92,6 +95,9 @@ development:
  google_hangout_chat:
    consumer_token: 339129576090-t5laj8ambvi4266e0h3u5rfjc65hr67t.apps.googleusercontent.com
    consumer_secret: Cmc8UF5d4uZO5a3bX1-uwC-9
+ outlook:
+   consumer_token: 297394a7-fbe3-43fd-8b54-8c8ba7eb00b2
+   consumer_secret: QWo9SZb9ng~Mpc64.8M2B.Pd11kD~wyg4A
 
 defaults: &defaults
  salesforce:
@@ -132,6 +138,9 @@ defaults: &defaults
  google_hangout_chat:
    consumer_token: 339129576090-t5laj8ambvi4266e0h3u5rfjc65hr67t.apps.googleusercontent.com
    consumer_secret: Cmc8UF5d4uZO5a3bX1-uwC-9
+ outlook:
+   consumer_token: 297394a7-fbe3-43fd-8b54-8c8ba7eb00b2
+   consumer_secret: QWo9SZb9ng~Mpc64.8M2B.Pd11kD~wyg4A
 
 test:
  <<: *defaults
@@ -203,6 +212,9 @@ staging:
  salesforce_v2:
    consumer_token:  3MVG9y6x0357HledW5ceTn9ZT1.KSsISjCgRJHBn4GG_r_Meq9Zzoc7Xvo_j3UfYqWRenDdf9Tg==
    consumer_secret: 5689067073667055939
+ outlook:
+   consumer_token: 297394a7-fbe3-43fd-8b54-8c8ba7eb00b2
+   consumer_secret: QWo9SZb9ng~Mpc64.8M2B.Pd11kD~wyg4A
 
 production:
  salesforce:
@@ -260,3 +272,6 @@ production:
  salesforce_v2:
    consumer_token:  3MVG9y6x0357HledW5ceTn9ZT13z3OsaOTdri1OzXuBmoGIB8Bh8G52UfZAWSuUIKX4PuaiRtQMOOpvzRUDYH
    consumer_secret: 5910100902142393254
+ outlook:
+   consumer_token: f28187ae-6f21-4f42-a4ef-4fbf9b6548bf
+   consumer_secret: J6YYDia18Vq2m7h_EORDLl_M2c3X-svw-K
