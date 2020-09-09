@@ -31,7 +31,7 @@ class OutlookAuthenticatorTest < ActiveSupport::TestCase
     outlook_authenticator = Auth::OutlookAuthenticator.new(options('outlook', true, 'test@1234'))
     obj = outlook_authenticator.after_authenticate(params('edit'))
     assert_includes(obj.redirect_url, 'edit')
-    refute_includes(obj.redirect_url, 'reference_key')
+    assert_includes(obj.redirect_url, 'reference_key')
   ensure
     Email::Mailbox::OauthRedis.any_instance.unstub(:fetch_hash)
   end

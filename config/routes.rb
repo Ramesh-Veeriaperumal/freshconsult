@@ -3091,7 +3091,6 @@ Helpkit::Application.routes.draw do
           put :launch_feature
           get :launched_feature_details
           put :activate_onboarding
-          post :freshcaller_migration
         end
       end
 

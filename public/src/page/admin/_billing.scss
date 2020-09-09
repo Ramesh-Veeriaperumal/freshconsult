@@ -523,7 +523,6 @@ dt.vertical-top {
 }
 
 .features-billing-edit {
-	margin:0 10px;
 
   &__toggle {
 		padding: 14px 16px;
@@ -1030,9 +1029,6 @@ input[type=text].input-agent-count{
 					&.plan-addon {
 						width: 34%;
 					}
-					&.plan-addon {
-						width: 34%;
-					}
 				}
 	}
 	.cancel-request {
@@ -1212,7 +1208,7 @@ input[type=text].input-agent-count{
 	background: #F8F8F8;
 	padding: 0 30px;
 	align-items: stretch;
-	.sprout-new-active{
+	.sprout-new-active, .explore-higer-plan{
 		@include margin(5px 0 0 5px);
 		&:hover{
 			cursor: pointer;

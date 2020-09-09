@@ -29,7 +29,7 @@ class GmailAuthenticatorTest < ActiveSupport::TestCase
     gmail_authenticator = Auth::GmailAuthenticator.new(options('gmail', true, 'test@1234'))
     obj = gmail_authenticator.after_authenticate(params('edit'))
     assert_includes(obj.redirect_url, 'edit')
-    refute_includes(obj.redirect_url, 'reference_key')
+    assert_includes(obj.redirect_url, 'reference_key')
   ensure
     Email::Mailbox::OauthRedis.any_instance.unstub(:fetch_hash)
   end

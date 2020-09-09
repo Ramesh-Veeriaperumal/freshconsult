@@ -1,16 +1,8 @@
-  common: &common
-    username: "freshdesk"
-    secret_key: "" #will be overridden through recipes and stack settings
-    iv: "" #will be overridden through recipes and stack settings
-  production:
-    <<: *common
-    datetime: "http://ner.freshworksapi.com/datetime"
-  staging: 
-    <<: *common
-    datetime: "http://ner.socialdev.io/datetime"
-  development: 
-    <<: *common
-    datetime: "http://ner.socialdev.io/datetime"
-  test: 
-    <<: *common
-    datetime: "http://ner.socialdev.io/datetime"
+production:
+  datetime: "http://ner.freshworksapi.com/datetime"
+staging: 
+  datetime: "http://ner.socialdev.io/datetime"
+development: 
+  datetime: "http://ner.socialdev.io/datetime"
+test: 
+  datetime: "http://ner.socialdev.io/datetime"

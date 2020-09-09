@@ -1,5 +1,8 @@
 module Mailbox::HelperMethods
 
+  include Redis::OthersRedis
+  include Redis::Keys::Others
+
   PUBLIC_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/public.pem'))
 
   def decrypt_password(mailbox_password)
@@ -38,5 +41,25 @@ module Mailbox::HelperMethods
 
     def changed_credentials?(mailbox)
       mailbox.previous_changes.key?(:encrypted_access_token)
+    end
+
+    def clear_custom_mailbox_status_key(account_id)
+      remove_others_redis_key(custom_mailbox_status_key(account_id))
+    end
+
+    def custom_mailbox_status_key(account_id)
+      format(CUSTOM_MAILBOX_STATUS_CHECK, account_id: account_id)
+    end
+
+    def add_custom_mailbox_status_key(account_id)
+      set_others_redis_key(custom_mailbox_status_key(account_id), 1)
+    end
+
+    def update_custom_mailbox_status(account_id)
+      if redis_key_exists?(custom_mailbox_status_key(account_id))
+        clear_custom_mailbox_status_key account_id if Account.current.imap_mailboxes.errors.blank? && Account.current.smtp_mailboxes.errors.blank?
+      elsif Account.current.imap_mailboxes.errors.present? || Account.current.smtp_mailboxes.errors.present?
+        add_custom_mailbox_status_key account_id
+      end
     end
 end

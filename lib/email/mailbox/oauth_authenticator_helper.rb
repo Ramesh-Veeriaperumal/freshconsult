@@ -6,7 +6,7 @@ module Email::Mailbox::OauthAuthenticatorHelper
   LANDING_PATH = '/a/admin/email/mailboxes'
 
   def build_url(params, status, reference_key)
-    url_params_arr = status == OAUTH_FAILED && params['type'] != 'new' ? [] : ["reference_key=#{reference_key}"]
+    url_params_arr = ["reference_key=#{reference_key}"]
     params.except(*OAUTH_KEYS).each_pair { |name, val| url_params_arr << "#{name}=#{CGI.escape(val)}" }
     url_params_arr.join('&')
   end

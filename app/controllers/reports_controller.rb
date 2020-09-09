@@ -12,7 +12,7 @@ class ReportsController < ApplicationController
   include HelpdeskReports::Helper::PlanConstraints
   # include Reports::ActivityReport
 
-  helper_method :enable_qna?, :enable_insights?, :enable_new_ticket_recieved_metric?
+  helper_method :enable_new_ticket_recieved_metric?
 
   def show
     @current_report  = @t_reports[params[:report_type].to_sym]
@@ -36,14 +36,6 @@ class ReportsController < ApplicationController
     @date_lag_by_plan = disable_date_lag? ? 0 : 1
     @is_trial_account = Account.current.subscription.trial?
     @hide_agent_metrics_feature = Account.current.hide_agent_metrics_feature?
-  end
-
-  def enable_qna?
-    Account.current.launched?(:enable_qna)
-  end
-
-  def enable_insights?
-    Account.current.launched?(:enable_insights)
   end
 
   def enable_new_ticket_recieved_metric?
