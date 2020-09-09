@@ -16,8 +16,6 @@ class TicketsExportTest < ActionView::TestCase
   include CoreTicketsTestHelper
   include SearchTestHelper
   include ArchiveTicketTestHelper
-  include Admin::AdvancedTicketing::FieldServiceManagement::Util
-
 
   def setup
     super
@@ -60,112 +58,6 @@ class TicketsExportTest < ActionView::TestCase
   ensure
     Tickets::Export::TicketsExport.any_instance.unstub(:send_to_silkroad?)
     Export::Util.unstub(:build_attachment)
-  end
-
-  def test_ticket_export_with_closed_service_tasks
-    enable_adv_ticketing([:field_service_management]) do
-      begin
-        Account.stubs(:current).returns(Account.first)
-        User.stubs(:current).returns(User.first)
-        ticket_fields = @ticket_fields
-        @ticket_fields = nil
-        perform_fsm_operations
-        @ticket_fields = ticket_fields
-        @account.rollback(:silkroad_export)
-        Tickets::Export::TicketsExport.any_instance.stubs(:send_to_silkroad?).returns(false)
-        time = Time.zone.now
-        fsm_fields = { fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '123344', fsm_appointment_start_time: time.utc.iso8601, fsm_appointment_end_time: (time + 1.hour).utc.iso8601 }
-        fsm_custom_fields = Hash[fsm_fields.map { |k, v| ["cf_#{k}_#{@account.id}", v] }]
-        fsm_export_fields = { fsm_contact_name: 'Contact', fsm_service_location: 'Service location', fsm_phone_number: 'Phone number', fsm_appointment_start_time: 'Appointment start time', fsm_appointment_end_time: 'Appointment end time' }
-        fsm_export_fields = Hash[fsm_export_fields.map { |k, v| ["cf_#{k}_#{@account.id}", v] }]
-        parent_ticket = create_ticket(requester_id: User.current.id, responder_id: User.current.id)
-        service_task = create_ticket(assoc_parent_id: parent_ticket.display_id, requester_id: User.current.id, ticket_type: 'Service Task', fsm_custom_fields: fsm_custom_fields)
-        service_task.status = Helpdesk::Ticketfields::TicketStatus::CLOSED
-        service_task.save!
-        service_task.ticket_states.closed_at = @time
-        service_task.ticket_states.save!
-
-        args = { format: 'xls', date_filter: '30', ticket_state_filter: 'created_at',
-                 query_hash: [{ condition: 'created_at', operator: 'is_greater_than', value: 'last_month' }],
-                 start_date: @start_time, end_date: @end_time,
-                 ticket_fields: @ticket_fields.merge(fsm_custom_fields),
-                 contact_fields: {},
-                 company_fields: {},
-                 filter_name: 'all_tickets',
-                 export_fields: { resolution_status: 'Resolution status' }.merge(fsm_export_fields),
-                 data_hash: [{ condition: 'created_at', operator: 'is_greater_than', value: 'last_month' }, { condition: 'spam', operator: 'is', value: false }, { condition: 'deleted', operator: 'is', value: false }],
-                 current_user_id: @agent.user_id,
-                 portal_url: 'localhost.freshdesk-dev.com' }
-        Export::Util.stubs(:build_attachment).returns(true)
-        Tickets::Export::TicketsExport.new.perform(args)
-        data_export = @account.data_exports.last
-        assert_equal data_export.status, DataExport::EXPORT_STATUS[:completed]
-        assert_equal data_export.source, DataExport::EXPORT_TYPE[:ticket]
-        assert_equal data_export.last_error, nil
-        assert_equal service_task.resolution_status, ''
-        data_export.destroy
-        service_task.destroy
-        parent_ticket.destroy
-      ensure
-        User.unstub(:current)
-        cleanup_fsm
-        Account.unstub(:current)
-        Tickets::Export::TicketsExport.any_instance.unstub(:send_to_silkroad?)
-        Export::Util.unstub(:build_attachment)
-      end
-    end
-  end
-
-  def test_ticket_export_with_open_service_tasks
-    enable_adv_ticketing([:field_service_management]) do
-      begin
-        Account.stubs(:current).returns(Account.first)
-        User.stubs(:current).returns(User.first)
-        ticket_fields = @ticket_fields
-        @ticket_fields = nil
-        perform_fsm_operations
-        @ticket_fields = ticket_fields
-        @account.rollback(:silkroad_export)
-        Tickets::Export::TicketsExport.any_instance.stubs(:send_to_silkroad?).returns(false)
-        fsm_fields = { fsm_contact_name: 'User', fsm_service_location: 'Location', fsm_phone_number: '123344', fsm_appointment_start_time: Time.zone.now.utc.iso8601, fsm_appointment_end_time: (Time.zone.now + 1.hour).utc.iso8601 }
-        fsm_custom_fields = Hash[fsm_fields.map { |k, v| ["cf_#{k}_#{@account.id}", v] }]
-        fsm_export_fields = { fsm_contact_name: 'Contact', fsm_service_location: 'Service location', fsm_phone_number: 'Phone number', fsm_appointment_start_time: 'Appointment start time', fsm_appointment_end_time: 'Appointment end time' }
-        fsm_export_fields = Hash[fsm_export_fields.map { |k, v| ["cf_#{k}_#{@account.id}", v] }]
-        parent_ticket = create_ticket(requester_id: User.current.id, responder_id: User.current.id)
-        service_task = create_ticket(assoc_parent_id: parent_ticket.display_id, requester_id: User.current.id, ticket_type: 'Service Task', fsm_custom_fields: fsm_custom_fields)
-        service_task.save!
-        service_task.ticket_states.created_at = @time
-        service_task.ticket_states.save!
-
-        args = { format: 'xls', date_filter: '30', ticket_state_filter: 'created_at',
-                 query_hash: [{ condition: 'created_at', operator: 'is_greater_than', value: 'last_month' }],
-                 start_date: @start_time, end_date: @end_time,
-                 ticket_fields: @ticket_fields.merge(fsm_custom_fields),
-                 contact_fields: {},
-                 company_fields: {},
-                 filter_name: 'all_tickets',
-                 export_fields: { resolution_status: 'Resolution status' }.merge(fsm_export_fields),
-                 data_hash: [{ condition: 'created_at', operator: 'is_greater_than', value: 'last_month' }, { condition: 'spam', operator: 'is', value: false }, { condition: 'deleted', operator: 'is', value: false }],
-                 current_user_id: @agent.user_id,
-                 portal_url: 'localhost.freshdesk-dev.com' }
-        Export::Util.stubs(:build_attachment).returns(true)
-        Tickets::Export::TicketsExport.new.perform(args)
-        data_export = @account.data_exports.last
-        assert_equal data_export.status, DataExport::EXPORT_STATUS[:completed]
-        assert_equal data_export.source, DataExport::EXPORT_TYPE[:ticket]
-        assert_equal data_export.last_error, nil
-        assert_equal service_task.resolution_status, ''
-        data_export.destroy
-        service_task.destroy
-        parent_ticket.destroy
-      ensure
-        User.unstub(:current)
-        cleanup_fsm
-        Tickets::Export::TicketsExport.any_instance.unstub(:send_to_silkroad?)
-        Export::Util.unstub(:build_attachment)
-        Account.unstub(:current)
-      end
-    end
   end
 
   def test_index_ticket_excel

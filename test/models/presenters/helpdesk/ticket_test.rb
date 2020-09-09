@@ -16,6 +16,7 @@ class TicketTest < ActiveSupport::TestCase
   include SharedOwnershipTestHelper
   include PrivilegesHelper
   include UsersTestHelper
+  include TestCaseMethods
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
@@ -921,5 +922,18 @@ class TicketTest < ActiveSupport::TestCase
   ensure
     ticket.destroy
     nested_field_level1.destroy
+  end
+
+  def test_resolution_status_for_service_task
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        fsm_ticket = create_service_task_ticket
+        assert_equal '', fsm_ticket.resolution_status
+      ensure
+        fsm_ticket.destroy
+        cleanup_fsm
+      end
+    end
   end
 end
