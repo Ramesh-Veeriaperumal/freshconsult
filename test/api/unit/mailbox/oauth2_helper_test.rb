@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require_relative '../../unit_test_helper'
 require_relative '../../../api/helpers/email_mailbox_test_helper.rb'
-['gmail_oauth_helper.rb'].each { |file| require Rails.root.join("lib/email/mailbox/#{file}") }
+['oauth2_helper.rb'].each { |file| require Rails.root.join("lib/email/mailbox/#{file}") }
 
-class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
+class Mailbox::Oauth2HelperTest < ActiveSupport::TestCase
   include EmailMailboxTestHelper
-  include Email::Mailbox::GmailOauthHelper
+  include Email::Mailbox::Oauth2Helper
 
   def setup
     Account.stubs(:current).returns(Account.first || create_test_account)
@@ -20,38 +22,29 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
       support_email: 'testoauth@fdtest.com',
       imap_mailbox_attributes: {
         imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       },
       smtp_mailbox_attributes: {
         smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       }
     )
-    Mailbox::GmailOauthHelperTest.any_instance.stubs(:decrypt_refresh_token).returns('refreshtoken')
-    Mailbox::GmailOauthHelperTest.any_instance.stubs(:get_oauth2_access_token).returns(
+    Mailbox::Oauth2HelperTest.any_instance.stubs(:get_oauth2_access_token).returns(
       OAuth2::AccessToken.new(
         OAuth2::Client.new(
-          "token_aaa",
-          "secret_aaa"
-          ),
-        "token_abc"
+          'token_aaa',
+          'secret_aaa'
+        ),
+        'token_abc'
       )
     )
-    Mailbox::GmailOauthHelperTest.any_instance.stubs(:redis_key_exists?).returns(true)
     refresh_access_token(mailbox.smtp_mailbox)
-    assert_equal access_token_expired?(mailbox.account_id, mailbox.smtp_mailbox.id), false
+    mailbox.smtp_mailbox.reload
+    assert_equal mailbox.smtp_mailbox.access_token, 'token_abc'
   ensure
-    Mailbox::GmailOauthHelperTest.unstub(:decrypt_refresh_token)
-    Mailbox::GmailOauthHelperTest.unstub(:get_oauth2_access_token)
-    Mailbox::GmailOauthHelperTest.unstub(:redis_key_exists?)
-    $redis_others.perform_redis_op(
-      'del',
-      format(
-        GMAIL_ACCESS_TOKEN_VALIDITY,
-        account_id: mailbox.account_id,
-        smtp_mailbox_id: mailbox.smtp_mailbox.id
-      )
-    )
+    Mailbox::Oauth2HelperTest.unstub(:get_oauth2_access_token)
     mailbox.destroy
   end
 
@@ -60,25 +53,27 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
       support_email: 'testoauth@fdtest.com',
       imap_mailbox_attributes: {
         imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       },
       smtp_mailbox_attributes: {
         smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       }
     )
-    Mailbox::GmailOauthHelperTest.any_instance.stubs(:decrypt_refresh_token).returns('refreshtoken')
-    Mailbox::GmailOauthHelperTest.any_instance.stubs(:get_oauth2_access_token).raises(
+    Mailbox::Oauth2HelperTest.any_instance.stubs(:get_oauth2_access_token).raises(
       OAuth2::Error.new(
         OAuth2::Response.new(
-          Faraday::Response.new()
+          Faraday::Response.new
         )
       )
     )
     $redis_others.perform_redis_op(
       'set',
       format(
-        GMAIL_ACCESS_TOKEN_VALIDITY,
+        OAUTH_ACCESS_TOKEN_VALIDITY,
+        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox.smtp_mailbox)],
         account_id: mailbox.account_id,
         smtp_mailbox_id: mailbox.smtp_mailbox.id
       ),
@@ -87,13 +82,14 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
     )
     refresh_access_token(mailbox.smtp_mailbox)
     assert_equal mailbox.smtp_mailbox.error_type, 401
-    assert_equal access_token_expired?(mailbox.account_id, mailbox.smtp_mailbox.id), true
+    assert_equal access_token_expired?(mailbox.smtp_mailbox), true
   ensure
-    Mailbox::GmailOauthHelperTest.unstub(:get_oauth2_access_token)
+    Mailbox::Oauth2HelperTest.unstub(:get_oauth2_access_token)
     $redis_others.perform_redis_op(
       'del',
       format(
-        GMAIL_ACCESS_TOKEN_VALIDITY,
+        OAUTH_ACCESS_TOKEN_VALIDITY,
+        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox.smtp_mailbox)],
         account_id: mailbox.account_id,
         smtp_mailbox_id: mailbox.smtp_mailbox.id
       )
@@ -106,11 +102,13 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
       support_email: 'testoauth@fdtest.com',
       imap_mailbox_attributes: {
         imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       },
       smtp_mailbox_attributes: {
         smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       }
     )
     mailbox.active = true
@@ -127,29 +125,39 @@ class Mailbox::GmailOauthHelperTest < ActiveSupport::TestCase
       support_email: 'testoauth@fdtest.com',
       imap_mailbox_attributes: {
         imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       },
       smtp_mailbox_attributes: {
         smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       }
     )
-    mailbox.smtp_mailbox.error_type = 401
     mailbox.save!
-    set_valid_access_token_key(Account.current.id, mailbox.id)
-    Mailbox::GmailOauthHelperTest.any_instance.stubs(:redis_key_exists?).returns(true)
-    expired = access_token_expired?(Account.current.id, mailbox.id)
+    $redis_others.perform_redis_op(
+      'set',
+      format(
+        OAUTH_ACCESS_TOKEN_VALIDITY,
+        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox.smtp_mailbox)],
+        account_id: mailbox.account_id,
+        smtp_mailbox_id: mailbox.smtp_mailbox.id
+      ),
+      true,
+      ex: Email::Mailbox::Constants::ACCESS_TOKEN_EXPIRY
+    )
+    expired = access_token_expired?(mailbox.smtp_mailbox)
     assert_equal expired, false
   ensure
-    Mailbox::GmailOauthHelperTest.unstub(:redis_key_exists?)
     $redis_others.perform_redis_op(
       'del',
       format(
-        GMAIL_ACCESS_TOKEN_VALIDITY,
+        OAUTH_ACCESS_TOKEN_VALIDITY,
+        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox.smtp_mailbox)],
         account_id: mailbox.account_id,
         smtp_mailbox_id: mailbox.smtp_mailbox.id
       )
     )
-    mailbox.destroy   
+    mailbox.destroy
   end
 end

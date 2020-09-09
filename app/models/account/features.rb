@@ -39,11 +39,11 @@ class Account < ActiveRecord::Base
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :idle_session_timeout, :solutions_dashboard,
-    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments, :shopify_api_revamp,
+    :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments,
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
-    :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish, :archive_on_missing_associations
+    :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish, :archive_on_missing_associations, :mailbox_ms365_oauth
     ].freeze
 
   BITMAP_FEATURES = [
@@ -79,7 +79,7 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics
+    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -446,6 +446,14 @@ class Account < ActiveRecord::Base
 
   def solutions_agent_metrics_enabled?
     launched?(:solutions_agent_metrics)
+  end
+
+  def forums_agent_portal_enabled?
+    launched?(:forums_agent_portal)
+  end
+
+  def solutions_agent_portal_enabled?
+    launched?(:solutions_agent_portal)
   end
 
   def features

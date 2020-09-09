@@ -209,11 +209,11 @@ class Email::MailboxValidation < ApiValidation
     end
 
     def validate_reference
-      errors[:reference_key] = :invalid_oauth_reference unless gmail_redis_obj.exists?
+      errors[:reference_key] = :invalid_oauth_reference unless redis_obj.exists?
     end
 
-    def gmail_redis_obj
-      @gmail_redis_obj ||= Email::Mailbox::GmailOauthRedis.new(redis_key: oauth_reference)
+    def redis_obj
+      @redis_obj ||= Email::Mailbox::OauthRedis.new(redis_key: oauth_reference)
     end
 
     def validate_oauth_email
@@ -221,7 +221,7 @@ class Email::MailboxValidation < ApiValidation
     end
 
     def invalid_reference?
-      cached_oauth_hash = gmail_redis_obj.fetch_hash
+      cached_oauth_hash = redis_obj.fetch_hash
       oauth_email = cached_oauth_hash[OAUTH_EMAIL]
       invalid_incoming_reference?(oauth_email) || invalid_outgoing_reference?(oauth_email)
     end
