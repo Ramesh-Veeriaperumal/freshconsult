@@ -5,7 +5,7 @@ module Fdadmin::FeatureMethods
 
     BITMAP_FEATURES = BITMAP_FEATURES_WITH_VALUES.keys
 
-    FEATURE_TYPES = ["bitmap", "db", "launchparty"]
+    FEATURE_TYPES = ["bitmap", "launchparty"]
 
     BLACKLISTED_LP_FEATURES = [:freshid, :freshid_org_v2, :fluffy, :fluffy_min_level].freeze
 
@@ -15,9 +15,11 @@ module Fdadmin::FeatureMethods
 
     def feature_types(feature_name)
       feature_types = []
-      feature_types << "bitmap" if BITMAP_FEATURES.include?(feature_name)
-      # feature_types << "db" if @account.features.respond_to?(feature_name) # disabling adding db features via freshops
-      feature_types << 'launchparty' if (Account::LAUNCHPARTY_FEATURES.keys + Account::LP_FEATURES).uniq.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
+      if (Account::LAUNCHPARTY_FEATURES.keys + Account::LP_FEATURES).uniq.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
+        feature_types << 'launchparty'
+        # will be removed after settings implementation
+        feature_types << "bitmap" if BITMAP_FEATURES.include?(feature_name)
+      end
       feature_types
     end
 
@@ -79,20 +81,12 @@ module Fdadmin::FeatureMethods
       end
     end
 
-    def enable_db_feature(feature_name)
-      @account.features.safe_send(feature_name).save!
-    end
-
     def enable_launchparty_feature(feature_name)
       @account.launch(feature_name)
     end
 
     def disable_bitmap_feature(feature_name)
       @account.revoke_feature(feature_name)
-    end
-
-    def disable_db_feature(feature_name)
-      @account.features.safe_send(feature_name).destroy
     end
 
     def disable_launchparty_feature(feature_name)
