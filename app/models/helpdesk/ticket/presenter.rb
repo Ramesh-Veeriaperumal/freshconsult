@@ -42,6 +42,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def central_publish_preloaded_payload
+    as_api_response(:central_publish_preload)
+  end
+
   def central_publish_payload
     as_api_response(:central_publish)
   end
