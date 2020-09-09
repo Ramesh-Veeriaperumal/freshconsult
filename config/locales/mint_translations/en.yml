@@ -2738,7 +2738,7 @@ en:
         assign_to_gp: Assign to Group
         dm_threading_interval: Set Ticket Threading Interval
         header: Convert tweets from above stream to tickets
-        filter_mentions_html: <span>Filter comments that just have user mentions. (ex. @mark &#128521;)</span>
+        filter_mentions_html: Filter comments that just have user mentions. (ex. @mark &#128521;)
       helpcard:
         handle_title2: Converting specific tweets to tickets automatically
         handle_info2: >-

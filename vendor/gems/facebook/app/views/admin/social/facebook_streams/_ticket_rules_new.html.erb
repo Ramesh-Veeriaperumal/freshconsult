@@ -48,7 +48,7 @@
                     :class => 'text social_ticket_rule_includes form-control span12 pl20' %>
                   <% if Account.current.filter_facebook_mentions_enabled? %>
                     <label>
-                      <%= check_box_tag 'new_ticket_filter_mentions', true, ticket_rule.optimal? && ticket_rule.filter_mentions? %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
+                      <%= check_box_tag 'new_ticket_filter_mentions', true, ticket_rule.optimal? && ticket_rule.filter_mentions? %>&nbsp;&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
                     </label>
                   <% end %>
                 </div>
@@ -81,12 +81,16 @@
               <%= t(".convert_ad_post_helptext") %>
             </label>
 
-            <div class="control-group mt10">
-              <% if Account.current.filter_facebook_mentions_enabled? %>
-                <label id="ad_post_filter_mentions">
-                  <%= check_box_tag 'ad_posts_filter_mentions', true, ad_posts_filter_mentions %>&nbsp;<%= t("admin.social.ticket_rules.filter_mentions_html") %>
-                </label>
-              <% end %>
+            <div class="control-group">
+              <div class="checkbox">
+                <% if Account.current.filter_facebook_mentions_enabled? %>
+                  <label id="ad_post_filter_mentions">
+                    <%= check_box_tag 'ad_posts_filter_mentions', true, ad_posts_filter_mentions %>
+                    <%= t("admin.social.ticket_rules.filter_mentions_html") %>
+                  </label>
+                <% end %>
+              </div>
+
               <label class="mt10 pl5">
                 <%= t('.assign_to_gp')%>
                 <%= select_tag "ad_posts[group_id]", options_for_select(current_account.support_agent_groups_from_cache.collect{ |c| [c.name, c.id]}.insert(0, '...'), ad_post_group_id), {:class => "select2-container span4 ml10"} %>
