@@ -130,12 +130,15 @@ class SAAS::SubscriptionEventActions
       features_list.each do |feature|
         unless plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature)
 
-          next if AccountSettings::SettingsConfig[feature] && plan_features.include?(AccountSettings::SettingsConfig[feature][:feature_dependency])
-
+          next if a_setting?(feature) && applicable_for_plan?(feature)
           account.reset_feature(feature)
         end
       end
       account.save
+    end
+
+    def applicable_for_plan?(setting)
+      plan_features.include?(AccountSettings::SettingsConfig[setting][:feature_dependency])
     end
 
     def add_new_plan_features
@@ -305,5 +308,9 @@ class SAAS::SubscriptionEventActions
       if account.field_service_management_toggle_enabled? && account.field_service_management_enabled?
         account.add_feature(:dynamic_sections) unless account.has_feature?(:dynamic_sections)
       end
+    end
+
+    def a_setting?(feature)
+      AccountSettings::SettingsConfig[feature].present?
     end
 end
