@@ -133,6 +133,12 @@ class Account < ActiveRecord::Base
     end
   end
 
+  AccountSettings::SettingsConfig.each do |setting, config|
+    define_method "#{setting.to_s}_enabled" do
+      has_feature?(config[:feature_dependency]) && has_feature?(setting)
+    end    
+  end
+
   Collaboration::Ticket::SUB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       self.collaboration_enabled? && (self.collab_settings[item.to_s] == 1)
@@ -452,15 +458,4 @@ class Account < ActiveRecord::Base
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
   end
 
-  # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
-  def enable_setting(setting)
-    launch(setting) if LP_FEATURES.include?(setting)
-    add_feature(setting) if BITMAP_FEATURES.include?(setting)
-  end
-
-  # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
-  def disable_setting(setting)
-    rollback(setting) if LP_FEATURES.include?(setting)
-    revoke_feature(setting) if BITMAP_FEATURES.include?(setting)
-  end
 end
