@@ -35,7 +35,7 @@ class Account < ActiveRecord::Base
     :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log,
-    :requester_widget_timeline,
+    :requester_widget_timeline, :sprout_trial_onboarding,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :idle_session_timeout, :solutions_dashboard,
@@ -43,8 +43,9 @@ class Account < ActiveRecord::Base
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
-    :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish, :archive_on_missing_associations, :mailbox_ms365_oauth
-    ].freeze
+    :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
+    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp
+  ].freeze
 
   BITMAP_FEATURES = [
     :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
@@ -99,7 +100,7 @@ class Account < ActiveRecord::Base
   ].freeze
 
   BITMAP_FEATURES_TO_LOG = [
-    :falcon
+    :falcon, :disable_old_ui
   ].freeze
 
   def launched?(*feature_name)
@@ -337,8 +338,7 @@ class Account < ActiveRecord::Base
   end
 
   def falcon_ui_enabled?(current_user = :no_user)
-    valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
-    valid_user && disable_old_ui_enabled?
+    return true if current_user
   end
 
   def falcon_support_portal_theme_enabled?

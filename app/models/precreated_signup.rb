@@ -76,6 +76,10 @@ class PrecreatedSignup < ActivePresenter::Base
     if aloha_signup && bundle_id && bundle_name
       account.subscription.subscription_plan = SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_20]).first
       account.subscription.save
+    elsif account.enable_sprout_trial_onboarding?
+      account.subscription.subscription_plan = SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_20]).first
+      account.subscription.convert_to_free
+      account.subscription.save
     end
   end
 
