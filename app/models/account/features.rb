@@ -306,10 +306,6 @@ class Account < ActiveRecord::Base
     redis_key_exists?(TWITTER_SMART_FILTER_REVOKED) && smart_filter_enabled? && !Account.current.twitter_handles_from_cache.blank?
   end
 
-  def tags_filter_reporting_enabled?
-    features?(:tags_filter_reporting)
-  end
-
   def tkt_templates_enabled?
     @templates ||= (features?(:ticket_templates) || parent_child_tickets_enabled?)
   end

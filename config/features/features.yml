@@ -116,7 +116,7 @@
       :redis_display_id: 112
       :chat_enable: 113
       :survey_links: 114
-      :tags_filter_reporting: 115
+      :unused_115: 115
       :personalized_email_replies: 116
       :anonymous_tickets: 117
       :client_debugging: 118
@@ -425,7 +425,6 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
-  :tags_filter_reporting: false
   :personalized_email_replies: false
   :reply_to_based_tickets: true
   :freshfone: false
