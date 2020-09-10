@@ -1044,6 +1044,7 @@ Helpkit::Application.routes.draw do
     get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
     put '/solutions/articles/:id/thumbs_up', to: 'channel/v2/api_solutions/articles#thumbs_up'
     put '/solutions/articles/:id/thumbs_down', to: 'channel/v2/api_solutions/articles#thumbs_down'
+    put 'solutions/articles/:id/hit', to: 'channel/v2/api_solutions/articles#hit'
     
     get '/solutions/search', to: 'channel/v2/api_solutions/articles#search'
   end

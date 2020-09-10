@@ -470,6 +470,152 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     assert_response 400
     expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "Value set is of type String.It should be a/an Boolean", code: 'datatype_mismatch' }] }
     assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+  ensure
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
+  end
+
+  def test_article_hit_count
+    stub_channel_api do
+      Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(false)
+      article_new = get_article_without_draft
+      initial_views = @account.solution_articles.find(article_new.id).hits
+      put :hit, controller_params(version: 'channel', id: article_new.id, source_type: 'freshchat')
+      final_views = @account.solution_articles.find(article_new.id).hits
+      assert_response 204
+      assert_equal initial_views, final_views - 1
+    end
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
+  end
+
+  def test_article_hit_with_agent_set
+    stub_channel_api do
+      Account.any_instance.stubs(:solutions_agent_metrics_enabled?).returns(false)
+      Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(true)
+      article_new = get_article_without_draft
+      initial_views = @account.solution_articles.find(article_new.id).hits
+      put :hit, controller_params(version: 'channel', id: article_new.id, source_type: 'freshchat')
+      final_views = @account.solution_articles.find(article_new.id).hits
+      assert_response 204
+      assert_equal initial_views, final_views
+    end
+    Account.any_instance.unstub(:solutions_agent_metrics_enabled?)
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
+  end
+
+  def test_article_hit_with_solutions_agent_metrics_enabled
+    stub_channel_api do
+    Account.any_instance.stubs(:solutions_agent_metrics_enabled?).returns(true)
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(true)
+    article_new = get_article_without_draft
+    initial_views = @account.solution_articles.find(article_new.id).hits
+    put :hit, controller_params(version: 'channel', id: article_new.id, source_type: 'freshchat')
+    final_views = @account.solution_articles.find(article_new.id).hits
+    assert_response 204
+    assert_equal initial_views, final_views - 1
+    end
+    Account.any_instance.unstub(:solutions_agent_metrics_enabled?)
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
+  end
+
+  def test_article_hit_with_invalid_params
+    stub_channel_api do
+      article_new = get_article_without_draft
+      initial_views = @account.solution_articles.find(article_new.id).hits
+      put :hit, controller_params(version: 'channel', id: article_new.id, invalid_params: 'invalid', source_type: 'freshchat')
+      final_views = @account.solution_articles.find(article_new.id).hits
+      assert_response 400
+      expected = { description: 'Validation failed', errors: [{ field: 'invalid_params', message: "Unexpected/invalid field in request", code: 'invalid_field' }] }
+ 
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+  end
+
+  def test_invalid_language_params_for_article_hit
+    stub_channel_api do
+      article_new = get_article_without_draft
+      put :hit, controller_params(version: 'channel', id: article_new.id, language: 'en-us', source_type: 'freshchat')
+      assert_response 404
+      match_json(request_error_pattern(:language_not_allowed, code: 'en-us', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+    end
+  end
+
+  def test_article_hit_with_article_in_draft_state
+    stub_channel_api do
+      article_new = get_article
+      article_new.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+      article_new.save!
+      put :hit, controller_params(version: 'channel', id: article_new.id, source_type: 'freshchat')
+      assert_response 405
+    end
+  end
+
+  def test_article_hit_with_invalid_user_id
+    stub_channel_api do
+      article_new = get_article
+      article_new.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+      article_new.save!
+      put :hit, controller_params(version: 'channel', user_id: -1, id: article_new.id, source_type: 'freshchat')
+      assert_response 400
+      expected = { description: 'Validation failed', errors: [{ field: 'user_id', message: "must be greater than 0", code: 'invalid_value' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+  end
+
+  def test_article_hit_without_source_type_params
+    stub_channel_api do
+      article_new = get_article
+      article_new.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+      article_new.save!
+      put :hit, controller_params(version: 'channel', id: article_new.id)
+      assert_response 400
+      expected = { description: 'Validation failed', errors: [{ field: 'source_type', message: "Mandatory attribute missing", code: 'missing_field' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+  end
+
+  def test_article_hit_with_invalid_source_id_params
+    stub_channel_api do
+      article_new = get_article
+      article_new.status = Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
+      article_new.save!
+      put :hit, controller_params(version: 'channel', id: article_new.id, source_type: 'freshchat', source_id: -1)
+      assert_response 400
+      expected = { description: 'Validation failed', errors: [{ field: 'source_id', message: "must be greater than 0", code: 'invalid_value' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+  end
+
+  def test_article_hit_with_valid_user_id_source_id_and_source_type
+    stub_channel_api do
+      Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(false)
+      article_new = get_article_without_draft
+      user = add_new_user(@account)
+      initial_views = @account.solution_articles.find(article_new.id).hits
+      put :hit, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1)
+      final_views = @account.solution_articles.find(article_new.id).hits
+      assert_response 204
+      assert_equal initial_views, final_views - 1
+    end
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
+  end
+
+  def test_channel_hit_payload
+    stub_channel_api do
+      Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(false)
+      article_new = get_article_without_draft
+      user = add_new_user(@account)
+      CentralPublishWorker::SolutionArticleWorker.jobs.clear
+      put :hit, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1)
+      job = CentralPublishWorker::SolutionArticleWorker.jobs.first
+      assert_response 204
+      assert_equal 1, CentralPublishWorker::SolutionArticleWorker.jobs.size
+      assert_equal user.id, job["args"][1]['current_user_id']
+      assert_equal 3, job['args'][1]['event_info']['source_type']
+      assert_equal 1, job['args'][1]['event_info']['source_id'].to_i
+    end
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
   end
   
   def test_search

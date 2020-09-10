@@ -69,6 +69,14 @@ module Channel::V2::ApiSolutions
       assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
     end
 
+    def test_show_category_with_invalid_language_and_language_fallback_true
+      set_jwe_auth_header(SUPPORT_BOT)
+      sample_category = get_category
+      get :index, controller_params(id: sample_category.parent_id, language: 'invalid', allow_language_fallback: 'true')
+      assert_response 200
+      assert_equal @account.language, JSON.parse(response.body)[0]["language"]
+    end
+
     def test_show_unavailable_category
     	set_jwe_auth_header(SUPPORT_BOT)
       get :show, controller_params(id: 99999)

@@ -93,6 +93,7 @@ module ApiSolutions
       end
 
       def validate_filter_params
+        sanitize_boolean_params
         @validation_klass = 'ApiSolutions::CategoryFilterValidation'.freeze
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])

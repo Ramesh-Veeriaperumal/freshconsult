@@ -70,7 +70,7 @@ class SolutionOmniFilterValidation < FilterValidation
   end
 
   def source_type_required?
-    [:thumbs_down, :thumbs_up].include?(validation_context)
+    [:thumbs_down, :thumbs_up, :hit].include?(validation_context)
   end
  
   def search_action
