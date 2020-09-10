@@ -35,20 +35,6 @@ module Ember
         Account.current.sections.find_by_label(SERVICE_TASK_SECTION).try(:destroy)
       end
 
-      def test_create_parent_child
-        disable_feature(:parent_child_tickets) do
-          post :create, construct_params({version: 'private'}, {name: 'parent_child_tickets'})
-          create_success_pattern(:parent_child_tickets)
-        end
-      end
-
-      def test_create_link_tickets
-        disable_feature(:link_tickets) do
-          post :create, construct_params({version: 'private'}, {name: 'link_tickets'})
-          create_success_pattern(:link_tickets)
-        end
-      end
-
       def test_create_assets
         Account.stubs(:current).returns(Account.first)
         enable_assets do
@@ -58,13 +44,6 @@ module Ember
         end
       ensure
         Account.unstub(:current)
-      end
-
-      def test_create_shared_ownership
-        disable_feature(:shared_ownership) do
-          post :create, construct_params({version: 'private'}, {name: 'shared_ownership'})
-          create_success_pattern(:shared_ownership)
-        end
       end
 
       def test_create_parent_child_without_toggle
@@ -101,19 +80,16 @@ module Ember
 
       def test_create_with_disable_old_ui_enabled
         disable_feature(:parent_child_tickets) do
-          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           post :create, construct_params({ version: 'private' }, name: 'parent_child_tickets')
           assert_response 204
           assert Account.current.parent_child_tickets_enabled?
           assert_equal 0, Account.current.installed_applications.with_name('parent_child_tickets').count
-          Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
       end
 
       def test_create_fsm
         enable_fsm do
           begin
-            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
             fields_count_before_installation = Account.current.ticket_fields.size
             total_fsm_fields_count = fsm_custom_field_to_reserve.size
             Sidekiq::Testing.inline! do
@@ -142,7 +118,6 @@ module Ember
             assert Account.current.roles.map(&:name).include?(I18n.t('fsm_scheduling_dashboard.name'))
           ensure
             destroy_fsm_fields_and_section
-            Account.any_instance.unstub(:disable_old_ui_enabled?)
             destroy_fsm_dashboard_and_filters
           end
         end
@@ -153,7 +128,6 @@ module Ember
           begin
             Account.current.all_service_task_dispatcher_rules.destroy_all
             Account.current.all_service_task_observer_rules.destroy_all
-            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
               assert_response 204
@@ -175,36 +149,29 @@ module Ember
               assert_equal true, Account.current.all_service_task_dispatcher_rules.none?(&:active)
               assert_equal true, Account.current.all_service_task_observer_rules.none?(&:active)
             end
-          ensure
-            Account.any_instance.unstub(:disable_old_ui_enabled?)
           end
         end
       end
 
       def test_reenable_fsm_without_any_data_loss
         enable_fsm do
-          begin
-            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Account.current.revoke_feature(:field_service_management)
-            Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              assert Account.current.field_service_management_enabled?
+          Account.current.revoke_feature(:field_service_management)
+          Sidekiq::Testing.inline! do
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
 
-              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-              assert_equal false, Account.current.field_service_management_enabled?
+            delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+            assert_equal false, Account.current.field_service_management_enabled?
 
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              Account.reset_current_account
-              Account.stubs(:current).returns(Account.first)
-              assert Account.current.field_service_management_enabled?
-              assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
-              assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
-            end
-          ensure
-            Account.any_instance.unstub(:disable_old_ui_enabled?)
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            assert_response 204
+            Account.reset_current_account
+            Account.stubs(:current).returns(Account.first)
+            assert Account.current.field_service_management_enabled?
+            assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
+            assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
+            assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
           end
         end
       end
@@ -263,26 +230,21 @@ module Ember
 
       def test_reenable_fsm_without_any_data_loss_when_fsm_field_is_deleted
         enable_fsm do
-          begin
-            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              assert Account.current.field_service_management_enabled?
+          Sidekiq::Testing.inline! do
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
 
-              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-              assert_equal false, Account.current.field_service_management_enabled?
+            delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+            assert_equal false, Account.current.field_service_management_enabled?
 
-              Account.current.ticket_fields.find_by_name(fsm_custom_field_to_reserve.first[:name] + "_#{Account.current.id}").destroy
-              Account.reset_current_account
-              Account.stubs(:current).returns(Account.first)
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              assert Account.current.field_service_management_enabled?
-              assert_equal true, Account.current.ticket_fields.find_by_name(fsm_custom_field_to_reserve.first[:name] + "_#{Account.current.id}").present?
-            end
-          ensure
-            Account.any_instance.unstub(:disable_old_ui_enabled?)
+            Account.current.ticket_fields.find_by_name(fsm_custom_field_to_reserve.first[:name] + "_#{Account.current.id}").destroy
+            Account.reset_current_account
+            Account.stubs(:current).returns(Account.first)
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
+            assert_equal true, Account.current.ticket_fields.find_by_name(fsm_custom_field_to_reserve.first[:name] + "_#{Account.current.id}").present?
           end
         end
       end
@@ -290,7 +252,6 @@ module Ember
       def test_reenable_fsm_without_any_data_loss_when_fsm_fields_are_archived
         enable_fsm do
           begin
-            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
             Account.current.launch :archive_ticket_fields
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
@@ -311,7 +272,6 @@ module Ember
               assert_equal FSM_DEFAULT_TICKET_FIELDS.size, fsm_fields.size
             end
           ensure
-            Account.any_instance.unstub(:disable_old_ui_enabled?)
             Account.current.rollback :archive_ticket_fields
           end
         end
@@ -319,58 +279,48 @@ module Ember
 
       def test_reenable_fsm_without_any_data_loss_when_fsm_section_is_deleted
         enable_fsm do
-          begin
-            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              assert Account.current.field_service_management_enabled?
+          Sidekiq::Testing.inline! do
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
 
-              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-              assert_equal false, Account.current.field_service_management_enabled?
+            delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+            assert_equal false, Account.current.field_service_management_enabled?
 
-              destroy_fsm_fields_and_section
+            destroy_fsm_fields_and_section
 
-              Account.reset_current_account
-              Account.stubs(:current).returns(Account.first)
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              assert Account.current.field_service_management_enabled?
-              assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
-            end
-          ensure
-            Account.any_instance.unstub(:disable_old_ui_enabled?)
+            Account.reset_current_account
+            Account.stubs(:current).returns(Account.first)
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
+            assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
+            assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
           end
         end
       end
 
       def test_reenable_fsm_without_any_data_loss_when_service_task_type_is_deleted
         enable_fsm do
-          begin
-            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-            Sidekiq::Testing.inline! do
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              assert Account.current.field_service_management_enabled?
+          Sidekiq::Testing.inline! do
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
 
-              delete :destroy, controller_params(version: 'private', id: 'field_service_management')
-              assert_equal false, Account.current.field_service_management_enabled?
+            delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+            assert_equal false, Account.current.field_service_management_enabled?
 
-              destroy_fsm_fields_and_section
-              Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).destroy
+            destroy_fsm_fields_and_section
+            Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).destroy
 
-              Account.reset_current_account
-              Account.stubs(:current).returns(Account.first)
-              post :create, construct_params({ version: 'private' }, name: 'field_service_management')
-              assert_response 204
-              assert Account.current.field_service_management_enabled?
-              assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
-              assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
-              assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
-            end
-          ensure
-            Account.any_instance.unstub(:disable_old_ui_enabled?)
+            Account.reset_current_account
+            Account.stubs(:current).returns(Account.first)
+            post :create, construct_params({ version: 'private' }, name: 'field_service_management')
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
+            assert_equal true, Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).present?
+            assert_equal true, Account.current.sections.find_by_label(SERVICE_TASK_SECTION).present?
+            assert Account.current.sections.find_by_label(SERVICE_TASK_SECTION).section_fields.size == fsm_custom_field_to_reserve.size
           end
         end
       end
@@ -396,28 +346,14 @@ module Ember
         end
       end
 
-      # Test create with failed validation.
-      def test_create_fsm_with_old_ui_enabled
-        enable_fsm do
-          Account.current.revoke_feature(:disable_old_ui)
-          post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
-
-          assert_response 400
-          match_json([bad_request_error_pattern('name', :fsm_only_on_mint_ui, code: :invalid_value, feature: :field_service_management)])
-        end
-      end
-
       # Feature already enabled validation.
       def test_create_fsm_with_already_enabled
         enable_fsm do
-          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           Account.current.set_feature(:field_service_management)
           post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
 
           assert_response 400
           match_json([bad_request_error_pattern('name', :feature_exists, code: :invalid_value, feature: :field_service_management)])
-
-          Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
       end
 
@@ -425,13 +361,11 @@ module Ember
 
       def test_create_fsm_with_plan_based_feature_disabled
         enable_fsm do
-          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           Account.any_instance.stubs(:field_service_management_toggle_enabled?).returns(false)
           post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
           assert_response 400
           match_json([bad_request_error_pattern('name', :require_feature, code: :invalid_value, feature: :field_service_management)])
           Account.any_instance.unstub(:field_service_management_toggle_enabled?)
-          Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
       end
 
@@ -455,30 +389,6 @@ module Ember
         end
       end
 
-      def test_destroy_parent_child
-        Account.current.installed_applications.with_name(:parent_child_tickets).each do |inst_app|
-          inst_app.destroy
-        end
-        create_installed_application(:parent_child_tickets) do
-          delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
-          destroy_success_pattern(:parent_child_tickets)
-        end
-      end
-
-      def test_destroy_link_tickets
-        create_installed_application(:link_tickets) do
-          delete :destroy, controller_params(version: 'private', id: 'link_tickets')
-          destroy_success_pattern(:link_tickets)
-        end
-      end
-
-      def test_destroy_shared_ownership
-        create_installed_application(:shared_ownership) do
-          delete :destroy, controller_params(version: 'private', id: 'shared_ownership')
-          destroy_success_pattern(:shared_ownership)
-        end
-      end
-
       def test_destroy_assets
         Account.stubs(:current).returns(Account.first)
         enable_assets do
@@ -496,23 +406,18 @@ module Ember
 
       def test_destroy_with_disable_old_ui_enabled
         create_installed_application(:parent_child_tickets) do
-          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
           assert_response 204
-          assert_equal 0,Account.current.installed_applications.with_name('parent_child_tickets').count
           assert_equal false, Account.current.parent_child_tickets_enabled?
-          Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
       end
 
       def test_destroy_with_feature_and_without_installed_app_entry
         Account.current.add_feature(:parent_child_tickets) unless Account.current.parent_child_tickets_enabled?
-        Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
         delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
         assert_response 204
         assert_equal false, Account.current.parent_child_tickets_enabled?
       ensure
-        Account.any_instance.unstub(:disable_old_ui_enabled?)
         Account.current.revoke_feature(:parent_child_tickets) if Account.current.parent_child_tickets_enabled?
       end
 
@@ -523,13 +428,6 @@ module Ember
           assert_response 400
           match_json([bad_request_error_pattern('id', :feature_unavailable, code: :invalid_value, feature: :parent_child_tickets)])
           Account.any_instance.unstub(:parent_child_tickets_enabled?)
-        end
-      end
-
-      def test_destroy_with_invalid_params
-        create_installed_application(:parent_child_tickets) do
-          delete :destroy, controller_params(version: 'private', id: 'abcd')
-          assert_response 404
         end
       end
 
@@ -557,25 +455,6 @@ module Ember
       ensure
         AwsWrapper::S3.unstub(:read)
         remove_others_redis_key(ADVANCED_TICKETING_METRICS)
-      end
-
-      def test_create_with_exception
-        disable_feature(:parent_child_tickets) do
-          Integrations::InstalledApplication.any_instance.stubs(:save!).raises(RuntimeError)
-          post :create, construct_params({version: 'private'}, {name: 'parent_child_tickets'})
-          assert_response 400
-        end
-      ensure
-        Integrations::InstalledApplication.any_instance.unstub(:save!)
-      end
-
-      def test_destroy_with_exception
-        create_installed_application(:parent_child_tickets) do
-          Integrations::InstalledApplication.any_instance.stubs(:destroy).raises(RuntimeError)
-          delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
-          assert_response 400
-          Integrations::InstalledApplication.any_instance.unstub(:destroy)
-        end
       end
 
       def test_insights_with_exception

@@ -99,7 +99,7 @@ class Account < ActiveRecord::Base
   ].freeze
 
   BITMAP_FEATURES_TO_LOG = [
-    :falcon
+    :falcon, :disable_old_ui
   ].freeze
 
   def launched?(*feature_name)
@@ -337,8 +337,7 @@ class Account < ActiveRecord::Base
   end
 
   def falcon_ui_enabled?(current_user = :no_user)
-    valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
-    valid_user && disable_old_ui_enabled?
+    return true if current_user
   end
 
   def falcon_support_portal_theme_enabled?
