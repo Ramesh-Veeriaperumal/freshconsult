@@ -754,6 +754,14 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal true, JSON.parse(payload)["status_stop_sla_timer"]
   end
 
+  def test_central_publish_with_agent_responded_at
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    t = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    n = create_note(source: 0, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  end
+
   def test_central_publish_payload_with_secure_field
     @account = Account.first.nil? ? create_test_account : Account.first.make_current
     create_custom_field_dn('custom_card_no_test', 'secure_text')
