@@ -12,6 +12,7 @@
 :condition_based_setup_keys:
   twitter: 4
   custom_app: 7
+  freshfone_number: 8
   email_notification: 9
   reports: 10
   forums: 11

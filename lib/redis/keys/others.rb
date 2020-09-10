@@ -14,7 +14,6 @@ module Redis::Keys::Others
   PREMIUM_GAMIFICATION_ACCOUNT            = "PREMIUM_GAMIFICATION_ACCOUNT".freeze
   WEBHOOK_DROP_NOTIFY                     = "WEBHOOK_DROP_NOTIFY:%{account_id}".freeze
   GOOGLE_OAUTH_SSO                        = "GOOGLE_OAUTH_SSO:%{random_key}".freeze
-  ADMIN_CALLS_FILTER                      = "ADMIN_CALLS_FILTER:%{account_id}:%{user_id}".freeze
   FACEBOOK_APP_RATE_LIMIT                 = "FACEBOOK_APP_RATE_LIMIT".freeze
   FACEBOOK_LIKES                          = "FACEBOOK_LIKES".freeze
   FACEBOOK_USER_RATE_LIMIT                = "FACEBOOK_USER_RATE_LIMIT:%{page_id}".freeze
