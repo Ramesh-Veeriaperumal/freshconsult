@@ -3,7 +3,6 @@ class ImapMailboxObserver < ActiveRecord::Observer
   include Mailbox::HelperMethods
   include Cache::Memcache::EmailConfig
   include EmailHelper
-  include Email::Mailbox::Oauth2Helper
 
   def before_create mailbox
     set_account mailbox
