@@ -8,10 +8,6 @@
     <%= render partial: 'layouts/shared/freshcaller' %>
   <% end %>
   <%= render :partial => "layouts/chat" %>
-  <% if current_account.freshchat_account.try(:enabled) %>
-  	<%= render :partial => "layouts/agent_freshchat" if current_user && !current_user.is_falcon_pref? %>
-  <% end %>
-  <%= render :partial => "layouts/shared/chat/chat_support" if in_app_support? && !current_user.is_falcon_pref? %>
 </div>
 
 <% if current_user && current_user.agent? && (current_account.freshfone_active? || freshcaller_enabled_agent? || ( chat_activated? && !(is_assumed_user?)) || freshchat_enabled?) %>
