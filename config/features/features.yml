@@ -404,6 +404,8 @@
       :solutions_agent_metrics: 400
       :forums_agent_portal: 401
       :solutions_agent_portal: 402
+      :fetch_ticket_from_ref_first: 403
+      :skip_ticket_threading: 404
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -508,3 +510,5 @@
   :solutions_agent_metrics: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
+  :fetch_ticket_from_ref_first: false
+  :skip_ticket_threading: false
