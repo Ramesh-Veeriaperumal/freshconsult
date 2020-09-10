@@ -140,7 +140,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_fresh_connect
-    ::Freshconnect::RegisterFreshconnect.perform_async if freshconnect_signup_allowed?
+    ::Freshconnect::RegisterFreshconnect.perform_in(30.seconds.from_now) if freshconnect_signup_allowed?
   end
 
   def create_rts_account
