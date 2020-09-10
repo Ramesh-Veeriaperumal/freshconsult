@@ -367,6 +367,21 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_customize_domain_with_mars_domains
+    assert_raises(ActiveRecord::RecordInvalid) do
+      put :customize_domain, construct_params(version: 'private', subdomain: 'mars-us')
+    end
+    assert_raises(ActiveRecord::RecordInvalid) do
+      put :customize_domain, construct_params(version: 'private', subdomain: 'mars-euc')
+    end
+    assert_raises(ActiveRecord::RecordInvalid) do
+      put :customize_domain, construct_params(version: 'private', subdomain: 'mars-ind')
+    end
+    assert_raises(ActiveRecord::RecordInvalid) do
+      put :customize_domain, construct_params(version: 'private', subdomain: 'mars-au')
+    end
+  end
+
   def test_customize_domain_success
     @account.make_current
     new_domain = Faker::Internet.domain_word

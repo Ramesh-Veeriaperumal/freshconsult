@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
                           elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 agent-hermes
                           attachment euattachment eucattachment ausattachment indattachment cobrowsing migrations
                           migrations-eu migrations-au migrations-ind authz authz-euc authz-ind authz-au ipaas-tool
-                          ipaas-app ipaas-ui analytics-export) + FreshopsSubdomains + PartnerSubdomains
+                          ipaas-app ipaas-ui analytics-export mars-us mars-euc mars-au mars-ind) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails, :marketplace ] },
