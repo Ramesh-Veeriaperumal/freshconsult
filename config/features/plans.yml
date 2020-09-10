@@ -20,7 +20,7 @@
       - :personal_canned_response
       - :api_v2
       - :help_widget
-      - :default_settings_feature
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -164,7 +164,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
-      - :default_settings_feature
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_19:
@@ -382,7 +382,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
-      - :default_settings_feature
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_20:

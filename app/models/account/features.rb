@@ -459,7 +459,7 @@ class Account < ActiveRecord::Base
     add_feature(setting) if BITMAP_FEATURES.include?(setting) || ADMIN_CUSTOMER_PORTAL_FEATURES.include?(setting)
   end
 
-  def can_admin_modify_setting?(setting)
+  def admin_setting_for_account?(setting)
     return true unless launched?(:feature_based_settings)
     settings_hash = AccountSettings::SettingsConfig[setting]
     settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
