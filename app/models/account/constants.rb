@@ -229,7 +229,7 @@ class Account < ActiveRecord::Base
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
-    requester_widget_timeline: false,
+    requester_widget_timeline: false, sprout_trial_onboarding: false,
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
@@ -242,7 +242,7 @@ class Account < ActiveRecord::Base
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
     mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false
   }.freeze
-  
+
   BLOCK_GRACE_PERIOD = 90.days
 
   ACCOUNT_TYPES = {

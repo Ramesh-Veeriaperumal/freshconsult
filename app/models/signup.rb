@@ -126,6 +126,8 @@ class Signup < ActivePresenter::Base
     def build_subscription
       plan_name = if aloha_signup && bundle_id && bundle_name
                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_20]
+                  elsif account.enable_sprout_trial_onboarding?
+                    SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_20]
                   else
                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_20]
                   end
