@@ -1251,7 +1251,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def resolution_status
-    return "" unless [RESOLVED, CLOSED].include?(status)
+    # Skipping resolution status for service Task, as resolution status is not applicable for service tasks
+    return '' if service_task? || ![RESOLVED, CLOSED].include?(status)
+
     resolved_at.nil? ? "" : ((resolved_at < due_by)  ? t('export_data.in_sla') : t('export_data.out_of_sla'))
   end
 
