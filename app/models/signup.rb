@@ -61,7 +61,7 @@ class Signup < ActivePresenter::Base
 
   def aloha_signup_steps
     account.reload
-    account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name)
+    account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name, true)
     account.account_additional_settings.referring_product_setter(referring_product) if referring_product
     freshid_organisation = JSON.parse(organisation.to_json, object_class: OpenStruct)
     freshid_organisation.alternate_domain = nil
