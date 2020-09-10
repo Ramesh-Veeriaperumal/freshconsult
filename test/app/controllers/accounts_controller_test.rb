@@ -99,9 +99,9 @@ class AccountsControllerTest < ActionController::TestCase
     assert_response 200, resp
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
+    assert_equal account.has_feature?(:untitled_setting_1), false
     assert_equal account.has_feature?(:untitled_setting_3), false
     assert_equal account.has_feature?(:untitled_setting_4), false
-    assert_equal account.has_feature?(:untitled_setting_1), false
   ensure
     Account.find(resp['account_id']).destroy if resp['account_id'].present?
     unstub_signup_calls

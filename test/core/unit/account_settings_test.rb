@@ -1,7 +1,6 @@
 require_relative '../test_helper'
 
 class AccountSettingsTest < ActiveSupport::TestCase
-
   ALLOWED_KEYS = ['internal', 'default', 'feature_dependency'].freeze
 
   def test_validate_account_settings_for_no_additional_keys
