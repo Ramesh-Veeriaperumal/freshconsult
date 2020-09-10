@@ -228,7 +228,7 @@ gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.
 gem 'freshid', git: 'git@github.com:freshdesk/freshid-ruby-client.git', tag: 'v4.0.13'
 gem 'freshid-sdk', git: 'git@github.com:freshdesk/platforms-sdk-ruby.git', tag: '1.1.3', glob: 'gems/freshid-sdk/freshid-sdk.gemspec'
 gem "fluffy", git: 'git@github.com:freshdesk/api-gateway.git', tag: 'v1.0.2', glob: 'clients/fluffy_ruby/src/fluffy.gemspec'
-gem 'central-publisher', git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.19'
+gem 'central-publisher', git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.20'
 gem 'formserv-gem', git: 'git@github.com:freshdesk/formserv-gem.git', tag: 'v0.11.3'
 gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.4'
 gem 'sidekiq_sober', git: 'git@github.com:freshdesk/sidekiq_sober.git', tag: 'v1.0.0'

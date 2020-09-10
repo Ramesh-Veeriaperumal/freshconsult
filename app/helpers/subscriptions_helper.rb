@@ -190,7 +190,7 @@ module SubscriptionsHelper
 
   def fsm_supported_plan?(plan)
     features = PLANS_FEATURES["#{plan.name.downcase}"]
-    Account.current.disable_old_ui_enabled? && (features || []).include?('fsm_option')
+    (features || []).include?('fsm_option')
   end
 
   def previous_plan?(plan)

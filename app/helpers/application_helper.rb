@@ -2088,7 +2088,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def show_sandbox_notification
-    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled? && current_user.is_falcon_pref?
+    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled?
   end
 
   def support_mint_applicable?

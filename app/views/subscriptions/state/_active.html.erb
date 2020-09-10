@@ -285,12 +285,10 @@
       <% unless hide_omnichannel_toggle %>
         <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => false, :show_omni_toggle => false }%>
       <% end %>
-      <% if current_account.disable_old_ui_enabled? %>
-        <% unless hide_omnichannel_toggle %>
-          <span class="vr-line"></span>
-        <% end %>
-        <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+      <% unless hide_omnichannel_toggle %>
+        <span class="vr-line"></span>
       <% end %>
+      <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
     </div>
   <% end %>
     <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription,

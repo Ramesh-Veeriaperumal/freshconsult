@@ -149,7 +149,7 @@ class Account < ActiveRecord::Base
     :cobrowsing => false,
     :threading_without_user_check => false,
     :restricted_helpdesk => false, :enable_multilingual => false,
-    :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
+    :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :skill_based_round_robin => false,
     :advanced_search => false, :advanced_search_bulk_actions => false, :chat => false, :chat_routing => false,
@@ -239,7 +239,8 @@ class Account < ActiveRecord::Base
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false, mailbox_ms365_oauth: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
+    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false
   }.freeze
   
   BLOCK_GRACE_PERIOD = 90.days
