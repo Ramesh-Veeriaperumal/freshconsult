@@ -133,7 +133,7 @@ class Account < ActiveRecord::Base
     :sort_by_customer_response => false, :survey_links => true,
     :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
-    :single_session_per_user => false, :marketplace_app => false, :sandbox_account => false,
+    :single_session_per_user => false, :marketplace_app => false,
     :collaboration => false
   }
 
