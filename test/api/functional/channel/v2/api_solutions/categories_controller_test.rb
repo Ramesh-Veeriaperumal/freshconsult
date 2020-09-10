@@ -65,7 +65,7 @@ module Channel::V2::ApiSolutions
       sample_category = get_category
       get :index, controller_params(id: sample_category.parent_id, allow_language_fallback: 'invalid')
       assert_response 400
-      expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "It should be one of these values: 'true,false'", code: 'invalid_value' }] }
+      expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "Value set is of type String.It should be a/an Boolean", code: 'datatype_mismatch' }] }
       assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
     end
 

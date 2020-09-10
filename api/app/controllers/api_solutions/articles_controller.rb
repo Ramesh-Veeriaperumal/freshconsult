@@ -17,7 +17,7 @@ module ApiSolutions
     before_filter :language_metric_presence
     before_filter :validate_publish_solution_privilege, only: [:update, :create]
     before_filter :sanitize_chat_params, only: [:folder_articles, :search], if: :channel_v2?
-    before_filter :sanitize_prefer_published, only: [:folder_articles, :search]
+    before_filter :sanitize_boolean_params, only: [:folder_articles, :search]
     before_filter :reconstruct_params, only: [:folder_articles], if: :filters_present? && :channel_v2?
     before_filter :validate_omni_filter_params, only: [:folder_articles, :search], if: :channel_v2?
     before_filter :portal_delegator_validation, only: [:folder_articles], if: :channel_v2?
@@ -257,7 +257,7 @@ module ApiSolutions
       end
 
       def before_load_object
-        sanitize_prefer_published
+        sanitize_boolean_params
         if channel_v2?
           sanitize_chat_params
           return unless validate_omni_filter_params
@@ -358,8 +358,9 @@ module ApiSolutions
         params[:tags] = params[:tags].split(',').uniq if params[:tags].present?
       end
 
-      def sanitize_prefer_published
-        params[:prefer_published] = params[:prefer_published].to_bool if params[:prefer_published].present? && (params[:prefer_published] == "true" || params[:prefer_published] == "false")
+      def sanitize_boolean_params
+        params[:prefer_published] = params[:prefer_published].to_bool if boolean_param?(:prefer_published)
+        params[:allow_language_fallback] = params[:allow_language_fallback].to_bool if boolean_param?(:allow_language_fallback)
       end
 
       def filters_present?
