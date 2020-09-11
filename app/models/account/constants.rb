@@ -138,7 +138,7 @@ class Account < ActiveRecord::Base
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false, :portal_cc => false, :personalized_email_replies => false, :agent_collision => false,
+    :gamification_enable => false, :portal_cc => false, :personalized_email_replies => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
     :no_list_view_count_query => false, :client_debugging => false, :collision_socket => false,
     :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
@@ -169,7 +169,6 @@ class Account < ActiveRecord::Base
   FEATURE_NAME_CHANGES = {
     twitter: :advanced_twitter,
     facebook: :advanced_facebook,
-    agent_collision: :collision,
     cascade_dispatchr: :cascade_dispatcher
   }.freeze
 

@@ -127,7 +127,7 @@
       :sandbox: 123
       :call_quality_metrics: 124
       :freshfone_conference: 125
-      :agent_collision: 126
+      :unused_126: 126
       :id_less_tickets: 127
       :no_list_view_count_query: 128
       :saml_unspecified_nameid: 129
