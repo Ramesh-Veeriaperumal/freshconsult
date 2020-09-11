@@ -10,7 +10,6 @@
       - :social_tab
       - :omni_channel
       - :customize_table_view
-      - :public_url_toggle
       - :add_to_response
       - :agent_scope
       - :performance_report
@@ -176,7 +175,6 @@
       - :sla_management_v2
       - :api_v2
       - :add_to_response
-      - :public_url_toggle
       - :social_tab
       - :scenario_automation
       - :customize_table_view
@@ -395,7 +393,6 @@
       - :sla_management_v2
       - :api_v2
       - :add_to_response
-      - :public_url_toggle
       - :social_tab
       - :scenario_automation
       - :customize_table_view

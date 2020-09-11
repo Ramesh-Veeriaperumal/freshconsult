@@ -1,39 +1,35 @@
 
-require './lib/helpdesk/initializers/account_settings'
 class Admin::AccountFeaturesController < ApiApplicationController
   include HelperConcern
   include Fdadmin::FeatureMethods
   include Admin::AccountFeatureConstants
-  include ::AccountSettings
 
   before_filter :validate_query_params, only: ALLOWED_METHOD_FOR_PRIVATE_API
   skip_before_filter :build_object, :load_object, only: ALLOWED_METHOD_FOR_PRIVATE_API
   before_filter :get_feature_type, only: ALLOWED_METHOD_FOR_PRIVATE_API
 
   def create
-    puts "------------- CREATE -------------------------------"
     if Account.current.launched?(:feature_based_settings) && AccountSettings::SettingsConfig[params[:name]]
-      if can_admin_modify_setting?(@feature_name)
-        enable_setting(@feature_name)
+      if Account.current.admin_setting_for_account?(@feature_name)
+        @account.enable_setting(@feature_name)
+        head 204
       end
     else
-      p "param: #{params[:name]}"
-      p "settings: #{AccountSettings::SettingsConfig[params[:name]]}"
-      p "launched: #{Account.current.launched?(:feature_based_settings)}"
-      p "can modify #{can_admin_modify_setting?(@feature_name)}"
       modify_feature :enable
       head 204
     end
   end
 
   def destroy
-    puts "------------- DESTROY -------------------------------"
-    p "param: #{params[:name]}"
-    p "settings: #{AccountSettings::SettingsConfig[params[:name]]}"
-    p "launched: #{Account.current.launched?(:feature_based_settings)}"
-    p "can modify #{can_admin_modify_setting?(@feature_name)}"
-    modify_feature :disable
-    head 204
+    if Account.current.launched?(:feature_based_settings) && AccountSettings::SettingsConfig[params[:name]]
+      if Account.current.admin_setting_for_account?(@feature_name)
+        @account.disable_setting(@feature_name)
+        head 204
+      end
+    else
+      modify_feature :disable
+      head 204
+    end
   end
 
   private

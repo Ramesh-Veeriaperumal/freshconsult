@@ -1107,7 +1107,15 @@ class Account < ActiveRecord::Base
     def update_features(features)
       if features.present?
         features.each do |name, value|
-          AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+          if launched?(:feature_based_settings) && AccountSettings::SettingsConfig[name]
+            # should be changed to a new method for enabling and disabling settings temporarily without making db calls
+            # like the set_feature method.
+            if admin_setting_for_account?(name.to_sym)
+              AccountsHelper.value_to_boolean(value) ? enable_setting(name.to_sym) : disable_setting(name.to_sym)
+            end
+          else
+            AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+          end
         end
       end
     end

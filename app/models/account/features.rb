@@ -65,7 +65,7 @@ class Account < ActiveRecord::Base
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
-    :canned_forms, :customize_table_view, :public_url_toggle, :solutions_templates,
+    :canned_forms, :customize_table_view, :solutions_templates,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
@@ -79,7 +79,8 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal
+    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics,
+    :basic_settings_feature
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -463,12 +464,18 @@ class Account < ActiveRecord::Base
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
   def enable_setting(setting)
     launch(setting) if LP_FEATURES.include?(setting)
-    add_feature(setting) if BITMAP_FEATURES.include?(setting)
+    add_feature(setting) if BITMAP_FEATURES.include?(setting) || ADMIN_CUSTOMER_PORTAL_FEATURES.include?(setting)
+  end
+
+  def admin_setting_for_account?(setting)
+    return true unless launched?(:feature_based_settings)
+    settings_hash = AccountSettings::SettingsConfig[setting]
+    settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end
 
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
   def disable_setting(setting)
     rollback(setting) if LP_FEATURES.include?(setting)
-    revoke_feature(setting) if BITMAP_FEATURES.include?(setting)
+    revoke_feature(setting) if BITMAP_FEATURES.include?(setting) || ADMIN_CUSTOMER_PORTAL_FEATURES.include?(setting)
   end
 end
