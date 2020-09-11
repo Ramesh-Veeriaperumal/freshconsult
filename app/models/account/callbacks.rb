@@ -139,7 +139,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_fresh_connect
-    ::Freshconnect::RegisterFreshconnect.perform_async if freshconnect_signup_allowed?
+    ::Freshconnect::RegisterFreshconnect.perform_in(30.seconds.from_now) if freshconnect_signup_allowed?
   end
 
   def create_rts_account
@@ -425,6 +425,7 @@ class Account < ActiveRecord::Base
       currency = fetch_currency
       self.build_subscription(plan: @plan, next_renewal_at: @plan_start, creditcard: @creditcard, address: @address, affiliate: @affiliate, subscription_currency_id: currency)
       subscription.set_billing_params(currency)
+      subscription.convert_to_free if enable_sprout_trial_onboarding?
     end
 
     def fetch_currency

@@ -64,7 +64,7 @@ class PrecreatedSignup < ActivePresenter::Base
   def assign_freshid_v2_org_and_account
     account.suppress_freshid_calls = true
     account.launch_freshid_with_omnibar(true) if freshid_v2_signup?
-    account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name)
+    account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name, true)
     freshid_organisation = JSON.parse(organisation.to_json, object_class: OpenStruct)
     freshid_organisation.alternate_domain = nil
     account.organisation = Organisation.find_or_create_from_freshid_org(freshid_organisation)
@@ -75,6 +75,10 @@ class PrecreatedSignup < ActivePresenter::Base
   def update_subscription
     if aloha_signup && bundle_id && bundle_name
       account.subscription.subscription_plan = SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_20]).first
+      account.subscription.save
+    elsif account.enable_sprout_trial_onboarding?
+      account.subscription.subscription_plan = SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_20]).first
+      account.subscription.convert_to_free
       account.subscription.save
     end
   end
