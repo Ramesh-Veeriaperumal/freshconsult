@@ -168,7 +168,7 @@
       :disable_old_ui: 164
       :omni_channel_routing: 165
       :segments: 166
-      :limit_mobihelp_results: 167
+      :unused_167: 167
       :ecommerce: 168
       :es_v2_writes: 169
       :fluffy_higher_plan3: 170
@@ -461,7 +461,6 @@
   :collision_socket: false
   :resource_rate_limit: false
   :domain_restricted_access: false
-  :limit_mobihelp_results: false
   :ecommerce: false
   :freshfone_call_metrics: false
   :cobrowsing: false
