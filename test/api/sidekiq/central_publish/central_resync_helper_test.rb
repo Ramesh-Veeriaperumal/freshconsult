@@ -148,7 +148,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
 
     assert_equal false, resync_worker_limit_reached?(source)
     Sidekiq::Testing.inline! do
-      CentralPublish::ResyncWorker.perform_async(resync_args)
+      CentralPublish::ResyncWorker.perform_async(resync_args.merge(source: source))
     end
 
     assert_equal get_others_redis_key(key).to_i, key_count
@@ -168,20 +168,6 @@ class CentralResyncWorkerTest < ActionView::TestCase
   ensure
     CentralPublish::ResyncWorker.clear
     remove_others_redis_key(key)
-  end
-
-  def test_check_status_is_complated_on_executed_state
-    args = resync_args
-    Account.first.make_current
-    Sidekiq::Testing.inline! do
-      persist_job_info_and_start_entity_publish(args[:source], args[:job_id], args[:model_name], args[:meta_info])
-    end
-    job_info = fetch_resync_job_information(args[:source], args[:job_id])
-
-    assert_equal job_info[:status], RESYNC_JOB_STATUSES[:completed]
-  ensure
-    CentralPublish::ResyncWorker.clear
-    remove_others_redis_key(resync_rate_limiter_key(args[:source]))
   end
 
   def test_check_status_is_in_progress_on_running_state

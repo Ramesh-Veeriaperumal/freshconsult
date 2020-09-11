@@ -58,13 +58,13 @@ defaults: &defaults
     jwt_secret: ["f94EEa09B3dde55964AB1793021154f0"]
   analytics:
     auth_type: "jwt"
-    jwt_secret: ["dummy"]
+    jwt_secret: ["0bc477b3c1df7c17be0999c247907b15"]
   freshdesk:
     auth_type: "jwt"
-    jwt_secret: ["dummy"]
+    jwt_secret: ["0bc477b3c1df7c17be0999c247907b16"]
   search:
     auth_type: "jwt"
-    jwt_secret: ["dummy"]
+    jwt_secret: ["0bc477b3c1df7c17be0999c247907b17"]
 
 development:
   <<: *defaults
