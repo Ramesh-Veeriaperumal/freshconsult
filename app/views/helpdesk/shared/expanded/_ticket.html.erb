@@ -34,7 +34,7 @@
 					<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket, "data-pjax" => "#body-container" ) %>
 				<% end %>
 
-				<% if (feature?(:agent_collision) || feature?(:collision)) %>
+				<% if feature?(:collision) %>
 					<div class="index-collision">
 						<div rel="view_collision" id="tickets:<%=current_account.id%>:viewers:<%=ticket.id%>"
 							class="symbols-ac-viewingon-listview" data-ticket-id="<%= ticket.display_id %>">

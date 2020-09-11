@@ -2,7 +2,6 @@ module AccountHelper
   include Redis::RedisKeys
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
-    ChargeBee::Customer.stubs(:update).returns(true)
     subscription = Subscription.where("state != 'suspended'").first
     @acc = Account.find_by_id(subscription.account_id) unless subscription.nil?
     unless @acc.nil?
@@ -20,8 +19,6 @@ module AccountHelper
     update_currency
     @account = @acc
     @acc
-  ensure
-    ChargeBee::Customer.unstub(:update)
   end
 
   def create_test_billing_acccount
@@ -32,7 +29,6 @@ module AccountHelper
   end
 
   def create_new_account(domain = "localhost", user_email = Helpdesk::EMAIL[:sample_email])
-    ChargeBee::Customer.stubs(:update).returns(true)
     Account.reset_current_account
     signup = Signup.new(  
       :account_name => 'Test Account',
@@ -54,8 +50,6 @@ module AccountHelper
     @acc.reload
     create_dummy_customer
     @acc
-  ensure
-    ChargeBee::Customer.unstub(:update)
   end
 
   def create_dummy_customer
@@ -132,12 +126,9 @@ module AccountHelper
       
     Resque.inline = true 
     Billing::Subscription.any_instance.stubs(:create_subscription).returns(true)
-    ChargeBee::Customer.stubs(:update).returns(true)
     post :new_signup_free, signup_params
     Resque.inline = false
     Billing::Subscription.any_instance.unstub(:create_subscription)
-  ensure
-    ChargeBee::Customer.unstub(:update)
   end
 
   def create_enable_multilingual_feature

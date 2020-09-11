@@ -2,7 +2,7 @@ module CronWebhooks
   class TrafficSwitchFetchAccounts < CronWebhooks::CronWebhookWorker
     sidekiq_options queue: :cron_traffic_switch_fetch_accounts, retry: 0, dead: true, failures: :exhausted
 
-    S3_BUCKET_NAME = 'log-bucket-production'.freeze
+    S3_BUCKET_NAME = 'fd-haproxy'.freeze
     S3_BUCKET_PATH = "haproxy-domains/#{ENV['AWS_REGION']}".freeze
 
     def perform(args)

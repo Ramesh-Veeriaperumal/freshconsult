@@ -221,7 +221,7 @@ module Helpdesk::DashboardHelper
     if current_user.privilege?(:admin_tasks)
       options << default_dashboard[3]
     elsif current_user.privilege?(:view_reports)
-      options << default_dashboard[2] if current_account.launched?(:supervisor_dashboard)
+      options << default_dashboard[2]
     else
       options << default_dashboard[1]
     end

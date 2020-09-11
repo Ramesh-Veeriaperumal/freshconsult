@@ -82,7 +82,8 @@ module Solution::Constants
 
   INTERACTION_SOURCE = {
     portal: 1,
-    widget: 2
+    widget: 2,
+    freshchat: 3
   }.freeze
 
   HUMANIZE_STATS = {
