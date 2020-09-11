@@ -116,7 +116,7 @@
       :redis_display_id: 112
       :chat_enable: 113
       :survey_links: 114
-      :tags_filter_reporting: 115
+      :unused_115: 115
       :personalized_email_replies: 116
       :anonymous_tickets: 117
       :client_debugging: 118
@@ -159,7 +159,7 @@
       :freshfone_onboarding: 155
       :archive_tickets: 156
       :freshfone_custom_forwarding: 157
-      :tokenize_emoji: 158
+      :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
       :countv2_reads: 161
@@ -216,13 +216,13 @@
       :unused_212: 212
       :XX_unused_213: 213
       :updated_twilio_client: 214
-      :count_es_reads: 215
+      :unused_215: 215
       :reports_regenerate_data: 216
       :seafarers_1: 217
-      :sandbox_account: 218
+      :unused_218: 218
       :portal_cc: 219
       :disable_rr_toggle: 220
-      :count_es_writes: 221
+      :unused_221: 221
       :XX_unused_222: 222
       :analytics_landing_search: 223
       :analytics_landing_data_schedules: 224
@@ -404,6 +404,8 @@
       :solutions_agent_metrics: 400
       :forums_agent_portal: 401
       :solutions_agent_portal: 402
+      :fetch_ticket_from_ref_first: 403
+      :skip_ticket_threading: 404
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -423,7 +425,6 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
-  :tags_filter_reporting: false
   :personalized_email_replies: false
   :reply_to_based_tickets: true
   :freshfone: false
@@ -477,7 +478,6 @@
   :chat: false
   :freshreports_analytics: false
   :disable_old_reports: false
-  :tokenize_emoji: false
   :report_field_regenerate: false
   :reports_regenerate_data: false
   :saml_old_issuer: false
@@ -490,11 +490,8 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :updated_twilio_client: false
-  :count_es_reads: false
-  :sandbox_account: false
   :portal_cc: false
   :disable_rr_toggle: false
-  :count_es_writes: false
   :social_revamp: true
   :activity_revamp: true
   :hide_first_response_due: false
@@ -512,3 +509,5 @@
   :solutions_agent_metrics: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
+  :fetch_ticket_from_ref_first: false
+  :skip_ticket_threading: false

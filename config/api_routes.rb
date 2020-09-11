@@ -54,9 +54,10 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :security, controller: 'api_security', only: [:show] do
+      resources :security, controller: 'api_security' do
         collection do
           get :show
+          put :update
         end
       end
     end
@@ -1037,10 +1038,14 @@ Helpkit::Application.routes.draw do
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
     get '/solutions/categories/:id/folders', to: 'channel/v2/api_solutions/folders#category_folders'
-    get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
     get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
-    get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
+    get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
+    get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
+    put '/solutions/articles/:id/thumbs_up', to: 'channel/v2/api_solutions/articles#thumbs_up'
+    put '/solutions/articles/:id/thumbs_down', to: 'channel/v2/api_solutions/articles#thumbs_down'
+    put 'solutions/articles/:id/hit', to: 'channel/v2/api_solutions/articles#hit'
+    
     get '/solutions/search', to: 'channel/v2/api_solutions/articles#search'
   end
 

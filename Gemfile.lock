@@ -169,8 +169,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 58e2bb3403ec79406531100d3b28a1e65492e337
-  tag: v2.0.19
+  revision: 28f5896e537914ebcd8f4ba5ff3aff2da3dd1d9e
+  tag: v2.0.20
   specs:
     central-publisher (2.0.19)
       active_record_shards (>= 3.2.0)

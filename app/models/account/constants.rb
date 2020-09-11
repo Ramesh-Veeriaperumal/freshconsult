@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
                           elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 agent-hermes
                           attachment euattachment eucattachment ausattachment indattachment cobrowsing migrations
                           migrations-eu migrations-au migrations-ind authz authz-euc authz-ind authz-au ipaas-tool
-                          ipaas-app ipaas-ui analytics-export) + FreshopsSubdomains + PartnerSubdomains
+                          ipaas-app ipaas-ui analytics-export mars-us mars-euc mars-au mars-ind) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails, :marketplace ] },
@@ -126,15 +126,13 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
     :bi_reports => false, :social_revamp => true,
-    :tokenize_emoji => false,
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false, :reports_regenerate_data => false,
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => true, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
-    :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
-    :single_session_per_user => false, :marketplace_app => false, :sandbox_account => false,
+    :single_session_per_user => false, :marketplace_app => false,
     :collaboration => false
   }
 
@@ -150,7 +148,7 @@ class Account < ActiveRecord::Base
     :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
-    :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
+    :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
     :advanced_search => false, :advanced_search_bulk_actions => false, :chat => false, :chat_routing => false,
@@ -202,7 +200,7 @@ class Account < ActiveRecord::Base
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
     sha256_enabled: false, auto_ticket_export: false, select_all: false,
-    ticket_contact_export: false, custom_apps: false,
+    ticket_contact_export: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
     freshid: false,
@@ -231,7 +229,7 @@ class Account < ActiveRecord::Base
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
-    requester_widget_timeline: false,
+    requester_widget_timeline: false, sprout_trial_onboarding: false,
     enable_secure_login_check: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
@@ -241,9 +239,10 @@ class Account < ActiveRecord::Base
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false, mailbox_ms365_oauth: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
+    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false
   }.freeze
-  
+
   BLOCK_GRACE_PERIOD = 90.days
 
   ACCOUNT_TYPES = {

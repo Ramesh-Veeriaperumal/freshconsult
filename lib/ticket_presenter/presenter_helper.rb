@@ -15,61 +15,63 @@ module TicketPresenter::PresenterHelper
   DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at, :first_response_time, :first_assigned_at].freeze
   DONT_CARE_VALUE = '*'.freeze
 
+  PRE_COMPUTE_FIELDS = [
+    [:id, :id],
+    [:display_id, :display_id],
+    [:account_id, :account_id],
+    [:responder_id, :responder_id],
+    [:group_id, :group_id],
+    [:status_hash, :status],
+    [:priority_hash, :priority],
+    [:ticket_type, :ticket_type],
+    [:source_hash, :source],
+    [:requester_id, :requester_id],
+    [:product_id, :product_id],
+    [:company_id, :company_id],
+    [:sla_policy_id, :sla_policy_id],
+    [:isescalated, :is_escalated],
+    [:fr_escalated, :fr_escalated],
+    [:escalation_level, :resolution_escalation_level],
+    [:sla_response_reminded, :response_reminded],
+    [:sla_resolution_reminded, :resolution_reminded],
+    [:resolution_time_by_bhrs, :time_to_resolution_in_bhrs],
+    [:resolution_time_by_chrs, :time_to_resolution_in_chrs],
+    [:inbound_count, :inbound_count],
+    [:first_resp_time_by_bhrs, :first_response_by_bhrs],
+    [:archive, :archive],
+    [:internal_agent_id, :internal_agent_id],
+    [:internal_group_id, :internal_group_id],
+    [:outbound_email?, :outbound_email],
+    [:watchers, :watchers],
+    [:urgent, :urgent],
+    [:spam, :spam],
+    [:trained, :trained],
+    [:to_emails, :to_emails],
+    [:email_config_id, :email_config_id],
+    [:deleted, :deleted],
+    [:group_users, :group_users],
+    [:import_id, :import_id],
+    [:on_state_time, :on_state_time],
+    [:source_additional_info_hash, :source_additional_info],
+    [:status_stop_sla_timer, :status_stop_sla_timer],
+    [:status_deleted, :status_deleted]
+  ].freeze
+
   included do |base|
     base.include InstanceMethods
 
     acts_as_api
 
-    api_accessible :central_publish do |at|
-      at.add :id
-      at.add :display_id
-      at.add :account_id
-      at.add :responder_id
-      at.add :group_id
-      at.add :status_hash, as: :status
-      at.add :priority_hash, as: :priority
-      at.add :ticket_type
-      at.add :source_hash, as: :source
-      at.add :requester_id
+    # This is added to send the ticket properties at the time of commit or in otherword to avoid fetching latest data updated by some other thread.
+    api_accessible :central_publish_preload do |at|
+      PRE_COMPUTE_FIELDS.each do |key, key_as|
+        at.add key, as: key_as
+      end
       at.add :sl_skill_id, as: :skill_id, if: proc { Account.current.skill_based_round_robin_enabled? }
-      at.add :central_custom_fields_hash, as: :custom_fields
-      at.add :product_id
-      at.add :company_id
-      at.add :sla_policy_id
-      at.add :association_hash, as: :associates
-      at.add :associates_rdb
-      at.add :isescalated, as: :is_escalated
-      at.add :fr_escalated
       at.add :nr_escalated, if: proc { Account.current.next_response_sla_enabled? }
-      at.add :escalation_level, as: :resolution_escalation_level
-      at.add :sla_response_reminded, as: :response_reminded
-      at.add :sla_resolution_reminded, as: :resolution_reminded
       at.add :nr_reminded, as: :next_response_reminded, if: proc { Account.current.next_response_sla_enabled? }
-      at.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs
-      at.add :resolution_time_by_chrs, as: :time_to_resolution_in_chrs
-      at.add :inbound_count
-      at.add :first_resp_time_by_bhrs, as: :first_response_by_bhrs
-      at.add :archive
-      at.add :internal_agent_id
-      at.add :internal_group_id
-      at.add :outbound_email?, as: :outbound_email
-      at.add :subject
-      at.add proc { |x| x.description }, as: :description_text
-      at.add :description_html
-      at.add :watchers
-      at.add :urgent
-      at.add :spam
-      at.add :trained
       at.add proc { |x| x.utc_format(x.parse_to_date_time(x.frDueBy)) }, as: :fr_due_by
       at.add proc { |x| x.utc_format(x.parse_to_date_time(x.nr_due_by)) }, as: :nr_due_by, if: proc { Account.current.next_response_sla_enabled? }
-      at.add :to_emails
-      at.add :email_config_id
-      at.add :deleted
-      at.add :group_users
-      at.add :import_id
-      at.add :on_state_time
-      at.add :status_stop_sla_timer
-      at.add :status_deleted
       at.add proc { |x| x.attachments.map(&:id) }, as: :attachment_ids
       at.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
       REPORT_FIELDS.each do |key|
@@ -81,7 +83,15 @@ module TicketPresenter::PresenterHelper
       EMAIL_KEYS.each do |key|
         at.add proc { |x| x.cc_email_hash.try(:[], key) }, as: key
       end
-      at.add :source_additional_info_hash, as: :source_additional_info
+    end
+
+    api_accessible :central_publish, extend: :central_publish_preload do |at|
+      at.add :central_custom_fields_hash, as: :custom_fields
+      at.add :association_hash, as: :associates
+      at.add :associates_rdb
+      at.add :subject
+      at.add proc { |x| x.description }, as: :description_text
+      at.add :description_html
     end
 
     api_accessible :central_publish_associations do |at|

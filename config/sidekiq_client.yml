@@ -366,6 +366,7 @@ defaults: &defaults
     - [cron_freshfone]
     - [cron_meta_data_check]
     - [cron_enable_omniroute_for_new_accounts]
+    - [cron_omni_accounts_monitoring_internal_reports]
     - [custom_translations_update_survey_status]
     - [kbase_article_versions_worker]
     - [kbase_article_versions_migration_worker]

@@ -11,7 +11,7 @@ module Ember
       include Redis::HashMethods
 
       def create
-        disable_old_ui_enabled? ? (add_feature cname_params[:name].to_sym) : @item.save!
+        add_feature cname_params[:name].to_sym
         head 204
       rescue Exception => e
         Rails.logger.error("Exception while creating advanced ticketing app, account::#{current_account.id}, message::#{e.message}, backtrace::#{e.backtrace.join('\n')}")
@@ -19,7 +19,7 @@ module Ember
       end
 
       def destroy
-        remove_feature params[:id].to_sym if disable_old_ui_enabled?
+        remove_feature params[:id].to_sym
         @item.destroy if @item
         head 204
       rescue Exception => e
@@ -44,26 +44,15 @@ module Ember
       end
 
       def load_object
-        log_and_render_404 unless (@item = scoper.with_name(params[:id]).first) || disable_old_ui_enabled?
-      end
-
-      def disable_old_ui_enabled?
-        current_account.disable_old_ui_enabled?
-      end
-
-      def load_application_by_name(app_name)
-        @application = Integrations::Application.available_apps(current_account.id).find_by_name(app_name)
+        @item = scoper.with_name(params[:id]).first
       end
 
       def validate_params
         return unless validate_body_params
-        load_application_by_name(cname_params[:name])
-        return unless validate_delegator(@application, { feature: cname_params[:name] })
+        return unless validate_delegator(nil, { feature: cname_params[:name] })
       end
 
       def build_object
-        return if disable_old_ui_enabled?
-        @item = Integrations::InstalledApplication.new({account: current_account, application: @application})
       end
 
       def insights_from_s3

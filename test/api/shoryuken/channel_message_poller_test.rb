@@ -19,6 +19,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   def teardown
     cleanup_twitter_handles(@account)
+    Faraday::Connection.any_instance.unstub(:post)
   end
 
   def setup
@@ -29,6 +30,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     @stream = @handle.default_stream
     @fb_ticket = create_ticket_from_fb_post
     @fb_page = @fb_ticket.fb_post.facebook_page
+    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
   end
 
   def test_twitter_dm_convert_as_ticket
@@ -78,6 +80,24 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_not_nil tweet
     assert_equal tweet[:tweetable_id], ticket.id
     assert_equal ticket.description, payload[:description]
+  end
+
+  def test_twitter_mention_convert_as_ticket_post_reply_command_via_sidekiq
+    Account.any_instance.stubs(:channel_command_reply_to_sidekiq_enabled?).returns(true)
+    Channel::CommandWorker.jobs.clear
+    payload, command_payload = twitter_create_ticket_command('mention')
+    push_to_channel(command_payload)
+
+    ticket = @account.tickets.where(subject: payload[:subject]).first
+    tweet = ticket.tweet
+
+    assert_not_nil tweet
+    assert_equal tweet[:tweetable_id], ticket.id
+    assert_equal ticket.description, payload[:description]
+    assert_equal 1, Channel::CommandWorker.jobs.size
+  ensure
+    Channel::CommandWorker.jobs.clear
+    Account.any_instance.unstub(:channel_command_reply_to_sidekiq_enabled?)
   end
 
   def test_twitter_mention_convert_as_ticket_and_update_twitter_contact_fields
