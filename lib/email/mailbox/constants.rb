@@ -55,10 +55,11 @@ module Email::Mailbox::Constants
   OUTLOOK_OAUTH_URL = '/auth/outlook?origin=id%3D{{account_id}}%26r_key%3D{{r_key}}'.freeze
 
   EMAIL_SERVER = [
-    ['gmail', 'google_oauth2', 'google_oauth2'],
-    ['office365', 'outlook', 'outlook']
+    ['gmail', 'google_oauth2', 'google_oauth2', 'GMAIL'],
+    ['office365', 'outlook', 'outlook', 'O365']
   ].freeze
 
   APP_NAME_BY_SERVER_KEY = Hash[*EMAIL_SERVER.map { |i| [i[0], i[1]] }.flatten].freeze
   PROVIDER_NAME_BY_SERVER_KEY = Hash[*EMAIL_SERVER.map { |i| [i[0], i[2]] }.flatten].freeze
+  IMAP_PROVIDER_NAME_BY_SERVER_KEY = Hash[*EMAIL_SERVER.map { |i| [i[0], i[3]] }.flatten].freeze
 end

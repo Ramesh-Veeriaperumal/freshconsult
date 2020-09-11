@@ -458,6 +458,22 @@ class ArchiveTicketTest < ActiveSupport::TestCase
     end
   end
 
+  def test_resolution_status_for_service_task
+    @account.add_feature(:field_service_management)
+    enable_archive_tickets do
+      begin
+        perform_fsm_operations
+        fsm_ticket = create_service_task_ticket
+        convert_ticket_to_archive(fsm_ticket)
+        assert_equal '', fsm_ticket.resolution_status
+      ensure
+        fsm_ticket.destroy
+        cleanup_fsm
+        @account.revoke_feature(:field_service_management)
+      end
+    end
+  end
+
   def test_archive_ticket_esv2_json_non_boolean_flexifields_with_integer_returns_original_value
     @account.rollback(:custom_fields_search)
     email = Faker::Internet.email

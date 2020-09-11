@@ -235,6 +235,10 @@ module CronWebhooks::Constants
     suspended_account_deletion: {
       class_name: 'CronWebhooks::SuspendAccountWebhookWorker',
       semaphore_expiry: 1.hour
+    },
+    omni_accounts_monitoring_internal_reports: {
+      class_name: 'CronWebhooks::OmniAccountsMonitoringInternalReportsWorker',
+      semaphore_expiry: 1.hour
     }
   }.freeze
 

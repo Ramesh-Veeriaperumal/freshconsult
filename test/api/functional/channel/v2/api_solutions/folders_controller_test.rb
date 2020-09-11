@@ -213,8 +213,32 @@ module Channel::V2::ApiSolutions
         create_folder_translation(language_object.to_key)
         get :folder_filter, controller_params(version: 'channel', language: language, allow_language_fallback: 'incorrect')
         assert_response 400
-        expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "It should be one of these values: 'true,false'", code: 'invalid_value' }] }
+        expected ={:description=>"Validation failed",
+          :errors=>
+           [{:field=>"allow_language_fallback",
+             :message=>"Value set is of type String.It should be a/an Boolean",
+             :code=>"datatype_mismatch"}]}
         assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+      end
+    end
+  
+    def test_allow_language_for_category_folders
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        sample_category_meta = get_category_with_folders
+        get :category_folders, controller_params(id: sample_category_meta.id, allow_language_fallback: 'true')
+        assert_response 200
+      end
+    end
+
+    def test_invalid_allow_language_fallback_for_category_folders
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        sample_category_meta = get_category_with_folders
+        get :category_folders, controller_params(id: sample_category_meta.id, allow_language_fallback: 'invalid')
+        assert_response 400
+        results = parse_response(@response.body)
+        assert_equal results, { 'description' => 'Validation failed', 'errors' => [{ 'field' => 'allow_language_fallback', 'message' => 'Value set is of type String.It should be a/an Boolean', 'code' => 'datatype_mismatch' }] }
       end
     end
   end

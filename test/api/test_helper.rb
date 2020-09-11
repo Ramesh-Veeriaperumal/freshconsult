@@ -45,7 +45,6 @@ class ActionController::TestCase
     Helpdesk::Attachment.any_instance.stubs(:save_attached_files).returns(true)
     Helpdesk::Attachment.any_instance.stubs(:prepare_for_destroy).returns(true)
     Helpdesk::Attachment.any_instance.stubs(:destroy_attached_files).returns(true)
-
     #Stub all memcache calls
     Dalli::Client.any_instance.stubs(:get).returns(nil)
     Dalli::Client.any_instance.stubs(:delete).returns(true)
@@ -65,7 +64,6 @@ class ActionController::TestCase
     super
 
     Rails.logger.debug "END #{@test_name}"
-
     clear_instance_variables
   end
   # ActiveRecord::Base.logger.level = 1
@@ -95,7 +93,6 @@ class ActionDispatch::IntegrationTest
     set_key(account_key, 500, nil)
     set_key(default_key, 400, nil)
     @account.make_current
-
     @account.reputation = 1
     @account.save
     set_key(plan_key(@account.subscription.subscription_plan_id), 200, nil)
@@ -110,7 +107,6 @@ class ActionDispatch::IntegrationTest
   def teardown
     reconsider_gc_deferment
     super
-
     Rails.logger.debug "END #{@test_name}"
 
     clear_instance_variables
