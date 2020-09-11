@@ -64,10 +64,13 @@ class CentralResyncWorkerTest < ActionView::TestCase
 
   def test_execute_worker_and_observe_errors
     CentralPublish::ResyncWorker.clear
+    CentralPublish::ResyncWorker.any_instance.stubs(:sync_entity).returns(true)
     Sidekiq::Testing.inline! do
       CentralPublish::ResyncWorker.perform_async(resync_args)
     end
     assert_equal CentralPublish::ResyncWorker.jobs.size, 0
+  ensure
+    CentralPublish::ResyncWorker.any_instance.unstub(:sync_entity)
   end
 
   def test_worker_limit_on_changing_redis_key
@@ -127,6 +130,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     source = Faker::Lorem.word
     key = resync_rate_limiter_key(source)
     key_count = get_others_redis_key(key).to_i
+    CentralPublish::ResyncWorker.any_instance.stubs(:sync_entity).returns(true)
     assert_equal key_count, 0
     assert_equal false, resync_worker_limit_reached?(source)
     Sidekiq::Testing.inline! do
@@ -137,6 +141,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     assert_equal key_count, 1
     assert_equal get_others_redis_key(key).to_i, 0
   ensure
+    CentralPublish::ResyncWorker.any_instance.unstub(:sync_entity)
     CentralPublish::ResyncWorker.clear
     remove_others_redis_key(key)
   end
@@ -146,6 +151,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
     key = resync_rate_limiter_key(source)
     key_count = get_others_redis_key(key).to_i
 
+    CentralPublish::ResyncWorker.any_instance.stubs(:sync_entity).returns(true)
     assert_equal false, resync_worker_limit_reached?(source)
     Sidekiq::Testing.inline! do
       CentralPublish::ResyncWorker.perform_async(resync_args.merge(source: source))
@@ -153,6 +159,7 @@ class CentralResyncWorkerTest < ActionView::TestCase
 
     assert_equal get_others_redis_key(key).to_i, key_count
   ensure
+    CentralPublish::ResyncWorker.any_instance.unstub(:sync_entity)
     CentralPublish::ResyncWorker.clear
     remove_others_redis_key(key)
   end
@@ -168,6 +175,21 @@ class CentralResyncWorkerTest < ActionView::TestCase
   ensure
     CentralPublish::ResyncWorker.clear
     remove_others_redis_key(key)
+  end
+
+  def test_check_status_is_complated_on_executed_state
+    args = resync_args
+    CentralPublish::ResyncWorker.any_instance.stubs(:sync_entity).returns(true)
+    Sidekiq::Testing.inline! do
+      persist_job_info_and_start_entity_publish(args[:source], args[:job_id], args[:model_name], args[:meta_info])
+    end
+    job_info = fetch_resync_job_information(args[:source], args[:job_id])
+
+    assert_equal job_info[:status], RESYNC_JOB_STATUSES[:completed]
+  ensure
+    CentralPublish::ResyncWorker.any_instance.unstub(:sync_entity)
+    CentralPublish::ResyncWorker.clear
+    remove_others_redis_key(resync_rate_limiter_key(args[:source]))
   end
 
   def test_check_status_is_in_progress_on_running_state
