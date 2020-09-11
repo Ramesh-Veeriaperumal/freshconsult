@@ -50,9 +50,6 @@ module JwtTestHelper
 
   def generate_freddy_jwt(source_name)
     payload = { enc_payload: { 'source' => source_name, 'timestamp' => Time.now.iso8601 } }
-    puts "payload #{payload.inspect}"
-    puts "channel api-config #{CHANNEL_API_CONFIG.inspect}"
-    puts "analytics-secret #{CHANNEL_API_CONFIG[source_name.to_sym].inspect}"
     JWT.encode payload, CHANNEL_API_CONFIG[source_name.to_sym][:jwt_secret][0], 'HS256', source: source_name
   end
 
