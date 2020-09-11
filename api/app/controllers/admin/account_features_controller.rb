@@ -1,4 +1,3 @@
-
 class Admin::AccountFeaturesController < ApiApplicationController
   include HelperConcern
   include Fdadmin::FeatureMethods
@@ -9,8 +8,8 @@ class Admin::AccountFeaturesController < ApiApplicationController
   before_filter :get_feature_type, only: ALLOWED_METHOD_FOR_PRIVATE_API
 
   def create
-    if Account.current.launched?(:feature_based_settings) && AccountSettings::SettingsConfig[params[:name]]
-      if Account.current.admin_setting_for_account?(@feature_name)
+    if @account.launched?(:feature_based_settings) && AccountSettings::SettingsConfig[params[:name]]
+      if @account.admin_setting_for_account?(@feature_name)
         @account.enable_setting(@feature_name)
         head 204
       end
@@ -21,8 +20,8 @@ class Admin::AccountFeaturesController < ApiApplicationController
   end
 
   def destroy
-    if Account.current.launched?(:feature_based_settings) && AccountSettings::SettingsConfig[params[:name]]
-      if Account.current.admin_setting_for_account?(@feature_name)
+    if @account.launched?(:feature_based_settings) && AccountSettings::SettingsConfig[params[:name]]
+      if @account.admin_setting_for_account?(@feature_name)
         @account.disable_setting(@feature_name)
         head 204
       end
@@ -35,9 +34,7 @@ class Admin::AccountFeaturesController < ApiApplicationController
   private
 
     def modify_feature(method_type)
-      p @feature_type
       @feature_type.each do |type|
-        puts "#{method_type}_#{type}_feature #{@feature_name}"
         safe_send(:"#{method_type}_#{type}_feature", @feature_name)
       end
     end
