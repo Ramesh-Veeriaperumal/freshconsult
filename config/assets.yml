@@ -558,6 +558,7 @@ javascripts:
     - public/javascripts/cti/plugin/ticket_search.js
 
   cti_client:
+    - public/javascripts/cti/cti_end_call_form.js
     - public/javascripts/frameworks/plugins/jquery.popupbox.js
     - public/javascripts/cti/freshdesk_crm_events.js
     - public/javascripts/cti/popup.js
