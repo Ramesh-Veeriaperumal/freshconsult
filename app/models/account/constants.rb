@@ -127,7 +127,7 @@ class Account < ActiveRecord::Base
   TEMPORARY_FEATURES = {
     :bi_reports => false, :social_revamp => true,
     :custom_dashboard => false,
-    :report_field_regenerate => false, :reports_regenerate_data => false,
+    :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => true, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,

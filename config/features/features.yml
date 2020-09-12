@@ -217,7 +217,7 @@
       :XX_unused_213: 213
       :unused_214: 214
       :unused_215: 215
-      :reports_regenerate_data: 216
+      :unused_216: 216
       :seafarers_1: 217
       :unused_218: 218
       :portal_cc: 219
@@ -466,7 +466,6 @@
   :freshreports_analytics: false
   :disable_old_reports: false
   :report_field_regenerate: false
-  :reports_regenerate_data: false
   :saml_old_issuer: false
   :spam_dynamo: true
   :es_multilang_solutions: false
