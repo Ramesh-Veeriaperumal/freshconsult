@@ -7500,7 +7500,7 @@ en:
         domain: Account Domain
         account: Account Fields
         contact: Contact Fields
-        domain_info: 'Enter your Freshworks CRM domain without https. Ex: example.freshworks.com'
+        domain_info: 'Enter your Freshworks CRM domain without https. Ex: example.freshworks.com or example.myfreshworks.com'
       helptext: >-
         <h4>Freshworks CRM Integration Help</h4><p><br/> Once you enable this
         integration, your agents can access Freshworks CRM contact information right

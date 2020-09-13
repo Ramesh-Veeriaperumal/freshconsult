@@ -27,7 +27,7 @@
         </label>
 
         <div class="fields">
-          <%= construct_ui_element :configs, "domain", {:type => :text, :required => true, :label => "integrations.freshworkscrm.form.domain", :rel => "ghostwriter", :validator_type => "domain_validator"}, domain.to_s %>
+          <%= construct_ui_element :configs, "domain", {:type => :text, :required => true, :label => "integrations.freshworkscrm.form.domain", :rel => "ghostwriter", :validator_type => "domain_name_validator"}, domain.to_s %>
           <div class="info-data"> <%=t('integrations.freshworkscrm.form.domain_info')%> </div>
             <span class="seperator"></span>
         </div>
