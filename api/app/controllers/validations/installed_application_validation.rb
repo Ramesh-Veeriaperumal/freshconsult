@@ -16,7 +16,8 @@ class InstalledApplicationValidation < FilterValidation
     }, if: :payload_required?
   validates :configs, required: true, data_type: { rules: Hash, allow_nil: false }, on: :create
   validate :validate_configs, on: :create
-  validate :validate_freshsales_freshworkscrm_only_events, if: -> { FRESHSALES_ONLY_EVENTS.include?(event) }
+  validate :validate_freshsales_only_events, if: -> { event.present? && name == FRESHSALES }
+  validate :validate_freshworkscrm_only_events, if: -> { event.present? && name == FRESHWORKSCRM }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -35,13 +36,17 @@ class InstalledApplicationValidation < FilterValidation
   end
 
   def validate_configs
-    if name == 'freshsales' && configs.present? && configs.is_a?(Hash)
+    if (name == FRESHSALES || name == FRESHWORKSCRM) && configs.present? && configs.is_a?(Hash)
       return errors[(INSTALL_CONFIGS_KEYS - configs.keys).join(',').to_sym] << :missing_field unless configs.keys.to_set == INSTALL_CONFIGS_KEYS.to_set
     end
   end
 
-  def validate_freshsales_freshworkscrm_only_events
-    errors[:event] << :"is invalid" if @item.application.name != 'freshsales' && @item.application.name != 'freshworkscrm'
+  def validate_freshsales_only_events
+    errors[:event] << :"is invalid" unless FRESHSALES_ONLY_EVENTS.include?(event)
+  end
+
+  def validate_freshworkscrm_only_events
+    errors[:event] << :"is invalid" unless FRESHWORKSCRM_ONLY_EVENTS.include?(event)
   end
 
   private

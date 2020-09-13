@@ -25,4 +25,7 @@ module InstalledApplicationConstants
   INSTALLATION_DOMAIN = 'https://%{domain_url}'.freeze
   FRESHSALES_ONLY_EVENTS = ['fetch_form_fields', 'create_contact', 'fetch_dropdown_choices',
                             'fetch_autocomplete_results', 'create_lead'].freeze
+  FRESHWORKSCRM_ONLY_EVENTS = ['fetch_form_fields', 'create_contact', 'fetch_dropdown_choices', 'fetch_autocomplete_results'].freeze
+  FRESHSALES = 'freshsales'.freeze
+  FRESHWORKSCRM = 'freshworkscrm'.freeze
 end.freeze
