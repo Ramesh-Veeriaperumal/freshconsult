@@ -406,6 +406,7 @@
       :solutions_agent_portal: 402
       :fetch_ticket_from_ref_first: 403
       :skip_ticket_threading: 404
+      :helpdesk_tickets_by_product: 405
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -509,3 +510,4 @@
   :solutions_agent_portal: false
   :fetch_ticket_from_ref_first: false
   :skip_ticket_threading: false
+  :helpdesk_tickets_by_product: false
