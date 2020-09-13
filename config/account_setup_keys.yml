@@ -108,6 +108,7 @@
   - custom_app
   - agents
   - email_notification
+  - freshfone_number
   - twitter
   - automation
   - data_import
