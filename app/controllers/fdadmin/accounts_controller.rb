@@ -344,11 +344,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result[:account_id] = @account.id
     result[:account_name] = @account.name
     begin
-      render :json => {:status => "notice"}.to_json and return unless enableable?(@feature_name)
+      render :json => { status: 'notice' }.to_json && return unless enableable?(@feature_name)
       enable_feature(@feature_name)
-      result[:status] = "success"
+      result[:status] = 'success'
     rescue Exception => e
-      result[:status] = "error"
+      result[:status] = 'error'
     end
     respond_to do |format|
       format.json do
@@ -361,11 +361,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     @account = Account.find(params[:account_id]).make_current
     result = {:account_id => @account.id, :account_name => @account.name}
     begin
-      render :json => {:status => "notice"}.to_json and return unless disableable?(@feature_name)
+      render :json => { status: 'notice'}.to_json && return unless disableable?(@feature_name)
       disable_feature(@feature_name)
-      result[:status] = "success"
+      result[:status] = 'success'
     rescue Exception => e
-      result[:status] = "error"
+      result[:status] = 'error'
     end
     respond_to do |format|
       format.json do
