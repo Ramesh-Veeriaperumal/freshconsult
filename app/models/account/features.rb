@@ -421,7 +421,7 @@ class Account < ActiveRecord::Base
 
   def launched_central_publish_features
     # intersection of launched features and central publish lp features
-    all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES
+    all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES.keys
   end
 
   def ticket_properties_suggester_enabled?

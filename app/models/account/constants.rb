@@ -252,5 +252,14 @@ class Account < ActiveRecord::Base
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
   FILE_DOWNLOAD_URL_EXPIRY_TIME = 60.to_i.seconds
-  CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES = [:agent_statuses].freeze
+
+  # Add launchparty name to CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES if the feature needs to sent to central
+  # Setting feature to false, will not trigger separate account_update event on launching a key on signup
+  # feature_name: true/false
+  # true -> should fire separate account_update event with feature added
+  # false -> will not fire separate account_update
+  # the false/true value is not honoured if the key is launched after the account signup
+  CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES = {
+    agent_statuses: false
+  }.freeze
 end

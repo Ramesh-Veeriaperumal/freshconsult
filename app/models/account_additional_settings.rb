@@ -454,6 +454,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def launch_other_dependent_omni_features(new_signup)
     account.launch :omni_agent_availability_dashboard if redis_key_exists?(OMNI_AGENT_AVAILABILITY_DASHBOARD)
+    account.launch :agent_statuses if redis_key_exists?(AGENT_STATUSES_ENABLED_ON_SIGNUP)
     launch_conditional_omni_signup_features if new_signup
   end
 
