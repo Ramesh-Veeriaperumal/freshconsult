@@ -3,6 +3,8 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   include TicketsNotesHelper
   include TicketPresenter::PresenterHelper
 
+  DISALLOWED_PAYLOAD_TYPES = ['archive_ticket_update', 'archive_ticket_destroy'].freeze
+
   api_accessible :central_publish do |at|
     at.add :parent_id
     at.add proc { |x| x.utc_format(x.parse_to_date_time(x.safe_send(:archive_created_at))) }, as: :archive_created_at
@@ -23,5 +25,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def central_publish_worker_class
     'CentralPublishWorker::ArchiveTicketWorker'
+  end
+
+  def self.disallow_payload?(payload_type)
+    return true if DISALLOWED_PAYLOAD_TYPES.include? payload_type
+
+    super
   end
 end

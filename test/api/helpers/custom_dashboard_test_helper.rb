@@ -31,7 +31,11 @@ module CustomDashboardTestHelper
 
   def sanitize_response(response_hash)
     assert_not_nil_and_delete(response_hash, [:id, :last_modified_since])
-    response_hash[:widgets].map { |widget| assert_not_nil_and_delete(widget, [:id, :active]) }
+    response_hash[:widgets].map do |widget|
+      assert_not_nil_and_delete(widget, [:id, :active])
+      change_response_hash_to_config_data(widget, [:source])
+      widget.delete(:url)
+    end
     response_hash
   end
 
@@ -39,6 +43,13 @@ module CustomDashboardTestHelper
     keys.each do |key|
       assert_not_nil response_hash[key]
       response_hash.delete(key)
+    end
+  end
+
+  def change_response_hash_to_config_data(response_hash, keys)
+    keys.each do |key|
+      val = response_hash.delete(key)
+      response_hash[:config_data][key] = val if val
     end
   end
 

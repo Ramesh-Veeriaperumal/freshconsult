@@ -21,14 +21,9 @@ class UndoSendWorkerTest < ActionView::TestCase
   def setup
     @account = Account.first || create_new_account
     @account.make_current
-    @account.launch(:undo_send)
     @customer = Account.current.users.first
     @customer.make_current
     @ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
-  end
-
-  def teardown
-    @account.rollback(:undo_send)
   end
 
   def undo_send_args(ticket)
@@ -117,8 +112,6 @@ class UndoSendWorkerTest < ActionView::TestCase
     Tickets::UndoSendWorker.new.perform(args)
     kbase = Account.current.solution_articles.last
     assert_equal ticket.subject, kbase.title
-  ensure
-    @account.rollback(:undo_send)
   end
 
   def test_undo_send_worker_with_save_exception
@@ -130,23 +123,19 @@ class UndoSendWorkerTest < ActionView::TestCase
     Tickets::UndoSendWorker.new.perform(args)
     Helpdesk::Note.any_instance.unstub(:save_note)
     assert_equal old_notes_count, ticket.reload.notes.count
-  ensure
-    @account.rollback(:undo_send)
   end
 
   def test_undo_send_worker_with_exception
+    Account.any_instance.stubs(:tickets).raises(RuntimeError)
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    create_normal_reply_for(ticket)
+    args = HashWithIndifferentAccess.new(undo_send_args(ticket))
+    old_notes_count = ticket.notes.count
     assert_raises(RuntimeError) do
-      Account.any_instance.stubs(:tickets).raises(RuntimeError)
-      ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
-      create_normal_reply_for(ticket)
-      args = HashWithIndifferentAccess.new(undo_send_args(ticket))
-      old_notes_count = ticket.notes.count
       Tickets::UndoSendWorker.new.perform(args)
-      Account.any_instance.unstub(:tickets)
-      assert_equal old_notes_count, ticket.reload.notes.count
     end
-  ensure
-    @account.rollback(:undo_send)
+    Account.any_instance.unstub(:tickets)
+    assert_equal old_notes_count, ticket.reload.notes.count
   end
 
   def test_undo_send_worker_ticket_subject
@@ -161,8 +150,6 @@ class UndoSendWorkerTest < ActionView::TestCase
     Tickets::UndoSendWorker.new.perform(args)
     kbase = Account.current.solution_articles.last
     assert_equal I18n.t('undo_send_solution_error', ticket_display_id: ticket.display_id), kbase.title
-  ensure
-    @account.rollback(:undo_send)
   end
 
   def test_undo_send_worker_attachments
@@ -177,8 +164,6 @@ class UndoSendWorkerTest < ActionView::TestCase
     Tickets::UndoSendWorker.new.perform(args)
     assert_equal ticket.notes.last.inline_attachment_ids, undo_args[:inline_attachment_details]
     assert_equal ticket.notes.last.attachments.first, att
-  ensure
-    @account.rollback(:undo_send)
   end
 
   def test_undo_send_reply

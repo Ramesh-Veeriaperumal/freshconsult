@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
-    :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
+    :sso_login_expiry_limitation, :old_link_back_url_validation, :stop_contacts_count_query,
     :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp,
@@ -39,7 +39,7 @@ class Account < ActiveRecord::Base
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :idle_session_timeout, :solutions_dashboard,
     :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments,
-    :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription, :filter_facebook_mentions,
+    :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription, :omni_channel_team_dashboard, :filter_facebook_mentions,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
@@ -360,10 +360,6 @@ class Account < ActiveRecord::Base
     redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
   end
 
-  def undo_send_enabled?
-    has_feature?(:undo_send) || launched?(:undo_send)
-  end
-
   def email_spoof_check_feature?
     email_spoof_check_enabled? && !disable_email_spoof_check_enabled?
   end
@@ -425,7 +421,7 @@ class Account < ActiveRecord::Base
 
   def launched_central_publish_features
     # intersection of launched features and central publish lp features
-    all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES
+    all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES.keys
   end
 
   def ticket_properties_suggester_enabled?
@@ -438,6 +434,10 @@ class Account < ActiveRecord::Base
 
   def omni_channel_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_dashboard)
+  end
+
+  def omni_channel_team_dashboard_enabled?
+    omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
   def solutions_agent_metrics_enabled?
