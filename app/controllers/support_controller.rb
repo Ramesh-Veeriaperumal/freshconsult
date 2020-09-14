@@ -25,6 +25,7 @@ class SupportController < ApplicationController
 
   helper SupportTicketRateLimitMethods
 
+  before_filter :deny_iframe
   caches_action :show, :index, :new, :robots,
   :if => proc { |controller|
     controller_name = controller.controller_name
@@ -347,5 +348,12 @@ class SupportController < ApplicationController
 
   def check_sitemap_feature
     render_404 unless current_account.sitemap_enabled?
+  end
+
+  def deny_iframe
+    return unless request.format.html?
+    return unless current_account.account_additional_settings.security[:deny_iframe_embedding]
+
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
   end
 end

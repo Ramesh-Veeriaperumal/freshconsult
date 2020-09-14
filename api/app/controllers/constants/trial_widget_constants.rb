@@ -28,4 +28,5 @@ module TrialWidgetConstants
       goal_alias_name: 'fdeskgoalintegration'
     }
   }.freeze
+  VALID_STEPS = (Account::SETUP_KEYS | Account::ONBOARDING_V2_GOALS | Account::FRESHMARKETER_EVENTS).freeze
 end.freeze

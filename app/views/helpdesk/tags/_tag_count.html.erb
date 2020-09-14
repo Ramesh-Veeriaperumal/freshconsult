@@ -14,7 +14,7 @@
         <i class="symbols-tag-remove"></i>
         </a>
       <%end%>
-      <% if dom_type == "Articles" || (falcon_enabled? && Helpdesk::TagsHelper::MINT_DISABLED_TAG_LINKS.include?(dom_type)) %>
+      <% if dom_type == "Articles" || Helpdesk::TagsHelper::MINT_DISABLED_TAG_LINKS.include?(dom_type) %>
           <span class="oval-border tooltip" title="<%= tooltip %>">
           <%= font_icon(image, :size => 16,
                                         :class => "",

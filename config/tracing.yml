@@ -1,0 +1,30 @@
+development:
+  enabled: true
+  service_name: "Helpkit"
+  tracing_host: "localhost"
+  tracing_host_port: 6831
+  span_batch_size: 10
+  sampler_probability: 0.9
+  host_name: "localhost"
+test:
+  enabled: true
+  service_name: "Test"
+  tracing_host: "localhost"
+  tracing_host_port: 6832
+  span_batch_size: 10
+  sampler_probability: 0.9
+  host_name: "localhost"
+staging:
+  service_name: ""
+  tracing_host: ""
+  tracing_host_port: ""
+  span_batch_size: ""
+  sampler_probability: ""
+  host_name: ""
+production:
+  service_name: ""
+  tracing_host: ""
+  tracing_host_port: ""
+  span_batch_size: ""
+  sampler_probability: ""
+  host_name: ""

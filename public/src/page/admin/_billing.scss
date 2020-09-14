@@ -23,8 +23,14 @@
 }
 
 .calculate-container {
-	display: inline-block;
-	width: 500px;
+	padding: 24px 40px 24px 0;
+	width: 450px;
+	border-right: 1px solid #DADFE3;
+	margin-left: 50px;
+
+	.billing-actions{
+		float: right;
+	}
 }
 
 .current-plan-info .save-info {
@@ -58,6 +64,7 @@
 .omni-disabled, .omni-enabled {
 	margin-top: 10px;
 	position: relative;
+	font-size: 14px;
 }
 
 .choose-plan-container {
@@ -233,6 +240,8 @@
 	@include pie-clearfix;
 	background: #fefef0;
 	border-radius: 5px;
+	display: flex;
+	align-items: center;
 	@include padding(25px 20px);
 	.plan-title{
 		background: rgba(0, 0, 0, 0.5);
@@ -244,11 +253,16 @@
 		padding: 8px 20px;
 		border-radius: 20px;
 	}
-	.current-plan, .current-plan-info, .subscription-info-divider, .billing-info-divider{
+	.current-plan-info, .subscription-info-divider, .billing-info-divider{
 		width: 55%;
 		text-align: center;
 		display: inline-block;
 		vertical-align: middle;
+	}
+
+	.current-plan {
+		width: 55%;
+		align-self: center;
 	}
 
 	.current-plan, .subscription-info-divider {
@@ -316,7 +330,6 @@
 	.caption{
 		font-size: 16px;
 		font-weight: bold;
-		text-transform: capitalize;
 	}
 	.fields{
 		margin-top: 10px;
@@ -442,9 +455,13 @@ dt.vertical-top {
 		}
 		dt{
 			@include text-align(left);
-			width: 38%;
+			width: 47%;
 			font-weight: bold;
 			vertical-align: middle;
+
+			&.align-top {
+				vertical-align: top;
+			}
 		}
 		.agents-split{
 			border-top:1px dashed #afafaf;
@@ -455,6 +472,22 @@ dt.vertical-top {
 				font-weight: bold;
 				color: #666;
 	 		}
+		}
+		.freddy-pack {
+			font-weight: normal;
+			font-size: 12px;
+			color: #475867;
+		}
+		.session-pack {
+			color: #00A886;
+
+			&-cycle {
+				text-transform: lowercase;
+			}
+		}
+		&-divider {
+			height: 0;
+			border: 1px solid #EBEFF3;
 		}
 		.tr-total{
 			input[type=submit]{
@@ -485,12 +518,42 @@ dt.vertical-top {
   }
 }
 
+.freddy-semi-bold {
+	font-weight: 600 !important;
+}
+
 .features-billing-edit {
 
   &__toggle {
-	display: inline-block;
-	padding: 0 15px 0 10px;
-  }
+		padding: 14px 16px;
+    background: #F0F0F0;
+    border: 1px solid #EBEFF3;
+		border-radius: 6px;
+
+		.addon-name {
+			font-weight: bold;
+			font-size: 14px;
+		}
+
+		.toggle-button {
+			float: right;
+		}
+	}
+
+	.freddy-cx-options {
+		clear: both;
+		padding: 8px 16px;
+		background: #F0F0F0;
+		border: 1px solid #EBEFF3;
+		border-radius: 0 0 6px 6px;
+	}
+
+	.freddy-billing-exists {
+		border-bottom: 1px solid #DEDEDE;
+		margin-bottom: 0;
+		border-radius: 6px 6px 0 0;
+	}
+
 }
 
 .billing-divider{
@@ -742,11 +805,6 @@ input[type=text].input-agent-count{
 	display: block;
 }
 
-.billing-actions{
-	margin-top: 10px;
-}
-
-
 .invoice-list, .invoice-download-icon{
 	background-color: #f7f7f7;
 	text-align: center;
@@ -933,8 +991,7 @@ input[type=text].input-agent-count{
    .request-change-wrapper {
 			border: 1px solid #DADFE3;
 			border-bottom: 0;
-			border-top-left-radius: 4px;
-			border-top-right-radius: 4px;
+			border-radius: 4px;
 
  			.on-request {
 				border-bottom: 1px solid #DADFE3;
@@ -956,7 +1013,7 @@ input[type=text].input-agent-count{
 	 }
 	 .request-change-container {
 				display: flex;
-				padding: 30px 25px;
+				padding: 16px 24px;
 				.request-change-items {
 					padding-right: 50px;
 					.plan-from,.plan-to,.billing-cycle {
@@ -967,8 +1024,10 @@ input[type=text].input-agent-count{
 						text-transform: initial;
 					}
 					.agents-count {
-						font-weight: bold;
-						color: #415D71;
+						font-weight: 600;
+					}
+					&.plan-addon {
+						width: 34%;
 					}
 				}
 	}
@@ -979,18 +1038,20 @@ input[type=text].input-agent-count{
 		text-decoration: none;
 	}
 	.second-downgrade-modal-wrapper {
-		width: 65%;
-		left:42%;
+		width: 80%;
+		margin: 80px auto;
+		top: 0;
+		left: 0;
 		.modal-header{
 			border:0 none;
 		}
 		.request-change-container {
-			border: 1px solid #DADFE3;
-
+			border: 1px solid #ebeff3;
+			border-radius: 8px;
 		}
 		.downgrade-header {
-		    font-size: 16px;
-            font-weight: bold;
+		    font-size: 24px;
+				font-weight: 700;
 		}
 		.existing-request,.latest-request {
 			font-size: 14px;
@@ -1009,7 +1070,6 @@ input[type=text].input-agent-count{
 			}
 		}
 		.agents-count-text,.fsm-count-text {
-		  font-weight: normal;
 		  color:#333;
 		}
 		.required-mark{
@@ -1017,7 +1077,7 @@ input[type=text].input-agent-count{
 		}
 		.same-request {
 			.plan-from,.plan-to,.billing-cycle,.agents-count-text,.fsm-count-text {
-				font-weight: bold;
+				font-weight: 600;
 			}
 			.item-to {
 				font-weight: normal;
@@ -1058,7 +1118,7 @@ input[type=text].input-agent-count{
 		}
 	}
  	 .request-change-info {
-		 padding: 15px 25px;
+		 padding: 11px 25px;
 		 border: 1px solid #BBDCFE;
 		 margin: 0;
 		 background-color: #E5F2FD;
@@ -1146,7 +1206,9 @@ input[type=text].input-agent-count{
 
 .well-active-new{
 	background: #F8F8F8;
-	.sprout-new-active{
+	padding: 0 30px;
+	align-items: stretch;
+	.sprout-new-active, .explore-higer-plan{
 		@include margin(5px 0 0 5px);
 		&:hover{
 			cursor: pointer;
@@ -1161,9 +1223,72 @@ input[type=text].input-agent-count{
 		}
 	}
 	.edit-plan{
-		background-color: #fff;
+		font-size: 14px;
+    color: #12344D;
+    font-weight: 600;
+    background: linear-gradient(180deg, #FFFFFF 2.56%, #F3F5F7 95.75%);
+    border: 1px solid #CFD7DF;
 		@include margin(10px 0 0 -20px);
 	}
+
+	.session-metering {
+		border: 1px solid #EBEFF3;
+    box-sizing: border-box;
+    box-shadow: 0px 2px 4px rgba(207, 215, 223, 0.24);
+    border-radius: 8px;
+    background: #fff;
+		padding: 16px 20px;
+		margin-top: 15px;
+		margin-right: 15px;
+		max-width: 280px;
+
+		&-progress {
+			background: #EBEFF3;
+			border-radius: 6px;
+			margin-top: 8px;
+
+			&-bar {
+				height: 5px;
+				border-radius: 6px;
+
+				&.green-bar {
+					background: #00A886;
+				}
+
+				&.orange-bar {
+					background: #E86F25;
+				}
+
+				&.red-bar {
+					background: #D72D30;
+				}
+
+			}
+		}
+
+		&-meter {
+			font-weight: 700;
+		}
+
+		&-title {
+			font-size: 13px;
+			color: #475867;
+		}
+
+		&-consumed {
+			margin-top: 8px;
+			margin-bottom: 0;
+			font-size: 12px;
+			color: #475867;
+			font-style: italic;
+		}
+
+		.buy-session {
+			margin-top: 8px;
+			margin-left: 0;
+		}
+	}
+
 	.subscription-info-divider{
 		ul{
 			@include padding-right(20px);
@@ -1183,29 +1308,26 @@ input[type=text].input-agent-count{
 	}
 	.current-plan{
 		width: 20%;
+		padding: 24px 0;
+		align-self: start;
+    margin-right: 30px;
 	}
 	.current-plan-info{
 		width: 100%;
+    align-self: center;
 	}
 
 	.billing-info-divider {
 		width: auto;
-		max-width: 40%;
+		max-width: 50%;
 		@include float(left);
 	}
 	.plan-title.classic{
 		@include margin-right(20px);
 	}
-	#billing-template{
-		.billing-cost{
-			margin: 10px;
-		}
-	}
 	.payment-info-new{
 		max-width: 26%;
-		margin: -25px 0;
-		padding: 25px 0;
-		@include border-left(1px solid #ddd);
+		padding: 24px 0;
 		@include padding-left(25px);
 		@include word-hyphernate;
 	}
@@ -1288,15 +1410,14 @@ input[type=text].input-agent-count{
 	 }
 	 .request-change-container {
 				display: flex;
-				padding: 30px 25px;
+				padding: 16px 24px;
 				.request-change-items {
 					padding-right: 50px;
 					.plan-from,.plan-to,.billing-cycle {
-						font-weight: bold;
+						font-weight: 600;
 					}
 					.agents-count {
-						font-weight: bold;
-						color: #415D71;
+						font-weight: 600;
 					}
 				}
 	}
@@ -1307,8 +1428,10 @@ input[type=text].input-agent-count{
 		text-decoration: none;
 	}
 	.second-downgrade-modal-wrapper {
-		width: 65%;
-		left:42%;
+		width: 80%;
+		margin: 80px auto;
+		top: 0;
+		left: 0;
 		.modal-header{
 			border:0 none;
 		}
@@ -1317,8 +1440,8 @@ input[type=text].input-agent-count{
 
 		}
 		.downgrade-header {
-		    font-size: 16px;
-            font-weight: bold;
+			font-size: 24px;
+			font-weight: 700;
 		}
 		.existing-request,.latest-request {
 			font-size: 14px;
@@ -1326,21 +1449,16 @@ input[type=text].input-agent-count{
               font-weight: bold;
 			}
 		}
-		.request-change-items {
-		 .plan-from,.plan-to,.billing-cycle {
-			 font-weight: normal
-			}
-		}
 		.agents-count-text,.fsm-count-text {
-		  font-weight: normal;
-		  color:#333;
+			color:#333;
+			font-weight: 600;
 		}
 		.required-mark{
 			display: none;
 		}
 		.same-request {
 			.plan-from,.plan-to,.billing-cycle,.agents-count-text,.fsm-count-text {
-				font-weight: bold;
+				font-weight: 600;
 			}
 			.required-mark{
 				font-weight:bold;
@@ -1377,7 +1495,7 @@ input[type=text].input-agent-count{
 		}
 	}
  	 .request-change-info {
-		 padding: 15px 25px;
+		 padding: 11px 25px;
 		 border: 1px solid #BBDCFE;
 		 margin: 0;
 		 background-color: #E5F2FD;
@@ -1474,7 +1592,7 @@ input[type=text].input-agent-count{
 .nudge-banner-container {
 	border: 1px solid #CFD7DF;
 	border-radius: 4px;
-	margin-bottom: 55px;
+	margin-bottom: 30px;
 }
 .annual-savings {
 	&__icon {
@@ -1489,12 +1607,13 @@ input[type=text].input-agent-count{
 		font-size: 14px;
 		line-height: 24px;
 		vertical-align: middle;
+		color: #12344D;
 	}
 }
 
 .fd-fd-bundle-logo {
 	padding-top: 12px;
-	height: 43px; 
+	height: 43px;
 	width: 230px;
 	margin-bottom: 22px;
 }
@@ -1619,7 +1738,7 @@ input[type=text].input-agent-count{
 	color: #808080;
 }
 .carousel-control:hover {
-	color: #000000;	
+	color: #000000;
 }
 
 .fc-omni-channel-experience-logo {
@@ -1674,7 +1793,7 @@ input[type=text].input-agent-count{
 }
 
 .fc-omni-channel-td-data {
-	padding-left: 20px;	
+	padding-left: 20px;
 	width: 90%;
 }
 

@@ -12,7 +12,7 @@ class Ryuken::FreddyConsumedSessionReminder
   def perform(sqs_msg, args)
     msg = JSON.parse(sqs_msg.body)
     properties = msg['data']['payload']['model_properties'].deep_symbolize_keys
-    account_id = properties[:productAccountId]
+    account_id = properties[:bundleType] ? properties[:anchorProductAccountId] : properties[:productAccountId]
     Sharding.select_shard_of(account_id) do
       account = ::Account.find(account_id)
       account.make_current

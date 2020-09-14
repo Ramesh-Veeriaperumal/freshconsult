@@ -11,8 +11,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include ::Freshcaller::Util
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
-  around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features,
-                :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
+  around_filter :select_slave_shard, only: [:api_jwt_auth_feature,
+                                            :sha1_enabled_feature, :show,
+                                            :features, :agents, :tickets,
+                                            :portal, :user_info,
+                                            :check_contact_import,
+                                            :latest_solution_articles]
   around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,
                 :migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name,
                 :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
@@ -57,7 +61,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:spam_details] = ehawk_spam_details
     account_summary[:disable_emails] = account.launched?(:disable_emails)
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
-    account_summary[:falcon_enabled] = account.has_feature?(:falcon)
     account_summary[:account_cancellation_requested] = account.account_cancellation_requested?
     account_summary[:clone_status] = account.account_additional_settings.clone_status
     account_summary[:fluffy_info] = fetch_fluffy_details(account)
@@ -101,7 +104,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:freshfone] = account.features?(:freshfone)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
-    feature_info[:falcon] = account.has_feature?(:falcon)
     feature_info[:launch_party] = account.all_launched_features
     feature_info[:bitmap_list] = account.features_list
     feature_info[:db_feature_list] = account.features.map(&:to_sym)
@@ -642,20 +644,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
-  def select_all_feature
-    enabled = false
-    account = Account.find(params[:account_id]).make_current
-    if params[:operation] == "launch"
-      enabled = account.launch(:select_all).include?(:select_all)
-    elsif params[:operation] == "rollback"
-      enabled = account.rollback(:select_all).include?(:select_all)
-    elsif params[:operation] == "check"
-      enabled = account.launched?(:select_all)
-    end
-    Account.reset_current_account
-    render :json => {:status => enabled}
-  end
-
   def sha256_enabled_feature
     enabled = false
     account = Account.find(params[:account_id]).make_current
@@ -1160,7 +1148,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def check_freshconnect_migrate
       account = Account.current
-      render :json => {:status => "notice"}.to_json and return unless account.freshid_integration_enabled? && account.falcon_enabled? && !account.freshconnect_account.present?
+      render :json => { status: 'notice' }.to_json && return unless account.freshid_integration_enabled? && account.freshconnect_account.blank?
     end
 
     def check_create_organisation(account)

@@ -125,7 +125,7 @@
           heap.identify("<%= current_user.id %>");
           <% subscription = current_account.subscription %>
           heap.addUserProperties({
-            'account_id' : "<%= current_account.id %>"
+            'account_id' : "<%= current_account.id %>",
             'account_name': "<%= current_account.name %>",
             'agent_name': "<%= current_user.name %>",
             'account_plan': "<%= subscription.subscription_plan.name %>",

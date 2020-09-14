@@ -11,15 +11,6 @@ class AgentTest < ActiveSupport::TestCase
   include ModelsUsersTestHelper
   include GroupHelper
 
-  # def test_agent_update_without_feature
-  #   @account.rollback(:audit_logs_central_publish)
-  #   CentralPublishWorker::UserWorker.jobs.clear
-  #   update_agent
-  #   assert_equal 0, CentralPublishWorker::UserWorker.jobs.size
-  # ensure
-  #   @account.launch(:audit_logs_central_publish)
-  # end
-
   def setup
     @account = Account.first
     Account.stubs(:current).returns(Account.first)

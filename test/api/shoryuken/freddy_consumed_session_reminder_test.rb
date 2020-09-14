@@ -26,6 +26,22 @@ class FreddyConsumedSessionReminderTest < ActionView::TestCase
     Account.any_instance.unstub(:current)
   end
 
+  def test_freddy_consumed_session_reminder_bundle_account
+    Account.stubs(:current).returns(Account.first)
+    Subscription.any_instance.stubs(:freddy_sessions).returns(1000)
+    ::Bot::Emailbot::FreddyConsumedSessionWorker.jobs.clear
+    session_payload = { data: { payload: { model_properties: { 'bundleType': 'SUPPORT360', 'anchorProductAccountId': Account.current.id, sessionsConsumed: 50, consumedPercentage: 80 } } } }
+    sqs_msg = Hashit.new(body: session_payload.to_json)
+    assert_nothing_raised do
+      Ryuken::FreddyConsumedSessionReminder.new.perform(sqs_msg, nil)
+    end
+    sidekiq_jobs = Bot::Emailbot::FreddyConsumedSessionWorker.jobs
+    assert sidekiq_jobs.count == 1
+  ensure
+    Subscription.any_instance.unstub(:freddy_sessions)
+    Account.any_instance.unstub(:current)
+  end
+
   def test_freddy_consumed_session_reminder_when_breach_occures
     Account.stubs(:current).returns(Account.first)
     Subscription.any_instance.stubs(:freddy_sessions).returns(1000)

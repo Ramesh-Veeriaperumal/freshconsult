@@ -1,6 +1,11 @@
 <%
     plan = @subscription.subscription_plan
     is_new_sprout = new_sprout?(plan.name)
+    freddy_addon_count = @subscription.subscription_plan.freddy_addon_count || 0
+    freddy_ultimate_enabled = current_account.freddy_ultimate_enabled?
+    freddy_self_sevice_enabled = current_account.freddy_self_service_enabled? && !current_account.freddy_ultimate_enabled?
+    freddy_enabled = freddy_self_sevice_enabled || freddy_ultimate_enabled
+
     has_feature_gain = @subscription.additional_info[:feature_gain]
     plan_id = plan.name.parameterize.underscore
     field_agent_limit = @subscription.field_agent_limit || 0
@@ -9,11 +14,27 @@
     isSelected_plan_present = @selected_plan.present?
     isSelected_plan_nil = @selected_plan.nil?
     hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle) && !@not_eligible_for_omni_upgrade
+    is_prepaid = @subscription.freddy_billing_model.nil?
+    consumed_freddy_sessions = fetch_consumed_freddy_sessions.to_i
+    show_session_metering_info = current_account.freddy_subscription_enabled? && freddy_addon_count != 0 && (freddy_addon_count > 2 || freddy_enabled) && (is_prepaid ? @subscription.freddy_sessions > 0 : true )
+    if is_prepaid
+      actual_percentage = is_prepaid ? (consumed_freddy_sessions*100) / (@subscription.freddy_sessions.nonzero? || 1) : 0
+      percentage_session_consumed = actual_percentage > 100 ? 100 : actual_percentage
+      session_color = ''
+      if is_prepaid && percentage_session_consumed < 50
+        session_color = 'green-bar'
+      elsif is_prepaid && percentage_session_consumed < 80
+        session_color = 'orange-bar'
+      elsif is_prepaid && percentage_session_consumed >= 80
+        session_color = 'red-bar'
+      end
+    end
+    show_annual_savings_banner = @subscription.amount>0 && @subscription.renewal_period != Subscription::ANNUAL_PERIOD && !@subscription.account.omni_bundle_account? && !@offline_subscription && !@reseller_paid_account
+    savings_amount = fetch_savings_on_annual_plan(@subscription, @subscription.currency_name) if show_annual_savings_banner
   %>
 <% if has_feature_gain %>
   <%= render :partial => "loyalty_upgrade_info" %>
 <% end %>
-
 <div>
   <label class="accounted-created muted">
     <%= t('account_created', :total_time => distance_of_time_in_words(current_account.created_at, Time.now.to_s), :date => formated_date(current_account.created_at, {:format => :short_day_with_week, :include_year => true}) ) %>
@@ -55,18 +76,52 @@
       <% unless omni_account %>
         <p class="omni-enabled">
           <img alt="<%= t('fd_omni_channel_experience') %>" class="omni-close" src="/assets/tick.svg" width="11" />
-          <%= t('omni_enabled') %>
+          <%= t('omni_enabled').html_safe %>
         </p>
       <% end %>
     <% elsif plan.basic_variant? %>
       <p class="omni-disabled">
         <img alt="<%= t('fd_omni_channel_experience') %>" class="omni-close" src="/assets/close.svg" width="11" />
-        <%= t('omni_disabled') %>
+        <%= t('omni_disabled').html_safe %>
       </p>
     <% end %>
+
+    <% if current_account.freddy_subscription_enabled? && freddy_enabled %>
+      <p class="omni-enabled">
+        <% if freddy_self_sevice_enabled %>
+          <img alt="<%= t('freddy_self_service_enabled') %>" class="omni-close" src="/assets/tick.svg" width="11" />
+          <%= t('freddy_self_service_enabled').html_safe %>
+        <% else %>
+          <img alt="<%= t('freddy_ultimate_enabled') %>" class="omni-close" src="/assets/tick.svg" width="11" />
+          <%= t('freddy_ultimate_enabled').html_safe %>
+        <% end %>
+      </p>
+    <% end %>
+
     <% if @freshcaller_credit_info.present? %>
       <%= render :partial => "freshcaller_credits", :locals => {
         :wrapper_class => 'active-phone-credits' } %>
+    <% end %>
+
+    <% if show_session_metering_info %>
+      <div class="session-metering">
+        <h4 class="session-metering-meter">
+          <% if is_prepaid %>
+            <% sessions = consumed_freddy_sessions > @subscription.freddy_sessions ? @subscription.freddy_sessions : consumed_freddy_sessions  %>
+            <%= t('freddy.total_session_consumption', :consumed => sessions, :total => @subscription.freddy_sessions) %>
+          <% else %>
+            <%= consumed_freddy_sessions %>
+          <% end %>
+        </h4>
+        <div class="session-metering-title"><%= t('freddy.sessions_consumed') %></div>
+        <% if is_prepaid %>
+          <div class="session-metering-progress">
+            <div class="session-metering-progress-bar <%= session_color %>" style="width:<%=percentage_session_consumed%>%"></div>
+          </div>
+          <p class="session-metering-consumed"><%= t('freddy.percentage_session_consumed', :percentage => percentage_session_consumed) %></p>
+          <button class="btn btn-secondary buy-session" id="buy-more-sesion"> <%=t('buy_more_sessions')%></button>
+        <% end %>
+      </div>
     <% end %>
   </div>
 
@@ -75,7 +130,7 @@
     <div class="features-billing-edit hide">
     <% if !hide_omnichannel_toggle && (plan.omni_plan? || plan.basic_variant?) && !omni_account %>
       <p class="omni-billing-edit features-billing-edit__toggle">
-        <span><%= t('omni_channel') %></span>
+        <span class="addon-name"><%= t('omni_channel') %></span>
         <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="exclude-omni" name="omni-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
         <%= plan.name.include?('Omni')? "checked='true'" : '' %>
         <%= plan.classic && plan.omni_plan? ? "disabled" : '' %>/>
@@ -83,13 +138,43 @@
     <% end %>
     <% if fsm_supported_plan?(plan) %>
       <p data-heap-id="fsm-edit-toggle" class="fsm-billing-edit features-billing-edit__toggle">
-        <span><%= t('fsm_title') %></span>
+        <span class="addon-name"><%= t('fsm_title') %></span>
         <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" id="edit-billing-fsm-toggle" name="fsm-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
         <%= current_account.field_service_management_enabled? ? 'checked' : '' %> />
       </p>
       <%= render :partial => "subscriptions/features/dialogs/fsm_disable", :locals => {
         :current_account => current_account, :identifier => 'fsm-billing-edit' } %>
     <% end %>
+    <% if current_account.freddy_subscription_enabled? && freddy_addon_count != 0 %>
+      <% if freddy_addon_count > 2 %>
+        <p class="freddy-billing-edit features-billing-edit__toggle <%= 'freddy-billing-exists' if freddy_enabled %> ">
+          <span class="addon-name"><%= t('freddy.title') %></span>
+          <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="edit-billing-freddy-toggle" name="freddy-cx-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
+          <%= freddy_enabled ? 'checked' : '' %> >
+          <div class="freddy-cx-options <%= 'hide' unless freddy_enabled %> ">
+            <div class="controls row-fluid">
+              <label class="radio inline">
+                <input name="freddy_options" type="radio" value="freddy_self_service" <%= 'checked="checked"' if freddy_self_sevice_enabled %> >
+                <%= t('freddy.self_service')%>
+              </label>
+              <label class="radio inline">
+                <input name="freddy_options" type="radio" value="freddy_ultimate" <%= 'checked="checked"' if freddy_ultimate_enabled %> >
+                <%= t('freddy.ultimate')%>
+              </label>
+            </div>
+          </div>
+        </p>
+      <% elsif freddy_addon_count == 2 %>
+        <p class="freddy-cx-self-billing-edit features-billing-edit__toggle">
+          <span class="addon-name"><%= t('freddy.f_cx_self_service') %></span>
+          <input rel="toggle" type="checkbox" data-plan="<%= plan_id %>"  id="edit-billing-freddy-ss-toggle" name="freddy-cx-ss-edit-toggle" data-checked-label="<%= t('plain_yes') %>"
+          <%= 'checked="checked"' if freddy_self_sevice_enabled %> />
+        </p>
+      <% end %>
+      <%= render :partial => "subscriptions/features/dialogs/freddy_disable", :locals => {
+            :current_account => current_account, :identifier => 'freddy-billing-edit', :subscription => @subscription } %>
+    <% end %>
+
     </div>
     <div class="subscribed-plan-details current-plan-info">
       <div id="info_1" class="subscription-info-divider <%= is_new_sprout ? 'free-divider' : ''%>">
@@ -134,12 +219,12 @@
         <div class="billing-info-divider">
           <% subscription_end = @subscription.next_renewal_at - Time.now %>
           <%
-            if has_feature_gain 
+            if has_feature_gain
               total_amount = @subscription.amount_with_tax_safe_access
               discount = subscription.additional_info[:discount]
               has_discount = discount > 0;
               actual_amount = format_amount(total_amount * (100.to_f / (100 - discount)), @currency)
-            end 
+            end
           %>
           <ul>
             <li class="price">
@@ -177,6 +262,10 @@
 <%= render :partial => "/subscriptions/payment_info" if @subscription.card_number.present? && !@reseller_paid_account %>
 </div>
 
+<% if show_annual_savings_banner %>
+  <%= render :partial => '/subscriptions/annual_savings_banner', :locals => { :savings_amount => savings_amount }%>
+<% end %>
+
 <%= render :partial => "/subscriptions/freshfone_subscription" %>
 
 <% unless @offline_subscription || @reseller_paid_account %>
@@ -198,12 +287,10 @@
       <% unless hide_omnichannel_toggle %>
         <%= render :partial => "/subscriptions/features/toggle-box/ocr_toggle", :locals => { :plan => plan, :trial => false, :show_omni_toggle => false }%>
       <% end %>
-      <% if current_account.disable_old_ui_enabled? %>
-        <% unless hide_omnichannel_toggle %>
-          <span class="vr-line"></span>
-        <% end %>
-        <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
+      <% unless hide_omnichannel_toggle %>
+        <span class="vr-line"></span>
       <% end %>
+      <%= render :partial => "/subscriptions/features/toggle-box/fsm_toggle", :locals => { :current_account => current_account }%>
     </div>
   <% end %>
     <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription,

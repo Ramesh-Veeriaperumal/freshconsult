@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
                           elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 agent-hermes
                           attachment euattachment eucattachment ausattachment indattachment cobrowsing migrations
                           migrations-eu migrations-au migrations-ind authz authz-euc authz-ind authz-au ipaas-tool
-                          ipaas-app ipaas-ui) + FreshopsSubdomains + PartnerSubdomains
+                          ipaas-app ipaas-ui analytics-export mars-us mars-euc mars-au mars-ind) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails, :marketplace ] },
@@ -125,33 +125,30 @@ class Account < ActiveRecord::Base
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
-    :bi_reports => false, :contact_merge_ui => false, :social_revamp => true, :multiple_user_emails => false,
-    round_robin_revamp: false,
-    :facebook_realtime => false, :autorefresh_node => false, :tokenize_emoji => false,
+    :bi_reports => false, :social_revamp => true,
     :custom_dashboard => false, :updated_twilio_client => false,
-    :report_field_regenerate => false, :reports_regenerate_data => false,
-    :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
+    :report_field_regenerate => false,
+    :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
-    :tags_filter_reporting => false,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
-    :single_session_per_user => false, :marketplace_app => false, :sandbox_account => false,
+    :single_session_per_user => false, :marketplace_app => false,
     :collaboration => false
   }
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false, :portal_cc => false, :personalized_email_replies => false, :agent_collision => false,
+    :gamification_enable => false, :portal_cc => false, :personalized_email_replies => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
     :no_list_view_count_query => false, :client_debugging => false, :collision_socket => false,
     :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
     :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
-    :limit_mobihelp_results => false, :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
+    :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
     :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
-    :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
+    :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
     :advanced_search => false, :advanced_search_bulk_actions => false, :chat => false, :chat_routing => false,
@@ -172,49 +169,46 @@ class Account < ActiveRecord::Base
   FEATURE_NAME_CHANGES = {
     twitter: :advanced_twitter,
     facebook: :advanced_facebook,
-    agent_collision: :collision,
     cascade_dispatchr: :cascade_dispatcher
   }.freeze
 
-  DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :dynamics_v2, :marketplace_app]
+  DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :marketplace_app]
 
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
   LAUNCHPARTY_FEATURES = {
-    hide_og_meta_tags: false, admin_dashboard: false, agent_conference: false, agent_dashboard: false,
-    agent_new_ticket_cache: false, api_search_beta: false, autoplay: false,
-    bi_reports: false, cache_new_tkt_comps_forms: false,
-    disable_old_sso: false, enable_old_sso: false, es_count_reads: false, es_count_writes: false,
+
+    hide_og_meta_tags: false, agent_conference: false, api_search_beta: false, autoplay: false, bi_reports: false,
+    disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,
     gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
-    meta_read: false, most_viewed_articles: false, multifile_attachments: true,
-    new_footer_feedback_box: false, new_leaderboard: false, periodic_login_feature: false, restricted_helpdesk: false,
-    supervisor_dashboard: false, support_new_ticket_cache: false, synchronous_apps: false, ticket_list_page_filters_cache: false,
-    skip_hidden_tkt_identifier: false, agent_collision_alb: false, auto_refresh_alb: false,
+    meta_read: false, most_viewed_articles: false,
+    new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
+    support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
-    activity_ui: false, customer_sentiment: false, logout_logs: false,
-    es_v2_splqueries: false, suggest_tickets: false, "Freshfone New Notifications": false,
+    customer_sentiment: false, logout_logs: false,
+    es_v2_splqueries: false, suggest_tickets: false,
     feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
-    skip_ticket_threading: false, attachments_scope: false,
-    kbase_spam_whitelist: false, forum_post_spam_whitelist: false, enable_qna: false, enable_insights: false,
-    whitelist_supervisor_sla_limitation: false, escape_liquid_attributes: true, escape_liquid_for_reply: true,
-    one_hop: false, service_writes: false, service_reads: false,
+    skip_ticket_threading: false,
+    kbase_spam_whitelist: false,
+    whitelist_supervisor_sla_limitation: false,
+    service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
-    sha256_enabled: false, auto_ticket_export: false, select_all: false, facebook_realtime: false,
-    "Freshfone Call Tracker": false, ticket_contact_export: false, custom_apps: false, timesheet: false,
-    api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false, falcon_signup: false,
+    sha256_enabled: false, auto_ticket_export: false,
+    ticket_contact_export: false,
+    api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
-    froala_editor_forums: false, freshid: false,
+    freshid: false,
     incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
     auto_complete_off: false, freshworks_omnibar: false,
-    euc_migrated_twitter: false, new_ticket_recieved_metric: false, es_msearch: true,
+    new_ticket_recieved_metric: false, es_msearch: true,
     canned_forms: false, attachment_virus_detection: false, old_link_back_url_validation: false,
-    stop_contacts_count_query: false, undo_send: false,
+    stop_contacts_count_query: false,
     bot_email_channel: false, archive_ticket_fields: true,
     sso_login_expiry_limitation: false, csat_email_scan_compatibility: false, email_deprecated_style_parsing: false,
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
@@ -226,7 +220,7 @@ class Account < ActiveRecord::Base
     recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
-    supervisor_custom_status: false, asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
+    asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
     hide_mailbox_error_from_agents: false,
     jira_onpremise_reporter: false, sidekiq_logs_to_central: false,
@@ -234,19 +228,20 @@ class Account < ActiveRecord::Base
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
-    sla_policy_revamp: false, freshdesk_freshsales_bundle: false, requester_widget_timeline: false,
+    requester_widget_timeline: false, sprout_trial_onboarding: false,
     enable_secure_login_check: false,
-    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false, retry_emails: false,
+    marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
-    salesforce_sync: false, salesforce_v2: false, dynamics_v2: false, marketplace_app: false, freshid_sso_sync: true,
-    fw_sso_admin_security: false, shopify_api_revamp: false,
+    salesforce_sync: false, salesforce_v2: false, marketplace_app: false, freshid_sso_sync: true,
+    fw_sso_admin_security: false,
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
+    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false
   }.freeze
-  
+
   BLOCK_GRACE_PERIOD = 90.days
 
   ACCOUNT_TYPES = {
@@ -258,5 +253,14 @@ class Account < ActiveRecord::Base
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
   FILE_DOWNLOAD_URL_EXPIRY_TIME = 60.to_i.seconds
-  CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES = [:agent_statuses].freeze
+
+  # Add launchparty name to CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES if the feature needs to sent to central
+  # Setting feature to false, will not trigger separate account_update event on launching a key on signup
+  # feature_name: true/false
+  # true -> should fire separate account_update event with feature added
+  # false -> will not fire separate account_update
+  # the false/true value is not honoured if the key is launched after the account signup
+  CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES = {
+    agent_statuses: false
+  }.freeze
 end

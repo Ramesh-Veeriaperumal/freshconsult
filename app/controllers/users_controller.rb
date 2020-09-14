@@ -19,7 +19,6 @@ class UsersController < ApplicationController
   before_filter :assume_allowed?, :only => [:assume_identity]
   before_filter :load_items, :only => :block
   before_filter :has_access_to_enable_falcon?, :only => [:enable_falcon_for_all]
-  before_filter :has_access_to_disable_old_ui?, :only => [:disable_old_helpdesk]
   before_filter :req_feature, :only => [:set_conversation_preference]
 
   ##redirect to contacts
@@ -147,7 +146,6 @@ class UsersController < ApplicationController
 
   def enable_falcon
     return unless current_account.falcon_ui_enabled?
-    current_user.toggle_ui_preference unless current_user.is_falcon_pref?
     cookies[:falcon_enabled] = true
     redirect_to_falcon
   end
@@ -155,7 +153,6 @@ class UsersController < ApplicationController
   def disable_falcon
     # render nothing: true, status: 400 unless get_referer.start_with?('/a/')
     return head(401) if current_account.disable_old_ui_enabled?
-    current_user.disable_falcon_ui if (current_user.is_falcon_pref? || current_user.falcon_invite_eligible?)
     cookies[:falcon_enabled] = false
     return head :no_content
   end
@@ -168,7 +165,6 @@ class UsersController < ApplicationController
 
   def disable_old_helpdesk
     current_account.add_feature(:disable_old_ui)
-    current_account.rollback(:admin_only_mint) if current_account.admin_only_mint_enabled?
     Rails.logger.info("Disable OLD UI :: #{User.current.email} :: #{User.current.id} :: #{Account.current.id}")
     return head :no_content
   end
@@ -241,13 +237,7 @@ class UsersController < ApplicationController
     end
 
     def has_access_to_enable_falcon?
-      return head(401) unless current_account.admin_only_mint_enabled?
-      return head(403) if current_account.falcon_enabled?
-    end
-
-    def has_access_to_disable_old_ui?
-      return head(401) unless current_account.falcon_enabled?
-      return head(403) if current_account.disable_old_ui_enabled?
+      head(403)
     end
 
     def req_feature

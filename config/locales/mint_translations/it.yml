@@ -1067,8 +1067,6 @@ it:
         only_agents: Operatori
         remote_login_url_info: >-
           Questo è l’URL a cui saranno reindirizzati gli utenti per l’autenticazione quando tentano di accedere a Freshdesk.
-        customer_portal_ssl_warning: >-
-          Dato che per il tuo account è stato configurato l’URL dell’helpdesk personalizzato, sarai reindirizzato a 
         saml_cert_fingerprint: Impronta digitale certificato di sicurezza
         success_message: >-
           La tua richiesta relativa al certificato SSL personalizzato è stata avviata e sarà elaborata a breve. Riceverai un’email di conferma dal nostro provider prima dell’approvazione. Controlla la tua casella email per ulteriori aggiornamenti.
@@ -2146,6 +2144,7 @@ it:
         all_tickets: Tutti i ticket
         due_today: Tickets in scadenza oggi
         resolved: Ticket risolti
+        visible_and_resolved: Ticket risolti
       friendly_status:
         customer_responded: Con risposta del cliente
         elapsed: Scadenza risposta
@@ -3750,6 +3749,9 @@ it:
       created_at: Creato
       skill: Competenza
       description: Descrizione
+    field_service_fields:
+      cf_fsm_contact_name: Contatto
+      cf_fsm_phone_number: Numero di telefono
     formfield_props:
       behavior: Comportamento
       customer_edit: Modificabile dal cliente
@@ -5729,6 +5731,7 @@ it:
       sign_up_text: 'Inizia a chattare con i tuoi clienti sul tuo sito web, portale o app mobile.'
       enable_chat_in_portal_info: >-
         Rendi semplice per i tuoi clienti dialogare con te quando arrivano sulla pagina dell’assistenza.
+      topics_title: Argomenti
       app_id_placeholder: 'Es.: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Per convertire le conversazioni Freshchat in ticket vai a questa <a href='%{url}' target='_blank'>pagina</a>, quindi copia e incolla i dati elencati di seguito. Se ti serve ulteriore aiuto, prova a consultare <a href='%{article_url}' target='_blank'>questo articolo</a>.

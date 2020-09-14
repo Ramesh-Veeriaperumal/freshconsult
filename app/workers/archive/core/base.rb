@@ -13,6 +13,11 @@ module Archive
         # helpdesk_notes: [:survey_remark, :note_body, :schema_less_note, :external_note]
       }.freeze
 
+      # These attributes were missing sometimes due to unknown reasons and cause error when trying to view archived tickets
+      ASSOCIATIONS_REQUIRED = {
+        helpdesk_tickets: [:flexifield, :schema_less_ticket, :ticket_states]
+      }.freeze
+
       # tag_uses: "taggable", :tags, :parent
       # removed custom_survey_results
       ASSOCIATIONS_TO_MODIFY = {
@@ -75,6 +80,10 @@ module Archive
           ticket_model_hash[:helpdesk_tickets] = association_data_of_object(ticket)
           ASSOCIATIONS_TO_SERIALIZE[:helpdesk_tickets].each do |association_name|
             model_association = ticket.safe_send(association_name)
+            if ASSOCIATIONS_REQUIRED[:helpdesk_tickets].include?(association_name) && (model_association.nil? || model_association.id.nil?) && !Account.current.launched?(:archive_on_missing_associations)
+              Rails.logger.warn("#{association_name} is missing for this ticket #{ticket.inspect}")
+              raise MissionAssociationError.new "#{association_name} association is missing"
+            end
             ticket_association_hash[association_name] = association_data_of_object(model_association) if model_association
           end
           ticket_model_hash[:helpdesk_tickets_association] = ticket_association_hash
@@ -185,9 +194,10 @@ module Archive
         ticket.archive = true
         ticket.misc_changes = { archive: [false, true] }
         key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY
-        ticket.count_es_manual_publish('destroy') if Account.current.count_es_writes_enabled? # for count es, its a delete action and we ll remove document from count cluster.
+        ticket.count_es_manual_publish('destroy')
         ticket.save_deleted_ticket_info(true)
         ticket.manual_publish(['update', key, { manual_publish: true }], [:destroy, nil], true)
+        archive_ticket.manual_publish(nil, [:create, {}], false)
         if mysql_ticket_delete(ticket.id, ticket.account_id, archive_ticket)
           Helpdesk::ArchiveTicket.where(id: archive_ticket.id, account_id: archive_ticket.account_id, progress: true)
                                  .update_all(progress: false)

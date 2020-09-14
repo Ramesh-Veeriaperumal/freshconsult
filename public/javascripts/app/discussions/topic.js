@@ -70,12 +70,7 @@ window.App.Discussions = window.App.Discussions || {};
 
 		invokeReplyEditor: function() {
 			$('#sticky_redactor_toolbar').removeClass('hide');
-			if($('#reply_description').data('newEditor')) {
-        invokeEditor('reply_description', 'forum');
-      }
-      else {
-        invokeRedactor('reply_description', 'forum');
-      }
+      invokeEditor('reply_description', 'forum');
     },
 
 		closeReplyForm: function () {

@@ -7,6 +7,7 @@ class Ryuken::SwitchToAnnualNotification
                     body_parser: :json
 
   def perform(_sqs_msg, args)
+    Rails.logger.info "Monthly to annual notification poller request - #{args.inspect} - #{_sqs_msg.inspect} - current_account: #{Account.current.inspect}"
     subscription = Account.current.subscription
     if !subscription.active? || subscription.renewal_period == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] || Account.current.account_cancellation_requested?
       notification_offset = SubscriptionConstants::POSTPONE_NOTIFICATION_OFFSET # Notification months will be reduced by 3 months which actually will increase prior notifications by 1 month

@@ -4,11 +4,8 @@ module IntegrationServices::Services
 
       def get_recent_orders(customer_id)
         return {} if customer_id.blank?
-        request_url =  if Account.current.shopify_api_revamp_enabled?
-          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders.json?limit=5&order=created_at%20desc&customer_id=#{customer_id}&status=any"
-        else
-          "#{server_url}/admin/orders.json?limit=5&order=created_at%20desc&customer_id=#{customer_id}&status=any"
-        end
+
+        request_url = "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders.json?limit=5&order=created_at%20desc&customer_id=#{customer_id}&status=any"
         response = http_get request_url
         process_response(response, 200) do |orders|
           return {} if orders["orders"].blank?
@@ -23,11 +20,8 @@ module IntegrationServices::Services
 
       def get_order(order_id)
         return {} if order_id.blank?
-        request_url = if Account.current.shopify_api_revamp_enabled?
-            "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}.json"
-          else
-            "#{server_url}/admin/orders/#{order_id}.json"
-          end
+
+        request_url = "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}.json"
         response = http_get request_url
         process_response(response, 200) do |order|
           return {} if order["order"].blank?
@@ -37,11 +31,8 @@ module IntegrationServices::Services
 
       def cancel_order(order_id)
         return {} if order_id.blank?
-        request_url = if Account.current.shopify_api_revamp_enabled?
-            "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/cancel.json"
-          else
-            "#{server_url}/admin/orders/#{order_id}/cancel.json"
-          end
+
+        request_url = "#{server_url}/admin/#{SHOPIFY_API_VERSION}/orders/#{order_id}/cancel.json"
         response = http_post request_url
         process_response(response, 200) do |result|
           return result

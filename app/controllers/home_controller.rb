@@ -4,6 +4,7 @@ class HomeController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter { @hash_of_additional_params = { format: 'html' } }
   before_filter :set_content_scope, :set_mobile, only: [:index]
+  before_filter :csp_headers, only: :index_html
   skip_before_filter :check_account_state, :set_locale, :check_day_pass_usage, only: [:index_html]
 
   include Redis::OthersRedis
@@ -64,5 +65,13 @@ class HomeController < ApplicationController
 
     def can_redirect_to_mobile?
       current_user && mobile_agent? && !request.cookies['skip_mobile_app_download'] && current_user.agent?
+    end
+
+    def csp_headers
+      return unless current_account.account_additional_settings.additional_settings.try(:[], :security).try(:[], :block_mixed_content)
+      
+      response.headers['Content-Security-Policy'] = 'block-all-mixed-content'
+
+      # When we are expanding CSP headers to accomodate all the appropriate policies, we have to ensure the above as well
     end
 end

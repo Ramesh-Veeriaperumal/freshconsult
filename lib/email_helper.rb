@@ -80,10 +80,6 @@ module EmailHelper
     model.attachments.destroy_all if model.new_record?
   end
 
-  def tokenize_emojis(msg_text)
-    (msg_text.present? and !Account.current.launched?(:encode_emoji) and Account.current.features?(:tokenize_emoji)) ? msg_text.tokenize_emoji : msg_text
-  end
-
   def reply_to_private_note?(all_keys)
     all_keys.present? and all_keys.any? { |key| key.to_s.include? "private-notification.freshdesk.com" }
   end

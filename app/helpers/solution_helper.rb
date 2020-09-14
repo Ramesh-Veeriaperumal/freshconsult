@@ -254,22 +254,13 @@ module SolutionHelper
     feedbacks_array.first(3).each do |feedback|
       content << article_feedback(feedback)
     end
-    content << %{</ul>}
-      if current_user.is_falcon_pref?
-		    content << link_to( t('solution.sidebar.view_all'), "/a/tickets/filters/#{filter}",
-			             {
-			                :class => "view-all article-feedback-list",
-			                :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=#{filter}",
-			                :"data-parallel-placeholder" => "#ticket-leftFilter"
-			             }) if feedbacks_array.length > 3
-		  else
-		    content << pjax_link_to( t('solution.sidebar.view_all'), "/helpdesk/tickets/filter/#{filter}",
-		               {
-		                  :class => "view-all",
-		                  :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=#{filter}",
-		                  :"data-parallel-placeholder" => "#ticket-leftFilter"
-		               }) if feedbacks_array.length > 3
-		  end
+	    content << %{</ul>}
+		content << link_to(t('solution.sidebar.view_all'), "/a/tickets/filters/#{filter}",
+		{
+		  class: "view-all article-feedback-list",
+		  'data-parallel-url': "/helpdesk/tickets/filter_options?filter_name=#{filter}",
+		  'data-parallel-placeholder': "#ticket-leftFilter"
+		}) if feedbacks_array.length > 3
 		content << %{</div>}
 		content.html_safe
 	end

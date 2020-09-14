@@ -12,25 +12,11 @@ class Helpdesk::LeaderboardController < ApplicationController
     support_score = SupportScore.new
     current_time = Time.now.in_time_zone current_account.time_zone
 
-	category_list.each do |category|
-		if current_user.privilege?(:view_reports) || !current_account.launched?(:new_leaderboard)
-	    	response = support_score.get_leader_ids current_account, "agents", category, current_time, 1
-			@mini_list_leaderboard[category] = current_account.technicians.includes(:avatar).find(response.first.first) if response
-		else
-    	  response = support_score.get_mini_list current_account, current_user, category
-    	  @mini_list_leaderboard[category] = nil
-			unless response.nil?
-	    	  	@mini_list_leaderboard[category] = {}
-	    	  	@mini_list_leaderboard[category][:leader] = current_account.technicians.includes(:avatar).find(response.first.first)
-	    	  	@mini_list_leaderboard[category][:leader][:score] = response.first.second
-	    	  	@mini_list_leaderboard[category][:others] = []
-	    	  	response.second.each do |leaderboard_agent|
-	    	  		@mini_list_leaderboard[category][:others] << current_account.technicians.includes(:avatar).find(leaderboard_agent.first)
-	    	  		@mini_list_leaderboard[category][:others].last[:rank] = leaderboard_agent.last
-	    	  		@mini_list_leaderboard[category][:others].last[:score] = leaderboard_agent.second
-    	  		end
-			end
-    	end
+    category_list.each do |category|
+      if current_user.privilege?(:view_reports)
+        response = support_score.get_leader_ids current_account, "agents", category, current_time, 1
+        @mini_list_leaderboard[category] = current_account.technicians.includes(:avatar).find(response.first.first) if response
+      end
     end
     render :layout => false
   end

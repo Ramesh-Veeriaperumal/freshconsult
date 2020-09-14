@@ -64,9 +64,8 @@ class ConfigDecorator < ApiDecorator
       email_config[:custom_mailbox_error] = false
     end
     email_config[:rate_limited] = redis_key_exists?(format(EMAIL_RATE_LIMIT_BREACHED, account_id: Account.current.id))
-    email_config[:ms_mailbox_oauth_required] = redis_key_exists?(format(EMAIL_MAILBOX_OAUTH_REQUIRED, account_id: Account.current.id))
+    email_config[:mailbox_oauth_reauth_required] = mailbox_oauth_reauthorization_required?
     email_config
-
   end
 
   def zendesk_app_id

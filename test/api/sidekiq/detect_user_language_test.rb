@@ -52,25 +52,23 @@ class DetectUserLanguageTest < ActionView::TestCase
 
   def test_lang_detection_with_cld
     User.any_instance.stubs(:detect_language?).returns(true)
-    @account.launch(:compact_lang_detection)
     set_others_redis_hash_set("CLD_FD_LANGUAGE_MAPPING", "en", "en")
     Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 2')
     @user.reload
     assert_equal @user.language, "en"
-    @account.rollback(:compact_lang_detection)
   end
 
   def test_lang_detect_from_email_service_for_success_response
+    Users::DetectLanguage.any_instance.stubs(:lang_via_cld).returns(false)
     User.any_instance.stubs(:detect_language?).returns(true)
     Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('ar')
-    @account.rollback(:compact_lang_detection)
     Users::DetectLanguage.new.perform(user_id: @user.id, text: 'القائمة وفيما يخص التطبيقات')
     @user.reload
     assert_equal 'ar', @user.language, 'language detection proper response from email service'
   end
 
   def test_lang_detect_from_email_service_for_alternate_language_codes
-    @account.rollback(:compact_lang_detection)
+    Users::DetectLanguage.any_instance.stubs(:lang_via_cld).returns(false)
     User.any_instance.stubs(:detect_language?).returns(true)
     Users::DetectLanguage.any_instance.stubs(:detect_lang_from_email_service).returns('sv')
     Users::DetectLanguage.new.perform(user_id: @user.id, text: 'BC eller Barnens första bok för skolan och hemmet')

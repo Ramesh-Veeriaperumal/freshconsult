@@ -101,10 +101,12 @@ module Channel
       end
 
       def twitter_requester_fields_hash
-        {
+        twitter_requester_fields = {
           twitter_profile_status: params[cname][:twitter_profile_status],
           twitter_followers_count: params[cname][:twitter_followers_count]
         }
+        twitter_requester_fields.merge!(twitter_requester_handle_id: params[cname][:twitter_requester_handle_id]) if Account.current.twitter_api_compliance_enabled?
+        twitter_requester_fields
       end
   end
 end

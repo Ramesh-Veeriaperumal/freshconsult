@@ -404,6 +404,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
    end
   end
 
+  def requester_sender_email_valid?
+    requester_emails = requester.emails
+    requester_emails.present? && requester_emails.include?(sender_email)
+  end
+
   def properties_updated?
     changed? || schema_less_ticket_updated? || custom_fields_updated? || tags_updated
   end
@@ -1246,7 +1251,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def resolution_status
-    return "" unless [RESOLVED, CLOSED].include?(status)
+    # Skipping resolution status for service Task, as resolution status is not applicable for service tasks
+    return '' if service_task? || ![RESOLVED, CLOSED].include?(status)
+
     resolved_at.nil? ? "" : ((resolved_at < due_by)  ? t('export_data.in_sla') : t('export_data.out_of_sla'))
   end
 
@@ -1349,6 +1356,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     yield
   ensure
     Time.zone = old_zone
+  end
+
+  def self.ignore_primary_key
+    if Account.current.launched?(:export_ignore_primary_key)
+      self.from('helpdesk_tickets ignore key (primary)')
+    else
+      self.from('helpdesk_tickets')
+    end
   end
 
   # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.
@@ -1564,6 +1579,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     skip_ocr_sync = true
     self.save
+  end
+
+  def custom_field_value(field_name)
+    safe_send(field_name)
   end
 
   private

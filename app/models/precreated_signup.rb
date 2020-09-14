@@ -13,7 +13,6 @@ class PrecreatedSignup < ActivePresenter::Base
   before_validation :set_time_zone, :set_fs_cookie, :set_i18n_locale, :set_freshid_signup_version, :update_current_user_info, :update_current_account_info
 
   before_save :assign_freshid_v2_org_and_account, if: proc { freshid_v2_signup_allowed? && aloha_signup }
-  after_save :publish_manual_agent_update
   after_save :create_new_precreated_account, :update_account_domain, :update_main_portal_info, :update_subscription, :update_email_config_name
   after_save :create_freshid_v2_org_and_account, if: proc { freshid_v2_signup_allowed? && !aloha_signup }
   after_save :complete_signup_process
@@ -25,11 +24,6 @@ class PrecreatedSignup < ActivePresenter::Base
     account.update_default_forum_category(account_name)
     convert_to_trial(true, referring_product)
     enable_external_services(user.email, true)
-  end
-
-  def publish_manual_agent_update
-    changes = user.model_changes.slice(:name, :email, :phone)
-    user.agent.publish_update_central_payload(changes)
   end
 
   def update_main_portal_info
@@ -70,7 +64,7 @@ class PrecreatedSignup < ActivePresenter::Base
   def assign_freshid_v2_org_and_account
     account.suppress_freshid_calls = true
     account.launch_freshid_with_omnibar(true) if freshid_v2_signup?
-    account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name)
+    account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name, true)
     freshid_organisation = JSON.parse(organisation.to_json, object_class: OpenStruct)
     freshid_organisation.alternate_domain = nil
     account.organisation = Organisation.find_or_create_from_freshid_org(freshid_organisation)
@@ -81,6 +75,10 @@ class PrecreatedSignup < ActivePresenter::Base
   def update_subscription
     if aloha_signup && bundle_id && bundle_name
       account.subscription.subscription_plan = SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_20]).first
+      account.subscription.save
+    elsif account.enable_sprout_trial_onboarding?
+      account.subscription.subscription_plan = SubscriptionPlan.where(name: SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_20]).first
+      account.subscription.convert_to_free
       account.subscription.save
     end
   end

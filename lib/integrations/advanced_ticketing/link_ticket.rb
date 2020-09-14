@@ -13,7 +13,6 @@ class Integrations::AdvancedTicketing::LinkTicket
   end
 
   def disable_link_tkt(inst_app)
-    return if current_account.disable_old_ui_enabled?
-    remove_feature(:link_tickets)
+    Rails.logger.warn "Removed LinkedTicket :: #{caller[0..2]}"
   end
 end

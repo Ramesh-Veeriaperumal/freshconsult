@@ -5141,6 +5141,20 @@
             "type": "integer",
             "description": "Per page limit",
             "x-example": 20
+          },
+          {
+            "name": "available_in",
+            "in": "query",
+            "type": "string",
+            "description": "Filter the available agents based on the given channel value",
+            "x-enum": [
+              "ticket",
+              "chat",
+              "phone",
+              "any",
+              "none"
+            ],
+            "x-example": "ticket"
           }
         ],
         "responses": {
@@ -10287,13 +10301,36 @@
           "plans"
         ],
         "description": "Endpoint to list all Freshdesk plans and its pricing details",
-        "summary": "Endpoint to list all Freshdesk plans and its pricing details",
+        "summary": "List all",
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/plans"
             }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/plans/id": {
+      "get": {
+        "tags": [
+          "plans"
+        ],
+        "description": "Endpoint to fetch a Freshdesk plan and its pricing details",
+        "summary": "Fetch plan",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/fetch_plan"
+            }
+          },
+          "404": {
+            "description": "Not found"
           },
           "403": {
             "description": "Access denied"
@@ -12736,6 +12773,51 @@
             "schema": {
               "$ref": "#/definitions/agents_limit"
             }
+          }
+        }
+      }
+    },
+    "/admin/holidays/{id}": {
+      "get": {
+        "tags": [
+          "Holidays of Calendar"
+        ],
+        "summary": "Holidays of Calendar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "It should be calendar code"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "holidays": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/holidays"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Holidays not found"
           }
         }
       }
@@ -15789,52 +15871,6 @@
         }
       }
     },
-    "/admin/holidays/{id}": {
-      "get": {
-        "tags": [
-          "Holidays"
-        ],
-        "summary": "Holidays of Business Calendar",
-        "description": "Holidays of Business Calendar",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "string",
-            "description": "Holidays code",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "holidays": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/holidays"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "404": {
-            "description": "Holidays not found"
-            },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
     "/agent_statuses": {
       "get": {
         "tags": [
@@ -16838,7 +16874,7 @@
                     "rate_limited": {
                       "type": "boolean"
                     },
-                    "ms_mailbox_oauth_required": {
+                    "mailbox_oauth_reauth_required": {
                       "type": "boolean"
                     }
                   }
@@ -27768,6 +27804,39 @@
                     "cost_per_agent": {
                       "type": "string"
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fetch_plan": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "currency": {
+              "type": "string"
+            },
+            "pricings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "billing_cycle": {
+                    "type": "string"
+                  },
+                  "cost_per_agent": {
+                    "type": "string"
                   }
                 }
               }

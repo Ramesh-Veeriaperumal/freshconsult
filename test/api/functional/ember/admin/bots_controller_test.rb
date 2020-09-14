@@ -222,6 +222,21 @@ module Ember
 
       def test_create_without_view_bot_with_manage_bots_privilege
         enable_bot do
+          stub_request(:post, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_return(body: { 'success': true }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
+          User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
+          portal = create_portal
+          params = create_params(portal).merge(avatar: { is_default: true, url: 'https://s3.amazonaws.com/cdn.freshpo.com', avatar_id: 1 })
+          post :create, params
+          assert_response 200
+          User.any_instance.unstub(:privilege?)
+        end
+      end
+
+      def test_create_bot_exception_system42
+        enable_bot do
+          stub_request(:post, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_raise(StandardError)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
           User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
@@ -235,6 +250,7 @@ module Ember
 
       def test_create_with_valid_params_and_default_avatar
         enable_bot do
+          stub_request(:post, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_return(body: { 'success': true }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
           params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
@@ -274,6 +290,7 @@ module Ember
 
       def test_create_with_xss_params
         enable_bot do
+          stub_request(:post, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_return(body: { 'success': true }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
           params = xss_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
@@ -288,6 +305,7 @@ module Ember
 
       def test_create_with_valid_params_and_custom_avatar
         enable_bot do
+          stub_request(:post, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_return(body: { 'success': true }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
           attachment = create_attachment 
@@ -649,7 +667,7 @@ module Ember
         enable_bot do
           bot = create_bot(product: true)
           bot.training_not_started!
-          Bot.any_instance.stubs(:training_inprogress!).raises(RuntimeError)
+          Bot.any_instance.stubs(:training_completed!).raises(RuntimeError)
           category_ids = 3.times.map do
             create_category.id
           end
@@ -691,6 +709,20 @@ module Ember
           put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
           assert_response 204
           assert_equal category_ids, bot.solution_category_metum_ids
+        end
+      end
+
+      def test_map_categories_ml_api_stub_exception_system42
+        enable_bot do
+          bot = create_bot(product: true)
+          category_ids = Array.new(3) do
+            create_category.id
+          end
+          bot.portal.solution_category_metum_ids = category_ids
+          bot.portal.save
+          stub_request(:put, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_raise(StandardError)
+          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
+          assert_response 503
         end
       end
 

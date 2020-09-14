@@ -335,16 +335,11 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
   end
 
-  def check_custom_mailbox_status
+  def check_mailbox_oauth_status
     if features_included?('mailbox')
-      key = format(CUSTOM_MAILBOX_STATUS_CHECK, account_id: id)
-      MemcacheKeys.fetch(key) { imap_mailboxes.errors.present? || smtp_mailboxes.errors.present? }
+      key = format(OAUTH_MAILBOX_STATUS_CHECK, account_id: id)
+      MemcacheKeys.fetch(key) { imap_mailboxes.oauth_errors.present? || smtp_mailboxes.oauth_errors.present? }
     end
-  end
-
-  def custom_mailbox_errors_present
-    key = CUSTOM_MAILBOX_STATUS_CHECK % {:account_id => self.id }
-    MemcacheKeys.fetch(key) { self.imap_mailboxes.errors.present? }
   end
 
   def fb_realtime_msg_from_cache

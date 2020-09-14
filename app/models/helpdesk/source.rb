@@ -5,6 +5,14 @@ class Helpdesk::Source < Helpdesk::Choice
 
   serialize :meta, HashWithIndifferentAccess
 
+  SOURCE_FORMATTER = {
+    all_ids: proc { source_from.map(&:account_choice_id) },
+    keys_by_token: proc { source_from.map { |choice| [choice.try(:[], :from_constant) ? choice.translated_name : choice.translated_source_name(translation_record_from_ticket_fields), choice.account_choice_id] } },
+    token_by_keys: proc { Hash[*source_from.map { |choice| [choice.account_choice_id, choice.name] }.flatten] }
+  }.freeze
+
+  private_constant :SOURCE_FORMATTER
+
   class << self
     def ticket_sources
       if Account.current && Account.current.launched?(:whatsapp_ticket_source)
@@ -159,9 +167,50 @@ class Helpdesk::Source < Helpdesk::Choice
       Account.current.ticket_source_revamp_enabled?
     end
 
+    def source_choices(type)
+      SOURCE_FORMATTER[type].call
+    end
+
+    def source_from
+      return all_records if Account.current && revamp_enabled?
+
+      default_records
+    end
+
     def visible_custom_sources
       Account.current.ticket_source_from_cache.where(default: 0, deleted: 0)
     end
+
+    private
+
+      def current_supported_language
+        User.current.try(:supported_language) || Language.current.try(:to_key)
+      end
+
+      def ticket_fields
+        @ticket_fields ||= Account.current.ticket_fields_only.where(field_type: 'default_source').first
+      end
+
+      def translation_record_from_ticket_fields
+        @translation_record_from_ticket_fields ||= ticket_fields.safe_send("#{current_supported_language}_translation")
+      end
+
+      def all_records
+        Account.current.ticket_source_from_cache
+      end
+
+      def default_records
+        Helpdesk::Source.ticket_sources.map do |ch|
+          OpenStruct.new(name: ch[0],
+                         account_choice_id: ch[2],
+                         position: ch[2],
+                         meta: { 'icon_id' => ch[2] },
+                         default: true,
+                         deleted: false,
+                         from_constant: true,
+                         translated_name: I18n.t(ch[1]))
+        end
+      end
   end
 
   def new_response_hash
@@ -203,7 +252,6 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def translate_default_source_name
-      key = Helpdesk::Source.default_ticket_sources.select { |i| i[2] == account_choice_id }.first[1]
-      I18n.t(key)
+      I18n.t(Helpdesk::Source.default_ticket_source_names_by_key[account_choice_id])
     end
 end

@@ -17,6 +17,21 @@ class Channel::V2::Iam::AuthenticationControllerTest < ActionController::TestCas
     @controller.unstub(:api_current_user)
   end
 
+  def test_auth_by_channel_auth_header
+    set_jwt_auth_header('sherlock')
+    get :authenticate, controller_params(version: 'channel', url: '/api/channel/v2/billing')
+    assert_equal JSON.parse(response.body)['success'], true
+    assert response.headers.key?('x-fwi-client-token')
+    key = OpenSSL::PKey::RSA.new(File.read('config/cert/iam_public.pem'))
+    auth = response.headers['x-fwi-client-token'].match(/Bearer (.*)/)
+    auth = auth[1].strip if !auth.nil? && auth.length > 1
+    sub = (JWT.decode auth, key, true, algorithm: 'RS256').first['sub']
+    assert_equal sub, 'sherlock'
+    assert response.headers.key?('x-fwi-client-id')
+    assert_equal response.headers['x-fwi-client-id'], 'sherlock'
+    assert_response 200
+  end
+
   def test_auth_by_freshid_api
     Channel::V2::Iam::AuthenticationController.any_instance.stubs(:private_api?).returns(false)
     @current_account.launch(:api_jwt_auth)

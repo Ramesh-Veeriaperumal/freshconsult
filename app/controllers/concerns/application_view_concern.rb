@@ -55,7 +55,11 @@ module Concerns::ApplicationViewConcern
   end
 
   def custom_mailbox_error?
-    Account.current.check_custom_mailbox_status
+    redis_key_exists?(format(CUSTOM_MAILBOX_STATUS_CHECK, account_id: Account.current.id))
+  end
+
+  def mailbox_oauth_reauthorization_required?
+    Account.current.check_mailbox_oauth_status || false
   end
 
   def freshfone_deprecation?

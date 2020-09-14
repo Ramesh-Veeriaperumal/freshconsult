@@ -25,9 +25,9 @@ if !@attachments.empty? && @allow_attachments
   else
     page << "jQuery('#ticket-attachments').append('#{escape_javascript(attachment_dom)}')"
   end
-  if  current_account.launched?(:multifile_attachments)
-    page << "Helpdesk.MultipleFileUpload.canned_response(#{@attachments.to_json.html_safe},jQuery('.attachment-icon:visible').data('iconCount'))"
-  end
+
+  page << "Helpdesk.MultipleFileUpload.canned_response(#{@attachments.to_json.html_safe},jQuery('.attachment-icon:visible').data('iconCount'))"
+
   page << "jQuery('.modal#canned_responses').find('.close').trigger('click')"
   page << "jQuery('.response-loading').removeClass('response-loading')"
 end

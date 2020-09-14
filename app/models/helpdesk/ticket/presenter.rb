@@ -1,21 +1,13 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include RepresentationHelper
   include TicketsNotesHelper
+  include TicketPresenter::PresenterHelper
 
   SECURE_FIELD_PREFIX = Admin::TicketFieldConstants::ENCRYPTED_FIELDS_PREFIX_BY_TYPE[:secure_text].freeze
   FLEXIFIELD_PREFIXES = (['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_', 'dn_mlt_'] | [SECURE_FIELD_PREFIX]).freeze
-  REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :first_response_group_id, :first_response_agent_id,
-                   :first_assign_agent_id, :first_assign_group_id, :agent_reassigned_count, :group_reassigned_count,
-                   :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count,
-                   :agent_assigned_flag, :agent_reassigned_flag, :group_assigned_flag, :group_reassigned_flag,
-                   :internal_agent_assigned_flag, :internal_agent_reassigned_flag, :internal_group_assigned_flag,
-                   :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at].freeze
-  EMAIL_KEYS = [:cc_emails, :fwd_emails, :bcc_emails, :reply_cc, :tkt_cc].freeze
-  DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at, :first_response_time, :first_assigned_at].freeze
   TAG_KEYS = [:add_tag, :remove_tag].freeze
   WATCHER_KEYS = [:add_watcher, :remove_watcher].freeze
   SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent, :add_note, :forward_ticket].freeze
-  DONT_CARE_VALUE = '*'.freeze
   SPLIT_TICKET_ACTIVITY = 'ticket_split_target'.freeze
   MERGE_TICKET_ACTIVITY = 'ticket_merge_source'.freeze
   ROUND_ROBIN_ACTIVITY = 'round_robin'.freeze
@@ -30,83 +22,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SLA_ESCALATION_ATTRIBUTES = Hash[*SLA_ATTRIBUTES.map { |i| [i[0], i[1]] }.flatten]
   SLA_REMINDER_ATTRIBUTES = Hash[*SLA_ATTRIBUTES.map { |i| [i[0], i[2]] }.flatten]
 
-  acts_as_api
-
-  api_accessible :central_publish do |t|
-    t.add :id
-    t.add :display_id
-    t.add :account_id
-    t.add :responder_id
-    t.add :group_id
-    t.add :status_hash, as: :status
-    t.add :priority_hash, as: :priority
-    t.add :ticket_type
-    t.add :source_hash, as: :source
-    t.add :requester_id
-    t.add :skill_id, :if => proc { Account.current.skill_based_round_robin_enabled? }
-    t.add :central_custom_fields_hash, as: :custom_fields
-    t.add :product_id
-    t.add :company_id
-    t.add :sla_policy_id
-    t.add :association_hash, as: :associates
-    t.add :associates_rdb
-    t.add :isescalated, as: :is_escalated
-    t.add :fr_escalated
-    t.add :nr_escalated, :if => proc { Account.current.next_response_sla_enabled? }
-    t.add :escalation_level, as: :resolution_escalation_level
-    t.add :sla_response_reminded, as: :response_reminded
-    t.add :sla_resolution_reminded, as: :resolution_reminded
-    t.add :nr_reminded, as: :next_response_reminded, :if => proc { Account.current.next_response_sla_enabled? }
-    t.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs
-    t.add :resolution_time_by_chrs, as: :time_to_resolution_in_chrs
-    t.add :inbound_count
-    t.add :first_resp_time_by_bhrs, as: :first_response_by_bhrs
-    t.add :archive
-    t.add :internal_agent_id
-    t.add :internal_group_id
-    t.add :parent_ticket, as: :parent_id
-    t.add :outbound_email?, as: :outbound_email
-    t.add :subject
-    t.add proc { |x| x.description }, as: :description_text
-    t.add :description_html
-    t.add :watchers
-    t.add :urgent
-    t.add :spam
-    t.add :trained
-    t.add proc { |x| x.utc_format(x.frDueBy) }, as: :fr_due_by
-    t.add proc { |x| x.utc_format(x.nr_due_by) }, as: :nr_due_by, :if => proc { Account.current.next_response_sla_enabled? }
-    t.add :to_emails
-    t.add :email_config_id
-    t.add :deleted
-    t.add :group_users
-    t.add :import_id
-    t.add :on_state_time
-    t.add :status_stop_sla_timer
-    t.add :status_deleted
-    t.add proc { |x| x.attachments.map(&:id) }, as: :attachment_ids
-    t.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
-    REPORT_FIELDS.each do |key|
-      t.add proc { |x| x.reports_hash[key.to_s] }, as: key
-    end
-    DATETIME_FIELDS.each do |key|
-      t.add proc { |x| x.utc_format(x.safe_send(key)) }, as: key
-    end
-    EMAIL_KEYS.each do |key|
-      t.add proc { |x| x.cc_email_hash.try(:[], key) }, as: key
-    end
-    # Source additional info
-    t.add :source_additional_info_hash, as: :source_additional_info
-  end
-
-  api_accessible :central_publish_associations do |t|
-    t.add :requester, template: :central_publish
-    t.add :responder, template: :central_publish
-    t.add :group, template: :central_publish
-    t.add :attachments, template: :central_publish
-    t.add :skill, template: :skill_as_association, :if => proc { Account.current.skill_based_round_robin_enabled? }
-    t.add :product, template: :product_as_association
-    t.add :internal_group, template: :internal_group_central_publish_associations, if: proc { Account.current.shared_ownership_enabled? }
-    t.add :internal_agent, template: :internal_agent_central_publish_associations, if: proc { Account.current.shared_ownership_enabled? }
+  #add your attributes here if you want the property to be available only in ticket payload but not in archive ticket payload
+  #if your property is common, then add in TicketPresenter::PresenterHelper module
+  api_accessible :central_publish do |at|
+    at.add :parent_ticket, as: :parent_id
+    at.add proc { |x| x.utc_format(x.parse_to_date_time(x.requester_responded_at)) }, as: :requester_responded_at
+    at.add proc { |x| x.utc_format(x.parse_to_date_time(x.agent_responded_at)) }, as: :agent_responded_at
   end
 
   api_accessible :central_publish_destroy do |t|
@@ -123,6 +44,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       action = [:create, :update].find{ |action| transaction_include_action? action }
       "import_ticket_#{action}" if action.present?
     end
+  end
+
+  def central_publish_preloaded_payload
+    as_api_response(:central_publish_preload)
   end
 
   def central_publish_payload
@@ -143,131 +68,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  def priority_hash
-    { 
-      id: priority, 
-      name: PRIORITY_NAMES_BY_KEY[priority]
-    }
-  end
-
-  def status_hash
-    { 
-      id: status, 
-      name: status_name
-    }
-  end
-
-  def source_hash
-    { 
-      id: source, 
-      name: Account.current.helpdesk_sources.ticket_source_names_by_key[source]
-    }
-  end
-
-  def source_additional_info_hash
-    source_info = {}
-    source_info = social_source_additional_info(source_info)
-    source_info[:email] = email_source_info(schema_less_ticket.header_info) if email_ticket?
-    source_info.presence
-  end
-
-  def association_hash
-    render_assoc_hash(association_type)
-  end
-
-  def render_assoc_hash(current_association_type)
-    return nil if current_association_type.blank?
-
-    {
-      id: current_association_type,
-      type: TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
-    }
-  end
-
-  def requester_twitter_id
-    requester.try(:twitter_id)
-  end
-
-  def requester_fb_id
-    requester.try(:fb_profile_id)
-  end
-
-  def association_hash
-    render_assoc_hash(association_type)
-  end
-
-  def render_assoc_hash(current_association_type)
-    return nil if current_association_type.blank?
-
-    {
-      id: current_association_type,
-      type: TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
-    }
-  end
-
-  def central_custom_fields_hash
-    pv_transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(self)
-    arr = []
-    custom_flexifield_def_entries.each do |flexifield_def_entry|
-      field = flexifield_def_entry.ticket_field
-      next if field.blank?
-
-      begin
-        field_value = safe_send(field.name)
-        custom_field = {
-          name: field.name,
-          label: field.label,
-          type: field.flexifield_coltype,
-          value: map_field_value(field, field_value),
-          column: field.column_name
-        }
-        if field.flexifield_coltype == 'dropdown'
-          if field_value
-            picklist_id = pv_transformer.transform(field_value, field.column_name) # fetch picklist_id of the field
-            custom_field[:value] = nil if picklist_id.blank?
-          end
-          custom_field[:choice_id] = picklist_id
-        end
-        custom_field[:value] = DONT_CARE_VALUE if field.field_type == TicketFieldsConstants::SECURE_TEXT && custom_field[:value].present?
-        arr.push(custom_field)
-      rescue Exception => e
-        Rails.logger.error("Error while fetching ticket custom field #{field.name} - account #{account.id} - #{e.message} :: #{e.backtrace[0..10].inspect}")
-        NewRelic::Agent.notice_error(e)
-      end
-    end
-    arr
-  end
-
-  def map_field_value(ticket_field, value)
-    if ticket_field.field_type == 'custom_date'
-      utc_format(value)
-    elsif ticket_field.field_type == 'custom_file' && value.present?
-      value.to_i
-    else
-      value
-    end
-  end
-
-  def custom_flexifield_def_entries
-    @custom_flexifield_def_entries ||= account.flexifields_with_ticket_fields_from_cache
-  end
-
   def custom_ticket_fields
     @custom_tkt_fields ||= account.ticket_fields_from_cache.reject(&:default)
   end
 
   def file_ticket_fields
     custom_ticket_fields.select { |x| x.field_type == 'custom_file' }.map(&:column_name)
-  end
-
-  def resolution_time_by_chrs
-    resolved_at ? (resolved_at - created_at) : nil
-  end
-
-  def group_users
-    return [] unless group
-    group_users = Account.current.agent_groups_hash_from_cache[group.id]
-    (group_users && group_users.collect { |user_id| { "id" => user_id } }) || []
   end
 
   # *****************************************************************

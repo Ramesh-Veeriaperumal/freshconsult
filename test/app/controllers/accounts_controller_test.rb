@@ -50,6 +50,63 @@ class AccountsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_default_account_settings_when_new_signup_with_feature_based_settings_enabled
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    landing_url = Faker::Internet.url
+    user_name = Faker::Name.name
+    session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    assert_not_nil resp['account_id'], resp
+    account = Account.find(resp['account_id'])
+    assert account.has_feature?(:untitled_setting_3)
+    assert account.has_feature?(:untitled_setting_4)
+    assert_equal account.has_feature?(:untitled_setting_1), false
+  ensure
+    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    unstub_signup_calls
+  end
+
+  def test_default_account_settings_when_new_signup_with_feature_based_settings_disabled
+    stub_signup_calls
+    Account.any_instance.stubs(:launched?).with(:feature_based_settings).returns(false)
+    Signup.any_instance.unstub(:save)
+    account_name = Faker::Lorem.word
+    domain_name = Faker::Lorem.word
+    user_email = Faker::Internet.email
+    landing_url = Faker::Internet.url
+    user_name = Faker::Name.name
+    session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    assert_not_nil resp['account_id'], resp
+    account = Account.find(resp['account_id'])
+    assert_equal account.has_feature?(:untitled_setting_1), false
+    assert_equal account.has_feature?(:untitled_setting_3), false
+    assert_equal account.has_feature?(:untitled_setting_4), false
+  ensure
+    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    unstub_signup_calls
+  end
+
   def test_new_signup_with_precreated_account
     populate_plans
     AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
@@ -342,7 +399,7 @@ class AccountsControllerTest < ActionController::TestCase
     ensure
       AdminEmail::AssociatedAccounts.unstub(:find)
       remove_member_from_redis_set(INCREASE_DOMAIN_FOR_EMAILS, user_email)
-  end  
+  end
 
   def test_domain_existence
     get :check_domain, domain: "#{Faker::Lorem.word}.com", callback: '', format: 'json'
@@ -955,6 +1012,130 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:sync_user_info_from_freshid_v2!)
   end
 
+  def test_new_signup_from_free_helpdesk_site
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    user_email = 'nofsmonsignup@gleason.name'
+    user_name = Faker::Name.name
+    referrer = 'https=>//freshdesk.com/pricing/free-helpdesk-software'
+    session = { current_session: { referrer: referrer, url: Faker::Lorem.word, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: { lang: 'en' }, browser: {}, time: {}, mSegment: 'good' }.to_json
+    account_info = { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    account = Account.find(resp['account_id'])
+    assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'sprout_trial_onboarding'
+    assert_equal account.subscription.state, 'free'
+    assert_equal account.subscription.plan_name, 'Sprout Jan 20'
+  ensure
+    unstub_signup_calls
+  end
+
+  def test_new_signup_from_free_ticketing_site
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    Billing::Subscription.any_instance.stubs(:create_subscription).returns(true)
+    Billing::Subscription.any_instance.stubs(:activate_subscription).returns(true)
+    Billing::Subscription.any_instance.expects(:activate_subscription).once
+    user_email = 'nofsmonsignup@gleason.name'
+    user_name = Faker::Name.name
+    referrer = 'https=>//freshdesk.com/pricing/free-ticketing-software'
+    session = { current_session: { referrer: referrer, url: Faker::Lorem.word, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: { lang: 'en' }, browser: {}, time: {}, mSegment: 'good' }.to_json
+    account_info = { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    Billing::AddSubscriptionToChargebee.new.perform
+    account = Account.find(resp['account_id'])
+    assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'sprout_trial_onboarding'
+    assert_equal account.subscription.state, 'free'
+    assert_equal account.subscription.plan_name, 'Sprout Jan 20'
+  ensure
+    unstub_signup_calls
+    Billing::Subscription.any_instance.unstub(:create_subscription)
+    Billing::Subscription.any_instance.unstub(:activate_subscription)
+  end
+
+  def test_new_signup_not_sprout_trial_onboarding
+    stub_signup_calls
+    Signup.any_instance.unstub(:save)
+    user_email = 'nofsmonsignup@gleason.name'
+    user_name = Faker::Name.name
+    referrer = 'www.google.com'
+    session = { current_session: { referrer: referrer, url: Faker::Lorem.word, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: { lang: 'en' }, browser: {}, time: {}, mSegment: 'good' }.to_json
+    account_info = { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    account = Account.find(resp['account_id'])
+    assert_not_equal account.account_additional_settings.additional_settings[:onboarding_version], 'sprout_trial_onboarding'
+    assert_equal account.subscription.state, 'trial'
+    assert_equal account.subscription.plan_name, 'Forest Jan 20'
+  ensure
+    unstub_signup_calls
+  end
+
+  def test_new_sprout_trial_signup_with_precreated_account
+    populate_plans
+    AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
+    Subscription.any_instance.stubs(:add_to_billing).returns(true)
+    PrecreatedSignup.any_instance.stubs(:aloha_signup).returns(true)
+    PrecreatedSignup.any_instance.stubs(:freshid_v2_signup_allowed?).returns(true)
+    PrecreatedSignup.any_instance.stubs(:organisation).returns(freshid_organisation)
+    PrecreatedSignup.any_instance.stubs(:freshid_user).returns(freshid_user)
+    Account.any_instance.stubs(:sync_user_info_from_freshid_v2!).returns(true)
+    User.any_instance.stubs(:sync_profile_from_freshid).returns(true)
+    AccountCreation::PrecreateAccounts.new.perform(precreate_account_count: 1, shard_name: 'shard_1')
+    @controller.stubs(:redis_key_exists?).with('PRECREATE_ACCOUNT_ENABLED').returns(true)
+    precreated_account_id = get_others_redis_list(format(PRECREATED_ACCOUNTS_SHARD, current_shard: 'shard_1'), 0, 0)
+    stub_signup_calls
+    user_email = 'fsmonsignup@gleason.com'
+    user_name = Faker::Name.name
+    referrer = 'https=>//freshdesk.com/pricing/free-helpdesk-software'
+    session = { current_session: { referrer: referrer, url: Faker::Lorem.word, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
+                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
+                locale: 'en', browser: {}, time: {} }.to_json
+    account_info = { account_name: Faker::Lorem.word, account_domain: Faker::Lorem.word, locale: I18n.default_locale, time_zone: 'Chennai',
+                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
+                     user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
+    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
+    resp = JSON.parse(response.body)
+    assert_response 200, resp
+    assert_equal resp['account_id'], precreated_account_id[0].to_i
+    account = Account.find(resp['account_id'])
+    assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'sprout_trial_onboarding'
+    assert_equal account.subscription.state, 'free'
+    assert_equal account.subscription.plan_name, 'Sprout Jan 20'
+  ensure
+    unstub_signup_calls
+    @controller.unstub(:redis_key_exists?)
+    Account.unstub(:current)
+    AccountConfiguration.any_instance.unstub(:update_billing)
+    Subscription.any_instance.unstub(:add_to_billing)
+    PrecreatedSignup.any_instance.unstub(:aloha_signup)
+    PrecreatedSignup.any_instance.unstub(:freshid_v2_signup_allowed?)
+    PrecreatedSignup.any_instance.unstub(:organisation)
+    PrecreatedSignup.any_instance.unstub(:freshid_user)
+    Account.any_instance.unstub(:sync_user_info_from_freshid_v2!)
+    User.any_instance.unstub(:sync_profile_from_freshid)
+  end
+
   def test_anonymous_signup_without_redis_enabled
     anonymous_signup_key = ANONYMOUS_ACCOUNT_SIGNUP_ENABLED
     remove_others_redis_key(anonymous_signup_key)
@@ -1070,7 +1251,7 @@ class AccountsControllerTest < ActionController::TestCase
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
     user_email = 'nofsmonsignup@gleason.name'
-    landing_url = 'https://freshdesk.com/lp/free-helpdesk-india?u&device=c'
+    landing_url = 'https://freshdesk.com/lp/helpdesk-india?u&device=c'
     user_name = Faker::Name.name
     url = 'https://freshdesk.com/signup'
     session = { current_session: { referrer: landing_url, url: url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
@@ -1098,7 +1279,7 @@ class AccountsControllerTest < ActionController::TestCase
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
     user_email = 'nofsmonsignup@gleason.name'
-    landing_url = 'https://freshdesk.com/lp/free-helpdesk-india?u&device=c'
+    landing_url = 'https://freshdesk.com/lp/helpdesk-india?u&device=c'
     user_name = Faker::Name.name
     url = 'https://freshdesk.com/signup'
     session = { current_session: { referrer: landing_url, url: url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
@@ -1128,7 +1309,7 @@ class AccountsControllerTest < ActionController::TestCase
     user_email = 'nofsmonsignup@gleason.name'
     landing_url = 'https://google.com'
     user_name = Faker::Name.name
-    url = 'https://freshdesk.com/lp/free-helpdesk-india?u&device=c'
+    url = 'https://freshdesk.com/lp/helpdesk-india?u&device=c'
     session = { current_session: { referrer: landing_url, url: url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
                 device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' },
                 locale: { lang: 'en' }, browser: {}, time: {}, mSegment: 'good' }.to_json
@@ -1140,7 +1321,6 @@ class AccountsControllerTest < ActionController::TestCase
     resp = JSON.parse(response.body)
     assert_response 200, resp
     account = Account.find(resp['account_id'])
-    assert account.account_additional_settings.additional_settings[:onboarding_ab_testing]
     assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'default_onboarding'
   ensure
     unstub_signup_calls
@@ -1170,32 +1350,6 @@ class AccountsControllerTest < ActionController::TestCase
   ensure
     unstub_signup_calls
     AccountAdditionalSettings.any_instance.unstub(:get_onboarding_version)
-  end
-
-  def test_new_signup_with_new_pricing_enabled
-    stub_signup_calls
-    Signup.any_instance.unstub(:save)
-    $redis_others.perform_redis_op('set', NEW_2020_PRICING_ENABLED, true)
-    account_name = Faker::Lorem.word
-    domain_name = Faker::Lorem.word
-    user_email = Faker::Internet.email
-    user_name = Faker::Name.name
-    referrer = Faker::Internet.url
-    landing_url = Faker::Internet.url
-    session = { current_session: { referrer: referrer, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
-                device: {}, location: { countryName: 'India', countryCode: 'IND', cityName: 'Chennai', ipAddress: '127.0.0.1' } }.to_json
-    account_info = { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai',
-                     user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
-                     user_email: user_email, user_helpdesk_agent: true }
-    user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
-    get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
-    resp = JSON.parse(response.body)
-    assert_response 200, resp
-    account = Account.last
-    assert account.subscription.plan_name, 'Estate Jan 20'
-  ensure
-    unstub_signup_calls
-    $redis_others.perform_redis_op('del', NEW_2020_PRICING_ENABLED)
   end
 
   def test_new_signup_should_set_perishable_token_expiry_redis

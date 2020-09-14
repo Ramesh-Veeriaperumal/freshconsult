@@ -1,5 +1,0 @@
-if @result.present?
-  { 'pod_info': @result }.to_hash.to_json
-else
-  {}.to_hash.to_json
-end

@@ -19,27 +19,6 @@
 
 
 %>
-<% if admin_only_falcon_enabled? %>
-	<div id="admin-upgrade-banner" class="admin-upgrade-banner">
-		<p class="admin-mint-title">
-			<%= t('admin_upgrade.enable_mint_title') %>
-		</p>
-		<p class="muted">
-			<%= t('admin_upgrade.enable_mint_info') %>
-		</p>
-		<button data-loading-text="<%= t('livechat.enabling') %>"
-				data-default-text="<%= t('admin_upgrade.enable_mint_all') %>"
-				data-error-text="<%= t('admin_upgrade.enable_mint_error') %>"
-				class="btn btn-primary admin-mint-upgrade"
-				id="admin-mint-upgrade"><%= t('admin_upgrade.enable_mint_all') %></button>
-	</div>
-	<div id="admin-upgrade-success" class="admin-upgrade-banner hide">
-		<p class="admin-mint-title"><%= t('admin_upgrade.enable_mint_success') %></p>
-		<p class="muted">
-			<%= t('admin_upgrade.enable_mint_success_info') %>
-		</p>
-	</div>
-<% end %>
 <%= content_tag(:div, 
 		content_tag(:div, 
 			header_content.html_safe +

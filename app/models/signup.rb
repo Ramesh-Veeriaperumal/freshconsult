@@ -61,13 +61,13 @@ class Signup < ActivePresenter::Base
 
   def aloha_signup_steps
     account.reload
-    account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name)
+    account.account_additional_settings.bundle_details_setter(bundle_id, bundle_name, true)
     account.account_additional_settings.referring_product_setter(referring_product) if referring_product
     freshid_organisation = JSON.parse(organisation.to_json, object_class: OpenStruct)
     freshid_organisation.alternate_domain = nil
     account.organisation = Organisation.find_or_create_from_freshid_org(freshid_organisation)
     account.save!
-    fid_user = JSON.parse(freshid_user.to_json, object_class: OpenStruct)
+    fid_user = Freshid::V2::Models::User.find_by_email(freshid_user["email"], account.organisation.domain)
     account.sync_user_info_from_freshid_v2!(user, fid_user) if fid_user.present?
   end
 
@@ -126,6 +126,8 @@ class Signup < ActivePresenter::Base
     def build_subscription
       plan_name = if aloha_signup && bundle_id && bundle_name
                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_20]
+                  elsif account.enable_sprout_trial_onboarding?
+                    SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_20]
                   else
                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_20]
                   end

@@ -9,7 +9,6 @@ describe Support::Discussions::PostsController do
 		@forum = create_test_forum(@category)
 		@topic = create_test_topic(@forum)
 		@user = add_new_user(@account)
-		@account.features.spam_dynamo.destroy
 	end
 
 	before(:each) do

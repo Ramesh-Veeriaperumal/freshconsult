@@ -100,6 +100,7 @@ helpdesk:
     - clearbit_config
     - freshpipe
     - zendesk_app_config
+    - account_settings
     - product_feedback
     - connection_pool_patch
     - imap_patch
@@ -132,3 +133,5 @@ helpdesk:
     - extend_for_shard_mapping
     - coverband
     - silkroad_config
+    - tracing
+

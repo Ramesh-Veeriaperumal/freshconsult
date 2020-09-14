@@ -126,10 +126,19 @@ class TicketDecorator < ApiDecorator
   end
 
   def restricted_twitter_ticket_content
+    handle = record.tweet.twitter_handle
+    twitter_requester = record.requester
+    twitter_requester_handle_id = twitter_requester.twitter_requester_handle_id || record.tweet.twitter_handle_id
     if record.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      "View the tweet at https://twitter.com/#{record.tweet.twitter_handle_id}/status/#{record.tweet.tweet_id}"
+      "View the tweet at https://twitter.com/#{twitter_requester_handle_id}/status/#{record.tweet.tweet_id}"
     else
-      'View the message at https://twitter.com/messages'
+      dm_body_prefix = 'View the message at https://twitter.com/messages'
+      if handle && twitter_requester.twitter_requester_handle_id
+        handle_ids = [handle.twitter_user_id.to_i, twitter_requester_handle_id.to_i]
+        "#{dm_body_prefix}/#{handle_ids.min}-#{handle_ids.max}"
+      else
+        dm_body_prefix
+      end
     end
   end
 
@@ -230,12 +239,13 @@ class TicketDecorator < ApiDecorator
     return unless (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && record.twitter? && record.tweet.twitter_handle
     tweet = record.tweet
     handle = record.tweet.twitter_handle
+    twitter_requester = record.requester
     tweet_hash = {
       id: tweet.tweet_id.to_s,
       type: tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !channel_v2_api? ? nil : record.requester.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !channel_v2_api? ? twitter_requester.twitter_requester_handle_id : twitter_requester.twitter_id
     }
     tweet_hash[:stream_id] = tweet.stream_id if channel_v2_api?
     tweet_hash

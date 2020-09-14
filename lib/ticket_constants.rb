@@ -33,6 +33,8 @@ module TicketConstants
     receiver.extend ClassMethods
   end
 
+  FSM_DATE_TIME_FIELDS = { start_time: 'cf_fsm_appointment_start_time', end_time: 'cf_fsm_appointment_end_time' }.freeze
+
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
 
   SERVICE_TASK_NAME = "Service Task"
@@ -390,8 +392,8 @@ module TicketConstants
     :merged_ticket => 4
   }
 
-  CHILD_DEFAULT_FD_MAPPING = ["email", "requester_id", "subject", "status", "ticket_type", "group_id", "responder_id",
-                              "priority", "product_id", "description_html", "tags", 'owner_id']
+  CHILD_DEFAULT_FD_MAPPING = ['email', 'requester_id', 'subject', 'status', 'ticket_type', 'group_id', 'responder_id',
+                        'priority', 'product_id', 'description_html', 'tags', 'owner_id', 'source'].freeze
 
   SKILL_BASED_TICKET_ATTRIBUTES = [:sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :sbrr_turned_on, :status_sla_toggled_to, :skip_sbrr_assigner, :skip_sbrr_save]
 

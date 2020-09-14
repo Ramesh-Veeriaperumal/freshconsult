@@ -4,6 +4,7 @@ require_relative '../../../core/helpers/tickets_test_helper'
 require_relative '../../../core/helpers/users_test_helper'
 require_relative '../../../api/helpers/privileges_helper'
 require_relative '../../../api/helpers/archive_ticket_test_helper'
+require "#{Rails.root}/test/core/helpers/note_test_helper"
 
 class Support::TicketsControllerTest < ActionController::TestCase
   include ControllerTestHelper
@@ -11,6 +12,8 @@ class Support::TicketsControllerTest < ActionController::TestCase
   include CoreUsersTestHelper
   include PrivilegesHelper
   include ArchiveTicketTestHelper
+  include NoteTestHelper
+
   ARCHIVE_DAYS = 120
   TICKET_UPDATED_DATE = 150.days.ago
 
@@ -217,6 +220,25 @@ class Support::TicketsControllerTest < ActionController::TestCase
     t1.destroy
   end
 
+
+  def test_show_with_jumbled_order
+  	user = add_new_user(Account.current, active: true)
+  	user.make_current
+    t1 = create_ticket(requester_id: user.id)
+    note1 = create_note
+    note2 = create_note
+    # making note1.id < note2.id and note1.created_at > note2.created_at
+    note2.update_attribute(:created_at, Date.yesterday)
+  	login_as(user)
+  	get :show, :version => :private, id: t1.display_id
+  	assert_response 200
+    assert response.body.index(note2.body) < response.body.index(note1.body)
+    log_out
+  	user.destroy
+    t1.destroy
+  end
+
+
   def test_contractor_user
     agent = add_agent(Account.current)
     user = add_new_user(Account.current, active: true)
@@ -289,6 +311,19 @@ class Support::TicketsControllerTest < ActionController::TestCase
 
     log_out
     user.destroy
+  end
+
+  def test_create_ticket_from_account_with_ehawk_spam_4_and_above
+    Account.any_instance.stubs(:ehawk_spam?).returns(true)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    post :create, version: :private, helpdesk_ticket: { email: user.email }, cc_emails: Faker::Internet.email
+    assert_response 403
+    log_out
+    user.destroy
+  ensure
+    Account.any_instance.unstub(:ehawk_spam?)
   end
 
   def test_create_ticket_for_login_user_with_feature_enabled_with_diff_email

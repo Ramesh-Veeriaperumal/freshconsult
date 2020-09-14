@@ -39,8 +39,8 @@ class Helpdesk::Note < ActiveRecord::Base
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
 
   delegate :to_emails, :cc_emails, :bcc_emails, :subject, :cc_emails_hash, :to => :schema_less_note
-
   scope :newest_first, -> { order("created_at DESC,id DESC") }
+  scope :oldest_first, -> { order('created_at ASC,id ASC') }
   scope :visible, -> { where(deleted: false) }
   scope :public_notes, -> { where(private: false) }
   scope :private_notes, -> { where(private: true) }

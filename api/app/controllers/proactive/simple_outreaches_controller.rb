@@ -94,7 +94,7 @@ module Proactive
       end
 
       def email_outreach_disabled?
-        return true if current_account.disable_simple_outreach_enabled? || !current_account.simple_outreach_enabled?
+        current_account.disable_simple_outreach_enabled?
       end
   end
 end
