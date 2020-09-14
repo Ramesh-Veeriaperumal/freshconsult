@@ -130,7 +130,7 @@ jQuery('body').one('assetLoaded.fjax', function() {
 		<% end %>
 	<% end %>
 });
-<% add_to_reply = !(@ticket.facebook? || @ticket.twitter? || @ticket.freshfone_call.present?) %>
+<% add_to_reply = !(@ticket.facebook? || @ticket.twitter?) %>
 <% if add_to_reply %>
   Helpdesk.MultipleFileUpload.addToRply.init();
 <% end %>
