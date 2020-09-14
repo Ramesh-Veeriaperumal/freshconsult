@@ -169,8 +169,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 1759e91273bccb155209aab3b18231f76f528fc4
-  branch: FD-56016_central_resync_worker
+  revision: d92fc2d55b7558d838a09095dfea7cbc2132345b
+  tag: v2.0.21
   specs:
     central-publisher (2.0.20)
       active_record_shards (>= 3.2.0)

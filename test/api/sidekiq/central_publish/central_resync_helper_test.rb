@@ -15,7 +15,6 @@ class CentralResyncWorkerTest < ActionView::TestCase
   def setup
     super
     @account = Account.first || create_new_account
-    Account.any_instance.stubs(:current).returns(@account)
     @account.make_current
   end
 
