@@ -16,8 +16,8 @@ class InstalledApplicationValidation < FilterValidation
     }, if: :payload_required?
   validates :configs, required: true, data_type: { rules: Hash, allow_nil: false }, on: :create
   validate :validate_configs, on: :create
-  validate :validate_freshsales_only_events, if: -> { event.present? && name == FRESHSALES }
-  validate :validate_freshworkscrm_only_events, if: -> { event.present? && name == FRESHWORKSCRM }
+  validate :validate_freshworkscrm_only_events, if: -> { event.present? && @item.application.name == FRESHWORKSCRM}
+  validate :validate_freshsales_only_events, if: -> { event.present? && @item.application.name == FRESHSALES}
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)

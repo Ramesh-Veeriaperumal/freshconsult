@@ -296,6 +296,14 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
   end
 
+  def test_freshsales_invalid_event
+    app_id = get_installed_app('freshsales').id
+    param = construct_params(version: 'private', id: app_id, event: 'test_event',
+                             payload: { entity: { first_name: 'Sample', last_name: 'Contact' } })
+    post :fetch, param
+    assert_response 400
+  end
+
   def test_install_freshworkscrm_app
     freshworkscrm_application_id = Integrations::Application.where(name: 'freshworkscrm').first.id
     Account.current.installed_applications.where(application_id: freshworkscrm_application_id).first.delete
@@ -321,6 +329,14 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     match_json ({ 'results' => data })
   ensure
     IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_invalid_event
+    app_id = get_installed_app('freshworkscrm').id
+    param = construct_params(version: 'private', id: app_id, event: 'create_lead',
+                             payload: { entity: { first_name: 'Sample', last_name: 'Contact' } })
+    post :fetch, param
+    assert_response 400
   end
 
   def test_freshworkscrm_dropdown_choices
