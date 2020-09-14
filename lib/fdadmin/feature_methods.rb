@@ -5,7 +5,7 @@ module Fdadmin::FeatureMethods
 
     BITMAP_FEATURES = BITMAP_FEATURES_WITH_VALUES.keys
 
-    FEATURE_TYPES = ["bitmap", "launchparty"]
+    FEATURE_TYPES = ['bitmap', 'launchparty'].freeze
 
     BLACKLISTED_LP_FEATURES = [:freshid, :freshid_org_v2, :fluffy, :fluffy_min_level].freeze
 
@@ -18,7 +18,7 @@ module Fdadmin::FeatureMethods
       if (Account::LAUNCHPARTY_FEATURES.keys + Account::LP_FEATURES).uniq.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
         feature_types << 'launchparty'
         # will be removed after settings implementation
-        feature_types << "bitmap" if BITMAP_FEATURES.include?(feature_name)
+        feature_types << 'bitmap' if BITMAP_FEATURES.include?(feature_name)
       end
       feature_types
     end
