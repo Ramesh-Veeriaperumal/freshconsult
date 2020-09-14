@@ -472,12 +472,12 @@ class Account < ActiveRecord::Base
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
   def enable_setting(setting)
     launch(setting) if LP_FEATURES.include?(setting)
-    add_feature(setting) if BITMAP_FEATURES.include?(setting)
+    add_feature(setting) if BITMAP_FEATURES.include?(setting) || AccountSettings::SettingsConfig.include?(setting)
   end
 
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
   def disable_setting(setting)
     rollback(setting) if LP_FEATURES.include?(setting)
-    revoke_feature(setting) if BITMAP_FEATURES.include?(setting)
+    revoke_feature(setting) if BITMAP_FEATURES.include?(setting) || AccountSettings::SettingsConfig.include?(setting)
   end
 end

@@ -32,18 +32,18 @@ module Email
 
       def toggle_feature(feature, enable)
         if enable
-          current_account.add_feature(feature)
+          current_account.enable_setting(feature)
         else
-          current_account.revoke_feature(feature)
+          current_account.disable_setting(feature)
         end
       end
 
       def toggle_compose_email_feature(feature, enable)
         if enable != check_compose_email_enabled?
           if enable
-            current_account.revoke_feature(feature)
+            current_account.disable_setting(feature)
           else
-            current_account.add_feature(feature)
+            current_account.enable_setting(feature)
             $redis_others.perform_redis_op('srem', COMPOSE_EMAIL_ENABLED, current_account.id)
           end
         end
@@ -52,9 +52,9 @@ module Email
       def toggle_disable_email_feature(feature, enable)
         if enable == current_account.has_feature?(EmailSettingsConstants::DISABLE_AGENT_FORWARD)
           if enable
-            current_account.revoke_feature(feature)
+            current_account.disable_setting(feature)
           else
-            current_account.add_feature(feature)
+            current_account.enable_setting(feature)
           end
         end
       end
