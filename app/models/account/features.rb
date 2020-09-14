@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
-    :sso_login_expiry_limitation, :undo_send, :old_link_back_url_validation, :stop_contacts_count_query,
+    :sso_login_expiry_limitation, :old_link_back_url_validation, :stop_contacts_count_query,
     :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp,
@@ -358,10 +358,6 @@ class Account < ActiveRecord::Base
 
   def revoke_support_bot?
     redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
-  end
-
-  def undo_send_enabled?
-    has_feature?(:undo_send) || launched?(:undo_send)
   end
 
   def email_spoof_check_feature?

@@ -73,6 +73,7 @@
       - :sla_reminder_automation
       - :advanced_freshcaller
       - :custom_ssl
+      - :undo_send
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -229,6 +230,7 @@
       - :advanced_article_toolbar_options
       - :advanced_freshcaller
       - :custom_ssl
+      - :undo_send
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -444,6 +446,7 @@
       - :field_service_management_toggle
       - :advanced_freshcaller
       - :custom_ssl
+      - :undo_send
     :inherits:
       - :sprout_jan_20
     :exclude: []

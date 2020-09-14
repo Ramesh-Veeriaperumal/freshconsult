@@ -441,7 +441,6 @@
   :freshfone_custom_forwarding: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
-  :undo_send: false
   :anonymous_tickets: true
   :open_solutions: true
   :auto_suggest_solutions: true
