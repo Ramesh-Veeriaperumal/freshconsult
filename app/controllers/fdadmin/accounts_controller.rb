@@ -341,8 +341,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result = {}
     @account = Account.find(params[:account_id])
     @account.make_current
-    result[:account_id] = @account.id
-    result[:account_name] = @account.name
+    result = { account_id: @account.id, account_name: @account.name }
     begin
       render :json => { status: 'notice' }.to_json && return unless enableable?(@feature_name)
       enable_feature(@feature_name)
@@ -352,14 +351,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
     respond_to do |format|
       format.json do
-        render :json => result
+        render json: result
       end
     end
   end
 
   def remove_launch_party
     @account = Account.find(params[:account_id]).make_current
-    result = {:account_id => @account.id, :account_name => @account.name}
+    result = { account_id: @account.id, account_name: @account.name }
     begin
       render :json => { status: 'notice'}.to_json && return unless disableable?(@feature_name)
       disable_feature(@feature_name)
@@ -369,7 +368,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
     respond_to do |format|
       format.json do
-        render :json => result
+        render json: result
       end
     end
   end
