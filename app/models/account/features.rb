@@ -84,6 +84,8 @@ class Account < ActiveRecord::Base
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
+  LP_TO_BITMAP_MIGRATION_FEATURES = []
+
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
     ContactField::VERSION_MEMBER_KEY,
@@ -134,9 +136,9 @@ class Account < ActiveRecord::Base
   end
 
   AccountSettings::SettingsConfig.each do |setting, config|
-    define_method "#{setting.to_s}_enabled" do
+    define_method "#{setting}_enabled?" do
       has_feature?(config[:feature_dependency]) && has_feature?(setting)
-    end    
+    end
   end
 
   Collaboration::Ticket::SUB_FEATURES.each do |item|
