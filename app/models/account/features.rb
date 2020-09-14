@@ -472,11 +472,15 @@ class Account < ActiveRecord::Base
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
   def enable_setting(setting)
     launch(setting) if LP_FEATURES.include?(setting)
-    add_feature(setting) if BITMAP_FEATURES.include?(setting) || ADMIN_CUSTOMER_PORTAL_FEATURES.include?(setting)
+    add_feature(setting) if BITMAP_FEATURES.include?(setting)
+  end
+
+  # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
+  def set_setting(setting)
+    set_feature(setting) if AccountSettings::SettingsConfig.include?(setting)
   end
 
   def admin_setting_for_account?(setting)
-    return true unless launched?(:feature_based_settings)
     settings_hash = AccountSettings::SettingsConfig[setting]
     settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end
@@ -484,6 +488,11 @@ class Account < ActiveRecord::Base
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
   def disable_setting(setting)
     rollback(setting) if LP_FEATURES.include?(setting)
-    revoke_feature(setting) if BITMAP_FEATURES.include?(setting) || ADMIN_CUSTOMER_PORTAL_FEATURES.include?(setting)
+    revoke_feature(setting) if BITMAP_FEATURES.include?(setting)
+  end
+
+  # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
+  def reset_setting(setting)
+    reset_feature(setting) if AccountSettings::SettingsConfig.include?(setting)
   end
 end

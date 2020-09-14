@@ -196,7 +196,7 @@
       :freddy_ultimate: 192
       :agent_scope: 193
       :social_tab: 194
-      :reports_44: 195
+      :untitled_1: 195
       :add_to_response: 196
       :customer_journey: 197
       :customize_table_view: 198
@@ -441,20 +441,11 @@
   :freshfone_custom_forwarding: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
-  :anonymous_tickets: true
-  :open_solutions: true
-  :auto_suggest_solutions: true
   :google_signin: true
   :twitter_signin: true
   :facebook_signin: true
-  :signup_link: true
-  :moderate_posts_with_links: true
-  :open_forums: false
   :captcha: true
-  :moderate_all_posts: false
   :hide_portal_forums: false
-  :forum_captcha_disable: false
-  :public_ticket_url: false
   :id_less_tickets: false
   :no_list_view_count_query: false
   :client_debugging: false
