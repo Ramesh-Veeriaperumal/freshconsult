@@ -57,7 +57,7 @@ class AuditLog::Translators::AutomationRuleTest < ActionView::TestCase
   def test_readable_rule_changes_observer_rule_with_webhook
     @rule = AutomationRuleFakeClass.new(VAConfig::OBSERVER_RULE)
     result = @rule.readable_rule_changes({ condition_data: [ any: [{ evaluate_on: 'created_at', name: 'supervisor', performer: { field: {}, type: "2"}, events: [ { name: 'trigger_webhook' } ] },
-                                                                   { name: 'supervisor', performer: { field: {}, type: "2"}, events: [ { name: 'priority' } ] } ] })
+                                                                   { name: 'supervisor', performer: { field: {}, type: "2"}, events: [ { name: 'priority' } ] } ] ] })
     assert result[:condition_data][0][:events][0][:value][:name] == 'trigger_webhook'
   end
 
