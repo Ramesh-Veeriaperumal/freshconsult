@@ -332,7 +332,7 @@
       :business_hours: 328
       :scenario_automations: 329
       :social_revamp: 330
-      :spam_dynamo: 331
+      :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
       :article_versioning: 334
@@ -479,7 +479,6 @@
   :disable_old_reports: false
   :report_field_regenerate: false
   :saml_old_issuer: false
-  :spam_dynamo: true
   :es_multilang_solutions: false
   :sort_by_customer_response: false
   :saml_unspecified_nameid: false
