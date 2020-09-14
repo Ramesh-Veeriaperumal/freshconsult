@@ -80,11 +80,4 @@ module Redis::TicketsRedis
       end
 	  end
 	end
-
-	def publish_to_tickets_channel channel, message
-		newrelic_begin_rescue do
-	  	return $redis_tickets.perform_redis_op("publish", channel, message)
-	  end
-	end
-
 end

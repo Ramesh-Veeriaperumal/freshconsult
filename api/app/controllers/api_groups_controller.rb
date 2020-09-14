@@ -8,11 +8,11 @@ class ApiGroupsController < ApiApplicationController
   def index
     if include_omni_channel_groups?
       @omni_channel_groups = []
-      ocr_path = OCR_PATHS[:get_groups]
-      ocr_path = [ocr_path, { auto_assignment: params[:auto_assignment] }.to_query].join('?') if params[:auto_assignment]
+      req_path = service_paths[:get_groups]
+      req_path = [req_path, { auto_assignment: params[:auto_assignment] }.to_query].join('?') if params[:auto_assignment]
       begin
-        ocr_response = request_ocr(:admin, :get, ocr_path)
-        @omni_channel_groups = JSON.parse(ocr_response).try(:[], 'ocr_groups')
+        service_response = request_service(:admin, :get, req_path)
+        @omni_channel_groups = JSON.parse(service_response).try(:[], 'ocr_groups')
       rescue Exception => e
         Rails.logger.info "Exception while fetching groups from OCR :: #{e.inspect}"
         NewRelic::Agent.notice_error(e)

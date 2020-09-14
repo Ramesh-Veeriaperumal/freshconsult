@@ -196,7 +196,7 @@ class Support::TicketsController < SupportController
           ticket_scope : 
           ticket_scope.created_at_inside(params[:start_date], params[:end_date])
       @tickets = TicketsFilter.filter(current_filter, current_user, date_added_ticket_scope)
-      filter_helpdesk_tickets_by_product if current_account.launched?(:helpdesk_tickets_by_product)
+      filter_helpdesk_tickets_by_product if current_account.helpdesk_tickets_by_product_enabled?
       per_page = params[:wf_per_page] || 10
       is_correct_order_type = TicketsFilter::SORT_ORDER_FIELDS_BY_KEY.keys.include?(current_wf_order_type)
       current_order = visible_fields.include?(current_wf_order.to_s) && is_correct_order_type  ? "#{current_wf_order} #{current_wf_order_type}" :

@@ -169,8 +169,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 58e2bb3403ec79406531100d3b28a1e65492e337
-  tag: v2.0.19
+  revision: 28f5896e537914ebcd8f4ba5ff3aff2da3dd1d9e
+  tag: v2.0.20
   specs:
     central-publisher (2.0.19)
       active_record_shards (>= 3.2.0)
@@ -276,25 +276,6 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 3a7410fb7753aa50eebe75b7706ebb1d30b340fd
-  branch: active-record
-  specs:
-    opentelemetry-instrumentation-active_record (0.5.0)
-      opentelemetry-api (~> 0.5.0)
-      opentelemetry-instrumentation-active_support
-      opentelemetry-instrumentation-rack (~> 0.5.0)
-
-GIT
-  remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: ef8998e43119b7ff0414b94f6b8fb53582077beb
-  branch: active-support
-  specs:
-    opentelemetry-instrumentation-active_support (0.5.0)
-      opentelemetry-api (~> 0.5.0)
-      opentelemetry-instrumentation-rack (~> 0.5.0)
-
-GIT
-  remote: git@github.com:freshdesk/opentelemetry-ruby.git
   revision: c3448bf657d942865d5998a8dc28f0995f81105e
   branch: api
   specs:
@@ -318,12 +299,20 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 66ad9d0f35be544c1ff0f4c9d3655bd9538f7c41
+  revision: 46d353515d17fd348f65eb849b534b7afbaef66d
   branch: exporter-jaeger
   specs:
     opentelemetry-exporters-jaeger (0.5.0)
       opentelemetry-api (~> 0.5.0)
       thrift
+
+GIT
+  remote: git@github.com:freshdesk/opentelemetry-ruby.git
+  revision: db5be369d29c334a28d3934847db29f1c504d1b6
+  branch: mysql2
+  specs:
+    opentelemetry-instrumentation-mysql2 (0.5.0)
+      opentelemetry-api (~> 0.5.0)
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
@@ -335,7 +324,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 79d6b226b3b7261f71a4e729a69e034fe51dd3b0
+  revision: 935fea2dc6050eba0bd16457b390f67831d8171c
   branch: rack
   specs:
     opentelemetry-instrumentation-rack (0.5.0)
@@ -360,7 +349,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: ed26f753e70732b14e0c659dde560272ec9095f8
+  revision: 5869a25733a7120ae94d962119ae4bf2a6dca79f
   branch: sdk
   specs:
     opentelemetry-sdk (0.5.1)
@@ -1731,10 +1720,9 @@ DEPENDENCIES
   opentelemetry-api!
   opentelemetry-exporters-jaeger!
   opentelemetry-instrumentation-action_pack!
-  opentelemetry-instrumentation-active_record!
-  opentelemetry-instrumentation-active_support!
   opentelemetry-instrumentation-dalli!
   opentelemetry-instrumentation-ethon!
+  opentelemetry-instrumentation-mysql2!
   opentelemetry-instrumentation-net_http!
   opentelemetry-instrumentation-rack!
   opentelemetry-instrumentation-rails!

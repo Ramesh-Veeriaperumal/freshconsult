@@ -5,7 +5,6 @@ unless Account.current
     $redis_others.perform_redis_op("sadd", "FALCON_ENABLED_LANGUAGES", I18n.default_locale.to_s)
   end
   if Account.count == 0
-    ChargeBee::Customer.stubs(:update).returns(true)
     signup = Signup.new(
       :account_name => 'Test Account',
       :account_domain => 'localhost',
@@ -13,13 +12,12 @@ unless Account.current
       :time_zone => "Chennai",
       :user_name => 'Support',
       :user_password => 'test1234',
-      :user_password_confirmation => 'test1234', 
+      :user_password_confirmation => 'test1234',
       :user_email => Helpdesk::EMAIL[:sample_email],
       :user_helpdesk_agent => true
     )
     signup.save
     signup.account.make_current
-    ChargeBee::Customer.unstub(:update)
   else
     Account.first.make_current
   end

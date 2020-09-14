@@ -124,6 +124,8 @@ class AgentDecorator < ApiDecorator
   end
 
   def channel_agents_availability_data
+    return record if Account.current.agent_statuses_enabled?
+
     channels_data = channel_availabilities.each_with_object([]) do |(channel, hash), array|
       array << hash.merge!(channel: channel, availability_updated_at: hash[:availability_updated_at] ||= nil)
     end

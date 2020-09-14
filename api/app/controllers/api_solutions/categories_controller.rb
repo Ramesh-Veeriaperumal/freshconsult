@@ -5,6 +5,8 @@ module ApiSolutions
     include Solution::LanguageControllerMethods
     decorate_views
 
+    before_filter :sanitize_boolean_params, only: [:index]
+
     def index
       super if validate_language
     end
@@ -43,7 +45,12 @@ module ApiSolutions
       end
 
       def before_load_object
+        sanitize_boolean_params
         validate_language
+      end
+
+      def sanitize_boolean_params
+        params[:allow_language_fallback] = params[:allow_language_fallback].to_bool if boolean_param?(:allow_language_fallback)
       end
 
       def load_object(items = scoper)
@@ -86,6 +93,7 @@ module ApiSolutions
       end
 
       def validate_filter_params
+        sanitize_boolean_params
         @validation_klass = 'ApiSolutions::CategoryFilterValidation'.freeze
         return unless validate_query_params
         return unless validate_delegator(nil, portal_id: params[:portal_id])

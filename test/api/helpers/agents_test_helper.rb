@@ -377,4 +377,45 @@ module AgentsTestHelper
   def ocr_agents_availability_pattern(output)
     [{ id: output[:id], contact: { name: output[:name] }, availability: { status: { id: output[:status_id] }, channel_availability: output[:availability] } }]
   end
+
+  def mars_agents_response
+    {
+      agents: [{
+        id: Faker::Lorem.characters(5),
+        contact: {
+          name: Faker::Lorem.characters(5),
+          email: Faker::Internet.email
+        },
+        availability: {
+          channel_availability:
+          [
+            {
+              channel: 'freshdesk',
+              available: true,
+              assignment_limit: 10,
+              availability_updated_at: Faker::Time.between(10.days.ago, 2.days.ago)
+            },
+            {
+              channel: 'freshchat',
+              available: true,
+              assignment_limit: 3,
+              availability_updated_at: Faker::Time.between(10.days.ago, 2.days.ago),
+              logged_in: true
+            },
+            {
+              channel: 'freshcaller',
+              available: true,
+              assignment_limit: 1,
+              availability_updated_at: Faker::Time.between(10.days.ago, 2.days.ago),
+              logged_in: true,
+              on_call: true
+            }
+          ]
+        }
+      }],
+      meta: {
+        count: 1
+      }
+    }.to_json
+  end
 end

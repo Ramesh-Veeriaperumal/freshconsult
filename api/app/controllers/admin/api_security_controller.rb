@@ -19,6 +19,7 @@ module Admin
       return unless validate_delegator(@item, cname_params)
 
       render_errors(@item.errors) unless @item.save
+      render_errors(@item.account_configurations.errors) if cname_params[:notification_emails].present? && !@item.account_configuration.save
     end
 
     private

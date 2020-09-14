@@ -51,7 +51,13 @@ module ArchiveTicketExportParams
     hhmm(resolution_time_by_bhrs)
   end
 
+  def service_task?
+    ticket_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+  end
+
   def resolution_status
+    return '' if service_task?
+
     resolved_at.nil? ? "" : ((resolved_at < due_by) ? I18n.t('export_data.in_sla') : I18n.t('export_data.out_of_sla'))
   end
 

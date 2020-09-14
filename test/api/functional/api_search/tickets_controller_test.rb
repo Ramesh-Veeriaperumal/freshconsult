@@ -890,5 +890,10 @@ module ApiSearch
       ticket.destroy
       Account.any_instance.unstub(:next_response_sla_enabled?)
     end
+
+    def test_single_quote_in_search
+      get :index, controller_params(query: "\"custom_string:sam'ple\"")
+      assert_response 200
+    end
   end
 end

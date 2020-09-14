@@ -22,6 +22,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SLA_ESCALATION_ATTRIBUTES = Hash[*SLA_ATTRIBUTES.map { |i| [i[0], i[1]] }.flatten]
   SLA_REMINDER_ATTRIBUTES = Hash[*SLA_ATTRIBUTES.map { |i| [i[0], i[2]] }.flatten]
 
+  #add your attributes here if you want the property to be available only in ticket payload but not in archive ticket payload
+  #if your property is common, then add in TicketPresenter::PresenterHelper module
+  api_accessible :central_publish do |at|
+    at.add :parent_ticket, as: :parent_id
+    at.add proc { |x| x.utc_format(x.parse_to_date_time(x.requester_responded_at)) }, as: :requester_responded_at
+    at.add proc { |x| x.utc_format(x.parse_to_date_time(x.agent_responded_at)) }, as: :agent_responded_at
+  end
+
   api_accessible :central_publish_destroy do |t|
     t.add :id
     t.add :display_id
@@ -36,6 +44,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       action = [:create, :update].find{ |action| transaction_include_action? action }
       "import_ticket_#{action}" if action.present?
     end
+  end
+
+  def central_publish_preloaded_payload
+    as_api_response(:central_publish_preload)
   end
 
   def central_publish_payload
