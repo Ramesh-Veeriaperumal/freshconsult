@@ -453,6 +453,12 @@
         "_activities_export_host": "activitiesexport.internal.podapsouth1.freshdesk.com",
         "_port": "80"
       },
+      "tracing": {
+        "_service_name": "freshdesk_helpkit",
+        "_tracing_host_port": 6831,
+        "_span_batch_size": 20,
+        "_sampler_probability": 0
+      },
       "redshift": {
         "write_user_pwd": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IafXvUv/C+gVj1yKuQAM6xZGeOzwhfCi:+fmj9ykpDVA/uBYx4UK1uIIp3AI6DCjL]",
         "read_user_pwd": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:0l33vJja9ZvpPfk+mw+mFSsOHpBHoDeL:YnJ29zZsoI6dpBl0J8/n9BylN0nZv5R5]",
