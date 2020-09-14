@@ -103,7 +103,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def custom_dashboard_limits
     if additional_settings.present? && additional_settings[:dashboard_limits].present?
-      additional_settings[:dashboard_limits]
+      OMNI_WIDGET_LIMITS.deep_merge(additional_settings[:dashboard_limits])
     elsif Account.current.field_service_management_enabled?
       dashboard_limits = DASHBOARD_LIMITS[:min].clone
       dashboard_limits[:dashboard] += 1
