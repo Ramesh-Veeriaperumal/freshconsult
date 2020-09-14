@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Account < ActiveRecord::Base
 
   AccountSettings::SettingsConfig.each do |setting, config|

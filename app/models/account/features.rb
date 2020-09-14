@@ -84,7 +84,7 @@ class Account < ActiveRecord::Base
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
-  LP_TO_BITMAP_MIGRATION_FEATURES = []
+  LP_TO_BITMAP_MIGRATION_FEATURES = [:solutions_agent_metrics].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
