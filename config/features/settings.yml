@@ -31,3 +31,12 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :allow_wildcard_ticket_create:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
+  :skip_ticket_threading:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
+

@@ -1,10 +1,9 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES = [
-
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
-    :falcon_portal_theme, :freshid, :allow_huge_ccs,
+    :falcon_portal_theme, :freshid, :allow_huge_ccs, :email_new_settings,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
