@@ -379,13 +379,18 @@ class Account < ActiveRecord::Base
       @launch_party_features ||= []
       changes.each do |key, features|
         features.each do |feature|
-          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key)
+          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key) && lp_central_publish_on_signup?(feature)
         end
       end
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
       # after_commit for new record or modified record.
       versionize_timestamp unless id_changed?
       trigger_launchparty_feature_callbacks unless self.id_changed?
+    end
+
+    def lp_central_publish_on_signup?(feature_name)
+      return true unless signup_in_progress?
+      CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES.fetch(feature_name, true)
     end
 
     # define your callback method in this format ->

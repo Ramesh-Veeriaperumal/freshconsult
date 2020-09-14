@@ -22,7 +22,11 @@ window.App.Admin = window.App.Admin || {};
         $import_visitor_post_checkbox = $doc.find('#social_ticket_rule__import_visitor_posts'),
         $import_page_post_checkbox = $doc.find('#social_ticket_rule__import_company_comments'),
         $enable_threading_radio = $doc.find('#same_ticket_threading'),
-        $disable_threading_radio = $doc.find('#new_ticket_threading');
+        $disable_threading_radio = $doc.find('#new_ticket_threading'),
+        $keyword_container = $doc.find('.keyword_container'),
+        $threading_container = $doc.find('.threading_container'),
+        $ad_posts_import_ad_posts_checkbox = $doc.find('#ad_posts_import_ad_posts');
+
       const CURRENT_RULE = $doc.find('#social_ticket_rule__rule_type').val();
 
       $('.social_ticket_rule_includes').select2({
@@ -57,6 +61,7 @@ window.App.Admin = window.App.Admin || {};
               .select2('val', '')
               .hide();
           }
+          $threading_container.hide();
           break;
 
         case _this.BROAD_RULE_TYPE:
@@ -67,19 +72,25 @@ window.App.Admin = window.App.Admin || {};
           $import_visitor_post_checkbox.click();
           $import_page_post_checkbox.click();
 
-          $enable_threading_radio.prop('checked', true);
+          $enable_threading_radio.click();
           $import_visitor_post_checkbox.prop('disabled', true);
           $('#import_visitor_posts_text').toggleClass('muted');
 
           $doc.find('.optimal-rules-container #s2id_social_ticket_rule__includes')
             .select2('val', '')
             .hide();
-          $('.keyword_container').hide();
+          $keyword_container.hide();
           break;
       }
 
       if (!$import_page_post_checkbox.prop('checked')) {
         $('.keyword_wrapper').fadeOut('slow', 'linear');
+      }
+
+      if($ad_posts_import_ad_posts_checkbox.prop('checked')) {
+        $('#ad_post_filter_mentions').fadeIn('slow','linear');
+      } else {
+        $('#ad_post_filter_mentions').fadeOut('slow','linear');
       }
 
     },
@@ -92,7 +103,9 @@ window.App.Admin = window.App.Admin || {};
         $rule_settings_container = $doc.find('#ticket_rules'),
         $select2_container = $doc.find('.optimal-rules-container #s2id_social_ticket_rule__includes'),
         $ticket_rule_type = $doc.find('#social_ticket_rule__rule_type'),
-        $disable_threading_radio = $doc.find('#new_ticket_threading');
+        $disable_threading_radio = $doc.find('#new_ticket_threading'),
+        $keyword_container = $doc.find('.keyword_container'),
+        $threading_container = $doc.find('.threading_container');
 
       $doc.on('change.fbAdminEvents', '#primary_toggle_switch', function () {
         if (this.checked) {
@@ -137,8 +150,15 @@ window.App.Admin = window.App.Admin || {};
         }
       });
 
+      $doc.on('change.fbAdminEvents', '#ad_posts_import_ad_posts', function () {
+        if(this.checked) {
+          $('#ad_post_filter_mentions').fadeIn('slow','linear');
+        } else {
+          $('#ad_post_filter_mentions').fadeOut('slow','linear');
+        }
+      });
+
       $('.threading').on('change', function () {
-        var $select2_container = $('.keyword_container');
 
         switch (this.id) {
           case 'same_ticket_threading':
@@ -147,14 +167,16 @@ window.App.Admin = window.App.Admin || {};
             $ticket_rule_type.val(_this.BROAD_RULE_TYPE);
             $('#toggle_keywords').prop('checked', false);
             $('.optimal-rules-container #s2id_social_ticket_rule__includes').select2('val', '').hide();
-            $select2_container.fadeOut('slow', 'linear').css('display', 'block');
+            $threading_container.fadeIn('slow', 'linear').css('display', 'block');
+            $keyword_container.fadeOut('slow', 'linear').css('display', 'block');
             break;
 
           case 'new_ticket_threading':
             $import_visitor_post_checkbox.prop('disabled', false);
             $('#import_visitor_posts_text').removeClass('muted');
             $ticket_rule_type.val(_this.OPTIMAL_RULE_TYPE);
-            $select2_container.fadeIn('slow', 'linear').css('display', 'block');
+            $keyword_container.fadeIn('slow', 'linear').css('display', 'block');
+            $threading_container.fadeOut('slow', 'linear').css('display', 'block');
             break;
         }
       });

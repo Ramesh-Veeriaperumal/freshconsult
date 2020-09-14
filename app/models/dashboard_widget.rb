@@ -8,7 +8,8 @@ class DashboardWidget < ActiveRecord::Base
   attr_accessible :active, :config_data, :dashboard_id,
                   :grid_config, :name, :refresh_interval, :ticket_filter_id, :widget_type, :x, :y, :width, :height,
                   :threshold_min, :threshold_max, :representation, :sort, :categorised_by, :group_id,
-                  :time_range, :group_ids, :product_id, :metric, :date_range, :metric_type, :ticket_type
+                  :time_range, :group_ids, :product_id, :metric, :date_range, :metric_type, :ticket_type,
+                  :source, :time_type, :queue_id, :view, :url
 
   serialize :config_data, Hash
   serialize :grid_config, Hash
@@ -23,6 +24,7 @@ class DashboardWidget < ActiveRecord::Base
   validates_inclusion_of :widget_type, in: WIDGET_MODULES_BY_TOKEN.keys
 
   before_save :set_active, on: :update, if: :inactive_widget_updated?
+  before_save :set_url, if: :omni_widget_source?
 
   scope :all_active, -> { where(active: true) }
   scope :of_types, -> (types) { where(active: true, widget_type: types) }
@@ -54,5 +56,13 @@ class DashboardWidget < ActiveRecord::Base
 
   def set_active
     self.active = true
+  end
+
+  def omni_widget_source?
+    Account.current.omni_channel_team_dashboard_enabled? && OMNI_DASHBOARD_SOURCES.include?(config_data[:source])
+  end
+
+  def set_url
+    config_data[:url] = config_data.select { |k, v| OMNI_VALID_QUERY_PARAMS.include?(k.to_sym) && v.present? }.to_query
   end
 end

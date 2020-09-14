@@ -5,9 +5,7 @@ class MergeContacts < BaseWorker
   include RabbitMq::Helper
 
   BATCH_LIMIT = 500
-  
-  REPORTS_TRACKING_CLASS = ["Helpdesk::Ticket", "Helpdesk::ArchiveTicket"]
- 
+
   VOTE_OPTIONS = {
     :object     => "votes",
     :poly_type  => :voteable_type, 
@@ -118,9 +116,7 @@ class MergeContacts < BaseWorker
       # We are doing update_all to update the user id to the parent user id. update_all won't instantiate active record objects ,
       # but just returns the count. We need to manually push the changes to RMQ as it does not trigger callbacks too.
       # Here adding .all to trigger the query(delayed query) and storing the active record objects for which updates need to be sent to RMQ 
-      items_to_update_arr = items_to_update.all if REPORTS_TRACKING_CLASS.include?(klass_name)
-      records_updated     = items_to_update.update_all_with_publish(values, {}, { batch_size: BATCH_LIMIT })
-      send_updates_to_rmq(items_to_update_arr, klass_name) if REPORTS_TRACKING_CLASS.include?(klass_name)
+      records_updated     = items_to_update.update_all_with_publish(values, {}, batch_size: BATCH_LIMIT, manual_publish: true)
     end while records_updated == BATCH_LIMIT
   end
 

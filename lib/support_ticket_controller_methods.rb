@@ -20,7 +20,7 @@ module SupportTicketControllerMethods
   end
   
   def create
-    if create_the_ticket(enforce_captcha?(feature?(:captcha)))
+    if !current_account.ehawk_spam? && create_the_ticket(enforce_captcha?(feature?(:captcha)))
       respond_to do |format|
         format.html {
           flash.keep(:notice)
@@ -32,10 +32,15 @@ module SupportTicketControllerMethods
         }
       end
     else
-      logger.debug "Ticket Errors is #{@ticket.errors.inspect}"
-      @params = sanitize_params
-      set_portal_page :submit_ticket
-      render :action => :new
+      if current_account.ehawk_spam?
+        Rails.logger.error("This is spam account account_id: #{current_account.id} spam: #{current_account.ehawk_spam?}")
+        render_403
+      else
+        logger.debug "Ticket Errors is #{@ticket.errors.inspect}"
+        @params = sanitize_params
+        set_portal_page :submit_ticket
+        render :action => :new
+      end
     end
   end
   

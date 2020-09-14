@@ -62,7 +62,7 @@ function validate_changes_in_restricted_files() {
 }
 
 
-validate_changes_in_restricted_files
+# validate_changes_in_restricted_files
 validate_ejson
 validate_ruby_files
 validate_test_file
