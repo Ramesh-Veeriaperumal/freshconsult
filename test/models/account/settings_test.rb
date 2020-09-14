@@ -116,7 +116,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
     @account.enable_setting(feature)
     # then
     assert @account.launched?(feature)
-    assert @account.has_feature(feature)
+    assert @account.has_feature?(feature)
   ensure
     is_launched ? @account.launch(feature) : @account.rollback(feature)
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
@@ -130,10 +130,10 @@ class Account::SettingsTest < ActiveSupport::TestCase
     bitmap_enabled = @account.has_feature?(feature)
     @account.add_feature(feature)
     # when
-    @account.enable_setting(feature)
+    @account.disable_setting(feature)
     # then
     assert_equal @account.launched?(feature), false
-    assert_equal @account.has_feature(feature), false
+    assert_equal @account.has_feature?(feature), false
   ensure
     is_launched ? @account.launch(feature) : @account.rollback(feature)
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
