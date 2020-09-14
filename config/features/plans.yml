@@ -21,7 +21,7 @@
       - :personal_canned_response
       - :api_v2
       - :help_widget
-      - :untitled_sprout_feature_dependency_toggle
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -75,6 +75,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -165,7 +166,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
-      - :untitled_sprout_feature_dependency_toggle
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_19:
@@ -234,6 +235,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -384,7 +386,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
-      - :untitled_sprout_feature_dependency_toggle
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_20:
@@ -452,6 +454,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_20
     :exclude: []

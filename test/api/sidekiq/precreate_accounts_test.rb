@@ -5,16 +5,6 @@ require 'sidekiq/testing'
 class PrecreateAccountsTest < ActionView::TestCase
   include AccountTestHelper
 
-  def setup
-    ChargeBee::Customer.stubs(:update).returns(true)
-    p 'Setup'
-  end
-
-  def teardown
-    ChargeBee::Customer.unstub(:update)
-    p 'teardown'
-  end
-
   def test_precreate_accounts_default_domain
     populate_plans
     AccountCreation::PrecreateAccounts.new.perform(precreate_account_count: 1, shard_name: 'shard_1')

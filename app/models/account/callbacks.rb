@@ -140,7 +140,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_fresh_connect
-    ::Freshconnect::RegisterFreshconnect.perform_async if freshconnect_signup_allowed?
+    ::Freshconnect::RegisterFreshconnect.perform_in(30.seconds.from_now) if freshconnect_signup_allowed?
   end
 
   def create_rts_account
@@ -379,13 +379,18 @@ class Account < ActiveRecord::Base
       @launch_party_features ||= []
       changes.each do |key, features|
         features.each do |feature|
-          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key)
+          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key) && lp_central_publish_on_signup?(feature)
         end
       end
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
       # after_commit for new record or modified record.
       versionize_timestamp unless id_changed?
       trigger_launchparty_feature_callbacks unless self.id_changed?
+    end
+
+    def lp_central_publish_on_signup?(feature_name)
+      return true unless signup_in_progress?
+      CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES.fetch(feature_name, true)
     end
 
     # define your callback method in this format ->
@@ -426,6 +431,7 @@ class Account < ActiveRecord::Base
       currency = fetch_currency
       self.build_subscription(plan: @plan, next_renewal_at: @plan_start, creditcard: @creditcard, address: @address, affiliate: @affiliate, subscription_currency_id: currency)
       subscription.set_billing_params(currency)
+      subscription.convert_to_free if enable_sprout_trial_onboarding?
     end
 
     def fetch_currency

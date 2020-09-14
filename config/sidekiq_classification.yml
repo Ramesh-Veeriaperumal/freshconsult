@@ -125,7 +125,6 @@
     - contact_export
     - company_export
     - product_feedback
-    - freshcaller_migration_worker
     - ner_worker
     - launch_party_actions
     - ml_solutions_training
@@ -368,6 +367,7 @@
     - cron_meta_data_check
     - cron_enable_omniroute_for_new_accounts
     - cron_archive_automation
+    - cron_omni_accounts_monitoring_internal_reports
   :gamification:
     - gamification_user_score
     - gamification_ticket_score
@@ -675,7 +675,6 @@
     - contact_export
     - company_export
     - product_feedback
-    - freshcaller_migration_worker
     - ner_worker
     - launch_party_actions
     - ml_solutions_training
@@ -746,6 +745,7 @@
     - cron_meta_data_check
     - cron_enable_omniroute_for_new_accounts
     - cron_archive_automation
+    - cron_omni_accounts_monitoring_internal_reports
     - jira_acc_config_updates
     - merge_topics
     - report_post_worker
@@ -758,7 +758,6 @@
     - premium_supervisor
     - premium_sla_reminders
     - sla_reminders
-    - freshcaller_migration_worker
     - freshcaller_account_delete
     - freshcaller_update_agents
     - bitmap_callbacks

@@ -1,7 +1,7 @@
 module AgentConstants
   LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send update_multiple search_in_freshworks verify_agent_privilege availability_count].freeze
   STATES = %w[occasional fulltime].freeze
-  AVAILABILITY_PARAMS = %w[channel search_term].freeze
+  AVAILABILITY_PARAMS = %w[channel search_term available_in].freeze
   INDEX_FIELDS = %w[state email phone mobile only type privilege group_id include order_type order_by].freeze | AVAILABILITY_PARAMS
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids contribution_group_ids].freeze
   TICKET_SEARCH_SETTINGS = [:include_subject, :include_description, :include_other_properties, :include_notes, :include_attachment_names, :archive].freeze
@@ -90,4 +90,5 @@ module AgentConstants
   ].freeze
   FORMATTED_OCR_KEYS = Hash[*OCR_KEYS_MAP.map { |i| [i[0], i[1]] }.flatten]
   CHANNELS_BOOLEAN_KEYS = [:available, :logged_in].freeze
+  CHANNELS_FILTER = ['ticket', 'phone', 'chat', 'any', 'none'].freeze
 end.freeze

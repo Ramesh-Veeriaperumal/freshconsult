@@ -6,7 +6,7 @@ class ApiSolutions::CategoryValidation < ApiValidation
 
   validates :visible_in_portals, custom_absence: { message: :multiple_portals_required }, unless: -> { Account.current.has_multiple_portals? }
   validates :visible_in_portals, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true } }
-  validates :allow_language_fallback, custom_inclusion: { in: [true, false], ignore_string: :allow_string_param }
+  validates :allow_language_fallback, data_type: { rules: 'Boolean' }
 
   def attributes_to_be_stripped
     SolutionConstants::CATEGORY_ATTRIBUTES_TO_BE_STRIPPED

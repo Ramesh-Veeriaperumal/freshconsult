@@ -31,7 +31,13 @@ module ChannelIntegrations
     private
 
       def send_integrations_reply(reply_payload, args)
-        post_to_collector(build_reply_payload(reply_payload, args))
+        helpkit_reply_payload = build_reply_payload(reply_payload, args)
+        if Account.current.channel_command_reply_to_sidekiq_enabled?
+          msg_id = Digest::MD5.hexdigest(helpkit_reply_payload.to_s)
+          Channel::CommandWorker.perform_async(helpkit_reply_payload, msg_id)
+        else
+          post_to_collector(helpkit_reply_payload.to_json)
+        end
       end
 
       def build_reply_payload(payload, args) # payload contains data, status_code and reply_status.
@@ -39,13 +45,18 @@ module ChannelIntegrations
         command = args[:payload][:command_name]
         reply_schema = default_reply_schema(owner, command, args[:payload])
 
-        reply_json = {
-          payload_type: ChannelIntegrations::Constants::PAYLOAD_TYPES[:reply_from_helpkit],
-          account_id: args[:account_id],
+        reply_payload = {
           payload: payload.merge!(reply_schema)
-        }.to_json
+        }
 
-        reply_json
+        if Account.current.channel_command_reply_to_sidekiq_enabled?
+          reply_payload.merge!(override_payload_type: ChannelIntegrations::Constants::PAYLOAD_TYPES[:reply_from_helpkit])
+        else
+          reply_payload[:payload_type] = ChannelIntegrations::Constants::PAYLOAD_TYPES[:reply_from_helpkit]
+          reply_payload[:account_id] = args[:account_id]
+        end
+
+        reply_payload
       end
 
       def log_params(payload)

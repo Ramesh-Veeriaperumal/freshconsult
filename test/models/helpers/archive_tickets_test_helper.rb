@@ -53,7 +53,7 @@ module ArchiveTicketsTestHelper
       internal_group_reassigned_flag: ticket.reports_hash['internal_group_reassigned_flag'],
       internal_agent_first_assign_in_bhrs: ticket.reports_hash['internal_agent_first_assign_in_bhrs'],
       last_resolved_at: ticket.reports_hash['last_resolved_at'],
-      parent_id: ticket.parent_ticket,
+      parent_id: ticket.parent_id,
       outbound_email: ticket.outbound_email?,
       subject: ticket.subject,
       description_text: ticket.description,
