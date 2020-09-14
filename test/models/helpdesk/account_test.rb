@@ -83,21 +83,7 @@ class AccountTest < ActiveSupport::TestCase
     @account.disable_setting(:abcd)
   end
 
-
-  def test_admin_setting_for_account_with_lp_disabled
-    launch_party = :feature_based_settings
-    is_lp_enabled = @account.send("#{launch_party}_enabled?")
-    @account.rollback(launch_party)
-    assert_equal @account.admin_setting_for_account?(launch_party), true
-  ensure
-    is_lp_enabled ? @account.launch(launch_party) : @account.rollback(launch_party)
-  end
-
   def test_admin_setting_for_account_with_setting_dependency_disabled
-    launch_party = :feature_based_settings
-    is_lp_enabled = @account.send("#{launch_party}_enabled?")
-    @account.launch(launch_party)
-
     feature = :signup_link
     dependent_feature = :basic_settings_feature
     is_dependent_feature_enabled = @account.send("#{dependent_feature}_enabled?")
@@ -105,15 +91,10 @@ class AccountTest < ActiveSupport::TestCase
 
     assert_equal @account.admin_setting_for_account?(feature), false
   ensure
-    is_lp_enabled ? @account.launch(launch_party) : @account.rollback(launch_party)
     is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
   def test_admin_setting_for_account_with_setting_dependency_enabled
-    launch_party = :feature_based_settings
-    is_lp_enabled = @account.send("#{launch_party}_enabled?")
-    @account.launch(launch_party)
-
     feature = :signup_link
     dependent_feature = :basic_settings_feature
     is_dependent_feature_enabled = @account.send("#{dependent_feature}_enabled?")
@@ -121,16 +102,11 @@ class AccountTest < ActiveSupport::TestCase
 
     assert_equal @account.admin_setting_for_account?(feature), true
   ensure
-    is_lp_enabled ? @account.launch(launch_party) : @account.rollback(launch_party)
     is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
-  def test_update_features_method_with_feature_based_settings_enabled_and_setting_dependency_disabled
+  def test_update_features_method_with_setting_dependency_disabled
     params = { features: { signup_link: false } }
-
-    launch_party = :feature_based_settings
-    is_lp_enabled = @account.send("#{launch_party}_enabled?")
-    @account.launch(launch_party)
 
     dependent_feature = :basic_settings_feature
     is_dependent_feature_enabled = @account.send("#{dependent_feature}_enabled?")
@@ -144,17 +120,12 @@ class AccountTest < ActiveSupport::TestCase
     assert @account.has_feature?(:signup_link), 'signup_link should be true'
 
     ensure
-      is_lp_enabled ? @account.launch(launch_party) : @account.rollback(launch_party)
       is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
-  def test_update_features_method_with_feature_based_settings_enabled_and_setting_dependency_enabled
+  def test_update_features_method_with_setting_dependency_enabled
     params = { features: { signup_link: false } }
-
-    launch_party = :feature_based_settings
-    is_lp_enabled = @account.send("#{launch_party}_enabled?")
-    @account.launch(launch_party)
-
+    
     feature = :signup_link
     is_feature_enabled = @account.has_feature?(feature)
 
@@ -170,7 +141,6 @@ class AccountTest < ActiveSupport::TestCase
     refute @account.has_feature?(:signup_link), 'signup_link should be false'
 
     ensure
-      is_lp_enabled ? @account.launch(launch_party) : @account.rollback(launch_party)
       is_feature_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
       is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
