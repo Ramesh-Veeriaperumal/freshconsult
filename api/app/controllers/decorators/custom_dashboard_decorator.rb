@@ -1,4 +1,6 @@
 class CustomDashboardDecorator < ApiDecorator
+  include Dashboard::Custom::CustomDashboardConstants
+
   def initialize(record, options)
     super(record)
   end
@@ -33,14 +35,16 @@ class CustomDashboardDecorator < ApiDecorator
 
   def construct_widget_hash(widget)
     ticket_filter_id = widget.ticket_filter_id
-    {
+    widget_hash = {
       id: widget.id,
       type: widget.widget_type,
       name: widget.name,
-      config_data: widget.config_data.merge(ticket_filter_id.nil? ? {} : { ticket_filter_id: ticket_filter_id }),
+      config_data: widget.config_data.merge(ticket_filter_id.nil? ? {} : { ticket_filter_id: ticket_filter_id }).except(:source, :url),
       refresh_interval: widget.refresh_interval,
       active: widget.active
     }.merge!(widget.grid_config.symbolize_keys)
+    widget_hash.merge!(omni_config_data(widget)) if Account.current.omni_channel_team_dashboard_enabled? && OMNI_DASHBOARD_SOURCES.include?(widget.config_data[:source])
+    widget_hash
   end
 
   def add_announcements(detail_hash)
@@ -53,5 +57,9 @@ class CustomDashboardDecorator < ApiDecorator
     access_hash = { type: record.access_type }
     access_hash[:group_ids] = record.group_accesses.map(&:group_id).presence
     access_hash
+  end
+
+  def omni_config_data(widget)
+    { source: widget.config_data[:source], url: OMNI_WIDGET_DATA_URL + widget.config_data[:url] }
   end
 end

@@ -5,6 +5,7 @@ require_relative '../../test_helper'
 ['account_helper.rb', 'user_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
 ['skills_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', 'admin', file) }
 ['social_tickets_creation_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['users_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class ArchiveTicketsTest < ActiveSupport::TestCase
   include ArchiveTicketsTestHelper # helper for central payload
@@ -16,6 +17,7 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
   include TicketFieldsTestHelper
   include Admin::SkillsTestHelper
   include SocialTicketsCreationHelper
+  include CoreUsersTestHelper
 
   ARCHIVE_DAYS = 120
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
@@ -217,6 +219,47 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
       assoc_payload = archive_ticket.associations_to_publish.to_json
       assoc_payload.must_match_json_expression(central_publish_assoc_archive_ticket_pattern(archive_ticket))
       archive_ticket.destroy
+    end
+  end
+
+  def test_central_publish_payload_with_parent_ticket
+    ticket = create_ticket
+    create_archive_ticket_with_assoc(
+      created_at: @ticket_update_date,
+      updated_at: @ticket_update_date,
+      create_association: true,
+      parent_ticket_id: ticket.id,
+      header_info: { received_at: Time.now.utc.iso8601 }
+    )
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.where(ticket_id: @archive_ticket.id).first
+      payload = archive_ticket.central_publish_payload.to_json
+      payload.must_match_json_expression(central_payload_archive_ticket_pattern(archive_ticket))
+      assoc_payload = archive_ticket.associations_to_publish.to_json
+      assoc_payload.must_match_json_expression(central_publish_assoc_archive_ticket_pattern(archive_ticket))
+      archive_ticket.destroy
+    end
+  ensure
+    ticket.destroy
+  end
+
+  def test_for_archive_ticket_disallow_payload
+    create_archive_ticket_with_assoc(
+      created_at: @ticket_update_date,
+      updated_at: @ticket_update_date,
+      create_association: true,
+      header_info: { received_at: Time.now.utc.iso8601 }
+    )
+    stub_archive_assoc_for_show(@archive_association) do
+      new_user = add_new_user(@account)
+      archive_ticket = @account.archive_tickets.where(ticket_id: @archive_ticket.id).first
+      central_publish_options = { model_changes: { requester_id: [archive_ticket.requester_id, new_user.id] } }
+      archive_ticket.attributes = { requester_id: new_user.id }
+      archive_ticket.save
+      payload = archive_ticket.manual_publish(nil, [:update, central_publish_options], false)
+      assert_nil payload
+      archive_ticket.destroy
+      new_user.destroy
     end
   end
 end

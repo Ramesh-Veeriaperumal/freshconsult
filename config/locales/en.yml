@@ -3194,6 +3194,7 @@ en:
       tickets:
         create:
           success: Your ticket has been created.
+          access_denied: You have been restricted from creating a ticket.
           success_cc_drop: Your ticket has been created, but the following ccs were dropped due to moderation.
       create:
         success: "Portal has been enabled for '%{product_name}'"

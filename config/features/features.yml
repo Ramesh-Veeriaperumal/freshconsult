@@ -116,7 +116,7 @@
       :redis_display_id: 112
       :chat_enable: 113
       :survey_links: 114
-      :tags_filter_reporting: 115
+      :unused_115: 115
       :personalized_email_replies: 116
       :anonymous_tickets: 117
       :client_debugging: 118
@@ -127,7 +127,7 @@
       :sandbox: 123
       :call_quality_metrics: 124
       :freshfone_conference: 125
-      :agent_collision: 126
+      :unused_126: 126
       :id_less_tickets: 127
       :no_list_view_count_query: 128
       :saml_unspecified_nameid: 129
@@ -159,7 +159,7 @@
       :freshfone_onboarding: 155
       :archive_tickets: 156
       :freshfone_custom_forwarding: 157
-      :tokenize_emoji: 158
+      :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
       :countv2_reads: 161
@@ -168,7 +168,7 @@
       :disable_old_ui: 164
       :omni_channel_routing: 165
       :segments: 166
-      :limit_mobihelp_results: 167
+      :unused_167: 167
       :ecommerce: 168
       :es_v2_writes: 169
       :fluffy_higher_plan3: 170
@@ -211,19 +211,19 @@
       :proactive_spam_detection: 207
       :api_v2: 208
       :bi_reports: 209
-      :contact_merge_ui: 210
-      :multiple_user_emails: 211
-      :facebook_realtime: 212
-      :autorefresh_node: 213
+      :XX_unused_210: 210
+      :unused_211: 211
+      :unused_212: 212
+      :XX_unused_213: 213
       :updated_twilio_client: 214
-      :count_es_reads: 215
-      :reports_regenerate_data: 216
+      :unused_215: 215
+      :unused_216: 216
       :seafarers_1: 217
-      :sandbox_account: 218
+      :unused_218: 218
       :portal_cc: 219
       :disable_rr_toggle: 220
-      :count_es_writes: 221
-      :round_robin_revamp: 222
+      :unused_221: 221
+      :XX_unused_222: 222
       :analytics_landing_search: 223
       :analytics_landing_data_schedules: 224
       :analytics_landing_new_report: 225
@@ -315,7 +315,7 @@
       :reports_89: 311
       :reports_90: 312
       :reports_91: 313
-      :untitled_sprout_feature_dependency_toggle: 314
+      :basic_settings_feature: 314
       :untitled_feature_1_dependency_toggle: 315
       :untitled_feature_2_dependency_toggle: 316
       :untitled_setting_1: 317
@@ -332,7 +332,7 @@
       :business_hours: 328
       :scenario_automations: 329
       :social_revamp: 330
-      :spam_dynamo: 331
+      :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
       :article_versioning: 334
@@ -402,6 +402,11 @@
       :triage_ultimate: 398
       :autofaq_eligible: 399
       :solutions_agent_metrics: 400
+      :forums_agent_portal: 401
+      :solutions_agent_portal: 402
+      :fetch_ticket_from_ref_first: 403
+      :skip_ticket_threading: 404
+      :helpdesk_tickets_by_product: 405
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -421,7 +426,6 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
-  :tags_filter_reporting: false
   :personalized_email_replies: false
   :reply_to_based_tickets: true
   :freshfone: false
@@ -437,7 +441,6 @@
   :freshfone_custom_forwarding: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
-  :undo_send: false
   :anonymous_tickets: true
   :open_solutions: true
   :auto_suggest_solutions: true
@@ -458,7 +461,6 @@
   :collision_socket: false
   :resource_rate_limit: false
   :domain_restricted_access: false
-  :limit_mobihelp_results: false
   :ecommerce: false
   :freshfone_call_metrics: false
   :cobrowsing: false
@@ -475,11 +477,8 @@
   :chat: false
   :freshreports_analytics: false
   :disable_old_reports: false
-  :tokenize_emoji: false
   :report_field_regenerate: false
-  :reports_regenerate_data: false
   :saml_old_issuer: false
-  :spam_dynamo: true
   :es_multilang_solutions: false
   :sort_by_customer_response: false
   :saml_unspecified_nameid: false
@@ -487,17 +486,9 @@
   :single_session_per_user: false
   :proactive_spam_detection: true
   :bi_reports: false
-  :contact_merge_ui: false
-  :multiple_user_emails: false
-  :facebook_realtime: false
-  :autorefresh_node: false
   :updated_twilio_client: false
-  :count_es_reads: false
-  :sandbox_account: false
   :portal_cc: false
   :disable_rr_toggle: false
-  :count_es_writes: false
-  :round_robin_revamp: false
   :social_revamp: true
   :activity_revamp: true
   :hide_first_response_due: false
@@ -513,3 +504,8 @@
   :location_tagging: false
   :kb_allow_base64_images: false
   :solutions_agent_metrics: false
+  :forums_agent_portal: false
+  :solutions_agent_portal: false
+  :fetch_ticket_from_ref_first: false
+  :skip_ticket_threading: false
+  :helpdesk_tickets_by_product: false

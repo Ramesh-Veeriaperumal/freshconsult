@@ -1076,6 +1076,10 @@ class Account < ActiveRecord::Base
     update_default_forum_category_name(new_account_name)
   end
 
+  def enable_sprout_trial_onboarding?
+    launched?(:sprout_trial_onboarding) && conversion_metric.present? && conversion_metric.sprout_trial_onboarding?
+  end
+
   protected
 
     def external_url_is_valid?(url)

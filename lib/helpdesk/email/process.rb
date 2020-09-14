@@ -142,9 +142,7 @@ class Helpdesk::Email::Process
     ticket_data = parse_ticket_metadata.merge(common_email_data) #In parse_email_data
     ticket = nil
     archive_ticket = nil
-    unless account.launched?(:skip_ticket_threading)
-      ticket, archive_ticket = fetch_ticket_info(ticket_data, user, account)
-    end
+    ticket, archive_ticket = fetch_ticket_info(ticket_data, user, account) unless account.skip_ticket_threading_enabled?
     email_handler = Helpdesk::Email::HandleTicket.new(ticket_data, user, account, ticket)
     if ticket.present? || (archive_ticket.present? && archive_ticket.is_a?(Helpdesk::Ticket))
       self.user ||= get_user(common_email_data[:from], common_email_data[:email_config], params["body-plain"], true)

@@ -14,4 +14,4 @@ settings:
   :untitled_setting_4:
     default: true
     internal: false
-    feature_dependency: :untitled_sprout_feature_dependency_toggle
+    feature_dependency: :basic_settings_feature

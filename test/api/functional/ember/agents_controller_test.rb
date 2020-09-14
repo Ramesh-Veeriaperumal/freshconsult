@@ -926,7 +926,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     }
     fd_name = Faker::Lorem.characters(5)
     status_id = Faker::Number.number(3)
-    Ember::AgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: { freshdesk_user.id.to_s => channels_data }, name: fd_name, status_id: status_id))
+    Ember::AgentsController.any_instance.stubs(:request_service).returns(ocr_agents_response(channel: { freshdesk_user.id.to_s => channels_data }, name: fd_name, status_id: status_id))
     group = create_group_with_agents(@account, agent_list: [freshdesk_user.id])
     get :index, controller_params(version: 'private', only: 'availability', channel: 'freshdesk', group_id: group.id, search_term: 'First')
     assert_response 200
@@ -940,7 +940,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   def test_private_no_ata_enabled_agents_across_channels
     @account.stubs(:omni_channel_routing_enabled?).returns(true)
     @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
-    Ember::AgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: {}))
+    Ember::AgentsController.any_instance.stubs(:request_service).returns(ocr_agents_response(channel: {}))
     get :index, controller_params(version: 'private', only: 'availability')
     assert_response 200
     match_json([])

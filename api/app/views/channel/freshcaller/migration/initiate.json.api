@@ -1,5 +1,0 @@
-if @errors.present?
-  { "error": @errors }.to_hash.to_json
-else
-  { "success": 'Migration started', "jid": @jid }.to_hash.to_json
-end

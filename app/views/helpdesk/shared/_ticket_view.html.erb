@@ -21,11 +21,6 @@
 	<div id="ticket-toolbar" class="toolbar">
 	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" , :inline => true %>
     </div>
-    <% if render_select_all_toolbar? %>
-       <div id="select_all_alert" class="hide admin_select_all_text">
-        <%= render :partial => "select_all_message" %>
-       </div>
-    <% end %>
 
 	<div id="index_refresh_alert" class="hide">
 		<span id="new_ticket_message" class="count-label hide"

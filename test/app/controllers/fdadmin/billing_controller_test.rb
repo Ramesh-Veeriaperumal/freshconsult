@@ -5,6 +5,7 @@ require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'billing_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'omni_channels_test_helper.rb')
 
 class Fdadmin::BillingControllerTest < ActionController::TestCase
   include Billing::BillingHelper
@@ -12,6 +13,7 @@ class Fdadmin::BillingControllerTest < ActionController::TestCase
   include BillingTestHelper
   include SubscriptionTestHelper
   include CoreUsersTestHelper
+  include OmniChannelsTestHelper
 
   def setup
     super
@@ -294,6 +296,11 @@ class Fdadmin::BillingControllerTest < ActionController::TestCase
     fch_domain = @account.freshchat_account.domain
     fcl_domain = @account.freshcaller_account.domain
     freshid_response = org_freshid_response(create_sample_account_details(fch_domain, fcl_domain), metadata)
+    Freshid::V2::Models::Account.stubs(:find_by_domain).returns(Freshid::V2::Models::Account.new(id: Faker::Number.number(5)))
+    user = @account.technicians.first
+    org_admin_response = org_admin_users_response
+    org_admin_response[:users][0][:email] = user.email
+    Freshid::V2::Models::User.stubs(:account_users).returns(org_admin_response)
     Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
     Faraday::Connection.any_instance.stubs(:get).returns(Faraday::Response.new(status: 200, body: sample_freshchat_agents_response(fch_agent_emails)))
     HTTParty::Request.any_instance.stubs(:perform).returns(sample_freshcaller_agents_response(fcl_agent_emails))
@@ -313,6 +320,8 @@ class Fdadmin::BillingControllerTest < ActionController::TestCase
     @account.destroy
     Account.unstub(:current)
     unstub_subscription_settings
+    Freshid::V2::Models::Account.unstub(:find_by_domain)
+    Freshid::V2::Models::User.unstub(:account_users)
     Freshid::V2::Models::Account.unstub(:organisation_accounts)
     Faraday::Connection.any_instance.unstub(:get)
     HTTParty::Request.any_instance.unstub(:perform)

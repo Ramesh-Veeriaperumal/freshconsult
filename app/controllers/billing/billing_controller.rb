@@ -22,10 +22,10 @@ class Billing::BillingController < ApplicationController
                 :load_subscription_info
 
   def trigger
-    upgrade_success = handle_chargebee_callback(params[:event_type], params[:content])
+    upgrade_success = handle_chargebee_callback
     process_live_chat_events if LIVE_CHAT_EVENTS.include?(params[:event_type]) && upgrade_success
     handle_due_invoices if check_due_invoices?
-    trigger_omni_subscription_callbacks(params)
+    trigger_omni_subscription_callbacks
     Account.reset_current_account
     respond_to do |format|
       format.xml { head 200 }
@@ -64,12 +64,11 @@ class Billing::BillingController < ApplicationController
       end
     end
 
-    def handle_chargebee_callback(event_type, content)
+    def handle_chargebee_callback
       upgrade_success = true
-      if event_eligible_to_process?(event_type)
-        plan = subscription_plan(content[:subscription][:plan_id])
-        upgrade_success = handle_omni_upgrade_via_chargebee if omni_plan_upgrade?(event_type, plan.name)
-        safe_send(event_type, content) if upgrade_success
+      if event_eligible_to_process?
+        upgrade_success = handle_omni_upgrade_via_chargebee if omni_plan_upgrade?(params[:event_type], params[:content])
+        safe_send(params[:event_type], params[:content]) if upgrade_success
       end
       upgrade_success
     end
@@ -78,40 +77,6 @@ class Billing::BillingController < ApplicationController
       retrieve_account unless @account
       Livechat::Sync.new.sync_account_state(expires_at: @account.subscription.next_renewal_at.utc, suspended: !@account.active?) if live_chat_setting_enabled?
     end
-
-    def handle_omni_upgrade_via_chargebee
-      eligible_for_upgrade = eligible_for_omni_upgrade?
-      revert_to_previous_subscription unless eligible_for_upgrade
-      eligible_for_upgrade
-    end
-
-    def trigger_omni_subscription_callbacks(params)
-      if omni_bundle_account?
-        Rails.logger.info "Pushing event data for Freshcaller/Freshchat product account-id: #{@account.id}"
-        Billing::FreshcallerSubscriptionUpdate.perform_async(params)
-        Billing::FreshchatSubscriptionUpdate.perform_async(params)
-      end
-    end
-
-    def live_chat_setting_enabled?
-      @account&.chat_setting && @account&.subscription && @account.chat_setting.site_id
-    end
-
-    def omni_bundle_account?
-      @account.present? && @account.make_current && @account.omni_bundle_account?
-    end
-
-    def event_eligible_to_process?(event_type)
-      (not_api_source? || sync_for_all_sources?) && INVOICE_EVENTS.exclude?(event_type)
-    end
-
-    def not_api_source?
-      params[:source] != EVENT_SOURCES[:api]
-    end
-
-    def sync_for_all_sources?
-      SYNC_EVENTS_ALL_SOURCE.include?(params[:event_type])
-    end   
 
     def ensure_right_parameters
       if ((params[:event_type].blank?) or (params[:content].blank?) or customer_id_param.blank?)
@@ -141,10 +106,6 @@ class Billing::BillingController < ApplicationController
       Rails.logger.debug @billing_data
       @subscription_data = subscription_info(@billing_data.subscription, @billing_data.customer)
       Rails.logger.debug @subscription_data.inspect
-    end
-
-    def revert_to_previous_subscription
-      Billing::Subscription.new.update_subscription(@account.subscription, false, @account.addons)
     end
 
     #Events
