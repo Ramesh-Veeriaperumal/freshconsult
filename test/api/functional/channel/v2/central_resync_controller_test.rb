@@ -6,7 +6,7 @@ module Channel::V2
     include CentralLib::CentralResyncHelper
     include JwtTestHelper
 
-    SOURCE = 'field_service' # Temporary source for test
+    SOURCE = 'analytics'
 
     def wrap_cname(params)
       { central_resync: params }
