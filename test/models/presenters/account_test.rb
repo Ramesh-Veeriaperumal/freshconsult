@@ -4,6 +4,11 @@ require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 class AccountTest < ActiveSupport::TestCase
   include AccountTestHelper
   
+  def setup
+    @account = Account.first || create_new_account
+    @account.make_current
+  end
+
   def test_create
     CentralPublishWorker::AccountWorker.jobs.clear
     create_new_account(Faker::Name.first_name, Faker::Internet.email)
@@ -18,10 +23,11 @@ class AccountTest < ActiveSupport::TestCase
     payload.must_match_json_expression(central_publish_account_post(@account))
     assoc_payload = @account.associations_to_publish.to_json
     assoc_payload.must_match_json_expression(central_publish_account_association_pattern(@account))
+  ensure
+    Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end
 
   def test_add_bitmap_feature
-    Account.stubs(:current).returns(Account.first || create_test_account)
     @account.revoke_feature(:skill_based_round_robin)
     CentralPublishWorker::AccountWorker.jobs.clear
     @account.add_feature(:skill_based_round_robin)
@@ -33,11 +39,9 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal({ 'added' => ["skill_based_round_robin"], 'removed' => [] }, job['args'][1]['model_changes']['features'])
   ensure
     @account.revoke_feature(:skill_based_round_robin)
-    Account.unstub(:current)
   end
   
   def test_remove_bitmap_feature
-    Account.stubs(:current).returns(Account.first || create_test_account)
     @account.add_feature(:skill_based_round_robin)
     CentralPublishWorker::AccountWorker.jobs.clear
     @account.revoke_feature(:skill_based_round_robin)
@@ -47,30 +51,23 @@ class AccountTest < ActiveSupport::TestCase
     job = CentralPublishWorker::AccountWorker.jobs.last
     assert_equal 'account_update', job['args'][0]
     assert_equal({ 'added' => [], 'removed' => ["skill_based_round_robin"] }, job['args'][1]['model_changes']['features'])
-  ensure
-    Account.unstub(:current)
   end
 
   def test_account_publish_for_suspended_account?
-    Account.stubs(:current).returns(Account.first || create_test_account)
     Subscription.any_instance.stubs(:suspended?).returns(true)
     pass_value = Account.disallow_payload?('account_destroy')
     assert_equal false, pass_value
-    Account.unstub(:current)
     Subscription.any_instance.unstub(:suspended?)
   end
 
   def test_account_publish_for_suspended_account_fail
-    Account.stubs(:current).returns(Account.first || create_test_account)
     Subscription.any_instance.stubs(:suspended?).returns(true)
     pass_value = Account.disallow_payload?('default_value')
     assert_equal true, pass_value
-    Account.unstub(:current)
     Subscription.any_instance.unstub(:suspended?)
   end
 
   def test_account_publish_for_account_configuration_change
-    Account.stubs(:current).returns(Account.first || create_test_account)
     AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
     @account.reload
     CentralPublishWorker::AccountWorker.jobs.clear
@@ -100,11 +97,9 @@ class AccountTest < ActiveSupport::TestCase
   ensure
     @account.account_configuration.update_attributes!({ contact_info: contact_info, company_info: company_info })
     AccountConfiguration.any_instance.unstub(:update_billing)
-    Account.unstub(:current)
   end
 
   def test_account_publish_for_account_additional_settings_portal_languages
-    Account.stubs(:current).returns(Account.first || create_test_account)
     @account.reload
     CentralPublishWorker::AccountWorker.jobs.clear
     account_additional_settings = @account.account_additional_settings
@@ -118,12 +113,9 @@ class AccountTest < ActiveSupport::TestCase
     job = CentralPublishWorker::AccountWorker.jobs.last
     assert_equal 'account_update', job['args'][0]
     assert_equal(expected_model_change, job['args'][1]['model_changes'])
-  ensure
-    Account.unstub(:current)
   end
 
   def test_account_publish_for_account_additional_settings_portal_languages_with_help_widget_enabled
-    Account.stubs(:current).returns(Account.first || create_test_account)
     @account.reload
     @account.add_feature(:help_widget)
     CentralPublishWorker::AccountWorker.jobs.clear
@@ -139,12 +131,10 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal(expected_model_change, job['args'][1]['model_changes'])
   ensure
     @account.revoke_feature(:help_widget)
-    Account.unstub(:current)
   end
 
   def test_account_publish_for_account_additional_settings_supported_languages
     # multilingual enabled and hence only supported languages can be changed
-    Account.stubs(:current).returns(Account.first || create_test_account)
     setup_multilingual
     @account.reload
     CentralPublishWorker::AccountWorker.jobs.clear
@@ -159,13 +149,10 @@ class AccountTest < ActiveSupport::TestCase
     job = CentralPublishWorker::AccountWorker.jobs.last
     assert_equal 'account_update', job['args'][0]
     assert_equal(expected_model_change, job['args'][1]['model_changes'])
-  ensure
-    Account.unstub(:current)
   end
 
   def test_account_publish_for_portal_language
     # multilingual not enabled and hence only primary language can be changed, which is portal language
-    Account.stubs(:current).returns(Account.first || create_test_account)
     @account.reload
     Account.any_instance.stubs(:multilingual?).returns(false)
     account_additional_settings = @account.account_additional_settings
@@ -186,11 +173,9 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal(expected_model_change, job['args'][1]['model_changes'])
   ensure
     Account.any_instance.unstub(:multilingual?)
-    Account.unstub(:current)
   end
 
   def test_publish_for_rts_info
-    Account.stubs(:current).returns(Account.first || create_test_account)
     CentralPublishWorker::AccountWorker.jobs.clear
     @account.reload
     Account.current.stubs(:agent_collision_revamp_enabled?).returns(true)

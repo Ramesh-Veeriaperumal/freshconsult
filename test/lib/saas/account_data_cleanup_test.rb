@@ -144,6 +144,8 @@ class AccountDataCleanupTest < ActionView::TestCase
     non_deleted_custom_statuses = @account.ticket_statuses.where(is_default: false).find { |status| status.deleted == false }
     assert ticket_field.updated_at > updated_at # to check if perform_cleanup updates ticket_field
     assert_nil non_deleted_custom_statuses
+  ensure
+    Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end
 
   def test_handle_article_approval_workflow_drop_data
@@ -163,6 +165,8 @@ class AccountDataCleanupTest < ActionView::TestCase
     assert @account.helpdesk_approvals.solution_approvals.count != 0
     SAAS::AccountDataCleanup.new(@account, ['article_approval_workflow'], 'drop').perform_cleanup
     assert_equal @account.reload.helpdesk_approvals.solution_approvals.count, 0
+  ensure
+    Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end
 
   def test_handle_article_approval_workflow_drop_data_with_exception
@@ -187,6 +191,7 @@ class AccountDataCleanupTest < ActionView::TestCase
     end
   ensure
     Helpdesk::Approval.any_instance.unstub(:destroy)
+    Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end
 
   def test_handle_solutions_templates_drop_data
