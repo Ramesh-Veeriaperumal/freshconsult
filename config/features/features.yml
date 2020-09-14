@@ -426,11 +426,7 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
-  :personalized_email_replies: false
-  :reply_to_based_tickets: true
   :freshfone: false
-  :disable_agent_forward: false
-  :compose_email: false
   :enable_multilingual: false
   :countv2_writes: false
   :countv2_reads: false

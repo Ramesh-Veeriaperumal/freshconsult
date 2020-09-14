@@ -138,12 +138,12 @@ class Account < ActiveRecord::Base
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false, :portal_cc => false, :personalized_email_replies => false,
-    :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
+    :gamification_enable => false, :portal_cc => false,
+    :id_less_tickets => false, :freshfone => false,
     :no_list_view_count_query => false, :client_debugging => false, :collision_socket => false,
-    :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
+    :resource_rate_limit => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
-    :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
+    :marketplace => false, :fa_developer => false,:archive_tickets => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
     :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
