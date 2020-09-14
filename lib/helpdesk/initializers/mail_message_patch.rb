@@ -2,7 +2,7 @@
 
 require 'mail'
 Mail::Message.class_eval do
-  include Email::Mailbox::GmailOauthHelper
+  include Email::Mailbox::Oauth2Helper
   include Email::Mailbox::Utils
   include Email::Mailbox::Constants
 

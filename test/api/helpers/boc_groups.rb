@@ -1015,7 +1015,6 @@ module BocGroups
                   'app/workers/freshfone/acw_worker.rb',
                   'app/workers/freshfone/call_queue_worker.rb',
                   'app/workers/freshfone/call_terminate_worker.rb',
-                  'app/workers/freshfone/freshcaller_migration_worker.rb',
                   'app/workers/freshfone/notification_worker.rb',
                   'app/workers/freshfone/call_timeout_worker.rb',
                   'app/workers/freshfone/trial_call_trigger_worker.rb',

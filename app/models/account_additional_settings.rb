@@ -7,6 +7,8 @@ class AccountAdditionalSettings < ActiveRecord::Base
   include AccountConstants
   include SandboxConstants
   include CentralLib::Util
+  include Redis::OthersRedis
+  include Redis::Keys::Others
 
   belongs_to :account
   serialize :supported_languages, Array
@@ -122,12 +124,12 @@ class AccountAdditionalSettings < ActiveRecord::Base
     self.supported_languages = support_languages
   end
 
-  def bundle_details_setter(bundle_id, bundle_name)
+  def bundle_details_setter(bundle_id, bundle_name, new_signup = false)
     if bundle_id.present? && bundle_name.present?
       additional_settings[:bundle_id] = bundle_id
       additional_settings[:bundle_name] = bundle_name
       account.launch :omni_bundle_2020 if account.freshid_org_v2_enabled?
-      launch_other_dependent_omni_features if account.omni_bundle_2020_enabled?
+      launch_other_dependent_omni_features(new_signup) if account.omni_bundle_2020_enabled?
     end
   end
 
@@ -450,7 +452,15 @@ class AccountAdditionalSettings < ActiveRecord::Base
     @old_model = attributes.deep_dup
   end
 
-  def launch_other_dependent_omni_features
+  def launch_other_dependent_omni_features(new_signup)
     account.launch :omni_agent_availability_dashboard if redis_key_exists?(OMNI_AGENT_AVAILABILITY_DASHBOARD)
+    launch_conditional_omni_signup_features if new_signup
+  end
+
+  def launch_conditional_omni_signup_features
+    condition_based_launchparty_features = get_others_redis_hash(CONDITION_BASED_OMNI_LAUNCHPARTY_FEATURES)
+    if condition_based_launchparty_features.present?
+      condition_based_launchparty_features.each { |key, value| account.launch(key.to_sym) if value.to_bool }
+    end
   end
 end

@@ -17,11 +17,6 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
   def before_all
     @user = create_test_account
     @account = @user.account.make_current
-    ChargeBee::Customer.stubs(:update).returns(true)
-  end
-
-  def teardown
-    ChargeBee::Customer.unstub(:update)
   end
 
   def test_index

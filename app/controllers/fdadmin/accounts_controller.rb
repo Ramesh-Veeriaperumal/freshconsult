@@ -11,8 +11,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include ::Freshcaller::Util
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
-  around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features,
-                :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
+  around_filter :select_slave_shard, only: [:api_jwt_auth_feature,
+                                            :sha1_enabled_feature, :show,
+                                            :features, :agents, :tickets,
+                                            :portal, :user_info,
+                                            :check_contact_import,
+                                            :latest_solution_articles]
   around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,
                 :migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name,
                 :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
@@ -638,20 +642,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         render :json => result
       end
     end
-  end
-
-  def select_all_feature
-    enabled = false
-    account = Account.find(params[:account_id]).make_current
-    if params[:operation] == "launch"
-      enabled = account.launch(:select_all).include?(:select_all)
-    elsif params[:operation] == "rollback"
-      enabled = account.rollback(:select_all).include?(:select_all)
-    elsif params[:operation] == "check"
-      enabled = account.launched?(:select_all)
-    end
-    Account.reset_current_account
-    render :json => {:status => enabled}
   end
 
   def sha256_enabled_feature

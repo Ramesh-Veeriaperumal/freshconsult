@@ -67,6 +67,7 @@ module SubscriptionHelper
         url: SQS_V2_QUEUE_URLS[SQS[sqs_queue_name]]
       }
     }
+    Rails.logger.info "Sending request to kairos for account - #{Account.current.id} - #{payload.inspect}"
     Scheduler::PostMessage.perform_async(payload: payload)
   end
 

@@ -68,20 +68,20 @@ module MailboxConcern
   end
 
   def oauth_reference
-    params[:custom_mailbox] && params[:custom_mailbox][:reference_key]
+    cname_params[:custom_mailbox] && cname_params[:custom_mailbox][:reference_key]
   end
 
-  def gmail_redis_obj
-    @gmail_redis_obj ||= Email::Mailbox::GmailOauthRedis.new(redis_key: oauth_reference)
+  def redis_obj
+    @redis_obj ||= Email::Mailbox::OauthRedis.new(redis_key: oauth_reference)
   end
 
   def fetch_cached_auth_values
-    cached_oauth_hash = gmail_redis_obj.fetch_hash
+    cached_oauth_hash = redis_obj.fetch_hash
     [cached_oauth_hash[OAUTH_TOKEN], cached_oauth_hash[REFRESH_TOKEN]]
   end
 
   def remove_cached_oauth_value
-    gmail_redis_obj.remove_hash
+    redis_obj.remove_hash
   end
 
   def custom_mailbox?

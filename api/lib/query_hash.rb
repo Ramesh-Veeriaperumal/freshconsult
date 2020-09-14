@@ -130,7 +130,7 @@ class QueryHash
 
     def format_time(time)
       time = Time.zone.parse(time)
-      format.eql?(:system) ? time.strftime('%d %b %Y') : time.iso8601
+      format.eql?(:system) ? time.strftime('%d %b %Y %T') : time.iso8601
     end
 
     def iso_time_format(time)

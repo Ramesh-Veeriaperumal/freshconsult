@@ -3,11 +3,7 @@ module IntegrationServices::Services
     class ShopifyShopResource < IntegrationServices::Services::Shopify::ShopifyGenericResource
       
       def get_shop_info
-        request_url = if Account.current.shopify_api_revamp_enabled?
-          "#{server_url}/admin/#{SHOPIFY_API_VERSION}/shop.json"
-        else
-          "#{server_url}/admin/shop.json"
-        end
+        request_url = "#{server_url}/admin/#{SHOPIFY_API_VERSION}/shop.json"
         response = http_get request_url
         process_response(response, 200) do |shop_info|
           return {} if shop_info["shop"].blank?

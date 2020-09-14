@@ -5,7 +5,6 @@ class ActiveSupport::TestCase
   include TestClassMethods
   def setup
     begin_gc_deferment
-    ChargeBee::Customer.stubs(:update).returns(true)
     create_test_account unless @account
 
     @account ||= Account.first
@@ -15,7 +14,6 @@ class ActiveSupport::TestCase
   def teardown
     reconsider_gc_deferment
     super
-    ChargeBee::Customer.unstub(:update)
     clear_instance_variables
   end
 

@@ -3,7 +3,6 @@
   verification_keys: <%= node[:ymls][:freshcaller][:jwt_verification_keys] %>
   jwt_default_expiry: <%= node[:ymls][:freshcaller][:jwt_token_expiry] %>
   signup_domain: '<%= node[:ymls][:freshcaller][:signup_full_domain] %>'
-  s3_bucket: '<%= node[:ymls][:freshcaller][:migration_s3_bucket_name] %>'
   region: '<%= node[:ymls][:freshcaller][:region] %>'
   domain_prefix: '<%= node[:ymls][:freshcaller][:domain_prefix] %>'
   domain_suffix: '<%= node[:ymls][:freshcaller][:domain_suffix] %>'
