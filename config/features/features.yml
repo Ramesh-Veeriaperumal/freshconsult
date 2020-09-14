@@ -441,7 +441,6 @@
   :freshfone_custom_forwarding: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
-  :undo_send: false
   :google_signin: true
   :twitter_signin: true
   :facebook_signin: true
