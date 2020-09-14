@@ -1,5 +1,11 @@
 class Account < ActiveRecord::Base
 
+  AccountSettings::SettingsConfig.each do |setting, config|
+    define_method "#{setting}_enabled?" do
+      has_feature?(config[:feature_dependency]) && has_feature?(setting.to_sym)
+    end
+  end
+
   # Need to modify methods when we move all LPs to Bitmaps and validate settings throw error for invalid settings
   def admin_setting_for_account?(setting)
     settings_hash = AccountSettings::SettingsConfig[setting]
@@ -28,7 +34,7 @@ class Account < ActiveRecord::Base
   end
 
   def disable_setting(setting)
-    if valid_setting
+    if valid_setting(setting)
       has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) ? revoke_feature(setting) : raise_invalid_setting_error(setting)
     elsif Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(setting)
       rollback(setting)
@@ -37,7 +43,7 @@ class Account < ActiveRecord::Base
   end
 
   def reset_setting(setting)
-    if valid_setting
+    if valid_setting(setting)
       has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) ? reset_feature(setting) : raise_invalid_setting_error(setting)
     end
   end

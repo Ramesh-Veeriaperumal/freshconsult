@@ -135,12 +135,6 @@ class Account < ActiveRecord::Base
     end
   end
 
-  AccountSettings::SettingsConfig.each do |setting, config|
-    define_method "#{setting}_enabled?" do
-      has_feature?(config[:feature_dependency]) && has_feature?(setting)
-    end
-  end
-
   Collaboration::Ticket::SUB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       self.collaboration_enabled? && (self.collab_settings[item.to_s] == 1)
