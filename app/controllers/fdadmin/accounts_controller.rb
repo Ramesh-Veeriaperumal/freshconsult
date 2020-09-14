@@ -14,7 +14,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features,
                 :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
   around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,
-                :migrate_to_freshconnect, :add_launch_party, :change_url, :single_sign_on, :remove_launch_party,:change_account_name,
+                :migrate_to_freshconnect, :add_feature, :add_launch_party, :change_url, :single_sign_on, :remove_feature, :remove_launch_party,:change_account_name,
                 :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
                 :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy,
                 :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy , :disable_min_level_fluffy, :min_level_fluffy_info,
@@ -23,7 +23,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
-  before_filter :symbolize_feature_name, :only => [:add_launch_party, :remove_launch_party]
+  before_filter :symbolize_feature_name, :only => [:add_feature, :add_launch_party, :remove_feature, :remove_launch_party]
   before_filter :check_freshconnect_migrate, :only => [:migrate_to_freshconnect]
   before_filter :validate_extend_higher_plan_trial, only: [:extend_higher_plan_trial]
   before_filter :validate_change_trial_plan, only: [:change_trial_plan]
@@ -293,6 +293,43 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result[:account_id] = account.id
     result[:account_name] = account.name
     Account.reset_current_account
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def add_feature
+    result = {}
+    @account = Account.find(params[:account_id])
+    @account.make_current
+    result[:account_id] = @account.id
+    result[:account_name] = @account.name
+    begin
+      render :json => {:status => "notice"}.to_json and return unless enableable?(@feature_name)
+      enable_feature(@feature_name)
+      result[:status] = "success"
+    rescue Exception => e
+      result[:status] = "error"
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def remove_feature
+    @account = Account.find(params[:account_id]).make_current
+    result = {:account_id => @account.id, :account_name => @account.name}
+    begin
+      render :json => {:status => "notice"}.to_json and return unless disableable?(@feature_name)
+      disable_feature(@feature_name)
+      result[:status] = "success"
+    rescue Exception => e
+      result[:status] = "error"
+    end
     respond_to do |format|
       format.json do
         render :json => result
