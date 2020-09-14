@@ -177,8 +177,9 @@ class Account < ActiveRecord::Base
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
   LAUNCHPARTY_FEATURES = {
+
     hide_og_meta_tags: false, agent_conference: false, api_search_beta: false, autoplay: false, bi_reports: false,
-    disable_old_sso: false, enable_old_sso: false, es_count_writes: false,
+    disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,
