@@ -1631,7 +1631,7 @@
         "_service_name": "staging_freshdesk_helpkit",
         "_tracing_host_port": 6831,
         "_span_batch_size": 20,
-        "_sampler_probability": 0.1
+        "_sampler_probability": 0
       },
       "twitter": {
         "consumer_secret": "EJ[1:8exvi2D7SfEJxmn+Br7CeoKsCDfXy1gOfUh5hGbLsSw=:1GEjNUdnyGNCmC2AHo5M3oZ15HG5ej8o:HgTyKLuiPrWqhpbgJ5kwCJBPcItExu8LwguJQrvkQ7s+S6VP9XVzLR3/l/lDJ+Ih5UO4eCZ+XuBuO5IrGBHlYu5u]",

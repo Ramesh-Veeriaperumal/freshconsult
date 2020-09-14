@@ -128,7 +128,7 @@ class Account < ActiveRecord::Base
     :bi_reports => false, :social_revamp => true,
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false,
-    :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
+    :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
@@ -177,8 +177,9 @@ class Account < ActiveRecord::Base
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
   LAUNCHPARTY_FEATURES = {
+
     hide_og_meta_tags: false, agent_conference: false, api_search_beta: false, autoplay: false, bi_reports: false,
-    disable_old_sso: false, enable_old_sso: false, es_count_writes: false,
+    disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,
@@ -197,7 +198,7 @@ class Account < ActiveRecord::Base
     service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
-    sha256_enabled: false, auto_ticket_export: false, select_all: false,
+    sha256_enabled: false, auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
@@ -207,7 +208,7 @@ class Account < ActiveRecord::Base
     auto_complete_off: false, freshworks_omnibar: false,
     new_ticket_recieved_metric: false, es_msearch: true,
     canned_forms: false, attachment_virus_detection: false, old_link_back_url_validation: false,
-    stop_contacts_count_query: false, undo_send: false,
+    stop_contacts_count_query: false,
     bot_email_channel: false, archive_ticket_fields: true,
     sso_login_expiry_limitation: false, csat_email_scan_compatibility: false, email_deprecated_style_parsing: false,
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
@@ -252,5 +253,14 @@ class Account < ActiveRecord::Base
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
   FILE_DOWNLOAD_URL_EXPIRY_TIME = 60.to_i.seconds
-  CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES = [:agent_statuses].freeze
+
+  # Add launchparty name to CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES if the feature needs to sent to central
+  # Setting feature to false, will not trigger separate account_update event on launching a key on signup
+  # feature_name: true/false
+  # true -> should fire separate account_update event with feature added
+  # false -> will not fire separate account_update
+  # the false/true value is not honoured if the key is launched after the account signup
+  CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES = {
+    agent_statuses: false
+  }.freeze
 end

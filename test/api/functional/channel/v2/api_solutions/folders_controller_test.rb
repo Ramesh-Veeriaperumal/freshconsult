@@ -241,5 +241,23 @@ module Channel::V2::ApiSolutions
         assert_equal results, { 'description' => 'Validation failed', 'errors' => [{ 'field' => 'allow_language_fallback', 'message' => 'Value set is of type String.It should be a/an Boolean', 'code' => 'datatype_mismatch' }] }
       end
     end
+
+    def test_page_params_for_category_folders
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        sample_category_meta = get_category_with_folders
+        get :category_folders, controller_params(id: sample_category_meta.id, page: 1)
+        assert_response 200
+      end
+    end
+
+    def test_per_page_params_for_category_folders
+      setup_channel_api do
+        set_jwe_auth_header(SUPPORT_BOT)
+        sample_category_meta = get_category_with_folders
+        get :category_folders, controller_params(id: sample_category_meta.id, per_page: 1)
+        assert_response 200
+      end
+    end
   end
 end

@@ -17,7 +17,6 @@ class Helpdesk::TicketsController < ApplicationController
   helper AutocompleteHelper
   helper Helpdesk::NotesHelper
   helper Helpdesk::TicketsExportHelper
-  helper Helpdesk::SelectAllHelper
   helper Helpdesk::RequesterWidgetHelper
   include Helpdesk::TagMethods
   include Helpdesk::NotePropertiesMethods
