@@ -20,8 +20,11 @@ module CentralLib::CentralResyncRateLimiter
   def resync_ratelimit_options(args)
     {
       batch_size: RESYNC_ENTITY_BATCH_SIZE,
-      conditions: args[:conditions]
-    }.tap { |hash_body| hash_body[:start] = args[:primary_key_offset] if args[:primary_key_offset].present? }
+      conditions: args[:conditions].class == Hash ? args[:conditions][:conditions] : args[:conditions]
+    }.tap do |hash_body|
+      hash_body[:start] = args[:primary_key_offset] if args[:primary_key_offset].present?
+      hash_body[:joins] = args[:conditions][:joins] if args[:conditions].class == Hash && args[:conditions][:joins].present?
+    end
   end
 
   def max_allowed_records

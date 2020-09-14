@@ -300,7 +300,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def subscription_plan_from_cache
-    subscription_plans_from_cache.select {|s_plan| s_plan.id == self.plan_id}.first
+    SubscriptionPlan.subscription_plans_from_cache.select { |s_plan| s_plan.id == self.plan_id }.first
   end
 
   def classic?
@@ -312,7 +312,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def convert_to_free
-    self.state = FREE if card_number.blank?
+    self.state = 'free' if card_number.blank?
     self.agent_limit = subscription_plan.free_agents
     self.renewal_period = 1
     self.day_pass_amount = subscription_plan.day_pass_amount
@@ -726,7 +726,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def losing_features(to_plan)
-    new_plan = subscription_plans_from_cache.find { |plan| plan.id == to_plan }
+    new_plan = SubscriptionPlan.subscription_plans_from_cache.find { |plan| plan.id == to_plan }
     features_lost = account.features_list - PLANS[:subscription_plans][new_plan.canon_name][:features]
     features_lost
   end
@@ -1037,7 +1037,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def omni_plan_conversion?
-      account.launched?(:explore_omnichannel_feature) && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan? && !account.not_eligible_for_omni_conversion?
+      account.launched?(:explore_omnichannel_feature) && @chargebee_update_response.present? && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan? && !account.not_eligible_for_omni_conversion?
     end
 
     def enqueue_omni_account_creation?
@@ -1054,7 +1054,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def enqueue_omni_account_creation_workers
-      if account.omni_bundle_id.present? && @chargebee_update_response.present?
+      if account.omni_bundle_id.present?
         worker_args = {
           chargebee_response: @chargebee_update_response
         }

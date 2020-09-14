@@ -421,7 +421,7 @@ RSpec.describe Helpdesk::TicketsController do
     end
 
     it "should update a ticket's properties with agent collision feature" do
-      @account.features.agent_collision.create
+      @account.features.collision.create
       test_ticket = create_ticket
       put :update_ticket_properties, { :helpdesk_ticket => { :priority => "4",
                                                              :status => "3",
@@ -433,7 +433,7 @@ RSpec.describe Helpdesk::TicketsController do
                                        :helpdesk => { :tags => ""},
                                        :id => test_ticket.display_id
                                       }
-      @account.features.agent_collision.destroy
+      @account.features.collision.destroy
       updated_ticket = @account.tickets.find(test_ticket.id)
       updated_ticket.ticket_type.should be_eql("Lead")
       updated_ticket.source.should be_eql(9)

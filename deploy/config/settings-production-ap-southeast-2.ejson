@@ -95,10 +95,7 @@
         "secret_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:FMf75h4tGCtJqKsNz665w1jQTWm6qt91:ngc0xbwZbg/nGrY2rMTXBn7QzVNJ7vrgIAH7dDIScPAzJJNIJ4Oy1COV7QTSyzGzBh9QVDIC9wI=]"
       },
       "ner": {
-        "secret_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:CbMAIw5GsLscKFy1NqiRGoOZhajKs4oT:pMUIelV1sTsnbh5KA+4TIxHBhA==]",
-        "iv": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:xFp3200S5iI+0jv4gb5CTIn5acijRRsG:eFMbPhQHTJ0kUD8YzdF9WnpQbA==]",
-        "_username": "xxx",
-        "_datetime": "xxx"
+        "_datetime": "https://ner-api.prod.freddyproject.com/datetime"
       },
       "fdadmin_api": {
         "secret_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:Qqhs72GzQXFrL5GQ4itU+R6tEcnjoJ+j:cPfkXp6LC5+PwMLllHZJpHwvfoUvhoLUbdXP+jKsxkak0FGaIaHAUKfkA2//fFMD]",
@@ -113,7 +110,6 @@
         ],
         "jwt_token_expiry": 10,
         "_signup_full_domain": "https://signup-au.freshcaller.com",
-        "_migration_s3_bucket_name": "au-fd-fc-migration",
         "_domain_prefix": "",
         "_domain_suffix": ".freshcaller.com"
       },
@@ -456,6 +452,12 @@
         "_activities_export_host": "activitiesexport.internal.podapsoutheast2.freshdesk.com",
         "_port": "80"
       },
+      "tracing": {
+        "_service_name": "freshdesk_helpkit",
+        "_tracing_host_port": 6831,
+        "_span_batch_size": 20,
+        "_sampler_probability": 0
+      },
       "redshift": {
         "write_user_pwd": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:rPwvaOj/2Jf1uI7SqaVrp51TJr+0Xa7r:57Wwg27lfRotR5tBmno31ucxl/aIuALo]",
         "read_user_pwd": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:kckpwpjYVIFU0Am6Y6pv62s4pHWNlcTl:dJEGY9KYG78EJ5ZYV9DPFPrqlq71t0z7]",
@@ -637,10 +639,6 @@
             "_sqs_queue": "social_gnip_2_0_tweet_production",
             "_priority": 1
           },
-          "count_etl_queue": {
-            "_sqs_queue": "count_etl_queue_production",
-            "_priority": 1
-          },
           "analytics_etl_queue": {
             "_priority": 1,
             "_sqs_queue": "analytics_etl_queue_production"
@@ -743,10 +741,6 @@
               "_sqs_queue": "search-etlqueue-archive-production",
               "_priority": 1
           },
-          "count_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "count_etl_queue_archive_production"
-          },
           "analytics_etl_queue": {
               "_priority": 1,
               "_sqs_queue": "analytics_etl_queue_archive_production"
@@ -755,10 +749,6 @@
         "maintenance": {
           "search_etlqueue_maintenance": {
             "_sqs_queue": "search-etlqueue-production_maintenance",
-            "_priority": 1
-          },
-          "count_etl_queue_maintenance": {
-            "_sqs_queue": "count_etl_queue_production_maintenance",
             "_priority": 1
           },
           "analytics_etl_queue_maintenance": {
@@ -858,7 +848,9 @@
         "microsoft_teams_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:bXnytyLS62oRsFjN4Qw45kekwCd/NX67:WSNdzUalgVl/J6EsaOqT3RH/cibzENIKGi+edjPxXMwWJ+0R9BuB]",
         "google_hangout_chat_token": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:DgAuzcHcab6r8PgaQkOP5QajNTXXKZP4:vKs22Qpu2jC5t/BFThdcufRHH3H4Q9/Dj7KSOOEjqhaKVJALne9gzII7GrlMQmDc2OO1FAEBHA==]",
         "google_hangout_chat_secret": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:2Mgo7T+AcJZ6RuQVPCj+t6ZorEPPc26M:RSqXQdTjcqcdobSWED7M5iF1DNG4phkX215vTtxYlIq/oYfbAx8HHg==]",
-        "google_oauth2_client_id_iosv4_classic": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:RyT3llDJmoGEGE0k/mbH9DYcRZ7Kyw7H:DjAc+WB4oNyIDlrDDpPJPpRGeWLrDcEEuGPaO5Oiy+B38P2v0eKwfH1la0Rvj+6o+sK7NX292S2WEV2LOxWcGoiBG5fnfkKpAtxPyUbiOOEf4WW0SosPAA==]"
+        "google_oauth2_client_id_iosv4_classic": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:RyT3llDJmoGEGE0k/mbH9DYcRZ7Kyw7H:DjAc+WB4oNyIDlrDDpPJPpRGeWLrDcEEuGPaO5Oiy+B38P2v0eKwfH1la0Rvj+6o+sK7NX292S2WEV2LOxWcGoiBG5fnfkKpAtxPyUbiOOEf4WW0SosPAA==]",
+        "microsoft_outlook_token": "EJ[1:Vi3++Q3c6o5vIaLSWm1yHwEOEy0sEQidvtzHmZWcYUg=:aNlRWcgubCOPhGjnP0FfoN0tER2rjuR+:ov/P5Gc9vbhmBElvCjaaAcJe3+clPyTAViJDnZz2ArTqjXh2MWedHcSZxIowuf9rgAWYQA==]",
+        "microsoft_outlook_secret": "EJ[1:Vi3++Q3c6o5vIaLSWm1yHwEOEy0sEQidvtzHmZWcYUg=:AGBiEwLbLwhyoVfx5wOXfVWwO+JSU2Ex:aRiV6S/LXvPNBOZLFz0VhImuWMi4UbZN7191ZmJ/7nTvGR5ztYi/Jo56las0fTLkKfE=]"
       },
       "spam_watcher": {
         "_email": "dev-ops@freshdesk.com,helpdesk@noc-alerts.freshservice.com"
@@ -945,7 +937,6 @@
       "sqs_queues": {
         "_twitter_realtime_queue": "social_gnip_2_0_tweet_production",
         "_facebook_realtime_queue": "social_fb_feed_production",
-        "_count_etl_queue": "count_etl_queue_production",
         "_free_customer_email_queue": "free_customer_email_queue_production",
         "_active_customer_email_queue": "active_customer_email_queue_production",
         "_trial_customer_email_queue": "trial_customer_email_queue_production",
@@ -994,14 +985,12 @@
         "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_production",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_production",
         "_search_etlqueue_maintenance": "search-etlqueue-production_maintenance",
-        "_count_etl_queue_maintenance": "count_etl_queue_production_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue_production_maintenance",
         "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_production",
         "_email_rate_limiting_queue": "email_rate_limiting_production"
       },
       "archive_sqs_queues": {
         "_search_etl_queue": "search-etlqueue-archive-production",
-        "_count_etl_queue": "count_etl_queue_archive_production",
         "_analytics_etl_queue": "analytics_etl_queue_archive_production"
       },
       "freshid": {
@@ -1520,9 +1509,9 @@
         "_early_expiration": 60
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:Y9yqjJg6nW26pxd4TXUFCgYHHLWrCVCKoIDtqix1nC8=:NybmTUlc6EyQF0PSXZowNX6mbh0QKr5o:w9v8sfKsBq5Id9rWtXsUjg==]",
-        "_end_point": "",
-        "_bu_name": "",
+        "secret_key": "EJ[1:1Eo7pwRT7j2khmcijbFAOGDAt3cG+77OUuDZ33hwjVc=:7HKI9tqsrYlUdXDz13Y4T6mocgD6MbnO:80fGi/+L7/rNhFfDwCwUBDwCvz2XxviezUZoCD93v786iTehBm6ytZ0yy9Jmpv2CtPwviP8mXUP2rZJK]",
+        "_end_point": "https://freshdesk-au.freshreports.com",
+        "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
         "_timeout_for_pricing_api": 10,
@@ -1637,7 +1626,7 @@
         "_messageKey": "fd.site-announcement.sprout-banner"
       },
       "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.2.1.js",
+        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.2.4.js",
         "schedulerConfig": {
           "metricsAdapters": [
             {

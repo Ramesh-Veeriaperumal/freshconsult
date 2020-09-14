@@ -23,6 +23,6 @@ class Social::TicketRule < ActiveRecord::Base
   end
 
   def keyword_rule?
-    type == 'Mention' && rule_type.blank?
+    ['Mention', 'Ad_post'].include?(type) && rule_type.blank?
   end
 end

@@ -9,7 +9,7 @@ module Channel::V2
     include Redis::OthersRedis
 
     SOURCE = 'analytics'.freeze
-    
+
     def wrap_cname(params)
       { conversation: params }
     end

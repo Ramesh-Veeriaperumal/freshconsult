@@ -5,12 +5,6 @@ module Cache::Memcache::SubscriptionPlan
     base.extend ClassMethods
   end
 
-  def subscription_plans_from_cache
-    @subscription_plans_from_cache ||= MemcacheKeys.fetch(SUBSCRIPTION_PLANS) do
-      SubscriptionPlan.select("id,name,display_name,classic").all
-    end
-  end
-
   def retrieve_plan_from_cache(plan, renewal_period)
     key = plan.chargebee_plan_cache_key(renewal_period,
       Account.current.subscription.currency_name)
@@ -43,6 +37,12 @@ module Cache::Memcache::SubscriptionPlan
 
     def current_plan_names_from_cache
       cached_current_plans.map(&:name)
+    end
+
+    def subscription_plans_from_cache
+      MemcacheKeys.fetch(MemcacheKeys::SUBSCRIPTION_PLANS) do
+        SubscriptionPlan.select('id,name,display_name,classic').all
+      end
     end
   end
 end

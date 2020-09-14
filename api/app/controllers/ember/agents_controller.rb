@@ -19,7 +19,6 @@ module Ember
     def update
       mark_avatar_for_destroy
       super
-      assign_avatar if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
     end
 
     private
@@ -41,11 +40,10 @@ module Ember
       def mark_avatar_for_destroy
         user_avatar = @item.user.avatar
         avatar_id = user_avatar.id if params[cname].key?('avatar_id') && user_avatar
-        params[cname][:user_attributes][:avatar_attributes] = { id: avatar_id, _destroy: 1 } if avatar_id.present? && avatar_id != params[cname][:avatar_id]
-      end
-
-      def assign_avatar
-        @item.user.avatar = @delegator.draft_attachments.first
+        if avatar_id.present? && avatar_id != params[cname][:avatar_id]
+          params[cname][:user_attributes][:avatar_attributes] = { id: avatar_id, _destroy: 1 }
+          @avatar_changes = :destroy
+        end
       end
 
       def agent_delegator_klass
@@ -62,7 +60,7 @@ module Ember
           @items = privilege_scoper
         else
           super
-          @items_count = @parsed_ocr_response.try(:[], 'meta').try(:[], 'count') || 0 if @only_omni_channel_availability
+          @items_count = @parsed_omni_agents_count || 0 if @only_omni_channel_availability
         end
       end
 

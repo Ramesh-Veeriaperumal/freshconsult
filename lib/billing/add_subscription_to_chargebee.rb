@@ -14,6 +14,7 @@ class Billing::AddSubscriptionToChargebee
       subscription.save #to update resp. currency amount
       EmailServiceProvider.perform_async
       Subscription::AddAffiliateSubscription.perform(account)
+      subscription.billing.activate_subscription(subscription, {}) if subscription.new_sprout?
     rescue Exception => e
       logger.info "#{e}"
       logger.info e.backtrace.join("\n")

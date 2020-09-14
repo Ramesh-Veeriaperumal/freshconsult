@@ -1067,8 +1067,6 @@ sl:
         only_agents: Agenti
         remote_login_url_info: >-
           To je URL na katerega Freshdesk preusmeri uporabnike za avtentikacijio, ki želijo vstopiti v Freshdesk.
-        customer_portal_ssl_warning: >-
-          Ker je v vašem računu za Podporo nastavljen poseben URL boste preusmerjeni
         saml_cert_fingerprint: Prstni odtis varnostnega certifikata
         success_message: >-
           Vaša zahteva za SSL cetifikat po naročilu se je zagnala in bo izvedena v kratkem. Naš ponudnik certifikatov vam bo pred izvedbo poslal potrditveno obvestilo. Prosimo preverite vaš poštni predal za novosti.
@@ -2145,6 +2143,7 @@ sl:
         all_tickets: Vsi zahtevki
         due_today: Zahtevki, ki zapadejo danes
         resolved: Rešeni zahtevki
+        visible_and_resolved: Rešeni zahtevki
       friendly_status:
         customer_responded: Kupec je odgovoril
         elapsed: Odgovor do
@@ -3765,6 +3764,9 @@ sl:
       created_at: Izdelal
       skill: Veščina
       description: Opis
+    field_service_fields:
+      cf_fsm_contact_name: Stik
+      cf_fsm_phone_number: Telef. št.
     formfield_props:
       behavior: Obnašanje
       customer_edit: Kupec lahko ureja
@@ -5744,6 +5746,7 @@ sl:
       sign_up_text: 'Začnite pogovore s strankami na spletnem mestu, portalu ali v mobilni aplikaciji.'
       enable_chat_in_portal_info: >-
         Strankam omogočite preprostejšo komunikacijo, ko pristanejo na vašem portalu za pomoč uporabnikom.
+      topics_title: Teme
       app_id_placeholder: 'Primer: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Za pretvorbo Freshchatovih pogovorov v zahtevke obiščite <a href='%{url}' target='_blank'>to stran</a> in prilepite spodnje podatke. Če potrebujete več pomoči, si preberite <a href='%{article_url}' target='_blank'>ta članek</a>.

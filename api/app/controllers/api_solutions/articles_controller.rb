@@ -16,10 +16,10 @@ module ApiSolutions
     before_filter :validate_draft_state, only: [:update, :destroy]
     before_filter :language_metric_presence
     before_filter :validate_publish_solution_privilege, only: [:update, :create]
-    before_filter :sanitize_chat_params, only: [:folder_articles], if: :channel_v2?
-    before_filter :sanitize_prefer_published, only: [:folder_articles]
+    before_filter :sanitize_chat_params, only: [:folder_articles, :search], if: :channel_v2?
+    before_filter :sanitize_boolean_params, only: [:folder_articles, :search]
     before_filter :reconstruct_params, only: [:folder_articles], if: :filters_present? && :channel_v2?
-    before_filter :validate_omni_filter_params, only: [:folder_articles], if: :channel_v2?
+    before_filter :validate_omni_filter_params, only: [:folder_articles, :search], if: :channel_v2?
     before_filter :portal_delegator_validation, only: [:folder_articles], if: :channel_v2?
 
     def show
@@ -95,11 +95,40 @@ module ApiSolutions
       end
     end
 
+    def search
+      @prefer_published = params[:prefer_published] unless params[:prefer_published].nil?
+      if validate_language
+        @items = search_articles
+        @exclude = [:description, :attachments]
+        render '/api_solutions/articles/index'
+      else
+        false
+      end
+    end
+
     def self.wrap_params
       SolutionConstants::ARTICLE_WRAP_PARAMS
     end
 
     private
+
+      def search_articles
+        @klasses        = ['Solution::Article']
+        @sort_direction = 'desc'
+        @search_sort    = 'relevance'
+        @search_context = :filtered_solution_search
+        @category_ids   = portal_catagory_ids if portal_catagory_ids.present?
+        @language_id    = @lang_id
+        # For filter search, only article ID is needed
+        if es_for_filter?
+          @count_request = true
+          @results = esv2_query_results(esv2_agent_article_model)
+          @results_count = @results.total_entries
+          @results = (@results.records['results'].presence || {}).map { |result| result['id'] }
+          return @results
+        end
+        @results = esv2_query_results(esv2_agent_article_model)
+      end
 
       def scoper
         current_account.solution_articles
@@ -228,7 +257,7 @@ module ApiSolutions
       end
 
       def before_load_object
-        sanitize_prefer_published
+        sanitize_boolean_params
         if channel_v2?
           sanitize_chat_params
           return unless validate_omni_filter_params
@@ -329,8 +358,9 @@ module ApiSolutions
         params[:tags] = params[:tags].split(',').uniq if params[:tags].present?
       end
 
-      def sanitize_prefer_published
-        params[:prefer_published] = params[:prefer_published].to_bool if params[:prefer_published].present? && (params[:prefer_published] == "true" || params[:prefer_published] == "false")
+      def sanitize_boolean_params
+        params[:prefer_published] = params[:prefer_published].to_bool if boolean_param?(:prefer_published)
+        params[:allow_language_fallback] = params[:allow_language_fallback].to_bool if boolean_param?(:allow_language_fallback)
       end
 
       def filters_present?
@@ -409,6 +439,10 @@ module ApiSolutions
 
       def validate_chat_query_parameters
         validate_filter_params(SolutionConstants::FOLDER_ARTICLES_FIELDS)
+      end
+
+      def validate_search_query_parameters
+        validate_filter_params(SolutionConstants::SEARCH_FIELDS)
       end
 
       def load_meta(id)

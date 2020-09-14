@@ -75,7 +75,7 @@ module CentralLib
 
           push_bulk_jobs('CentralPublisher::CentralReSyncWorker', batch) do |each_record|
             manual_publish_args = each_record.construct_manual_publish_args(:sync)
-            manual_publish_args[:event_info].merge!(each_record.meta_for_central_payload)
+            manual_publish_args[:event_info].merge!(meta: each_record.meta_for_central_payload)
             [each_record.construct_payload_type(:sync), manual_publish_args]
           end
           # Update the job details with the number of records processed and last_model_id

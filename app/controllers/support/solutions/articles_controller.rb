@@ -80,8 +80,7 @@ class Support::Solutions::ArticlesController < SupportController
   private
 
     def set_interaction_source
-      @article.current_article.interaction_source_type = Solution::Constants::INTERACTION_SOURCE[:portal]
-      @article.current_article.interaction_source_id = (Portal.current || Account.current.main_portal).id
+      @article.current_article.set_portal_interaction_source
     end
 
     def filter_params

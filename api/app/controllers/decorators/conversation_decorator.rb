@@ -107,12 +107,21 @@ class ConversationDecorator < ApiDecorator
   def construct_note_body_hash
     return default_body_hash unless restrict_twitter_content?
 
+    handle = record.tweet.twitter_handle
+    twitter_user = record.user
+    twitter_requester_handle_id = twitter_user.twitter_requester_handle_id || record.tweet.twitter_handle_id
     if record.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      tweet_body = "View the tweet at https://twitter.com/#{record.tweet.twitter_handle_id}/status/#{record.tweet.tweet_id}"
+      tweet_body = "View the tweet at https://twitter.com/#{twitter_requester_handle_id}/status/#{record.tweet.tweet_id}"
       return twitter_public_api_body_hash(tweet_body)
     else
-      dm_body = 'View the message at https://twitter.com/messages'
-      return twitter_public_api_body_hash(dm_body)
+      dm_body_prefix = 'View the message at https://twitter.com/messages'
+      if handle && twitter_user.twitter_requester_handle_id
+        handle_ids = [handle.twitter_user_id.to_i, twitter_requester_handle_id.to_i]
+        dm_body = "#{dm_body_prefix}/#{handle_ids.min}-#{handle_ids.max}"
+      else
+        dm_body = dm_body_prefix
+      end
+      twitter_public_api_body_hash(dm_body)
     end
   end
 
@@ -177,12 +186,14 @@ class ConversationDecorator < ApiDecorator
   def tweet_public_hash
     return {} unless record.tweet? && record.tweet && record.tweet.twitter_handle
     handle = record.tweet.twitter_handle
+    twitter_user = record.user
+    twitter_requester_handle_id = twitter_user.twitter_requester_handle_id if record.incoming
     tweet_hash = {
       id: record.tweet.tweet_id > 0 ? record.tweet.tweet_id.to_s : nil,
       type: record.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !channel_v2_api? ? nil : record.user.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !channel_v2_api? ? twitter_requester_handle_id : twitter_user.twitter_id
     }
     tweet_hash[:stream_id] = record.tweet.stream_id if channel_v2_api?
     tweet_hash

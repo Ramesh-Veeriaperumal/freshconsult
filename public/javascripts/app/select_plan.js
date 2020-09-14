@@ -91,6 +91,7 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '.downgrade-modal .btn-primary', function(){ $this.closeModal() })
       $(document).on('change'+$this.namespace(), '#agents-text-box', function(ev){ $this.agentChange(ev, this) })
       $(document).on('change'+$this.namespace(), '#billing_cycle', function(){ $this.billingCycleChange(this) })
+      $(document).on('click'+$this.namespace(), '#switch-to-annual-link', function(){ $this.switchToAnnual(this)} )
       $(document).on('click'+$this.namespace(),  '.trial-plan-change', function(){ $this.trialPlanChange(this) })
       $(document).on('click'+$this.namespace(),  '.omni-toggle-holder .toggle-button', function(){ $this.toggleOmniPlans(this) })
       $(document).on('click'+$this.namespace(),  '.omni-billing-edit .toggle-button', function(){ $this.toggleOmniPlans(this) })
@@ -159,6 +160,7 @@ window.App = window.App || {};
       this.pending_cancellation_request = false;
       var message = cancel_type === this.subscription_cancel ? 'downgrade_policy.subscription_cancel_request_success' : 'downgrade_policy.request_cancel_success'
       $('#cancellation-wrapper').removeClass('sloading inner-form-hide');
+      $('#annual-savings-wrapper').removeClass('hide');
       $('.request-change-wrapper').addClass('hide');
       $('.request-change-info').addClass('hide');
       $('.request-change-status').addClass('success').removeClass('hide');
@@ -319,6 +321,11 @@ window.App = window.App || {};
        return jQuery(jQuery("[data-omni-plan-id='"+non_omni_plan+"']")[0]).attr("data-plan-id");
       }
 
+    },
+    switchToAnnual: function (ev) {
+      $('.edit-plan').click();
+      this.editBilling = false;
+      jQuery('#billing_cycle').val('12').trigger('change');
     },
     trialPlanChange: function (button) {
       var $this = $(button),
@@ -729,7 +736,8 @@ window.App = window.App || {};
       var per_month_amount  = Math.floor(this.currencyToNumber(total_cost) / no_of_months);
       var per_month_cost = this.currencyToNumber($("#cost-per-month-value").val());
       var per_month_discounted_cost = this.currencyToNumber($("#discounted-cost-per-month-value").val());
-      var you_save = currency_symbol+""+((per_month_cost - per_month_discounted_cost) * 12 * agent_count);
+      var savings_amount = ((per_month_cost - per_month_discounted_cost) * 12 * agent_count);
+      var you_save = currency_symbol+""+savings_amount.toLocaleString();
       var per_month_charges = $(".per-month-charges");
 
       $(".you-save-amount").text(you_save);

@@ -632,16 +632,6 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
     	if(!selectAllBarAvailable()) {
       		return;
     	}
-
-    	if(jQuery("#select_all_disabled").length > 0 && jQuery("#helpdesk-select-all").prop('checked')) {
-      		jQuery.ajax({
-        		url: "/helpdesk/select_all_ticket_actions/select_all_message_content",
-        		type: "GET",
-        		success: function(){
-          			updateBulkActionTicketCount();
-        		}            
-      		});
-    	}
     	var select_all_bar = $J("#select_all_alert");
     	updateBulkActionTicketCount();
     	if($J(this).prop("checked")){

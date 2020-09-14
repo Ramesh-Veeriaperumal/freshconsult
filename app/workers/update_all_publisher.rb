@@ -21,7 +21,7 @@ class UpdateAllPublisher
       record.sqs_manual_publish_without_feature_check if esv2_enabled && subscribers.include?('search')
       record.count_es_manual_publish if record.respond_to?(:count_es_manual_publish)
       next unless options[:manual_publish]
-      key = RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
+      key = RabbitMq::Constants.const_get("RMQ_REPORTS_#{model_name.upcase}_KEY")
       if options[:reason].present?
         record.misc_changes = options[:reason]
         key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY

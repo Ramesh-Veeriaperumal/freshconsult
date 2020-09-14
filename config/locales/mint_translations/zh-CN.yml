@@ -1067,8 +1067,6 @@ zh-CN:
         only_agents: 客服
         remote_login_url_info: >-
           这是用户访问Freshdesk时将会被导向的URL地址，进行身份验证。
-        customer_portal_ssl_warning: >-
-          由于您的账号配置了自定义URL地址，您将被重定向到 
         saml_cert_fingerprint: 安全认证指纹
         success_message: >-
           您已提交了自定义SSL证书的请求，我们将尽快处理。批准后，您将收到一封来自我们提供商的邮件。请注意查收邮件。
@@ -2156,6 +2154,7 @@ zh-CN:
         all_tickets: 所有工单
         due_today: 今天到期的工单
         resolved: 已解决的工单
+        visible_and_resolved: 已解决的工单
       friendly_status:
         customer_responded: 客户已响应
         elapsed: 响应到期
@@ -3750,6 +3749,9 @@ zh-CN:
       created_at: 创建
       skill: 技能
       description: 描述
+    field_service_fields:
+      cf_fsm_contact_name: 联系人
+      cf_fsm_phone_number: 电话号码
     formfield_props:
       behavior: 行为
       customer_edit: 客户可以编辑
@@ -5730,6 +5732,7 @@ zh-CN:
       sign_up_text: '在网站、门户或移动端应用中同客户聊天。'
       enable_chat_in_portal_info: >-
         让客户在抵达您的支持服务门户时能够轻松地同您交谈。
+      topics_title: 话题
       app_id_placeholder: '如：09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         如需将 Freshchat 会话转换成工单，请前往该<a href='%{url}' target='_blank'>页面</a>，复制并粘贴下方的详情。如果您需要更多帮助，请查看<a href='%{article_url}' target='_blank'>本文档</a>。

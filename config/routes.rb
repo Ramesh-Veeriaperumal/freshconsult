@@ -212,6 +212,9 @@ Helpkit::Application.routes.draw do
   match "/auth/gmail/callback" => 'omniauth_callbacks#complete', :provider => 'gmail'
   match "/auth/gmail/failure" => 'omniauth_callbacks#failure', :as => :failure
 
+  match '/auth/outlook/callback' => 'omniauth_callbacks#complete', :provider => 'outlook', :via => :get
+  match '/auth/failure' => 'omniauth_callbacks#failure', :as => :failure, :constraints => ->(request) { request.params[:provider] == 'outlook' }, :via => :get
+
   match '/shopify_integration_redirect' => 'shopify_listing#send_approval_request', :via => :get
   match '/shopify_landing' => 'shopify_listing#show', :via => :get
   match '/shopify_account_verification' => 'shopify_listing#verify_domain_shopify', :via => :post
@@ -1257,6 +1260,7 @@ Helpkit::Application.routes.draw do
       collection do
         get :google_signin
         get :existing_email
+        get :microsoft_signin
         post :personalized_email_enable
         post :personalized_email_disable
         post :toggle_agent_forward_feature
@@ -2170,16 +2174,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :select_all_ticket_actions do
-      collection do
-        get :select_all_message_content
-        put :close_multiple
-        put :spam
-        put :delete
-        put :update_multiple
-      end
-    end
-
     resources :merge_tickets do
       collection do
         post :complete_merge
@@ -3006,7 +3000,6 @@ Helpkit::Application.routes.draw do
           get :check_contact_import
           put :reset_login_count
           post :contact_import_destroy
-          post :select_all_feature
           post :sha256_enabled_feature
           post :sha1_enabled_feature
           post :api_jwt_auth_feature
@@ -3087,7 +3080,6 @@ Helpkit::Application.routes.draw do
           put :launch_feature
           get :launched_feature_details
           put :activate_onboarding
-          post :freshcaller_migration
         end
       end
 

@@ -54,9 +54,10 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :security, controller: 'api_security', only: [:show] do
+      resources :security, controller: 'api_security' do
         collection do
           get :show
+          put :update
         end
       end
     end
@@ -230,6 +231,8 @@ Helpkit::Application.routes.draw do
         put :bitmap_add_feature
         put :bitmap_revoke_feature
         put :execute_script
+        put :enable_setting
+        put :disable_setting
       end
     end
 
@@ -933,6 +936,7 @@ Helpkit::Application.routes.draw do
     resource :rts, controller: 'ember/rts', only: [:show]
 
     get '/plans', to: 'admin/subscriptions#plans'
+    get '/plans/:id', to: 'admin/subscriptions#fetch_plan'
 
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'
@@ -1042,10 +1046,15 @@ Helpkit::Application.routes.draw do
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
     get '/solutions/categories/:id/folders', to: 'channel/v2/api_solutions/folders#category_folders'
-    get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
     get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
-    get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
+    get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
+    get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
+    put '/solutions/articles/:id/thumbs_up', to: 'channel/v2/api_solutions/articles#thumbs_up'
+    put '/solutions/articles/:id/thumbs_down', to: 'channel/v2/api_solutions/articles#thumbs_down'
+    put 'solutions/articles/:id/hit', to: 'channel/v2/api_solutions/articles#hit'
+    
+    get '/solutions/search', to: 'channel/v2/api_solutions/articles#search'
   end
 
   channel_routes = proc do
@@ -1054,12 +1063,6 @@ Helpkit::Application.routes.draw do
     get '/freshcaller/contacts/:id/activities', to: 'channel/freshcaller/contacts#activities'
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
-    post '/freshcaller/migration/validate', to: 'channel/freshcaller/migration#validate'
-    post '/freshcaller/migration/initiate', to: 'channel/freshcaller/migration#initiate'
-    post '/freshcaller/migration/cross_verify', to: 'channel/freshcaller/migration#cross_verify'
-    post '/freshcaller/migration/revert', to: 'channel/freshcaller/migration#revert'
-    post '/freshcaller/migration/reset_freshfone', to: 'channel/freshcaller/migration#reset_freshfone'
-    post '/freshcaller/migration/fetch_pod_info', to: 'channel/freshcaller/migration#fetch_pod_info'
     put '/admin/data_export/update', to: 'channel/admin/data_export#update'
 
     resources :tickets, controller: 'channel/tickets', only: [:create, :show]

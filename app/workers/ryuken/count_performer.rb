@@ -4,13 +4,11 @@ class Ryuken::CountPerformer
       search_payload = args["#{args['object']}_properties"].merge(
         'version' => (args['action_epoch'] * 1_000_000).ceil
       )
-      legacy = false
-      analytics = args['analytics'].nil? ? true : args['analytics']
       case search_payload['action']
       when 'destroy'
-        Search::Dashboard::Count.new(search_payload).remove_es_count_document(legacy, analytics)
+        Search::Dashboard::Count.new(search_payload).remove_es_count_document
       else
-        Search::Dashboard::Count.new(search_payload).index_es_count_document(legacy, analytics)
+        Search::Dashboard::Count.new(search_payload).index_es_count_document
       end
       sqs_msg.delete
     rescue Exception => e

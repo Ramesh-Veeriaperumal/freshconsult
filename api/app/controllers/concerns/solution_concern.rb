@@ -68,7 +68,11 @@ module SolutionConcern
   end
 
   def allow_kb_language_fallback?
-    params.key?(:allow_language_fallback) && params[:allow_language_fallback] == 'true' && get_request?
+    params.key?(:allow_language_fallback) && params[:allow_language_fallback] && get_request?
+  end
+
+  def boolean_param?(key)
+    params[key].present? && (params[key] == "true" || params[key] == "false")
   end
 
   def fetch_permitted_languages

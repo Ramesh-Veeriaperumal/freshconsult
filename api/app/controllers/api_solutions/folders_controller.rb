@@ -4,7 +4,7 @@ module ApiSolutions
     include Solution::LanguageControllerMethods
     decorate_views(decorate_objects: [:category_folders, :folder_filter])
     SLAVE_ACTIONS = %w[index category_folders].freeze
-    before_filter :validate_filter_params, only: [:category_folders]
+    before_filter :validate_filter_params, only: [:category_folders], unless: :channel_v2?
 
     def create
       return unless delegator_validation
@@ -148,6 +148,10 @@ module ApiSolutions
 
       def validate_filter_params
         super(SolutionConstants::INDEX_FIELDS)
+      end
+
+      def channel_v2?
+        self.class == Channel::V2::ApiSolutions::FoldersController
       end
   end
 end

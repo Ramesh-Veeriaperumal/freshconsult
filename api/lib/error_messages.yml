@@ -32,6 +32,7 @@ api_error_messages:
   method_not_allowed: "%{fired_method} method is not allowed. It should be one of these method(s): %{methods}"
   require_feature: "The %{feature} feature(s) is/are not supported in your plan. Please upgrade your account to use it."
   require_any_feature : "Atleast one of the features required: %{feature}"
+  unwanted_feature_for_attribute: " The %{feature} feature(s) is/are should be disabled for accessing %{attribute} attribute"
   require_fsm_feature: "The Field Service Management module is not enabled in your account. Please enable it to use."
   invalid_credentials: "You have to be logged in to perform this action."
   credentials_required: "Authentication header is needed to log in."
@@ -587,8 +588,7 @@ api_error_messages:
   require_availability: "only=availability param is required for the given %{param} param"
 
   invalid_date_for_holidays: "Day should be from %{range} inclusive in {D, DD} format"
-  invalid_start_end_business_time: "HH should be between 0 and 23 inclusive and MM should one of the '00, 30, 59'"
-  invalid_minute_on_24_hours: "MM as 59 should be only present if the HH is 23, otherwise please use MM as 00 or 30"
+  invalid_start_end_business_time: "HH should be between 0 and 23 inclusive and MM should be inside the range inclusive of '00..59'"
   invalid_time_slot: "Please enter a valid time slot"
   time_slot_count_for_channel_error: "Too many time slots for '%{value}' channel in '%{name}'"
   duplicate_holiday_date: "Duplicate holiday date is present"

@@ -171,9 +171,10 @@ class User < ActiveRecord::Base
                   :description, :time_zone, :customer_id, :avatar_attributes, :company_id,
                   :company_name, :tag_names, :import_id, :deleted, :fb_profile_id, :language,
                   :address, :client_manager, :helpdesk_agent, :role_ids, :parent_id, :string_uc04,
-                  :contractor, :skill_ids, :user_skills_attributes, :unique_external_id, :twitter_profile_status, :twitter_followers_count
+                  :contractor, :skill_ids, :user_skills_attributes, :unique_external_id, :twitter_profile_status, :twitter_followers_count, :twitter_requester_handle_id
 
   TWITTER_REQUESTER_FIELDS_MAPPING = {
+    string_uc07: :twitter_requester_handle_id,
     boolean_uc01: :twitter_profile_status,
     long_uc01: :twitter_followers_count
   }.freeze
@@ -500,7 +501,8 @@ class User < ActiveRecord::Base
   end
 
   def is_falcon_pref?
-    self.preferences[:agent_preferences][:falcon_ui] || Account.current.disable_old_ui_enabled?
+    Rails.logger.warn "FALCON HELPER METHOD :: is_falcon_pref? :: #{caller[0..2]}"
+    true
   end
 
   def old_notes_first?

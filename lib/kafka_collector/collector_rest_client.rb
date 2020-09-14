@@ -20,8 +20,10 @@ module KafkaCollector
         req.options.timeout = timeout
       end
       response.status
-    rescue Exception => e
+    rescue StandardError => e
       Rails.logger.info "Error in connecting to collector. #{Account.current.id} #{data}, #{e.message}, #{e.backtrace}"
+      raise e if JSON.parse(data)['payload_type'] == ChannelIntegrations::Constants::PAYLOAD_TYPES[:reply_from_helpkit]
+
       400
     end
   end
