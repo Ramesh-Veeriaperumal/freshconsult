@@ -127,7 +127,7 @@ class Account < ActiveRecord::Base
   TEMPORARY_FEATURES = {
     :bi_reports => false, :social_revamp => true,
     :custom_dashboard => false, :updated_twilio_client => false,
-    :report_field_regenerate => false, :reports_regenerate_data => false,
+    :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false, :spam_dynamo => true,
     :redis_display_id => true, :es_multilang_solutions => false,
     :sort_by_customer_response => false, :survey_links => true,
@@ -197,7 +197,7 @@ class Account < ActiveRecord::Base
     service_writes: false, service_reads: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
-    sha256_enabled: false, auto_ticket_export: false, select_all: false,
+    sha256_enabled: false, auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,

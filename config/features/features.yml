@@ -217,7 +217,7 @@
       :XX_unused_213: 213
       :updated_twilio_client: 214
       :unused_215: 215
-      :reports_regenerate_data: 216
+      :unused_216: 216
       :seafarers_1: 217
       :unused_218: 218
       :portal_cc: 219
@@ -406,6 +406,7 @@
       :solutions_agent_portal: 402
       :fetch_ticket_from_ref_first: 403
       :skip_ticket_threading: 404
+      :helpdesk_tickets_by_product: 405
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -478,7 +479,6 @@
   :freshreports_analytics: false
   :disable_old_reports: false
   :report_field_regenerate: false
-  :reports_regenerate_data: false
   :saml_old_issuer: false
   :spam_dynamo: true
   :es_multilang_solutions: false
@@ -510,3 +510,4 @@
   :solutions_agent_portal: false
   :fetch_ticket_from_ref_first: false
   :skip_ticket_threading: false
+  :helpdesk_tickets_by_product: false
