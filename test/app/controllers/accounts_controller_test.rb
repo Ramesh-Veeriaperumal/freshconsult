@@ -107,7 +107,6 @@ class AccountsControllerTest < ActionController::TestCase
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
     assert_equal account.has_feature?(:signup_link), false
-    assert_equal account.has_feature?(:anonymous_tickets), false
     assert_equal account.has_feature?(:public_ticket_url), false
   ensure
     Account.find(resp['account_id']).destroy if resp['account_id'].present?
