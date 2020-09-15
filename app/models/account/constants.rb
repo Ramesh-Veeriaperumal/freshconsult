@@ -155,10 +155,9 @@ class Account < ActiveRecord::Base
     :freshreports_analytics => false, :disable_old_reports => false, contact_custom_activity_api: false, assets: false, assets_toggle: false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
-  ADMIN_CUSTOMER_PORTAL_FEATURES =  { 
+  ADMIN_CUSTOMER_PORTAL_FEATURES = {
     :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-    :captcha => true, :prevent_ticket_creation_for_others=> true,
-    :hide_portal_forums => false 
+    :captcha => true, :prevent_ticket_creation_for_others => true, :hide_portal_forums => false
   }
 
   ADMIN_CUSTOMER_PORTAL_SETTINGS = {

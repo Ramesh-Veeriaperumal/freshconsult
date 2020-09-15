@@ -75,7 +75,7 @@ class Account < ActiveRecord::Base
   alias :full_time_agents :full_time_support_agents
 
   proxy_features(SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + ADMIN_CUSTOMER_PORTAL_FEATURES.keys +
-                 PLANS_AND_FEATURES.collect { |key, value| value[:features] }.flatten!.uniq!)
+    ADMIN_CUSTOMER_PORTAL_SETTINGS.keys + PLANS_AND_FEATURES.collect { |key, value| value[:features] }.flatten!.uniq!)
 
   Limits = {
     'agent_limit' => Proc.new { |a| a.full_time_support_agents.count },
@@ -1112,9 +1112,7 @@ class Account < ActiveRecord::Base
       if features.present?
         features.each do |name, value|
           if AccountSettings::SettingsConfig[name]
-            if admin_setting_for_account?(name)
-              AccountsHelper.value_to_boolean(value) ? set_setting(name.to_sym) : reset_setting(name.to_sym)
-            end
+            AccountsHelper.value_to_boolean(value) ? set_setting(name.to_sym) : reset_setting(name.to_sym) if admin_setting_for_account?(name)
           else
             AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
           end

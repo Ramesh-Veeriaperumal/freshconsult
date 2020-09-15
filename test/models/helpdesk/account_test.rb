@@ -119,14 +119,12 @@ class AccountTest < ActiveSupport::TestCase
     @account.update_attributes!(params)
 
     assert @account.has_feature?(:signup_link), 'signup_link should be true'
-
-    ensure
+  ensure
       is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
   def test_update_features_method_with_setting_dependency_enabled
     params = { features: { signup_link: false } }
-    
     feature = :signup_link
     is_feature_enabled = @account.has_feature?(feature)
 
@@ -140,8 +138,7 @@ class AccountTest < ActiveSupport::TestCase
     @account.update_attributes!(params)
 
     refute @account.has_feature?(:signup_link), 'signup_link should be false'
-
-    ensure
+  ensure
       is_feature_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
       is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
