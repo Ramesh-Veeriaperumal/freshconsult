@@ -16,7 +16,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.revoke_feature(setting)
-    assert_equal @account.has_feature?(setting), false  
+    assert_equal @account.has_feature?(setting), false
     is_required_feature_enabled = @account.has_feature?(required_feature)
     @account.add_feature(required_feature)
     assert @account.has_feature?(required_feature)
@@ -55,7 +55,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.add_feature(setting)
-    assert @account.has_feature?(setting)  
+    assert @account.has_feature?(setting)
     is_required_feature_enabled = @account.has_feature?(required_feature)
     @account.add_feature(required_feature)
     assert @account.has_feature?(required_feature)
@@ -138,7 +138,6 @@ class Account::SettingsTest < ActiveSupport::TestCase
     is_launched ? @account.launch(feature) : @account.rollback(feature)
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
   end
-
 
   def test_disable_setting_with_invalid_value_doesnt_raise_error
     @account.disable_setting(:abcd)
