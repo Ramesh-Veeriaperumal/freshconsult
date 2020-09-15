@@ -450,14 +450,6 @@ class Account < ActiveRecord::Base
     launched?(:solutions_agent_metrics)
   end
 
-  def fetch_ticket_from_ref_first_enabled?
-    launched?(:fetch_ticket_from_ref_first)
-  end
-
-  def skip_ticket_threading_enabled?
-    launched?(:skip_ticket_threading)
-  end
-
   def forums_agent_portal_enabled?
     launched?(:forums_agent_portal)
   end
