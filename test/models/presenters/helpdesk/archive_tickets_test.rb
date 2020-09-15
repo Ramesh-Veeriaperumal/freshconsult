@@ -61,11 +61,9 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_payload_with_custom_text_field_and_custom_file
-    flexifield_def = FlexifieldDef.where(account_id: @account.id, 'module': 'Ticket').first
     attachment = create_file_ticket_field_attachment
     custom_text_field = create_custom_field(Faker::Lorem.word, 'text')
-    file_field_col_name = flexifield_def.first_available_column('file')
-    custom_file_field = create_custom_field_dn('test_file_field', 'file', false, false, flexifield_name: file_field_col_name)
+    custom_file_field = create_custom_field_dn('test_file_field', 'file', false, false, flexifield_name: 'dn_slt_009')
     create_archive_ticket_with_assoc(
       created_at: @ticket_update_date,
       updated_at: @ticket_update_date,
