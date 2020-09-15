@@ -5,6 +5,11 @@ module Channel::V2
     include ConversationsTestHelper
     include SocialTicketsCreationHelper
     include TwitterHelper
+    include CentralLib::CentralResyncHelper
+    include Redis::OthersRedis
+
+    SOURCE = 'analytics'.freeze
+
     def wrap_cname(params)
       { conversation: params }
     end
@@ -314,6 +319,145 @@ module Channel::V2
       Account.any_instance.unstub(:twitter_api_compliance_enabled?)
       CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
+    end
+
+    def test_notes_resync_with_no_source
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, user_ids: [1, 2], ticket_ids: [1, 2], created_at: { 'start' => '"05/01/2020 10:00:00', 'end' => '"05/01/2020 15:00:00' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 403
+    end
+
+    def test_notes_resync_with_invalid_source
+      invalid_source = 'silkroad'
+      remove_others_redis_key(resync_rate_limiter_key(invalid_source))
+      set_jwt_auth_header(invalid_source)
+      args = { meta: { meta_id: 'abc' }, user_ids: [1, 2], ticket_ids: [1, 2], created_at: { 'start' => '"05/01/2020 10:00:00', 'end' => '"05/01/2020 15:00:00' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 403
+    end
+
+    def test_notes_resync_success
+      set_jwt_auth_header(SOURCE)
+      job_id = SecureRandom.hex
+      request.stubs(:uuid).returns(job_id)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      expected_body = { 'job_id' => job_id }
+      args = { meta: { meta_id: 'abc' }, user_ids: [1, 2], ticket_ids: [1, 2], created_at: { 'start' => '2020-05-01 10:00:00', 'end' => '2020-05-02 05:00:00' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      response_body = parse_response @response.body
+      assert_response 202
+      assert_equal expected_body, response_body
+    ensure
+      request.unstub(:uuid)
+    end
+
+    def test_notes_resync_with_worker_limit_reached
+      set_jwt_auth_header(SOURCE)
+      set_others_redis_key_if_not_present(resync_rate_limiter_key(SOURCE), 5)
+      args = { meta: { meta_id: 'abc' }, user_ids: [1, 2] }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 429
+    end
+
+    def test_notes_resync_with_no_filters
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:require_filter_params, 'Anyone of the following filter attributes is mandatory: created_at, user_ids, ticket_ids.', code: 'missing_field'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_end_date_greater_than_start_date
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, created_at: { 'start' => '2020-05-02 10:00:00', 'end' => '2020-05-01 05:00:00' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:created_at, 'Invalid date time range, end time should be greater or equal to the start time.', code: 'invalid_value'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_invalid_date_type
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, created_at: { 'start' => '2020-05-02 10:00:00', 'end' => nil } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern_with_nested_field(:created_at, 'end', 'It should be a/an String', code: 'datatype_mismatch'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_date_not_parsed
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, created_at: { 'start' => '2020-05-02 10:00:00', 'end' => 'ABCD' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:created_at, 'Value set is of type String.It should be a/an DateTime', code: 'datatype_mismatch'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_date_range_more_than_two
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, created_at: { 'start' => '2020-05-01 10:00:00', 'end' => '2020-05-04 05:00:00' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:created_at, 'Datetime range can only be a maximum of 2 days', code: 'invalid_value'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_invalid_array_field
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, ticket_ids: nil }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:ticket_ids, 'Value set is of type Null.It should be a/an Array', code: 'datatype_mismatch'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_ticket_ids_as_string
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, ticket_ids: '10' }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:ticket_ids, 'Value set is of type String.It should be a/an Array', code: 'datatype_mismatch'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_array_count_exceeding_limit
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, ticket_ids: [*1..101] }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:ticket_ids, 'Has 101 elements, it can have maximum of 100 elements', code: 'invalid_value'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_invalid_meta
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: nil, ticket_ids: [1] }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:meta, "can't be blank", code: 'invalid_value'))
+      match_json(pattern)
+    end
+
+    def test_notes_resync_with_invalid_primary_key_offset
+      set_jwt_auth_header(SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
+      args = { meta: { meta_id: 'abc' }, ticket_ids: [1], primary_key_offset: 'id' }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:primary_key_offset, 'Value set is of type String.It should be a/an Positive Integer', code: 'datatype_mismatch'))
+      match_json(pattern)
     end
   end
 end

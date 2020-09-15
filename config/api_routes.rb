@@ -1021,6 +1021,7 @@ Helpkit::Application.routes.draw do
         get :verify_agent_privilege
       end
     end
+    match '/notes/sync', to: 'channel/v2/conversations#sync', via: [:post]
     post '/canned_responses', to: 'channel/v2/canned_responses#create'
     post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
@@ -1032,6 +1033,12 @@ Helpkit::Application.routes.draw do
     resources :fbms, controller: 'channel/v2/fbms' do
       collection do
         post :update_post_id
+      end
+    end
+    resources :central_resync, controller: 'channel/v2/central_resync', only: [:show]
+    resources :ticket_fields, controller: 'channel/v2/ticket_fields' do
+      collection do
+        post 'sync', to: 'channel/v2/ticket_fields#sync'
       end
     end
 
