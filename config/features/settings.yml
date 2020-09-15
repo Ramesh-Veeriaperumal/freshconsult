@@ -15,22 +15,6 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
-  :personalized_email_replies:
-    default: false
-    internal: false
-    feature_dependency: :basic_settings_feature
-  :compose_email:
-    default: false
-    internal: false
-    feature_dependency: :basic_settings_feature
-  :reply_to_based_tickets:
-    default: true
-    internal: false
-    feature_dependency: :basic_settings_feature
-  :disable_agent_forward:
-    default: false
-    internal: false
-    feature_dependency: :basic_settings_feature
   :allow_wildcard_ticket_create:
     default: false
     internal: false
