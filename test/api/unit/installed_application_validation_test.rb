@@ -12,6 +12,13 @@ class InstalledApplicationValidationTest < ActionView::TestCase
     }
   end
 
+  def get_application(app_name)
+    app = Integrations::InstalledApplication.new
+    app.application = Integrations::Application.new
+    app.application.name = app_name
+    app
+  end
+
   def test_value_valid
     installed_app = InstalledApplicationValidation.new({ name: 'harvest' }, nil)
     assert installed_app.valid?
@@ -23,8 +30,9 @@ class InstalledApplicationValidationTest < ActionView::TestCase
   end
 
   def test_fetch_with_valid_event_and_payload
+    app = get_application('salesforce')
     installed_app = InstalledApplicationValidation.new(
-      get_request_payload("fetch_user_selected_fields", "contact"), nil)
+      get_request_payload("fetch_user_selected_fields", "contact"), app)
     assert installed_app.valid?(:fetch)
   end
 
@@ -47,25 +55,28 @@ class InstalledApplicationValidationTest < ActionView::TestCase
   end
 
   def test_fetch_without_payload_value
+    app = get_application('salesforce')
     installed_app = InstalledApplicationValidation.new(
-      { event: 'fetch_user_selected_fields' }, nil)
+      { event: 'fetch_user_selected_fields' }, app)
     refute installed_app.valid?(:fetch)
     error_messages = installed_app.errors.full_messages
     assert error_messages.include? "Payload datatype_mismatch"
   end
 
   def test_fetch_on_nil_payload
+    app = get_application('salesforce')
     installed_app = InstalledApplicationValidation.new(
-      { event: 'fetch_user_selected_fields', payload: nil }, nil)
+      { event: 'fetch_user_selected_fields', payload: nil }, app)
     refute installed_app.valid?(:fetch)
     error_messages = installed_app.errors.full_messages
     assert error_messages.include? "Payload datatype_mismatch"
   end
 
   def test_fetch_on_invalid_type_value_in_payload_param
+    app = get_application('salesforce')
     request_payload = get_request_payload("fetch_user_selected_fields", 
       Faker::Lorem.characters(10))
-    installed_app = InstalledApplicationValidation.new(request_payload, nil)
+    installed_app = InstalledApplicationValidation.new(request_payload, app)
     refute installed_app.valid?(:fetch)
     error_messages = installed_app.errors.full_messages
     assert error_messages.include? "Payload not_included"
@@ -74,9 +85,10 @@ class InstalledApplicationValidationTest < ActionView::TestCase
   end
 
   def test_fetch_without_type_value_in_payload_param
+    app = get_application('salesforce')
     request_payload = get_request_payload("fetch_user_selected_fields")
     request_payload[:payload].delete(:type)
-    installed_app = InstalledApplicationValidation.new(request_payload, nil)
+    installed_app = InstalledApplicationValidation.new(request_payload, app)
     refute installed_app.valid?(:fetch)
     error_messages = installed_app.errors.full_messages
     assert error_messages.include? "Payload not_included"
@@ -85,16 +97,18 @@ class InstalledApplicationValidationTest < ActionView::TestCase
   end
 
   def test_fetch_with_event_as_integrated_resource
+    app = get_application('salesforce')
     request_payload = get_request_payload("integrated_resource")
     request_payload[:payload] = { ticket_id: rand(20) }
-    installed_app = InstalledApplicationValidation.new(request_payload, nil)
+    installed_app = InstalledApplicationValidation.new(request_payload, app)
     assert installed_app.valid?(:fetch)
   end
 
   def test_fetch_integrated_resource_without_ticket_id
+    app = get_application('salesforce')
     request_payload = get_request_payload("integrated_resource")
     request_payload[:payload] = {}
-    installed_app = InstalledApplicationValidation.new(request_payload, nil)
+    installed_app = InstalledApplicationValidation.new(request_payload, app)
     refute installed_app.valid?(:fetch)
     error_messages = installed_app.errors.full_messages
     assert error_messages.include? "Payload datatype_mismatch"
