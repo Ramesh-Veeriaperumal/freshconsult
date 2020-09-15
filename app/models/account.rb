@@ -1113,7 +1113,7 @@ class Account < ActiveRecord::Base
         features.each do |name, value|
           if AccountSettings::SettingsConfig[name]
             if admin_setting_for_account?(name)
-              AccountsHelper.value_to_boolean(value) ? set_setting(name.to_sym) : reset_setting(name.to_sym) 
+              AccountsHelper.value_to_boolean(value) ? set_setting(name.to_sym) : reset_setting(name.to_sym)
             end
           else
             AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
