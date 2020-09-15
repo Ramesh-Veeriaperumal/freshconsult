@@ -33,7 +33,7 @@ module Channel::V2
       end
 
       def skip_privilege_check?
-        RESYNC_ALLOWED_SOURCES.any? { |source| channel_source?(source.to_sym) }
+        RESYNC_ALLOWED_SOURCE.any? { |source| channel_source?(source.to_sym) }
       end
   end
 end
