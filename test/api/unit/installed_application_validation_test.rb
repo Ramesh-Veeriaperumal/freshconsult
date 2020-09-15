@@ -31,8 +31,7 @@ class InstalledApplicationValidationTest < ActionView::TestCase
 
   def test_fetch_with_valid_event_and_payload
     app = get_application('salesforce')
-    installed_app = InstalledApplicationValidation.new(
-      get_request_payload("fetch_user_selected_fields", "contact"), app)
+    installed_app = InstalledApplicationValidation.new(get_request_payload('fetch_user_selected_fields', 'contact'), app)
     assert installed_app.valid?(:fetch)
   end
 
@@ -56,8 +55,7 @@ class InstalledApplicationValidationTest < ActionView::TestCase
 
   def test_fetch_without_payload_value
     app = get_application('salesforce')
-    installed_app = InstalledApplicationValidation.new(
-      { event: 'fetch_user_selected_fields' }, app)
+    installed_app = InstalledApplicationValidation.new({ event: 'fetch_user_selected_fields' }, app)
     refute installed_app.valid?(:fetch)
     error_messages = installed_app.errors.full_messages
     assert error_messages.include? "Payload datatype_mismatch"
@@ -65,8 +63,7 @@ class InstalledApplicationValidationTest < ActionView::TestCase
 
   def test_fetch_on_nil_payload
     app = get_application('salesforce')
-    installed_app = InstalledApplicationValidation.new(
-      { event: 'fetch_user_selected_fields', payload: nil }, app)
+    installed_app = InstalledApplicationValidation.new({ event: 'fetch_user_selected_fields', payload: nil }, app)
     refute installed_app.valid?(:fetch)
     error_messages = installed_app.errors.full_messages
     assert error_messages.include? "Payload datatype_mismatch"
