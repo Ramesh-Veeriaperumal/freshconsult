@@ -15,7 +15,7 @@ module CentralPublish
     # => conditions: Where condition, (Eg: ['display_ids in (1, 2, 3, 4, 5) and deleted = false and spam = false'])
     # => primary_key_offset: ID of the record from which the publish should start, (Eg: 76344628)
     def perform(args)
-      args.symbolize_keys!
+      args.deep_symbolize_keys!
 
       Sharding.run_on_slave { sync_entity(args) }
       update_resync_job_information(args[:source], args[:job_id], status: RESYNC_JOB_STATUSES[:completed])
