@@ -8,13 +8,13 @@ module Email
     def update
       features = params[cname]
       features.each do |feature, enable|
-        feature_name = EmailSettingsConstants::EMAIL_CONFIG_PARAMS[feature.to_sym]
+        feature_name = EmailSettingsConstants::EMAIL_CONFIG_PARAMS[feature.to_sym] || feature.to_sym
         if feature_name.eql? EmailSettingsConstants::COMPOSE_EMAIL_FEATURE
           toggle_compose_email_feature(feature_name, enable)
         elsif feature_name.eql? EmailSettingsConstants::DISABLE_AGENT_FORWARD
           toggle_disable_email_feature(feature_name, enable)
         elsif check_feature_toggled feature_name, enable
-          toggle_feature feature_name, enable
+          AccountSettings::SettingsConfig[feature_name] ? toggle_settings(feature_name, enable) : toggle_feature(feature_name, enable)
         end
       end
       generate_view_hash
@@ -32,18 +32,24 @@ module Email
 
       def toggle_feature(feature, enable)
         if enable
-          current_account.enable_setting(feature)
+          current_account.add_feature(feature)
         else
-          current_account.disable_setting(feature)
+          current_account.revoke_feature(feature)
+        end
+      end
+
+      def toggle_settings(setting, enable)
+        if current_account.admin_setting_for_account?(setting)
+          enable ? current_account.enable_setting(setting) : current_account.disable_setting(setting)
         end
       end
 
       def toggle_compose_email_feature(feature, enable)
         if enable != check_compose_email_enabled?
           if enable
-            current_account.disable_setting(feature)
+            current_account.revoke_feature(feature)
           else
-            current_account.enable_setting(feature)
+            current_account.add_feature(feature)
             $redis_others.perform_redis_op('srem', COMPOSE_EMAIL_ENABLED, current_account.id)
           end
         end
@@ -52,9 +58,9 @@ module Email
       def toggle_disable_email_feature(feature, enable)
         if enable == current_account.has_feature?(EmailSettingsConstants::DISABLE_AGENT_FORWARD)
           if enable
-            current_account.disable_setting(feature)
+            current_account.revoke_feature(feature)
           else
-            current_account.enable_setting(feature)
+            current_account.add_feature(feature)
           end
         end
       end
@@ -64,7 +70,17 @@ module Email
       end
 
       def validate_params
-        validate_body_params
+        # If block can be removed after LP cleanup
+        if !current_account.email_new_settings_enabled?
+          field = EmailSettingsConstants::UPDATE_OLDER_FIELDS
+          params[cname].permit(*field)
+          @validator = SettingsValidation.new(params[cname], nil, string_request_params?)
+          valid = @validator.valid?(action_name.to_sym)
+          render_custom_errors(@validator, true) unless valid
+          valid
+        else
+          validate_body_params
+        end
       end
 
       def check_compose_email_enabled?
@@ -78,6 +94,13 @@ module Email
           allow_agent_to_initiate_conversation: check_compose_email_enabled?,
           original_sender_as_requester_for_forward: !current_account.has_feature?(:disable_agent_forward)
         }
+        if current_account.email_new_settings_enabled?
+          # Temporary implementation. Can be checked only with has_feature? after migrated to bitmap
+          @item[:allow_wildcard_ticket_create] = Account::LP_FEATURES.include?(:allow_wildcard_ticket_create) ?
+                                                     current_account.launched?(:allow_wildcard_ticket_create) : current_account.has_feature?(:allow_wildcard_ticket_create)
+          @item[:skip_ticket_threading] = Account::LP_FEATURES.include?(:skip_ticket_threading) ?
+                                              current_account.launched?(:skip_ticket_threading) : current_account.has_feature?(:skip_ticket_threading)
+        end
       end
   end
 end

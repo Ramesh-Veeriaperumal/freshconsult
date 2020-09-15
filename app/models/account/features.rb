@@ -479,4 +479,9 @@ class Account < ActiveRecord::Base
     rollback(setting) if LP_FEATURES.include?(setting)
     revoke_feature(setting) if BITMAP_FEATURES.include?(setting) || AccountSettings::SettingsConfig.include?(setting)
   end
+
+  def admin_setting_for_account?(setting)
+    settings_hash = AccountSettings::SettingsConfig[setting]
+    settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
+  end
 end
