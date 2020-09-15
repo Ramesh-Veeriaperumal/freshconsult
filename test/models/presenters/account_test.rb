@@ -3,7 +3,7 @@ require 'faker'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 class AccountTest < ActiveSupport::TestCase
   include AccountTestHelper
-  
+
   def setup
     @account = Account.first || create_new_account
     @account.make_current
@@ -40,7 +40,7 @@ class AccountTest < ActiveSupport::TestCase
   ensure
     @account.revoke_feature(:skill_based_round_robin)
   end
-  
+
   def test_remove_bitmap_feature
     @account.add_feature(:skill_based_round_robin)
     CentralPublishWorker::AccountWorker.jobs.clear
@@ -73,13 +73,13 @@ class AccountTest < ActiveSupport::TestCase
     CentralPublishWorker::AccountWorker.jobs.clear
     current_account_configuration = @account.account_configuration.account_configuration_for_central.stringify_keys
     expected_model_change = { 'account_configuration' => [current_account_configuration.clone, current_account_configuration.clone] }
-    expected_model_change['account_configuration'][1].merge!({ 'first_name'=>'Seafarer', 
-                                                               'address'=>'SP Infocity', 
-                                                               'city'=>'Chennai', 
-                                                               'state'=>'Tamil Nadu', 
-                                                               'zipcode'=>600042, 
-                                                               'country'=> 'India' 
-                                                             })
+    expected_model_change['account_configuration'][1].merge!({ 'first_name'=>'Seafarer',
+                                                               'address'=>'SP Infocity',
+                                                               'city'=>'Chennai',
+                                                               'state'=>'Tamil Nadu',
+                                                               'zipcode'=>600042,
+                                                               'country'=> 'India'
+                                                               })
 
     contact_info = @account.account_configuration.contact_info.clone
     new_contact_info = contact_info.clone
@@ -140,8 +140,10 @@ class AccountTest < ActiveSupport::TestCase
     CentralPublishWorker::AccountWorker.jobs.clear
     account_additional_settings = @account.account_additional_settings
     removed_language = [@account.supported_languages.first]
-    expected_model_change = { 'all_languages' => { 'added' => [], 'removed' => language_details([removed_language]) }}
-    account_additional_settings.supported_language_setter(@account.supported_languages-removed_language)
+    expected_model_change = {
+      'all_languages' => { 'added' => language_details(account_additional_settings.portal_languages), 'removed' => [] }
+    }
+    account_additional_settings.supported_language_setter(account_additional_settings.portal_languages)
     account_additional_settings.save!
     assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
     payload = @account.central_publish_payload.to_json
@@ -161,11 +163,9 @@ class AccountTest < ActiveSupport::TestCase
     account_additional_settings.save!
     old_primary_lang = @account.main_portal.language
     CentralPublishWorker::AccountWorker.jobs.clear
-    expected_model_change = { 'all_languages' => { 'added' => language_details(['es']), 'removed' => language_details([old_primary_lang]) }}
-    portal = @account.main_portal
-    portal.language = 'es'
-    portal.save
-    @account.reload
+    expected_model_change = { 'portal_languages' => [['en'], []], 'all_languages' => { 'added' => [], 'removed' => language_details(['en']) }}
+    @account.main_portal.language = 'es'
+    @account.save!
     payload = @account.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_account_post(@account))
     job = CentralPublishWorker::AccountWorker.jobs.last

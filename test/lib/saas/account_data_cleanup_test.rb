@@ -151,14 +151,14 @@ class AccountDataCleanupTest < ActionView::TestCase
     @account.make_current
 
     category = create_category(portal_id: @account.main_portal.id)
-    {
+    params = {
       title: "Test #{rand(10_000)}",
       description: "Test #{rand(10_000)}",
       folder_id: create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id).id,
       status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
     }
 
-    create_article(category)
+    create_article(params)
 
     get_in_review_article
     assert @account.helpdesk_approvals.solution_approvals.count != 0
@@ -171,14 +171,14 @@ class AccountDataCleanupTest < ActionView::TestCase
     @account.make_current
 
     category = create_category(portal_id: @account.main_portal.id)
-    {
+    params = {
       title: "Test #{rand(10_000)}",
       description: "Test #{rand(10_000)}",
       folder_id: create_folder(visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id).id,
       status: Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]
     }
 
-    create_article(category)
+    create_article(params)
 
     get_in_review_article
     assert @account.helpdesk_approvals.solution_approvals.count != 0

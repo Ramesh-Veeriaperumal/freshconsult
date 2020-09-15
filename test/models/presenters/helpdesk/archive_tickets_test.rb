@@ -83,9 +83,8 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
       archive_ticket.destroy
     end
   ensure
+    @account.ticket_fields.custom_fields.map(&:destroy)
     attachment.try(:destroy)
-    custom_file_field.try(:destroy)
-    custom_text_field.try(:destroy)
   end
 
   def test_central_publish_payload_with_custom_dropdown_field_and_date_field
@@ -109,8 +108,8 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
       archive_ticket.destroy
     end
   ensure
-    custom_drop_down.try(:destroy)
-    custom_date_field.try(:destroy)
+    custom_drop_down.destroy
+    custom_date_field.destroy
   end
 
   def test_central_publish_payload_with_enabled_skill_and_next_reponse_sla
