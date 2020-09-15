@@ -1783,5 +1783,298 @@ module Ember
       assert_response 200
       match_announcement_show(JSON.parse(response.body), announcement, user_ids)
     end
+
+    def test_dashboard_crud_flow_with_freshcaller_call_trend_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(18, view: 1, queue_id: 0, time_type: 1, source: 'freshcaller')
+      dashboard_object.add_widget(18, view: 1, queue_id: 0, time_type: 1, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 201
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, queue_id: -1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, queue_id: 1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshcaller_call_trend_widget_with_invalid_view
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(18, view: -1, queue_id: 0, time_type: 1, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_call_trend_widget_with_invalid_queue_id
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(18, view: 1, queue_id: -1, time_type: 1, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_call_trend_widget_with_invalid_source
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(18, view: 1, queue_id: 0, time_type: 1, source: 'freshcall')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_call_trend_widget_with_invalid_time_type
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(18, view: 1, queue_id: 0, time_type: 11, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_dashboard_crud_flow_with_freshcaller_availability_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(13, queue_id: 0, source: 'freshcaller')
+      dashboard_object.add_widget(13, queue_id: 0, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      assert_response 201
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, queue_id: -1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, queue_id: 1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshcaller_availability_widget_with_invalid_queue_id
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(13, queue_id: -1, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_availability_widget_with_invalid_source
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(13, queue_id: 0, source: 'freshcall')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_dashboard_crud_flow_with_freshcaller_sla_trend_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(17, time_type: 1, queue_id: 0, source: 'freshcaller')
+      dashboard_object.add_widget(17, time_type: 1, queue_id: 0, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 201
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, queue_id: -1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, queue_id: 1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshcaller_sla_trend_widget_with_invalid_queue_id
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(17, time_type: 1, queue_id: -1, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_sla_trend_widget_with_invalid_source
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(17, time_type: 1, queue_id: 0, source: 'freshcall')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_sla_trend_widget_with_invalid_time_type
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(17, time_type: -1, queue_id: 0, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_dashboard_crud_flow_with_freshcaller_time_trend_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 1, time_type: 1, queue_id: 0, source: 'freshcaller')
+      dashboard_object.add_widget(16, metric: 1, time_type: 1, queue_id: 0, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 201
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, queue_id: -1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, queue_id: 1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshcaller_time_trend_widget_with_invalid_queue_id
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 1, time_type: 1, queue_id: -1, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_time_trend_widget_with_invalid_source
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 1, time_type: 1, queue_id: 0, source: 'freshcall')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_time_trend_widget_with_invalid_time_type
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 1, time_type: -1, queue_id: 0, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshcaller_time_trend_widget_with_invalid_matric
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: -1, time_type: 1, queue_id: 0, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
   end
 end

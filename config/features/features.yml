@@ -127,7 +127,7 @@
       :sandbox: 123
       :call_quality_metrics: 124
       :freshfone_conference: 125
-      :agent_collision: 126
+      :unused_126: 126
       :id_less_tickets: 127
       :no_list_view_count_query: 128
       :saml_unspecified_nameid: 129
@@ -168,7 +168,7 @@
       :disable_old_ui: 164
       :omni_channel_routing: 165
       :segments: 166
-      :limit_mobihelp_results: 167
+      :unused_167: 167
       :ecommerce: 168
       :es_v2_writes: 169
       :fluffy_higher_plan3: 170
@@ -217,7 +217,7 @@
       :XX_unused_213: 213
       :updated_twilio_client: 214
       :unused_215: 215
-      :reports_regenerate_data: 216
+      :unused_216: 216
       :seafarers_1: 217
       :unused_218: 218
       :portal_cc: 219
@@ -315,13 +315,13 @@
       :reports_89: 311
       :reports_90: 312
       :reports_91: 313
-      :reports_92: 314
-      :reports_93: 315
-      :reports_94: 316
-      :reports_95: 317
-      :reports_96: 318
-      :reports_97: 319
-      :reports_98: 320
+      :basic_settings_feature: 314
+      :untitled_feature_1_dependency_toggle: 315
+      :untitled_feature_2_dependency_toggle: 316
+      :untitled_setting_1: 317
+      :untitled_setting_2: 318
+      :untitled_setting_3: 319
+      :untitled_setting_4: 320
       :field_service_geolocation: 321
       :reports_99: 322
       :freshreports_analytics: 323
@@ -332,7 +332,7 @@
       :business_hours: 328
       :scenario_automations: 329
       :social_revamp: 330
-      :spam_dynamo: 331
+      :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
       :article_versioning: 334
@@ -406,6 +406,7 @@
       :solutions_agent_portal: 402
       :fetch_ticket_from_ref_first: 403
       :skip_ticket_threading: 404
+      :helpdesk_tickets_by_product: 405
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -440,7 +441,6 @@
   :freshfone_custom_forwarding: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
-  :undo_send: false
   :anonymous_tickets: true
   :open_solutions: true
   :auto_suggest_solutions: true
@@ -461,7 +461,6 @@
   :collision_socket: false
   :resource_rate_limit: false
   :domain_restricted_access: false
-  :limit_mobihelp_results: false
   :ecommerce: false
   :freshfone_call_metrics: false
   :cobrowsing: false
@@ -479,9 +478,7 @@
   :freshreports_analytics: false
   :disable_old_reports: false
   :report_field_regenerate: false
-  :reports_regenerate_data: false
   :saml_old_issuer: false
-  :spam_dynamo: true
   :es_multilang_solutions: false
   :sort_by_customer_response: false
   :saml_unspecified_nameid: false
@@ -511,3 +508,4 @@
   :solutions_agent_portal: false
   :fetch_ticket_from_ref_first: false
   :skip_ticket_threading: false
+  :helpdesk_tickets_by_product: false

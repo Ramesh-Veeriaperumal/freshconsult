@@ -72,7 +72,7 @@ module SolutionConstants
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested, :folder_filter].freeze
 
   INDEX_FIELDS = %w[language prefer_published].freeze
-  CATEGORY_FOLDERS_FIELDS = %w[language prefer_published allow_language_fallback].freeze
+  CATEGORY_FOLDERS_FIELDS = (%w[allow_language_fallback] | INDEX_FIELDS | ApiConstants::DEFAULT_INDEX_FIELDS).freeze
 
   SHOW_FIELDS = %w[language prefer_published status allow_language_fallback].freeze
 

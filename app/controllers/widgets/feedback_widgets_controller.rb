@@ -38,14 +38,20 @@ class Widgets::FeedbackWidgetsController < SupportController
       params[:meta][:user_agent] = RailsFullSanitizer.sanitize params[:meta][:user_agent] if params[:meta][:user_agent].present?
       params[:meta][:referrer] = sanitize_referrer params[:meta][:referrer] if params[:meta][:referrer].present?
     end
-    if create_the_ticket(enforce_captcha?(check_captcha_for_anonymous))
+    if !current_account.ehawk_spam? && create_the_ticket(enforce_captcha?(check_captcha_for_anonymous))
 
       widget_response = {:success => true }
     else
-      @feeback_widget_error = true
-      decord_params
-      setup_form
-      widget_response = {:success => false, :error => @ticket.errors.full_messages.first }
+      if current_account.ehawk_spam?
+        Rails.logger.error("This is spam account account_id: #{current_account.id} spam: #{current_account.ehawk_spam?}")
+        widget_response = { success: false, error: I18n.t(:'flash.portal.tickets.create.access_denied') }
+        return render :json => widget_response.to_json, :callback => params['callback'], status: 403
+      else
+        @feeback_widget_error = true
+        decord_params
+        setup_form
+        widget_response = { success: false, error: @ticket.errors.full_messages.first }
+      end
     end
 
     if params[:callback]
