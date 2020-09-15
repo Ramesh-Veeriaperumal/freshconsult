@@ -53,6 +53,7 @@ class Account < ActiveRecord::Base
 
   after_commit :update_crm_and_map, :send_domain_change_email, :update_account_domain_in_chargebee, on: :update, if: :account_domain_changed?
   after_commit :change_fluffy_account_domain, on: :update, if: [:account_domain_changed?, :fluffy_integration_enabled?]
+  after_commit :change_fluffy_email_account_domain, on: :update, if: [:account_domain_changed?, :fluffy_email_enabled?]
   after_commit :update_bot, on: :update, if: :update_bot?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
@@ -139,7 +140,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_fresh_connect
-    ::Freshconnect::RegisterFreshconnect.perform_async if freshconnect_signup_allowed?
+    ::Freshconnect::RegisterFreshconnect.perform_in(30.seconds.from_now) if freshconnect_signup_allowed?
   end
 
   def create_rts_account
@@ -157,7 +158,6 @@ class Account < ActiveRecord::Base
     # Temp for falcon signup
     # Enable customer portal by default
     if falcon_ui_applicable?
-      self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
     end
     if freshid_integration_signup_allowed?
@@ -165,10 +165,6 @@ class Account < ActiveRecord::Base
     end
     if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
       launch(:automation_revamp)
-    end
-    #next response sla feature based on redis. Remove once its stable
-    if redis_key_exists?(ENABLE_NEXT_RESPONSE_SLA)
-      launch(:sla_policy_revamp)
     end
     if redis_key_exists?(EMBERIZE_AGENT_FORM)
       [:emberize_agent_form, :emberize_agent_list].each do |feature|
@@ -243,8 +239,21 @@ class Account < ActiveRecord::Base
     fluffy_account = current_fluffy_limit(@all_changes[:full_domain].first)
     if fluffy_account.present?
       fluffy_account.name = full_domain
-      Fluffy::ApiWrapper.fluffy_add_account(account: fluffy_account)
+      Fluffy::FRESHDESK.fluffy_add_account(account: fluffy_account)
       destroy_fluffy_account(@all_changes[:full_domain].first)
+    else
+      create_fluffy_account
+    end
+  end
+
+  def change_fluffy_email_account_domain
+    fluffy_account = current_fluffy_email_limit(@all_changes[:full_domain].first)
+    if fluffy_account.present?
+      fluffy_account.name = full_domain
+      Fluffy::FRESHDESK_EMAIL.fluffy_add_account(account_v2: fluffy_account)
+      destroy_fluffy_email_account(@all_changes[:full_domain].first)
+    else
+      create_fluffy_email_account
     end
   end
 
@@ -370,14 +379,18 @@ class Account < ActiveRecord::Base
       @launch_party_features ||= []
       changes.each do |key, features|
         features.each do |feature|
-          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key)
+          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key) && lp_central_publish_on_signup?(feature)
         end
       end
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
       # after_commit for new record or modified record.
-      admin_only_mint_on_launch(changes)
       versionize_timestamp unless id_changed?
       trigger_launchparty_feature_callbacks unless self.id_changed?
+    end
+
+    def lp_central_publish_on_signup?(feature_name)
+      return true unless signup_in_progress?
+      CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES.fetch(feature_name, true)
     end
 
     # define your callback method in this format ->
@@ -402,12 +415,6 @@ class Account < ActiveRecord::Base
       self.helpdesk_name = self.name if name_changed?
     end
 
-    def admin_only_mint_on_launch(feature_changes)
-      if feature_changes[:launch] && feature_changes[:launch].include?(:admin_only_mint)
-        self.set_falcon_redis_keys
-      end
-    end
-
     def add_to_billing
       if sandbox?
         Billing::AddSubscriptionToChargebee.new.perform
@@ -424,6 +431,7 @@ class Account < ActiveRecord::Base
       currency = fetch_currency
       self.build_subscription(plan: @plan, next_renewal_at: @plan_start, creditcard: @creditcard, address: @address, affiliate: @affiliate, subscription_currency_id: currency)
       subscription.set_billing_params(currency)
+      subscription.convert_to_free if enable_sprout_trial_onboarding?
     end
 
     def fetch_currency
@@ -474,6 +482,13 @@ class Account < ActiveRecord::Base
 
         plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
+
+          # Adding the settings that are under the feature
+          next unless self.launched?(:feature_based_settings)
+          
+          (AccountSettings::FeatureToSettingsMapping[key] || []).each do |setting|
+            bitmap_value = self.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
+          end
         end
         self.selectable_features_list.each do |feature_name, enable_on_signup|
           bitmap_value = enable_on_signup ? self.set_feature(feature_name) : bitmap_value
@@ -630,7 +645,6 @@ class Account < ActiveRecord::Base
     end
 
     def enable_count_es
-      self.launch(:count_service_es_writes)
       self.launch(:count_service_es_reads)
     end
 

@@ -92,12 +92,6 @@ class ShoryukenConfig
         dedicated_execution = true
       end
 
-      if hostname.include?("shoryuken-sidekiq-count")
-        settings[:workers]      = 8
-        settings[:queues]["count_etl_queue_production"] = 1
-        dedicated_execution = true
-      end
-
       if hostname.include?("shoryuken-falcon-analytics")
         settings[:workers]      = 8
         settings[:queues]["analytics_etl_queue_production"] = 1
@@ -217,7 +211,6 @@ class ShoryukenConfig
     STDERR.puts "Shoryuken: Renaming SQS queues for test setup"
 
     queues_keys_to_rename = [
-      :count_etl_queue,
       :scheduled_export_payload,
       :scheduled_ticket_export,
       :search_etlqueue,
@@ -236,7 +229,10 @@ class ShoryukenConfig
       :trial_email,
       :fd_scheduler_export_cleanup_queue,
       :analytics_etl_queue,
-      :email_rate_limiting_queue
+      :freddy_consumed_session_reminder_queue,
+      :email_rate_limiting_queue,
+      :switch_to_annual_notification,
+      :downgrade_policy_reminder
     ]
 
     queue_prefix = ENV["HELPKIT_TEST_SETUP_SQS_QUEUE_PREFIX"]

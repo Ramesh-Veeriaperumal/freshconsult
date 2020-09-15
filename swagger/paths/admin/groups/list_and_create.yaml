@@ -1,0 +1,42 @@
+get:
+  tags: [admin groups]
+  summary: List all
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          groups:
+            type: array
+            items:
+              $ref: '#/definitions/admin_groups_response'
+          meta:
+            $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+post:
+  tags: [admin groups]
+  description: Create group
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/admin_groups_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/admin_groups_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

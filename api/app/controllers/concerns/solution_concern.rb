@@ -4,16 +4,15 @@ module SolutionConcern
   include Cache::Memcache::Account
 
   def validate_language(allow_destroy = false)
+    @permitted_languages ||= fetch_permitted_languages
     if params.key?(:language)
-      permitted_languages = Account.current.supported_languages
-      permitted_languages += [Account.current.language] unless create?
       invalid_language = true
-      if !insert_solution_action? && !Account.current.multilingual? && params[:language] != Account.current.language
+      if !insert_solution_action? && !Account.current.multilingual? && params[:language] != Account.current.language && !allow_kb_language_fallback?
         render_request_error(:require_feature, 404, feature: 'MultilingualFeature')
       elsif destroy? && !allow_destroy
         log_and_render_404
-      elsif permitted_languages.exclude?(params[:language])
-        render_request_error(:language_not_allowed, 404, code: params[:language], list: permitted_languages.sort.join(', '))
+      elsif @permitted_languages.exclude?(params[:language]) && !allow_kb_language_fallback?
+        render_request_error(:language_not_allowed, 404, code: params[:language], list: @permitted_languages.sort.join(', '))
       else
         invalid_language = false
       end
@@ -38,7 +37,13 @@ module SolutionConcern
   end
 
   def current_request_language
-    Language.find_by_code(params[:language] || Account.current.language)
+    @permitted_languages ||= fetch_permitted_languages
+    if allow_kb_language_fallback? && @permitted_languages.exclude?(params[:language]) && params.key?(:language)
+      splitted_language = params[:language].split('-').first
+      @permitted_languages.include?(splitted_language) ? Language.find_by_code(splitted_language) : Language.find_by_code(Account.current.language)
+    else
+      Language.find_by_code(params[:language] || Account.current.language)
+    end
   end
 
   def secondary_language?
@@ -60,5 +65,19 @@ module SolutionConcern
 
   def insert_solution_action?
     params[:controller] == SolutionConstants::ARTICLES_PRIVATE_CONTROLLER && SolutionConstants::INSERT_SOLUTION_ACTIONS.include?(params[:action])
+  end
+
+  def allow_kb_language_fallback?
+    params.key?(:allow_language_fallback) && params[:allow_language_fallback] && get_request?
+  end
+
+  def boolean_param?(key)
+    params[key].present? && (params[key] == "true" || params[key] == "false")
+  end
+
+  def fetch_permitted_languages
+    permitted_languages = Account.current.supported_languages
+    permitted_languages += [Account.current.language] unless create?
+    permitted_languages
   end
 end

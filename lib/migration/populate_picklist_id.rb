@@ -63,8 +63,6 @@ module Migration
       def enable_feature
         key = PICKLIST_ID % { account_id: account.id }
         set_display_id_redis_key(key, @max_picklist_id)
-        account.launch(:redis_picklist_id)
-        log("redis_picklist_id feature enabled for #{account.id}")
       end
 
       def account

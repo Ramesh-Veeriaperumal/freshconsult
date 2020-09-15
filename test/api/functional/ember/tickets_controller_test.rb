@@ -5104,8 +5104,7 @@ module Ember
       end
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       assert_response 400
-      match_json([bad_request_error_pattern('source',  :invalid_field),
-                  bad_request_error_pattern('product_id',  :invalid_field),
+      match_json([bad_request_error_pattern('product_id', :invalid_field),
                   bad_request_error_pattern('responder_id',  :invalid_field),
                   bad_request_error_pattern('requester_id',  :invalid_field),
                   bad_request_error_pattern('twitter_id',  :invalid_field),
@@ -5115,17 +5114,41 @@ module Ember
       Account.any_instance.unstub(:compose_email_enabled?)
     end
 
-    def test_compose_email
+    def test_compose_email_without_source
       email_config = fetch_email_config
       params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
       CUSTOM_FIELDS.each do |custom_field|
         params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
       end
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
-      t = Helpdesk::Ticket.last
+      t = @account.tickets.last
       match_json(ticket_show_pattern(t))
       assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
       assert_response 201
+    end
+
+    def test_compose_with_source_as_outbound
+      email_config = fetch_email_config
+      params = ticket_params_hash.except(:product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      params[:source] = 10
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      t = @account.tickets.last
+      match_json(ticket_show_pattern(t))
+      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert_response 201
+    end
+
+    def test_compose_email_with_invalid_source
+      email_config = fetch_email_config
+      params = ticket_params_hash.except(:product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
     end
 
     def test_compose_email_as_read_access_agent

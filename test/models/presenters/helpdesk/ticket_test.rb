@@ -16,6 +16,7 @@ class TicketTest < ActiveSupport::TestCase
   include SharedOwnershipTestHelper
   include PrivilegesHelper
   include UsersTestHelper
+  include TestCaseMethods
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
@@ -32,6 +33,7 @@ class TicketTest < ActiveSupport::TestCase
     return if @@before_all_run
     @account.subscription.state = 'active'
     @account.subscription.save
+    @account.rollback(:response_time_null_fix)
     @account.ticket_fields.custom_fields.each(&:destroy)
     @@ticket_fields = []
     @@custom_field_names = []
@@ -119,7 +121,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_check_hypertrail_version
@@ -129,7 +131,7 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     create_event_info = t.event_info(:create)
     assert_equal CentralConstants::HYPERTRAIL_VERSION, create_event_info[:hypertrail_version]
-    create_event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    create_event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   ensure
     t.destroy
   end
@@ -141,7 +143,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_on_merge_ticket
@@ -151,7 +153,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_with_valid_marketplace_attribute
@@ -162,7 +164,7 @@ class TicketTest < ActiveSupport::TestCase
     t.save
     t.update_attributes(requester_id: @account.contacts.first.try(:id) || 1)
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_with_invalid_marketplace_attribute
@@ -173,7 +175,7 @@ class TicketTest < ActiveSupport::TestCase
     t.save
     t.update_attributes(description: Faker::Lorem.paragraph)
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: false))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_for_archive_destory
@@ -183,7 +185,7 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     t.stubs(:archive).returns(true)
     event_info = t.event_info(:destroy)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: false))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_for_non_archive_destory
@@ -193,7 +195,7 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     t.save
     event_info = t.event_info(:destroy)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_event_info_marketplace_attribute_for_custom_field_update
@@ -205,7 +207,7 @@ class TicketTest < ActiveSupport::TestCase
     t.save
     t.update_attributes(custom_field: { "test_custom_dropdown_#{@account.id}" => DROPDOWN_CHOICES.sample })
     event_info = t.event_info(:update)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: false))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: false))
   end
 
   def test_central_publish_payload_event_info_on_ticket_from_social_tab
@@ -215,7 +217,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_payload_without_custom_fields
@@ -254,6 +256,8 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     assoc_payload = t.associations_to_publish.to_json
     assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+    payload = t.central_publish_preloaded_payload.to_json
+    payload.must_match_json_expression(preload_cp_ticket_pattern(t))
   end
 
   def test_central_publish_payload_group_update
@@ -454,7 +458,48 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal({ 'agent_reply_count' => [nil, 1] }, job['args'][1]['model_changes'])
   end
 
-  def test_ticket_state_worker_central_publish
+  def test_ticket_state_worker_with_response_time_null_fix_disabled
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    note = create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, created_at: Time.zone.now.round, private: false, body: Faker::Lorem.paragraph)
+    input = {
+      id: note.id,
+      model_changes: nil,
+      freshdesk_webhook: false,
+      current_user_id: @agent.id
+    }
+    Tickets::UpdateTicketStatesWorker.new.perform(input)
+    ticket = ticket.reload
+    ticket_state = ticket.ticket_states
+    schema_less_ticket = ticket.schema_less_ticket
+    assert_equal @agent.id, schema_less_ticket.reports_hash['first_response_agent_id']
+    assert_equal note.id, schema_less_ticket.reports_hash['first_response_id']
+    assert_equal note.created_at, ticket_state.first_response_time
+  end
+
+  def test_ticket_state_worker_with_response_time_null_fix_enabled
+    Account.current.launch(:response_time_null_fix)
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    note = create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, created_at: Time.zone.now.round, private: false, body: Faker::Lorem.paragraph)
+    input = {
+      id: note.id,
+      model_changes: nil,
+      freshdesk_webhook: false,
+      current_user_id: @agent.id
+    }
+    Tickets::UpdateTicketStatesWorker.new.perform(input)
+    ticket = ticket.reload
+    ticket_state = ticket.ticket_states
+    schema_less_ticket = ticket.schema_less_ticket
+    assert_equal @agent.id, schema_less_ticket.reports_hash['first_response_agent_id']
+    assert_equal note.id, schema_less_ticket.reports_hash['first_response_id']
+    assert_equal note.created_at, ticket_state.first_response_time
+  ensure
+    Account.current.rollback(:response_time_null_fix)
+  end
+
+  def test_ticket_state_worker_central_publish_with_response_time_null_fix_disabled
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
     note = create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
@@ -477,6 +522,37 @@ class TicketTest < ActiveSupport::TestCase
                    'first_response_by_bhrs' => [nil, ticket_state.first_resp_time_by_bhrs] }, ticket_state_job['args'][1]['model_changes'])
     assert_equal({ 'first_response_id' => [nil, schema_less_ticket.reports_hash['first_response_id']],
                    'first_response_agent_id' => [nil, schema_less_ticket.reports_hash['first_response_agent_id']] }, schema_less_ticket_job['args'][1]['model_changes'])
+  end
+
+  def test_ticket_state_worker_central_publish_with_response_time_null_fix_enabled
+    Account.current.launch(:response_time_null_fix)
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    note = create_note(source: 0, ticket_id: ticket.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+    input = {
+      id: note.id,
+      model_changes: nil,
+      freshdesk_webhook: false,
+      current_user_id: @agent.id
+    }
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    Tickets::UpdateTicketStatesWorker.new.perform(input)
+    assert_equal 2, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    ticket_state_job = CentralPublishWorker::ActiveTicketWorker.jobs.first
+    schema_less_ticket_job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    ticket = ticket.reload
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+    ticket_state = ticket.ticket_states
+    schema_less_ticket = ticket.schema_less_ticket
+    assert_equal 'ticket_update', ticket_state_job['args'][0]
+    assert_equal 'ticket_update', schema_less_ticket_job['args'][0]
+    assert_equal({ 'first_response_time' => [nil, ticket_state.first_response_time],
+                   'first_response_by_bhrs' => [nil, ticket_state.first_resp_time_by_bhrs] }, ticket_state_job['args'][1]['model_changes'])
+    assert_equal({ 'first_response_id' => [nil, schema_less_ticket.reports_hash['first_response_id']],
+                   'first_response_agent_id' => [nil, schema_less_ticket.reports_hash['first_response_agent_id']] }, schema_less_ticket_job['args'][1]['model_changes'])
+  ensure
+    Account.current.rollback(:response_time_null_fix)
   end
 
   def test_central_publish_payload_product_update_with_value
@@ -523,7 +599,7 @@ class TicketTest < ActiveSupport::TestCase
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     event_info = t.event_info(:create)
-    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, marketplace_event: true))
+    event_info.must_match_json_expression(cp_ticket_event_info_pattern(t, app_update: true))
   end
 
   def test_central_publish_internal_agent_associations
@@ -663,6 +739,27 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal({'next_response' => [@agent.id]}, job['args'][1]['misc_changes']['notify_agents'])
   ensure
     Account.any_instance.unstub(:next_response_sla_enabled?)
+  end
+
+  def test_central_publish_with_stop_sla_timer
+    t = create_ticket(ticket_params_hash.merge(responder_id: @agent.id))
+    t.reload
+    t.status = Account.current.ticket_statuses.where(stop_sla_timer:true).first.status_id
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.save
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal true, JSON.parse(payload)["status_stop_sla_timer"]
+  end
+
+  def test_central_publish_with_agent_responded_at
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    t = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    n = create_note(source: 0, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
   end
 
   def test_central_publish_payload_with_secure_field
@@ -808,5 +905,39 @@ class TicketTest < ActiveSupport::TestCase
   ensure
     t.destroy
     Account.any_instance.unstub(:shared_ownership_enabled?)
+  end
+
+  def test_for_ticket_custom_dependent_fields
+    names = Faker::Lorem.words(3).map { |x| "nf_stoid_one_#{x}" }
+    nested_value_level1 = Faker::Lorem.word
+    nested_value_level11 = Faker::Lorem.word
+    nested_value_level12 = Faker::Lorem.word
+    nested_value_level111 = Faker::Lorem.word
+    nested_value_level121 = Faker::Lorem.word
+    nested_values = [[nested_value_level1, '0', [[nested_value_level11, '0', [[nested_value_level111, 0]]], [nested_value_level12, '0', [[nested_value_level121, 0]]]]]]
+    nested_field_level1 = create_dependent_custom_field(names, nil, nil, nil, nested_values)
+    custom_fields_hash = { "#{names[0]}_#{@account.id}" => nested_value_level1, "#{names[1]}_#{@account.id}" => nested_value_level11, "#{names[2]}_#{@account.id}" => nested_value_level111 }
+    ticket = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
+    transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(ticket)
+    Account.find(Account.current.id).make_current
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+    assert_equal true, transformer.transform(nested_value_level111, 'ffs_09').present?
+  ensure
+    ticket.destroy
+    nested_field_level1.destroy
+  end
+
+  def test_resolution_status_for_service_task
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        fsm_ticket = create_service_task_ticket
+        assert_equal '', fsm_ticket.resolution_status
+      ensure
+        fsm_ticket.destroy
+        cleanup_fsm
+      end
+    end
   end
 end

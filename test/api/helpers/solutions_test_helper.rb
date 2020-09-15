@@ -39,7 +39,7 @@ module SolutionsTestHelper
                       else
                         []
                       end
-      result[:icon] = folder.parent.icon.present? ? AttachmentDecorator.new(folder.parent.icon).to_hash : {}
+      result[:icon_url] = folder.parent.icon.present? ? folder.parent.icon.attachment_public_url : nil
     end
     result
   end
@@ -57,10 +57,11 @@ module SolutionsTestHelper
   end
 
   def solution_folder_pattern_private(_expected_output = {}, _ignore_extra_keys = true, folder)
-    result = solution_folder_pattern({}, true, folder)
+    result = solution_folder_pattern({}, true, folder).except(:icon_url)
     result[:article_order] = folder.parent.article_order
     result[:position] = folder.parent.position
     result[:language] = folder.language_code
+    result[:icon] = folder.parent.icon.present? ? AttachmentDecorator.new(folder.parent.icon).to_hash : {} if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
     result[:platforms] = _expected_output[:platforms].presence || platform_response(true, folder.parent.solution_platform_mapping) if omni_bundle_enabled?
     result
   end
@@ -167,8 +168,9 @@ module SolutionsTestHelper
     resp
   end
 
-  def channel_api_solution_article_pattern(article)
-    ret_hash = omni_bundle_enabled? ? private_api_solution_article_pattern(article, { exclude_description: true, exclude_attachments: true }, ignore_extra_keys = true, user = nil, channel_api = true) : private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, channel_api = true)
+  def channel_api_solution_article_pattern(article, ignore_extra_keys = true, prefer_published = false)
+    exclude_description = exclude_attachments = ignore_extra_keys
+    ret_hash = omni_bundle_enabled? ? private_api_solution_article_pattern(article, { exclude_description: exclude_description, exclude_attachments: exclude_attachments, exclude_draft: prefer_published }, ignore_extra_keys = true, user = nil, channel_api = true) : private_api_solution_article_pattern(article, expected_output = {}, ignore_extra_keys = true, user = nil, channel_api = true)
     ret_hash[:language_id] = article.language_id
     if ret_hash[:status] == Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]
       ret_hash[:published_by] = article.recent_author && article.recent_author.helpdesk_agent ? article.recent_author.try(:name) : nil
@@ -575,11 +577,15 @@ module SolutionsTestHelper
     }
   end
 
+  def fetch_folder(folder_meta, lang_key)
+    folder_meta.safe_send("#{lang_key}_available?") ? folder_meta.safe_send("#{lang_key}_folder") : folder_meta.primary_folder
+  end
+
   def enriched_folder_pattern(folder_meta, lang_key)
-    folder = folder_meta.safe_send("#{lang_key}_available?") ? folder_meta.safe_send("#{lang_key}_folder") : folder_meta.primary_folder
+    folder = fetch_folder(folder_meta, lang_key)
     unless folder_meta.is_default
       resp_hash = {
-        id: folder.id,
+        id: folder_meta.id,
         name: folder.name,
         visibility: folder_meta.visibility
       }
@@ -588,11 +594,15 @@ module SolutionsTestHelper
     end
   end
 
+  def fetch_category(category_meta, lang_key)
+    category_meta.safe_send("#{lang_key}_available?") ? category_meta.safe_send("#{lang_key}_category") : category_meta.primary_category
+  end
+
   def enriched_category_pattern(category_meta, lang_key)
-    category = category_meta.safe_send("#{lang_key}_available?") ? category_meta.safe_send("#{lang_key}_category") : category_meta.primary_category
+    category = fetch_category(category_meta, lang_key)
     unless category_meta.is_default
       {
-        id: category.id,
+        id: category_meta.id,
         name: category.name,
         visible_in_portals: Account.current.portals.where(id: category.parent.portal_solution_categories.pluck(:portal_id)).pluck(:name)
       }

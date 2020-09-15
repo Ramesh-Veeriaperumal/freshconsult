@@ -247,7 +247,6 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_search_with_feature_enabled_and_invalid_params
     @account.launch :es_count_writes
-    @account.launch :list_page_new_cluster
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
@@ -260,7 +259,6 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_search_with_feature_enabled_and_invalid_value
     @account.launch :es_count_writes
-    @account.launch :list_page_new_cluster
     params = ticket_params_hash.except(:description).merge(custom_field: {})
     CUSTOM_FIELDS.each do |custom_field|
       params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
@@ -3896,6 +3894,19 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
   end
 
+  def test_show_twitter_ticket_with_restricted_dm_content_with_requester_handle_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    requester = create_tweet_user(name: Faker::Name.name, screen_name: Faker::Lorem.word)
+    requester.twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    ticket = create_twitter_ticket(tweet_type: 'dm', requester: requester)
+    get :show, controller_params(id: ticket.display_id)
+    assert_response 200
+    match_json(show_ticket_pattern({}, ticket))
+  ensure
+    ticket.destroy
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
   def test_show_twitter_ticket_with_unrestricted_dm_content
     ticket = create_twitter_ticket(tweet_type: 'dm')
     get :show, controller_params(id: ticket.display_id)
@@ -4887,8 +4898,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     post :create, construct_params({ _action: 'compose_email' }, params)
     assert_response 400
-    match_json([bad_request_error_pattern('source',  :invalid_field),
-                bad_request_error_pattern('product_id',  :invalid_field),
+    match_json([bad_request_error_pattern('product_id', :invalid_field),
                 bad_request_error_pattern('responder_id',  :invalid_field),
                 bad_request_error_pattern('requester_id',  :invalid_field),
                 bad_request_error_pattern('twitter_id',  :invalid_field),

@@ -500,6 +500,7 @@
             "_proxy_enabled": true,
             "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3e+0WycEZpW1dYuRI/tT/qJGXaLbdV7N:7vptgTlVBylwd20wiLXegdj0kFToAcUl]",
+            "slave2_proxy": { "_username": "shard_1_slave" },
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:3bv0zyx+bbEPd8a1t+DM6h67NILKdF28:HG0TMuva+CqIgWE6F9UQQhImFTRi0CeA]",
               "_host": "usrds1slave1.internal-freshpo.com",
@@ -534,6 +535,7 @@
             "_proxy_enabled": true,
             "_proxy_master_enabled": true,
             "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5RScK29IZfMnTfJHFGAZ0HG+07bYZnKl:gB1Fs1Zf+ZdRuSGvALXSRR7jUloU3aln]",
+            "slave2_proxy": { "_username": "shard_7_slave" },
             "slave1": {
               "password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:5jJeIuFcW+6JwsA7A8HgMNAimEqCRD99:uQwKG+XiTovPT4AXn0Bhr5GALukhzwBZ]",
               "_host": "usrds7slave1.internal-freshpo.com",
@@ -913,7 +915,6 @@
         ],
         "_domain_prefix": "fcstaginguseast-",
         "_domain_suffix": ".freshfonehello.com",
-        "_migration_s3_bucket_name": "helpkit-freshcaller-migration",
         "_region": "us-east-1",
         "_signup_full_domain": "https://fcstaginguseast-test1.freshfonehello.com"
       },
@@ -1142,10 +1143,7 @@
         "_notifications_url": "https://mobilepush.freshpo.com"
       },
       "ner": {
-        "iv": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:pjJT9Y/Rh1kYZ3zOYW9yhLbftKivddmS:+4y/cvWelak3VdNMr2VCBueKvhFgb7hUgRW3MGjDsclMO32XTzryz8iF6pgc3uqhjJQIMRJzzwUDUHPu2Iw1CllyX35kcr416HrkaOikAJg=]",
-        "secret_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:l7KX87zHUckMbPULpj1we6sOufKQZbMD:5RVSNVb8qkpt9Da1GrC7iBPU11tRxacibilD/0EdJpyTyFTANmjCUV2MSVaBuP/QTfw927ZVk0F0S0U3NLQxPURi4g9jgeL2Q31wzc3kas8=]",
-        "_datetime": "http://nereuc.freshworksapi.com/datetime",
-        "_username": "freshdesk"
+        "_datetime": "https://ner-api.prod.freddyproject.com/datetime"
       },
       "newrelic": {
         "license_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:aff0bArmLdGr/ONu8djpW1mLzefReCgX:nkym71hrsNPNwtv7rriW/0yfSHAPW3UHd7QabFkJV+TNlloK0Ik6teHW]",
@@ -1209,9 +1207,11 @@
         "slack_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:9tujHWzauEnuOvPyNxzdONExgitLjatM:CUC0vUp9OR0AYzs1Ff1oUbz+5FpQggrABP7uZow3UNjgJzV0gsrZx/byPHzxPdwR]",
         "slack_slash_cmd_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:TNt+NLjLSPekl04laqUfjcGXejm9D451:+nBCclaJ7Ak+/sxnEyZzdPI/H2DOnjNXLGddfegFrpajpmgTMcJoSA==]",
         "slack_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:x3pDauWVbgcguCdQ8HvGMUkwaqin6fk4:mHOH9uXl0ZF7dWou373BMExN7Bz1V6q8bRLDEMxRuPLU785KNwMU]",
-        "surveymonkey_api_key": "EJ[1:mXYCWwIKn34JaHq/c/D9AODm+k+vQstg02F6aLskFQM=:7HJsG1ZUcENMt80miV/47mnDtdhIFY6C:HPrm9yzYn6K5HZZc62TnulMgN8w6vt1tZkSTnHRtr+h9+IibeIsXh46ePL1gMC1bDoRZBjIKI01PkDxyAWM1+3fLcEE2CidRcunwRiU2RNqnKYQEzzD9K1JO9hqjbJXBNhrjMbrMG6HWFiiEJgXn01CcCO8onWP16gZhrXWHf4PANkASFVYt8iPp+E3gS55P]",
-        "surveymonkey_secret": "EJ[1:mXYCWwIKn34JaHq/c/D9AODm+k+vQstg02F6aLskFQM=:olTQ/XSVT1xGkEtsuiyLBtOZfPdDRpnb:KZbWPtl8dNvvpl58lLVohfG3046tGmPXfYQR2PvQvQmNsvaW7T+GC4ojvMY3QwJghDyHhS8=]",
-        "surveymonkey_token": "EJ[1:mXYCWwIKn34JaHq/c/D9AODm+k+vQstg02F6aLskFQM=:FUSaMWc7XIm2N8OyeLQ+P52Fh5L7wUG7:Ys+pDtzts+Ou+TjjL8UEYFL+WSpfz23FB2glEjWQ/Ea/V6xny3U=]"
+        "surveymonkey_token": "EJ[1:U/1r+cxIRWeSyTozVVgPBfFoo6iZIiJQjMbifGoKbnE=:yp5ABZlzCFkduQHh46VLP+HzItJkUq5U:KKQUxsD+3X/KBSVSgMjCfbHhWdc3lU5GC7vqORyXUUjkeHCEqR8=]",
+        "surveymonkey_secret": "EJ[1:U/1r+cxIRWeSyTozVVgPBfFoo6iZIiJQjMbifGoKbnE=:yxawOZ/KvxPA1Izhjro//GH32ruZs+6E:dHub2gFJC95UrTZQoma8nMpH8G206BUEQKtwzl3aPsc709d7iigKDN/fiyGnT7j4s9Zwk5H6Gw==]",
+        "surveymonkey_api_key": "EJ[1:U/1r+cxIRWeSyTozVVgPBfFoo6iZIiJQjMbifGoKbnE=:vB6HapgIPpTOv6sIs//exY5gcR4hhx0L:Kq1chWk73Pg93My0Dw0mV7tjgwFQCyalLas5TyK+n8pTxGo9BMf+D1mXccwCWFsJ2mPc+7z2FGRZ+JszmWt1SUm6mmIbAc+nDjdryVutX4olcWivf0hq/3MbLPxQv/Y+nusHU2T4wEy2Qx0PvzZUhvfjFSfRQkbVvD4CnhhItR3QEIgWtlTUj49coWIxdrjG9t2R]",
+        "microsoft_outlook_secret": "EJ[1:+H/zjh14XDYpU1B4w5+S66/7z5w45nOOmaRX7H30DHI=:gJ/UkWlYSVQoSmG6PVJZQ+KG8EjmKPs1:xznU4ozDfTdMm3p9X/uUDhv8u8khLymITIgcalBavtePXymAhZ0n8Ud7Mki3MMtSUX0=]",
+        "microsoft_outlook_token": "EJ[1:+H/zjh14XDYpU1B4w5+S66/7z5w45nOOmaRX7H30DHI=:9OR4rs7TOedgkUb1lUKNasfURyn4bWVt:7inl3dITVv3Bvzxm+t5gwr8o2dY1KwOewD6sMKoSUVXbIsApSiEZTLqpAZKuknqyjpItHg==]"
       },
       "pod_dns": {
         "domains": {
@@ -1367,6 +1367,7 @@
         "_todo_group_name": "helpkit_todo_reminder",
         "_account_cleanup_group_name": "helpkit_suspended_account_cleanup",
         "_downgrade_policy_group_name": "helpkit_downgrade_policy_reminder",
+        "_monthly_to_annual_group_name": "monthly_to_annual_notification",
         "_export_group_name": "helpkit_export_cleanup",
         "_ticket_delete_group_name": "helpkit_ticket_delete"
       },
@@ -1410,16 +1411,16 @@
             "_priority": 1,
             "_sqs_queue": "main_staging_social_gnip_tweets_queue"
           },
-          "count_etl_queue": {
-            "_priority": 1,
-            "_sqs_queue": "count_etl_queue-stagingvpc-staging"
-          },
           "analytics_etl_queue": {
             "_priority": 1,
             "_sqs_queue": "analytics_etl_queue-stagingvpc-staging"
           },
           "downgrade_policy_reminder": {
             "_sqs_queue": "fd_scheduler_downgrade_policy_reminder_queue_staging",
+            "_priority": 1
+          },
+          "switch_to_annual_notification": {
+            "_sqs_queue": "switch_to_annual_notification_queue_staging",
             "_priority": 1
           },
           "suspended_account_cleanup": {
@@ -1498,6 +1499,10 @@
             "_priority": 1,
             "_sqs_queue": "main_staging_trial_email"
           },
+          "freddy_consumed_session_reminder_queue": {
+            "_sqs_queue": "freddy_consumed_session_reminder_queue",
+            "_priority": 1
+          },
           "email_rate_limiting_queue": {
              "_priority": 1,
              "_sqs_queue": "email_rate_limiting_staging"
@@ -1510,10 +1515,6 @@
               "_sqs_queue": "search-etlqueue-archive-staging",
               "_priority": 1
           },
-          "count_etl_queue": {
-              "_priority": 1,
-              "_sqs_queue": "count_etl_queue_archive_staging"
-          },
           "analytics_etl_queue": {
               "_priority": 1,
               "_sqs_queue": "analytics_etl_queue_archive_staging"
@@ -1522,10 +1523,6 @@
         "maintenance": {
           "search_etlqueue_maintenance": {
             "_sqs_queue": "search-etlqueue-stagingvpc-staging_new_maintenance",
-            "_priority": 1
-          },
-          "count_etl_queue_maintenance": {
-            "_sqs_queue": "count_etl_queue-stagingvpc-staging_maintenance",
             "_priority": 1
           },
           "analytics_etl_queue_maintenance": {
@@ -1562,7 +1559,6 @@
         "_channel_framework_services": "main_staging_channel_framework_services",
         "_collab_agent_update_queue": "collab_agent_update_staging",
         "_collab_ticket_update_queue": "collab_ticket_update_staging",
-        "_count_etl_queue": "count_etl_queue-stagingvpc-staging",
         "_cti_call_queue": "cti_call_staging",
         "_cti_screen_pop": "cti_screen_pop_staging",
         "_custom_mailbox_realtime_queue": "https://sqs.us-east-1.amazonaws.com/206535303787/imap-conf-data-sqs",
@@ -1600,15 +1596,15 @@
         "_fd_scheduler_export_cleanup_queue": "main_staging_fd_scheduler_export_cleanup_queue",
         "_analytics_etl_queue": "analytics_etl_queue-stagingvpc-staging",
         "_fd_scheduler_downgrade_policy_reminder_queue": "fd_scheduler_downgrade_policy_reminder_queue_staging",
+        "_switch_to_annual_notification_queue": "switch_to_annual_notification_queue_staging",
         "_suspended_account_cleanup_queue": "suspended_account_cleanup_queue_staging",
         "_search_etlqueue_maintenance": "search-etlqueue-stagingvpc-staging_new_maintenance",
-        "_count_etl_queue_maintenance": "count_etl_queue-stagingvpc-staging_maintenance",
         "_analytics_etl_queue_maintenance": "analytics_etl_queue-stagingvpc-staging_maintenance",
+        "_freddy_consumed_session_reminder_queue": "freddy_consumed_session_reminder_queue",
         "_email_rate_limiting_queue": "email_rate_limiting_staging"
       },
       "archive_sqs_queues": {
         "_search_etl_queue": "search-etlqueue-archive-staging",
-        "_count_etl_queue": "count_etl_queue_archive_staging",
         "_analytics_etl_queue": "analytics_etl_queue_archive_staging"
       },
       "statsd": {
@@ -1618,6 +1614,12 @@
         "_activities_export_host": "activities-export-elb.internal-freshpo.com",
         "_activities_host": "activities-elb.internal-freshpo.com",
         "_port": "80"
+      },
+      "tracing": {
+        "_service_name": "staging_freshdesk_helpkit",
+        "_tracing_host_port": 6831,
+        "_span_batch_size": 20,
+        "_sampler_probability": 0
       },
       "twitter": {
         "consumer_secret": "EJ[1:8exvi2D7SfEJxmn+Br7CeoKsCDfXy1gOfUh5hGbLsSw=:1GEjNUdnyGNCmC2AHo5M3oZ15HG5ej8o:HgTyKLuiPrWqhpbgJ5kwCJBPcItExu8LwguJQrvkQ7s+S6VP9XVzLR3/l/lDJ+Ih5UO4eCZ+XuBuO5IrGBHlYu5u]",
@@ -1735,8 +1737,8 @@
         "_timeout_for_pricing_api": 10
       },
       "omni_freshvisuals": {
-        "secret_key": "EJ[1:tzR1beNIuQuL2OZPDtIU9jJsqUAJ5N4OVHBBwTwK5HA=:7XpxGCkZIPmXwGIeCRi/W4RKf6bDG8OW:E4DH2ZB5R3V/OwLFlnw+LLWAH7v5CR+/0gYKwyVdmpBu4IZmJd9mUFVSCCGWHNoSCwCrqy5HasUZpykJ]",
-        "_end_point": "https://staging.freshreports.com/",
+        "secret_key": "EJ[1:BPAbyvtU9RiOu0a7VTBO0PXCpi14F6/5Td+KZDCKWA8=:9RRoYEHlKgzoks3gCqVJt0Zaf4wTEHoH:9vYZStnq51M/yPd0PguQGovdH2+TwCcxO/YsrA1WQQREX70y2LW402QOSpHt23V6Er5hzZ+3IX2jQQvE]",
+        "_end_point": "https://staging.freshreports.com",
         "_bu_name": "support360",
         "_session_expiration": 36000,
         "_session_expiration_for_pricing_api": 30,
@@ -1746,7 +1748,9 @@
       "fluffy": {
         "_host": "vpce-0b247209ae0145d88-4fa54j71.vpce-svc-0874c1e9512bd57dc.us-east-1.vpce.amazonaws.com",
         "username": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:qrgtap1okUwcx0qIs/bPJ5t1x/mkm0Oe:9NvC+DrZtADYb8l0Pe8j5orfiVJYIYAiNg==]",
-        "password": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:G0hLjfcT/xDslPM+IvgoZHOPC4qbuw9S:32COF4bZOIdTS+LeAL3pj0TROw/wYUK1qQ==]"
+        "password": "EJ[1:KPLwfD8Y0BIZH6YQcEzQDNBn8/EQoDQ4PmS4r5J76zk=:G0hLjfcT/xDslPM+IvgoZHOPC4qbuw9S:32COF4bZOIdTS+LeAL3pj0TROw/wYUK1qQ==]",
+        "fd_email_username": "EJ[1:q5V06hqsIrKN2tulzpbNviFzUMwxFL16TX4OLJ+znCo=:DixTfL/y7bLwvGPLFexZcnEvY4jBehFZ:O6sWK5pkFPdX049IoNrjPE3CrPUVHT9PekGqU/vglg==]",
+        "fd_email_password": "EJ[1:q5V06hqsIrKN2tulzpbNviFzUMwxFL16TX4OLJ+znCo=:FMuEil75mWEGLUSXE+pfS5LV5KMvwrzm:aM414Jlzdh3OCic1BndsdHEPdF+JGzscDrL5Z2Xmvw==]"
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
@@ -1788,6 +1792,11 @@
           "_demo_email": "support@freshdesk.com",
           "_timeout": 5,
           "_onboard_timeout": 5
+        },
+        "freddy_consumed_session": {
+          "_url": "http://freddyacctusage.stagfreshbots.com/api/v1/accounts",
+          "_app_name": "freshdesk",
+          "_timeout": 3
         }
       },
       "shift_config": {
@@ -1828,7 +1837,7 @@
     },
     "falcon_ui": {
       "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshpo.com/analytics/analytics-v1.2.1.js",
+        "_analyticsCollectorScript": "https://assets.freshpo.com/analytics/analytics-v1.2.4.js",
         "schedulerConfig": {
           "metricsAdapters": [
             {
@@ -1967,6 +1976,7 @@
         "saml.pem",
         "iam.pem",
         "jwe_encryption_key.pem",
+        "freddy_sessions.pem",
         "iam_public.pem"
       ],
       "_path": "certificates/common",

@@ -40,6 +40,11 @@ defaults: &defaults
     timeout: 5
     onboard_timeout: 5
 
+  freddy_consumed_session:
+    url: 'http://freddyacctusage.stagfreshbots.com/api/v1/accounts'
+    app_name: 'freshdesk'
+    timeout: 3
+
 development:
   <<: *defaults
 

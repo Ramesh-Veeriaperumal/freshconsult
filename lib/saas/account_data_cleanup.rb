@@ -31,16 +31,8 @@ class SAAS::AccountDataCleanup
   end
 
   def handle_custom_source_drop_data
-    account.helpdesk_sources.visible.custom.each do |source|
-      begin
-        # make the source as soft deleted.
-        source.deleted = true
-        source.save!
-      rescue StandardError => e
-        Rails.logger.error "Exception in custom source deletion.. #{e.backtrace}"
-        NewRelic::Agent.notice_error(e)
-      end
-    end
+    reset_ticket_templates_to_default_source
+    delete_custom_sources
   end
 
   def handle_create_observer_drop_data
@@ -461,6 +453,13 @@ class SAAS::AccountDataCleanup
     )
   end
 
+  def run_with_rescue(context)
+    yield
+  rescue StandardError => e
+    Rails.logger.error "Exception in #{context}.. #{e.backtrace}"
+    NewRelic::Agent.notice_error(e)
+  end
+
   def update_all_in_batches(change_hash)
     change_hash.symbolize_keys!
     frame_conditions(change_hash)
@@ -488,5 +487,25 @@ class SAAS::AccountDataCleanup
 
   def cleanup_fb_ad_posts
     Account.current.facebook_pages.each(&:remove_ad_stream_ticket_rule)
+  end
+
+  def reset_ticket_templates_to_default_source
+    account.ticket_templates.each do |template|
+      run_with_rescue('custom source template deletion') do
+        if template.template_data.present? && template.template_data['source'].present? && template.template_data['source'].to_i >= Helpdesk::Source::CUSTOM_SOURCE_BASE_SOURCE_ID
+          template.template_data['source'] = Helpdesk::Source.ticket_source_keys_by_token[:phone].to_s
+          template.save!
+        end
+      end
+    end
+  end
+
+  def delete_custom_sources
+    account.helpdesk_sources.visible.custom.each do |source|
+      run_with_rescue('custom source soft deletion') do
+        source.deleted = true
+        source.save!
+      end
+    end
   end
 end

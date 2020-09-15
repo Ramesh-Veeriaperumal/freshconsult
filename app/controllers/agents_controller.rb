@@ -167,6 +167,13 @@ class AgentsController < ApplicationController
         redirect_to :action => 'index'
       else
         set_skill_data
+        Account.current.users.where(id: @user.id).first.try(:destroy)
+        @user  = current_account.users.new
+        @agent = current_account.agents.new
+        @agent.user = User.new
+        @agent.user.avatar = Helpdesk::Attachment.new
+        @agent.user.time_zone = current_account.time_zone
+        @agent.user.language = current_portal.language
         render :action => :new
       end
     else  
@@ -293,7 +300,6 @@ class AgentsController < ApplicationController
       else
         flash[:notice] = t(:'flash.agents.to_contact')
       end
-      @user.toggle_ui_preference if @user.is_falcon_pref?
       redirection_url(@user)
     else
       flash[:notice] = t(:'flash.agents.to_contact_failed')

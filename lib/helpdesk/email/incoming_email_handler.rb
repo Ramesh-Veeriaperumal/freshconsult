@@ -469,9 +469,7 @@ module Helpdesk
 			def add_to_or_create_ticket(account, from_email, to_email, user, email_config)
 				ticket = nil
 				archive_ticket = nil
-				unless account.launched?(:skip_ticket_threading)
-					ticket, archive_ticket = process_email_ticket_info(account, from_email, user, email_config) 
-				end
+				ticket, archive_ticket = process_email_ticket_info(account, from_email, user, email_config) unless account.skip_ticket_threading_enabled?
 				if (ticket.present? || archive_ticket.present?) && user.blank?
 					if archive_ticket
 						parent_ticket = archive_ticket.parent_ticket
@@ -668,8 +666,10 @@ module Helpdesk
 				ticket_params = {
 					:account_id => account.id,
 					:subject => params[:subject],
-					:ticket_body_attributes => {:description => tokenize_emojis(params[:text]) || "",
-						:description_html => cleansed_html || ""},
+					:ticket_body_attributes => {
+						description:      params[:text] || '',
+						description_html: cleansed_html || ''
+					},
 					:requester => user,
 					:to_email => to_email[:email],
 					:to_emails => parse_to_emails,
@@ -1000,10 +1000,10 @@ module Helpdesk
 					:private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user) or hide_response_from_customer),
 					:incoming => true,
 					:note_body_attributes => {
-						:body => tokenize_emojis(body) || "",
-						:body_html => body_html || "",
-						:full_text => tokenize_emojis(full_text),
-						:full_text_html => full_text_html || ""
+						body:           body || '',
+						body_html:      body_html || '',
+						full_text:      full_text,
+						full_text_html: full_text_html || ''
 					},
 					:source => Account.current.helpdesk_sources.note_source_keys_by_token["email"],
 					:user => user, #by Shan temp

@@ -6,28 +6,15 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
     super
     CustomRequestStore.store[:private_api_request] = true
     @sla_policy = nil
-    @account.stubs(:sla_policy_revamp_enabled?).returns(true)
     @account.stubs(:next_response_sla_enabled?).returns(false)
   end
 
   after(:all) do
     @sla_policy.destroy if @sla_policy.present? && @account.sla_policies.where(id: @sla_policy.id).first # to handle sla_policy destroy test case
-    Account.any_instance.unstub(:sla_policy_revamp_enabled?)
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
   # ************************************************** Test Index
-  def test_index_with_sla_policy_revamp_feature
-    get :index, controller_params(version: 'private')
-    pattern = []
-    Account.current.sla_policies.each do |sp|
-      pattern << sla_policy_pattern(sp)
-    end
-    assert_response 200
-    match_json(pattern.ordered!)
-  end
-
-  def test_index_without_sla_policy_revamp_feature
-    @account.stubs(:sla_policy_revamp_enabled?).returns(false)
+  def test_index
     get :index, controller_params(version: 'private')
     pattern = []
     Account.current.sla_policies.each do |sp|
@@ -38,15 +25,7 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
   end
 
   # ************************************************** Test Show
-  def test_show_with_sla_policy_revamp_feature
-    @sla_policy = create_complete_sla_policy
-    get :show, controller_params(id: @sla_policy.id, version: 'private')
-    assert_response 200
-    match_json(sla_policy_pattern(@sla_policy.reload))
-  end
-
-  def test_show_without_sla_policy_revamp_feature
-    @account.stubs(:sla_policy_revamp_enabled?).returns(false)
+  def test_show
     @sla_policy = create_complete_sla_policy
     get :show, controller_params(id: @sla_policy.id, version: 'private')
     assert_response 200
@@ -54,7 +33,7 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
   end
 
   # ************************************************** Test Create
-  def test_create_new_format_with_sla_policy_revamp_feature
+  def test_create_new_format
     params_hash = create_sla_params_hash_with_company(true)
     post :create, construct_params({ version: 'private' }.merge(params_hash))
     assert_response 201
@@ -64,19 +43,11 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
     match_json(sla_policy_pattern(@sla_policy))
   end
 
-  def test_create_old_format_with_sla_policy_revamp_feature
+  def test_create_old_format
     params_hash = create_sla_params_hash_with_company
     post :create, construct_params({ version: 'private' }.merge(params_hash))
     assert_response 400
     match_json([bad_request_error_pattern('respond_within', :invalid_field), bad_request_error_pattern('resolve_within', :invalid_field)])
-  end
-
-  def test_create_new_format_without_sla_policy_revamp_feature
-    @account.stubs(:sla_policy_revamp_enabled?).returns(false)
-    params_hash = create_sla_params_hash_with_company(true)
-    post :create, construct_params({ version: 'private' }.merge(params_hash))
-    assert_response 400
-    match_json([bad_request_error_pattern('first_response_time', :invalid_field), bad_request_error_pattern('resolution_due_time', :invalid_field)])
   end
 
   def test_create_with_next_response_sla_feature
@@ -123,7 +94,7 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
   end
 
   # ************************************************** Test Update
-  def test_update_sla_target_new_format_with_sla_policy_revamp_feature
+  def test_update_sla_target_new_format
     @sla_policy = create_complete_sla_policy
     put :update, construct_params(version: 'private', id: @sla_policy.id,
       sla_target: {
@@ -137,7 +108,7 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
     match_json(sla_policy_pattern(@sla_policy.reload))
   end
 
-  def test_update_sla_target_old_format_with_sla_policy_revamp_feature
+  def test_update_sla_target_old_format
     @sla_policy = create_complete_sla_policy
     put :update, construct_params(version: 'private', id: @sla_policy.id,
       sla_target: {
@@ -149,21 +120,6 @@ class Ember::SlaPoliciesControllerTest < ActionController::TestCase
     )
     assert_response 400
     match_json([bad_request_error_pattern('respond_within', :invalid_field), bad_request_error_pattern('resolve_within', :invalid_field)])
-  end
-
-  def test_update_sla_target_new_format_without_sla_policy_revamp_feature
-    @account.stubs(:sla_policy_revamp_enabled?).returns(false)
-    @sla_policy = create_complete_sla_policy
-    put :update, construct_params(version: 'private', id: @sla_policy.id,
-      sla_target: {
-        'priority_4': { first_response_time: 'PT1H', resolution_due_time: 'PT1H', business_hours: false, escalation_enabled: true },
-        'priority_3': { first_response_time: 'PT30M', resolution_due_time: 'PT30M', business_hours: true, escalation_enabled: true },
-        'priority_2': { first_response_time: 'PT20M', resolution_due_time: 'PT20M', business_hours: false, escalation_enabled: true },
-        'priority_1': { first_response_time: 'PT15M', resolution_due_time: 'PT15M', business_hours: false, escalation_enabled: true }
-      }
-    )
-    assert_response 400
-    match_json([bad_request_error_pattern('first_response_time', :invalid_field), bad_request_error_pattern('resolution_due_time', :invalid_field)])
   end
 
   def test_update_unallowed_field_default_sla_policy

@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   end
 
   def event_info(action)
-    { ip_address: Thread.current[:current_ip], marketplace_event: valid_marketplace_event?(action) }
+    { ip_address: Thread.current[:current_ip], app_update: valid_app_event?(action) }
   end
 
   def model_changes_for_central

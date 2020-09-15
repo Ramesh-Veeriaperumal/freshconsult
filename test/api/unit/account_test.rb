@@ -2,10 +2,11 @@ require_relative '../unit_test_helper'
 require_relative '../test_helper'
 require 'sidekiq/testing'
 require Rails.root.join('spec', 'support', 'account_helper.rb')
-
+require Rails.root.join('test', 'api', 'helpers', 'omni_channels_test_helper.rb')
 class AccountTest < ActionView::TestCase
   include AccountHelper
   include UsersTestHelper
+  include OmniChannelsTestHelper
 
   def setup
     super
@@ -524,9 +525,7 @@ class AccountTest < ActionView::TestCase
     Account.current.hipaa_encryption_key
     assert_equal response.status, 200
     Account.current.beacon_report
-    Account.current.force_2020_plan?
     assert_equal response.status, 200
-    Account.current.new_2020_pricing_enabled?
     assert_equal response.status, 200
   end
 
@@ -749,10 +748,42 @@ class AccountTest < ActionView::TestCase
     Account.any_instance.stubs(:verified?).returns(true)
     Account.any_instance.stubs(:organisation).returns(Organisation.new)
     Account.any_instance.stubs(:organisation_accounts).returns(dummy_freshid_org_accounts_response_with_freshcaller_freshchat)
+    Freshid::V2::Models::Account.stubs(:find_by_domain).returns(Freshid::V2::Models::Account.new(id: Faker::Number.number(5)))
     dummy_org_domain = 'sample.freshworks.com'
+    user = Account.current.technicians.first
+    org_admin_response = org_admin_users_response
+    org_admin_response[:users][0][:email] = user.email
+    Freshid::V2::Models::User.stubs(:account_users).returns(org_admin_response)
     Organisation.any_instance.stubs(:domain).returns(dummy_org_domain)
     RestClient::Request.any_instance.stubs(:execute).returns(freshworks_product_list)
     refute Account.current.show_omnichannel_banner?
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:explore_omnichannel_feature)
+    Account.current.rollback(:freshid_org_v2)
+    Account.any_instance.unstub(:account_cancellation_requested?)
+    SubscriptionPlan.any_instance.unstub(:omni_plan?)
+    Account.any_instance.unstub(:verified?)
+    Account.any_instance.unstub(:organisation)
+    Account.any_instance.unstub(:organisation_accounts)
+    Freshid::V2::Models::User.unstub(:account_users)
+    Freshid::V2::Models::Account.unstub(:find_by_domain)
+    Organisation.any_instance.unstub(:domain)
+    RestClient::Request.unstub(:execute)
+  end
+
+  def test_should_show_omnichannel_banner_when_org_accounts_fetch_fails
+    User.any_instance.stubs(:privilege?).returns(true)
+    Account.current.launch(:explore_omnichannel_feature)
+    Account.current.launch(:freshid_org_v2)
+    SubscriptionPlan.any_instance.stubs(:omni_plan?).returns(false)
+    Account.any_instance.stubs(:verified?).returns(true)
+    Account.any_instance.stubs(:organisation).returns(Organisation.new)
+    Account.any_instance.stubs(:organisation_accounts).returns(dummy_freshid_org_accounts_response_with_freshcaller_freshchat)
+    dummy_org_domain = 'sample.freshworks.com'
+    Organisation.any_instance.stubs(:domain).returns(dummy_org_domain)
+    RestClient::Request.any_instance.stubs(:execute).returns(freshworks_product_list)
+    assert Account.current.show_omnichannel_banner?
   ensure
     User.any_instance.unstub(:privilege?)
     Account.current.rollback(:explore_omnichannel_feature)

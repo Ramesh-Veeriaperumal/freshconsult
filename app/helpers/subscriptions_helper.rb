@@ -6,6 +6,10 @@ module SubscriptionsHelper
   AGENTS = :agents
   FIELD_TECHNICIANS = :'field technicians'
   PRODUCTS = :products
+  FREDDY_SESSIONS_TOKEN_EXPIRY = 15.minutes
+  FREDDY_TOKEN_ALGORITHM = 'RS256'.freeze
+  JWT_KEYWORD = 'JWT'.freeze
+  FREDDY_SESSIONS_CONTENT_TYPE = 'application/json'.freeze
 
   OMNI_FEATURES = {
     "sproutomni_channel_option" => ["sprout_omni"],
@@ -192,6 +196,12 @@ module SubscriptionsHelper
     current_account.currency_name.eql?(DEFAULT_CURRENCY)
   end
 
+  def fetch_savings_on_annual_plan(subscription, currency)
+    cost_per_month = subscription.cost_per_agent(SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly])
+    cost_per_month_discounted = subscription.cost_per_agent(SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
+    format_amount((cost_per_month - cost_per_month_discounted) * Subscription::ANNUAL_PERIOD * subscription.agent_limit, currency)
+  end
+
   def plan_button(plan, button_label, button_classes, free_plan_flag, add_freshdialog,
     title = "", data_submit_label = "", data_close_label = "", data_classes = "",
     data_submit_loading = t('please_wait'), billing_cycle = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
@@ -223,7 +233,7 @@ module SubscriptionsHelper
 
   def fsm_supported_plan?(plan)
     features = PLANS_FEATURES["#{plan.name.downcase}"]
-    Account.current.disable_old_ui_enabled? && (features || []).include?('fsm_option')
+    (features || []).include?('fsm_option')
   end
 
   def previous_plan?(plan)
@@ -263,5 +273,106 @@ module SubscriptionsHelper
 
   def get_omni_features(plan_name)
     IMPORTANT_OMNI_FEATURES["#{plan_name}"] || []
+  end
+
+  def calculate_freddy_session(addons, subscription, plan_name, billing_cycle)
+    freddy_session_packs_count = addons.collect { |addon| addon.billing_quantity(subscription) if SubscriptionConstants::FREDDY_SESSION_PACK_ADDONS.include?(addon.name) }.compact.first
+    self_service_addon = addons.detect { |addon| addon.name == Subscription::Addon::FREDDY_SELF_SERVICE_ADDON }
+    ultimate_addon = addons.detect { |addon| addon.name == Subscription::Addon::FREDDY_ULTIMATE_ADDON }
+    freddy_plan_session = PLANS[:subscription_plans][plan_name].present? ? PLANS[:subscription_plans][plan_name][:freddy_sessions] : 0
+    total_sessions = 0
+    total_sessions += freddy_plan_session * billing_cycle.to_i if freddy_plan_session.present?
+    total_sessions += get_default_addon_sessions(ultimate_addon, self_service_addon, billing_cycle)
+    total_sessions + SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_session_packs] * freddy_session_packs_count.to_i
+  end
+
+  def get_default_addon_sessions(ultimate_addon, self_service_addon, billing_period)
+    addon_sessions = if ultimate_addon.present?
+                       SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_ultimate]
+                     elsif self_service_addon.present?
+                       SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_self_service]
+                     end
+    addon_sessions.to_i * billing_period.to_i
+  end
+
+  def is_addon_enabled(addons, addon_name)
+    addons ||= {}
+    addons.detect { |addon| addon.name == addon_name }.present?
+  end
+
+  def update_billing_based_addon(addons, billing_period)
+    session_pack_addon = SubscriptionConstants::FREDDY_SESSION_PACK_ADDONS.detect { |addon| is_addon_enabled(addons, addon)}
+    return unless session_pack_addon.present?
+
+    if construct_session_packs_addon_name(billing_period) != session_pack_addon
+      addons.reject! { |addon| addon.name == session_pack_addon }
+      addons.push(*Subscription::Addon.where(name: construct_session_packs_addon_name(billing_period)))
+    end
+    addons
+  end
+
+  def construct_session_packs_addon_name(billing_period)
+    Subscription::Addon::FREDDY_SESSION_PACKS_ADDON + ' ' + SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[billing_period]
+  end
+
+  def fetch_consumed_freddy_sessions
+    fetch_freddy_account_usage[:sessionsConsumed] if Account.current.subscription.freddy_sessions > 0
+  end
+
+  def fetch_freddy_account_usage
+    account_usage = {}
+    url = FreddySkillsConfig[:freddy_consumed_session][:url]
+    time_taken = Benchmark.realtime { account_usage = HTTParty.get(url, freddy_sessions_options) }
+    Rails.logger.info "Time Taken to fetch freddy account usage - #{Account.current.id} time - #{time_taken}"
+    account_usage.success? ? JSON.parse(account_usage.response.body)['data'].symbolize_keys : {}
+  rescue StandardError => e
+    Rails.logger.error "Error while fetching freddy account usage #{e.message}"
+    {}
+  end
+
+  def freddy_omni_account_query_param
+    {
+      'bundleType' => Account.current.omni_bundle_name,
+      'bundleId' => Account.current.omni_bundle_id
+    }
+  end
+
+  def freddy_non_omni_account_query_param
+    {
+      'product' => FreddySkillsConfig[:freddy_consumed_session][:app_name],
+      'productAccountId' => Account.current.id
+    }
+  end
+
+  def freddy_sessions_options
+    query_param = Account.current.omni_bundle_account? ? freddy_omni_account_query_param : freddy_non_omni_account_query_param
+    {
+      headers: freddy_sessions_consumed_headers,
+      query: query_param,
+      timeout: FreddySkillsConfig[:freddy_consumed_session][:timeout]
+    }
+  end
+
+  def freddy_sessions_consumed_headers
+    {
+      'authToken' => freddy_sessions_jwt_token,
+      'Content-Type' => FREDDY_SESSIONS_CONTENT_TYPE
+    }
+  end
+
+  def freddy_sessions_private_key
+    OpenSSL::PKey::RSA.new(File.read('config/cert/freddy_sessions.pem'))
+  end
+
+  def freddy_sessions_jwt_token
+    JWT.encode freddy_sessions_payload, freddy_sessions_private_key, FREDDY_TOKEN_ALGORITHM, 'alg': FREDDY_TOKEN_ALGORITHM, 'typ': JWT_KEYWORD
+  end
+
+  def freddy_sessions_payload
+    {
+      iss: FreddySkillsConfig[:freddy_consumed_session][:app_name],
+      iat: Time.zone.now.to_i,
+      exp: Time.zone.now.to_i + FREDDY_SESSIONS_TOKEN_EXPIRY
+    }
   end
 end

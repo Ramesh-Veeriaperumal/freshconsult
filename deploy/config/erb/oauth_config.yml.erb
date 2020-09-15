@@ -31,6 +31,9 @@ oauth_options:
   google_contacts:
     site: https://accounts.google.com
     token_url: /o/oauth2/token
+  outlook:
+    site: https://login.microsoftonline.com
+    token_url: /common/oauth2/v2.0/token
 
 <% layer = node[:opsworks][:instance][:layers].first %>
 
@@ -97,4 +100,7 @@ oauth_options:
  google_hangout_chat:
    consumer_token: <%= node[:ymls][:oauth_config][:google_hangout_chat_token] %>
    consumer_secret: <%= node[:ymls][:oauth_config][:google_hangout_chat_secret] %>
+ outlook:
+  consumer_token: <%= node[:ymls][:oauth_config][:microsoft_outlook_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:microsoft_outlook_secret] %>
 <% end %>

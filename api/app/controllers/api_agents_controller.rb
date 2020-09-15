@@ -23,16 +23,16 @@ class ApiAgentsController < ApiApplicationController
 
   def index
     if only_omni_channel_availability
-      # Request OCR for the agents available for automatic ticket assignment
+      # Request OCR/MARS for the agents available for automatic ticket assignment
       query_params = { auto_assignment: true }
       (AgentConstants::AVAILABILITY_PARAMS | [:group_id, :page, :per_page, :order_type]).each do |param|
         query_params[param.to_sym] = params[param.to_sym] if params[param.to_sym].present?
       end
-      ocr_path = [OCR_PATHS[:get_agents], query_params.to_query].join('?')
-      Rails.logger.debug "GET #{ocr_path}"
+      req_path = [service_paths(proxy_to_mars?)[:get_agents], query_params.to_query].join('?')
+      Rails.logger.debug "GET #{req_path}"
       begin
-        ocr_response = request_ocr(:admin, :get, ocr_path)
-        @parsed_ocr_response = JSON.parse(ocr_response)
+        service_response = request_service(:admin, :get, req_path, nil, proxy_to_mars?)
+        @parsed_omni_agents, @parsed_omni_agents_count = parsed_omni_agents_response(JSON.parse(service_response))
       rescue Exception => e
         Rails.logger.info "Exception while fetching agents from OCR :: #{e.inspect}"
         NewRelic::Agent.notice_error(e)
@@ -60,7 +60,7 @@ class ApiAgentsController < ApiApplicationController
     return unless validate_delegator(nil, params[cname].slice(*AgentConstants::AGENT_CREATE_DELEGATOR_KEY).merge(agent_delegator_params))
 
     @user = current_account.users.new
-    assign_avatar if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
+    assign_avatar(@user) if params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
     params[:user] = params[cname][:user_attributes]
     check_and_assign_field_agent_roles if Account.current.field_service_management_enabled?
     check_and_assign_skills_for_create if Account.current.skill_based_round_robin_enabled?
@@ -70,6 +70,7 @@ class ApiAgentsController < ApiApplicationController
       if @item.save
         render_201_with_location(location_url: 'agents_url', item_id: @item.id)
       else
+        Account.current.users.where(id: @user.id).first.try(:destroy)
         render_errors(@item.errors)
       end
     else
@@ -92,6 +93,8 @@ class ApiAgentsController < ApiApplicationController
     @item.user.uniqueness_validated = true
     @item.user_changes = @item.user.agent.user_changes || {}
     @item.user_changes.merge!(@item.user.changes)
+    @item.user_avatar_changes = @avatar_changes
+    assign_avatar(@item.user) if private_api? && params[cname][:avatar_id].present? && @delegator.draft_attachments.present?
     return render_custom_errors(@item) unless check_edit_privilege
 
     assign_group_with_contribution_group
@@ -196,12 +199,12 @@ class ApiAgentsController < ApiApplicationController
     group_filter_hash = AgentConstants::AVAILABILITY_COUNT_FIELDS.each_with_object({}) do |filter_key, hash|
       hash[filter_key.to_sym] = params[filter_key] if params[filter_key].present?
     end
-    ocr_path = OCR_PATHS[:get_availability_count]
-    ocr_path = [ocr_path, group_filter_hash.to_query].join('?') if group_filter_hash.present?
+    req_path = service_paths[:get_availability_count]
+    req_path = [req_path, group_filter_hash.to_query].join('?') if group_filter_hash.present?
     begin
-      ocr_response = request_ocr(:admin, :get, ocr_path)
-      Rails.logger.debug "GET #{ocr_path}, response: #{ocr_response.inspect}"
-      @availability_count = JSON.parse(ocr_response).try(:[], 'agents_availability_count')
+      service_response = request_service(:admin, :get, req_path)
+      Rails.logger.debug "GET #{req_path}, response: #{service_response.inspect}"
+      @availability_count = JSON.parse(service_response).try(:[], 'agents_availability_count')
     rescue Exception => e
       Rails.logger.info "Exception while fetching availability count from OCR :: #{e.inspect}"
       NewRelic::Agent.notice_error(e)
@@ -311,7 +314,7 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def load_objects(scoper_options = nil)
-      return super(@parsed_ocr_response.try(:[], 'ocr_agents') || [], false) if only_omni_channel_availability
+      return super(@parsed_omni_agents || [], false) if only_omni_channel_availability
       return super(scoper_options) if scoper_options
 
       super(
@@ -365,8 +368,9 @@ class ApiAgentsController < ApiApplicationController
       @item.build_agent_groups_attributes(group_ids, contribution_group_ids)
     end
 
-    def assign_avatar
-      @user.avatar = @delegator.draft_attachments.first
+    def assign_avatar(user)
+      user.avatar = @delegator.draft_attachments.first
+      @item.user_avatar_changes = :upsert if user.avatar.try(:id)
     end
 
     def check_and_assign_field_agent_roles
@@ -513,5 +517,15 @@ class ApiAgentsController < ApiApplicationController
     def check_privilege
       success = super
       render_request_error(:access_denied, 403) if success && !private_api? && index? && !(only_omni_channel_availability || current_user.privilege?(:manage_users))
+    end
+
+    def proxy_to_mars?
+      @proxy_to_mars ||= Account.current.agent_statuses_enabled?
+    end
+
+    def parsed_omni_agents_response(omni_agent_response)
+      omni_agents_key = 'agents'
+      omni_agents_key.prepend('ocr_') unless proxy_to_mars?
+      [omni_agent_response.try(:[], omni_agents_key), omni_agent_response.try(:[], 'meta').try(:[], 'count')]
     end
 end

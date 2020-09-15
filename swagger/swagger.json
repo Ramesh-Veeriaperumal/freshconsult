@@ -5141,6 +5141,20 @@
             "type": "integer",
             "description": "Per page limit",
             "x-example": 20
+          },
+          {
+            "name": "available_in",
+            "in": "query",
+            "type": "string",
+            "description": "Filter the available agents based on the given channel value",
+            "x-enum": [
+              "ticket",
+              "chat",
+              "phone",
+              "any",
+              "none"
+            ],
+            "x-example": "ticket"
           }
         ],
         "responses": {
@@ -10287,13 +10301,36 @@
           "plans"
         ],
         "description": "Endpoint to list all Freshdesk plans and its pricing details",
-        "summary": "Endpoint to list all Freshdesk plans and its pricing details",
+        "summary": "List all",
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/plans"
             }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/plans/id": {
+      "get": {
+        "tags": [
+          "plans"
+        ],
+        "description": "Endpoint to fetch a Freshdesk plan and its pricing details",
+        "summary": "Fetch plan",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/fetch_plan"
+            }
+          },
+          "404": {
+            "description": "Not found"
           },
           "403": {
             "description": "Access denied"
@@ -12736,6 +12773,51 @@
             "schema": {
               "$ref": "#/definitions/agents_limit"
             }
+          }
+        }
+      }
+    },
+    "/admin/holidays/{id}": {
+      "get": {
+        "tags": [
+          "Holidays of Calendar"
+        ],
+        "summary": "Holidays of Calendar",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true,
+            "description": "It should be calendar code"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "holidays": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/holidays"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Holidays not found"
           }
         }
       }
@@ -15789,52 +15871,6 @@
         }
       }
     },
-    "/admin/holidays/{id}": {
-      "get": {
-        "tags": [
-          "Holidays"
-        ],
-        "summary": "Holidays of Business Calendar",
-        "description": "Holidays of Business Calendar",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "string",
-            "description": "Holidays code",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "holidays": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/holidays"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "404": {
-            "description": "Holidays not found"
-            },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },
     "/agent_statuses": {
       "get": {
         "tags": [
@@ -15981,6 +16017,422 @@
           },
           "404": {
             "description": "Agent status not found"
+          }
+        }
+      }
+    },
+    "/admin/business_calendars": {
+      "get": {
+        "tags": [
+          "admin business calendars"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "business_calendars": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/business_hours_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin business calendars"
+        ],
+        "description": "Create business hours",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/business_hours_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/business_hours_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/admin/business_calendars/{id}": {
+      "get": {
+        "tags": [
+          "admin business calendars"
+        ],
+        "summary": "Show business hours",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/business_hours_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "business hours not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin business calendars"
+        ],
+        "summary": "Delete business hours",
+        "description": "Destroys the business hours, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "business hours not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admin business calendars"
+        ],
+        "summary": "Update business hours",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/business_hours_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/business_hours_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "business hours not found"
+          }
+        }
+      }
+    },
+    "/admin/groups": {
+      "get": {
+        "tags": [
+          "admin groups"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "groups": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/admin_groups_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin groups"
+        ],
+        "description": "Create group",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/admin_groups_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/admin_groups_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/admin/groups/{id}": {
+      "get": {
+        "tags": [
+          "admin groups"
+        ],
+        "summary": "Show group",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/admin_groups_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "groups not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "admin groups"
+        ],
+        "summary": "Delete group",
+        "description": "Destroys the groups, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "groups not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admin groups"
+        ],
+        "summary": "Update group",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/admin_groups_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/admin_groups_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "groups not found"
+          }
+        }
+      }
+    },
+    "/admin/groups/{id}/agents": {
+      "get": {
+        "tags": [
+          "admin groups"
+        ],
+        "summary": "List all group agents",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "groups": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/admin_groups_agents_list_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "group not found"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "admin groups"
+        ],
+        "summary": "Update group agents",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "agents": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "write_access": {
+                        "type": "boolean"
+                      },
+                      "delete": {
+                        "type": "boolean",
+                        "default": false
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "agents"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "group not found"
           }
         }
       }
@@ -16422,7 +16874,7 @@
                     "rate_limited": {
                       "type": "boolean"
                     },
-                    "ms_mailbox_oauth_required": {
+                    "mailbox_oauth_reauth_required": {
                       "type": "boolean"
                     }
                   }
@@ -27360,6 +27812,39 @@
         }
       }
     },
+    "fetch_plan": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "currency": {
+              "type": "string"
+            },
+            "pricings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "billing_cycle": {
+                    "type": "string"
+                  },
+                  "cost_per_agent": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "subscription_update_request": {
       "type": "object",
       "properties": {
@@ -31357,6 +31842,545 @@
           }
         }
       ]
+    },
+    "business_hours_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "business hour name"
+        },
+        "description": {
+          "type": "string",
+          "description": "business hour description"
+        },
+        "time_zone": {
+          "type": "string",
+          "description": "default is account timezone. Accepted timezone strings are [\"American Samoa\", \"International Date Line West\", \"Midway Island\", \"Hawaii\", \"Alaska\", \"Pacific Time (US & Canada)\", \"Tijuana\", \"Arizona\", \"Chihuahua\", \"Mazatlan\", \"Mountain Time (US & Canada)\", \"Central America\", \"Central Time (US & Canada)\", \"Guadalajara\", \"Mexico City\", \"Monterrey\", \"Saskatchewan\", \"Bogota\", \"Eastern Time (US & Canada)\", \"Indiana (East)\", \"Lima\", \"Quito\", \"Atlantic Time (Canada)\", \"Caracas\", \"Georgetown\", \"La Paz\", \"Santiago\", \"Newfoundland\", \"Brasilia\", \"Buenos Aires\", \"Greenland\", \"Mid-Atlantic\", \"Azores\", \"Cape Verde Is.\", \"Casablanca\", \"Dublin\", \"Edinburgh\", \"Lisbon\", \"London\", \"Monrovia\", \"UTC\", \"Amsterdam\", \"Belgrade\", \"Berlin\", \"Bern\", \"Bratislava\", \"Brussels\", \"Budapest\", \"Copenhagen\", \"Ljubljana\", \"Madrid\", \"Paris\", \"Prague\", \"Rome\", \"Sarajevo\", \"Skopje\", \"Stockholm\", \"Vienna\", \"Warsaw\", \"West Central Africa\", \"Zagreb\", \"Athens\", \"Bucharest\", \"Cairo\", \"Harare\", \"Helsinki\", \"Istanbul\", \"Jerusalem\", \"Kyiv\", \"Pretoria\", \"Riga\", \"Sofia\", \"Tallinn\", \"Vilnius\", \"Baghdad\", \"Kuwait\", \"Minsk\", \"Moscow\", \"Nairobi\", \"Riyadh\", \"St. Petersburg\", \"Volgograd\", \"Tehran\", \"Abu Dhabi\", \"Baku\", \"Muscat\", \"Tbilisi\", \"Yerevan\", \"Kabul\", \"Ekaterinburg\", \"Islamabad\", \"Karachi\", \"Tashkent\", \"Chennai\", \"Kolkata\", \"Mumbai\", \"New Delhi\", \"Sri Jayawardenepura\", \"Kathmandu\", \"Almaty\", \"Astana\", \"Dhaka\", \"Urumqi\", \"Rangoon\", \"Bangkok\", \"Hanoi\", \"Jakarta\", \"Krasnoyarsk\", \"Novosibirsk\", \"Beijing\", \"Chongqing\", \"Hong Kong\", \"Irkutsk\", \"Kuala Lumpur\", \"Perth\", \"Singapore\", \"Taipei\", \"Ulaan Bataar\", \"Osaka\", \"Sapporo\", \"Seoul\", \"Tokyo\", \"Yakutsk\", \"Adelaide\", \"Darwin\", \"Brisbane\", \"Canberra\", \"Guam\", \"Hobart\", \"Melbourne\", \"Port Moresby\", \"Sydney\", \"Vladivostok\", \"Magadan\", \"New Caledonia\", \"Solomon Is.\", \"Auckland\", \"Fiji\", \"Kamchatka\", \"Marshall Is.\", \"Wellington\", \"Nuku'alofa\", \"Samoa\", \"Tokelau Is.\"]"
+        },
+        "channel_business_hours": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "enum": [
+                  "ticket",
+                  "chat",
+                  "phone"
+                ]
+              },
+              "business_hours_type": {
+                "type": "string",
+                "description": "business_hours property should be populated if the type is custom",
+                "enum": [
+                  "24_7_availability",
+                  "custom"
+                ]
+              },
+              "business_hours": {
+                "type": "array",
+                "description": "Only when business_hours_type is custom",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "day": {
+                      "type": "string",
+                      "description": "day of the week",
+                      "enum": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ]
+                    },
+                    "time_slots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start_time": {
+                            "type": "string",
+                            "description": "in 24 hour format hh:mm"
+                          },
+                          "end_time": {
+                            "type": "string",
+                            "description": "in 24 hour format hh:mm"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "away_message": {
+                "type": "string",
+                "description": "only available for chat"
+              }
+            },
+            "required": [
+              "channel",
+              "business_hours_type"
+            ]
+          }
+        },
+        "holidays": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "description": "in the format 'mmm day'. example 'jun 02'"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "time_zone",
+        "channel_business_hours"
+      ]
+    },
+    "admin_business_hours": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "business hour name"
+        },
+        "description": {
+          "type": "string",
+          "description": "business hour description"
+        },
+        "time_zone": {
+          "type": "string",
+          "description": "default is account timezone. Accepted timezone strings are [\"American Samoa\", \"International Date Line West\", \"Midway Island\", \"Hawaii\", \"Alaska\", \"Pacific Time (US & Canada)\", \"Tijuana\", \"Arizona\", \"Chihuahua\", \"Mazatlan\", \"Mountain Time (US & Canada)\", \"Central America\", \"Central Time (US & Canada)\", \"Guadalajara\", \"Mexico City\", \"Monterrey\", \"Saskatchewan\", \"Bogota\", \"Eastern Time (US & Canada)\", \"Indiana (East)\", \"Lima\", \"Quito\", \"Atlantic Time (Canada)\", \"Caracas\", \"Georgetown\", \"La Paz\", \"Santiago\", \"Newfoundland\", \"Brasilia\", \"Buenos Aires\", \"Greenland\", \"Mid-Atlantic\", \"Azores\", \"Cape Verde Is.\", \"Casablanca\", \"Dublin\", \"Edinburgh\", \"Lisbon\", \"London\", \"Monrovia\", \"UTC\", \"Amsterdam\", \"Belgrade\", \"Berlin\", \"Bern\", \"Bratislava\", \"Brussels\", \"Budapest\", \"Copenhagen\", \"Ljubljana\", \"Madrid\", \"Paris\", \"Prague\", \"Rome\", \"Sarajevo\", \"Skopje\", \"Stockholm\", \"Vienna\", \"Warsaw\", \"West Central Africa\", \"Zagreb\", \"Athens\", \"Bucharest\", \"Cairo\", \"Harare\", \"Helsinki\", \"Istanbul\", \"Jerusalem\", \"Kyiv\", \"Pretoria\", \"Riga\", \"Sofia\", \"Tallinn\", \"Vilnius\", \"Baghdad\", \"Kuwait\", \"Minsk\", \"Moscow\", \"Nairobi\", \"Riyadh\", \"St. Petersburg\", \"Volgograd\", \"Tehran\", \"Abu Dhabi\", \"Baku\", \"Muscat\", \"Tbilisi\", \"Yerevan\", \"Kabul\", \"Ekaterinburg\", \"Islamabad\", \"Karachi\", \"Tashkent\", \"Chennai\", \"Kolkata\", \"Mumbai\", \"New Delhi\", \"Sri Jayawardenepura\", \"Kathmandu\", \"Almaty\", \"Astana\", \"Dhaka\", \"Urumqi\", \"Rangoon\", \"Bangkok\", \"Hanoi\", \"Jakarta\", \"Krasnoyarsk\", \"Novosibirsk\", \"Beijing\", \"Chongqing\", \"Hong Kong\", \"Irkutsk\", \"Kuala Lumpur\", \"Perth\", \"Singapore\", \"Taipei\", \"Ulaan Bataar\", \"Osaka\", \"Sapporo\", \"Seoul\", \"Tokyo\", \"Yakutsk\", \"Adelaide\", \"Darwin\", \"Brisbane\", \"Canberra\", \"Guam\", \"Hobart\", \"Melbourne\", \"Port Moresby\", \"Sydney\", \"Vladivostok\", \"Magadan\", \"New Caledonia\", \"Solomon Is.\", \"Auckland\", \"Fiji\", \"Kamchatka\", \"Marshall Is.\", \"Wellington\", \"Nuku'alofa\", \"Samoa\", \"Tokelau Is.\"]"
+        },
+        "default": {
+          "type": "boolean",
+          "default": false
+        },
+        "channel_business_hours": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "type": "string",
+                "enum": [
+                  "ticket",
+                  "chat",
+                  "phone"
+                ]
+              },
+              "business_hours_type": {
+                "type": "string",
+                "description": "business_hours property should be populated if the type is custom",
+                "enum": [
+                  "24_7_availability",
+                  "custom"
+                ]
+              },
+              "business_hours": {
+                "type": "array",
+                "description": "Only when business_hours_type is custom",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "day": {
+                      "type": "string",
+                      "description": "day of the week",
+                      "enum": [
+                        "monday",
+                        "tuesday",
+                        "wednesday",
+                        "thursday",
+                        "friday",
+                        "saturday",
+                        "sunday"
+                      ]
+                    },
+                    "time_slots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "start_time": {
+                            "type": "string",
+                            "description": "in 24 hour format hh:mm"
+                          },
+                          "end_time": {
+                            "type": "string",
+                            "description": "in 24 hour format hh:mm"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "away_message": {
+                "type": "string",
+                "description": "only available for chat"
+              }
+            },
+            "required": [
+              "channel",
+              "business_hours_type"
+            ]
+          }
+        },
+        "holidays": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string",
+                "description": "in the format 'mmm day'. example 'jun 02'"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "time_zone",
+        "channel_business_hours"
+      ]
+    },
+    "business_hours_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/admin_business_hours"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "admin_groups_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "group name"
+        },
+        "description": {
+          "type": "string",
+          "description": "group description"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "support_agent_group",
+            "field_agent_group"
+          ],
+          "default": "support_agent_group"
+        },
+        "escalate_to": {
+          "type": "number",
+          "description": "agent id to whom the ticket has to be assigned on escalation"
+        },
+        "unassigned_for": {
+          "type": "string",
+          "description": "time period till which the ticket can remain unassigned.",
+          "enum": [
+            "30m",
+            "1h",
+            "2h",
+            "4h",
+            "8h",
+            "12h",
+            "1d",
+            "2d",
+            "3d",
+            "nil"
+          ]
+        },
+        "agent_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "contribution_agent_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "agents to be provided with read access"
+        },
+        "business_calendar_id": {
+          "type": "number"
+        },
+        "automatic_agent_assignment": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "omni_channel",
+                "channel_specific"
+              ]
+            },
+            "settings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "ticket",
+                      "chat"
+                    ]
+                  },
+                  "assignment_type": {
+                    "type": "string",
+                    "description": "channel specific assignment type. intelli_assign is the only option available for chat",
+                    "enum": [
+                      "round_robin",
+                      "load_based_round_robin",
+                      "skill_based_round_robin",
+                      "lbrr_by_omni_route",
+                      "intelli_assign"
+                    ]
+                  },
+                  "assignment_type_settings": {
+                    "type": "object",
+                    "description": "settings relevant to the selected assignment_type",
+                    "properties": {
+                      "capping_limit": {
+                        "type": "number",
+                        "description": "only for load_based_round_robin/skill_based_round_robin"
+                      },
+                      "reassign_conversation_of_inactive_agent": {
+                        "type": "boolean",
+                        "description": "only applicable for freschat channel."
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "channel",
+                  "assignment_type"
+                ]
+              }
+            }
+          },
+          "required": [
+            "enabled",
+            "type"
+          ]
+        },
+        "allow_agents_to_change_availability": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "admin_groups": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "group name"
+        },
+        "description": {
+          "type": "string",
+          "description": "group description"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "support_agent_group",
+            "field_agent_group"
+          ],
+          "default": "support_agent_group"
+        },
+        "escalate_to": {
+          "type": "number",
+          "description": "agent id to whom the ticket has to be assigned on escalation"
+        },
+        "unassigned_for": {
+          "type": "string",
+          "description": "time period till which the ticket can remain unassigned.",
+          "enum": [
+            "30m",
+            "1h",
+            "2h",
+            "4h",
+            "8h",
+            "12h",
+            "1d",
+            "2d",
+            "3d",
+            "nil"
+          ]
+        },
+        "agent_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "contribution_agent_ids": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "agents to be provided with read access"
+        },
+        "business_calendar_id": {
+          "type": "number"
+        },
+        "automatic_agent_assignment": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "omni_channel",
+                "channel_specific"
+              ]
+            },
+            "settings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "channel": {
+                    "type": "string",
+                    "enum": [
+                      "ticket",
+                      "chat"
+                    ]
+                  },
+                  "assignment_type": {
+                    "type": "string",
+                    "description": "channel specific assignment type. intelli_assign is the only option available for chat",
+                    "enum": [
+                      "round_robin",
+                      "load_based_round_robin",
+                      "skill_based_round_robin",
+                      "lbrr_by_omni_route",
+                      "intelli_assign"
+                    ]
+                  },
+                  "assignment_type_settings": {
+                    "type": "object",
+                    "description": "settings relevant to the selected assignment_type",
+                    "properties": {
+                      "capping_limit": {
+                        "type": "number",
+                        "description": "only for load_based_round_robin/skill_based_round_robin"
+                      },
+                      "reassign_conversation_of_inactive_agent": {
+                        "type": "boolean",
+                        "description": "only applicable for freschat channel."
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "channel",
+                  "assignment_type"
+                ]
+              }
+            }
+          },
+          "required": [
+            "enabled",
+            "type"
+          ]
+        },
+        "allow_agents_to_change_availability": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "admin_groups_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/admin_groups"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "admin_groups_agents_list_response": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "ticket_scope": {
+          "type": "integer",
+          "x-enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "role_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "freshcaller_agent": {
+          "type": "boolean"
+        },
+        "freshchat_agent": {
+          "type": "boolean"
+        },
+        "contact": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "avatar": {
+              "$ref": "#/definitions/avatar"
+            }
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
     }
   },
   "parameters": {

@@ -28,7 +28,7 @@ module Concerns
         else
           default_reply_forward = signature.blank? ? '<p/><p/><br/>' : "<p/><p><br></br></p><p></p><p></p><div>#{signature}</div>"
         end
-        ticket.escape_liquid_attributes = current_account.launched?(:escape_liquid_for_reply)
+        ticket.escape_liquid_attributes = true
         quoted_text = ''
         if quoted
           quoted_text = quoted_text(item, forward)
@@ -78,15 +78,24 @@ module Concerns
         # item can be note/ticket
         # If its a ticket we will be getting the last note from the ticket
         @last_item = item.is_a?(Helpdesk::Note) || forward ? item : (item.notes.visible.public_notes.last || item)
-
-        %(<div class="freshdesk_quote">
-            <blockquote class="freshdesk_quote">
-              #{I18n.t('ticket.quoted_text.wrote_on')}
-              #{formated_date(@last_item.created_at.in_time_zone((User.current || Account.current).time_zone))}
-              <span class="separator" />, #{user_details_template(@last_item)} #{I18n.t('ticket.quoted_text.wrote')}:
-              #{(@last_item.description_html || extract_quote_from_note(@last_item).to_s)}
-            </blockquote>
-           </div>)
+        item_requester = item.is_a?(Helpdesk::Ticket) ? item.requester : item.notable.requester
+        quoted_text_language = (item_requester.try(:language) || Account.current.language).to_sym
+        # Setting I18n.locale to requester's language as the date_time in the quoted_text must be of requester's language (Eg: On Wed, 20 May at 5:10 AM)
+        if I18n.locale != quoted_text_language
+          old_i18n = I18n.locale
+          I18n.locale = quoted_text_language
+        end
+        quoted_text = %(<div class="freshdesk_quote">
+                          <blockquote class="freshdesk_quote">
+                            #{I18n.t('ticket.quoted_text.wrote_on')}
+                            #{formated_date(@last_item.created_at.in_time_zone((item_requester || User.current || Account.current).time_zone))}
+                            <span class="separator" />, #{user_details_template(@last_item)} #{I18n.t('ticket.quoted_text.wrote')}:
+                            #{(@last_item.description_html || extract_quote_from_note(@last_item).to_s)}
+                          </blockquote>
+                        </div>)
+        # Resetting I18n.locale to the old value.
+        I18n.locale = old_i18n if old_i18n.present?
+        quoted_text
       end
 
       def user_details_template(item)

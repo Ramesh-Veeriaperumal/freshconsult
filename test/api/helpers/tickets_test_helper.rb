@@ -373,10 +373,19 @@ module ApiTicketsTestHelper
   end
 
   def restricted_twitter_ticket_content(ticket)
+    handle = ticket.tweet.twitter_handle
+    twitter_requester = ticket.requester
+    twitter_requester_handle_id = twitter_requester.twitter_requester_handle_id || ticket.tweet.twitter_handle_id
     if ticket.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      "View the tweet at https://twitter.com/#{ticket.tweet.twitter_handle_id}/status/#{ticket.tweet.tweet_id}"
+      "View the tweet at https://twitter.com/#{twitter_requester_handle_id}/status/#{ticket.tweet.tweet_id}"
     else
-      'View the message at https://twitter.com/messages'
+      dm_body_prefix = 'View the message at https://twitter.com/messages'
+      if handle && twitter_requester.twitter_requester_handle_id
+        handle_ids = [handle.twitter_user_id.to_i, twitter_requester_handle_id.to_i]
+        "#{dm_body_prefix}/#{handle_ids.min}-#{handle_ids.max}"
+      else
+        dm_body_prefix
+      end
     end
   end
 
@@ -1143,11 +1152,9 @@ module ApiTicketsTestHelper
   end
 
   def new_ticket_from_forum_topic(params = {})
-    @account.launch(:forum_post_spam_whitelist)
     topic = create_test_topic(Forum.first || create_test_forum(create_test_category))
-    @account.rollback(:forum_post_spam_whitelist)
     ticket = create_ticket(params)
-    ticket_topic = create_ticket_topic_mapping(topic, ticket)
+    create_ticket_topic_mapping(topic, ticket)
     ticket
   end
 
@@ -1415,12 +1422,13 @@ module ApiTicketsTestHelper
 
   def tweet_hash(ticket)
     handle = ticket.tweet.twitter_handle
+    twitter_requester = ticket.requester
     tweet_hash = {
       id: ticket.tweet.tweet_id.to_s,
       type: ticket.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !@channel_v2_api ? nil : ticket.requester.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !@channel_v2_api ? twitter_requester.twitter_requester_handle_id : twitter_requester.twitter_id
     }
     if @channel_v2_api
       tweet_hash.merge!(stream_id: ticket.tweet.stream_id)

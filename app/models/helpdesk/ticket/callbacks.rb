@@ -85,7 +85,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :notify_on_update, :update_activity, :stop_timesheet_timers, :fire_update_event, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
-  after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
   after_commit :set_links, :on => :create, :if => :tracker_ticket?
@@ -184,6 +183,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     process_agent_and_group_changes
     process_status_changes
     update_ticket_lifecycle
+    assign_uncommited_ticket_states
     ticket_states.save if ticket_states.changed?
     Rails.logger.info "Helpdesk::Ticket::update_ticket_states::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
     schema_less_ticket.save if Account.current.ticket_observer_race_condition_fix_enabled? || schema_less_ticket_changed?
@@ -291,6 +291,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     tkt_group ||= model_changes.has_key?(:group_id) ? Group.find_by_id(model_changes[:group_id][0]) : self.group
 
     @ticket_lifecycle = schema_less_ticket.update_lifecycle_changes(time_zone_now, tkt_group, [RESOLVED,CLOSED].include?(status))
+  end
+
+  def assign_uncommited_ticket_states
+    if ticket_states.previous_changes.present?
+      prev_changes = ticket_states.previous_changes.each_with_object({}) { |(k, v), change| change[k] = v.last }
+      curr_changes = ticket_states.changes.each_with_object({}) { |(k, v), change| change[k] = v.last }
+      Rails.logger.info "Helpdesk:ticket_states:previous_changes:: #{prev_changes.inspect}, Helpdesk:ticket_states:changes:: #{curr_changes.inspect}"
+      ticket_states.reload
+      ticket_states.assign_attributes(prev_changes)
+    end
   end
 
   #Shared onwership Validations
@@ -738,7 +748,7 @@ private
   end
 
   def should_sanitise_subject?
-    model_changes[:subject] && Account.current.encode_emoji_subject_enabled?
+    model_changes[:subject]
   end
 
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!,
@@ -935,16 +945,6 @@ private
 
   def fire_update_event
     fire_event(:update, @model_changes) unless disable_observer
-  end
-
-  def publish_to_update_channel
-    return unless Account.current.features?(:agent_collision)
-    agent_name = User.current ? User.current.name : ""
-    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id,
-                                                  :ticket_id => self.id,
-                                                  :agent_name => agent_name,
-                                                  :type => "updated"}
-    publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
   end
 
   def regenerate_reports_data

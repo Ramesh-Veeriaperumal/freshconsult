@@ -78,8 +78,8 @@ class ApiSlaPolicyValidation < ApiValidation
 
   def validate_sla_target
     self.sla_target.each do |level|
-      sla_validator = private_api? && Account.current.sla_policy_revamp_enabled? ? Ember::SlaDetailsValidation.new(level.second, nil) : ApiSlaDetailsValidation.new(level.second, nil)
-      marge_error(sla_validator, "sla_target[#{level.first}]") if sla_validator.invalid?
+      sla_validator = private_api? ? Ember::SlaDetailsValidation.new(level.second, nil) : ApiSlaDetailsValidation.new(level.second, nil)
+      merge_error(sla_validator, "sla_target[#{level.first}]") if sla_validator.invalid?
     end
   end
 
@@ -98,10 +98,10 @@ class ApiSlaPolicyValidation < ApiValidation
   def validate_escalation_hash(key, hash)
     validation_hash = hash.dup.merge(escalation_type: key)
     sla_validator = ApiSlaEscalationValidation.new(hash, nil)
-    marge_error(sla_validator, key) if sla_validator.invalid?
+    merge_error(sla_validator, key) if sla_validator.invalid?
   end
 
-  def marge_error(sla_validator,key)
+  def merge_error(sla_validator, key)
     sla_validator.errors.messages.each do |err,val|
       if val.present?
         errors[:"#{key}[#{err}]"] << val.first

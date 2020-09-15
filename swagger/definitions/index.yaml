@@ -679,6 +679,8 @@ subscription_response:
   $ref: ./response/subscription/show.yaml
 plans:
   $ref: ./response/subscription/plans.yaml
+fetch_plan:
+  $ref: ./response/subscription/fetch_plan.yaml
 subscription_update_request:
   $ref: ./request/subscription/update.yaml
 subscription_estimate:
@@ -928,6 +930,8 @@ out_of_office_response:
 
 scoreboard_level:
   $ref: './resource/admin/scoreboard_level.yaml'
+holidays:
+  $ref: './resource/admin/holidays.yaml'
 
 search_in_freshworks:
   $ref: './response/agents/search_in_freshworks.yaml'
@@ -956,3 +960,21 @@ agent_availability_count_response:
   $ref: ./response/agents/availability_count.yaml
 agent_with_availability_response:
   $ref: './response/agents/availability.yaml'
+
+# Admin business hours
+business_hours_input:
+  $ref: ./request/admin/business_hours.yaml
+admin_business_hours:
+  $ref: ./resource/admin/business_hours.yaml
+business_hours_response:
+  $ref: ./response/admin/business_hours.yaml
+
+# Admin groups
+admin_groups_input:
+  $ref: ./resource/admin/groups.yaml
+admin_groups:
+  $ref: ./resource/admin/groups.yaml
+admin_groups_response:
+  $ref: ./response/admin/groups.yaml
+admin_groups_agents_list_response:
+  $ref: ./response/admin/groups_agents.yaml

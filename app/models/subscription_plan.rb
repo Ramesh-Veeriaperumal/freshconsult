@@ -25,12 +25,6 @@ class SubscriptionPlan < ActiveRecord::Base
 
   scope :get_details_by_name, ->(fields, names) { select(fields).where(name: names) }
 
-  # TODO: Remove force_2020_plan?() after 2019 plan launched
-  # START
-  scope :plans_2020, -> { where(name: ['Sprout Jan 20', 'Blossom Jan 20', 'Garden Jan 20', 'Estate Jan 20', 'Estate Omni Jan 20', 'Forest Jan 20', 'Forest Omni Jan 20']).
-                                         order('amount asc')}
-  # END
-
   scope :omni_channel_plan, -> { where(name: ['Estate Omni Jan 20', 'Forest Omni Jan 20']).order('amount asc') }
 
   after_commit :clear_cache
@@ -127,6 +121,12 @@ class SubscriptionPlan < ActiveRecord::Base
   end.freeze
 
   FREE_OMNI_PLANS = ['Forest Jan 19'].freeze
+
+  FREDDY_DEFAULT_SESSIONS_MAP = {
+    freddy_self_service: 1000,
+    freddy_ultimate: 5000,
+    freddy_session_packs: 1000
+  }.freeze
 
   def fetch_discount(billing_cycle)
     BILLING_CYCLE_DISCOUNT[self.name].fetch(billing_cycle,1)
@@ -232,5 +232,29 @@ class SubscriptionPlan < ActiveRecord::Base
 
   def multi_product?
     PLANS[:subscription_plans][canon_name][:features].include?(:multi_product) if PLANS[:subscription_plans][canon_name]
+  end
+
+  def freddy_self_service_cost(currency)
+    costs = price[:FREDDY][:SELF_SERVICE]
+    costs.nil? ? 0 : costs[currency.to_sym]
+  end
+
+  def freddy_ultimate_cost(currency)
+    costs = price[:FREDDY][:ULTIMATE]
+    costs.nil? ? 0 : costs[currency.to_sym]
+  end
+
+  def freddy_ultimate_session_cost(currency)
+    costs = price[:FREDDY][:ULTIMATE_SESSION]
+    costs.nil? ? 0 : costs[currency.to_sym]
+  end
+
+  def freddy_additional_pack_cost(currency)
+    costs = price[:FREDDY][:ADDITIONAL_PACKS]
+    costs.nil? ? 0 : costs[currency.to_sym]
+  end
+
+  def freddy_addon_count
+    price[:FREDDY].count if price[:FREDDY].present?
   end
 end

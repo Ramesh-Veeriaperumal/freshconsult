@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20200502053301) do
+ActiveRecord::Schema.define(version: 20200817171910) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2202,9 +2202,11 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.boolean  "toggle_availability",               :default => false
     t.integer  "capping_limit",                     :default => 0
     t.integer  "group_type",                        :default => 1
+    t.string   'uid'
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
+  add_index 'groups', ['account_id', 'uid'], name: 'index_account_id_uid_on_groups'
 
   create_table "help_widgets", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -2890,7 +2892,8 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.integer  "timeout"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "refresh_token"
+    t.text     'encrypted_refresh_token'
+    t.text     'encrypted_access_token'
     t.column 'error_type', 'smallint'
   end
 
@@ -3463,7 +3466,8 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.string   "domain"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "refresh_token"
+    t.text     'encrypted_refresh_token'
+    t.text     'encrypted_access_token'
     t.column   'error_type', 'smallint'
   end
 
@@ -4394,6 +4398,7 @@ ActiveRecord::Schema.define(version: 20200502053301) do
     t.datetime 'created_at',                  :null => false
     t.datetime 'updated_at',                  :null => false
     t.boolean  "feature_loss",      :default => false
+    t.text     'additional_info'
   end
 
   add_index 'subscription_requests', ['account_id', 'subscription_id'], :name => 'index_subscription_requests_on_account_id_subscription_id'

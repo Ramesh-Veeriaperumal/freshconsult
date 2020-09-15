@@ -273,4 +273,17 @@ class SchemaLessTicketTest < ActiveSupport::TestCase
     @ticket.destroy
     Account.any_instance.unstub(:shared_ownership_enabled?)
   end
+
+  def test_retry_attribute_changes_on_stale_object_error
+    schema_less_t = @ticket.schema_less_ticket
+    schema_less_t.stubs(:save).raises(ActiveRecord::StaleObjectError)
+    lock_column = schema_less_t.class.locking_column
+    schema_less_t.product_id = rand(1..4)
+    2.times.each { |_i| schema_less_t.update }
+    assert_equal true, schema_less_t.changes.keys.include?(lock_column)
+    assert_equal false, schema_less_t.safe_send(:attribute_changes).keys.include?(lock_column)
+  ensure
+    schema_less_t.unstub(:save)
+    @ticket.destroy
+  end
 end

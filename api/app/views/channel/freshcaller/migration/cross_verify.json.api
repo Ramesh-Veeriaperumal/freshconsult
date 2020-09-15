@@ -1,5 +1,0 @@
-if @errors.length > 0
-  { "errors": @errors, "freshcaller_account_id": @freshcaller_account_id }.to_hash.to_json
-else
-  { "success": 'Verified migration', "freshcaller_account_id": @freshcaller_account_id }.to_hash.to_json
-end

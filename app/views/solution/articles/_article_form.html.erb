@@ -52,21 +52,12 @@
     <% end %>
     <input type="hidden" name="cancel_draft_changes" 
           value="1" id="cancel_draft_changes_input" disabled="disabled">
-          <% if current_account.launched?(:multifile_attachments) %>
-            <%= render	:partial => "/solution/shared/multi_attachment_form",
-            :locals => { :attach_id => 'article', :nsc_param => 'solution_article',
-              :original_attachments => { 
-                :cloud_files => active_attachments(:cloud_files, @article), 
-                :regular => active_attachments(:attachments, @article) }
-            } %>
-            <% else %>
-              <%= render  :partial => "/solution/shared/single_attachment_form",
-              :locals => { :attach_id => 'article', :nsc_param => "solution_article_meta[#{@language_scoper}]",
-                :original_attachments => { 
-                  :cloud_files => active_attachments(:cloud_files, @article), 
-                  :regular => active_attachments(:attachments, @article) }
-              } %>
-            <% end %>
+          <%= render	:partial => "/solution/shared/multi_attachment_form",
+          :locals => { :attach_id => 'article', :nsc_param => 'solution_article',
+            :original_attachments => { 
+              :cloud_files => active_attachments(:cloud_files, @article), 
+              :regular => active_attachments(:attachments, @article) }
+          } %>
     <% if is_application_installed?("screenr") %>
       <div class="control-group">
         <div class="controls">

@@ -15,7 +15,7 @@ module ChannelIntegrations::Commands::Services
       data = payload[:data]
 
       set_current_user(data[:requester_id])
-      update_contact_twitter_fields(data) if twitter_requester_fields_present?(data)
+      update_contact_twitter_fields(data, context)
       check_twitter_handle?(context[:twitter_handle_id])
 
       Rails.logger.debug("Twitter::CreateTicket, account_id: #{current_account.id}, tweet_id: #{context[:tweet_id]}")
@@ -38,7 +38,7 @@ module ChannelIntegrations::Commands::Services
       data = payload[:data]
       ticket_id = payload[:data][:ticket_id]
       set_current_user(data[:user_id])
-      update_contact_twitter_fields(data) if twitter_requester_fields_present?(data)
+      update_contact_twitter_fields(data, context)
       check_twitter_handle?(context[:twitter_handle_id])
 
       Rails.logger.debug("Twitter::CreateNote, account_id: #{current_account.id}, tweet_id: #{context[:tweet_id]}")
@@ -207,13 +207,20 @@ module ChannelIntegrations::Commands::Services
         (data.keys & [:twitter_profile_status, :twitter_followers_count]).present?
       end
 
-      def update_contact_twitter_fields(data)
+      def populate_twitter_requester_handle_id?(current_user, context)
+        Account.current.twitter_api_compliance_enabled? && (context.keys & [:contact_twitter_user_id]).present? && context[:contact_twitter_user_id].to_s != current_user.twitter_requester_handle_id
+      end
+
+      def update_contact_twitter_fields(data, context)
         current_user = User.current
-        current_user.twitter_profile_status = data.delete(:twitter_profile_status)
-        current_user.twitter_followers_count = data.delete(:twitter_followers_count)
+        current_user.twitter_requester_handle_id = context[:contact_twitter_user_id].to_s if populate_twitter_requester_handle_id?(current_user, context)
+        if twitter_requester_fields_present?(data)
+          current_user.twitter_profile_status = data.delete(:twitter_profile_status)
+          current_user.twitter_followers_count = data.delete(:twitter_followers_count)
+        end
         current_user.save!
       rescue StandardError => e
-        Rails.logger.info "Twitter::CreateNote exception while updating user account_id: #{current_account.id} data: #{data.inspect} #{e.message} #{e.backtrace[0.10]}"
+        Rails.logger.info "Twitter::CreateNote exception while updating user account_id: #{current_account.id} data: #{data.inspect} context: #{context.inspect} #{e.message} #{e.backtrace[0..10]}"
       end
   end
 end

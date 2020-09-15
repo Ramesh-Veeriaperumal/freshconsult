@@ -1156,6 +1156,20 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_create_agent_with_agent_save_failure
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    Agent.any_instance.stubs(:save).returns(false)
+    old_count = Account.current.users.count
+    params_hash = { email: Faker::Internet.email, ticket_scope: 2, role_ids: [Account.current.roles.where(name: 'Agent').first.id], name: Faker::Name.name }
+    post :create, construct_params(params_hash)
+    assert_equal old_count, Account.current.users.count # The new user created should have been deleted
+  ensure
+    Agent.any_instance.unstub(:save)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_create_agent_invalid_datatypes
     Account.stubs(:current).returns(Account.first)
     params = { name: nil, phone: 3_534_653, mobile: 6_756_868, email: Faker::Name.name, time_zone: 'Cntral Time (US & Canada)', language: 'huty', occasional: 'yes', signature: 123, ticket_scope: 212,
@@ -2387,12 +2401,12 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.current.launch(:omni_agent_availability_dashboard)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
-    ApiAgentsController.any_instance.stubs(:request_ocr).returns(AVAILABILITY_COUNT_RESPONSE.to_json)
+    ApiAgentsController.any_instance.stubs(:request_service).returns(AVAILABILITY_COUNT_RESPONSE.to_json)
     get :availability_count, controller_params
     assert_response 200
     match_json(availability_count_pattern)
   ensure
-    ApiAgentsController.any_instance.unstub(:request_ocr)
+    ApiAgentsController.any_instance.unstub(:request_service)
     User.any_instance.unstub(:privilege?)
     Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
     Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
@@ -2406,12 +2420,12 @@ class ApiAgentsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
     availability_count_response = AVAILABILITY_COUNT_RESPONSE.dup
     availability_count_response[:agents_availability_count].slice!(:freshdesk)
-    ApiAgentsController.any_instance.stubs(:request_ocr).returns(availability_count_response.to_json)
+    ApiAgentsController.any_instance.stubs(:request_service).returns(availability_count_response.to_json)
     get :availability_count, controller_params(freshdesk_group_ids: '1,2,3')
     assert_response 200
     match_json(availability_count_pattern(availability_count_response))
   ensure
-    ApiAgentsController.any_instance.unstub(:request_ocr)
+    ApiAgentsController.any_instance.unstub(:request_service)
     User.any_instance.unstub(:privilege?)
     Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
     Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
@@ -2482,7 +2496,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
     get :index, controller_params(only: 'availability')
     assert_response 400
-    match_json([bad_request_error_pattern('only', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'only=availability', feature: :omni_channel_routing)])
+    match_json([bad_request_error_pattern('only', :require_feature_for_attribute, code: :inaccessible_field, attribute: :only, feature: :omni_channel_routing)])
   ensure
     @account.unstub(:omni_channel_routing_enabled?)
     @account.unstub(:omni_agent_availability_dashboard_enabled?)
@@ -2491,12 +2505,14 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_only_availability_dashboard_feature
     @account.stubs(:omni_channel_routing_enabled?).returns(true)
     @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(false)
+    @account.stubs(:agent_statuses_enabled?).returns(false)
     get :index, controller_params(only: 'availability')
     assert_response 400
-    match_json([bad_request_error_pattern('only', :require_feature_for_attribute, code: :inaccessible_field, attribute: 'only=availability', feature: :omni_agent_availability_dashboard)])
+    match_json([bad_request_error_pattern('only', :require_feature_for_attribute, code: :inaccessible_field, attribute: :only, feature: 'omni_agent_availability_dashboard or agent_statuses')])
   ensure
     @account.unstub(:omni_channel_routing_enabled?)
     @account.unstub(:omni_agent_availability_dashboard_enabled?)
+    @account.unstub(:agent_statuses)
   end
 
   def test_channel_param_with_only_availability
@@ -2524,10 +2540,12 @@ class ApiAgentsControllerTest < ActionController::TestCase
   def test_group_id_param_with_channel
     @account.stubs(:omni_channel_routing_enabled?).returns(true)
     @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
+    @account.stubs(:agent_statuses_enabled?).returns(false)
     get :index, controller_params(only: 'availability', group_id: '222')
     assert_response 400
     match_json([bad_request_error_pattern('group_id', :require_channel, code: :invalid_value, param: :group_id)])
   ensure
+    @account.unstub(:agent_statuses_enabled?)
     @account.unstub(:omni_channel_routing_enabled?)
     @account.unstub(:omni_agent_availability_dashboard_enabled?)
   end
@@ -2543,12 +2561,23 @@ class ApiAgentsControllerTest < ActionController::TestCase
     @account.unstub(:omni_agent_availability_dashboard_enabled?)
   end
 
+  def test_available_in_with_only_availability
+    @account.stubs(:omni_channel_routing_enabled?).returns(true)
+    @account.stubs(:agent_statuses_enabled?).returns(true)
+    get :index, controller_params(available_in: 'ticket')
+    assert_response 400
+    match_json([bad_request_error_pattern('available_in', :require_availability, code: :inaccessible_field, param: :available_in)])
+  ensure
+    @account.unstub(:omni_channel_routing_enabled?)
+    @account.unstub(:agent_statuses_enabled?)
+  end
+
   def test_supervisor_access_only_availability
     @account.stubs(:omni_channel_routing_enabled?).returns(true)
     @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
-    ApiAgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: {}))
+    ApiAgentsController.any_instance.stubs(:request_service).returns(ocr_agents_response(channel: {}))
     get :index, controller_params(only: 'availability')
     assert_response 200
     match_json([])
@@ -2572,7 +2601,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:privilege?)
   end
 
-  def test_ata_enabled_agents_across_channels
+  def test_ata_enabled_agents_from_ocr
     freshdesk_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id)
     @account.stubs(:omni_channel_routing_enabled?).returns(true)
     @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
@@ -2583,7 +2612,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     }
     fd_name = Faker::Lorem.characters(5)
     status_id = Faker::Number.number(3)
-    ApiAgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: { freshdesk_user.id.to_s => channels_data }, name: fd_name, status_id: status_id))
+    ApiAgentsController.any_instance.stubs(:request_service).returns(ocr_agents_response(channel: { freshdesk_user.id.to_s => channels_data }, name: fd_name, status_id: status_id))
     group = create_group_with_agents(@account, agent_list: [freshdesk_user.id])
     get :index, controller_params(only: 'availability', channel: 'freshdesk', group_id: group.id, search_term: 'First')
     assert_response 200
@@ -2594,16 +2623,27 @@ class ApiAgentsControllerTest < ActionController::TestCase
     @account.unstub(:omni_agent_availability_dashboard_enabled?)
   end
 
-  def test_no_ata_enabled_agents_across_channels
+  def test_no_ata_enabled_agents_from_ocr
     @account.stubs(:omni_channel_routing_enabled?).returns(true)
     @account.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
-    ApiAgentsController.any_instance.stubs(:request_ocr).returns(ocr_agents_response(channel: {}))
+    ApiAgentsController.any_instance.stubs(:request_service).returns(ocr_agents_response(channel: {}))
     get :index, controller_params(only: 'availability')
     assert_response 200
     match_json([])
   ensure
     @account.unstub(:omni_channel_routing_enabled?)
     @account.unstub(:omni_agent_availability_dashboard_enabled?)
+  end
+
+  def test_ata_enabled_agents_from_mars
+    @account.stubs(:omni_channel_routing_enabled?).returns(true)
+    @account.stubs(:agent_statuses_enabled?).returns(true)
+    ApiAgentsController.any_instance.stubs(:request_service).returns(mars_agents_response)
+    get :index, controller_params(only: 'availability', channel: 'freshdesk', group_id: '123', search_term: 'First', available_in: 'ticket')
+    assert_response 200
+  ensure
+    @account.unstub(:omni_channel_routing_enabled?)
+    @account.unstub(:agent_statuses_enabled?)
   end
 
   private

@@ -117,6 +117,7 @@ run "ln -nfs #{shared_path}/config/channel_v2_api.yml #{node[:rel_path]}/config/
 run "ln -nfs #{shared_path}/config/silkroad_config.yml #{node[:rel_path]}/config/silkroad_config.yml"
 run "ln -nfs #{shared_path}/config/omni_channel_dashboard.yml #{node[:rel_path]}/config/omni_channel_dashboard.yml"
 run "ln -nfs #{shared_path}/config/omni_channel_bundle.yml #{node[:rel_path]}/config/omni_channel_bundle.yml"
+run "ln -nfs #{shared_path}/config/tracing.yml #{node[:rel_path]}/config/tracing.yml"
 
 # supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
@@ -135,6 +136,7 @@ run "ln -nfs #{shared_path}/config/cert/saml.pem #{node[:rel_path]}/config/cert/
 run "ln -nfs #{shared_path}/config/cert/iam.pem #{node[:rel_path]}/config/cert/iam.pem"
 run "ln -nfs #{shared_path}/config/cert/iam_public.pem #{node[:rel_path]}/config/cert/iam_public.pem"
 run "ln -nfs #{shared_path}/config/cert/jwe_encryption_key.pem #{node[:rel_path]}/config/cert/jwe_encryption_key.pem"
+run "ln -nfs #{shared_path}/config/cert/freddy_sessions.pem #{node[:rel_path]}/config/cert/freddy_sessions.pem"
 
 # Xero Cert files start
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-cert.pem #{node[:rel_path]}/config/cert/integrations/xero/entrust-cert.pem"

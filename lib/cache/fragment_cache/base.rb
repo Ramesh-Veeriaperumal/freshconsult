@@ -7,21 +7,20 @@ module Cache
       include Redis::RedisKeys
 
       ITEM_DETAILS = [
-        [:ticket_list_filters,        TICKETS_LIST_PAGE_FILTERS,  :ticket_list_page_filters_cache,  AGENT_LANGUAGE_LIST    ],
-        [:agent_new_ticket,           AGENT_NEW_TICKET_FORM,      :agent_new_ticket_cache,          AGENT_LANGUAGE_LIST    ],
-        [:compose_email_form,         COMPOSE_EMAIL_FORM,         :agent_new_ticket_cache,          AGENT_LANGUAGE_LIST    ],
-        [:support_new_ticket,         SUPPORT_NEW_TICKET_FORM,    :support_new_ticket_cache,        CUSTOMER_LANGUAGE_LIST ]
+        [:ticket_list_filters, TICKETS_LIST_PAGE_FILTERS, AGENT_LANGUAGE_LIST],
+        [:agent_new_ticket, AGENT_NEW_TICKET_FORM, AGENT_LANGUAGE_LIST],
+        [:compose_email_form, COMPOSE_EMAIL_FORM, AGENT_LANGUAGE_LIST],
+        [:support_new_ticket, SUPPORT_NEW_TICKET_FORM, CUSTOMER_LANGUAGE_LIST]
       ]
 
       CACHED_ITEMS                  = ITEM_DETAILS.map {|i| i[0] }
       ITEM_TO_CACHE_KEY_MAPPING     = Hash[*ITEM_DETAILS.map {|i| [i[0], i[1]]}.flatten]
-      ITEM_TO_LAUNCH_KEY_MAPPING    = Hash[*ITEM_DETAILS.map {|i| [i[0], i[2]]}.flatten]
-      FRAGMENT_TO_LANG_MAPPING      = Hash[*ITEM_DETAILS.map {|i| [i[0], i[3]]}.flatten]
+      FRAGMENT_TO_LANG_MAPPING      = Hash[*ITEM_DETAILS.map { |i| [i[0], i[2]] }.flatten]
 
       def enable_fragment_cache(cached_item, skip = false, &block)
         raise Exception unless CACHED_ITEMS.include?(cached_item)
         # Need not cache if User.current is nil -> Support new ticket => without logged in
-        if !skip and User.current and Account.current.launched?(ITEM_TO_LAUNCH_KEY_MAPPING[cached_item])
+        if !skip && User.current && (cached_item == :support_new_ticket && Account.current.launched?(:support_new_ticket_cache))
           cache(language_specific_cache_key(cached_item), &block)
         else
           block.call

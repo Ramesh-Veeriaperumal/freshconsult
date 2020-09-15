@@ -21,6 +21,7 @@
       - :personal_canned_response
       - :api_v2
       - :help_widget
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -73,6 +74,8 @@
       - :sla_reminder_automation
       - :advanced_freshcaller
       - :custom_ssl
+      - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -126,6 +129,9 @@
       - :twitter_field_automation
       - :solutions_templates
       - :contact_custom_activity_api
+      - :analytics_articles
+      - :analytics_knowledge_base
+      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -160,6 +166,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_19:
@@ -227,6 +234,8 @@
       - :advanced_article_toolbar_options
       - :advanced_freshcaller
       - :custom_ssl
+      - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -335,6 +344,9 @@
       - :next_response_sla
       - :twitter_field_automation
       - :solutions_templates
+      - :analytics_articles
+      - :analytics_knowledge_base
+      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -374,6 +386,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_20:
@@ -440,6 +453,8 @@
       - :field_service_management_toggle
       - :advanced_freshcaller
       - :custom_ssl
+      - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_20
     :exclude: []
@@ -540,6 +555,9 @@
       - :twitter_field_automation
       - :fb_ad_posts
       - :solutions_templates
+      - :analytics_articles
+      - :analytics_knowledge_base
+      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_20
     :exclude: []
@@ -563,8 +581,6 @@
       - :detect_thank_you_note_eligible
       - :smart_filter
       - :agent_assist_lite
-      - :autofaq
-      - :botflow
       - :agent_articles_suggest_eligible
       - :email_bot
       - :advanced_ticket_scopes
@@ -573,9 +589,14 @@
     :inherits:
       - :estate_jan_20
     :exclude: []
+    :freddy_sessions: 5000
   :forest_omni_jan_20:
     :name: Forest Omni Channel
-    :features: []
+    :features:
+      - :autofaq_eligible
+      - :autofaq
+      - :botflow
     :inherits:
       - :forest_jan_20
     :exclude: []
+    :freddy_sessions: 5000

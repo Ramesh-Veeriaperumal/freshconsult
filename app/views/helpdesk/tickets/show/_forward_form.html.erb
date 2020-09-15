@@ -139,11 +139,7 @@
   <li class="attachment-options-reply" id="attachment-options-reply">
       <% unless local_assigns[:no_attachments] %>
       <% attachments = {:regular => conv_item.all_attachments, :cloud_files => conv_item.cloud_files } %>
-          <% if current_account.launched?(:multifile_attachments) %>
-               <%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :forward=>true,:original_attachments => attachments} %>
-            <% else %>
-              <%= render :partial => "/helpdesk/tickets/show/single_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :forward => true,:original_attachments => attachments } %>
-            <% end %> 
+        <%= render :partial => "/helpdesk/tickets/show/multi_attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :forward=>true,:original_attachments => attachments} %>
       <% end %>    
   </li>
 

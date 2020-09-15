@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<%= render layout: 'shared/email_header_footer.html.erb', locals: { sent_by: :freshdesk_team, other_recipients_note: true } do %>
+  <p>
+    <%= t("freddy_consumed_session_mailer.consumed_sessions_body", sessions_consumed: sessions_consumed, session_count: session_count) %><br>
+    <%= t("freddy_consumed_session_mailer.buy_more_sessions_body", billing_url: "#{account.full_url}/a/admin/subscription").html_safe %><br>
+    <%= t("freddy_consumed_session_mailer.additional_sessions_note_body") %><br>
+  </p>
+<%end%>
+</body>
+</html>

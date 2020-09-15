@@ -5,14 +5,14 @@ unless Account.current
     $redis_others.perform_redis_op("sadd", "FALCON_ENABLED_LANGUAGES", I18n.default_locale.to_s)
   end
   if Account.count == 0
-    signup = Signup.new(  
+    signup = Signup.new(
       :account_name => 'Test Account',
       :account_domain => 'localhost',
       :locale => I18n.default_locale,
       :time_zone => "Chennai",
       :user_name => 'Support',
       :user_password => 'test1234',
-      :user_password_confirmation => 'test1234', 
+      :user_password_confirmation => 'test1234',
       :user_email => Helpdesk::EMAIL[:sample_email],
       :user_helpdesk_agent => true
     )

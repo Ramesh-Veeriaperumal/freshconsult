@@ -146,7 +146,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
       fetch_first_response_agent_id(note_id)
       self.reports_hash.merge!('first_response_group_id' => self.ticket.group_id)
       Rails.logger.info "Helpdesk::SchemaLessTicket::set_first_response_id::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{reports_hash.inspect}"
-      self.save
+      save unless Account.current.response_time_null_fix_enabled?
 		end
 	end
 
@@ -157,7 +157,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
   def update_first_response_agent_id
     first_response_agent_id = fetch_first_response_agent_id(reports_hash['first_response_id'])
     Rails.logger.info "Helpdesk::SchemaLessTicket::update_first_response_agent_id::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{reports_hash.inspect}"
-    self.save
+    save unless Account.current.response_time_null_fix_enabled?
     first_response_agent_id
   end
 
@@ -385,7 +385,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     attributes_was, attributes_is = column_name ? [schema_less_was["#{column_name}"], attributes["#{column_name}"]] : [schema_less_was, attributes]
     change_hash = {}
     if attributes_was.present? && attributes_is.present? && attributes_was != attributes_is
-      new_hash = attributes_was.merge(attributes_is)
+      # We should not consider the locking_column changes as attribute changes
+      new_hash = attributes_was.merge(attributes_is).tap { |hash_body| hash_body.delete(self.class.locking_column) }
       new_hash.keys.each do |key|
         change_hash[key] = [attributes_was[key], attributes_is[key]] if attributes_was[key] != attributes_is[key]
       end

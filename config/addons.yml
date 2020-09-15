@@ -131,7 +131,11 @@ Custom Ssl 20:
 Field Service Management 20:
   - :field_service_management
 Freddy Ultimate:
+  - :freddy_ultimate
   - :agent_assist_ultimate
+  - :triage_ultimate
+  - :canned_response_suggest
+  - :robo_assist_ultimate
 Detect Thankyou Note Migration:
   - :detect_thank_you_note
   - :detect_thank_you_note_eligible
@@ -163,6 +167,13 @@ Autofaq Migration:
   - :autofaq
 Botflow Migration:
   - :botflow
+Freddy Self Service:
+  - :freddy_self_service
+Freddy Ultimate Session Flatfee: []
+Freddy Session Packs Monthly: []
+Freddy Session Packs Quarterly: []
+Freddy Session Packs Half Yearly: []
+Freddy Session Packs Annual: []
 Emailbot Migration:
   - :emailbot
 Custom Objects Migration:

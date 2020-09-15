@@ -11,6 +11,7 @@ class FacebookDMCronWorker < ActionView::TestCase
   include FacebookTestHelper
   def teardown
     Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
+    Subscription.any_instance.unstub(:switch_annual_notification_eligible?)
     super
     @account.facebook_pages.destroy_all
     @account.facebook_streams.destroy_all
@@ -23,6 +24,7 @@ class FacebookDMCronWorker < ActionView::TestCase
 
   def setup
     Account.stubs(:current).returns(Account.first)
+    Subscription.any_instance.stubs(:switch_annual_notification_eligible?).returns(false)
     HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(status: 200, text: '{"pages": [{"id": 568, "freshdeskAccountId": "1", "facebookPageId": "532218423476440"}], "meta": {"count": 1}}')
     @account = Account.current
     @fb_page = create_test_facebook_page(@account)

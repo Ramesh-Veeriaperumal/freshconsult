@@ -1,6 +1,7 @@
 class Organisation < ActiveRecord::Base
   self.primary_key = :id
   include Cache::Memcache::Organisation
+  include OmniChannel::Util
   FRESHSALES = 'freshsales'.freeze
   FRESHCALLER = 'freshcaller'.freeze
   FRESHCHAT = 'freshchat'.freeze
@@ -75,6 +76,8 @@ class Organisation < ActiveRecord::Base
   end
 
   def omni_accounts_present?
+    existing_current_user = User.current
+    get_freshid_org_admin_user(Account.current).make_current
     organisation_domain = alternate_domain || domain
     products = product_details_from_cache(organisation_domain)
     page_counter = 1
@@ -91,11 +94,16 @@ class Organisation < ActiveRecord::Base
         Rails.logger.info "Organisation accounts fetch page limit reached for account :: #{Account.current.id} "
         break
       end
-      break unless organisation_accounts[:has_more]
+      break unless organisation_accounts && organisation_accounts[:has_more]
 
       page_counter += 1
     end
     false
+  rescue StandardError => e
+    Rails.logger.info "Error while fetching organisation accounts :: #{Account.current.id} :: #{e.message}"
+    false
+  ensure
+    existing_current_user.make_current if existing_current_user.present?
   end
 
   private

@@ -1,0 +1,7 @@
+<div id="annual-savings-wrapper" class="nudge-banner-container <%if @subscription.account.account_cancellation_requested? %>hide<%end%>">
+  <img class="annual-savings__icon" src="/images/percentage.svg">
+  <span class="annual-savings__text">
+    <%= t('annual_save.primary_text', amount: savings_amount) %>
+    <a id='switch-to-annual-link' href='#'> <%= t('annual_save.primary_link') %> </a>
+  </span>
+</div>

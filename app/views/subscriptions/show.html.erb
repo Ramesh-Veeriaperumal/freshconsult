@@ -7,8 +7,9 @@
 <% show_omnichannel_banner = @subscription.account.show_omnichannel_banner? %>
 <% multiple_banner_present = (show_fd_fs_banner || show_fd_fs_discountbanner) && show_omnichannel_banner %>
 
+<h3 class="lead"><%= @page_title = t("admin.home.index.billing") %></h3>
+
 <% if show_fd_fs_banner || show_fd_fs_discountbanner || show_omnichannel_banner %>
-  <h3 class="lead"><%=t('notification.whats_new')%></h3>
 
   <div id="plansAndBillingCarousel" class="carousel slide">
 
@@ -36,7 +37,6 @@
 
   </div>
 <% end %>
-<h3 class="lead"><%= @page_title = t("admin.home.index.billing") %></h3>
 
 <%= render :partial => "/subscriptions/state/#{@subscription.state}", 
 		   :locals => { :subscription => @subscription, :plans => @plans } %>

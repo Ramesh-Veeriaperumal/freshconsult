@@ -7,7 +7,7 @@ class ApiSolutionsArticlesDependencyTest < ActionView::TestCase
                         :set_default_locale, :set_locale, :set_msg_id, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
                         :check_account_state, :set_time_zone, :set_ui_preference, :check_day_pass_usage, :force_utf8_params,
                         :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
-                        :set_affiliate_cookie, :verify_authenticity_token, :set_modal, :sanitize_item_id,
+                        :set_affiliate_cookie, :verify_authenticity_token, :set_modal, :sanitize_item_id, :log_old_ui_path,
                         :portal_check, :set_selected_tab, :page_title, :load_meta_objects, :check_create_privilege, :old_folder, :check_new_folder,
                         :bulk_update_folder, :validate_author, :language, :cleanup_params_for_title, :language_scoper, :check_parent_params,
                         :unset_thread_variables, :set_parent_for_old_params, :check_account_activation,

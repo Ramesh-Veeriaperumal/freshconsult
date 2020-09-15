@@ -13,7 +13,6 @@ class Tickets::SelectAll::TicketsWorker
     @account = Account.current
     user = @account.all_users.find_by_id(user_id)
     user.make_current
-    @account.rollback(:select_all) #removing feature.
     raise InvalidBatchError unless valid_within_batch?
     Thread.current[:skip_round_robin] = true
     Thread.current[:skip_dashboard_activity] = true

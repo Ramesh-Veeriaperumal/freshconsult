@@ -221,7 +221,7 @@ module Admin::RolesHelper
             value = label(:agent, :signature_html, "<b>#{t('admin.roles.agent_can')}</b>".html_safe)
             if section[:children]
               if section[:children].last[:children] and section[:children].last[:children].last[:id] == "manage_account" and !current_user.privilege?(:manage_account)
-                section[:children].last[:children].last.merge!(:class => "permanent_disable")
+                section[:children].last[:children].last.merge!(disabled: true, class: 'option_permanent_disabled')
               end
               value += process_children(section[:children], section[:id], false)
             end
@@ -243,7 +243,7 @@ module Admin::RolesHelper
               content_tag(:label, :class => "#{child[:dom_type]} #{style(child[:dom_type])}") do
                 case child[:dom_type]
                 when "check_box", "radio_button"
-                  build_element(child, parent, disabled)
+                  build_element(child, parent, child[:disabled] || disabled)
                 when "hidden_field"
                   build_hidden(child, parent, disabled)
                 end

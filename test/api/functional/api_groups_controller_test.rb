@@ -564,7 +564,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
     Account.any_instance.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
-    ApiGroupsController.any_instance.stubs(:request_ocr).returns(omni_channel_groups_response)
+    ApiGroupsController.any_instance.stubs(:request_service).returns(omni_channel_groups_response)
     get :index, controller_params(include: 'omni_channel_groups', auto_assignment: true)
     assert_response 200
     pattern = []
@@ -577,7 +577,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     end
     match_json(pattern)
   ensure
-    ApiGroupsController.any_instance.unstub(:request_ocr)
+    ApiGroupsController.any_instance.unstub(:request_service)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
     Account.any_instance.unstub(:omni_agent_availability_dashboard_enabled?)
     Account.any_instance.unstub(:omni_channel_routing_enabled?)
@@ -589,7 +589,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
     Account.any_instance.stubs(:omni_agent_availability_dashboard_enabled?).returns(true)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
-    ApiGroupsController.any_instance.stubs(:request_ocr).returns(omni_channel_groups_response(false))
+    ApiGroupsController.any_instance.stubs(:request_service).returns(omni_channel_groups_response(false))
     get :index, controller_params(include: 'omni_channel_groups')
     assert_response 200
     pattern = []
@@ -602,7 +602,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     end
     match_json(pattern)
   ensure
-    ApiGroupsController.any_instance.unstub(:request_ocr)
+    ApiGroupsController.any_instance.unstub(:request_service)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
     Account.any_instance.unstub(:omni_agent_availability_dashboard_enabled?)
     Account.any_instance.unstub(:omni_channel_routing_enabled?)

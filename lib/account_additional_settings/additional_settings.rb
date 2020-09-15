@@ -12,6 +12,10 @@ module AccountAdditionalSettings::AdditionalSettings
         self.additional_settings[:email_template] : DEFAULTS_FONT_SETTINGS[:email_template]
   end
 
+  def security
+    (additional_settings || {})[:security] || {}
+  end
+
   def font_settings=(settings = {})
     additional_settings = self.additional_settings
     email_template = (self.email_template_settings || {}).merge(settings)
@@ -47,7 +51,9 @@ module AccountAdditionalSettings::AdditionalSettings
     metric = Account.current.conversion_metric
     member = metric.msegments if metric.present?
     self.additional_settings ||= {}
-    if Account.current.launched?(:goal_based_onboarding) && member.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] &&
+    if Account.current.enable_sprout_trial_onboarding?
+      self.additional_settings[:onboarding_version] = GrowthHackConfig[:sprout_trial_onboarding]
+    elsif member.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] &&
        metrics_has_any_personalised_onboarding_keys?(metric.referrer)) ||
        metrics_has_any_personalised_onboarding_keys?(metric.current_session_url))
       self.additional_settings[:onboarding_ab_testing] = true

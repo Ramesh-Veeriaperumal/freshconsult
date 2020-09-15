@@ -5,9 +5,7 @@
       <%= check_twitter_reauth_required %>
       <%= check_smart_filter_revoked %>
       <%= check_custom_mailbox_status %>
-      <%= live_chat_phone_deprecation %>
-    <% end %>  
-    <%= old_ui_deprecation %>
+    <% end %>
 <% end %>
 <div class="index-page-content" id="realtime-dashboard-content">
     <%= render :partial => "/helpdesk/realtime_dashboard/summary" %>
@@ -53,5 +51,4 @@
         RealtimeDashboard.month_name = <%=t('date.abbr_month_names').to_json.html_safe%>;
         RealtimeDashboard.full_domain = '<%= current_account.full_domain %>';
         RealtimeDashboard.helpdesk_name = '<%= current_account.portal_name %>';
-        RealtimeDashboard.dashboard_enabled = <%= current_account.dashboardv2_enabled? %>;
 </script>

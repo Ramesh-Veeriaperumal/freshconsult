@@ -101,27 +101,37 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     refute Account.current.account_onboarding_pending?
   end
 
-  def test_complete_step_onboarding_goals_to_freshmarketer
-    current_user = @account.users.current
-    stub_request(:put, ThirdCrm::FRESHMARKETER_CONFIG['events_url'])
+  def test_event_names_to_freshmarketer
+    step_name = 'fdesk_tickets_view'
+    trial_day = ((Time.now.to_i - @account.subscription.created_at.to_i) / 86400).to_i
+    req_stub = stub_request(:post, "#{ThirdCrm::FRESHMARKETER_CONFIG['events_url']}?email=#{@account.admin_email}&event_name=#{ThirdCRM::FRESHMARKETER_EVENTS[:fdesk_event]}")
       .with(
-        body: "{\"custom_field\":{\"cf_fdeskgoalticket\":\"true\"},\"email\":\"#{current_user.email}\",\"last_name\":\"#{current_user.name}\"}",
-        headers: {
-          'Accept' => '*/*; q=0.5, application/xml',
-          'Accept-Encoding' => 'gzip, deflate',
-          'Content-Length' => '99',
-          'Content-Type' => 'application/json',
-          'Fm-Token' => 'i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla',
-          'User-Agent' => 'Ruby'
-        }
-      ).to_return(status: 200, body: '', headers: {})
-    post :complete_step, construct_params(steps: ['tickets_intro', 'organiseand_keep_track'], version: 'private')
+        body: "{\"custom_field\":{},\"Fdesk Tickets View\":\"true\",\"Trial Day\":\"#{trial_day}\"}",
+        headers: { 'Accept' => '*/*; q=0.5, application/xml', 'Accept-Encoding' => 'gzip, deflate', 'Content-Length' => '63', 'Content-Type' => 'application/json', 'Fm-Token' => 'i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla', 'User-Agent' => 'Ruby' }).to_return(status: 200, body: "", headers: {})
+    Sidekiq::Testing.inline! do
+      post :complete_step, construct_params(steps: ['fdesk_tickets_view'], version: 'private')
+    end
     assert_response 204
+  ensure
+    @account.try("unmark_#{step_name}_setup_and_save")
+    remove_request_stub(req_stub)
+  end
+
+  def test_complete_step_onboarding_goals_to_freshmarketer
+    req_stub = stub_request(:post, "#{ThirdCrm::FRESHMARKETER_CONFIG['events_url']}?email=#{@account.admin_email}&event_name=#{ThirdCRM::FRESHMARKETER_EVENTS[:goal_completed]}").with(
+        body: "{\"custom_field\":{}, \"goal-name\":\"fdeskgoalticket\"}",
+        headers: { 'Accept' => '*/*; q=0.5, application/xml', 'Accept-Encoding' => 'gzip, deflate', 'Content-Length' => '49', 'Content-Type' => 'application/json', 'Fm-Token' => 'i141ie6mbs865gne8g9h66u0ocr6v5mi0g9o3gla', 'User-Agent' => 'Ruby' }).to_return(status: 200, body: '', headers: {})
+    Sidekiq::Testing.inline! do
+      post :complete_step, construct_params(steps: ['tickets_intro', 'organiseand_keep_track'], version: 'private')
+    end
+    assert_response 204
+  ensure
+    remove_request_stub(req_stub)
   end
 
   def test_onboarding_goals_payload_to_freshmarketer
     current_user = @account.users.current
-    stub_request(:put, ThirdCrm::FRESHMARKETER_CONFIG['contact_url'])
+    req_stub = stub_request(:put, ThirdCrm::FRESHMARKETER_CONFIG['contact_url'])
       .with(
         body: "{\"custom_field\":{\"cf_fdeskgoalautomation\":\"true\"},\"email\":\"#{current_user.email}\",\"last_name\":\"#{current_user.name}\"}",
         headers: {
@@ -133,7 +143,11 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
           'User-Agent' => 'Ruby'
         }
       ).to_return(status: 200, body: '', headers: {})
-    post :complete_step, construct_params(goals: ['automate_repetitive_tasks'], version: 'private')
+    Sidekiq::Testing.inline! do
+      post :complete_step, construct_params(goals: ['automate_repetitive_tasks'], version: 'private')
+    end
     assert_response 204
+  ensure
+    remove_request_stub(req_stub)
   end
 end

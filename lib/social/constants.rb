@@ -139,14 +139,15 @@ module Social::Constants
 
   WHITELISTED_SPECIAL_CHARS_REGEX = /[,.():;=\-\<\>\/&!?%+"']/
 
-  EMOJI_UNICODE_REGEX         = /[\u{1F600}-\u{1F64F}|\u2600-\u26FF|\u{1F300}-\u{1F5FF}|\u{1F900}-\u{1F9FF}|\u{1F680}-\u{1F6FF}|\u2700-\u27BF]/i
+  EMOJI_UNICODE_REGEX = /[\u{1F600}-\u{1F64F}|\u2600-\u26FF|\u{1F300}-\u{1F5FF}|\u{1F900}-\u{1F9FF}|\u{1F680}-\u{1F6FF}|\u2700-\u27BF|\uFE0F|\u200D| \u{1FA70}-\u{1FA7A}| \u{1FA90}| \u2B50| \u{1FA80}-\u{1FA82} | \u{1FA91}-\u{1FA95}| \u2300-\u23FF| \u{1F000}-\u{1FFFF}]/i.freeze
+
+  EMOJI_SPECIAL_CHARS_ARRAY = ['o/', '</3', '<3', '8-D', '8D', ':-D', '=-3', '=-D', '=3', '=D', 'B^D', 'X-D', 'XD', 'x-D', 'xD', ':\')', ':\'-)', ':-))', '8)', ':)', ':-)', ':3', ':D', ':]', ':^)', ':c)', ':o)', ':}', ':っ)', '=)', '=]', '0:)', '0:-)', '0:-3', '0:3', '0;^)', 'O:-)', '3:)', '3:-)', '}:)', '}:-)', '*)', '*-)', ':-, ', ';)', ';-)', ';-]', ';D', ';]', ';^)', ':-|', ':|', ':(', ':-(', ':-<', ':-[', ':-c', ':<', ':[', ':c', ':{', ':っC', '%)', '%-)', ':-P', ':-b', ':-p', ':-Þ', ':-þ', ':P', ':b', ':p', ':Þ', ':þ', ';(', '=p', 'X-P', 'XP', 'd:', 'x-p', 'xp', ':-||', ':@', ':-.', ':-/', ':/', ':L', ':S', ':\\', '=/', '=L', '=\\', ':\'(', ':\'-(', '^5', '^<_<', 'o/\\o', '|-O', '|;-)', ':###..', ':-###..', 'D8', 'D:', 'D:<', 'D;', 'D=', 'DX', 'v.v', '8-0', ':-O', ':-o', ':O', ':o', 'O-O', 'O_O', 'O_o', 'o-o', 'o_O', 'o_o', ':$', '#-)', ':#', ':&', ':-#', ':-&', ':-X', ':X', ':-J', ':*', ':^*', 'ಠ_ಠ', '*\\0/*', '\\o/', ':>', '>.<', '>:(', '>:)', '>:-)', '>:/', '>:O', '>:P', '>:[', '>:\\', '>;)', '>_>^'].freeze
 
   NEW_LINE_WITH_CARRIAGE_RETURN = /\r\n/
  
   NEW_LINE_CHARACTER = "\n"
 
   TWITTER_MENTION = "@"
-  EU_TWITTER_HANDLES = "eu_twitter_handles"
   TWEET_MEDIA_PHOTO = 'photo'.freeze
   TWEET_MEDIA_ANIMATED_GIF = 'animated_gif'.freeze
   TWEET_ALREADY_EXISTS = "Tweet already converted as a ticket".freeze

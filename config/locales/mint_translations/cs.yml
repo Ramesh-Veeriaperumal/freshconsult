@@ -1067,8 +1067,6 @@ cs:
         only_agents: Zástupci
         remote_login_url_info: >-
           Na tuto adresu bude Freshdesk přesměrovávat uživatele k ověření v případě, že se budou přihlašovat do Freshdesku.
-        customer_portal_ssl_warning: >-
-          Jelikož má váš účet nakonfigurovánu vlastní adresu URL helpdesku, budete přesměrováni na 
         saml_cert_fingerprint: '"Otisk prstu" pro bezpečnostní certifikát'
         success_message: >-
           Váš požadavek o certifikát vlastní SSL byl přijat a bude brzy zpracován. Před schválením obdržíte potvrzující e-mail od našeho poskytovatele. Prosím, zkontrolujte si příchozí poštu.
@@ -2150,6 +2148,7 @@ cs:
         all_tickets: Všechny požadavky
         due_today: Tickety s termínem dnes
         resolved: Vyřešené požadavky
+        visible_and_resolved: Vyřešené tickety
       friendly_status:
         customer_responded: Zákazník odpověděl
         elapsed: Termín odpovědi
@@ -3774,6 +3773,9 @@ cs:
       created_at: Vytvořeno
       skill: Dovednost
       description: Popis
+    field_service_fields:
+      cf_fsm_contact_name: Kontakt
+      cf_fsm_phone_number: Telefonní číslo
     formfield_props:
       behavior: Chování
       customer_edit: Zákazník může upravovat
@@ -5757,6 +5759,7 @@ cs:
       sign_up_text: 'Začněte chatovat se zákazníky na svých webových stránkách, portálu nebo v mobilní aplikaci.'
       enable_chat_in_portal_info: >-
         Umožněte svým zákazníkům chatovat s vámi, když přijdou na váš portál podpory.
+      topics_title: Témata
       app_id_placeholder: 'Např: 09901344-2b17-4d55-b412-2fd41811a83f'
       did_you_know_info: >-
         Abyste mohli převádět Freshchat konverzace na tickety, přejděte prosím na tuto <a href='%{url}' target='_blank'>stránku</a>, zkopírujte a vložte níže uvedené údaje. Pokud potřebujete pomoc, podívejte se prosím na <a href='%{article_url}' target='_blank'>tento článek</a>.

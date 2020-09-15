@@ -658,8 +658,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     calculate_mock = get_response_mock(calculate_json, 200)
     response_mock = get_response_mock(response, 201)
 
-    calculate_url = "#{url}/admin/orders/#{order_id}/refunds/calculate.json"
-    refund_url = "#{url}/admin/orders/#{order_id}/refunds.json"
+    calculate_url = "#{url}/admin/#{IntegrationServices::Services::Shopify::ShopifyOrderResource::SHOPIFY_API_VERSION}/orders/#{order_id}/refunds/calculate.json"
+    refund_url = "#{url}/admin/#{IntegrationServices::Services::Shopify::ShopifyOrderResource::SHOPIFY_API_VERSION}/orders/#{order_id}/refunds.json"
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(calculate_url, full_refund_calculate_hash.to_json).returns(calculate_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(refund_url, full_refund_hash.to_json).returns(response_mock)
@@ -683,13 +683,12 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     order_json = fetch_order.to_json
     calculate_json = fetch_refund_calculate.to_json
     response = fetch_refund_response.to_json
-
     order_mock = get_response_mock(order_json, 200)
     calculate_mock = get_response_mock(calculate_json, 200)
     response_mock = get_response_mock(response, 201)
 
-    calculate_url = "#{url}/admin/orders/#{order_id}/refunds/calculate.json"
-    refund_url = "#{url}/admin/orders/#{order_id}/refunds.json"
+    calculate_url = "#{url}/admin/#{IntegrationServices::Services::Shopify::ShopifyOrderResource::SHOPIFY_API_VERSION}/orders/#{order_id}/refunds/calculate.json"
+    refund_url = "#{url}/admin/#{IntegrationServices::Services::Shopify::ShopifyOrderResource::SHOPIFY_API_VERSION}/orders/#{order_id}/refunds.json"
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(calculate_url, lineitem_refund_calculate_hash.to_json).returns(calculate_mock)
     IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(refund_url, lineitem_refund_hash.to_json).returns(response_mock)

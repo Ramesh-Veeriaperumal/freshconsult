@@ -21,6 +21,7 @@ module AttachmentConstants
 
   INLINE_ATTACHABLE_NAMES_BY_KEY = Hash[*INLINE_ATTACHABLE_TYPES.map { |i| [i[2], i[1]] }.flatten]
   INLINE_ATTACHABLE_TOKEN_BY_KEY = Hash[*INLINE_ATTACHABLE_TYPES.map { |i| [i[2], i[0]] }.flatten]
+  INLINE_ATTACHABLE_NAMES_BY_TOKEN = Hash[*INLINE_ATTACHABLE_TYPES.map { |i| [i[0], i[1]] }.flatten]
 
   ATTACHABLE_TYPES = {
     'ticket'           => 'Helpdesk::Ticket',

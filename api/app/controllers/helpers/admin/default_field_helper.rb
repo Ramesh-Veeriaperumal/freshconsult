@@ -23,10 +23,11 @@ module Admin::DefaultFieldHelper
   def validate_source_choices(source_field, choices)
     validate_source_features
     source_params_validation(choices) if errors.blank?
-    icon_validation(choices) if errors.blank?
     db_source_value_validation(choices) if errors.blank?
     default_source_choices_validation(choices) if errors.blank?
     validate_db_uniqueness_for_source_choices(source_field, choices) if errors.blank?
+    icon_validation(choices) if errors.blank?
+    validate_source_choice_limit(source_field, choices) if errors.blank?
   end
 
   private
@@ -37,15 +38,27 @@ module Admin::DefaultFieldHelper
     end
 
     def icon_validation(choices)
-      max_icon_id = current_account.ticket_source_from_cache.select(&:default).max_by { |x| x.meta[:icon_id] }.meta[:icon_id]
       choices.each do |each_choice|
         next unless each_choice[:icon_id]
 
-        if each_choice[:icon_id] <= max_icon_id
-          source_icon_id_error(:choices, nil, max_icon_id + 1)
+        if Helpdesk::Source::CUSTOM_SOURCE_ICON_RANGE.exclude?(each_choice[:icon_id].to_i)
+          source_icon_id_error(:choices, Helpdesk::Source::CUSTOM_SOURCE_ICON_RANGE.last, Helpdesk::Source::CUSTOM_SOURCE_ICON_RANGE.first)
           break
         end
       end
+    end
+
+    def validate_source_choice_limit(record, choices)
+      custom_choices_map = current_account.ticket_source_from_cache.visible.custom.map { |i| [i.account_choice_id, i.deleted].flatten }.to_h
+      new_non_deleted_choice_count = choices.count { |x| x[:id].blank? && x[:deleted].blank? }
+      choices.each do |each_choice|
+        next unless each_choice[:id]
+
+        custom_choices_map[each_choice[:id]] = each_choice[:deleted] if each_choice.key?(:deleted)
+      end
+      total_non_deleted_choices = new_non_deleted_choice_count + custom_choices_map.values.count(false)
+      max_limit = Helpdesk::Source::CUSTOM_SOURCE_MAX_ACTIVE_COUNT
+      limit_exceeded_error(record.label, max_limit, :ticket_choices_exceeded_limit) if total_non_deleted_choices > max_limit
     end
 
     def archive_deleted_key_validation(choices)
