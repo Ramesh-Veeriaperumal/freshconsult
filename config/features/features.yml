@@ -148,7 +148,7 @@
       :field_service_management_toggle: 144
       :parent_child_infra: 145
       :enable_multilingual: 146
-      :countv2_writes: 147
+      :unused_147: 147
       :marketplace: 148
       :fa_developer: 149
       :es_multilang_solutions: 150
@@ -434,7 +434,6 @@
   :disable_agent_forward: false
   :compose_email: false
   :enable_multilingual: false
-  :countv2_writes: false
   :countv2_reads: false
   :freshfone_onboarding: false
   :archive_tickets: false
