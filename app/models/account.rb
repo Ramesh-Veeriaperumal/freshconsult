@@ -37,7 +37,7 @@ class Account < ActiveRecord::Base
 
   concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations,
                  :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods,
-                 :fluffy_methods, :patches
+                 :fluffy_methods, :patches, :settings
 
   include CustomerDeprecationMethods
 
