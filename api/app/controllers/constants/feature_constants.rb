@@ -30,4 +30,5 @@ module FeatureConstants
   SOLUTIONS_TEMPLATES = :solutions_templates
   OMNI_AGENT_AVAILABILITY_DASHBOARD = :omni_agent_availability_dashboard
   EMBERIZE_BUSINESS_HOURS = :emberize_business_hours
+  GROUP_MANAGEMENT_V2 = :group_management_v2
 end

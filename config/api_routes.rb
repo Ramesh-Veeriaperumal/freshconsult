@@ -384,6 +384,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :admin do
+      resources :groups, only: [:index, :show]
+    end
+
     resources :help_widgets do
       resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules', only: [:create, :update, :destroy, :index]
     end

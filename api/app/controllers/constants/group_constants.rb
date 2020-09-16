@@ -81,4 +81,23 @@ module GroupConstants
     freshchat_intelliassign: 22,
     freshcaller_omniroute: 26
   }.freeze
+
+  # group v2 constants
+
+  KEY_MAPPINGS = { business_hour_id: :business_calendar_id, group_type: :type }.freeze
+
+  ASSIGNMENT_TYPE_MAPPINGS = {
+    ROUND_ROBIN => 'round_robin',
+    LOAD_BASED_ROUND_ROBIN => 'load_based_round_robin',
+    SKILL_BASED_ROUND_ROBIN => 'skill_based_round_robin',
+    LBRR_BY_OMNIROUTE => 'lbrr_by_omniroute'
+  }.freeze
+
+  OMNI_CHANNEL = 'omni_channel'.freeze
+
+  CHANNEL_SPECIFIC = 'channel_specific'.freeze
+
+  GROUP_V2_INDEX_FIELDS = (%w[type] | INDEX_FIELDS - %w[group_type]).freeze
+
+  CHANNEL_NAMES = { freshdesk: 'ticket' }.freeze
 end.freeze
