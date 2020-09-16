@@ -1018,6 +1018,7 @@ class AccountsControllerTest < ActionController::TestCase
   def test_new_signup_from_free_helpdesk_site
     stub_signup_calls
     Signup.any_instance.unstub(:save)
+    SAAS::SubscriptionEventActions.any_instance.stubs(:change_api_limit).returns(true)
     user_email = 'nofsmonsignup@gleason.name'
     user_name = Faker::Name.name
     referrer = 'https=>//freshdesk.com/pricing/free-helpdesk-software'
@@ -1035,8 +1036,10 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'sprout_trial_onboarding'
     assert_equal account.subscription.state, 'free'
     assert_equal account.subscription.plan_name, 'Sprout Jan 20'
+    assert_not_includes account.features_list, :sla_management_v2
   ensure
     unstub_signup_calls
+    SAAS::SubscriptionEventActions.any_instance.unstub(:change_api_limit)
   end
 
   def test_new_signup_from_free_ticketing_site
@@ -1095,6 +1098,8 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_new_sprout_trial_signup_with_precreated_account
     populate_plans
+    sub_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_20])
+    SubscriptionPlan.stubs(:find_by_name).returns(sub_plan)
     AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
     Subscription.any_instance.stubs(:add_to_billing).returns(true)
     PrecreatedSignup.any_instance.stubs(:aloha_signup).returns(true)
@@ -1137,6 +1142,7 @@ class AccountsControllerTest < ActionController::TestCase
     PrecreatedSignup.any_instance.unstub(:freshid_user)
     Account.any_instance.unstub(:sync_user_info_from_freshid_v2!)
     User.any_instance.unstub(:sync_profile_from_freshid)
+    SubscriptionPlan.unstub(:find_by_name)
   end
 
   def test_anonymous_signup_without_redis_enabled
