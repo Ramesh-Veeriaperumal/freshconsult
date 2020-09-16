@@ -186,12 +186,13 @@ class AccountsController < ApplicationController
   end
 
   def assign_precreated_account
-    input_params = params[:signup].except!(:direct_signup)
+    input_params = params[:signup].except(:direct_signup)
     input_params.merge!(account: Account.current, user: User.current)
     @signup = PrecreatedSignup.new(input_params)
     @signup.account.fs_cookie_signup_param = params[:fs_cookie]
     @signup.save!
     @signup.user.publish_agent_update_central_payload
+    @signup.update_subscription
     true
   rescue StandardError => e
     Rails.logger.error "Error in mapping precreated account - error - #{e.message} backtrace - #{e.backtrace}"
