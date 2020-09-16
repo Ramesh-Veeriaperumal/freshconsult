@@ -48,10 +48,10 @@ class Email::SettingsControllerTest < ActionController::TestCase
   end
 
   def test_show_email_config_features
-    Account.any_instance.stubs(:has_feature?).with(:reply_to_based_tickets).returns(true)
-    Account.any_instance.stubs(:has_feature?).with(:disable_agent_forward).returns(false)
-    Account.any_instance.stubs(:has_feature?).with(:compose_email).returns(false)
-    Account.any_instance.stubs(:has_feature?).with(:personalized_email_replies).returns(true)
+    Account.any_instance.stubs(:has_setting?).with(:reply_to_based_tickets).returns(true)
+    Account.any_instance.stubs(:has_setting?).with(:disable_agent_forward).returns(false)
+    Account.any_instance.stubs(:has_setting?).with(:compose_email).returns(false)
+    Account.any_instance.stubs(:has_setting?).with(:personalized_email_replies).returns(true)
     get :show, controller_params
     assert_response 200
     match_json(all_features_params)
