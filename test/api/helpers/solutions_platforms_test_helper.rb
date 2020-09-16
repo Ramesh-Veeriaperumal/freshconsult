@@ -19,7 +19,7 @@ module SolutionsPlatformsTestHelper
   end
 
   def get_article_with_platform_enabled_in_folder
-    article = get_article
+    article = get_article_without_draft
     create_platform_mapping_for_associated_folder(article)
     article
   end

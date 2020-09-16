@@ -1,5 +1,6 @@
 class ApiSolutions::FolderValidation < ApiValidation
   include SolutionHelper
+  include SolutionConcern
   CHECK_PARAMS_SET_FIELDS = %w[company_ids visibility article_order contact_segment_ids company_segment_ids platforms tags icon].freeze
   attr_accessor :name, :description, :visibility, :company_ids, :article_order, :category_id, :contact_segment_ids, :company_segment_ids, :platforms, :tags, :icon
 
@@ -31,7 +32,9 @@ class ApiSolutions::FolderValidation < ApiValidation
 
   validates :category_id, custom_numericality: { only_integer: true, greater_than: 0 }, if: -> { category_id }
 
-  validates :platforms, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.platform_format } }, allow_nil: true
+  validates :platforms, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.platform_format } }, allow_nil: true, unless: -> { public_api?(@version) }
+  validates :platforms, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true },
+                                                              custom_inclusion: { in: SolutionConstants::PLATFORM_TYPES } }, if: -> { public_api?(@version) }
   validates :platforms, custom_absence: { message: :cant_set_platforms }, if: -> { (errors[:visibility].blank? && platforms_not_allowed?) }
 
   validates :tags, data_type: { rules: Array, allow_nil: true }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }
@@ -39,8 +42,9 @@ class ApiSolutions::FolderValidation < ApiValidation
   validates :tags, custom_absence: { message: :cant_set_tags }, if: -> { (errors[:visibility].blank? && tags_not_allowed?) }
   validates :tags, custom_absence: { message: :cant_set_tags }, if: -> { @platforms.blank? }, on: :create
 
-  def initialize(request_params, item, lang_id)
+  def initialize(request_params, version, item, lang_id)
     super(request_params, item)
+    @version = version
     @lang_id = lang_id
     @visibility = item.parent.visibility if item.respond_to?(:visibility) && !request_params.key?(:visibility)
   end
