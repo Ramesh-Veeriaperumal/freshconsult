@@ -1470,4 +1470,8 @@ module ApiTicketsTestHelper
     ecommerce_ticket.reload
     ecommerce_ticket
   end
+
+  def tickets_sync_pattern(job_id)
+    { 'job_id' => job_id }
+  end
 end

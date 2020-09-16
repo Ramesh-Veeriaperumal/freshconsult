@@ -21,7 +21,7 @@ module Email::PerformUtil
   end
 
   def allow_wild_card(account)
-    !account.launched?(:prevent_wc_ticket_create) || account.launched?(:allow_wildcard_ticket_create)
+    account.allow_wildcard_ticket_create_enabled?
   end
 
   def assign_language(user, account, ticket)

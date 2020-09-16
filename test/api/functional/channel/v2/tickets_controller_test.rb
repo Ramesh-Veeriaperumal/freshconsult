@@ -7,8 +7,12 @@ module Channel::V2
     include ApiTicketsTestHelper
     include SocialTicketsCreationHelper
     include TicketFiltersHelper
+    include CentralLib::CentralResyncHelper
+    include CentralLib::CentralResyncConstants
+    include Redis::OthersRedis
 
     CUSTOM_FIELDS = %w[number checkbox decimal text paragraph dropdown country state city date].freeze
+    CHANNEL_SOURCE = 'analytics'.freeze
 
     def setup
       super
@@ -1474,5 +1478,145 @@ module Channel::V2
       CustomRequestStore.store[:channel_api_request] = false
       @channel_v2_api = false
     end
+
+    def test_sync_tickets_auth_failure_403
+      post :sync, construct_params({ version: 'channel' }, meta: 'abc')
+      assert_response 403
+    end
+
+    def test_tickets_resync_with_invalid_source
+      invalid_source = 'silkroad'
+      remove_others_redis_key(resync_rate_limiter_key(invalid_source))
+      set_jwt_auth_header(invalid_source)
+      args = { meta: { meta_id: 'abc' }, display_ids: [1, 2] }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 403
+    end
+
+    def test_tickets_resync_with_worker_limit_reached
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      set_others_redis_key_if_not_present(resync_rate_limiter_key(CHANNEL_SOURCE), 5)
+      args = { meta: { meta_id: 'abc' }, display_ids: [1, 2] }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 429
+    ensure
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+    end
+
+    def test_tickets_resync_success
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      job_id = SecureRandom.hex
+      request.stubs(:uuid).returns(job_id)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      args = { meta: { meta_id: 'abc' }, display_ids: [1, 2] }
+      CentralPublish::ResyncWorker.jobs.clear
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_equal 1, CentralPublish::ResyncWorker.jobs.size
+      assert_response 202
+      match_json(tickets_sync_pattern(job_id))
+    ensure
+      request.unstub(:uuid)
+    end
+
+    def test_tickets_resync_success_with_date_filters
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      job_id = SecureRandom.hex
+      request.stubs(:uuid).returns(job_id)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      start_date = Time.zone.now - 3.days
+      end_date = start_date + 2.days
+      CentralPublish::ResyncWorker.jobs.clear
+      args = { meta: { meta_id: 'abc' }, created_at: date_time_range(start_date, end_date),
+               updated_at: date_time_range(start_date, end_date), resolved_at: date_time_range(start_date, end_date),
+               closed_at: date_time_range(start_date, end_date) }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_equal 1, CentralPublish::ResyncWorker.jobs.size
+      assert_response 202
+      match_json(tickets_sync_pattern(job_id))
+    ensure
+      request.unstub(:uuid)
+    end
+
+    def test_tickets_resync_with_no_filters
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      args = { meta: { meta_id: 'abc' } }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:require_filter_params, 'Anyone of the following filter attributes is mandatory: display_ids, created_at, updated_at, resolved_at, closed_at.', code: 'missing_field'))
+      match_json(pattern)
+    end
+
+    def test_tickets_resync_with_invalid_date_range
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      start_date = Time.zone.now - 3.days
+      end_date = start_date - 2.days
+      args = { meta: { meta_id: 'abc' }, created_at: date_time_range(start_date, end_date) }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:created_at, 'Invalid date time range, end time should be greater or equal to the start time.', code: 'invalid_value'))
+      match_json(pattern)
+    end
+
+    def test_tickets_resync_with_invalid_date_fields
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      start_date = Time.zone.now - 3.days
+      end_date = 'nil'
+      args = { meta: { meta_id: 'abc' }, created_at: date_time_range(start_date, end_date) }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:created_at, 'Value set is of type String.It should be a/an DateTime', code: 'datatype_mismatch'))
+      match_json(pattern)
+    end
+
+    def test_tickets_resync_with_greater_date_range
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      start_date = Time.zone.now - 3.days
+      end_date = start_date + 3.days
+      args = { meta: { meta_id: 'abc' }, created_at: date_time_range(start_date, end_date) }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:created_at, 'Datetime range can only be a maximum of 2 days', code: 'invalid_value'))
+      match_json(pattern)
+    end
+
+    def test_tickets_resync_with_invalid_array_fields
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      args = { meta: { meta_id: 'abc' }, display_ids: nil }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:display_ids, 'Value set is of type Null.It should be a/an Array', code: 'datatype_mismatch'))
+      match_json(pattern)
+    end
+
+    def test_tickets_resync_with_invalid_meta
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      args = { meta: nil, display_ids: [1] }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:meta, "can't be blank", code: 'invalid_value'))
+      match_json(pattern)
+    end
+
+    def test_tickets_resync_with_invalid_primary_key_offset
+      set_jwt_auth_header(CHANNEL_SOURCE)
+      remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
+      args = { meta: { meta_id: 'abc' }, display_ids: [1, 2], primary_key_offset: 'id' }
+      post :sync, construct_params({ version: 'channel' }, args)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:primary_key_offset, 'Value set is of type String.It should be a/an Positive Integer', code: 'datatype_mismatch'))
+      match_json(pattern)
+    end
+
+    private
+
+      def date_time_range(start_date, end_date)
+        { start: start_date.to_s, end: end_date.to_s }
+      end
   end
 end

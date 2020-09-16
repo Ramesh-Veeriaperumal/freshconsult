@@ -3428,7 +3428,7 @@
         },
         "dedicated": {
           "_fc-bg-sidekiq-archive": 3,
-          "_fc-bg-sidekiq-occasional": 8,
+          "_fc-bg-sidekiq-occasional": 4,
           "_fc-bg-sidekiq-central-realtime": 8,
           "_fc-bg-sidekiq-realtime": 10,
           "_hk-bg-shoryuken-search": 15
