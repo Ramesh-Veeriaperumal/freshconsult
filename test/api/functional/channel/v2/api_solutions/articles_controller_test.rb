@@ -887,6 +887,7 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   ensure
     Account.any_instance.unstub(:omni_bundle_account?)
     Account.current.rollback :kbase_omni_bundle
+    CustomRequestStore.unstub(:read)
   end
 
   def test_article_thumbs_up_invalid_user
@@ -913,19 +914,22 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   def test_article_thumbs_up
     stub_channel_api do
       article = get_article_without_draft
+      @controller.stubs(:current_user).returns(nil)
       old_thumbs_up = article.thumbs_up
       put :thumbs_up, controller_params(version: 'channel', id: article.parent_id, source_type: 'freshchat')
       assert_response 204
       assert_equal article.reload.thumbs_up, old_thumbs_up + 1
     end
+  ensure
+    @controller.unstub(:current_user)
   end
 
   def test_article_thumbs_up_with_user
     stub_channel_api do
       article = get_article_without_draft
+      article.votes.map(&:destroy)
       old_thumbs_up = article.thumbs_up
       user = add_new_user(@account)
-      article.votes.map(&:destroy)
       put :thumbs_up, controller_params(version: 'channel', id: article.parent_id, user_id: user.id, source_type: 'freshchat')
       assert_response 204
       assert_equal article.reload.thumbs_up, old_thumbs_up + 1
@@ -958,11 +962,14 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   def test_article_thumbs_down
     stub_channel_api do
       article = get_article_without_draft
+      @controller.stubs(:current_user).returns(nil)
       old_thumbs_down = article.thumbs_down
       put :thumbs_down, controller_params(version: 'channel', id: article.parent_id, source_type: 'freshchat')
       assert_response 204
       assert_equal article.reload.thumbs_down, old_thumbs_down + 1
     end
+  ensure
+    @controller.unstub(:current_user)
   end
   
   def test_article_thumbs_down_with_user

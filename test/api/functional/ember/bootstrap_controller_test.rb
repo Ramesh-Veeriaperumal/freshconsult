@@ -353,7 +353,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
   def test_invoice_due_warning_with_skip_feature
     set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
-    Account.current.launch(:skip_invoice_due_warning)
+    Account.current.enable_setting(:skip_invoice_due_warning)
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
@@ -361,13 +361,13 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_nil invoice
   ensure
     User.any_instance.unstub(:privilege?)
-    Account.current.rollback(:skip_invoice_due_warning)
+    Account.current.disable_setting(:skip_invoice_due_warning)
   end
 
 
   def test_invoice_due_warning_with_skip_feature_with_redis_set
     set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
-    Account.current.launch(:skip_invoice_due_warning)
+    Account.current.enable_setting(:skip_invoice_due_warning)
     set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 10.days)
     get :account, controller_params(version: 'private')
     assert_response 200
@@ -376,7 +376,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_nil invoice
   ensure
     User.any_instance.unstub(:privilege?)
-    Account.current.rollback(:skip_invoice_due_warning)
+    Account.current.disable_setting(:skip_invoice_due_warning)
     remove_others_redis_key(invoice_due_key)
   end
 

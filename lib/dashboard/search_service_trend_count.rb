@@ -87,7 +87,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
       query = transform_fields(query) if TRANSFORM_DEFAULT_FIELDS.include?(trend)
       query = filter_query + " AND " + query if filter_query.present?
       query = query + " AND " + construct_query_for_restricted if default_filter?(trend) and @with_permissible and User.current.agent? and User.current.restricted?
-      query = query + " AND agent_id:#{User.current.id}" if default_filter?(trend) and @is_agent
+      query += " AND responder_id:#{User.current.id}" if default_filter?(trend) && @is_agent
       queries << query
     end
     queries

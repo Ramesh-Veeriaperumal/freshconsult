@@ -9,7 +9,7 @@ module Admin
     validates :channel_business_hours, presence: true, if: -> { instance_variable_defined?(:@channel_business_hours) }, on: :update
     validates :name, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING },
                      if: -> { create_or_update? && instance_variable_defined?(:@name) }
-    validates :description, data_type: { rules: String }, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING },
+    validates :description, data_type: { rules: String }, allow_nil: true, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING },
                             if: -> { create_or_update? && instance_variable_defined?(:@description) }
     validates :time_zone, custom_inclusion: { in: TIMEZONES }, if: -> { create_or_update? && instance_variable_defined?(:@time_zone) }
     validates :default, custom_inclusion: { in: [true, false] }, if: -> { create_or_update? && instance_variable_defined?(:@default) }
