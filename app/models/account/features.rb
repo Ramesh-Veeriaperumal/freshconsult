@@ -446,14 +446,6 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def fetch_ticket_from_ref_first_enabled?
-    launched?(:fetch_ticket_from_ref_first)
-  end
-
-  def skip_ticket_threading_enabled?
-    launched?(:skip_ticket_threading)
-  end
-
   def allow_wildcard_ticket_create_enabled?
     launched?(:allow_wildcard_ticket_create)
   end
