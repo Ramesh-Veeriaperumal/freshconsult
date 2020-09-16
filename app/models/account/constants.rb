@@ -190,7 +190,7 @@ class Account < ActiveRecord::Base
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
-    feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
+    feedback_widget_captcha: false, es_multilang_solutions: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false,
     kbase_spam_whitelist: false,
