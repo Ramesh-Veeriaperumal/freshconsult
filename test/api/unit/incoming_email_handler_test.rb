@@ -30,7 +30,7 @@ module Helpdesk
         @parse_name = Faker::Name.name
         @parse_email = Faker::Internet.email
         @parsed_to_email = { name: Faker::Name.name, email: @custom_config.to_email, domain: @account.full_domain }
-        @account.revoke_feature(:disable_agent_forward)
+        @account.disable_setting(:disable_agent_forward)
         Account.any_instance.stubs(:parse_replied_email_enabled?).returns(true)
       end
 

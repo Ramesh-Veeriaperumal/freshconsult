@@ -121,10 +121,10 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
 
   def toggle_agent_forward_feature
-    if current_account.features_included?(:disable_agent_forward)
-      current_account.features.disable_agent_forward.destroy
+    if current_account.disable_agent_forward_enabled?
+      current_account.disable_setting(:disable_agent_forward)
     else
-      current_account.features.disable_agent_forward.create
+      current_account.enable_setting(:disable_agent_forward)
     end
     post_process
   end

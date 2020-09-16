@@ -545,7 +545,7 @@ module Helpdesk
 			def create_ticket(account, from_email, to_email, user, email_config)
 				e_email = {}
 				if (user.agent? && !user.deleted?)
-					e_email = (account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text) unless composed_email?
+					e_email = (account.disable_agent_forward_enabled? ? {} : orig_email_from_text) unless composed_email?
 					if e_email[:cc_emails].present?
 						params[:cc] = (params[:cc].present?) ? (params[:cc] << ", " << e_email[:cc_emails].join(", ")) : e_email[:cc_emails]
 					end
