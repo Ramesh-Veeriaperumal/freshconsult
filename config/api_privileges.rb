@@ -204,7 +204,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
     resource :"admin/api_business_calendar", only: [:index, :show, :create, :update, :destroy]
     resource :agent_status, only: [:show, :create, :update, :destroy]
-    resource :'admin/group', only: [:index, :show]
+    resource :'admin/group', only: [:index, :show, :destroy]
   end
 
   edit_ticket_properties do

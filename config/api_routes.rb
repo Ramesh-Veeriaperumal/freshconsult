@@ -385,7 +385,7 @@ Helpkit::Application.routes.draw do
     end
 
     namespace :admin do
-      resources :groups, only: [:index, :show]
+      resources :groups, only: [:index, :show, :destroy]
     end
 
     resources :help_widgets do

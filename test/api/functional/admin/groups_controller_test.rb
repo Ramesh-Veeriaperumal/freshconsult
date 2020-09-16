@@ -6,6 +6,7 @@ module Admin
   class GroupsControllerTest < ActionController::TestCase
     include GroupsTestHelper
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+    include PrivilegesHelper
 
     def setup
       super
@@ -247,6 +248,34 @@ module Admin
     def test_invalid_group_id_show
       get :show, controller_params(version: 'private', id: 199_991)
       assert_response 404
+    end
+    
+    # DELETE tests
+
+    def test_delete_group_with_invalid_id
+      delete :destroy, construct_params(id: Random.rand(1000..1010))
+      assert_response 404
+      assert_equal ' ', @response.body
+    end
+
+    def test_delete_group
+      group = create_group_private_api(@account, ticket_assign_type: 2, capping_limit: 23)
+      delete :destroy, construct_params(id: group.id)
+      assert_equal ' ', @response.body
+      assert_response 204
+      assert_nil Group.find_by_id(group.id)
+    end
+
+    def test_delete_group_without_privilege
+      group = create_group_private_api(@account, ticket_assign_type: 2, capping_limit: 23)
+      remove_privilege(@agent, :manage_account)
+      remove_privilege(@agent, :admin_tasks)
+      delete :destroy, construct_params(id: group.id)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      add_privilege(@agent, :manage_account)
+      add_privilege(@agent, :admin_tasks)
     end
 
     private
