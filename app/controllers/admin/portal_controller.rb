@@ -109,7 +109,7 @@ class Admin::PortalController < Admin::AdminController
         Account::ADMIN_CUSTOMER_PORTAL_FEATURES.keys.each do |feature|
           allowed_features[feature] = filter_features[feature] if filter_features[feature]
         end
-        Account::ADMIN_CUSTOMER_PORTAL_SETTINGS.keys.each do |feature|
+        Account::ADMIN_CUSTOMER_PORTAL_SETTINGS.each do |feature|
           allowed_features[feature] = filter_features[feature] if filter_features[feature]
         end
         params[:account][:features]  = allowed_features

@@ -160,11 +160,11 @@ class Account < ActiveRecord::Base
     :captcha => true, :prevent_ticket_creation_for_others => true, :hide_portal_forums => false
   }
 
-  ADMIN_CUSTOMER_PORTAL_SETTINGS = {
-    :signup_link => true, :anonymous_tickets => true, :auto_suggest_solutions => true,
-    :public_ticket_url => false, :open_solutions => true, :open_forums => false,
-    :forum_captcha_disable => false, :moderate_posts_with_links => true, :moderate_all_posts => false
-  }
+  ADMIN_CUSTOMER_PORTAL_SETTINGS = [
+    :signup_link, :anonymous_tickets, :auto_suggest_solutions,
+    :public_ticket_url, :open_solutions, :open_forums,
+    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts
+  ]
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
 

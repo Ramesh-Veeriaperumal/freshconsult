@@ -75,7 +75,7 @@ class Account < ActiveRecord::Base
   alias :full_time_agents :full_time_support_agents
 
   proxy_features(SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + ADMIN_CUSTOMER_PORTAL_FEATURES.keys +
-    PLANS_AND_FEATURES.collect { |key, value| value[:features] }.flatten!.uniq!)
+                 PLANS_AND_FEATURES.collect { |key, value| value[:features] }.flatten!.uniq!)
 
   Limits = {
     'agent_limit' => Proc.new { |a| a.full_time_support_agents.count },
