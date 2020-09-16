@@ -446,18 +446,6 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def solutions_agent_metrics_enabled?
-    launched?(:solutions_agent_metrics)
-  end
-
-  def forums_agent_portal_enabled?
-    launched?(:forums_agent_portal)
-  end
-
-  def solutions_agent_portal_enabled?
-    launched?(:solutions_agent_portal)
-  end
-
   def helpdesk_tickets_by_product_enabled?
     launched?(:helpdesk_tickets_by_product)
   end

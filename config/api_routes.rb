@@ -1012,6 +1012,7 @@ Helpkit::Application.routes.draw do
       end
       collection do
         get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
+        post :sync
       end
     end
     resources :conversations, controller: 'channel/v2/conversations', only: [:update]
@@ -1027,6 +1028,11 @@ Helpkit::Application.routes.draw do
     get '/account', to: 'channel/v2/accounts#show'
     match '/account/update_freshchat_domain', to: 'channel/v2/accounts#update_freshchat_domain', via: [:post]
     match '/authenticate', to: 'channel/v2/iam/authentication#authenticate', via: [:get, :post, :put, :delete]
+    resources :groups, controller: 'channel/v2/groups' do
+      collection do
+        post 'sync', to: 'channel/v2/groups#sync'
+      end
+    end
     post '/iam/token', to: 'channel/v2/iam/authentication#iam_authenticate_token'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index, :update]
