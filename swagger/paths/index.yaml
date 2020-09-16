@@ -91,6 +91,8 @@
   $ref: ./conversations/latest_note_forward_template.yaml
 /tickets/{id}/facebook_reply:
   $ref: ./conversations/facebook_reply.yaml
+/tickets/{id}/channel-reply:
+  $ref: ./conversations/channel_reply.yaml
 /tickets/{id}/tweet:
   $ref: ./conversations/twitter_reply.yaml
 /tickets/{id}/reply_to_forward:

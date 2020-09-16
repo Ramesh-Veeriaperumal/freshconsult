@@ -1,0 +1,17 @@
+type: object
+required:
+  - channel_id
+  - profile_unique_id
+  - body
+properties:
+  channel_id:
+    type: integer
+    description: ID of channel from which the reply need to be sent.
+  profile_unique_id:
+    type: string
+    description: Receiver's unique identifier with respect to the channel, ex, phone number in WhatsApp channel.
+  last_note_id:
+    type: integer
+  body:
+    type: string
+    description: The text of the reply message

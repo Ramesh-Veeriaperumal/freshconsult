@@ -59,6 +59,7 @@
     - create_and_link_omni_account
     - sync_omni_agents
     - retry_observer
+    - channel_reply_messages
 
   :bulk_api:
     - bulk_api_jobs
@@ -448,6 +449,7 @@
     - update_article_platform_mapping_worker
     - marketplace_app_billing
     - retry_observer
+    - channel_reply_messages
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
