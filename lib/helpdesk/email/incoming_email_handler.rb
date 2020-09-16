@@ -217,7 +217,7 @@ module Helpdesk
 			def parse_from_email account
 				f_email = parse_email(params[:from])
 				reply_to_email = parse_email(params[:reply_to])
-				reply_to_feature = account.features?(:reply_to_based_tickets)
+				reply_to_feature = account.reply_to_based_tickets_enabled?
 				if reply_to_feature or invalid_from_email?(f_email, reply_to_email, reply_to_feature)
 					return (reply_to_email[:email].nil? ? f_email : reply_to_email)
 				else

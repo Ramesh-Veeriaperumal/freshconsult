@@ -151,12 +151,12 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
 
   def reply_to_email_enable
-    current_account.features.reply_to_based_tickets.create
+    current_account.enable_setting(:reply_to_based_tickets)
     post_process
   end
 
   def reply_to_email_disable
-    current_account.features.reply_to_based_tickets.destroy
+    current_account.disable_setting(:reply_to_based_tickets)
     post_process
   end
 

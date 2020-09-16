@@ -440,7 +440,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def parse_from_email account
-      reply_to_feature = account.features?(:reply_to_based_tickets)
+      reply_to_feature = account.reply_to_based_tickets_enabled?
       parse_reply_to_email if reply_to_feature
 
       #Assigns email of reply_to if feature is present or gets it from params[:from]

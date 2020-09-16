@@ -13,7 +13,7 @@ describe Admin::EmailConfigsController do
 
   after(:all) do
     clear_email_config
-    restore_default_feature("reply_to_based_tickets")
+    restore_default_setting("reply_to_based_tickets")
   end
 
   # Creating new email configs with and without custom mailbox
@@ -508,13 +508,13 @@ describe Admin::EmailConfigsController do
   it "should enable reply_to email feature" do
     post :reply_to_email_enable
     @account.reload
-    @account.features?(:reply_to_based_tickets).should eql true
+    @account.reply_to_based_tickets_enabled?.should eql true
   end
 
   it "should disable reply_to email feature" do
     post :reply_to_email_disable
     @account.reload
-    @account.features?(:reply_to_based_tickets).should eql false
+    @account.reply_to_based_tickets_enabled?.should eql false
   end
 
   it "should enable personalized email" do

@@ -90,7 +90,7 @@
     </p> 
   </div>
   <div class="span2 align-right" id="survey_link_con">
-    <input rel="toggle" type="checkbox" id="reply_to_based_tickets" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_account.features?(:reply_to_based_tickets)%>checked="true"<%end%> />
+    <input rel="toggle" type="checkbox" id="reply_to_based_tickets" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_account.reply_to_based_tickets_enabled? %>checked="true"<%end%> />
   </div>
 </div>
 
