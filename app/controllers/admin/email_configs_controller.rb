@@ -141,12 +141,12 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
 
   def personalized_email_enable
-    current_account.features.personalized_email_replies.create
+    current_account.enable_setting(:personalized_email_replies)
     post_process
   end
 
   def personalized_email_disable
-    current_account.features.personalized_email_replies.destroy
+    current_account.disable_setting(:personalized_email_replies)
     post_process
   end
 
