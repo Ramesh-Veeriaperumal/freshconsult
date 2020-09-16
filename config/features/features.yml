@@ -317,8 +317,8 @@
       :reports_91: 313
       :basic_settings_feature: 314
       :untitled_feature_1_dependency_toggle: 315
-      :untitled_feature_2_dependency_toggle: 316
-      :untitled_setting_1: 317
+      :solutions_agent_metrics_feature: 316
+      :helpdesk_tickets_by_product: 317
       :untitled_setting_2: 318
       :untitled_setting_3: 319
       :untitled_setting_4: 320
@@ -503,7 +503,6 @@
   :field_service_geolocation: false
   :location_tagging: false
   :kb_allow_base64_images: false
-  :solutions_agent_metrics: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :fetch_ticket_from_ref_first: false

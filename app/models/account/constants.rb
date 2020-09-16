@@ -155,11 +155,16 @@ class Account < ActiveRecord::Base
     :freshreports_analytics => false, :disable_old_reports => false, contact_custom_activity_api: false, assets: false, assets_toggle: false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
-  ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
-                            :open_forums => false, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-                            :signup_link => true, :captcha => true, :prevent_ticket_creation_for_others=> true,
-                            :moderate_all_posts => false, :moderate_posts_with_links => true, :hide_portal_forums => false,
-                            :forum_captcha_disable => false, :public_ticket_url => false }
+  ADMIN_CUSTOMER_PORTAL_FEATURES = {
+    :google_signin => true, :twitter_signin => true, :facebook_signin => true, :auto_suggest_solutions => true, :captcha => true, :prevent_ticket_creation_for_others => true, :hide_portal_forums => false
+  }
+
+  ADMIN_CUSTOMER_PORTAL_SETTINGS = [
+    :signup_link, :anonymous_tickets, :auto_suggest_solutions,
+    :public_ticket_url, :open_solutions, :open_forums,
+    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts,
+    :helpdesk_tickets_by_product, :solutions_agent_metrics
+  ]
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
 
@@ -238,8 +243,7 @@ class Account < ActiveRecord::Base
     omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
-    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
-    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false
+    chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false, portal_new_settings: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

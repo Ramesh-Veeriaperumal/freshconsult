@@ -131,6 +131,30 @@
 			</div>
 		</div>
 	<% end %>
+  <% if current_account.launched?(:portal_new_settings) %>
+    <% if current_account.admin_setting_for_account?(:helpdesk_tickets_by_product) %>
+      <div class="control-group sub-section">
+        <div class="control-label width-100"><%= t('.view_portal_tickets_title') %></div>
+        <div class="muted control-description"><%= t('.view_portal_tickets_description').html_safe %></div>
+        <div class="control-radio-button">
+          <%= feature_radio_button({
+              :helpdesk_tickets_by_product => t('plain_yes'),
+              :default => t('plain_no') }) %>
+        </div>
+      </div>
+    <% end %>
+    <% if current_account.admin_setting_for_account?(:solutions_agent_metrics) %>
+      <div class="control-group">
+        <div class="control-label width-100"><%= t('.track_agent_metrics_title') %></div>
+        <div class="muted control-description"><%= t('.track_agent_metrics_description') %></div>
+        <div class="control-radio-button">
+          <%= feature_radio_button({
+              :solutions_agent_metrics => t('plain_yes'),
+              :default => t('plain_no')}) %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
 </div>
 <% if current_account.features_included?(:forums) %>
 	<div class="portal-section">

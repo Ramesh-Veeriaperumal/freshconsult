@@ -2491,6 +2491,10 @@ en:
         reset_for: This will reset edits for
         forum_captcha: Logged in users should enter CAPTCHA to create topic
         notify_agents: 'Send Moderation and Spam Notification to:'
+        view_portal_tickets_title: "Allow users to view only portal-specific tickets"
+        view_portal_tickets_description: "If enabled, users will be able to view only tickets created by them in the specific portal. <br> If disabled, users will be able to view all the tickets created by them in every portal."
+        track_agent_metrics_title: "Track article metrics of agents"
+        track_agent_metrics_decription: "Track the article views/likes/dislikes from agents on the customer portal."
         view_forums: Who can view forums
         important: Important
         moderate_links_help: >-

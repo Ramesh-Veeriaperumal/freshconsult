@@ -8,13 +8,27 @@ class Admin::AccountFeaturesController < ApiApplicationController
   before_filter :get_feature_type, only: ALLOWED_METHOD_FOR_PRIVATE_API
 
   def create
-    modify_feature :enable
-    head 204
+    if @is_a_setting
+      if @account.admin_setting_for_account?(@feature_name)
+        @account.enable_setting(@feature_name)
+        head 204
+      end
+    else
+      modify_feature :enable
+      head 204
+    end
   end
 
   def destroy
-    modify_feature :disable
-    head 204
+    if @is_a_setting
+      if @account.admin_setting_for_account?(@feature_name)
+        @account.disable_setting(@feature_name)
+        head 204
+      end
+    else
+      modify_feature :disable
+      head 204
+    end
   end
 
   private
@@ -35,5 +49,6 @@ class Admin::AccountFeaturesController < ApiApplicationController
       @account = current_account
       @feature_name = params[:name].to_sym
       @feature_type = feature_types(@feature_name)
+      @is_a_setting = @account.launched?(:feature_based_settings) && AccountSettings::SettingsConfig[params[:name]]
     end
 end

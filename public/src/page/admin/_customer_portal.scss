@@ -31,8 +31,25 @@
 		}
 		.control-label{
 			padding-top: 0;
-			width: 320px;
-		}
+      width: 320px;
+
+      &.width-100 {
+        width: 100%;
+      }
+    }
+
+    .control-description {
+      display: inline-block;
+      width: 325px;
+      margin-top: 10px;
+    }
+    .control-radio-button {
+     display: inline-block;
+     margin-left: 30px;
+     vertical-align: top;
+     margin-top: 10px;
+    }
+
 		.controls{
 			@include margin-left(320px);
 			@include padding-left(10px);

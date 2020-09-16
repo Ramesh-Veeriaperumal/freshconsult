@@ -1111,7 +1111,12 @@ class Account < ActiveRecord::Base
     def update_features(features)
       if features.present?
         features.each do |name, value|
-          AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+          if AccountSettings::SettingsConfig[name]
+            byebug
+            AccountsHelper.value_to_boolean(value) ? set_setting(name.to_sym) : reset_setting(name.to_sym) if admin_setting_for_account?(name)
+          else
+            AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+          end
         end
       end
     end

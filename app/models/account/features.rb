@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
     :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
-    :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
+    :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product,:migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log,
     :requester_widget_timeline, :sprout_trial_onboarding,
@@ -44,7 +44,7 @@ class Account < ActiveRecord::Base
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
-    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :skip_ticket_threading, :channel_command_reply_to_sidekiq
+    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :skip_ticket_threading, :channel_command_reply_to_sidekiq, :portal_new_settings
   ].freeze
 
   BITMAP_FEATURES = [
@@ -80,8 +80,8 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
-    :fetch_ticket_from_ref_first, :skip_ticket_threading, :helpdesk_tickets_by_product, :skip_invoice_due_warning, :allow_wildcard_ticket_create
+    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :forums_agent_portal, :solutions_agent_portal,
+    :fetch_ticket_from_ref_first, :skip_ticket_threading, :skip_invoice_due_warning, :allow_wildcard_ticket_create, :solutions_agent_metrics_feature
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -462,6 +462,15 @@ class Account < ActiveRecord::Base
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
   end
 
+  def set_setting(setting)
+    set_feature(setting) if AccountSettings::SettingsConfig.include?(setting)
+  end
+
+  def admin_setting_for_account?(setting)
+    settings_hash = AccountSettings::SettingsConfig[setting]
+    settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
+  end
+
   # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
   def enable_setting(setting)
     launch(setting) if LP_FEATURES.include?(setting)
@@ -472,5 +481,9 @@ class Account < ActiveRecord::Base
   def disable_setting(setting)
     rollback(setting) if LP_FEATURES.include?(setting)
     revoke_feature(setting) if BITMAP_FEATURES.include?(setting)
+  end
+
+  def reset_setting(setting)
+    reset_feature(setting) if AccountSettings::SettingsConfig.include?(setting)
   end
 end
