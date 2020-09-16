@@ -50,7 +50,7 @@ module Email
       end
 
       def toggle_disable_email_setting(feature, enable)
-        if enable == current_account.disable_agent_forward_enabled?
+        if enable == current_account.safe_send("#{EmailSettingsConstants::DISABLE_AGENT_FORWARD}_enabled?")
           if enable
             current_account.disable_setting(feature)
           else
@@ -68,7 +68,7 @@ module Email
       end
 
       def check_compose_email_enabled?
-        !current_account.compose_email_enabled? || ismember?(COMPOSE_EMAIL_ENABLED, current_account.id)
+        !current_account.safe_send("#{EmailSettingsConstants::COMPOSE_EMAIL_FEATURE}_enabled?") || ismember?(COMPOSE_EMAIL_ENABLED, current_account.id)
       end
 
       def generate_view_hash
