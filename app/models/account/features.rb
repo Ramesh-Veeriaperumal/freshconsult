@@ -1,7 +1,8 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES = [
-    :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service,
+
+    :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
     :falcon_portal_theme, :freshid, :allow_huge_ccs,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
@@ -24,7 +25,7 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
-    :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
+    :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
@@ -39,7 +40,7 @@ class Account < ActiveRecord::Base
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :idle_session_timeout, :solutions_dashboard,
     :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments,
-    :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription,
+    :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription, :omni_channel_team_dashboard, :filter_facebook_mentions,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
@@ -80,9 +81,14 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
-    :fetch_ticket_from_ref_first, :skip_ticket_threading, :helpdesk_tickets_by_product
+    :fetch_ticket_from_ref_first, :skip_ticket_threading, :helpdesk_tickets_by_product, :skip_invoice_due_warning, :allow_wildcard_ticket_create
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
+
+  LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal, :helpdesk_tickets_by_product,
+    :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create
+  ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
@@ -436,28 +442,20 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_dashboard)
   end
 
-  def solutions_agent_metrics_enabled?
-    launched?(:solutions_agent_metrics)
+  def omni_channel_team_dashboard_enabled?
+    omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def fetch_ticket_from_ref_first_enabled?
-    launched?(:fetch_ticket_from_ref_first)
-  end
-
-  def skip_ticket_threading_enabled?
-    launched?(:skip_ticket_threading)
-  end
-
-  def forums_agent_portal_enabled?
-    launched?(:forums_agent_portal)
-  end
-
-  def solutions_agent_portal_enabled?
-    launched?(:solutions_agent_portal)
+  def allow_wildcard_ticket_create_enabled?
+    launched?(:allow_wildcard_ticket_create)
   end
 
   def helpdesk_tickets_by_product_enabled?
     launched?(:helpdesk_tickets_by_product)
+  end
+
+  def skip_invoice_due_warning_enabled?
+    launched?(:skip_invoice_due_warning)
   end
 
   def features

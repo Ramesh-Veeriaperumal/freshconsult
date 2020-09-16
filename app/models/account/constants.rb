@@ -140,7 +140,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {
     :gamification_enable => false, :portal_cc => false, :personalized_email_replies => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
-    :no_list_view_count_query => false, :client_debugging => false, :collision_socket => false,
+    :client_debugging => false, :collision_socket => false,
     :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
     :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
@@ -148,7 +148,7 @@ class Account < ActiveRecord::Base
     :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
-    :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
+    :activity_revamp => true, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
     :advanced_search => false, :advanced_search_bulk_actions => false, :chat => false, :chat_routing => false,
@@ -177,8 +177,9 @@ class Account < ActiveRecord::Base
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
   LAUNCHPARTY_FEATURES = {
+
     hide_og_meta_tags: false, agent_conference: false, api_search_beta: false, autoplay: false, bi_reports: false,
-    disable_old_sso: false, enable_old_sso: false, es_count_writes: false,
+    disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,
@@ -189,7 +190,7 @@ class Account < ActiveRecord::Base
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
-    feedback_widget_captcha: false, es_multilang_solutions: false, requester_widget: false,
+    feedback_widget_captcha: false, es_multilang_solutions: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     skip_ticket_threading: false,
     kbase_spam_whitelist: false,
@@ -216,7 +217,7 @@ class Account < ActiveRecord::Base
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
-    recalculate_daypass: false, prevent_wc_ticket_create: true, allow_wildcard_ticket_create: false,
+    recalculate_daypass: false, allow_wildcard_ticket_create: false,
     attachment_redirect_expiry: false, solutions_agent_portal: false, solutions_agent_metrics: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
