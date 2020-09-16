@@ -70,16 +70,9 @@ class AccountsControllerTest < ActionController::TestCase
     assert_response 200, resp
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
-    assert account.has_feature?(:signup_link)
-    assert account.has_feature?(:anonymous_tickets)
-    assert account.has_feature?(:auto_suggest_solutions)
-    assert account.has_feature?(:open_solutions)
-    assert account.has_feature?(:moderate_posts_with_links)
-
-    assert_equal account.has_feature?(:public_ticket_url), false
-    assert_equal account.has_feature?(:open_forums), false
-    assert_equal account.has_feature?(:forum_captcha_disable), false
-    assert_equal account.has_feature?(:moderate_all_posts), false
+    assert account.has_feature?(:untitled_setting_3)
+    assert account.has_feature?(:untitled_setting_4)
+    assert_equal account.has_feature?(:untitled_setting_1), false
   ensure
     Account.find(resp['account_id']).destroy if resp['account_id'].present?
     unstub_signup_calls
@@ -106,8 +99,9 @@ class AccountsControllerTest < ActionController::TestCase
     assert_response 200, resp
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
-    assert_equal account.has_feature?(:signup_link), false
-    assert_equal account.has_feature?(:public_ticket_url), false
+    assert_equal account.has_feature?(:untitled_setting_1), false
+    assert_equal account.has_feature?(:untitled_setting_3), false
+    assert_equal account.has_feature?(:untitled_setting_4), false
   ensure
     Account.find(resp['account_id']).destroy if resp['account_id'].present?
     unstub_signup_calls
