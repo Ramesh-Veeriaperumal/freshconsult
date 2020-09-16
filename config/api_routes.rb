@@ -1012,6 +1012,7 @@ Helpkit::Application.routes.draw do
       end
       collection do
         get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
+        post :sync
       end
     end
     resources :conversations, controller: 'channel/v2/conversations', only: [:update]

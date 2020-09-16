@@ -64,6 +64,7 @@ module ApiConstants
                        Solutions::HomeConstants::LOAD_OBJECT_EXCEPT +
                        Testing::FreshidApiConstants::LOAD_OBJECT_EXCEPT +
                        Admin::CustomTranslationsConstants::LOAD_OBJECT_EXCEPT +
+                       Channel::V2::TicketConstants::LOAD_OBJECT_EXCEPT +
                        Channel::V2::ConversationConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
