@@ -52,6 +52,15 @@
   silkroad:
     auth_type: <%= node[:ymls][:channel_api_keys][:silkroad][:auth_type]%>
     jwt_secret: <%= node[:ymls][:channel_api_keys][:silkroad][:jwt_secret]%>
+  analytics:
+    auth_type: <%= node[:ymls][:channel_api_keys][:analytics][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:analytics][:jwt_secret]%>
   kbservice:
     auth_type: <%= node[:ymls][:channel_api_keys][:kbservice][:auth_type]%>
     jwt_secret: <%= node[:ymls][:channel_api_keys][:kbservice][:jwt_secret]%>
+  freshdesk:
+    auth_type: <%= node[:ymls][:channel_api_keys][:freshdesk][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:freshdesk][:jwt_secret]%>
+  search:
+    auth_type: <%= node[:ymls][:channel_api_keys][:search][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:search][:jwt_secret]%>

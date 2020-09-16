@@ -268,6 +268,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
+    puts "Response---  #{json_response.inspect}"
     assert_equal json_response['support_agent']['full_time_agent_count'], 1
     assert_equal json_response['support_agent']['occasional_agent_count'], 0
     assert_equal json_response['support_agent']['license_available'], nil
@@ -285,6 +286,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
+    puts "Response---  #{json_response.inspect}"
     assert_equal json_response['support_agent']['full_time_agent_count'], 1
     assert_equal json_response['support_agent']['license_available'], 0
   ensure
@@ -304,6 +306,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
+    puts "Response---  #{json_response.inspect}"
     assert_equal json_response['support_agent']['full_time_agent_count'], 2
     assert_equal json_response['support_agent']['occasional_agent_count'], 1
     assert_equal json_response['support_agent']['license_available'], 1
@@ -324,6 +327,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
+    puts "Response---  #{json_response.inspect}"
     assert_equal json_response['support_agent']['full_time_agent_count'], 2
     assert_equal json_response['support_agent']['occasional_agent_count'], 1
     assert_equal json_response['support_agent']['license_available'], 1
@@ -340,6 +344,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
+    puts "Response---  #{json_response.inspect}"
     assert_equal json_response['field_agent']['full_time_agent_count'], 0
     assert_equal json_response['field_agent']['occasional_agent_count'], nil
     assert_equal json_response['field_agent']['license_available'], nil
@@ -356,6 +361,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
+    puts "Response---  #{json_response.inspect}"
     assert_equal json_response['field_agent']['full_time_agent_count'], 0
     assert_equal json_response['field_agent']['occasional_agent_count'], nil
     assert_equal json_response['field_agent']['license_available'], 0
@@ -377,6 +383,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
+    puts "Response---  #{json_response.inspect}"
     assert_equal json_response['field_agent']['full_time_agent_count'], 1
     assert_equal json_response['field_agent']['license_available'], 0
   ensure
@@ -399,6 +406,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     get :agents_limit, controller_params(version: 'private')
     assert_response 200
     json_response = JSON.parse(response.body)
+    puts "Response---  #{json_response.inspect}"
     assert_equal json_response['field_agent']['full_time_agent_count'], 1
     assert_equal json_response['field_agent']['license_available'], 0
   ensure
