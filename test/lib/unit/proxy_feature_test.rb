@@ -70,8 +70,8 @@ class ProxyFeatureTest < ActiveSupport::TestCase
 
   def test_account_update_features_method
     params = { features: { open_forums: false, open_solutions: false, hide_portal_forums: true } }
-    [:open_forums, :open_solutions].each { |feature| @account.features.safe_send(feature).create }
-    @account.features.hide_portal_forums.destroy
+    [:open_forums, :forums, :open_solutions].each { |feature| @account.add_feature(feature) }
+    @account.revoke_feature(:hide_portal_forums)
     assert @account.has_feature?(:open_forums), 'open_forums should be true'
     assert @account.has_feature?(:open_solutions), 'open_solutions should be true'
     refute @account.has_feature?(:hide_portal_forums), 'hide_portal_forums should be false'

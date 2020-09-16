@@ -382,7 +382,7 @@ class Support::TicketsControllerTest < ActionController::TestCase
 
   def test_create_ticket_for_login_user_without_anonymous_tickets_and_with_prevent_ticket_creation_for_others_feature
     @account.add_feature(:prevent_ticket_creation_for_others)
-    @account.remove_feature(:anonymous_tickets)
+    @account.revoke_feature(:anonymous_tickets)
     user = add_new_user(Account.current, active: true)
     user.make_current
     login_as(user)
@@ -393,12 +393,12 @@ class Support::TicketsControllerTest < ActionController::TestCase
     log_out
     user.destroy
   ensure
-    @account.remove_feature(:prevent_ticket_creation_for_others)
+    @account.revoke_feature(:prevent_ticket_creation_for_others)
   end
 
   def test_create_ticket_for_login_user_without_anonymous_tickets_feature_and_without_prevent_ticket_creation_for_others_feature
-    @account.remove_feature(:prevent_ticket_creation_for_others)
-    @account.remove_feature(:anonymous_tickets)
+    @account.revoke_feature(:prevent_ticket_creation_for_others)
+    @account.revoke_feature(:anonymous_tickets)
     user = add_new_user(Account.current, active: true)
     user.make_current
     login_as(user)
@@ -423,8 +423,8 @@ class Support::TicketsControllerTest < ActionController::TestCase
     log_out
     user.destroy
   ensure
-    @account.remove_feature(:anonymous_tickets)
-    @account.remove_feature(:prevent_ticket_creation_for_others)
+    @account.revoke_feature(:anonymous_tickets)
+    @account.revoke_feature(:prevent_ticket_creation_for_others)
   end
 
   def test_create_with_svg_ticket_type

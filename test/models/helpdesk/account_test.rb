@@ -88,7 +88,7 @@ class AccountTest < ActiveSupport::TestCase
   def test_admin_setting_for_account_with_setting_dependency_disabled
     feature = :signup_link
     dependent_feature = :basic_settings_feature
-    is_dependent_feature_enabled = @account.send("#{dependent_feature}_enabled?")
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
     @account.revoke_feature(dependent_feature)
 
     assert_equal @account.admin_setting_for_account?(feature), false
@@ -99,7 +99,7 @@ class AccountTest < ActiveSupport::TestCase
   def test_admin_setting_for_account_with_setting_dependency_enabled
     feature = :signup_link
     dependent_feature = :basic_settings_feature
-    is_dependent_feature_enabled = @account.send("#{dependent_feature}_enabled?")
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
     @account.add_feature(dependent_feature)
 
     assert_equal @account.admin_setting_for_account?(feature), true
@@ -108,41 +108,45 @@ class AccountTest < ActiveSupport::TestCase
   end
 
   def test_update_features_method_with_setting_dependency_disabled
-    params = { features: { signup_link: false } }
+    params = { features: { signup_link: true } }
+
+    feature = :signup_link
+    is_feature_enabled = @account.has_feature?(feature)
+    @account.revoke_feature(feature)
 
     dependent_feature = :basic_settings_feature
-    is_dependent_feature_enabled = @account.send("#{dependent_feature}_enabled?")
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
     @account.revoke_feature(dependent_feature)
 
-    assert @account.has_feature?(:signup_link), 'signup_link should be true'
+    refute @account.has_feature?(feature), 'feature should be false'
     refute @account.has_feature?(dependent_feature), 'dependent_feature should be false'
 
     @account.update_attributes!(params)
 
-    assert @account.has_feature?(:signup_link), 'signup_link should be true'
-
-    ensure
-      is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
+    refute @account.has_feature?(feature), 'feature should be false'
+  ensure
+    is_feature_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
+    is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
   def test_update_features_method_with_setting_dependency_enabled
-    params = { features: { signup_link: false } }
-    
+    params = { features: { signup_link: true } }
+
     feature = :signup_link
     is_feature_enabled = @account.has_feature?(feature)
+    @account.revoke_feature(feature)
 
     dependent_feature = :basic_settings_feature
-    is_dependent_feature_enabled = @account.send("#{dependent_feature}_enabled?")
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
     @account.add_feature(dependent_feature)
 
-    assert @account.has_feature?(feature), 'signup_link should be true'
+    refute @account.has_feature?(feature), 'feature should be false'
     assert @account.has_feature?(dependent_feature), 'dependent_feature should be true'
 
     @account.update_attributes!(params)
 
-    refute @account.has_feature?(:signup_link), 'signup_link should be false'
-
-    ensure
+    assert @account.has_feature?(feature), 'feature should be true'
+  ensure
       is_feature_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
       is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
