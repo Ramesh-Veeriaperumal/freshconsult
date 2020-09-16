@@ -19,6 +19,7 @@ class AccountsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:deliver_admin_activation).returns(true)
     User.any_instance.stubs(:perishable_token).returns(Faker::Number.number(5))
     User.any_instance.stubs(:reset_perishable_token!).returns(true)
+    @req_stub = stub_request(:post, "#{ThirdCrm::FRESHMARKETER_CONFIG['events_url']}?email=#{current_account.admin_email}&event_name=#{ThirdCRM::FRESHMARKETER_EVENTS[:fdesk_event]}").to_return(status: 200, body: '', headers: {})
   end
 
   def unstub_signup_calls
@@ -31,6 +32,7 @@ class AccountsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:deliver_admin_activation)
     User.any_instance.unstub(:perishable_token)
     User.any_instance.unstub(:reset_perishable_token!)
+    remove_request_stub(@req_stub)
   end
 
   def current_account
@@ -45,6 +47,7 @@ class AccountsControllerTest < ActionController::TestCase
     Account.stubs(:current).returns(Account.first)
     get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
     assert_response 200
+    assert_not_equal AddEventToFreshmarketer.jobs.size, 0
   ensure
     unstub_signup_calls
     Account.unstub(:current)
@@ -55,7 +58,7 @@ class AccountsControllerTest < ActionController::TestCase
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
-    user_email = Faker::Internet.email
+    user_email = "#{Faker::Lorem.word}#{rand(1_000)}@testemail.com"
     landing_url = Faker::Internet.url
     user_name = Faker::Name.name
     session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
@@ -74,7 +77,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert account.has_feature?(:untitled_setting_4)
     assert_equal account.has_feature?(:untitled_setting_1), false
   ensure
-    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    Account.find(resp['account_id']).destroy if resp && resp['account_id']
     unstub_signup_calls
   end
 
@@ -84,7 +87,7 @@ class AccountsControllerTest < ActionController::TestCase
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
-    user_email = Faker::Internet.email
+    user_email = "#{Faker::Lorem.word}#{rand(1_000)}@testemail.com"
     landing_url = Faker::Internet.url
     user_name = Faker::Name.name
     session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
@@ -103,7 +106,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.has_feature?(:untitled_setting_3), false
     assert_equal account.has_feature?(:untitled_setting_4), false
   ensure
-    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    Account.find(resp['account_id']).destroy if resp && resp['account_id']
     unstub_signup_calls
   end
 

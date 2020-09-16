@@ -3,8 +3,8 @@
 module CentralLib
   module CentralResyncConstants
     RESYNC_ENTITIES = {
-      agent: 'AGENT',
-      group: 'GROUP',
+      agent: 'Agent',
+      group: 'Group',
       ticket_field: 'Helpdesk::TicketField',
       ticket: 'Helpdesk::Ticket',
       note: 'Helpdesk::Note'
