@@ -58,7 +58,7 @@ class AccountsControllerTest < ActionController::TestCase
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
-    user_email = Faker::Internet.email
+    user_email = "#{Faker::Lorem.word}#{rand(1_000)}@testemail.com"
     landing_url = Faker::Internet.url
     user_name = Faker::Name.name
     session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
@@ -77,7 +77,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert account.has_feature?(:untitled_setting_4)
     assert_equal account.has_feature?(:untitled_setting_1), false
   ensure
-    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    Account.find(resp['account_id']).destroy if resp && resp['account_id']
     unstub_signup_calls
   end
 
@@ -87,7 +87,7 @@ class AccountsControllerTest < ActionController::TestCase
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
-    user_email = Faker::Internet.email
+    user_email = "#{Faker::Lorem.word}#{rand(1_000)}@testemail.com"
     landing_url = Faker::Internet.url
     user_name = Faker::Name.name
     session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
@@ -106,7 +106,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.has_feature?(:untitled_setting_3), false
     assert_equal account.has_feature?(:untitled_setting_4), false
   ensure
-    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    Account.find(resp['account_id']).destroy if resp && resp['account_id']
     unstub_signup_calls
   end
 
