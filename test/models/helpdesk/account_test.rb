@@ -6,7 +6,8 @@ class AccountTest < ActiveSupport::TestCase
   include AccountTestHelper
 
   def setup
-    create_test_account if @account.nil?
+    @account = Account.first || create_new_account
+    @account.make_current
   end
 
   def test_account_find_with_valid_account_id

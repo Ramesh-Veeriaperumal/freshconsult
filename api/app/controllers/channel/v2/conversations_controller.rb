@@ -1,8 +1,15 @@
+# frozen_string_literal: true
+
 module Channel::V2
   class ConversationsController < ::ConversationsController
-
+    include ChannelAuthentication
+    include Channel::V2::ConversationConstants
+    include CentralLib::CentralResyncHelper
     include Conversations::Twitter
+
     skip_before_filter :can_send_user?
+    skip_before_filter :check_privilege, if: -> { skip_privilege_check? && action_name == 'sync' }
+    before_filter :channel_client_authentication, :validate_sync_params, only: [:sync]
 
     CHANNEL_V2_CONVERSATIONS_CONSTANTS_CLASS = 'Channel::V2::ConversationConstants'.freeze
 
@@ -15,7 +22,18 @@ module Channel::V2
         render_custom_errors(conversation_delegator, true)
       end
     end
-    
+
+    def sync
+      if resync_worker_limit_reached?(@source)
+        head 429
+      else
+        persist_job_info_and_start_entity_publish(@source, request.uuid, RESYNC_ENTITIES[:note],
+                                                  params[:meta], query_conditions, params[:primary_key_offset])
+        @item = { job_id: request.uuid }
+        render status: :accepted
+      end
+    end
+
     private
 
       def invoke_delegator
@@ -42,6 +60,10 @@ module Channel::V2
         Channel::V2::ConversationValidation
       end
 
+      def sync_validation_class
+        Channel::V2::ConversationSyncValidation
+      end
+
       def validate_params
         field = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize | ['source_additional_info' => 'twitter']
         params[cname].permit(*field)
@@ -53,6 +75,12 @@ module Channel::V2
         valid = @conversation_validation.valid?(action_name.to_sym)
         render_errors @conversation_validation.errors, @conversation_validation.error_options unless valid
         valid
+      end
+
+      def validate_sync_params
+        conversation_sync_validation = sync_validation_class.new(params[cname])
+        valid = conversation_sync_validation.valid?(action_name.to_sym)
+        render_errors conversation_sync_validation.errors, conversation_sync_validation.error_options unless valid
       end
 
       def sanitize_params
@@ -87,7 +115,7 @@ module Channel::V2
         params_hash = {
           notable: @ticket
         }
-        params_hash[:twitter_handle_id] =  @tweet[:twitter_handle_id] if social_source?
+        params_hash[:twitter_handle_id] = @tweet[:twitter_handle_id] if social_source?
         params_hash
       end
 
@@ -113,6 +141,23 @@ module Channel::V2
 
       def check_agent_note
         # Channel api should allow updating notes made by customers too
+      end
+
+      def skip_privilege_check?
+        RESYNC_ALLOWED_SOURCE.any? { |source| channel_source?(source.to_sym) }
+      end
+
+      def query_conditions
+        conditions = []
+        request_params = params[cname]
+        (SYNC_DATETIME_ATTRIBUTES & request_params.keys).each do |field|
+          conditions.push("#{SYNC_ATTRIBUTE_MAPPING[field]} >= '#{request_params[field][:start]}' and #{SYNC_ATTRIBUTE_MAPPING[field]} <= '#{request_params[field][:end]}'")
+        end
+        (SYNC_ARRAY_ATTRIBUTES & request_params.keys).each do |field|
+          array_values = request_params[field].join(', ')
+          conditions.push("#{SYNC_ATTRIBUTE_MAPPING[field]} in (#{array_values})")
+        end
+        conditions.join(' and ')
       end
   end
 end

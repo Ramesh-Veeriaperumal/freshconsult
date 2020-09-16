@@ -186,6 +186,53 @@ module GroupsTestHelper
     hash
   end
 
+  def group_management_v2_pattern(group)
+    {
+      id: Integer,
+      name: group.name,
+      description: group.description,
+      business_calendar_id: group.business_calendar_id,
+      type: GroupType.group_type_name(group.group_type),
+      escalate_to: group.escalate_to,
+      unassigned_for: GroupConstants::UNASSIGNED_FOR_MAP.key(group.assign_time),
+      agent_ids: group.agent_ids,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      allow_agents_to_change_availability: false,
+      automatic_agent_assignment: { enabled: false }
+    }
+  end
+
+  def group_management_rr_pattern(group)
+    result = group_management_v2_pattern(group).except(:automatic_agent_assignment)
+    result.merge!(automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                settings: [{ channel: 'ticket', assignment_type: 'round_robin' }] })
+    result
+  end
+
+  def group_management_lbrr_pattern(group)
+    result = group_management_v2_pattern(group).except(:automatic_agent_assignment)
+    result.merge!(automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                settings: [{ channel: 'ticket', assignment_type: 'load_based_round_robin',
+                                                             assignment_type_settings: { capping_limit: group.capping_limit } }] })
+    result
+  end
+
+  def group_management_sbrr_pattern(group)
+    result = group_management_v2_pattern(group).except(:automatic_agent_assignment)
+    result.merge!(automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                settings: [{ channel: 'ticket', assignment_type: 'skill_based_round_robin',
+                                                             assignment_type_settings: { capping_limit: group.capping_limit } }] })
+    result
+  end
+
+  def group_management_v2_lbrr_by_omni_pattern(group)
+    result = group_management_v2_pattern(group).except(:automatic_agent_assignment)
+    result.merge!(automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                settings: [{ channel: 'ticket', assignment_type: 'lbrr_by_omniroute' }] })
+    result
+  end
+
   # Helpers
   def group_payload
     { group: v1_group_params }.to_json

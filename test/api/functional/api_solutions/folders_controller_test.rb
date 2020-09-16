@@ -495,7 +495,7 @@ module ApiSolutions
     def test_create_folder_with_visibility_anyone_and_platforms
       enable_omni_bundle do
         category_meta = get_category
-        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true })
+        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: ['ios', 'web'])
         assert_response 201
         result = parse_response(@response.body)
         assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
@@ -508,7 +508,7 @@ module ApiSolutions
         Account.any_instance.stubs(:omni_bundle_account?).returns(true)
         Account.current.launch(:kbase_omni_bundle)
         category_meta = get_category
-        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 2, platforms: { ios: true, web: false, android: true })
+        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 2, platforms: ['ios', 'web'])
         assert_response 400
         result = parse_response(@response.body)
         match_json([bad_request_error_pattern('platforms', :cant_set_platforms, code: :incompatible_field)])
@@ -517,7 +517,7 @@ module ApiSolutions
 
     def test_create_folder_with_platforms_and_omni_feature_disabled
       category_meta = get_category
-      post :create, construct_params({ id: category_meta.id }, { name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true } })
+      post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: ['ios', 'android'])
       assert_response 403
       match_json(validation_error_pattern(bad_request_error_pattern('properties[:platforms]', :require_feature, feature: :omni_bundle_2020, code: :access_denied)))
     end
@@ -526,7 +526,7 @@ module ApiSolutions
       enable_omni_bundle do
         category_meta = get_category
         tag = Faker::Lorem.word
-        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true }, tags: [tag])
+        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: ['ios', 'android'], tags: [tag])
         assert_response 201
         result = parse_response(@response.body)
         assert_equal "http://#{@request.host}/api/v2/solutions/folders/#{result['id']}", response.headers['Location']
@@ -544,7 +544,7 @@ module ApiSolutions
           assert_equal @account.tags.map(&:name).include?(tag), false
           tag
         end
-        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: { ios: true, web: false, android: true }, tags: tags)
+        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: ['ios', 'android'], tags: tags)
         assert_response 400
         add_privilege(User.current, :create_tags)
       end
@@ -554,9 +554,8 @@ module ApiSolutions
       enable_omni_bundle do
         category_meta = get_category
         tag = Faker::Lorem.word
-        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 2, platforms: { ios: true, web: false, android: true }, tags: [tag])
+        post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 2, platforms: ['ios', 'android'], tags: [tag])
         assert_response 400
-        result = parse_response(@response.body)
         match_json([bad_request_error_pattern('platforms', :cant_set_platforms, code: :incompatible_field), bad_request_error_pattern('tags', :cant_set_tags, code: :incompatible_field)])
       end
     end
@@ -617,7 +616,7 @@ module ApiSolutions
       sample_folder = get_folder
       tag = Faker::Lorem.word
       visibility = 1
-      params_hash = { visibility: visibility, platforms: { web: true }, tags: [tag] }
+      params_hash = { visibility: visibility, platforms: ['web'], tags: [tag] }
       put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
       assert_response 403
     end
@@ -637,7 +636,7 @@ module ApiSolutions
         visibility = 1
         sample_folder = get_folder
         tag = Faker::Lorem.word
-        params_hash = { visibility: visibility, platforms: { ios: true }, tags: [tag] }
+        params_hash = { visibility: visibility, platforms: ['ios'], tags: [tag] }
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))
@@ -648,7 +647,7 @@ module ApiSolutions
       enable_omni_bundle do
         sample_folder = get_folder_with_platform_mapping(ios: false, android: true, web: true)
         tag = Faker::Lorem.word
-        params_hash = { platforms: { ios: true }, tags: [tag] }
+        params_hash = { platforms: ['ios'], tags: [tag] }
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))
@@ -658,7 +657,7 @@ module ApiSolutions
     def test_update_folder_disabling_platforms
       enable_omni_bundle do
         sample_folder = get_folder_with_platform_mapping(ios: false, android: true, web: true)
-        params_hash = { platforms: { android: false } }
+        params_hash = { platforms: [] }
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))
@@ -681,7 +680,7 @@ module ApiSolutions
     def test_update_folder_disabling_all_platforms
       enable_omni_bundle do
         sample_folder = get_folder_with_platform_mapping(ios: false, android: true, web: true)
-        params_hash = { platforms: { android: false, web: false } }
+        params_hash = { platforms: [] }
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))
