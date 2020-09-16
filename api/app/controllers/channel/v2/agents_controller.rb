@@ -4,7 +4,7 @@ module Channel::V2
     include CentralLib::CentralResyncHelper
     include CentralLib::CentralResyncConstants
 
-    skip_before_filter :check_privilege, if: :skip_privilege_check?
+    skip_before_filter :check_privilege, if: -> { skip_privilege_check? && action_name == 'sync' }
     before_filter :channel_client_authentication, :validate_sync_params, only: :sync
 
     def verify_agent_privilege
