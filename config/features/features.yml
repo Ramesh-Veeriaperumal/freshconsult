@@ -129,7 +129,7 @@
       :freshfone_conference: 125
       :unused_126: 126
       :id_less_tickets: 127
-      :no_list_view_count_query: 128
+      :unused_128: 128
       :saml_unspecified_nameid: 129
       :euc_hide_agent_metrics: 130
       :open_solutions: 131
@@ -457,7 +457,6 @@
   :forum_captcha_disable: false
   :public_ticket_url: false
   :id_less_tickets: false
-  :no_list_view_count_query: false
   :client_debugging: false
   :collision_socket: false
   :resource_rate_limit: false
