@@ -280,7 +280,7 @@ class Account < ActiveRecord::Base
   end
 
   def compose_email_enabled?
-    !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+    !has_setting?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   def helpdesk_restriction_enabled?

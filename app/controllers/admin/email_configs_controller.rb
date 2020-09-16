@@ -129,11 +129,11 @@ class Admin::EmailConfigsController < Admin::AdminController
     post_process
   end
 
-   def toggle_compose_email_feature
+   def toggle_compose_email_setting
     if current_account.features_included?(:compose_email)
-      current_account.features.compose_email.destroy
+      current_account.disable_setting(:compose_email)
     else
-      current_account.features.compose_email.create
+      current_account.enable_setting(:compose_email)
       #Handle delta case. Will remove this code once we remove redis feature check.
       $redis_others.perform_redis_op("srem", COMPOSE_EMAIL_ENABLED,current_account.id)
     end

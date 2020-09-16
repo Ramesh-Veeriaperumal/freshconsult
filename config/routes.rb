@@ -1264,7 +1264,7 @@ Helpkit::Application.routes.draw do
         post :personalized_email_enable
         post :personalized_email_disable
         post :toggle_agent_forward_feature
-        post :toggle_compose_email_feature
+        post :toggle_compose_email_setting
         post :reply_to_email_enable
         post :reply_to_email_disable
         post :id_less_tickets_enable
