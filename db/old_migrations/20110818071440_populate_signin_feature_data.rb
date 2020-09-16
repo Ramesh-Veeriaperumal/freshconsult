@@ -3,6 +3,7 @@ class PopulateSigninFeatureData < ActiveRecord::Migration
     Account.all.each do |account|
       account.features.google_signin.create
       account.features.twitter_signin.create
+      account.features.signup_link.create
     end
   end
 

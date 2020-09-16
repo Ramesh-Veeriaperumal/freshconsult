@@ -5,7 +5,7 @@ class FeaturesTest < ActiveSupport::TestCase
     features = { features: {open_forums: false, open_solutions: false, hide_portal_forums: true } }
     create_test_features
     destroy_test_features
-    @account.revoke_feature(:hide_portal_forums)
+    @account.features.hide_portal_forums.destroy
     @account.update_attributes!(features)
     refute @account.has_feature? :open_forums
     refute @account.has_feature? :open_solutions
@@ -17,7 +17,7 @@ class FeaturesTest < ActiveSupport::TestCase
   end
 
   def create_test_features
-    [:open_forums, :open_solutions].each { |feature| @account.add_feature(feature) }
+    [:open_forums, :open_solutions].each { |feature| @account.features.safe_send(feature).create }
     assert @account.has_feature? :open_forums
     assert @account.has_feature? :open_solutions
     features = @account.features.map(&:to_sym)
@@ -26,7 +26,7 @@ class FeaturesTest < ActiveSupport::TestCase
   end
 
   def destroy_test_features
-    @account.revoke_feature(:hide_portal_forums)
+    @account.features.hide_portal_forums.destroy
     refute @account.has_feature? :hide_portal_forums
     refute @account.features.map(&:to_sym).include? :hide_portal_forums
   end

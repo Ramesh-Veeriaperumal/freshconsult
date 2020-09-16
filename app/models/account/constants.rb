@@ -155,16 +155,11 @@ class Account < ActiveRecord::Base
     :freshreports_analytics => false, :disable_old_reports => false, contact_custom_activity_api: false, assets: false, assets_toggle: false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
-  ADMIN_CUSTOMER_PORTAL_FEATURES = {
-    :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-    :captcha => true, :prevent_ticket_creation_for_others => true, :hide_portal_forums => false
-  }
-
-  ADMIN_CUSTOMER_PORTAL_SETTINGS = [
-    :signup_link, :anonymous_tickets, :auto_suggest_solutions,
-    :public_ticket_url, :open_solutions, :open_forums,
-    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts
-  ]
+  ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
+                            :open_forums => false, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
+                            :signup_link => true, :captcha => true, :prevent_ticket_creation_for_others=> true,
+                            :moderate_all_posts => false, :moderate_posts_with_links => true, :hide_portal_forums => false,
+                            :forum_captcha_disable => false, :public_ticket_url => false }
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
 
@@ -182,9 +177,8 @@ class Account < ActiveRecord::Base
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
   LAUNCHPARTY_FEATURES = {
-
     hide_og_meta_tags: false, agent_conference: false, api_search_beta: false, autoplay: false, bi_reports: false,
-    disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
+    disable_old_sso: false, enable_old_sso: false, es_count_writes: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,

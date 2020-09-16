@@ -196,7 +196,7 @@
       :freddy_ultimate: 192
       :agent_scope: 193
       :social_tab: 194
-      :untitled_1: 195
+      :public_url_toggle: 195
       :add_to_response: 196
       :customer_journey: 197
       :customize_table_view: 198
@@ -315,13 +315,13 @@
       :reports_89: 311
       :reports_90: 312
       :reports_91: 313
-      :basic_settings_feature: 314
-      :untitled_feature_1_dependency_toggle: 315
-      :untitled_feature_2_dependency_toggle: 316
-      :untitled_setting_1: 317
-      :untitled_setting_2: 318
-      :untitled_setting_3: 319
-      :untitled_setting_4: 320
+      :reports_92: 314
+      :reports_93: 315
+      :reports_94: 316
+      :reports_95: 317
+      :reports_96: 318
+      :reports_97: 319
+      :reports_98: 320
       :field_service_geolocation: 321
       :reports_99: 322
       :freshreports_analytics: 323
@@ -439,12 +439,22 @@
   :call_quality_metrics: false
   :freshfone_conference: false
   :freshfone_custom_forwarding: false
+  :cascade_dispatcher: false
   :custom_encrypted_fields: false
+  :anonymous_tickets: true
+  :open_solutions: true
+  :auto_suggest_solutions: true
   :google_signin: true
   :twitter_signin: true
   :facebook_signin: true
+  :signup_link: true
+  :moderate_posts_with_links: true
+  :open_forums: false
   :captcha: true
+  :moderate_all_posts: false
   :hide_portal_forums: false
+  :forum_captcha_disable: false
+  :public_ticket_url: false
   :id_less_tickets: false
   :no_list_view_count_query: false
   :client_debugging: false

@@ -32,6 +32,7 @@ RSpec.describe Support::Solutions::ArticlesController do
   end
 
   before(:each) do
+    @account.features.open_solutions.create
     @account.reload
   end
 
@@ -198,10 +199,27 @@ RSpec.describe Support::Solutions::ArticlesController do
     @public_article_meta3.thumbs_down.should eql(dislikes + 1)
   end
 
+  it "should redirect to login page if there is no open solutions feature " do
+    name = Faker::Name.name
+    @account.features.open_solutions.destroy
+    article_meta = create_article( {:title => "#{name}", :description => "#{Faker::Lorem.sentence(3)}", :folder_id => @test_folder_meta1.id, 
+      :status => "2", :art_type => "1" , :user_id => "#{@agent.id}"} )    
+    get 'show', id: article_meta.id
+    response.body.should_not =~ /#{name}/
+    response.should redirect_to(login_path)
+  end
+
   it "should not show article and redirect to support solutions home if its folder is visible only to Agents" do
     log_in(@user) 
     get 'show', :id => @test_article3    
     response.should redirect_to(support_solutions_path)    
+  end
+ 
+  it "should not show draft article without logging in while open solutions feature is disabled" do
+    @account.features.open_solutions.destroy
+    get 'show', id: @test_article_meta2
+    response.body.should_not =~ /article2 with status as draft/
+    response.should redirect_to(login_path)
   end
 
   it "should handle unknown actions" do

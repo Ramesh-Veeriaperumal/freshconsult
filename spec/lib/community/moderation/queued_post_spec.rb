@@ -16,12 +16,15 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	after(:all) do
+		@account.features.moderate_all_posts.destroy
+		@account.features.moderate_posts_with_links.destroy
 		delete_dynamo_posts("ForumSpam")
 		delete_dynamo_posts("ForumUnpublished")
 		@category.destroy
 	end
 
 	it "should create a dynamo approval topic" do
+		@account.features.moderate_all_posts.create
 		sqs_params = sqs_topic_params
 
 		Community::Moderation::QueuedPost.new(sqs_params).analyze
@@ -35,6 +38,7 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a dynamo approval post" do
+		@account.features.moderate_all_posts.create
 		sqs_params = sqs_post_params
 
 		Community::Moderation::QueuedPost.new(sqs_params).analyze
@@ -72,6 +76,7 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a published topic" do
+		@account.features.moderate_all_posts.destroy
 		sqs_params = sqs_topic_params
 
 		Community::Moderation::QueuedPost.new(sqs_params).analyze
@@ -96,6 +101,8 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should not create a approval topic when body_html is nil" do
+		@account.features.moderate_all_posts.create
+
 		sqs_params = sqs_topic_params.merge({'body_html' => nil})
 
 		Community::Moderation::QueuedPost.new(sqs_params).analyze
@@ -127,6 +134,8 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a dynamo spam topic when body has email" do
+		@account.features.moderate_all_posts.destroy
+		@account.features.moderate_posts_with_links.create
 		sqs_params = sqs_topic_params.merge({
 										"body_html" => "<p>#{Faker::Lorem.paragraph}#{Faker::Internet.email}</p>"
 									})
@@ -142,6 +151,7 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a dynamo spam topic when body has phone numbers" do
+		@account.features.moderate_posts_with_links.create
 		sqs_params = sqs_topic_params.merge({
 										"body_html" => "<p>#{Faker::Lorem.paragraph}#{ForumHelper::PHONE_NUMBERS.sample}</p>"
 									})
@@ -157,6 +167,7 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a dynamo spam topic when body has links" do
+		@account.features.moderate_posts_with_links.create
 		sqs_params = sqs_topic_params.merge({
 										"body_html" => "<p>#{Faker::Lorem.paragraph}#{Faker::Internet.url}</p>"
 									})
@@ -172,6 +183,7 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a published topic when body has whitelisted link" do
+		@account.features.moderate_posts_with_links.create
 		whitelisted_link = "https://www.youtube.com/watch?v=lbJO8MBCyp4"
 		sqs_params = sqs_topic_params.merge({
 										"body_html" => "<p>#{Faker::Lorem.paragraph}#{whitelisted_link}</p>"
@@ -187,6 +199,7 @@ describe Community::Moderation::QueuedPost do
 	end
 
 	it "should create a published topic when body has no links, email, phone numbers" do
+		@account.features.moderate_posts_with_links.create
 		sqs_params = sqs_topic_params.merge({
 										"body_html" => "<p>#{Faker::Lorem.paragraph}</p>"
 									})

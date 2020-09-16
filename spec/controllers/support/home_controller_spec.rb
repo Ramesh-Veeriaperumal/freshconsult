@@ -20,9 +20,31 @@ describe Support::HomeController do
       :status => "1", :art_type => "1", :user_id => @agent_id } )
   end
 
+  before(:each) do
+    @account.features.open_solutions.create
+  end
+
   it "should show folder1 without logging in" do
     get 'index'
     response.body.should =~ /folder1/
+  end
+
+  it "should not show folder3 without logging in" do
+    @account.features.open_solutions.destroy
+    get 'index'
+    response.body.should_not =~ /folder3 visible to logged in customers/
+  end
+
+  it "should not show folder2 without logging in" do
+    @account.features.open_solutions.destroy
+    get 'index'
+    response.body.should_not =~ /folder2 visible to agents/
+  end
+
+  it "should not show solutions" do
+    @account.features.open_solutions.destroy
+    get 'index'
+    response.body.should_not =~ /Solutions/
   end
 
   it "should show category" do
@@ -61,10 +83,19 @@ describe Support::HomeController do
     response.body.should_not =~ /article2 with status as draft/
   end
 
+  it "should redirect to login page if the account has open_forums feature without having forums and solutions" do
+    @account.features.open_solutions.destroy
+    @account.features.open_forums.create
+    @account.features.forums.destroy
+    get 'index'
+    response.should redirect_to support_login_url
+  end
+
   describe 'Canonical url' do
     before(:each) do
       @account.reload
       @account.features.forums.create
+      @account.features.open_forums.create
       @category = create_test_category
       @forum = create_test_forum(@category)
       @url_options = { :host => @account.portals.first.host, :protocol => @account.url_protocol }

@@ -10,6 +10,7 @@
       - :social_tab
       - :omni_channel
       - :customize_table_view
+      - :public_url_toggle
       - :add_to_response
       - :agent_scope
       - :performance_report
@@ -20,7 +21,6 @@
       - :personal_canned_response
       - :api_v2
       - :help_widget
-      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -73,7 +73,6 @@
       - :sla_reminder_automation
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_17
@@ -130,7 +129,6 @@
       - :contact_custom_activity_api
       - :analytics_articles
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -165,7 +163,6 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
-      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_19:
@@ -176,6 +173,7 @@
       - :sla_management_v2
       - :api_v2
       - :add_to_response
+      - :public_url_toggle
       - :social_tab
       - :scenario_automation
       - :customize_table_view
@@ -232,7 +230,6 @@
       - :advanced_article_toolbar_options
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_19
@@ -344,7 +341,6 @@
       - :solutions_templates
       - :analytics_articles
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -384,7 +380,6 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
-      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_20:
@@ -395,6 +390,7 @@
       - :sla_management_v2
       - :api_v2
       - :add_to_response
+      - :public_url_toggle
       - :social_tab
       - :scenario_automation
       - :customize_table_view
@@ -450,7 +446,6 @@
       - :field_service_management_toggle
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_20
@@ -554,7 +549,6 @@
       - :solutions_templates
       - :analytics_articles
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_20
     :exclude: []
