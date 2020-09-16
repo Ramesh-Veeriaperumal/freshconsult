@@ -740,6 +740,7 @@ class AccountsController < ApplicationController
       end
       set_account_onboarding_pending
       mark_new_account_setup
+      AddEventToFreshmarketer.perform_async(event: ThirdCRM::FRESHMARKETER_EVENTS[:fdesk_event], event_name: FM_TRIAL_EVENT_NAME)
     end
 
     def set_additional_signup_params
