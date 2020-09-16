@@ -1,11 +1,13 @@
 require_relative '../test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'test_case_methods.rb')
 
 class AccountTest < ActiveSupport::TestCase
   include AccountTestHelper
 
   def setup
-    create_test_account if @account.nil?
+    @account = Account.first || create_new_account
+    @account.make_current
   end
 
   def test_account_find_with_valid_account_id
@@ -81,5 +83,57 @@ class AccountTest < ActiveSupport::TestCase
 
   def test_disable_setting_with_invalid_value_doesnt_raise_error
     @account.disable_setting(:abcd)
+  end
+
+  def test_publish_lp_onsignup_as_false
+    Account.any_instance.stubs(:signup_in_progress?).returns(false)
+    central_publish_lp_stub_const = { feature_name: false }
+    feature_class_mapping = {
+      feature_name: 'CentralPublishLaunchpartyFeatures'
+    }
+    stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
+      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
+        @account.launch :feature_name
+      end
+    end
+    # @launch_party_features is set to nil only if the lp publish worker is enqueued
+    assert_nil @account.instance_variable_get(:@launch_party_features)
+  ensure
+    @account.rollback :feature_name
+    Account.any_instance.unstub(:signup_in_progress?)
+  end
+
+  def test_publish_lp_onsignup_if_preference_of_feature_is_true
+    Account.any_instance.stubs(:signup_in_progress?).returns(true)
+    central_publish_lp_stub_const = { feature_name: true }
+    feature_class_mapping = {
+      feature_name: 'CentralPublishLaunchpartyFeatures'
+    }
+    stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
+      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
+        @account.launch :feature_name
+      end
+    end
+
+    # @launch_party_features is set to nil only if the lp publish worker is enqueued
+    assert_nil @account.instance_variable_get(:@launch_party_features)
+  ensure
+    Account.any_instance.unstub(:signup_in_progress?)
+  end
+
+  def test_publish_lp_onsignup_if_preference_of_feature_is_false
+    Account.any_instance.stubs(:signup_in_progress?).returns(true)
+    central_publish_lp_stub_const = { feature_name: false }
+    feature_class_mapping = {
+      feature_name: 'CentralPublishLaunchpartyFeatures'
+    }
+    stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
+      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
+        @account.launch :feature_name
+      end
+    end
+    assert @account.instance_variable_get(:@launch_party_features).empty?
+  ensure
+    Account.any_instance.unstub(:signup_in_progress?)
   end
 end

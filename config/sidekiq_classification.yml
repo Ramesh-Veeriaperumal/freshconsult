@@ -149,6 +149,7 @@
     - bitmap_callbacks
     - quality_management_system
     - update_agent_status_availability
+    - central_publish_resync
 
   :maintainence:
     - select_all_tickets
@@ -367,6 +368,7 @@
     - cron_meta_data_check
     - cron_enable_omniroute_for_new_accounts
     - cron_archive_automation
+    - cron_omni_accounts_monitoring_internal_reports
   :gamification:
     - gamification_user_score
     - gamification_ticket_score
@@ -744,6 +746,7 @@
     - cron_meta_data_check
     - cron_enable_omniroute_for_new_accounts
     - cron_archive_automation
+    - cron_omni_accounts_monitoring_internal_reports
     - jira_acc_config_updates
     - merge_topics
     - report_post_worker
@@ -761,3 +764,4 @@
     - bitmap_callbacks
     - quality_management_system
     - update_agent_status_availability
+    - central_publish_resync

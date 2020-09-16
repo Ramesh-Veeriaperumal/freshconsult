@@ -142,7 +142,7 @@
         "domains": {
           "_podeuwest1": "podeuwest1route.freshdesk.com",
           "_podeucentral1": "podeucentral1route.freshdesk.com",
-          "_podapsoutheast2": "edge-aus-lb.freshdesk.com",
+          "_podapsoutheast2": "podapsoutheast2route.freshdesk.com",
           "_podapsouth1": "podapsouth1route.freshdesk.com"
         },
         "hosted_zone": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:3W9xOn2kA2kzeMtC+wuwP6tXAgkLm4Ev:mF/gKjm2xZ/CV05+6tufwL2AuJR4qoz0wrtuz8jr]"
@@ -451,6 +451,12 @@
         "_activities_host": "activities.internal.podapsoutheast2.freshdesk.com",
         "_activities_export_host": "activitiesexport.internal.podapsoutheast2.freshdesk.com",
         "_port": "80"
+      },
+      "tracing": {
+        "_service_name": "freshdesk_helpkit",
+        "_tracing_host_port": 6831,
+        "_span_batch_size": 20,
+        "_sampler_probability": 0
       },
       "redshift": {
         "write_user_pwd": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:rPwvaOj/2Jf1uI7SqaVrp51TJr+0Xa7r:57Wwg27lfRotR5tBmno31ucxl/aIuALo]",
@@ -1349,6 +1355,18 @@
         "kbservice": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:Oa+pjMLmQ4Bg/NwxGeOxT0me0lSUYJxwwyN1dHIsEiw=:uuAmacIwHDgtIXBDorXykWJ99PM8l+6G:cSzMu/jFm3+V4ETOhgnMIQB52PsJ3J7fAlaTu4zQ9gbzfR1QTk4Wa9zzm0SuND7r]"]
+        },
+        "analytics": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:yLlDn6Li0A28jR2LnZVQ1LNXL3sxHzTJoeLJ6+Veni8=:fNUU17OPnbqt1lQ7Vm2Jg7jBkWm96Kb7:pSqulwqmMt11p78AthiJWHdLVAVasoJ746dSzcFCQkCQ4Xr07mSItlSQqU+i9n+OiKwCx1IoGzw=]"]
+        },
+        "freshdesk": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:yLlDn6Li0A28jR2LnZVQ1LNXL3sxHzTJoeLJ6+Veni8=:nI7r8zD0nuEb6i9WsYW3UzBiCvD74yqN:c28+CAFjKwa9ujckRDRf0a4PtWV86Yxq+GdFqBkCIbZzbKyEpvFrCFWBgUJSix5X7kjsAFBjl3g=]"]
+        },
+        "search": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:yLlDn6Li0A28jR2LnZVQ1LNXL3sxHzTJoeLJ6+Veni8=:y2IW/AtDdsf7w64sCM2x2JkQmvWOnJz8:oQo0FC6Fljzkmg/AK6KKGMwY44BEbmLlC1J8YALwiGPas470cIBC5qWYqQd/BcCaWa4hZykv2w4=]"]
         }
       },
       "scheduler_client_keys": {
@@ -1608,7 +1626,7 @@
         "_messageKey": "fd.site-announcement.sprout-banner"
       },
       "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.2.1.js",
+        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.2.4.js",
         "schedulerConfig": {
           "metricsAdapters": [
             {

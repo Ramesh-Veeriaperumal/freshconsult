@@ -407,8 +407,12 @@ class Solution::Article < ActiveRecord::Base
 
   def set_portal_interaction_source
     current_portal = Portal.current || Account.current.main_portal
-    self.interaction_source_type = INTERACTION_SOURCE[:portal]
-    self.interaction_source_id = current_portal.id
+    set_interaction_source(:portal, current_portal.id)
+  end
+
+  def set_interaction_source(source_type, source_id)
+    self.interaction_source_type = INTERACTION_SOURCE[source_type]
+    self.interaction_source_id = source_id
   end
 
   def self.article_type_option

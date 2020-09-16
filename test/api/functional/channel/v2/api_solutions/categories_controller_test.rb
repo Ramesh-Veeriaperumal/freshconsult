@@ -65,8 +65,15 @@ module Channel::V2::ApiSolutions
       sample_category = get_category
       get :index, controller_params(id: sample_category.parent_id, allow_language_fallback: 'invalid')
       assert_response 400
-      expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "It should be one of these values: 'true,false'", code: 'invalid_value' }] }
+      expected = { description: 'Validation failed', errors: [{ field: 'allow_language_fallback', message: "Value set is of type String.It should be a/an Boolean", code: 'datatype_mismatch' }] }
       assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+
+    def test_show_category_with_invalid_language_and_language_fallback_true
+      set_jwe_auth_header(SUPPORT_BOT)
+      sample_category = get_category
+      get :index, controller_params(id: sample_category.parent_id, language: 'invalid', allow_language_fallback: 'true')
+      assert_response 200
     end
 
     def test_show_unavailable_category

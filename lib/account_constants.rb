@@ -84,10 +84,12 @@ module AccountConstants
 
   # min is used by default
   DASHBOARD_LIMITS = {
-    min: { dashboard: 15, widgets: { scorecard: 15, bar_chart: 5, csat: 3, leaderboard: 3, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2 } },
-    mid: { dashboard: 20, widgets: { scorecard: 20, bar_chart: 7, csat: 3, leaderboard: 3, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3 } },
-    max: { dashboard: 25, widgets: { scorecard: 25, bar_chart: 9, csat: 3, leaderboard: 3, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4 } }
+    min: { dashboard: 15, widgets: { scorecard: 15, bar_chart: 5, csat: 3, leaderboard: 3, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5 } },
+    mid: { dashboard: 20, widgets: { scorecard: 20, bar_chart: 7, csat: 3, leaderboard: 3, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5 } },
+    max: { dashboard: 25, widgets: { scorecard: 25, bar_chart: 9, csat: 3, leaderboard: 3, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5 } }
   }.freeze
+
+  OMNI_WIDGET_LIMITS = { widgets: { freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5 } }.freeze
 
   PAID_BY_RESELLER = {
     'Yes' =>  true,
@@ -108,6 +110,8 @@ module AccountConstants
   IGNORE_SIGNUP_PARAMS = ['company_name'].freeze
 
   DEFAULT_AGENT_AVAILABILITY_REFRESH_TIME = 60
+
+  FM_TRIAL_EVENT_NAME = 'Fdesk Trial Plan'.freeze
 
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT

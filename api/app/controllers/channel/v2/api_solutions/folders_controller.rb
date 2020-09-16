@@ -8,8 +8,9 @@ module Channel::V2::ApiSolutions
 
     skip_before_filter :check_privilege, :verify_authenticity_token, only: [:index, :show, :category_folders, :folder_filter]
     before_filter :channel_client_authentication, only: [:index, :show, :category_folders, :folder_filter]
+    before_filter :sanitize_boolean_params, only: [:folder_filter, :category_folders]
     before_filter :sanitize_filter_query_params, only: [:folder_filter]
-    before_filter :validate_filter_query_params, only: [:folder_filter]
+    before_filter :validate_filter_query_params, only: [:folder_filter, :category_folders]
     before_filter :delegator_validation, only: [:folder_filter]
 
     def folder_filter
@@ -54,6 +55,11 @@ module Channel::V2::ApiSolutions
 
         render_custom_errors(@delegator, true)
         false
+      end
+
+      def sanitize_boolean_params
+        params[:prefer_published] = params[:prefer_published].to_bool if boolean_param?(:prefer_published)
+        params[:allow_language_fallback] = params[:allow_language_fallback].to_bool if boolean_param?(:allow_language_fallback)
       end
   end
 end

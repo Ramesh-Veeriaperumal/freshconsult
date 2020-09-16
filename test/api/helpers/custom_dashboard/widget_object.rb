@@ -21,16 +21,18 @@ class WidgetObject
     @type = type
     @grid_config = widget_grid_config
     @refresh_interval = WIDGET_MODULES_BY_TOKEN[type].constantize::CACHE_EXPIRY
-    @config_data = build_widget_configuration(type, options)
+    @config_data = build_widget_configuration(type, options, options && options[:source])
   end
 
   def widget_grid_config
     { x: 0, y: 0, height: 2, width: 2 }
   end
 
-  def build_widget_configuration(type, options)
-    options = options.present? ? options : CONFIG_OPTION_DEFAULTS
-    options.slice(*"Dashboard::Custom::CustomDashboardConstants::#{WIDGET_MODULES_BY_NAME[type].upcase}_ATTRIBUTES".constantize)
+  def build_widget_configuration(type, options, source = nil)
+    options = options.presence || CONFIG_OPTION_DEFAULTS.dup
+    new_options = options.slice(*"Dashboard::Custom::CustomDashboardConstants::#{WIDGET_MODULES_BY_NAME[type].upcase}_ATTRIBUTES".constantize)
+    new_options[:source] = source if source
+    new_options
   end
 
   def construct_widget_hash(req_type)

@@ -21,6 +21,7 @@
       - :personal_canned_response
       - :api_v2
       - :help_widget
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -73,6 +74,8 @@
       - :sla_reminder_automation
       - :advanced_freshcaller
       - :custom_ssl
+      - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -128,6 +131,7 @@
       - :contact_custom_activity_api
       - :analytics_articles
       - :analytics_knowledge_base
+      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_17
     :exclude: []
@@ -162,6 +166,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_19:
@@ -229,6 +234,8 @@
       - :advanced_article_toolbar_options
       - :advanced_freshcaller
       - :custom_ssl
+      - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -339,6 +346,7 @@
       - :solutions_templates
       - :analytics_articles
       - :analytics_knowledge_base
+      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_19
     :exclude: []
@@ -378,6 +386,7 @@
       - :analytics_tickets_resource
       - :help_widget
       - :freshreports_analytics
+      - :basic_settings_feature
     :inherits: []
     :exclude: []
   :blossom_jan_20:
@@ -444,6 +453,8 @@
       - :field_service_management_toggle
       - :advanced_freshcaller
       - :custom_ssl
+      - :untitled_feature_1_dependency_toggle
+      - :undo_send
     :inherits:
       - :sprout_jan_20
     :exclude: []
@@ -546,6 +557,7 @@
       - :solutions_templates
       - :analytics_articles
       - :analytics_knowledge_base
+      - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_20
     :exclude: []
