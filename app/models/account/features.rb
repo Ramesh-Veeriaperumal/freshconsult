@@ -458,14 +458,6 @@ class Account < ActiveRecord::Base
     launched?(:skip_ticket_threading)
   end
 
-  def forums_agent_portal_enabled?
-    launched?(:forums_agent_portal)
-  end
-
-  def solutions_agent_portal_enabled?
-    launched?(:solutions_agent_portal)
-  end
-
   def helpdesk_tickets_by_product_enabled?
     launched?(:helpdesk_tickets_by_product)
   end
