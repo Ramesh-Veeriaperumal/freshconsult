@@ -520,13 +520,13 @@ describe Admin::EmailConfigsController do
   it "should enable personalized email" do
     post :personalized_email_enable
     @account.reload
-    @account.features?(:personalized_email_replies).should eql true
+    @account.personalized_email_replies_enabled?.should eql true
   end
 
   it "should disable personalized email" do
     post :personalized_email_disable
     @account.reload
-    @account.features?(:personalized_email_replies).should eql false
+    @account.personalized_email_replies_enabled?.should eql false
   end
 
   it "should throw error on create" do
