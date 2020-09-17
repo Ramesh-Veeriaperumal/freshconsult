@@ -736,7 +736,6 @@ class Subscription < ActiveRecord::Base
     self.state = TRIAL
     convert_to_free if new_sprout?
     save!
-    update_features
   end
 
   protected
