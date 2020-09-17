@@ -12,6 +12,8 @@ class Admin::AccountFeaturesController < ApiApplicationController
       if @account.admin_setting_for_account?(@feature_name)
         @account.enable_setting(@feature_name)
         head 204
+      else
+        head 400
       end
     else
       modify_feature :enable
@@ -24,6 +26,8 @@ class Admin::AccountFeaturesController < ApiApplicationController
       if @account.admin_setting_for_account?(@feature_name)
         @account.disable_setting(@feature_name)
         head 204
+      else
+        head 400
       end
     else
       modify_feature :disable

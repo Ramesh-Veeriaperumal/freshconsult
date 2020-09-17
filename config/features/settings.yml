@@ -16,6 +16,6 @@ settings:
     internal: false
     feature_dependency: :basic_settings_feature
   :cascade_dispatcher:
-    default: true
+    default: false
     internal: false
     feature_dependency: :basic_settings_feature

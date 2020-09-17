@@ -440,7 +440,6 @@
   :call_quality_metrics: false
   :freshfone_conference: false
   :freshfone_custom_forwarding: false
-  :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :anonymous_tickets: true
   :open_solutions: true
