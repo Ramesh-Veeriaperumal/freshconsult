@@ -20,7 +20,7 @@ class NullifySoFieldsInSchemaLessTickets < ActiveRecord::Migration
           begin
             slt.update_column(SLT_INTERNAL_GROUP_COL, nil)
             slt.update_column(SLT_INTERNAL_AGENT_COL, nil)
-            slt.ticket.count_es_manual_publish if account.features?(:countv2_writes)
+            slt.ticket.count_es_manual_publish
           rescue
             failed_tickets[account.id] ||= []
             failed_tickets[account.id] << t.id
