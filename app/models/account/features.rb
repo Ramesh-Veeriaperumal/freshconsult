@@ -450,10 +450,6 @@ class Account < ActiveRecord::Base
     launched?(:allow_wildcard_ticket_create)
   end
 
-  def helpdesk_tickets_by_product_enabled?
-    launched?(:helpdesk_tickets_by_product)
-  end
-
   def skip_invoice_due_warning_enabled?
     launched?(:skip_invoice_due_warning)
   end
