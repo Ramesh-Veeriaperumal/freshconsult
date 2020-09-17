@@ -21,14 +21,17 @@ class Admin::AccountFeaturesControllerTest < ActionController::TestCase
     @account.add_feature(:basic_settings_feature)
     delete :destroy, controller_params(name: 'cascade_dispatcher')
     assert_response 204
+  ensure
     @account.rollback(:feature_based_settings)
   end
 
   def test_disable_setting_without_feature_dependency
-    @account.launch(:feature_based_settings)
-    @account.revoke_feature(:basic_settings_feature)
-    delete :destroy, controller_params(name: 'cascade_dispatcher')
-    assert_response 400
+    assert_raises(RuntimeError) do
+      @account.launch(:feature_based_settings)
+      @account.revoke_feature(:basic_settings_feature)
+      delete :destroy, controller_params(name: 'cascade_dispatcher')
+    end
+  ensure
     @account.rollback(:feature_based_settings)
   end
 

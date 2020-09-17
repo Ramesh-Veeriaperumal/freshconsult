@@ -88,6 +88,90 @@ class Account::SettingsTest < ActiveSupport::TestCase
     is_required_feature_enabled ? @account.add_feature(required_feature) : @account.revoke_feature(required_feature)
   end
 
+  def test_set_setting_with_dependent_feature
+    # setup
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
+    is_setting_enabled = @account.has_feature?(setting)
+    @account.revoke_feature(setting)
+    assert_equal @account.has_feature?(setting), false
+    is_required_feature_enabled = @account.has_feature?(required_feature)
+    @account.add_feature(required_feature)
+    assert @account.has_feature?(required_feature)
+    # when
+    @account.set_setting(setting)
+    # then
+    assert @account.changes.key?('plan_features')
+    assert @account.send("#{setting}_enabled?")
+    assert_equal Account.find(@account.id).send("#{setting}_enabled?"), false
+  ensure
+    @account.reset_plan_features!
+    is_setting_enabled ? @account.add_feature(setting) : @account.revoke_feature(setting)
+    is_required_feature_enabled ? @account.add_feature(required_feature) : @account.revoke_feature(required_feature)
+  end
+
+  def test_set_setting_without_dependent_feature
+    # setup
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
+    is_setting_enabled = @account.has_feature?(setting)
+    @account.revoke_feature(setting)
+    assert_equal @account.has_feature?(setting), false
+    is_required_feature_enabled = @account.has_feature?(required_feature)
+    @account.revoke_feature(required_feature)
+    assert_equal @account.has_feature?(required_feature), false
+    # when + then
+    assert_raise RuntimeError do
+      @account.set_setting(setting)
+      assert @account.has_feature?(setting), false
+    end
+  ensure
+    is_setting_enabled ? @account.add_feature(setting) : @account.revoke_feature(setting)
+    is_required_feature_enabled ? @account.add_feature(required_feature) : @account.revoke_feature(required_feature)
+  end
+
+  def test_reset_setting_with_dependent_feature
+    # setup
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
+    is_setting_enabled = @account.has_feature?(setting)
+    @account.add_feature(setting)
+    assert @account.has_feature?(setting)
+    is_required_feature_enabled = @account.has_feature?(required_feature)
+    @account.add_feature(required_feature)
+    assert @account.has_feature?(required_feature)
+    # when
+    @account.reset_setting(setting)
+    # then
+    assert @account.changes.key?('plan_features')
+    assert_equal @account.send("#{setting}_enabled?"), false
+    assert Account.find(@account.id).send("#{setting}_enabled?")
+  ensure
+    @account.reset_plan_features!
+    is_setting_enabled ? @account.add_feature(setting) : @account.revoke_feature(setting)
+    is_required_feature_enabled ? @account.add_feature(required_feature) : @account.revoke_feature(required_feature)
+  end
+
+  def test_reset_setting_without_dependent_feature
+    # setup
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
+    is_setting_enabled = @account.has_feature?(setting)
+    @account.add_feature(setting)
+    assert @account.has_feature?(setting)
+    is_required_feature_enabled = @account.has_feature?(required_feature)
+    @account.revoke_feature(required_feature)
+    assert_equal @account.has_feature?(required_feature), false
+    # when + then
+    assert_raise RuntimeError do
+      @account.reset_setting(setting)
+      assert @account.has_feature?(setting)
+    end
+  ensure
+    is_setting_enabled ? @account.add_feature(setting) : @account.revoke_feature(setting)
+    is_required_feature_enabled ? @account.add_feature(required_feature) : @account.revoke_feature(required_feature)
+  end
+
   def test_setting_enabled_method
     # setup
     setting = AccountSettings::SettingsConfig.keys.sample.to_sym
@@ -139,11 +223,20 @@ class Account::SettingsTest < ActiveSupport::TestCase
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
   end
 
+  # Modify these test when we refactor settings methods
   def test_disable_setting_with_invalid_value_doesnt_raise_error
     @account.disable_setting(:abcd)
   end
 
   def test_enable_setting_with_invalid_value_doesnt_raise_error
+    @account.enable_setting(:abcd)
+  end
+
+  def test_set_setting_with_invalid_value_doesnt_raise_error
+    @account.disable_setting(:abcd)
+  end
+
+  def test_reset_setting_with_invalid_value_doesnt_raise_error
     @account.enable_setting(:abcd)
   end
 end
