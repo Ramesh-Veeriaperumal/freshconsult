@@ -129,7 +129,7 @@
       :freshfone_conference: 125
       :unused_126: 126
       :id_less_tickets: 127
-      :no_list_view_count_query: 128
+      :unused_128: 128
       :saml_unspecified_nameid: 129
       :euc_hide_agent_metrics: 130
       :open_solutions: 131
@@ -148,7 +148,7 @@
       :field_service_management_toggle: 144
       :parent_child_infra: 145
       :enable_multilingual: 146
-      :countv2_writes: 147
+      :unused_147: 147
       :marketplace: 148
       :fa_developer: 149
       :es_multilang_solutions: 150
@@ -268,7 +268,7 @@
       :analytics_survey_results: 264
       :analytics_articles: 265
       :analytics_knowledge_base: 266
-      :reports_45: 267
+      :analytics_knowledge_base_report: 267
       :reports_46: 268
       :reports_47: 269
       :reports_48: 270
@@ -408,6 +408,7 @@
       :skip_ticket_threading: 404
       :helpdesk_tickets_by_product: 405
       :skip_invoice_due_warning: 406
+      :allow_wildcard_ticket_create: 407
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -433,7 +434,6 @@
   :disable_agent_forward: false
   :compose_email: false
   :enable_multilingual: false
-  :countv2_writes: false
   :countv2_reads: false
   :freshfone_onboarding: false
   :archive_tickets: false
@@ -457,7 +457,6 @@
   :forum_captcha_disable: false
   :public_ticket_url: false
   :id_less_tickets: false
-  :no_list_view_count_query: false
   :client_debugging: false
   :collision_socket: false
   :resource_rate_limit: false
@@ -511,3 +510,4 @@
   :skip_ticket_threading: false
   :helpdesk_tickets_by_product: false
   :skip_invoice_due_warning: false
+  :allow_wildcard_ticket_create: false

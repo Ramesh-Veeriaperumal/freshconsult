@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
-    :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
+    :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
@@ -81,13 +81,13 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
-    :fetch_ticket_from_ref_first, :skip_ticket_threading, :helpdesk_tickets_by_product, :skip_invoice_due_warning
+    :fetch_ticket_from_ref_first, :skip_ticket_threading, :helpdesk_tickets_by_product, :skip_invoice_due_warning, :allow_wildcard_ticket_create
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal, :helpdesk_tickets_by_product,
-    :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning
+    :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -446,12 +446,8 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def fetch_ticket_from_ref_first_enabled?
-    launched?(:fetch_ticket_from_ref_first)
-  end
-
-  def skip_ticket_threading_enabled?
-    launched?(:skip_ticket_threading)
+  def allow_wildcard_ticket_create_enabled?
+    launched?(:allow_wildcard_ticket_create)
   end
 
   def helpdesk_tickets_by_product_enabled?
