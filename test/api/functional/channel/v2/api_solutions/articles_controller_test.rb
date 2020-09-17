@@ -1048,12 +1048,14 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
 
   def test_article_thumbs_up_without_agent_metrics
     stub_channel_api do
+      puts ">>>>>>>>>START<<<<<<<<<<"
       Account.any_instance.stubs(:solutions_agent_metrics_enabled?).returns(false)
       article = get_article_without_draft
       old_thumbs_up = article.thumbs_up
       user = @account.agents.first.user
       put :thumbs_up, controller_params(version: 'channel', id: article.parent_id, user_id: user.id, source_type: 'freshchat')
       assert_response 204
+      puts ">>>>>>>>>END<<<<<<<<<<"
       assert_equal article.reload.thumbs_up, old_thumbs_up
     end
   ensure

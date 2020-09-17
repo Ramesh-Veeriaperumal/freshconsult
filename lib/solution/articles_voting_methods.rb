@@ -28,6 +28,7 @@ module Solution::ArticlesVotingMethods
   end
 
   def update_votes(incr_attr, vote)
+    puts ">>>>>>>>> #{current_account.solutions_agent_metrics_enabled?}"
     return false if (@portal || @help_widget || channel_v2_api?) && current_user && current_user.agent? && !current_account.solutions_agent_metrics_enabled?
 
     return @article.safe_send("#{incr_attr}!") unless current_user
