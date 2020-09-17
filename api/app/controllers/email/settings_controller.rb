@@ -72,7 +72,7 @@ module Email
       def validate_params
         # If block can be removed after LP cleanup
         if !current_account.email_new_settings_enabled?
-          field = EmailSettingsConstants::UPDATE_OLDER_FIELDS
+          field = EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS
           params[cname].permit(*field)
           @validator = SettingsValidation.new(params[cname], nil, string_request_params?)
           valid = @validator.valid?(action_name.to_sym)
@@ -95,11 +95,8 @@ module Email
           original_sender_as_requester_for_forward: !current_account.has_feature?(:disable_agent_forward)
         }
         if current_account.email_new_settings_enabled?
-          # Temporary implementation. Can be checked only with has_feature? after migrated to bitmap
-          @item[:allow_wildcard_ticket_create] = Account::LP_FEATURES.include?(:allow_wildcard_ticket_create) ?
-                                                     current_account.launched?(:allow_wildcard_ticket_create) : current_account.has_feature?(:allow_wildcard_ticket_create)
-          @item[:skip_ticket_threading] = Account::LP_FEATURES.include?(:skip_ticket_threading) ?
-                                              current_account.launched?(:skip_ticket_threading) : current_account.has_feature?(:skip_ticket_threading)
+          @item[:allow_wildcard_ticket_create] = current_account.allow_wildcard_ticket_create_enabled?
+          @item[:skip_ticket_threading] = current_account.skip_ticket_threading_enabled?
         end
       end
   end
