@@ -26,18 +26,18 @@ class PrecreateAccountsTest < ActionView::TestCase
   end
 
   def test_precreate_accounts_with_invalid_input
-    args = { precreate_account_count: 1, shard_name: 'invalid_shard' }
-    AccountCreation::PrecreateAccounts.new.perform(args)
-    current_precreated_account_length = $redis_others.perform_redis_op('llen', 'PRECREATED_ACCOUNTS:invalid_shard') || 0
-    assert_equal current_precreated_account_length, 0
+    assert_raise ActiveRecord::AdapterNotSpecified do
+      args = { precreate_account_count: 1, shard_name: 'invalid_shard' }
+      AccountCreation::PrecreateAccounts.new.perform(args)
+    end
   end
 
   def test_precreate_accounts_with_exception
     Signup.any_instance.stubs(:save!).raises(StandardError)
-    args = { precreate_account_count: 1, shard_name: 'shard_1' }
-    AccountCreation::PrecreateAccounts.new.perform(args)
-    current_precreated_account_length = $redis_others.perform_redis_op('llen', 'PRECREATED_ACCOUNTS:shard_1') || 0
-    assert_equal current_precreated_account_length, 0
+    assert_raise StandardError do
+      args = { precreate_account_count: 1, shard_name: 'shard_1' }
+      AccountCreation::PrecreateAccounts.new.perform(args)
+    end
   ensure
     Signup.any_instance.unstub(:save!)
   end

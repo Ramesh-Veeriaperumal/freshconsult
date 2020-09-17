@@ -29,7 +29,7 @@ class WriteSharedOwnershipFieldsToTicketTable < ActiveRecord::Migration
               if slt_internal_group_id != ticket_internal_group_id || slt_internal_agent_id != ticket_internal_agent_id
                 t.update_column(:internal_group_id, slt_internal_group_id) if slt_internal_group_id != ticket_internal_group_id
                 t.update_column(:internal_agent_id, slt_internal_agent_id) if slt_internal_agent_id != ticket_internal_agent_id
-                t.count_es_manual_publish if account.features?(:countv2_writes)
+                t.count_es_manual_publish
               end
             rescue
               failed_tickets[account.id] ||= []
@@ -70,7 +70,7 @@ class WriteSharedOwnershipFieldsToTicketTable < ActiveRecord::Migration
               if ticket_internal_group_id != slt_internal_group_id || internal_agent_id != slt_internal_agent_id
                 slt.update_column(SLT_INTERNAL_GROUP_COL, ticket_internal_group_id) if ticket_internal_group_id != slt_internal_group_id
                 slt.update_column(SLT_INTERNAL_AGENT_COL, ticket_internal_agent_id) if ticket_internal_agent_id != slt_internal_agent_id
-                t.count_es_manual_publish if account.features?(:countv2_writes)
+                t.count_es_manual_publish
               end
 
             rescue
