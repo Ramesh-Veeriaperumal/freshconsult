@@ -7,6 +7,7 @@ module ApiSolutions
     include CloudFilesHelper
     include ::Search::V2::AbstractController
     include Solution::ArticleFilters
+    include SolutionConstants
 
     SLAVE_ACTIONS = %w[index folder_articles].freeze
     STATUS_KEYS_BY_TOKEN = Solution::Article::STATUS_KEYS_BY_TOKEN
@@ -296,7 +297,7 @@ module ApiSolutions
                      end
 
         article = ApiSolutions::ArticleValidation.new(
-          params[cname], @item, attachable, @lang_id, string_request_params?
+          params[cname], @item, attachable, @lang_id, params[:version], string_request_params?
         )
         unless article.valid?(action_name.to_sym)
           render_errors article.errors,
@@ -343,6 +344,7 @@ module ApiSolutions
         sanitize_user_id_params
         sanitize_seo_params
         sanitize_attachment_params
+        params[cname][:platforms] = transform_platform_params(params[cname][:platforms]) if public_api?(params[:version]) && params[cname][:platforms]
         @tags = construct_tags(params[cname][:tags]) if params[cname] && params[cname][:tags]
         @article_params = params[cname].slice(*SolutionConstants::ARTICLE_META_FIELDS)
         

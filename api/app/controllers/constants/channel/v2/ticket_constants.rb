@@ -32,4 +32,21 @@ module Channel::V2::TicketConstants
                            status_updated_at sla_timer_stopped_at)
   FB_MSG_TYPES = ['dm', 'post', 'ad_post'].freeze # Dont change the index of the value
   TWITTER_MSG_TYPES = ['dm', 'mention'].freeze
+
+  # SYNC ACTION
+  SYNC_ATTRIBUTE_ASSOCIATION_MAPPING = [
+    [:display_ids, 'display_id', 'helpdesk_tickets'],
+    [:created_at, 'created_at', 'helpdesk_tickets'],
+    [:updated_at, 'updated_at', 'helpdesk_tickets'],
+    [:closed_at, 'closed_at', 'helpdesk_ticket_states'],
+    [:resolved_at, 'resolved_at', 'helpdesk_ticket_states']
+  ].freeze
+  SYNC_ATTRIBUTE_MAPPING = Hash[*SYNC_ATTRIBUTE_ASSOCIATION_MAPPING.map { |i| [i[0], i[1]] }.flatten]
+  SYNC_ASSOCIATION_MAPPING = Hash[*SYNC_ATTRIBUTE_ASSOCIATION_MAPPING.map { |i| [i[0], i[2]] }.flatten]
+  LOAD_OBJECT_EXCEPT = ['sync'].freeze
+  SYNC_FILTER_ATTRIBUTES = %w[display_ids created_at updated_at resolved_at closed_at].freeze
+  SYNC_DATETIME_ATTRIBUTES = %i[created_at updated_at resolved_at closed_at].freeze
+  SYNC_TICKET_STATE_ATTRIBUTES = %w[resolved_at closed_at].freeze
+  SYNC_FIELDS = (%w[meta primary_key_offset] + SYNC_FILTER_ATTRIBUTES) .freeze
+  SYNC_ID_FIELDS = %i[display_ids].freeze
 end

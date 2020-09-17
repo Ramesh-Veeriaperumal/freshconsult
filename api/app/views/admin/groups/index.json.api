@@ -1,0 +1,1 @@
+@items.map(&:to_group_v2_hash).to_json

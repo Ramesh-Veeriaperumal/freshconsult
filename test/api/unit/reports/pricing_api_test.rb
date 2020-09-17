@@ -135,6 +135,70 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     @account.revoke_feature :analytics_knowledge_base
   end
 
+  def test_kbanalytics_feature_upgrade_secondary
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Blossom Jan 20').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Garden Jan 20').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    assert_equal(@account.has_feature?(:analytics_articles), true)
+    assert_equal(@account.has_feature?(:analytics_knowledge_base), false)
+    assert_equal(@account.has_feature?(:analytics_knowledge_base_report), true)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
+  def test_kbanalytics_feature_upgrade
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Garden Jan 20').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Forest Jan 20').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    assert_equal(@account.has_feature?(:analytics_articles), true)
+    assert_equal(@account.has_feature?(:analytics_knowledge_base), true)
+    assert_equal(@account.has_feature?(:analytics_knowledge_base_report), false)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
+  def test_kbanalytics_feature_downgrade
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Forest Jan 20').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Garden Jan 20').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    assert_equal(@account.has_feature?(:analytics_articles), true)
+    assert_equal(@account.has_feature?(:analytics_knowledge_base), false)
+    assert_equal(@account.has_feature?(:analytics_knowledge_base_report), true)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
+  def test_kbanalytics_feature_downgrade_secondary
+    Account.stubs(:current).returns(@account)
+    @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Garden Jan 20').first.id, state: 'active', account_id: @account.id))
+    old_subscription = @account.subscription.dup
+    s = @account.subscription
+    s.subscription_plan_id = SubscriptionPlan.where(name: 'Blossom Jan 20').first.id
+    s.save
+    SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
+    assert_equal(@account.has_feature?(:analytics_articles), false)
+    assert_equal(@account.has_feature?(:analytics_knowledge_base), false)
+    assert_equal(@account.has_feature?(:analytics_knowledge_base_report), false)
+  ensure
+    Account.unstub(:current)
+    @account.unstub(:subscription)
+  end
+
   def test_timesheets_tabular_presence_when_upgraded_19
     Account.stubs(:current).returns(@account)
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Sprout Jan 19').first.id, state: 'active', account_id: @account.id))
