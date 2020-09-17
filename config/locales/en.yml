@@ -7615,6 +7615,9 @@ en:
         view_agent_status: Agent Availability Status
         no_agents: "- No Agents -"
         back: Back
+      freshfone:
+        accepting: Accepting
+        not_accepting: Not Accepting
       livechat:
         chat: Live Chat
         accepting: Accepting
@@ -11077,6 +11080,8 @@ en:
     ticket:
       recording:
         play: 'Play'
+  freshfone:
+    recording_on_process: "The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes"
   livechat:
     feature_request:
       title: "Welcome to Live Chat"

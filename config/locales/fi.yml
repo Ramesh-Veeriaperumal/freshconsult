@@ -10134,6 +10134,10 @@ fi:
       requester_name: Requester Name
       requester_email: Requester Email
       save: Save
+  freshfone:
+    recording_on_process: >-
+      The recording is being processed. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Check</a> again in a few minutes
   livechat:
     feature_request:
       title: Welcome to Live Chat

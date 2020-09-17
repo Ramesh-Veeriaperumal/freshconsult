@@ -7081,6 +7081,10 @@ zh-CN:
       requester_name: 请求人姓名
       requester_email: 请求人邮箱
       save: 保存
+  freshfone:
+    recording_on_process: >-
+      录制正在处理中。请几分钟后再<a href='#' target='_parent'
+      id='checkfreshfoneaudio'>检查</a>。
   livechat:
     feature_request:
       title: 欢迎使用Live Chat

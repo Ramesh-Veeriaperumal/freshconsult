@@ -7257,6 +7257,9 @@ uk:
         view_agent_status: Agent Availability Status
         no_agents: '- No Agents -'
         back: Back
+      freshfone:
+        accepting: Accepting
+        not_accepting: Not Accepting
       index:
         todo_title: Перелік завдань
       summary:
@@ -10805,6 +10808,10 @@ uk:
       requester_name: Requester Name
       requester_email: Requester Email
       save: Save
+  freshfone:
+    recording_on_process: >-
+      Запис оброблюється. <a href='#' target='_parent' id='checkfreshfoneaudio'>
+      Перевірте</a> знову через кілька хвилин
   livechat:
     feature_request:
       title: Welcome to Live Chat

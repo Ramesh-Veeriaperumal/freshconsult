@@ -6871,6 +6871,9 @@ th:
         view_agent_status: สถานะเจ้าหน้าที่ยังว่าง
         no_agents: ไม่มีเจ้าหน้าที่
         back: ย้อนกลับ
+      freshfone:
+        accepting: ยอมรับ
+        not_accepting: ไม่ยอมรับ
       index:
         todo_title: งานที่ต้องทำ
       summary:
@@ -10153,6 +10156,10 @@ th:
       requester_name: ชื่อผู้ร้องขอ
       requester_email: อีเมล์ผู้ร้องขอ
       save: บันทึก
+  freshfone:
+    recording_on_process: >-
+      กำลังดำเนินการการอัดเสียง <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>ตรวจสอบ</a> อีกครั้งในอีกสองถึงสามนาที
   livechat:
     feature_request:
       title: ยินดีต้อนรับสู่การสนทนาแบบสดๆ

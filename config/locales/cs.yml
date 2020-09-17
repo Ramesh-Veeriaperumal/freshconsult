@@ -10094,6 +10094,10 @@ cs:
       requester_name: Requester Name
       requester_email: Requester Email
       save: Save
+  freshfone:
+    recording_on_process: >-
+      Záznam je zpracováván. Prověřte si to <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>zde</a> za chvíli.
   livechat:
     feature_request:
       title: Vítejte na Live Chat

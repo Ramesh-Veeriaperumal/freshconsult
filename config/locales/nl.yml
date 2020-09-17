@@ -8488,6 +8488,9 @@ nl:
         view_agent_status: Beschikbaarheidsstatus medewerker weergeven
         no_agents: '- Geen medewerkers -'
         back: Terug
+      freshfone:
+        accepting: Aannemen
+        not_accepting: Niet aannemen
       livechat:
         chat: Livechat
         accepting: Aannemen
@@ -13031,6 +13034,10 @@ nl:
       save: Opslaan
       call_notes: opmerkingen
       notes: Opmerkingen
+  freshfone:
+    recording_on_process: >-
+      De opname wordt verwerkt. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Probeer het</a> over enkele minuten opnieuw.
   livechat:
     feature_request:
       title: Welkom bij livechat

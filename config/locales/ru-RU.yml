@@ -9257,6 +9257,9 @@ ru-RU:
         view_agent_status: Состояние доступности агента
         no_agents: '- Нет агентов -'
         back: Назад
+      freshfone:
+        accepting: Принимаю
+        not_accepting: Не принимаю
       livechat:
         chat: Онлайн чат
         accepting: Принимаю
@@ -13921,6 +13924,10 @@ ru-RU:
       save: Сохранить
       call_notes: комментарии
       notes: Комментарии
+  freshfone:
+    recording_on_process: >-
+      Запись обрабатывается. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Проверьте</a> снова через несколько минут
   livechat:
     feature_request:
       title: Добро пожаловать в онлайн чат

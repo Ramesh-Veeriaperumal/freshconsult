@@ -6581,6 +6581,9 @@ ja-JP:
         view_agent_status: エージェントの応答可能状況
         no_agents: '-エージェントなし-'
         back: 戻る
+      freshfone:
+        accepting: 応答する
+        not_accepting: 応答しない
       livechat:
         chat: ライブチャット
         accepting: 応答中
@@ -10031,6 +10034,10 @@ ja-JP:
       save: 保存
       call_notes: メモ
       notes: メモ
+  freshfone:
+    recording_on_process: >-
+      録音を処理中です。数分してから<a href='#' target='_parent'
+      id='checkfreshfoneaudio'>チェック</a>してください
   livechat:
     feature_request:
       title: ライブチャットへようこそ

@@ -9278,6 +9278,9 @@ es-LA:
         view_agent_status: Estado de disponibilidad del agente
         no_agents: '- Sin agentes -'
         back: Volver
+      freshfone:
+        accepting: Disponible
+        not_accepting: No disponible
       livechat:
         chat: Chat activo
         accepting: Disponible
@@ -14136,6 +14139,11 @@ es-LA:
       save: Guardar
       call_notes: notas
       notes: Notas
+  freshfone:
+    recording_on_process: >-
+      La grabación se está procesando. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Vuelve a combrobarla</a> en unos minutos.
+    not_enough_credit: ¡No hay suficiente crédito!
   livechat:
     feature_request:
       title: Bienvenido al chat activo

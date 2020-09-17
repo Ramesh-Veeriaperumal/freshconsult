@@ -7885,6 +7885,9 @@ pl:
         view_agent_status: Dostępność konsultantów
         no_agents: '- Brak konsultantów -'
         back: Wstecz
+      freshfone:
+        accepting: Odbiera
+        not_accepting: Nie odbiera
       index:
         todo_title: Lista zadań
       summary:
@@ -12022,6 +12025,10 @@ pl:
       save: Zapisz
       call_notes: notatki
       notes: Notatki
+  freshfone:
+    recording_on_process: >-
+      Trwa nagrywanie. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Sprawdź</a> ponownie za kilka minut
   livechat:
     feature_request:
       title: Witamy w czacie na żywo

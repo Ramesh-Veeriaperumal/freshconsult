@@ -10075,6 +10075,10 @@ tr:
       requester_name: İsteyen İsmi
       requester_email: İsteyen E-Postası
       save: Kaydet
+  freshfone:
+    recording_on_process: >-
+      Kayıt işleniyor.Bir kaç dakika içerisinde tekrar<a href='#'
+      target='_parent' id='checkfreshfoneaudio'>Kontrol Et</a>.
   livechat:
     feature_request:
       title: Live Chat'e Hoşgeldiniz

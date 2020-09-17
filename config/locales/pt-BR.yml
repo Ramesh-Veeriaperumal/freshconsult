@@ -9161,6 +9161,9 @@ pt-BR:
         view_agent_status: Status de disponibilidade do analista
         no_agents: '- Nenhum analista -'
         back: Voltar
+      freshfone:
+        accepting: Disponível
+        not_accepting: Indisponível
       livechat:
         chat: Chat em tempo real
         accepting: Aceitando
@@ -13950,6 +13953,10 @@ pt-BR:
       save: Salvar
       call_notes: anotações
       notes: Anotações
+  freshfone:
+    recording_on_process: >-
+      A gravação está sendo processada. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Verifique</a> novamente em alguns minutos
   livechat:
     feature_request:
       title: Bem-vindo ao chat em tempo real

@@ -7470,6 +7470,9 @@ sv-SE:
         view_agent_status: Visa agentens tillgänglighetsstatus
         no_agents: '- Inga agenter -'
         back: Bakåt
+      freshfone:
+        accepting: Godkänner
+        not_accepting: Godkänner ej
       index:
         todo_title: Att göra
       summary:
@@ -11015,6 +11018,10 @@ sv-SE:
       requester_name: Förfrågares namn
       requester_email: Förfrågares epostadress
       save: Spara
+  freshfone:
+    recording_on_process: >-
+      Inspelningen bearbetas. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Kom tillbaka</a> om ett par minuter.
   livechat:
     feature_request:
       title: Välkommen till live-chatt

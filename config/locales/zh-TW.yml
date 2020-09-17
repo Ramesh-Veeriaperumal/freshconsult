@@ -7036,6 +7036,9 @@ zh-TW:
         view_agent_status: 客服可聯繫狀態
         no_agents: '-沒有客服-'
         back: 返回
+      freshfone:
+        accepting: 接受
+        not_accepting: 不接受
       livechat:
         chat: 即時聊天
         accepting: 接受
@@ -10729,6 +10732,10 @@ zh-TW:
       save: 儲存
       call_notes: 備註
       notes: 備註
+  freshfone:
+    recording_on_process: >-
+      記錄正在處理中。<a href='#' target='_parent'
+      id='checkfreshfoneaudio'>在幾分鐘後再確認</a>一次
   livechat:
     feature_request:
       title: 歡迎來到即時聊天

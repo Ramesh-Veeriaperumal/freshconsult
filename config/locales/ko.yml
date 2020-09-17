@@ -6103,6 +6103,9 @@ ko:
         view_agent_status: 에이전트 가용성 보기
         no_agents: '- 에이전트 없음 -'
         back: 뒤로
+      freshfone:
+        accepting: 수락
+        not_accepting: 수락 안 함
       index:
         todo_title: 할 일
       summary:
@@ -9074,6 +9077,10 @@ ko:
       requester_name: 요청자 이름
       requester_email: 요청자 이메일
       save: 저장
+  freshfone:
+    recording_on_process: >-
+      기록이 처리됩니다. 잠시 후에 다시 <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>확인</a>하십시오.
   livechat:
     feature_request:
       title: 실시간 채팅에 오신 것을 환영합니다

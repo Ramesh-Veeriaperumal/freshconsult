@@ -5574,6 +5574,10 @@ vi:
         Thể loại diễn đàn này không thể được tìm thấy. Nó có thể đã bị xóa hoặc
         URL gõ sai.
   date_invalid: ngày không hợp lệ
+  freshfone:
+    recording_on_process: >-
+      Đang trong quá trình ghi nhận.<a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Kiểm tra</a> trong 1 vài phút
   agent_closes_tkt: Chuyên viên đã đóng ticket
   submit: Gửi
   export_data_successfull: Dữ liệu helpdesk của bạn sẽ được gửi đến email của bạn ngay!

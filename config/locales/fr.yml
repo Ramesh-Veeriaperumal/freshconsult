@@ -9177,6 +9177,9 @@ fr:
         view_agent_status: Statut de disponibilité des agents
         no_agents: '- Aucun agent -'
         back: Précédent
+      freshfone:
+        accepting: Acceptation
+        not_accepting: Refus
       livechat:
         chat: Chat en direct
         accepting: Acceptation
@@ -13880,6 +13883,10 @@ fr:
       save: Enregistrer
       call_notes: notes
       notes: Notes
+  freshfone:
+    recording_on_process: >-
+      L'enregistrement est en cours de traitement. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Revérifiez dans quelques minutes.</a>
   livechat:
     feature_request:
       title: Bienvenue dans le chat en direct

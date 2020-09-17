@@ -7655,6 +7655,9 @@ ro:
         view_agent_status: Status disponibilitate agent
         no_agents: '- fara agenti -'
         back: Inapoi
+      freshfone:
+        accepting: Accepta
+        not_accepting: Nu accepta
       livechat:
         chat: Live Chat
         accepting: Accepting
@@ -11790,6 +11793,10 @@ ro:
       save: Save
       call_notes: notes
       notes: Notes
+  freshfone:
+    recording_on_process: >-
+      The recording is being processed. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Check</a> again in a few minutes
   livechat:
     feature_request:
       title: Welcome to Live Chat

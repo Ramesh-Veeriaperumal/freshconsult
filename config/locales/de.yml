@@ -9823,6 +9823,9 @@ de:
         view_agent_status: Verfügbarkeitsstatus von Agenten
         no_agents: '- Keine Agenten -'
         back: Zurück
+      freshfone:
+        accepting: Entgegennehmend
+        not_accepting: Nicht entgegennehmend
       livechat:
         chat: Live-Chat
         accepting: Entgegennehmend
@@ -14931,6 +14934,10 @@ de:
     ticket:
       recording:
         play: Abspielen
+  freshfone:
+    recording_on_process: >-
+      Die Aufzeichnung wird verarbeitet. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Prüfen Sie</a> in ein paar Minuten erneut.
   livechat:
     feature_request:
       title: Willkommen bei Live-Chat

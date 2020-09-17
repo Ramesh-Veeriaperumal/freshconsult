@@ -10342,6 +10342,10 @@ ca:
       requester_name: Requester Name
       requester_email: Requester Email
       save: Save
+  freshfone:
+    recording_on_process: >-
+      S'està processant la gravació. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Prova-ho</a> de nou en uns minuts
   livechat:
     feature_request:
       title: Welcome to Live Chat

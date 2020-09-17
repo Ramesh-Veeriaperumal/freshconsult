@@ -6415,6 +6415,9 @@ test-ui:
         view_agent_status: Agent Availability Status Sit delectu
         no_agents: "- No Agents - Sit de"
         back: Back Si
+      freshfone:
+        accepting: "Accepting Sit "
+        not_accepting: Not Accepting Sit de
       livechat:
         chat: "Live Chat Sit "
         accepting: "Accepting Sit "
@@ -9434,6 +9437,8 @@ test-ui:
       save: Save Si
       call_notes: notes Sit
       notes: Notes Sit
+  freshfone:
+    recording_on_process: The recording is being processed. <a href='#' target='_parent' id='checkfreshfoneaudio'>Check</a> again in a few minutes Sit delectus nam non velit distinctio nesciunt in
   livechat:
     feature_request: 
       title: Welcome to Live Chat Sit delec

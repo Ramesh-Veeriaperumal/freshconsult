@@ -2995,6 +2995,9 @@ ar:
         view_agent_status: حالة توفر المندوب
         no_agents: '- لا يوجد مندوبين -'
         back: عودة
+      freshfone:
+        accepting: يستقبل
+        not_accepting: لا يستقبل
       livechat:
         chat: محادثة مباشرة
         accepting: يستقبل
@@ -13315,6 +13318,10 @@ ar:
       save: حفظ
       call_notes: ملاحظات
       notes: ملاحظات
+  freshfone:
+    recording_on_process: >-
+      جارٍ معالجة التسجيل. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>تحقق</a> مرة أخرى في غضون دقائق
   livechat:
     feature_request:
       title: Welcome to Live Chat

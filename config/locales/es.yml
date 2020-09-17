@@ -6226,6 +6226,9 @@ es:
         view_agent_status: Disponibilidad del agente
         no_agents: '- Sin Agentes -'
         back: Atras
+      freshfone:
+        accepting: Aceptando
+        not_accepting: No aceptado
       livechat:
         chat: Chat en línea
         accepting: Aceptando
@@ -9475,6 +9478,10 @@ es:
     jump_to_saved: Ir a un informe guardado
     agent_comparison_report: Informe de comparación de agentes
     group_comparison_report: Informe de comparación de grupos
+  freshfone:
+    recording_on_process: >-
+      La grabación se está procesando. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Prueba</a> de nuevo en unos minutos.
   livechat:
     chat_with_us: Contáctenos
     cobrowsing_agent_busy: Agent is in screen share session with customer

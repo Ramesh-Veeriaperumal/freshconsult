@@ -3245,6 +3245,9 @@ it:
         view_agent_status: Stato disponibilità agente
         no_agents: '- Nessun agente -'
         back: Indietro
+      freshfone:
+        accepting: In accettazione
+        not_accepting: Non in accettazione
       livechat:
         chat: Chat live
         accepting: In accettazione
@@ -14113,6 +14116,11 @@ it:
       save: Salva
       call_notes: note
       notes: Note
+  freshfone:
+    recording_on_process: >-
+      La registrazione è in fase di elaborazione. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Controlla</a> nuovamente tra qualche minuto
+    not_enough_credit: Credito insufficiente.
   livechat:
     feature_request:
       title: Benvenuti in Chat live

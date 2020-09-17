@@ -9369,6 +9369,10 @@ et:
       requester_name: Taotluse esitaja nimi
       requester_email: Taotluse esitaja e-posti aadress
       save: Salvesta
+  freshfone:
+    recording_on_process: >-
+      Salvestus on töötlemisel. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>Proovi</a> uuesti paari minuti pärast.
   livechat:
     feature_request:
       title: Tere tulemast Live Chatti!

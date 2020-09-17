@@ -6707,6 +6707,9 @@ he:
         view_agent_status: סטטוס זמינות הסוכן
         no_agents: '- אין סוכנים -'
         back: חזרה
+      freshfone:
+        accepting: מקבל
+        not_accepting: לא מקבל
       index:
         todo_title: משימות לביצוע
       summary:
@@ -9913,6 +9916,10 @@ he:
       requester_name: שם הפונה
       requester_email: כתובת דוא"ל של הפונה
       save: שמור
+  freshfone:
+    recording_on_process: >-
+      ההקלטה מעובדת. <a href='#' target='_parent'
+      id='checkfreshfoneaudio'>בדוק</a> שוב בעוד כמה דקות
   livechat:
     feature_request:
       title: ברוכים הבאים לצ'אט חי
