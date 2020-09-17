@@ -20,6 +20,9 @@ module AccountCreation
         acc_id: #{Account.current.try(:id)}, args: #{args.inspect}, error message: \
         #{e.message}, error: #{e.backtrace.join('\n')}"
       NewRelic::Agent.notice_error(e, custom_params: { description: "Error occoured while creating precreated accounts. args: #{args.inspect}, error message: #{e.message}, error: #{e.backtrace.join('\n')}" })
+      raise e
+    rescue ActiveRecord::RecordNotFound, ActiveRecord::AdapterNotSpecified, ShardNotFound => e
+      Rails.logger.error "Exception while precreating accounts #{e.inspect}"
     ensure
       Account.reset_current_account
     end

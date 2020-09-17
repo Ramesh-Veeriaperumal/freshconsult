@@ -19,6 +19,10 @@ module BusinessCalendarBuilder
   end
 
   def construct_default_params
+    # This is required like in below implementation we are having "params[cname][name] || prev_value"
+    # So if params[cname][name] = nil It will always take prev_value for description
+    # So for this I have added like nil|| "" will take  as empty string and ""||prev_value will take empty string for description
+    params[cname][:description] = params[cname][:description] || '' if params[cname].key? :description
     CREATE_PARAMS.each_pair do |name, attr_name|
       prev_value = @item.safe_send(attr_name)
       @item.safe_send("#{attr_name}=", params[cname][name] || prev_value)

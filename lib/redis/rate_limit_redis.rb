@@ -67,7 +67,14 @@ module Redis::RateLimitRedis
           JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'TICKETS_LIST') || '{}'),
           JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CONTACTS_LIST') || '{}'),
           JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CREATE_TICKET') || '{}'),
-          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'UPDATE_TICKET') || '{}')
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'UPDATE_TICKET') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CHANNEL_FOLDERS_LIST') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CHANNEL_SHOW_ARTICLE') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'CHANNEL_ARTICLE_SEARCH') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'KB_SERVICE_LIST_FOLDERS') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'KB_SERVICE_VIEW_ARTICLE') || '{}'),
+          JSON.parse(get_others_redis_hash_value(format(PLAN_API_MIN_PATHS_LIMIT, plan_id: plan_id), 'KB_SERVICE_ARTICLE_SEARCH') || '{}')
+
         ]
       }
     else
