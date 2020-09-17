@@ -129,7 +129,7 @@ class Admin::EmailConfigsController < Admin::AdminController
     post_process
   end
 
-   def toggle_compose_email_setting
+  def toggle_compose_email_setting
     if current_account.compose_email_enabled?
       current_account.disable_setting(:compose_email)
     else

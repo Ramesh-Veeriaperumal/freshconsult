@@ -39,7 +39,7 @@ module Email
       end
 
       def toggle_compose_email_setting(feature, enable)
-        if enable != current_account.compose_email_enabled?
+        if enable != check_compose_email_enabled?
           if enable
             current_account.disable_setting(feature)
           else
@@ -67,11 +67,15 @@ module Email
         validate_body_params
       end
 
+      def check_compose_email_enabled?
+        !current_account.has_setting?(EmailSettingsConstants::COMPOSE_EMAIL_FEATURE) || ismember?(COMPOSE_EMAIL_ENABLED, current_account.id)
+      end
+
       def generate_view_hash
         @item = {
           personalized_email_replies: current_account.personalized_email_replies_enabled?,
           create_requester_using_reply_to: current_account.reply_to_based_tickets_enabled?,
-          allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
+          allow_agent_to_initiate_conversation: check_compose_email_enabled?,
           original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
         }
       end
