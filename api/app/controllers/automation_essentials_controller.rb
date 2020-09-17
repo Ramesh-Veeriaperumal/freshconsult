@@ -76,7 +76,7 @@ class AutomationEssentialsController < ApiApplicationController
     end
 
     def validate_settings_feature
-      features = Account::LP_FEATURES + Account::BITMAP_FEATURES
+      features = Account::LP_TO_BITMAP_MIGRATION_FEATURES
       render_request_error :invalid_values, 400, fields: 'feature' unless features.include?(params[:feature].to_sym)
     end
 
