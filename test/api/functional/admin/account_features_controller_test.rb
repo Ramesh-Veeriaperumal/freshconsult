@@ -1,5 +1,5 @@
-# require 'sidekiq/testing'
-# require 'webmock/minitest'
+require 'sidekiq/testing'
+require 'webmock/minitest'
 require_relative "../../../test_helper.rb"
 Sidekiq::Testing.fake!
 
