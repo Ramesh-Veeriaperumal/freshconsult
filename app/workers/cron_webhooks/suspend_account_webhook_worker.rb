@@ -27,11 +27,11 @@ module CronWebhooks
 
       def init
         @start_time = Time.current
-        @deleted_accounts_count = 0
+        @deleted_accounts = []
         @shards = ActiveRecord::Base.shard_names
         @processing_accounts = {}
         @shards.each { |sh| @processing_accounts[sh] = { account_id: 0, attempt_count: 0 } }
-        @account_skip_list = get_all_members_in_a_redis_set(ACCOUNTS_SKIP_LIST_KEY)
+        @account_skip_list = get_all_members_in_a_redis_set(ACCOUNTS_SKIP_LIST_KEY).to_set
         @base_date = get_others_redis_key(ACCOUNTS_SUSPENDED_BASE_DATE_KEY) || SUSPENSION_BASE_DATE
       end
 
@@ -59,10 +59,12 @@ module CronWebhooks
           end
         end
       rescue StandardError => e
-        Rails.logger.info "StandardError - #{e.inspect}"
+        Rails.logger.info "SuspendAccountWebhookWorker StandardError - #{e.inspect}"
       ensure
         time_taken = Time.at((@start_time - Time.current).to_i.abs).utc.strftime('%H:%M:%S')
-        Rails.logger.info("successfully enqueued #{@deleted_accounts_count} jobs for deletion in #{time_taken}")
+        account_ids = @deleted_accounts.map { |h| h[:account] }
+        Rails.logger.info("successfully enqueued #{@deleted_accounts.size} jobs for deletion in #{time_taken}. Deleted Accounts - #{account_ids.inspect}")
+        Rails.logger.info("Deleted account details :: #{@deleted_accounts.inspect}")
       end
 
       def fetch_next_account_from_shard(shard_name)
@@ -94,15 +96,24 @@ module CronWebhooks
       end
 
       def delete_account_on_shard(account, shard_name)
+        if shard_mapping_exist?(account.id, shard_name)
+          job_id = AccountCleanup::DeleteAccount.perform_async(account_id: account.id)
+          @deleted_accounts << { account: account.id, shard: shard_name, rebalanced: false }
+        else
+          job_id = AccountCleanup::RebalancedAccountDeleteWorker.perform_async(account_id: account.id, shard_name: shard_name)
+          @deleted_accounts << { account: account.id, shard: shard_name, rebalanced: true }
+        end
         subscription = account.subscription
-        job_id = AccountCleanup::OldSuspendedAccountsWorker.perform_async(account_id: account.id, shard_name: shard_name)
-        @deleted_accounts_count += 1
-        Rails.logger.info "Deleting suspended account - #{account.id} with subscription - #{subscription.inspect}. Total deleted #{@deleted_accounts_count}, job id #{job_id}."
+        Rails.logger.info "Deleting suspended account - #{account.id} with subscription - #{subscription.inspect}. Total deleted #{@deleted_accounts.size}, job id #{job_id}."
+      end
+
+      def shard_mapping_exist?(account_id, shard_name)
+        ShardMapping.where(account_id: account_id, shard_name: shard_name).exists?
       end
 
       def stop_execution?
-        if @deleted_accounts_count >= batch_size || redis_key_exists?(WORKER_STOP_KEY)
-          Rails.logger.info("Stopped execution after enqueuing  #{@deleted_accounts_count} accounts.")
+        if @deleted_accounts.size >= batch_size || redis_key_exists?(WORKER_STOP_KEY)
+          Rails.logger.info("Stopped execution after enqueuing  #{@deleted_accounts.size} accounts.")
           return true
         end
         false

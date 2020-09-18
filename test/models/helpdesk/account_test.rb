@@ -46,7 +46,7 @@ class AccountTest < ActiveSupport::TestCase
       feature_name: 'CentralPublishLaunchpartyFeatures'
     }
     stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
-      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
+      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS', feature_class_mapping) do
         @account.launch :feature_name
       end
     end
@@ -64,9 +64,7 @@ class AccountTest < ActiveSupport::TestCase
       feature_name: 'CentralPublishLaunchpartyFeatures'
     }
     stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
-      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
-        @account.launch :feature_name
-      end
+      @account.launch :feature_name
     end
 
     # @launch_party_features is set to nil only if the lp publish worker is enqueued
@@ -82,9 +80,7 @@ class AccountTest < ActiveSupport::TestCase
       feature_name: 'CentralPublishLaunchpartyFeatures'
     }
     stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
-      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
-        @account.launch :feature_name
-      end
+      @account.launch :feature_name
     end
     assert @account.instance_variable_get(:@launch_party_features).empty?
   ensure

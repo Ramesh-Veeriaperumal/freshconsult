@@ -1,5 +1,9 @@
 if @only_omni_channel_availability
-  @items.map(&:channel_agents_availability_data).to_json
+  if @proxy_to_mars
+    @items.map(&:record)
+  else
+    @items.map(&:channel_agents_availability_data)
+  end.to_json
 else
   @items.map do |agent|
     @availability_details.present? ? agent.availability_hash(@availability_details[agent.record.user_id]) : (@privilege_filter ? agent.to_privilege_hash : agent.to_hash)

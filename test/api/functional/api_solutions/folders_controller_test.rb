@@ -495,6 +495,7 @@ module ApiSolutions
     def test_create_folder_with_visibility_anyone_and_platforms
       enable_omni_bundle do
         category_meta = get_category
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).once
         post :create, construct_params(id: category_meta.id, name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: 1, platforms: ['ios', 'web'])
         assert_response 201
         result = parse_response(@response.body)
@@ -637,6 +638,7 @@ module ApiSolutions
         sample_folder = get_folder
         tag = Faker::Lorem.word
         params_hash = { visibility: visibility, platforms: ['ios'], tags: [tag] }
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).at_least_once
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))
@@ -648,6 +650,7 @@ module ApiSolutions
         sample_folder = get_folder_with_platform_mapping(ios: false, android: true, web: true)
         tag = Faker::Lorem.word
         params_hash = { platforms: ['ios'], tags: [tag] }
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).once
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))
@@ -658,6 +661,7 @@ module ApiSolutions
       enable_omni_bundle do
         sample_folder = get_folder_with_platform_mapping(ios: false, android: true, web: true)
         params_hash = { platforms: [] }
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).once
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))
@@ -671,6 +675,7 @@ module ApiSolutions
         tag2 = Faker::Lorem.word
         folder_tag_count = sample_folder.parent.tags.size
         params_hash = { tags: [tag2] }
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).once
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))
@@ -681,6 +686,7 @@ module ApiSolutions
       enable_omni_bundle do
         sample_folder = get_folder_with_platform_mapping(ios: false, android: true, web: true)
         params_hash = { platforms: [] }
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).once
         put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
         assert_response 200
         match_json(solution_folder_pattern(sample_folder.reload))

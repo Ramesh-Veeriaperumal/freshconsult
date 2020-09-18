@@ -7,7 +7,7 @@ module Solution::PathHelper
   end
 
   def agent_actions_path(solution_object = nil, options = {})
-    current_account.falcon_ui_enabled?(current_user) ? mint_solutions_path(solution_object, options[:anchor] == 'edit') : old_solutions_path(solution_object, options)
+    mint_solutions_path(solution_object, options[:anchor] == 'edit')
   end
 
   def mint_solutions_path(solution_object, edit = false)

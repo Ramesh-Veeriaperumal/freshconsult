@@ -115,8 +115,9 @@ class AgentDecorator < ApiDecorator
     record.preferences
   end
 
-  def self.availability_count(availability_count)
+  def self.availability_count(availability_count, skip_parse = false)
     return unless availability_count.is_a? Hash
+    return availability_count if skip_parse
 
     OmniChannelRouting::Constants::OMNI_CHANNELS.each_with_object([]) do |channel, array|
       array << { channel: channel, count: availability_count[channel] || 0 }
@@ -124,8 +125,6 @@ class AgentDecorator < ApiDecorator
   end
 
   def channel_agents_availability_data
-    return record if Account.current.agent_statuses_enabled?
-
     channels_data = channel_availabilities.each_with_object([]) do |(channel, hash), array|
       array << hash.merge!(channel: channel, availability_updated_at: hash[:availability_updated_at] ||= nil)
     end
