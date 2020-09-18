@@ -7,19 +7,43 @@ class Email::SettingsControllerTest < ActionController::TestCase
     params
   end
 
-  def test_successful_updation_of_all_features
+  def test_successful_updation_of_all_settings_with_email_new_settings_lp_enabled
+    Account.current.launch(:email_new_settings)
     Redis.any_instance.stubs(:perform_redis_op).returns('OK')
     params = all_features_params
     put :update, params.merge(construct_params({ action: 'update', controller: 'email/settings' }, params))
     assert_response 200
-    match_json(all_features_params)
+    match_json(params)
+  ensure
+    Account.current.rollback(:email_new_settings)
   end
 
-  def test_successful_updation_of_selected_features
+  # This can be removed after LP cleanup
+  def test_successful_updation_of_settings_without_new_settings_with_email_new_settings_lp_disabled
+    Redis.any_instance.stubs(:perform_redis_op).returns('OK')
+    params = all_features_params.slice(*EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS.map(&:to_sym))
+    put :update, params.merge(construct_params({ action: 'update', controller: 'email/settings' }, params))
+    assert_response 200
+    match_json(params)
+  end
+
+  # This can be removed after LP cleanup
+  def test_update_new_settings_with_email_new_settings_lp_disabled
+    new_setting = (EmailSettingsConstants::UPDATE_FIELDS - EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS)[0]
+    params = { new_setting => true}
+    put :update, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('invalid_field', new_setting.to_sym, code: :invalid_field)])
+  end
+
+  def test_successful_updation_of_selected_settings_with_email_new_settings_lp_enabled
+    Account.current.launch(:email_new_settings)
     params = all_features_params.except(:allow_agent_to_initiate_conversation, :original_sender_as_requester_for_forward)
     put :update, construct_params({}, params)
     assert_response 200
     match_json(all_features_params)
+  ensure
+    Account.current.rollback(:email_new_settings)
   end
 
   def test_update_with_invalid_value
@@ -30,14 +54,15 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('personalized_email_replies', 'Value set is of type String.It should be a/an Boolean', code: :datatype_mismatch)])
   end
 
-  def test_update_with_invalid_feature_name
+  def test_update_with_invalid_setting_name
     params = invalid_field_params
     put :update, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('invalid_field', :invalid_field, code: :invalid_field)])
   end
 
-  def test_update_without_manage_email_settings_privilege
+  def test_update_without_manage_email_settings_privileg_email_new_settings_lp_enabled
+    Account.current.launch(:email_new_settings)
     params = all_features_params
     User.any_instance.stubs(:privilege?).with(:manage_email_settings).returns(false)
     put :update, construct_params({}, params)
@@ -45,18 +70,39 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:access_denied))
   ensure
     User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:email_new_settings)
   end
 
-  def test_show_email_config_features
+  # This can be removed after LP cleanup
+  def test_show_email_config_features_with_email_new_settings_lp_disabled
+    Account.current.rollback(:email_new_settings) if Account.current.skip_ticket_threading_enabled?
     Account.any_instance.stubs(:has_feature?).with(:reply_to_based_tickets).returns(true)
     Account.any_instance.stubs(:has_feature?).with(:disable_agent_forward).returns(false)
     Account.any_instance.stubs(:has_feature?).with(:compose_email).returns(false)
     Account.any_instance.stubs(:has_feature?).with(:personalized_email_replies).returns(true)
     get :show, controller_params
     assert_response 200
+    match_json(all_features_params.slice(*EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS.map(&:to_sym)))
+  ensure
+    Account.any_instance.unstub(:has_feature?)
+  end
+
+  def test_show_email_config_features_with_email_new_settings_lp_enabled
+    Account.current.launch(:email_new_settings)
+    Account.any_instance.stubs(:has_feature?).with(:reply_to_based_tickets).returns(true)
+    Account.any_instance.stubs(:has_feature?).with(:disable_agent_forward).returns(false)
+    Account.any_instance.stubs(:has_feature?).with(:compose_email).returns(false)
+    Account.any_instance.stubs(:has_feature?).with(:personalized_email_replies).returns(true)
+    Account.any_instance.stubs(:allow_wildcard_ticket_create_enabled?).returns(true)
+    Account.any_instance.stubs(:skip_ticket_threading_enabled?).returns(true)
+    get :show, controller_params
+    assert_response 200
     match_json(all_features_params)
   ensure
     Account.any_instance.unstub(:has_feature?)
+    Account.any_instance.unstub(:allow_wildcard_ticket_create_enabled?)
+    Account.any_instance.unstub(:skip_ticket_threading_enabled?)
+    Account.current.rollback(:email_new_settings)
   end
 
   def test_show_without_privilege
@@ -70,8 +116,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
 
   def test_update_redis_key_for_compose_email_feature
     Redis.any_instance.stubs(:perform_redis_op).returns([])
-    params = all_features_params.except(:personalized_email_replies, :original_sender_as_requester_for_forward, :create_requester_using_reply_to)
-    params[:allow_agent_to_initiate_conversation] = false
+    params = { :allow_agent_to_initiate_conversation => false }
     Account.any_instance.stubs(:has_feature?).returns(false)
     put :update, construct_params({}, params)
     assert_response 200
