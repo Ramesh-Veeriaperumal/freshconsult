@@ -31800,37 +31800,60 @@
       }
     },
     "agent_availability_count_response": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "channel": {
-            "type": "string",
-            "x-enum": [
-              "freshdesk",
-              "freshcaller",
-              "freshchat"
-            ]
-          },
-          "count": {
-            "type": "integer"
+      "type": "object",
+      "description": "Get the count of available agents in OCR",
+      "properties": {
+        "channel_availability_count": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/channel_availability_count"
           }
+        },
+        "total_available": {
+          "type": "integer"
+        },
+        "total_unavailable": {
+          "type": "integer"
         }
       },
-      "example": [
-        {
-          "channel": "freshdesk",
-          "count": 10
+      "example": {
+        "channel_availability_count": [
+          {
+            "channel": "freshdesk",
+            "count": 10
+          },
+          {
+            "channel": "freshchat",
+            "count": 4
+          },
+          {
+            "channel": "freshcaller",
+            "count": 1
+          }
+        ],
+        "total_available": 10,
+        "total_unavailable": 2
+      }
+    },
+    "channel_availability_count": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "type": "string",
+          "x-enum": [
+            "freshdesk",
+            "freshcaller",
+            "freshchat"
+          ]
         },
-        {
-          "channel": "freshchat",
-          "count": 4
-        },
-        {
-          "channel": "freshcaller",
-          "count": 1
+        "count": {
+          "type": "integer"
         }
-      ]
+      },
+      "example": {
+        "channel": "freshdesk",
+        "count": 10
+      }
     },
     "agent_with_availability_response": {
       "type": "object",

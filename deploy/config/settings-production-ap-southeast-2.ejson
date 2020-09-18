@@ -1496,7 +1496,8 @@
         "admin_jwt_secret": "EJ[1:OsQ+ws/3ZrOfjZfxHmFVJAfLftRLKFLDRGW70Z9NTBk=:zvP1AbpS1J7NtsM4Zd37/AtOo7+ihVyQ:FWHRVuwQ866PpMLS4EpFEI9VvRIXpjYBZTZNRdx8aTNRTXtZ1UeEdqWjiLIJM9Xs]",
         "_api_endpoint": "https://ap-southeast-2.ocr.freshdesk.com/api/v1/",
         "_auth_type": "jwt",
-        "_jwt_default_expiry": "30"
+        "_jwt_default_expiry": "30",
+        "touchstone_secret": "EJ[1:De4mwWKtdyWWJt1a88A1w2Bcu7kSCPwHsGuh+waFUSU=:SCs/3VU3LILQFOS5H463M4axiM6FnEBS:1pvRW5yO8tX0cPPMhqGMVKJb4TJE1CeUxiisiRKayw0Hiak1JOiXVcwjXV1nB8d0]"
       },
       "datadog": {
         "license_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:jUX9zlSFmnv4xsT+Zu3D4F+itxGpDcRP:YNl2UJhNgkoUiPRPcLNXHxQCjcxOiR+tIefjb2IyECDEecK+MQxzIfR4O3UYOPiA]",

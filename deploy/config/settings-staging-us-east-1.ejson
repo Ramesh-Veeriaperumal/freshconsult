@@ -1737,7 +1737,8 @@
         "admin_jwt_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:xTvqRm3G5Agwn+bl59sWivoMUoxZhExy:DrPaKWSpfhmn2o3HpC7SWRQ0eu2MghdHXWq12Wm+77cQG5wDTTiHSKD7tSSD2bDU]",
         "_api_endpoint": "http://ocr-staging-1971275129.us-east-1.elb.amazonaws.com/api/v1/",
         "_auth_type": "jwt",
-        "_jwt_default_expiry": "30"
+        "_jwt_default_expiry": "30",
+        "touchstone_secret": "EJ[1:4rbpJxQil3dP40LCeENVddzsQ1fB5elfStsfBxxhfWo=:mwfYY9GXhQ2GX8KNCWKNNaobVQJJ0ihh:/wHGOsNqeoDB9clZe81hycnmk3dPz6N2l7RPwKQRPEd93cq8Qlu09F1mzi85qksp]"
       },
       "datadog": {
         "license_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JsU3V4SBURAtMbZwkfe4SE0B7Ua1cegl:GoWwZzxhN7TntRImqO4OU96PB6MbC1/Rvs2NOwYzW7QzqdbV2WxESTFmMNYRFNwu]",

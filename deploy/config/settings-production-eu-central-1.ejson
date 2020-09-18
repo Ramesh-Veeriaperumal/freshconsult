@@ -1622,7 +1622,8 @@
         "admin_jwt_secret": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:skyCG7z+bSLkpFmdFmbQt96+gHB30j/h:flu40Mf4LGbltf8AopA9j4+zDOJT2RuXKbPoZQ69no4NYBNDJ9osYpBejnlTPK6F]",
         "_api_endpoint": "https://euc.ocr.freshdesk.com/api/v1/",
         "_auth_type": "jwt",
-        "_jwt_default_expiry": "30"
+        "_jwt_default_expiry": "30",
+        "touchstone_secret": "EJ[1:MLcL1mPdS31E4KhlTZrn82/l3NOD69F3ZKt0f0qoSng=:c83cVFMr56hq8XmlPnEJCX6GXnfmOuBK:l7BVT/WwM1Mpfpo7Frm1tbkG7cPAkgT4cvMtqqgNsWAD8gyRk/8AWGPG5OtMlI0g]"
       },
       "datadog": {
         "license_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:BgWZz9dbceP3jcSFQY2wdcKFUulxpCtq:XH0C9HO4F6LwQEDGnNs5dwx14aPLqfG9fx5ks9x6Zns7yUQTnzZr0jTmA8o6Evwc]",

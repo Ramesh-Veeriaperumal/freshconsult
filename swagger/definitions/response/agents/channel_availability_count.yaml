@@ -1,0 +1,14 @@
+type: object
+properties:
+  channel:
+    type: string
+    x-enum:
+      - freshdesk
+      - freshcaller
+      - freshchat
+  count:
+    type: integer
+example: {
+  channel: "freshdesk",
+  count: 10
+}
