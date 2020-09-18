@@ -10,6 +10,7 @@ module ApiSolutions
     include SolutionBuilderHelper
     include SolutionsArticlesTestHelper
     include SolutionsArticlesCommonTests
+    include SolutionsPlatformsTestHelper
 
     def setup
       super
@@ -149,6 +150,70 @@ module ApiSolutions
       match_json(request_error_pattern(:language_not_allowed, code: non_supported_language, list: (@account.supported_languages + [@account.language]).sort.join(', ')))
     end
 
+    def test_create_with_chat_platform_enabled_omni
+      enable_omni_bundle do
+        folder_meta = get_folder_meta_with_platform_mapping
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+
+        params = { title: title, description: paragraph, status: 1, platforms: ['web', 'ios', 'android'] }
+
+        post :create, construct_params({ version: version, id: folder_meta.id }, params)
+        assert_response 201
+        match_json(article_pattern(Solution::Article.last))
+      end
+    end
+
+    def test_create_with_chat_platform_disabled_omni
+      Account.any_instance.stubs(:omni_bundle_account?).returns(false)
+
+      folder_meta = get_folder_meta_with_platform_mapping
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+
+      params = { title: title, description: paragraph, status: 1, platforms: ['web', 'ios', 'android'] }
+
+      post :create, construct_params({ version: version, id: folder_meta.id }, params)
+      assert_response 403
+      match_json(validation_error_pattern(omni_bundle_required_error_for_platforms))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+    end
+
+    def test_create_for_folder_without_chat_platform
+      enable_omni_bundle do
+        folder_meta = get_folder_meta_without_platform_mapping
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+
+        params = { title: title, description: paragraph, status: 1, platforms: ['web', 'ios', 'android'] }
+
+        post :create, construct_params({ version: version, id: folder_meta.id }, params)
+        assert_response 201
+      end
+    end
+
+    def test_update_with_platform_values_with_omni_feature
+      enable_omni_bundle do
+        sample_article = get_article_with_platform_mapping(web: false)
+
+        put :update, construct_params({ version: version, id: sample_article.parent_id }, platforms: ['web'])
+        assert_response 200
+        match_json(article_pattern(sample_article))
+      end
+    end
+
+    def test_update_with_platform_values_without_omni_feature
+      Account.any_instance.stubs(:omni_bundle_account?).returns(false)
+      sample_article = get_article_with_platform_mapping
+
+      put :update, construct_params({ version: version, id: sample_article.parent_id }, platforms: ['web'])
+      assert_response 403
+      match_json(validation_error_pattern(omni_bundle_required_error_for_platforms))
+    ensure
+      Account.any_instance.unstub(:omni_bundle_account?)
+    end
+
     private
 
       def version
@@ -156,7 +221,7 @@ module ApiSolutions
       end
 
       def article_pattern(article, expected_output = {})
-        solution_article_pattern(expected_output, article)
+        solution_article_pattern(expected_output, true, false, article)
       end
 
       def article_draft_pattern(article, draft)

@@ -2,12 +2,28 @@ module Channel::V2
   class TicketsController < ::TicketsController
 
     CHANNEL_V2_TICKETS_CONSTANTS_CLASS = 'Channel::V2::TicketConstants'.freeze
-    PERMITTED_JWT_SOURCES = [:freddy, :multiplexer].freeze
+    PERMITTED_JWT_SOURCES = [:freddy, :multiplexer, :analytics, :search, :freshdesk].freeze
 
     include ChannelAuthentication
+    include Channel::V2::TicketConstants
+    include CentralLib::CentralResyncHelper
 
     skip_before_filter :check_privilege, :verify_authenticity_token, :after_load_object, if: :jwt_eligible?
     before_filter :channel_client_authentication, if: :jwt_eligible?
+    skip_before_filter :validate_params, only: [:sync]
+    before_filter :validate_sync_params, only: [:sync]
+
+    def sync
+      if resync_worker_limit_reached?(@source)
+        head 429
+      else
+        job_id = request.uuid
+        persist_job_info_and_start_entity_publish(@source, job_id, RESYNC_ENTITIES[:ticket],
+                                                  params[:meta], query_conditions, params[:primary_key_offset])
+        @item = { job_id: job_id }
+        render status: :accepted
+      end
+    end
 
     private
 
@@ -21,6 +37,16 @@ module Channel::V2
 
     def validation_class
       Channel::V2::TicketValidation
+    end
+
+    def sync_validation_class
+      Channel::V2::TicketSyncValidation
+    end
+
+    def validate_sync_params
+      sync_validation = sync_validation_class.new(params[cname])
+      valid = sync_validation.valid?(action_name.to_sym)
+      render_errors sync_validation.errors, sync_validation.error_options unless valid
     end
 
     def validate_params
@@ -207,6 +233,36 @@ module Channel::V2
 
     def jwt_eligible?
       permitted_jwt_source?(PERMITTED_JWT_SOURCES)
+    end
+
+    def query_conditions
+      query_conditions = {}
+      request = params[cname]
+      request_attributes = (SYNC_FILTER_ATTRIBUTES & request.keys).map(&:to_sym)
+      if request_attributes.present?
+        query_conditions[:joins] = generate_join_conditions(SYNC_TICKET_STATE_ATTRIBUTES.first) if (SYNC_TICKET_STATE_ATTRIBUTES & request.keys).present?
+        query_conditions[:conditions] = generate_where_conditions(request_attributes, request)
+      end
+      query_conditions.presence
+    end
+
+    def generate_join_conditions(attribute)
+      associated_table = SYNC_ASSOCIATION_MAPPING[attribute.to_sym]
+      "inner join #{associated_table} on #{associated_table}.account_id = helpdesk_tickets.account_id and #{associated_table}.ticket_id = helpdesk_tickets.id"
+    end
+
+    def generate_where_conditions(request_attributes, request)
+      conditions = request_attributes.inject([]) do |where_conditions, attribute|
+        key = SYNC_ATTRIBUTE_MAPPING[attribute]
+        value = request[attribute]
+        if SYNC_ID_FIELDS.include?(attribute)
+          where_conditions << ("#{key} in (#{value.join(',')})")
+        elsif SYNC_DATETIME_ATTRIBUTES.include?(attribute)
+          association = "#{SYNC_ASSOCIATION_MAPPING[attribute]}.#{key}"
+          where_conditions << "(#{association} >= '#{value[:start]}' and #{association} <= '#{value[:end]}')" if association.present?
+        end
+      end
+      conditions.join(' and ') if conditions.present?
     end
   end
 end

@@ -318,6 +318,6 @@ class ConversionMetric < ActiveRecord::Base
   end
 
   def sprout_trial_onboarding?
-    GrowthHackConfig[:freshdesk_free_websites].any? { |key| referrer.include?(key) || current_session_url.include?(key) }
+    GrowthHackConfig[:freshdesk_free_websites].any? { |key| (referrer.present? && referrer.include?(key)) || (current_session_url.present? && current_session_url.include?(key)) }
   end
 end

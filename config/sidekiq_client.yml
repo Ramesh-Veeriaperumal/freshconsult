@@ -405,6 +405,7 @@ defaults: &defaults
     - [marketplace_app_billing]
     - [update_agent_status_availability]
     - [privilege_modification]
+    - [central_publish_resync]
     - [create_and_link_omni_account]
     - [sync_omni_agents]
     - [archive_ticket_central_publish]

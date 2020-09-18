@@ -73,7 +73,11 @@ class ThirdCRM
 
   def publish_event(account, args)
     if args[:event_name].present?
-      event_data = { args[:event_name] => true, 'Trial Day' => ((Time.now.to_i - account.subscription.created_at.to_i) / 86400).to_i }
+      if args[:event_name] == AccountConstants::FM_TRIAL_EVENT_NAME
+        event_data = { args[:event_name] => account.subscription.subscription_plan_from_cache.name }
+      else
+        event_data = { args[:event_name] => true, 'Trial Day' => ((Time.now.to_i - account.subscription.created_at.to_i) / 86400).to_i }
+      end
     else
       event_data = { 'GoalName': args[:goal_name] }
     end

@@ -280,7 +280,8 @@ Sidekiq.configure_server do |config|
       :priority => ['account_id', 'shard_name'], 
       :required_classes => [
         'Archive::AccountTicketsWorker',
-        'Archive::TicketWorker'
+        'Archive::TicketWorker',
+        'CentralPublisher::CentralReSyncWorker'
     ]
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end

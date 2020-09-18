@@ -19,6 +19,7 @@ class AccountsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:deliver_admin_activation).returns(true)
     User.any_instance.stubs(:perishable_token).returns(Faker::Number.number(5))
     User.any_instance.stubs(:reset_perishable_token!).returns(true)
+    @req_stub = stub_request(:post, "#{ThirdCrm::FRESHMARKETER_CONFIG['events_url']}?email=#{current_account.admin_email}&event_name=#{ThirdCRM::FRESHMARKETER_EVENTS[:fdesk_event]}").to_return(status: 200, body: '', headers: {})
   end
 
   def unstub_signup_calls
@@ -31,6 +32,7 @@ class AccountsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:deliver_admin_activation)
     User.any_instance.unstub(:perishable_token)
     User.any_instance.unstub(:reset_perishable_token!)
+    remove_request_stub(@req_stub)
   end
 
   def current_account
@@ -45,6 +47,7 @@ class AccountsControllerTest < ActionController::TestCase
     Account.stubs(:current).returns(Account.first)
     get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
     assert_response 200
+    assert_not_equal AddEventToFreshmarketer.jobs.size, 0
   ensure
     unstub_signup_calls
     Account.unstub(:current)
@@ -55,7 +58,7 @@ class AccountsControllerTest < ActionController::TestCase
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
-    user_email = Faker::Internet.email
+    user_email = "#{Faker::Lorem.word}#{rand(1_000)}@testemail.com"
     landing_url = Faker::Internet.url
     user_name = Faker::Name.name
     session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
@@ -74,7 +77,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert account.has_feature?(:untitled_setting_4)
     assert_equal account.has_feature?(:untitled_setting_1), false
   ensure
-    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    Account.find(resp['account_id']).destroy if resp && resp['account_id']
     unstub_signup_calls
   end
 
@@ -84,7 +87,7 @@ class AccountsControllerTest < ActionController::TestCase
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
-    user_email = Faker::Internet.email
+    user_email = "#{Faker::Lorem.word}#{rand(1_000)}@testemail.com"
     landing_url = Faker::Internet.url
     user_name = Faker::Name.name
     session = { current_session: { referrer: Faker::Lorem.word, url: landing_url, search: { engine: Faker::Lorem.word, query: Faker::Lorem.word } },
@@ -103,7 +106,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.has_feature?(:untitled_setting_3), false
     assert_equal account.has_feature?(:untitled_setting_4), false
   ensure
-    Account.find(resp['account_id']).destroy if resp['account_id'].present?
+    Account.find(resp['account_id']).destroy if resp && resp['account_id']
     unstub_signup_calls
   end
 
@@ -1015,6 +1018,7 @@ class AccountsControllerTest < ActionController::TestCase
   def test_new_signup_from_free_helpdesk_site
     stub_signup_calls
     Signup.any_instance.unstub(:save)
+    SAAS::SubscriptionEventActions.any_instance.stubs(:change_api_limit).returns(true)
     user_email = 'nofsmonsignup@gleason.name'
     user_name = Faker::Name.name
     referrer = 'https=>//freshdesk.com/pricing/free-helpdesk-software'
@@ -1032,8 +1036,10 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'sprout_trial_onboarding'
     assert_equal account.subscription.state, 'free'
     assert_equal account.subscription.plan_name, 'Sprout Jan 20'
+    assert_not_includes account.features_list, :sla_management_v2
   ensure
     unstub_signup_calls
+    SAAS::SubscriptionEventActions.any_instance.unstub(:change_api_limit)
   end
 
   def test_new_signup_from_free_ticketing_site
@@ -1092,6 +1098,8 @@ class AccountsControllerTest < ActionController::TestCase
 
   def test_new_sprout_trial_signup_with_precreated_account
     populate_plans
+    sub_plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_20])
+    SubscriptionPlan.stubs(:find_by_name).returns(sub_plan)
     AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
     Subscription.any_instance.stubs(:add_to_billing).returns(true)
     PrecreatedSignup.any_instance.stubs(:aloha_signup).returns(true)
@@ -1134,6 +1142,7 @@ class AccountsControllerTest < ActionController::TestCase
     PrecreatedSignup.any_instance.unstub(:freshid_user)
     Account.any_instance.unstub(:sync_user_info_from_freshid_v2!)
     User.any_instance.unstub(:sync_profile_from_freshid)
+    SubscriptionPlan.unstub(:find_by_name)
   end
 
   def test_anonymous_signup_without_redis_enabled
