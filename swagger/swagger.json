@@ -10301,7 +10301,7 @@
           "plans"
         ],
         "description": "Endpoint to list all Freshdesk plans and its pricing details",
-        "summary": "List all",
+        "summary": "Endpoint to list all Freshdesk plans and its pricing details",
         "responses": {
           "200": {
             "description": "Success",
@@ -10321,7 +10321,7 @@
           "plans"
         ],
         "description": "Endpoint to fetch a Freshdesk plan and its pricing details",
-        "summary": "Fetch plan",
+        "summary": "Endpoint to fetch a Freshdesk plan and its pricing details",
         "responses": {
           "200": {
             "description": "Success",
@@ -10329,11 +10329,11 @@
               "$ref": "#/definitions/fetch_plan"
             }
           },
-          "404": {
-            "description": "Not found"
-          },
           "403": {
             "description": "Access denied"
+          },
+          "404": {
+            "description": "Not found"
           }
         }
       }
