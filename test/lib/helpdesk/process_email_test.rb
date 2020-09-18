@@ -133,7 +133,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
   end
 
   def test_success_email_to_the_wild_cards
-    Account.current.launch(:allow_wildcard_ticket_create)
+    Account.current.enable_setting(:allow_wildcard_ticket_create)
     ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
     Helpdesk::ProcessEmail.any_instance.stubs(:add_to_or_create_ticket).returns(true)
     params = default_params(Faker::Lorem.characters(50), 'Test Subject')
@@ -149,7 +149,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
   end
 
   def test_success_email_to_the_wild_cards_using_allow_check
-    Account.current.launch(:allow_wildcard_ticket_create)
+    Account.current.enable_setting(:allow_wildcard_ticket_create)
     ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
     Helpdesk::ProcessEmail.any_instance.stubs(:add_to_or_create_ticket).returns(true)
     params = default_params(Faker::Lorem.characters(50), 'Test Subject')
@@ -162,7 +162,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:email_configs)
     EmailConfig.any_instance.unstub(:find_by_to_email)
     Helpdesk::ProcessEmail.any_instance.unstub(:add_to_or_create_ticket)
-    Account.current.rollback(:allow_wildcard_ticket_create)
+    Account.current.disable_setting(:allow_wildcard_ticket_create)
   end
 
   def test_success_email_to_the_default_support_mailbox
