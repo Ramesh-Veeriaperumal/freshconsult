@@ -115,21 +115,6 @@ window.App = window.App || {};
                         break;
                 }
             });
-        },
-        bindPresenceToggle: function(){
-            $('body').on('change','.phone_item',function() {
-                $(this).prop('disabled','disabled')
-                $.ajax({
-                    type: "POST",
-                    dataType: "json",
-                    url: '/freshfone/users/manage_presence',
-                    data: {
-                        'agent_id': $(this).data("id")
-                    },
-                    success: function (data) {
-                    }
-                });
-            });
         }
     };
 }(window.jQuery));
