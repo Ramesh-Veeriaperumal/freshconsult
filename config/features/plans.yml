@@ -27,7 +27,6 @@
   :blossom_jan_17:
     :name: Blossom
     :features:
-      - :fa_developer
       - :split_tickets
       - :add_watcher
       - :traffic_cop
@@ -256,7 +255,6 @@
       - :session_replay
       - :image_annotation
       - :custom_apps
-      - :fa_developer
       - :forums
       - :multi_language
       - :css_customization
@@ -475,7 +473,6 @@
       - :session_replay
       - :image_annotation
       - :custom_apps
-      - :fa_developer
       - :forums
       - :multi_language
       - :css_customization
