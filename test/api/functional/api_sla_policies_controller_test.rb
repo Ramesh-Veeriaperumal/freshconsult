@@ -53,10 +53,11 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_update_remove_company_sla_policy
     @sla_policy = quick_create_sla_policy
-    put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_ids: [], group_ids: [1] })
+    group_id = @account.groups.last.id || create_group(@account).id
+    put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_ids: [], group_ids: [group_id] })
     assert_response 200
     match_json(sla_policy_pattern(@sla_policy.reload))
-    match_json(sla_policy_pattern({ applicable_to: { group_ids: [1] } }, @sla_policy))
+    match_json(sla_policy_pattern({ applicable_to: { group_ids: [group_id] } }, @sla_policy))
   end
 
   def test_update_with_invalid_company_ids
@@ -227,10 +228,11 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
     def test_update_remove_contact_segments_sla_policy
       @sla_policy = quick_create_sla_policy
-      put :update, construct_params({ id: @sla_policy.id }, applicable_to: { contact_segments: [], group_ids: [1] })
+      group_id = @account.groups.last.id || create_group(@account).id
+      put :update, construct_params({ id: @sla_policy.id }, applicable_to: { contact_segments: [], group_ids: [group_id] })
       assert_response 200
       match_json(sla_policy_pattern(@sla_policy.reload))
-      match_json(sla_policy_pattern({ applicable_to: { group_ids: [1] } }, @sla_policy))
+      match_json(sla_policy_pattern({ applicable_to: { group_ids: [group_id] } }, @sla_policy))
     end
 
     def test_update_with_invalid_contact_segments
@@ -262,10 +264,11 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       def test_update_remove_company_segments_sla_policy
  
         @sla_policy = quick_create_sla_policy
-        put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: [], group_ids: [1] })
+        group_id = @account.groups.last.id || create_group(@account).id
+        put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_segments: [], group_ids: [group_id] })
         assert_response 200
         match_json(sla_policy_pattern(@sla_policy.reload))
-        match_json(sla_policy_pattern({ applicable_to: { group_ids: [1] } }, @sla_policy))
+        match_json(sla_policy_pattern({ applicable_to: { group_ids: [group_id] } }, @sla_policy))
       end
 
       def test_update_with_invalid_company_segments

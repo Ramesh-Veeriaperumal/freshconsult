@@ -2,6 +2,8 @@ class Freshchat::Account < ActiveRecord::Base
   
   include DataVersioning::Model
   include OmniChannelDashboard::TouchstoneUtil
+  include Redis::OthersRedis
+  include Redis::Keys::Others
 
   CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'freshchat.yml')).deep_symbolize_keys
 
@@ -19,6 +21,7 @@ class Freshchat::Account < ActiveRecord::Base
   before_destroy :save_deleted_freshchat_account_info
   validates :app_id, presence: true
   after_commit :invoke_touchstone_account_worker, if: :omni_bundle_enabled?
+  after_commit :handle_ocr_to_mars_redis_key
 
   attr_accessor :model_changes, :deleted_model_info
 
@@ -44,4 +47,18 @@ class Freshchat::Account < ActiveRecord::Base
   def save_deleted_freshchat_account_info
     @deleted_model_info = as_api_response(:central_publish_destroy)
   end
+
+  def handle_ocr_to_mars_redis_key
+    return unless (Account.current || account).ocr_to_mars_api_enabled?
+    if transaction_include_action?(:create)
+      add_member_to_redis_set(OCR_TO_MARS_CHAT_ACCOUNT_IDS, app_id)
+    elsif transaction_include_action?(:update)
+      if @model_changes.key?(:enabled)
+        enabled ? add_member_to_redis_set(OCR_TO_MARS_CHAT_ACCOUNT_IDS, app_id) : remove_member_from_redis_set(OCR_TO_MARS_CHAT_ACCOUNT_IDS, app_id)
+      end
+    elsif transaction_include_action?(:destroy)
+      remove_member_from_redis_set(OCR_TO_MARS_CHAT_ACCOUNT_IDS, @deleted_model_info[:freshchat_account_id])
+    end
+  end
+
 end

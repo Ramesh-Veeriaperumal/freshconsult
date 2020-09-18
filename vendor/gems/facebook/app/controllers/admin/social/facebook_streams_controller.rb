@@ -56,12 +56,8 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
 
   def fb_client
     redirect_url = "#{AppConfig['integrations_url'][Rails.env]}/facebook/page/callback"
-    if current_account.falcon_ui_enabled?(current_user)
-      falcon_uri = admin_social_facebook_streams_url.gsub("/admin/social/facebook_streams", "/a/admin/social/facebook_streams")
-      @fb_client = make_fb_client(redirect_url, falcon_uri)
-    else
-      @fb_client = make_fb_client(redirect_url, admin_social_facebook_streams_url)
-    end
+    falcon_uri = admin_social_facebook_streams_url.gsub("/admin/social/facebook_streams", "/a/admin/social/facebook_streams")
+    @fb_client = make_fb_client(redirect_url, falcon_uri)
   end
 
   def enabled_facebook_pages

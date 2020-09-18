@@ -62,7 +62,7 @@
 			<%= render :partial => "integrations" %>
 
 		<% end %>
-		<%if current_account.reverse_notes_enabled? && current_account.falcon_ui_enabled?(current_user)%>
+		<%if current_account.reverse_notes_enabled?%>
 			<div class="sort-conversations-freshid">
 				<div class="row-fluid">
 					<div class="span10 sort-conversations__label"><%= t("account.sort_conversations.label") %></div>
@@ -78,7 +78,7 @@
 			</div>
     	<%end%>
     
-		<% if current_account.undo_send_enabled? && current_account.falcon_ui_enabled?(current_user) %>
+		<% if current_account.undo_send_enabled?%>
 			<hr>
 			<div class="row-fluid undo-send-option">
 				<div class="span10 align-left undo-toggle-freshid"><%= t("undo_toggle") %></div>

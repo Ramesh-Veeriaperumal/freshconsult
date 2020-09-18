@@ -115,7 +115,7 @@ class GroupDecorator < ApiDecorator
      result_hash.merge!({business_hour: business_hour_hash})
     end
 
-    if Account.current.agent_statuses_enabled? || (Account.current.omni_channel_routing_enabled? && assignment_type == OMNI_CHANNEL_ROUTING_ASSIGNMENT)
+    if (Account.current.agent_statuses_enabled? && assignment_type == NO_ASSIGNMENT) || (Account.current.omni_channel_routing_enabled? && assignment_type == OMNI_CHANNEL_ROUTING_ASSIGNMENT)
       result_hash.merge!(allow_agents_to_change_availability: allow_agents_to_change_availability)
     elsif round_robin_enabled? && assignment_type == ROUND_ROBIN_ASSIGNMENT
       result_hash.merge!(round_robin_hash)
