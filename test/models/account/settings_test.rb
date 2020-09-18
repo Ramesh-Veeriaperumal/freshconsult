@@ -7,7 +7,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
   include AccountTestHelper
 
   def setup
-    create_test_account if @account.nil?
+    @account = Account.first || create_new_account
+    @account.make_current
   end
 
   def test_type_of_setting_with_dependent_feature
