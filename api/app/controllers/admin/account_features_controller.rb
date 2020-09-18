@@ -10,21 +10,19 @@ class Admin::AccountFeaturesController < ApiApplicationController
   def create
     if @is_a_setting
       @account.enable_setting(@feature_name)
-      head 204
     else
       modify_feature :enable
-      head 204
     end
+    head 204
   end
 
   def destroy
     if @is_a_setting
       @account.disable_setting(@feature_name)
-      head 204
     else
       modify_feature :disable
-      head 204
     end
+    head 204
   end
 
   private
