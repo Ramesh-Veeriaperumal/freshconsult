@@ -1650,6 +1650,9 @@
         "access_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JQRILpKqyit4tx3yWlzNGlXU5DJL+4BI:7cavdBvvcRAHt9kP0oH4um/BO4x80oI=]",
         "_api_endpoint": "http://sr.pre-freshmarketer.io/ab/api/v1"
       },
+      "kbservice": {
+        "secret_key": "EJ[1:6hWB6JbN3NA4AuMyESnSuDXNBsSUFkLS6Ic8JSmHuio=:sm/+jKfOaSXga1biYhgSRGzdlXBK1WCz:quhLOPZEIiTCA4uHYvfq1fdKnutIm0J9RnJL]"
+      },
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:iP8XvLC5wcL1ww9dJA4sB8x38IayHDAroVIuF5vlQnw=:jqKSLiyzUgZ8snwGTaIfRdm7GojYsbQl:6rUTJNpK7NPCpyOANk22oDm0fzOLq2eZLvqq8osnMgak]",

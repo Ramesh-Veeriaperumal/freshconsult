@@ -85,7 +85,7 @@ class Solution::Category < ActiveRecord::Base
   def save_deleted_category_info
     @deleted_model_info = as_api_response(:central_publish_destroy) 
   end
-   
+
   private
   
     def name_uniqueness_validation

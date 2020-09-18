@@ -3080,6 +3080,9 @@
         "access_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:nGDzM8idHQuRoHK2yhvQp8AT8AfiYddr:T/9hxO+9a5P7KvriJzvNwWvMurL/F4zHpPc/yP2vCq7B1vuK5lOFXoAQUh3aghaoO7xHIj4GKErpbcuf12HXVLg3]",
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
       },
+      "kbservice": {
+        "secret_key": "EJ[1:WZMyHYgQRBgVYZws68toWl1Frsbnsm5MxG5ClYCU8h0=:pkmSn6KvSdJ2dBdwhTcyM/ccN+QNqJ+O:/JyCQuWMlBzkyzSB0IagcDJPQ1UBIaLLezn//0sqoZcIqvk2xNmw14vrKRfeh4a9]"
+      },
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:CfaiE80Ur6ikOJe2K44pNjkmkrnVegF23QXsD3yr2j8=:8CINh5rO/CbSRPcPqwunpzAA2lPIgTgc:ZCkE1E1488yPPOAf9OTzkADGAmU2ksUkyqk=]",
