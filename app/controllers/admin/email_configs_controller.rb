@@ -120,7 +120,7 @@ class Admin::EmailConfigsController < Admin::AdminController
     redirect_to :back
   end
 
-  def toggle_agent_forward_feature
+  def toggle_agent_forward_setting
     if current_account.disable_agent_forward_enabled?
       current_account.disable_setting(:disable_agent_forward)
     else
