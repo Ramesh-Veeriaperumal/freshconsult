@@ -140,9 +140,7 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
       else
         flash[:error] = t(:'flash.general.update.failure', :human_name => t('admin.ecommerce.human_name'))
       end
-        redirect_to ecommerce_path
-        #current_account.falcon_ui_enabled?(current_user) ? "/a#{admin_ecommerce_accounts_path}" : admin_ecommerce_accounts_path
-      #redirect_to admin_ecommerce_accounts_path
+      redirect_to ecommerce_path
     end
 
     def construct_ebay_request(additional_data, ru_params, ebay_site_id)
@@ -172,6 +170,6 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
     end
 
     def ecommerce_path
-      current_account.falcon_ui_enabled?(current_user) ? "/a#{admin_ecommerce_accounts_path}" : admin_ecommerce_accounts_path
+      "/a#{admin_ecommerce_accounts_path}"
     end
 end

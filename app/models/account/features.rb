@@ -340,12 +340,11 @@ class Account < ActiveRecord::Base
   end
 
   def falcon_ui_enabled?(current_user = :no_user)
+    Rails.logger.warn "FALCON FEATURE METHOD :: falcon_ui_enabled? :: #{caller[0..2]}"
     return true if current_user
   end
 
-  def falcon_support_portal_theme_enabled?
-    falcon_ui_enabled? && falcon_portal_theme_enabled?
-  end
+  alias falcon_support_portal_theme_enabled? falcon_portal_theme_enabled?
 
   #this must be called instead of using launchparty in console or from freshops to set all necessary things needed
   def enable_falcon_ui

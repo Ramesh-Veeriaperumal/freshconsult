@@ -53,9 +53,11 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
           redirect_to integrations_applications_path and return
         end
       else
-        auth_url = @application.oauth_url({ :account_id => current_account.id,
-          :portal_id => current_portal.id, :user_id => current_user.id,
-          :falcon_enabled => current_account.falcon_ui_enabled?(current_user) },
+        auth_url = @application.oauth_url({ 
+          account_id: current_account.id,
+          portal_id: current_portal.id, 
+          user_id: current_user.id,
+          falcon_enabled: true },
           @application[:name])
         redirect_to auth_url  and return
       end
@@ -212,7 +214,7 @@ class Integrations::MarketplaceAppsController < Admin::AdminController
     def oauth_app_installation
       auth_url = @application.oauth_url({ account_id: current_account.id,
                                           portal_id: current_portal.id, user_id: current_user.id,
-                                          falcon_enabled: current_account.falcon_ui_enabled?(current_user) },
+                                          falcon_enabled: true },
                                         @application[:name])
       render json: { url: auth_url, action: NATIVE_APP_OAUTH_INSTALL }
     end

@@ -38,7 +38,7 @@
     
     <div class="tab-content">
       <div class="tab-pane active" id="preferences">
-        <%= render :partial => "/admin/shared/portal_simple", :locals => { :portal_simple => @portal_template, :falcon_support_portal_theme_enabled => @falcon_support_portal_theme_enabled, :falcon_ui => @current_account.falcon_ui_enabled? }  %>
+        <%= render :partial => "/admin/shared/portal_simple", :locals => { :portal_simple => @portal_template, :falcon_support_portal_theme_enabled => @falcon_support_portal_theme_enabled, :falcon_ui => true }  %>
       </div>
       <%if feature?(:css_customization)%>
       	<div class="tab-pane" id="custom_css">		

@@ -102,7 +102,7 @@
 								<div class="help-block"><%=t('account.info4')%></div>
 					  		</div>
 						</div>
-						<% if current_account.reverse_notes_enabled? && current_account.falcon_ui_enabled?(current_user) %>
+						<% if current_account.reverse_notes_enabled?%>
 							<div class="control-group">
 								<%= f.label :sort_conversations, t('account.sort_conversations.label'), :class => "control-label"  %>
 								<div class="controls">

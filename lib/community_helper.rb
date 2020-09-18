@@ -3,9 +3,8 @@ module CommunityHelper
   def preview_portal(relative_path, category = nil, extraClass = nil)
     category.portals.collect(&:id) if category.present?
     # Above line added just to preload the portals. The above line is otherwise useless
-    is_falcon = current_account.falcon_ui_enabled?(current_user)
     return if category.present? && category.portal_ids.empty?
-    %(<span class="tooltip pull-right portal-preview-icon #{is_falcon ? extraClass : ''}" data-placement="left" title="#{t('solution.view_on_portal')}">
+    %(<span class="tooltip pull-right portal-preview-icon #{extraClass}" data-placement="left" title="#{t('solution.view_on_portal')}">
       #{link_to('<i class="ficon-open-in-portal fsize-21"></i>'.html_safe, portal_article_path(relative_path, category), target: 'view-portal')}
     </span>).html_safe
   end
