@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require_relative '../test_helper'
-require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('spec', 'support', 'account_helper.rb')
 
 class Account::SettingsTest < ActiveSupport::TestCase
-  include AccountTestHelper
+  include AccountHelper
 
   def setup
-    @account = Account.first || create_new_account
+    @account = Account.first || create_test_account
     @account.make_current
   end
 
