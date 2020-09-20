@@ -33,7 +33,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
     params = { new_setting => true}
     put :update, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern('invalid_field', new_setting.to_sym, code: :invalid_field)])
+    match_json([bad_request_error_pattern(new_setting, :invalid_field, code: :invalid_field)])
   end
 
   def test_successful_updation_of_selected_settings_with_email_new_settings_lp_enabled
@@ -47,8 +47,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_invalid_value
-    params = all_features_params.except(:allow_agent_to_initiate_conversation, :original_sender_as_requester_for_forward, :create_requester_using_reply_to)
-    params[:personalized_email_replies] = 'invalid_value'
+    params = { 'personalized_email_replies': 'invalid_value' }
     put :update, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('personalized_email_replies', 'Value set is of type String.It should be a/an Boolean', code: :datatype_mismatch)])
