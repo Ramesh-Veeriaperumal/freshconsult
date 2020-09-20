@@ -2,9 +2,9 @@
 
 class Account < ActiveRecord::Base
 
-  AccountSettings::SettingsConfig.each_key do |setting|
+  AccountSettings::SettingsConfig.each do |setting, config|
     define_method "#{setting}_enabled?" do
-      has_setting?(setting.to_sym)
+      has_feature?(config[:feature_dependency]) && has_feature?(setting.to_sym)
     end
   end
 
@@ -50,16 +50,11 @@ class Account < ActiveRecord::Base
     end
   end
 
-  # Can combine this with valid_setting once LP's are migrated to BITMAP
-  def has_setting?(setting)
-    AccountSettings::SettingsConfig[setting][:feature_dependency] && has_feature?(setting)
+  def valid_setting(setting)
+    AccountSettings::SettingsConfig[setting].present?
   end
 
   private
-
-    def valid_setting(setting)
-      AccountSettings::SettingsConfig[setting].present?
-    end
 
     def raise_invalid_setting_error(setting)
       raise "Invalid setting #{setting} for the account"

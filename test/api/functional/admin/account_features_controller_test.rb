@@ -7,7 +7,7 @@ class Admin::AccountFeaturesControllerTest < ActionController::TestCase
   # include ApiAccountHelper
 
   def test_feature_enable_for_valid_input
-    post :create, controller_params(name: 'cascade_dispatcher')
+    post :create, controller_params(name: 'freshreports_analytics')
     assert_response 204
   end
 
@@ -17,22 +17,16 @@ class Admin::AccountFeaturesControllerTest < ActionController::TestCase
   end
 
   def test_disable_setting_with_feature_dependency
-    @account.launch(:feature_based_settings)
     @account.add_feature(:basic_settings_feature)
     delete :destroy, controller_params(name: 'cascade_dispatcher')
     assert_response 204
-  ensure
-    @account.rollback(:feature_based_settings)
   end
 
   def test_disable_setting_without_feature_dependency
     assert_raises(RuntimeError) do
-      @account.launch(:feature_based_settings)
       @account.revoke_feature(:basic_settings_feature)
       delete :destroy, controller_params(name: 'cascade_dispatcher')
     end
-  ensure
-    @account.rollback(:feature_based_settings)
   end
 
   def test_disable_feature_for_valid_input
