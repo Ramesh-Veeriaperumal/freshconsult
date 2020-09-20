@@ -506,8 +506,6 @@
   :solutions_agent_metrics: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
-  :fetch_ticket_from_ref_first: false
-  :skip_ticket_threading: false
   :helpdesk_tickets_by_product: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
