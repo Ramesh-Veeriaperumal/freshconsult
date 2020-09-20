@@ -208,7 +208,7 @@ group :production, :staging, :test, :development do
 end
 
 # Freshdesk
-gem 'rate-limiting', git:'git://github.com/freshdesk/rate-limiting.git', tag: 'v2.0'
+gem 'rate-limiting', git:'git://github.com/freshworks/rate-limiting.git', tag: 'v2.1'
 gem 'time_bandits', git: 'git@github.com:freshdesk/fd_time_bandits', tag: 'v1.3' # for instrumenting cache-performance
 gem 'rack-ssl', require: 'rack/ssl', git: 'git://github.com/freshdesk/rack-ssl', branch: 'ssl'
 gem 'omniauth-salesforce', git: 'git://github.com/freshdesk/omniauth-salesforce.git', branch: 'master'
