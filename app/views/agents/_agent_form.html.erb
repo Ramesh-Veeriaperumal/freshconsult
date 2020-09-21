@@ -196,7 +196,6 @@
     				</li>
     			<% end %>
   		    <% if feature?(:multi_language) %>
-            <% if current_account.falcon_ui_enabled?(current_user) %>
               <li class="control-group">
                 <%= label(:user, :language, t('account.language'), :class => "control-label") %>
                 <div class="controls  margin-bottom">
@@ -207,14 +206,6 @@
                   <%= render partial:'ui/falcon_languages_alert' %>
                 </div>
               </li>
-            <% else %>
-    					<li class="control-group">
-    						<%= label(:user, :language, t('account.language'), :class => "control-label") %>
-    						<div class="controls  margin-bottom">
-    							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "input-xlarge select2"})%>
-    						</div>
-    					</li>
-            <% end %>
   	     	<% end %>
   				<li class="control-group">
   					<%= label(:agent, :signature_html, t('agent.signature'), :class => "control-label") %>

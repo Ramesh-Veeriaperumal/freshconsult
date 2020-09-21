@@ -313,12 +313,8 @@ class ApplicationController < ActionController::Base
 
     def set_ui_preference
       @falcon_redirection_check = true
-      if current_account.falcon_ui_enabled?(current_user)
-        cookies[:falcon_enabled] = true
-        handle_falcon_redirection
-      else
-        cookies[:falcon_enabled] = false
-      end
+      cookies[:falcon_enabled] = true
+      handle_falcon_redirection
     end
 
     def log_old_ui_path

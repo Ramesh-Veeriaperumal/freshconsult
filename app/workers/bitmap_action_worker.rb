@@ -12,7 +12,7 @@ class BitmapActionWorker < BaseWorker
     account_id = args[:account_id]
     begin
       key = TYPE.include?(args[:change].try(&:to_sym)) && args[:change].to_sym
-      class_name = FeatureClassMapping.get_class(args[:feature_name].to_s)
+      class_name = FeatureClassMapping.get_feature_class(args[:feature_name].to_s)
       method_name = :"on_#{key}"
       logger.info "Bitmap callback class name for account_id #{account_id} is #{class_name}"
       feature_class_instance = begin

@@ -15,6 +15,7 @@ module AgentConstants
   AGENT_TYPES = Agent::PERMISSION_KEYS_FOR_AGENT_TYPES.keys
   USER_FIELDS = %w[name email phone mobile time_zone job_title language role_ids skill_ids].freeze
   AVAILABILITY_COUNT_FIELDS = %w[freshdesk_group_ids freshchat_group_ids freshcaller_group_ids].freeze
+  NEW_AVAILABILITY_COUNT_FIELDS = %w[ticket_group_ids chat_group_ids phone_group_ids].freeze
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w[agent_role_ids group_ids].freeze
   VALIDATION_CLASS = 'AgentValidation'.freeze
   DEFAULT_AGENT_TYPE_LIST = {

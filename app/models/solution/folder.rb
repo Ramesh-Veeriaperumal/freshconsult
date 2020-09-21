@@ -20,7 +20,10 @@ class Solution::Folder < ActiveRecord::Base
   self.table_name =  "solution_folders"
   
   after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :update
-  
+
+  after_commit :kb_service_clear_cache, if: :folder_attrs_changed?
+  after_destroy :kb_service_clear_cache
+
   alias_method :parent, :solution_folder_meta
   
   scope :alphabetical, -> { order('name ASC') }
@@ -135,6 +138,17 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   private
+
+    def kb_service_clear_cache
+      job_id = Solution::KbserviceClearCacheWorker.perform_async(entity: 'folder')
+      Rails.logger.info "KBServiceClearCache:: folder_update, #{job_id}"
+    end
+
+    def folder_attrs_changed?
+      # Update changes for visibilty, etc will be tracked in parent level.
+      !(previous_changes.keys & SolutionConstants::PUBLISHABLE_FOLDER_PROPERTIES).empty? ||
+        !(parent.previous_changes.keys & SolutionConstants::PUBLISHABLE_FOLDER_META_PROPERTIES).empty?
+    end
 
     def populate_account
       self.account = category.account
