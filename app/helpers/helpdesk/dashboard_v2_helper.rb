@@ -37,7 +37,7 @@ module Helpdesk::DashboardV2Helper
   end
 
   def dashboardv2_available?
-    current_account.features?(:countv2_reads)
+    current_account.count_es_enabled?
   end
 
 end

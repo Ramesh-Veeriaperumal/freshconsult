@@ -162,7 +162,7 @@
       :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
-      :countv2_reads: 161
+      :unused_161: 161
       :reverse_notes: 162
       :opt_out_analytics: 163
       :disable_old_ui: 164
@@ -436,7 +436,6 @@
   :disable_agent_forward: false
   :compose_email: false
   :enable_multilingual: false
-  :countv2_reads: false
   :freshfone_onboarding: false
   :archive_tickets: false
   :call_quality_metrics: false

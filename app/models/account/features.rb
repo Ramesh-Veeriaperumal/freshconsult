@@ -237,7 +237,7 @@ class Account < ActiveRecord::Base
   end
 
   def count_es_enabled?
-    launched?(:count_service_es_reads) || features?(:countv2_reads)
+    launched?(:count_service_es_reads)
   end
 
   def count_es_api_enabled?
