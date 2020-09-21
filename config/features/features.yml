@@ -62,7 +62,7 @@
       :mailbox: 57
       :whitelisted_ips: 58
       :branding: 59
-      :toggle_branding: 60
+      :unused_60: 60
       :freshfone_vm_transcription: 61
       :basic_dkim: 62
       :advanced_dkim: 63
@@ -150,7 +150,7 @@
       :enable_multilingual: 146
       :unused_147: 147
       :marketplace: 148
-      :fa_developer: 149
+      :unused_149: 149
       :es_multilang_solutions: 150
       :compose_email: 151
       :wild_cards_10: 152
@@ -220,7 +220,7 @@
       :unused_216: 216
       :seafarers_1: 217
       :unused_218: 218
-      :portal_cc: 219
+      :unused_219: 219
       :disable_rr_toggle: 220
       :unused_221: 221
       :XX_unused_222: 222
@@ -409,6 +409,7 @@
       :helpdesk_tickets_by_product: 405
       :skip_invoice_due_warning: 406
       :allow_wildcard_ticket_create: 407
+      :supervisor_contact_field: 408
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -487,7 +488,6 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :updated_twilio_client: false
-  :portal_cc: false
   :disable_rr_toggle: false
   :social_revamp: true
   :activity_revamp: true
@@ -510,3 +510,4 @@
   :helpdesk_tickets_by_product: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
+  :supervisor_contact_field: false

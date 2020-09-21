@@ -1,8 +1,19 @@
 require_relative '../api/unit_test_helper'
+require_relative '../api/helpers/email_mailbox_test_helper.rb'
 require 'faker'
 
 class MailboxValidatorTest < ActionView::TestCase
   include MailboxValidator
+  include EmailMailboxTestHelper
+
+  def setup
+    Account.stubs(:current).returns(Account.first || create_test_account)
+  end
+
+  def teardown
+    Account.unstub(:current)
+    super
+  end
 
   def construct_args
     @args = {
@@ -226,5 +237,283 @@ class MailboxValidatorTest < ActionView::TestCase
     AwsWrapper::SqsV2.stubs(:send_message).returns(message_id: '1')
   ensure
     AwsWrapper::SqsV2.unstub(:send_message)
+  end
+
+  def test_verify_smtp_mailbox_with_tls_port
+    mailbox = create_email_config(
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'plain'
+      }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).returns(true)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], true
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_with_ssl_port
+    mailbox = create_email_config(
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'plain',
+        smtp_port: 465
+      }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).returns(true)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], true
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_ssl)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_imap_mailbox
+    mailbox = create_email_config(
+      imap_mailbox_attributes: {
+        imap_authentication: 'plain'
+      }
+    )
+    Net::IMAP.any_instance.stubs(:login).returns(true)
+    Net::IMAP.any_instance.stubs(:logout).returns(true)
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], true
+  ensure
+    Net::IMAP.any_instance.unstub(:login)
+    Net::IMAP.any_instance.unstub(:logout)
+  end
+
+  def test_verify_imap_mailbox_with_login_authentication_type
+    mailbox = create_email_config(
+      imap_mailbox_attributes: {
+        imap_authentication: 'login'
+      }
+    )
+    Net::IMAP.any_instance.stubs(:authenticate).returns(true)
+    Net::IMAP.any_instance.stubs(:logout).returns(true)
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], true
+  ensure
+    Net::IMAP.any_instance.unstub(:authenticate)
+    Net::IMAP.any_instance.unstub(:logout)
+  end
+
+  def test_verify_imap_mailbox_on_idle_not_supported_error
+    mailbox = create_email_config(
+      imap_mailbox_attributes: {
+        imap_authentication: 'plain'
+      }
+    )
+    Net::IMAP.any_instance.stubs(:login).returns(true)
+    Net::IMAP.any_instance.stubs(:capability).returns([Faker::Lorem.word])
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::IMAP.any_instance.unstub(:login)
+    Net::IMAP.any_instance.unstub(:capability)
+  end
+
+  def test_verify_imap_mailbox_on_imap_socket_error
+    mailbox = create_email_config(
+      imap_mailbox_attributes: {
+        imap_authentication: 'plain'
+      }
+    )
+    Net::IMAP.any_instance.stubs(:login).raises(SocketError)
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::IMAP.any_instance.unstub(:login)
+  end
+
+  def test_verify_imap_mailbox_on_imap_exceptions
+    mailbox = create_email_config(
+      imap_mailbox_attributes: {
+        imap_authentication: 'plain'
+      }
+    )
+    Net::IMAP.any_instance.stubs(:login).raises(StandardError)
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::IMAP.any_instance.unstub(:login)
+  end
+
+  def test_verify_smtp_mailbox_with_timeout_error
+    mailbox = create_email_config(
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'plain'
+      }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).raises(Timeout::Error)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_on_smtp_socket_error
+    mailbox = create_email_config(
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'plain'
+      }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).raises(SocketError)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_on_smtp_authentication_error
+    mailbox = create_email_config(
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'plain'
+      }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).raises(Net::SMTPAuthenticationError)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_on_smtp_exception
+    mailbox = create_email_config(
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'plain'
+      }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).raises(StandardError)
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+  end
+
+  def test_verify_smtp_mailbox_for_xoauth2_mailbox
+    mailbox = create_email_config(
+      support_email: 'testoauth@fdtest.com',
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true,
+        with_access_token: true
+      }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).returns(true)
+    MailboxValidatorTest.any_instance.stubs(:access_token_expired?).returns(true)
+    MailboxValidatorTest.any_instance.stubs(:get_oauth2_access_token).returns(
+      OAuth2::AccessToken.new(
+        OAuth2::Client.new(
+          'token_aaa',
+          'secret_aaa'
+        ),
+        'token_abc'
+      )
+    )
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal mailbox.smtp_mailbox.access_token, 'token_abc'
+    assert_equal verified_result[:success], true
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+    MailboxValidatorTest.any_instance.unstub(:access_token_expired?)
+  end
+
+  def test_verify_smtp_mailbox_for_xoauth2_mailbox_with_error
+    mailbox = create_email_config(
+      support_email: 'testoauth@fdtest.com',
+      smtp_mailbox_attributes: {
+        smtp_authentication: 'xoauth2',
+        with_refresh_token: true,
+        with_access_token: true
+      }
+    )
+    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:start).returns(true)
+    MailboxValidatorTest.any_instance.stubs(:access_token_expired?).returns(true)
+    MailboxValidatorTest.any_instance.stubs(:get_oauth2_access_token).raises(
+      OAuth2::Error.new(
+        OAuth2::Response.new(
+          Faraday::Response.new
+        )
+      )
+    )
+    verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::SMTP.any_instance.unstub(:enable_starttls)
+    Net::SMTP.any_instance.unstub(:start)
+    MailboxValidatorTest.any_instance.unstub(:access_token_expired?)
+    MailboxValidatorTest.any_instance.unstub(:get_oauth2_access_token)
+  end
+
+  def test_verify_imap_mailbox_for_xoauth2_mailbox
+    mailbox = create_email_config(
+      support_email: 'testoauth@fdtest.com',
+      imap_mailbox_attributes: {
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true,
+        with_access_token: true
+      }
+    )
+    Net::IMAP.any_instance.stubs(:authenticate).returns(true)
+    Net::IMAP.any_instance.stubs(:logout).returns(true)
+    MailboxValidatorTest.any_instance.stubs(:access_token_expired?).returns(true)
+    MailboxValidatorTest.any_instance.stubs(:get_oauth2_access_token).returns(
+      OAuth2::AccessToken.new(
+        OAuth2::Client.new(
+          'token_aaa',
+          'secret_aaa'
+        ),
+        'token_abc'
+      )
+    )
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal mailbox.imap_mailbox.access_token, 'token_abc'
+    assert_equal verified_result[:success], true
+  ensure
+    Net::IMAP.any_instance.unstub(:authenticate)
+    Net::IMAP.any_instance.unstub(:logout)
+    MailboxValidatorTest.any_instance.unstub(:access_token_expired?)
+  end
+
+  def test_verify_imap_mailbox_for_xoauth2_mailbox_with_error
+    mailbox = create_email_config(
+      support_email: 'testoauth@fdtest.com',
+      imap_mailbox_attributes: {
+        imap_authentication: 'xoauth2',
+        with_refresh_token: true,
+        with_access_token: true
+      }
+    )
+    Net::IMAP.any_instance.stubs(:authenticate).returns(true)
+    Net::IMAP.any_instance.stubs(:logout).returns(true)
+    MailboxValidatorTest.any_instance.stubs(:access_token_expired?).returns(true)
+    MailboxValidatorTest.any_instance.stubs(:get_oauth2_access_token).raises(
+      OAuth2::Error.new(
+        OAuth2::Response.new(
+          Faraday::Response.new
+        )
+      )
+    )
+    verified_result = verify_imap_mailbox(mailbox.imap_mailbox)
+    assert_equal verified_result[:success], false
+  ensure
+    Net::IMAP.any_instance.unstub(:authenticate)
+    Net::IMAP.any_instance.unstub(:logout)
+    MailboxValidatorTest.any_instance.unstub(:access_token_expired?)
+    MailboxValidatorTest.any_instance.unstub(:get_oauth2_access_token)
   end
 end
