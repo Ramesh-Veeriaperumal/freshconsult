@@ -86,7 +86,7 @@ module DashboardConcern
       ticket_counts = Dashboard::SearchServiceTrendCount.new(options).fetch_count
       ticket_counts = parse_results(ticket_counts)
     else
-      ticket_counts = ::Dashboard::DataLayer.new(current_account.features?(:countv2_reads), options).aggregated_data
+      ticket_counts = ::Dashboard::DataLayer.new(current_account.count_es_enabled?, options).aggregated_data
     end
     build_response(ticket_counts, options[:include_missing], params[:widget])
   end

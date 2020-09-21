@@ -162,7 +162,7 @@
       :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
-      :countv2_reads: 161
+      :unused_161: 161
       :reverse_notes: 162
       :opt_out_analytics: 163
       :disable_old_ui: 164
@@ -220,7 +220,7 @@
       :unused_216: 216
       :seafarers_1: 217
       :unused_218: 218
-      :portal_cc: 219
+      :unused_219: 219
       :disable_rr_toggle: 220
       :unused_221: 221
       :XX_unused_222: 222
@@ -314,7 +314,7 @@
       :reports_88: 310
       :reports_89: 311
       :reports_90: 312
-      :reports_91: 313
+      :untitled_feature_3_dependency_toggle: 313
       :basic_settings_feature: 314
       :untitled_feature_1_dependency_toggle: 315
       :untitled_feature_2_dependency_toggle: 316
@@ -410,6 +410,7 @@
       :skip_invoice_due_warning: 406
       :allow_wildcard_ticket_create: 407
       :supervisor_contact_field: 408
+      :bypass_signup_captcha: 409
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -435,7 +436,6 @@
   :disable_agent_forward: false
   :compose_email: false
   :enable_multilingual: false
-  :countv2_reads: false
   :freshfone_onboarding: false
   :archive_tickets: false
   :call_quality_metrics: false
@@ -487,7 +487,6 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :updated_twilio_client: false
-  :portal_cc: false
   :disable_rr_toggle: false
   :social_revamp: true
   :activity_revamp: true
@@ -512,3 +511,4 @@
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
+  :bypass_signup_captcha: false
