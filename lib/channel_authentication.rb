@@ -36,8 +36,8 @@ module ChannelAuthentication
 
   def permitted_jwt_source?(sources = [])
     channel_auth = request.headers['X-Channel-Auth']
-    return false unless channel_auth.present?
-    
+    return false if channel_auth.blank?
+
     channel_source = source(channel_auth)
     return sources.any?{ |source| channel_source == CHANNELS[source] }
   rescue StandardError
