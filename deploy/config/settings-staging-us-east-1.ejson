@@ -1068,7 +1068,8 @@
         "_rts_accId": "yNbWRwo4",
         "_rts_url": "https://dzvv3qu02a8s8.cloudfront.net/rts-1.0.js",
         "_service_name": "freshdesk",
-        "_socketiourl": "https://dzvv3qu02a8s8.cloudfront.net/socket.io-1.0.js"
+        "_socketiourl": "https://dzvv3qu02a8s8.cloudfront.net/socket.io-1.0.js",
+        "jwt_secret": "EJ[1:Ok84yjyRYRSzPw/cO2O7arsaPpxAeuMWmK7vcbaXgmE=:LbO+VB3jSoJIA5VXm16451jU2PT75hrO:Hoz35S2JDHFvUcx+vz543QlsYhCC/fAbt9kLozPeB1U7CHiqiR4IHw/HBIE8llSd69oaYx02u54FXWKWe8M70MTWUtiTBL0QCjbPI4y0uWU=]"
       },
       "kafka": {
         "service": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:hfZH+DhxqG+b1hXOAH/I8ybrOwbRXGAG:u4T44w9qXA4AZBbo+Ixj+U2wjOg3pmh3vjqix8i/V0Ml/6pM]",

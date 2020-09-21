@@ -507,6 +507,7 @@
         "_rts_accId": "LZK7R9OXG1",
         "_rts_url": "https://dzvv3qu02a8s8.cloudfront.net/rts-1.0.js",
         "_iris_url": "https://dzvv3qu02a8s8.cloudfront.net/iris-euc-1.0.js",
+        "jwt_secret": "EJ[1:AHaYkZ2RSbII8V8PkhAN1Vv23akJ+8Gd4LoIga49E3w=:TZCgI++3gkXzoRiajKUc/dUnghWn8oEz:YOYYH+ci8Stn4Mpi5lQZTRm0/mRYmMayOMzQqNqSlLNEfrZE37gOpYHe+IpHYHjSy05Aw9XYeSz+QbVNTRxqQmpFhuGuWThxEwHVCyG8CJs=]",
         "_collector_host": "https://iris-euc.freshworksapi.com"
       },
       "sendgrid_webhook": {
