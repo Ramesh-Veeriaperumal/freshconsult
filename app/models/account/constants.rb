@@ -138,7 +138,7 @@ class Account < ActiveRecord::Base
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false, :portal_cc => false,
+    :gamification_enable => false,
     :id_less_tickets => false, :freshfone => false,
     :client_debugging => false, :collision_socket => false,
     :resource_rate_limit => false, :call_quality_metrics => false,
