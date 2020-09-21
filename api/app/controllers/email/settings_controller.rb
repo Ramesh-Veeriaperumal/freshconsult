@@ -9,7 +9,7 @@ module Email
       features = params[cname]
       features.each do |feature, enable|
         feature_name = EmailSettingsConstants::EMAIL_CONFIG_PARAMS[feature.to_sym]
-        if feature_name.eql? EmailSettingsConstants::COMPOSE_EMAIL_FEATURE
+        if feature_name.eql? EmailSettingsConstants::COMPOSE_EMAIL_SETTING
           toggle_compose_email_setting(feature_name, enable)
         elsif feature_name.eql? EmailSettingsConstants::DISABLE_AGENT_FORWARD
           toggle_disable_email_setting(feature_name, enable)
@@ -65,10 +65,11 @@ module Email
 
       def validate_params
         validate_body_params
+        validate_delegator(nil, params[cname])
       end
 
       def check_compose_email_enabled?
-        !current_account.has_setting?(EmailSettingsConstants::COMPOSE_EMAIL_FEATURE) || ismember?(COMPOSE_EMAIL_ENABLED, current_account.id)
+        !current_account.has_setting?(EmailSettingsConstants::COMPOSE_EMAIL_SETTING) || ismember?(COMPOSE_EMAIL_ENABLED, current_account.id)
       end
 
       def generate_view_hash
