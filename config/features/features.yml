@@ -409,6 +409,7 @@
       :helpdesk_tickets_by_product: 405
       :skip_invoice_due_warning: 406
       :allow_wildcard_ticket_create: 407
+      :supervisor_contact_field: 408
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -511,3 +512,4 @@
   :helpdesk_tickets_by_product: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
+  :supervisor_contact_field: false
