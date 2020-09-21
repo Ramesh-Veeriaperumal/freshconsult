@@ -35,15 +35,11 @@ module ChannelAuthentication
   end
 
   def permitted_jwt_source?(sources = [])
-    return @permitted_jwt_source if defined?(@permitted_jwt_source)
-
     channel_auth = request.headers['X-Channel-Auth']
-    @permitted_jwt_source = if channel_auth.present?
-                              channel_source = source(channel_auth)
-                              sources.any?{ |source| channel_source == CHANNELS[source] }
-                            else
-                              false
-                            end
+    return false unless channel_auth.present?
+    
+    channel_source = source(channel_auth)
+    return sources.any?{ |source| channel_source == CHANNELS[source] }
   rescue StandardError
     invalid_credentials_error
   end
