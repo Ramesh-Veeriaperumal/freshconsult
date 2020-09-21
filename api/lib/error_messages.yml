@@ -431,6 +431,7 @@ api_error_messages:
   smtp_socket_error: 'Could not connect to the smtp server. Please verify server name, port and credentials'
   smtp_invalid_credentials: 'Error while authenticating the smtp server. Please make sure your user name and password are correct'
   smtp_error: "Error while verifying the mailbox smtp details - %{error}"
+  refresh_access_token_error: 'Error refreshing access token'
   default_primary_role_changed: "Cannot set default_reply_email to false of the default support email of a product"
   default_mailbox_product_changed: 'Cannot change product of default support email'
   file_size_limit_error: "File size cannot exceed %{file_size}."
