@@ -1,3 +1,5 @@
+require 'launch_party/launch_party_feature'
+
 class AgentStatus < LaunchPartyFeature
   include Redis::OthersRedis
   include Redis::Keys::Others
