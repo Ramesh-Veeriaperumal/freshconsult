@@ -71,12 +71,7 @@ class Mailbox::Oauth2HelperTest < ActiveSupport::TestCase
     )
     $redis_others.perform_redis_op(
       'set',
-      format(
-        OAUTH_ACCESS_TOKEN_VALIDITY,
-        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox.smtp_mailbox)],
-        account_id: mailbox.account_id,
-        smtp_mailbox_id: mailbox.smtp_mailbox.id
-      ),
+      valid_access_token_key(mailbox.smtp_mailbox),
       true,
       ex: Email::Mailbox::Constants::ACCESS_TOKEN_EXPIRY
     )
@@ -87,12 +82,7 @@ class Mailbox::Oauth2HelperTest < ActiveSupport::TestCase
     Mailbox::Oauth2HelperTest.unstub(:get_oauth2_access_token)
     $redis_others.perform_redis_op(
       'del',
-      format(
-        OAUTH_ACCESS_TOKEN_VALIDITY,
-        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox.smtp_mailbox)],
-        account_id: mailbox.account_id,
-        smtp_mailbox_id: mailbox.smtp_mailbox.id
-      )
+      valid_access_token_key(mailbox.smtp_mailbox)
     )
     mailbox.destroy
   end
@@ -137,12 +127,7 @@ class Mailbox::Oauth2HelperTest < ActiveSupport::TestCase
     mailbox.save!
     $redis_others.perform_redis_op(
       'set',
-      format(
-        OAUTH_ACCESS_TOKEN_VALIDITY,
-        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox.smtp_mailbox)],
-        account_id: mailbox.account_id,
-        smtp_mailbox_id: mailbox.smtp_mailbox.id
-      ),
+      valid_access_token_key(mailbox.smtp_mailbox),
       true,
       ex: Email::Mailbox::Constants::ACCESS_TOKEN_EXPIRY
     )
@@ -151,12 +136,7 @@ class Mailbox::Oauth2HelperTest < ActiveSupport::TestCase
   ensure
     $redis_others.perform_redis_op(
       'del',
-      format(
-        OAUTH_ACCESS_TOKEN_VALIDITY,
-        provider: Email::Mailbox::Constants::PROVIDER_NAME_BY_SERVER_KEY[server_key(mailbox.smtp_mailbox)],
-        account_id: mailbox.account_id,
-        smtp_mailbox_id: mailbox.smtp_mailbox.id
-      )
+      valid_access_token_key(mailbox.smtp_mailbox)
     )
     mailbox.destroy
   end

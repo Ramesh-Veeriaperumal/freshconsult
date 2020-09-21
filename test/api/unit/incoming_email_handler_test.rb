@@ -1087,7 +1087,7 @@ module Helpdesk
       end
 
       def test_success_email_to_the_wild_cards
-        Account.current.launch(:allow_wildcard_ticket_create)
+        Account.current.enable_setting(:allow_wildcard_ticket_create)
         ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
         Helpdesk::Email::IncomingEmailHandler.any_instance.stubs(:add_to_or_create_ticket).returns(true)
         params = default_params(Faker::Lorem.characters(50), 'Test Subject')
@@ -1103,7 +1103,7 @@ module Helpdesk
       end
 
       def test_success_email_to_the_wild_cards_using_allow_check
-        Account.current.launch(:allow_wildcard_ticket_create)
+        Account.current.enable_setting(:allow_wildcard_ticket_create)
         ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
         Helpdesk::Email::IncomingEmailHandler.any_instance.stubs(:add_to_or_create_ticket).returns(true)
         params = default_params(Faker::Lorem.characters(50), 'Test Subject')
@@ -1116,7 +1116,7 @@ module Helpdesk
         Account.any_instance.unstub(:email_configs)
         EmailConfig.any_instance.unstub(:find_by_to_email)
         Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
-        Account.current.rollback(:allow_wildcard_ticket_create)
+        Account.current.disable_setting(:allow_wildcard_ticket_create)
       end
 
       def test_success_email_to_the_default_support_mailbox
@@ -1172,13 +1172,13 @@ module Helpdesk
         account = Account.current
         account.revoke_feature :domain_restricted_access
         account.add_feature :restricted_helpdesk
-        account.launch :allow_wildcard_ticket_create
+        account.enable_setting :allow_wildcard_ticket_create
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
         failed_response = incoming_email_handler.perform(domain: 'localhost.freshpo.com',
                                                          email: Faker::Internet.email)
         assert_equal failed_response[:processed_status], 'No User'
       ensure
-        account.rollback :allow_wildcard_ticket_create
+        account.disable_setting :allow_wildcard_ticket_create
         account.revoke_feature :restricted_helpdesk
         Helpdesk::Email::SpamDetector.any_instance.unstub :check_spam
         ShardMapping.unstub :fetch_by_domain

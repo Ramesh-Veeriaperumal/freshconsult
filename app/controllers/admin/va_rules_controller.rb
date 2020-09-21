@@ -465,7 +465,7 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def contact_field_enabled?
-      supervisor_rules_controller? && current_account.launched?(:supervisor_contact_field)
+      supervisor_rules_controller? && current_account.supervisor_contact_field_enabled?
     end
 
     def company_field_enabled?

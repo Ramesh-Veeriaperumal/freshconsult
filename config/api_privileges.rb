@@ -205,6 +205,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/api_business_calendar", only: [:index, :show, :create, :update, :destroy]
     resource :agent_status, only: [:show, :create, :update, :destroy]
     resource :'admin/group', only: [:index, :show, :destroy]
+    resource :"admin/groups/agent", only: [:index, :update]
   end
 
   edit_ticket_properties do

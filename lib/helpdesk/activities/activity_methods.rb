@@ -196,7 +196,7 @@ module Helpdesk::Activities
     end
 
     def private_email_failure?
-      params[:version] == "private" && current_account.falcon_ui_enabled?(current_user)
+      params[:version] == "private"
     end
 
     def get_object_activities object

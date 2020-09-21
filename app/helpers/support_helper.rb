@@ -1031,6 +1031,6 @@ module SupportHelper
     end
 
     def hidden_lang_alert_redirection_url
-      current_account.falcon_ui_enabled?(current_user) ? '/a/admin/account/languages' : '/admin/manage_languages'
+      '/a/admin/account/languages'
     end
 end

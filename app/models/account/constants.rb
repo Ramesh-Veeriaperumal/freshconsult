@@ -143,7 +143,7 @@ class Account < ActiveRecord::Base
     :client_debugging => false, :collision_socket => false,
     :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
-    :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
+    :marketplace => false, :archive_tickets => false, :compose_email => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
     :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,

@@ -60,7 +60,7 @@ module AccountsHelper
   end
 
   def manage_language_url
-    current_account.falcon_ui_enabled?(current_user) ? '/a/admin/account/languages' : '/admin/manage_languages'
+    '/a/admin/account/languages'
   end
 
   def translation_download_url(object_type, object_id = nil, language_code = nil)
