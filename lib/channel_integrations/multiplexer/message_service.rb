@@ -2,6 +2,7 @@ module ChannelIntegrations::Multiplexer
   module MessageService
     include Iam::AuthToken
     MULTIPLEXER_MESSAGE_API_PATH = "/api/v2/channels/%{channel_id}/messages".freeze
+    TIMEOUT_IN_SEC = 3
 
     def post_message(account, user, params)
       response = multiplexer.post do |req|
@@ -9,7 +10,7 @@ module ChannelIntegrations::Multiplexer
         req.headers['Content-Type'] = 'application/json'
         req.headers['Authorization'] = construct_jwt_with_bearer(user)
         req.body = payload(params)
-        req.options.timeout = timeout
+        req.options.timeout = TIMEOUT_IN_SEC
       end
       Rails.logger.info "Multiplexer response status:#{response.status}, body:#{response.body.try(:inspect)}"
     end
