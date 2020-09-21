@@ -9,7 +9,12 @@ class Admin::AccountFeaturesController < ApiApplicationController
 
   def create
     if @account.valid_setting(@feature_name)
-      @account.enable_setting(@feature_name)
+      if @account.admin_setting_for_account?(@feature_name)
+        @account.enable_setting(@feature_name)
+        head 204
+      else
+        dependent_feature_error
+      end
     else
       modify_feature :enable
     end
@@ -18,11 +23,16 @@ class Admin::AccountFeaturesController < ApiApplicationController
 
   def destroy
     if @account.valid_setting(@feature_name)
-      @account.disable_setting(@feature_name)
+      if @account.admin_setting_for_account?(@feature_name)
+        @account.disable_setting(@feature_name)
+        head 204
+      else
+        dependent_feature_error
+      end
     else
       modify_feature :disable
+      head 204
     end
-    head 204
   end
 
   private
@@ -43,5 +53,9 @@ class Admin::AccountFeaturesController < ApiApplicationController
       @account = current_account
       @feature_name = params[:name].to_sym
       @feature_type = feature_types(@feature_name)
+    end
+
+    def dependent_feature_error
+      render_request_error(:require_feature, 403, feature: @account.feature_dependency(@feature_name).to_s)
     end
 end

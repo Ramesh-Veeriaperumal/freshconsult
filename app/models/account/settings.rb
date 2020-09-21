@@ -50,6 +50,10 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def feature_dependency(setting)
+    valid_setting(setting) ? AccountSettings::SettingsConfig[setting][:feature_dependency] : nil
+  end
+
   def valid_setting(setting)
     AccountSettings::SettingsConfig[setting].present?
   end

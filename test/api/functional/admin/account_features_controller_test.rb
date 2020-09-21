@@ -23,10 +23,9 @@ class Admin::AccountFeaturesControllerTest < ActionController::TestCase
   end
 
   def test_disable_setting_without_feature_dependency
-    assert_raises(RuntimeError) do
       @account.revoke_feature(:basic_settings_feature)
       delete :destroy, controller_params(name: 'cascade_dispatcher')
-    end
+      assert_response 403
   end
 
   def test_disable_feature_for_valid_input
