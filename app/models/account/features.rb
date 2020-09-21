@@ -70,7 +70,7 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
@@ -88,7 +88,7 @@ class Account < ActiveRecord::Base
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal, :helpdesk_tickets_by_product,
     :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create,
-    :supervisor_contact_field
+    :bypass_signup_captcha, :supervisor_contact_field
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -456,6 +456,10 @@ class Account < ActiveRecord::Base
 
   def supervisor_contact_field_enabled?
     launched?(:supervisor_contact_field)
+  end
+  
+  def bypass_signup_captcha_enabled?
+    launched?(:bypass_signup_captcha)
   end
 
   def features
