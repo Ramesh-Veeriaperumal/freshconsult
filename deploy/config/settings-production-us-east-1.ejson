@@ -3080,6 +3080,9 @@
         "access_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:nGDzM8idHQuRoHK2yhvQp8AT8AfiYddr:T/9hxO+9a5P7KvriJzvNwWvMurL/F4zHpPc/yP2vCq7B1vuK5lOFXoAQUh3aghaoO7xHIj4GKErpbcuf12HXVLg3]",
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
       },
+      "kbservice": {
+        "secret_key": "EJ[1:WZMyHYgQRBgVYZws68toWl1Frsbnsm5MxG5ClYCU8h0=:pkmSn6KvSdJ2dBdwhTcyM/ccN+QNqJ+O:/JyCQuWMlBzkyzSB0IagcDJPQ1UBIaLLezn//0sqoZcIqvk2xNmw14vrKRfeh4a9]"
+      },
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:CfaiE80Ur6ikOJe2K44pNjkmkrnVegF23QXsD3yr2j8=:8CINh5rO/CbSRPcPqwunpzAA2lPIgTgc:ZCkE1E1488yPPOAf9OTzkADGAmU2ksUkyqk=]",
@@ -3165,7 +3168,8 @@
         "admin_jwt_secret": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:Qs614tGf5F+K86uWaDoGUdOjlosN8DQX:5SzZkqSQGyJkyslyn4ADlLUX41GsSqgxc8YKxhV133an1aJdFSYE87ZUN1xFhA5w]",
         "_api_endpoint": "https://us-east-1.ocr.freshdesk.com/api/v1/",
         "_auth_type": "jwt",
-        "_jwt_default_expiry": "30"
+        "_jwt_default_expiry": "30",
+        "touchstone_secret": "EJ[1:X/p8n4Dd8OWzIznJs5N+/nPGryJefOmogIR+9Tx0Ghg=:nCgnruGLM9sDe3YD2LpbCmaMuLRpj7QJ:Uub1UKUUFNxHKFa5QR/VOZ4PWkw6XolsDtafOodCncYTvEnUEzJ5QTHQVUkEB+5G]"
       },
       "datadog": {
         "license_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:IONtlDloFeJwVR0oasZqgNRVovOmcWKZ:f7B7cxodsJQorIUKpC8hKrtJZ8axh/5MTKyDlcFjrL8dPeUIdamQvfC81s08pyQF]",
@@ -3428,7 +3432,7 @@
         },
         "dedicated": {
           "_fc-bg-sidekiq-archive": 3,
-          "_fc-bg-sidekiq-occasional": 8,
+          "_fc-bg-sidekiq-occasional": 4,
           "_fc-bg-sidekiq-central-realtime": 8,
           "_fc-bg-sidekiq-realtime": 10,
           "_hk-bg-shoryuken-search": 15

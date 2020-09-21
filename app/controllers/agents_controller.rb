@@ -259,11 +259,7 @@ class AgentsController < ApplicationController
         format.html do
           flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
           freshcaller_alerts
-          if current_account.falcon_ui_enabled?(current_user)
-            render :nothing => true
-          else
-            redirect_to :action => 'index'
-          end
+          render nothing: true
         end
         format.json {head :ok}
         format.xml {head :ok } 
@@ -279,11 +275,7 @@ class AgentsController < ApplicationController
         format.html {
           flash[:error] = t(:"flash.agents.edit.#{@agent.errors.messages[:agent_type]}") if @agent.errors.messages[:agent_type].present?
           set_skill_data
-          if current_account.falcon_ui_enabled?(current_user)
-            render :nothing => true
-          else
-            redirect_to :action => 'edit'
-          end
+          render nothing: true
          }
         format.json { render :json => result.to_json, :status => :bad_request }
         format.xml {render :xml => result.to_xml, :status => :bad_request } 

@@ -4,7 +4,7 @@
 </script>
 <% 
 	selected_tab = @selected_tab.to_s
-	is_ember_admin_flash = current_account.falcon_ui_enabled?(current_user) && params[:controller] == "admin/home" && params[:action] == "index"
+	is_ember_admin_flash = params[:controller] == "admin/home" && params[:action] == "index"
 %>
 <div class="wrapper">
 	<div class="wrapper-shadow">
@@ -53,10 +53,6 @@
 					<div class="alert notice" id="noticeajax" style="display:none;"></div>
 					<%= yield :pagetop %>
 					<div class="pagearea" id="Pagearea">
-            <% unless current_account.falcon_ui_enabled?(current_user) %>
-              <%= check_email_disabled_by_pipe %>
-            <% end %>
-
 						<%= yield %>
 					</div>
 				</div>

@@ -2,6 +2,7 @@ module ApiSolutions
   class FoldersController < ApiApplicationController
     include SolutionConcern
     include Solution::LanguageControllerMethods
+    include SolutionConstants
     decorate_views(decorate_objects: [:category_folders, :folder_filter])
     SLAVE_ACTIONS = %w[index category_folders].freeze
     before_filter :validate_filter_params, only: [:category_folders], unless: :channel_v2?
@@ -106,7 +107,7 @@ module ApiSolutions
         end
         fields = private_api? ? SolutionConstants::FOLDER_FIELDS_PRIVATE_API : SolutionConstants::FOLDER_FIELDS
         params[cname].permit(*fields)
-        folder = ApiSolutions::FolderValidation.new(params[cname], @item, @lang_id)
+        folder = ApiSolutions::FolderValidation.new(params[cname], params[:version], @item, @lang_id)
         render_errors folder.errors, folder.error_options unless folder.valid?(action_name.to_sym)
       end
 
@@ -116,6 +117,7 @@ module ApiSolutions
         params[cname][language_scoper] = language_params unless language_params.empty?
         params[cname][category] = params[:id]
         params[cname][:icon] = params[cname][:icon].to_s if params.key?(:icon)
+        params[cname][:platforms] = transform_platform_params(params[cname][:platforms]) if public_api?(params[:version]) && params[cname][:platforms]
         ParamsHelper.assign_and_clean_params({ company_ids: :customer_folders_attributes, contact_segment_ids: :contact_folders_attributes, company_segment_ids: :company_folders_attributes, tags: :tag_attributes, icon: :icon_attribute }, params[cname])
         @folder_params = params[cname].except!(:name, :description)
       end

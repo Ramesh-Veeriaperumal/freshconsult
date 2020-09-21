@@ -47,6 +47,9 @@ properties:
         on_call:
           type: boolean
           readOnly: true
+        call_forward:
+          type: boolean
+          description: true indicates calls will be forwarded to mobile, applicable for Freshcaller only
     example: [
       {
         channel: "freshdesk",
@@ -69,6 +72,7 @@ properties:
         assignment_limit: 1,
         availability_updated_at: "2020-05-21T10:30:20.580Z",
         logged_in: true,
-        on_call: true
+        on_call: true,
+        call_forward: true
       }
     ]

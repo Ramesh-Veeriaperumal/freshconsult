@@ -16,6 +16,7 @@ class FreshchatAccountTest < ActiveSupport::TestCase
 
   def test_create_freshchat_account
     @account.launch(:freshid_org_v2)
+    @account.freshchat_account&.destroy
     fchat_account = create_freshchat_account @account
     assert_equal 1, CentralPublishWorker::FreshchatAccountWorker.jobs.size
     payload = fchat_account.central_publish_payload.to_json
@@ -26,7 +27,7 @@ class FreshchatAccountTest < ActiveSupport::TestCase
   end
 
   def test_update_freshchat_account
-    fchat_account = create_freshchat_account @account
+    fchat_account = @account.freshchat_account || create_freshchat_account(@account)
     CentralPublishWorker::FreshchatAccountWorker.jobs.clear
     fchat_account.update_attributes({enabled: !fchat_account})
     assert_equal 1, CentralPublishWorker::FreshchatAccountWorker.jobs.size

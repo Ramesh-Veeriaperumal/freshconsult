@@ -11,7 +11,7 @@
         <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
       <% end %>
       <%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
-      <a href="<%= current_account.falcon_ui_enabled?(current_user) ? '/a/' : '/' %>" target="_top" class="btn"><%= t('cancel') %></a>
+      <a href="<%='/a/'%>" target="_top" class="btn"><%= t('cancel') %></a>
     </div>
   <%end%>
 
@@ -20,14 +20,8 @@
     <% unless current_account.sso_enabled? %>
       <div class="sidepanel">
         <%= content_tag( :h3, t("profile.change_password"), :class => "title" ) %>
-        <% if current_account.falcon_ui_enabled?(current_user) %>
-          <%= form_for "not_resource", :remote => true, :url => { :action => :change_password, :controller => 'profiles', :method => :put} do |f| %>
-            <%= render :partial => "change_password_form", :locals => { :f => f } %>
-          <% end %>
-        <% else %>
-          <%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
-            <%= render :partial => "change_password_form", :locals => { :f => f } %>
-          <% end %>
+        <%= form_for "not_resource", :remote => true, :url => { :action => :change_password, :controller => 'profiles', :method => :put} do |f| %>
+          <%= render :partial => "change_password_form", :locals => { :f => f } %>
         <% end %>
       </div>
     <% end %>
@@ -47,7 +41,7 @@
       <%= render :partial => "integrations" %>
     <% end %>
 
-    <% if current_account.falcon_ui_enabled?(current_user) && (current_account.undo_send_enabled? || current_account.reverse_notes_enabled?)%>
+    <% if (current_account.undo_send_enabled? || current_account.reverse_notes_enabled?)%>
       <%if current_account.reverse_notes_enabled?%>
         <div class="sidepanel">
           <div class="row-fluid">

@@ -1,0 +1,22 @@
+defaults: &defaults
+  clear_cache_path: '/solutions/api/v2/accounts/clear-cache'
+  api_endpoint: "https://%{domain}"
+  domain: "%{domain}"
+  secret_key: "SECRET_KEY2"
+
+development:
+  <<: *defaults
+  api_endpoint: "http://%{domain}"
+  domain: "%{domain}:8080"
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

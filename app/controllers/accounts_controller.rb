@@ -186,12 +186,13 @@ class AccountsController < ApplicationController
   end
 
   def assign_precreated_account
-    input_params = params[:signup].except!(:direct_signup)
+    input_params = params[:signup].except(:direct_signup)
     input_params.merge!(account: Account.current, user: User.current)
     @signup = PrecreatedSignup.new(input_params)
     @signup.account.fs_cookie_signup_param = params[:fs_cookie]
     @signup.save!
     @signup.user.publish_agent_update_central_payload
+    @signup.update_subscription
     true
   rescue StandardError => e
     Rails.logger.error "Error in mapping precreated account - error - #{e.message} backtrace - #{e.backtrace}"
@@ -272,7 +273,7 @@ class AccountsController < ApplicationController
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
-    @account.account_additional_settings.notes_order = params[:oldest_on_top] if current_account.reverse_notes_enabled? && current_account.falcon_ui_enabled?(current_user) && params[:oldest_on_top].present?
+    @account.account_additional_settings.notes_order = params[:oldest_on_top] if current_account.reverse_notes_enabled? && params[:oldest_on_top].present?
     @account.time_zone = params[:account][:time_zone]
     @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.ticket_display_id = params[:account][:ticket_display_id]
