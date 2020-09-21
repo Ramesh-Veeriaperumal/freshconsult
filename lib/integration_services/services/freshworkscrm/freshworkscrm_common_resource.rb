@@ -8,6 +8,7 @@ module IntegrationServices::Services
       def faraday_builder(b)
         super
         b.headers['User-Agent'] = 'Freshsales_Native_Mobile'
+        b.headers['REQUEST-SOURCE'] = 'freshdesk'
       end
 
       def fetch_autocomplete_results(payload)
@@ -19,7 +20,7 @@ module IntegrationServices::Services
       end
 
       def fetch_form_fields
-        url = "#{@service.instance_url}/settings/forms"
+        url = "#{@service.instance_url}/api/settings/forms"
         response = http_get url
         process_response(response, 200) do |resource|
           return process_result(resource['forms'])
