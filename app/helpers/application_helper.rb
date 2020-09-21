@@ -1710,11 +1710,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
 
     def onclick_strategy(auth_redirect_url)
-      if current_account.falcon_ui_enabled?(current_user)
-        "parent.location.href='#{auth_redirect_url}'"
-      else
-        "window.location.href='#{auth_redirect_url}'"
-      end
+      "parent.location.href='#{auth_redirect_url}'"
     end
 
     def social_tab
@@ -2098,7 +2094,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def inline_manual_people_tracing
     role = current_user.privilege?(:admin_tasks) ? "admin" : "agent"
-    ui_preference = current_account.falcon_ui_enabled?(current_user) ? 'mint' : 'oldui'
+    ui_preference = 'mint'
     state  = current_account.subscription.state
     bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
     bucket_split = split_with_separator bucket

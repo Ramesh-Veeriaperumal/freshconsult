@@ -33,11 +33,7 @@ module Admin::Social::StreamsHelper
   end
 
   def onclick_strategy(auth_redirect_url)
-    if current_account.falcon_ui_enabled?(current_user)
-      "parent.location.href='#{auth_redirect_url}'"
-    else
-      "window.location.href='#{auth_redirect_url}'"
-    end
+    "parent.location.href='#{auth_redirect_url}'"
   end
 
 end

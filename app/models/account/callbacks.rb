@@ -379,7 +379,7 @@ class Account < ActiveRecord::Base
       @launch_party_features ||= []
       changes.each do |key, features|
         features.each do |feature|
-          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key) && lp_central_publish_on_signup?(feature)
+          @launch_party_features << { "#{key}": [feature] } if (FeatureClassMapping.get_feature_class(feature.to_s) || FeatureClassMapping.get_central_launchparty_class(feature.to_s)) && [:launch, :rollback].include?(key) && (lp_central_publish_on_signup?(feature) || FeatureClassMapping.get_feature_class(feature.to_s))
         end
       end
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
@@ -398,7 +398,7 @@ class Account < ActiveRecord::Base
     #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
     def trigger_launchparty_feature_callbacks
       return if @launch_party_features.blank?
-      args = { :features => @launch_party_features, :account_id => self.id }
+      args = { features: @launch_party_features, account_id: self.id, signup_in_progress: signup_in_progress? }
       LaunchPartyActionWorker.perform_async(args)
       @launch_party_features = nil
     end

@@ -20,8 +20,7 @@ class HomeController < ApplicationController
     if can_redirect_to_mobile?
       redirect_to(mobile_welcome_path) && return
     elsif current_user && privilege?(:manage_tickets)
-      redirect_to('/a/') && return if current_account.falcon_ui_enabled?(current_user)
-      redirect_to(helpdesk_dashboard_path) && return
+      redirect_to('/a/') && return
     else
       flash.keep(:notice)
       redirect_to(support_home_path(url_locale: current_user.language)) && return if

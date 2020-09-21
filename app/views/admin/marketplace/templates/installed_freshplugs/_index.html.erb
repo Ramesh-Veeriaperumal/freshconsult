@@ -11,7 +11,7 @@
 
 <% installed_list.each do |installed| %>
   <% extension_details = installed[:extension_details] %>
-  <% next if current_account.falcon_ui_enabled?(current_user) && skip_falcon_render?(extension_details['name']) %>
+  <% next if skip_falcon_render?(extension_details['name']) %>
   <% installation_details = installed[:installation_details] %>
   <% is_ni_integration = extension_details['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni] %>
   <!-- TODO: app_type should be removed after new ext type is added for custom app -->

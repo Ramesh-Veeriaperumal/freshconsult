@@ -61,8 +61,7 @@ module Marketplace::ApiUtil
     end
 
     def platform_version
-      @platform_version ||= User.current ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] :
-                            Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1]
+      @platform_version ||= Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
     end
 
     def get_api(url, timeout)

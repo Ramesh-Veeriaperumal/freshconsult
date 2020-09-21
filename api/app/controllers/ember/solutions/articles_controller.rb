@@ -98,6 +98,12 @@ module Ember
             @failed_list << (article_meta.errors.any? ? article_meta : article_meta.safe_send(language_scoper))
           end
         end
+        # Clear cache when status is changed;
+        # if tags, agent_id changed, we can check iff atleast one article is published and trigger worker.
+        unless (cname_params[:properties].keys & SolutionConstants::BULK_UPDATE_PUBLISHABLE_ARTICLE_PROPERTIES).empty?
+          job_id = Solution::KbserviceClearCacheWorker.perform_async(entity: 'article')
+          Rails.logger.info "KBServiceClearCache:: bulk_publish, #{job_id}"
+        end
         render_bulk_action_response(@succeeded_list, @failed_list, 'ember/solutions/articles/partial_success')
       end
 

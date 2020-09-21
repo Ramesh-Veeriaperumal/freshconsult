@@ -10,13 +10,14 @@
 </script>
 <% end %>
 
-<% if current_account.falcon_ui_enabled?(current_user) %>
+<% if current_user %>
 	<script type="text/javascript">
 		if( top.window.location.href == window.location.href) {
 			location.href = "<%= redirect_falcon_path %>";
 		}
 	</script>
 <% end %>
+
 <div class="header">
   <div class="wrapper">
   	<div class="wrapper-shadow">
@@ -37,7 +38,7 @@
 
 		<div class="header-wrapper">
 
-	    <% if current_user && current_account.falcon_ui_enabled? && account_and_user_in_mint_supported_langs? %>
+	    <% if current_user && account_and_user_in_mint_supported_langs? %>
 	    	<%= link_to t('go_to_new_ui'), enable_falcon_path, :id=>"ui_toggle", :method => :post %>
 	    <% end %>
 
@@ -231,14 +232,6 @@
 <% if current_account.collaboration_enabled? and current_user %>
 	<input type="hidden" id="collab-account-payload" data-account-payload='<%= Collaboration::Ticket.new.account_payload %>'>
 <% end %>
-
-<% if current_user && current_user.gdpr_pending? && !current_account.falcon_ui_enabled?(current_user) %>
-   <div id="gdpr-compliance" class="hide">
-   <%= render partial: "gdpr_compliance/gdpr_modal" %>
-   </div>
-<% end %>
-
-
 
 <%  if logged_in? and current_user.agent?  %>
   <script type="text/javascript">   	

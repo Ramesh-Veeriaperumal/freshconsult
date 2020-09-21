@@ -2,7 +2,7 @@
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 
-<%= form_for @agent, url: agent_path(@user), html: { id: "agent_form", rel: (current_account.falcon_ui_enabled?(current_user) ? nil : "validate"),
+<%= form_for @agent, url: agent_path(@user), html: { id: "agent_form", rel: nil,
   multipart: true, "data-focus-invalid" => false,  "data-ignore" => "", class: "form-unsaved-changes-trigger" } do |f| %>
   <%= f.error_messages %>
   <h3 class="lead">
@@ -20,7 +20,7 @@
     </div>
 <%end%>
 
-<% if current_account.falcon_ui_enabled?(current_user) %>
+
 <script type="text/javascript">
   (function ($) {
     $('#agent_form').submit(function(e){
@@ -72,4 +72,3 @@
       }
   }(window.jQuery));
 </script>
-<% end %>

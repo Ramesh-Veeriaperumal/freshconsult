@@ -2,12 +2,6 @@
 	@page_title = t(".title") 
 	header_content ='';
 %>
-<% unless current_account.falcon_ui_enabled?(current_user) %>
-  <%= check_fb_reauth_required  %>
-  <%= check_twitter_reauth_required %>
-  <%= check_smart_filter_revoked %>
-  <%= check_custom_mailbox_status %>
-<% end %>
 
 <%= check_ecommerce_reauth_required %>
 <% content_for :layoutType do -%>single<%- end %>

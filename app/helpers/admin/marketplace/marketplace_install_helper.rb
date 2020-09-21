@@ -63,24 +63,19 @@ include FalconHelperMethods
         </script>
         )
     elsif @extension['name'] == Integrations::Constants::APP_NAMES[:slack_v2]
-      if current_account.falcon_ui_enabled?(current_user)
-        on_click_url=falcon_redirect_check("/integrations/slack_v2/oauth")
-      else
-        on_click_url="parentNode.submit();"
-      end
+      on_click_url = falcon_redirect_check("/integrations/slack_v2/oauth")
       _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post" target="_top"> </form>)
       _btn << %(
         <a href="javascript:;" onclick="#{on_click_url}" class="install-app #{ni_install_btn_class}"><img alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" style="padding-top: 10px;padding-left: 10px;width: 139px; height: 40px;"></a>
       )
     
-    elsif [Integrations::Constants::APP_NAMES[:microsoft_teams], Integrations::Constants::APP_NAMES[:google_hangout_chat]].include?(@extension['name']) && current_account.falcon_ui_enabled?(current_user)
+    elsif [Integrations::Constants::APP_NAMES[:microsoft_teams], Integrations::Constants::APP_NAMES[:google_hangout_chat]].include?(@extension['name'])
       on_click_url = on_click_url(@extension['name'])
       _btn << %(<form id="nativeapp-form" action="#{install_url}" method="post" target="_top"> </form>)
       _btn << %(
         <a href="javascript:;" onclick="#{on_click_url}" class="btn btn-default btn-primary install-app #{ni_install_btn_class}">#{install_btn_text}</a>
       )
-    elsif Integrations::Constants::FALCON_ENABLED_OAUTH_APPS.include?(@extension['name']) && 
-      current_account.falcon_ui_enabled?(current_user)
+    elsif Integrations::Constants::FALCON_ENABLED_OAUTH_APPS.include?(@extension['name'])
       _btn << link_to(install_btn_text, install_url, :method => :post, :target => '_top',
               :class => "btn btn-default btn-primary install-app #{ni_install_btn_class}").html_safe
     else
