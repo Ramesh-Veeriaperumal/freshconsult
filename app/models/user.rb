@@ -1367,7 +1367,7 @@ class User < ActiveRecord::Base
   end
 
   def preferred_source
-    Helpdesk::Source.ticket_source_token_by_key[preferences[:preferred_source]]
+    Helpdesk::Source.source_choices(:token_by_keys)[preferences[:preferred_source]]
   end
 
   def add_preferred_source(source)

@@ -162,7 +162,7 @@
       :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
-      :countv2_reads: 161
+      :unused_161: 161
       :reverse_notes: 162
       :opt_out_analytics: 163
       :disable_old_ui: 164
@@ -411,6 +411,7 @@
       :allow_wildcard_ticket_create: 407
       :supervisor_contact_field: 408
       :bypass_signup_captcha: 409
+      :disable_freshchat: 410
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -436,7 +437,6 @@
   :disable_agent_forward: false
   :compose_email: false
   :enable_multilingual: false
-  :countv2_reads: false
   :freshfone_onboarding: false
   :archive_tickets: false
   :call_quality_metrics: false
@@ -512,3 +512,4 @@
   :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
+  :disable_freshchat: false
