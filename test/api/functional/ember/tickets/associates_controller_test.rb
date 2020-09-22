@@ -274,20 +274,15 @@ module Ember
       def test_associations_with_service_task_type
         enable_adv_ticketing([:field_service_management]) do
           enable_fsm do
-            begin
-              perform_fsm_operations
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-              child_ticket_ids = create_advanced_tickets
-              Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
-              Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
-              get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, type: 'Service Task' }, false)
-              assert_response 200
-              match_json(associations_pattern(@parent_ticket))
-              Helpdesk::Ticket.any_instance.unstub(:associates=)
-              Helpdesk::Ticket.any_instance.unstub(:associates)
-            ensure
-              Account.any_instance.unstub(:disable_old_ui_enabled?)
-            end
+            perform_fsm_operations
+            child_ticket_ids = create_advanced_tickets
+            Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+            Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
+            get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, type: 'Service Task' }, false)
+            assert_response 200
+            match_json(associations_pattern(@parent_ticket))
+            Helpdesk::Ticket.any_instance.unstub(:associates=)
+            Helpdesk::Ticket.any_instance.unstub(:associates)
           end
         end
       end
@@ -295,20 +290,15 @@ module Ember
       def test_associations_with_empty_service_tasks
         enable_adv_ticketing([:field_service_management]) do
           enable_fsm do
-            begin
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-              perform_fsm_operations
-              create_parent_child_tickets
-              Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
-              Helpdesk::Ticket.any_instance.stubs(:associates).returns([@child_ticket.display_id])
-              get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, type: 'Service Task' }, false)
-              assert_response 200
-              Helpdesk::Ticket.any_instance.unstub(:associates=)
-              Helpdesk::Ticket.any_instance.unstub(:associates)
-              match_json([])
-            ensure
-              Account.any_instance.unstub(:disable_old_ui_enabled?)
-            end
+            perform_fsm_operations
+            create_parent_child_tickets
+            Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+            Helpdesk::Ticket.any_instance.stubs(:associates).returns([@child_ticket.display_id])
+            get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id, type: 'Service Task' }, false)
+            assert_response 200
+            Helpdesk::Ticket.any_instance.unstub(:associates=)
+            Helpdesk::Ticket.any_instance.unstub(:associates)
+            match_json([])
           end
         end
       end
@@ -330,7 +320,6 @@ module Ember
           enable_fsm do
             begin
               perform_fsm_operations
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
               child_ticket_ids = create_advanced_tickets
               Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
               Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
@@ -340,7 +329,6 @@ module Ember
             ensure
               Helpdesk::Ticket.any_instance.unstub(:associates=)
               Helpdesk::Ticket.any_instance.unstub(:associates)
-              Account.any_instance.unstub(:disable_old_ui_enabled?)
             end
           end
         end
@@ -351,7 +339,6 @@ module Ember
           enable_fsm do
             begin
               perform_fsm_operations
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
               child_ticket_ids = create_advanced_tickets
               Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
               Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
@@ -360,7 +347,6 @@ module Ember
             ensure
               Helpdesk::Ticket.any_instance.unstub(:associates=)
               Helpdesk::Ticket.any_instance.unstub(:associates)
-              Account.any_instance.unstub(:disable_old_ui_enabled?)
             end
           end
         end
@@ -397,7 +383,6 @@ module Ember
           enable_fsm do
             begin
               perform_fsm_operations
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
               child_ticket_ids = create_advanced_tickets
               Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
               Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
@@ -407,7 +392,6 @@ module Ember
             ensure
               Helpdesk::Ticket.any_instance.unstub(:associates=)
               Helpdesk::Ticket.any_instance.unstub(:associates)
-              Account.any_instance.unstub(:disable_old_ui_enabled?)
             end
           end
         end
@@ -418,7 +402,6 @@ module Ember
           enable_fsm do
             begin
               perform_fsm_operations
-              Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
               child_ticket_ids = create_advanced_tickets
               Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
               Helpdesk::Ticket.any_instance.stubs(:associates).returns(child_ticket_ids)
@@ -427,7 +410,6 @@ module Ember
             ensure
               Helpdesk::Ticket.any_instance.unstub(:associates=)
               Helpdesk::Ticket.any_instance.unstub(:associates)
-              Account.any_instance.unstub(:disable_old_ui_enabled?)
             end
           end
         end

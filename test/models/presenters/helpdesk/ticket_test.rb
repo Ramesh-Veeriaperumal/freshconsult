@@ -16,6 +16,7 @@ class TicketTest < ActiveSupport::TestCase
   include SharedOwnershipTestHelper
   include PrivilegesHelper
   include UsersTestHelper
+  include TestCaseMethods
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
@@ -255,6 +256,8 @@ class TicketTest < ActiveSupport::TestCase
     payload.must_match_json_expression(cp_ticket_pattern(t))
     assoc_payload = t.associations_to_publish.to_json
     assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+    payload = t.central_publish_preloaded_payload.to_json
+    payload.must_match_json_expression(preload_cp_ticket_pattern(t))
   end
 
   def test_central_publish_payload_group_update
@@ -751,6 +754,14 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal true, JSON.parse(payload)["status_stop_sla_timer"]
   end
 
+  def test_central_publish_with_agent_responded_at
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    t = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    n = create_note(source: 0, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  end
+
   def test_central_publish_payload_with_secure_field
     @account = Account.first.nil? ? create_test_account : Account.first.make_current
     create_custom_field_dn('custom_card_no_test', 'secure_text')
@@ -915,5 +926,18 @@ class TicketTest < ActiveSupport::TestCase
   ensure
     ticket.destroy
     nested_field_level1.destroy
+  end
+
+  def test_resolution_status_for_service_task
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        fsm_ticket = create_service_task_ticket
+        assert_equal '', fsm_ticket.resolution_status
+      ensure
+        fsm_ticket.destroy
+        cleanup_fsm
+      end
+    end
   end
 end

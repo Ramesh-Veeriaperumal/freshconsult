@@ -58,6 +58,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent_status, only: [:index]
     resource :api_agent, only: [:fetch_availability, :update_availability]
     resource :account_admin, only: [:preferences]
+    resource :'admin/group', only: [:index]
   end
 
   view_secure_field do
@@ -154,6 +155,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/freddy"
     resource :"ember/flow"
     resource :'ember/omni_channel', only: [:index]
+    resource :'admin/group', only: [:show, :index]
   end
 
   delete_ticket do
@@ -193,7 +195,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/ticket_field", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/section", only: [:create, :update, :destroy, :show, :index]
     resource :"admin/security_key", only: [:regenerate_widget_key]
-    resource :"admin/api_security", only: [:show]
+    resource :"admin/api_security", only: [:update, :show]
     resource :"admin/freshcaller_account", only: [:show, :create, :link, :update, :enable, :disable, :destroy, :credit_info]
     resource :"admin/api_skill", only: [:index, :create, :show, :update, :destroy]
     resource :"admin/shift", only: [:index, :show, :create, :update, :destroy]
@@ -202,6 +204,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
     resource :"admin/api_business_calendar", only: [:index, :show, :create, :update, :destroy]
     resource :agent_status, only: [:show, :create, :update, :destroy]
+    resource :'admin/group', only: [:index, :show, :destroy]
+    resource :"admin/groups/agent", only: [:index, :update]
   end
 
   edit_ticket_properties do

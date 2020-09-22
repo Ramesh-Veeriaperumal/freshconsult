@@ -172,8 +172,13 @@
             }
             $("#helpdesk_ticket_submit").button("reset");
           },
-          error : function (data)
+          error : function (response, data)
           {
+            $('#errorExplanation').removeClass('hide');
+            $('#feedback_widget_error').html(JSON.parse(response.responseText).error);
+              if(typeof Recaptcha != "undefined") {
+                Recaptcha.reload();
+              }
             $("#helpdesk_ticket_submit").button("reset");
           }
         });

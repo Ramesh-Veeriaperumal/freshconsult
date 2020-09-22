@@ -42,4 +42,57 @@ module FacebookTestHelper
   def sample_callback_url
     'https://afakeapitest.com'
   end
+
+  def optimal_rule_params(stream_id, ticket_rule_id)
+    {
+      social_ticket_rule: [
+        {
+          ticket_rule_id: ticket_rule_id,
+          rule_type: 2,
+          import_visitor_posts: true,
+          import_company_comments: true,
+          includes: [],
+          group_id: '...'
+        }
+      ],
+      new_ticket_filter_mentions: true,
+      id: stream_id,
+      visible_to: [0],
+      primary_toggle: {
+        switch: 0
+      }
+    }
+  end
+
+  def broad_rule_params(stream_id, ticket_rule_id)
+    {
+      social_ticket_rule: [
+        {
+          ticket_rule_id: ticket_rule_id,
+          rule_type: 3,
+          import_visitor_posts: true,
+          import_company_comments: true,
+          includes: [],
+          group_id: '...'
+        }
+      ],
+      same_ticket_filter_mentions: true,
+      id: stream_id,
+      visible_to: [0],
+      primary_toggle: {
+        switch: 0
+      }
+    }
+  end
+
+  def ad_posts_params
+    {
+      ad_posts_filter_mentions: true,
+      ad_posts: {
+        group_id: '...',
+        import_ad_posts: true
+      },
+      social_facebook_page: {}
+    }
+  end
 end

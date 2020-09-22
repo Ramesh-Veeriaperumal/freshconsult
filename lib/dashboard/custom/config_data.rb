@@ -2,11 +2,17 @@ module Dashboard::Custom
   module ConfigData
     include ::Dashboard::Custom::CustomDashboardConstants
 
-    CONFIG_ATTRIBUTES = SCORECARD_ATTRIBUTES | BAR_CHART_ATTRIBUTES | TICKET_TREND_CARD_ATTRIBUTES | TIME_TREND_CARD_ATTRIBUTES | SLA_TREND_CARD_ATTRIBUTES | CSAT_ATTRIBUTES | LEADERBOARD_ATTRIBUTES
+    CONFIG_ATTRIBUTES = SCORECARD_ATTRIBUTES | BAR_CHART_ATTRIBUTES | TICKET_TREND_CARD_ATTRIBUTES | TIME_TREND_CARD_ATTRIBUTES | SLA_TREND_CARD_ATTRIBUTES | CSAT_ATTRIBUTES | LEADERBOARD_ATTRIBUTES | MS_AVAILABILITY_ATTRIBUTES | MS_TIME_TREND_ATTRIBUTES | MS_SLA_TREND_ATTRIBUTES | MS_CALL_TREND_ATTRIBUTES | OMNI_CONFIG_ATTRIBUTES
 
     CONFIG_ATTRIBUTES.each do |attribute|
       define_method("#{attribute}=") do |updated_value|
         merge_config_data(attribute => updated_value)
+      end
+    end
+
+    OMNI_CONFIG_ATTRIBUTES.each do |attribute|
+      define_method(attribute.to_s) do
+        config_data[attribute]
       end
     end
 
@@ -19,6 +25,7 @@ module Dashboard::Custom
 
     def ticket_filter_id
       return config_data[:ticket_filter_id] if config_data[:ticket_filter_id]
+
       super
     end
 

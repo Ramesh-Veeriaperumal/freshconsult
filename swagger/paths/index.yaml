@@ -525,6 +525,8 @@
   $ref: ./subscription/estimate.yaml
 /plans:
   $ref: ./subscription/plans.yaml
+/plans/id:
+  $ref: ./subscription/fetch_plan.yaml
 /subscription/update_payment:
   $ref: ./subscription/update_payment.yaml
 

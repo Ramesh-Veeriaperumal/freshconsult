@@ -102,7 +102,6 @@
         ],
         "jwt_token_expiry": 10,
         "_signup_full_domain": "https://signup-euc.freshcaller.com",
-        "_migration_s3_bucket_name": "euc-fd-fc-migration",
         "_domain_prefix": "",
         "_domain_suffix": ".freshcaller.com",
         "_region": "eu-central-1"
@@ -142,7 +141,7 @@
         "domains": {
           "_podeuwest1": "podeuwest1route.freshdesk.com",
           "_podeucentral1": "podeucentral1route.freshdesk.com",
-          "_podapsoutheast2": "edge-aus-lb.freshdesk.com",
+          "_podapsoutheast2": "podapsoutheast2route.freshdesk.com",
           "_podapsouth1": "podapsouth1route.freshdesk.com"
         },
         "hosted_zone": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:oCikbjANdCwFwoP7jU+kgkFaCnBkOyuO:gPbUuKwB9TKCP5LObhdX73f3S4azrLz7LTYtQUdl]"
@@ -461,6 +460,12 @@
         "_activities_host": "activities.internal.podeucentral1.freshdesk.com",
         "_activities_export_host": "activitiesexport.internal.podeucentral1.freshdesk.com",
         "_port": "80"
+      },
+      "tracing": {
+        "_service_name": "freshdesk_helpkit",
+        "_tracing_host_port": 6831,
+        "_span_batch_size": 20,
+        "_sampler_probability": 0
       },
       "redshift": {
         "write_user_pwd": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:QhNzbmoP5IQWWOxXTl5zOGvzsa40Lj9v:Uk8/7YlYBh+5LHcWHjv8hjS5k9cJk3rB]",
@@ -853,7 +858,9 @@
         "google_hangout_chat_token": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:trjxzS9fuEHNNpnXXSo/3BjX4gF7lR2+:y4tS/qW5WL2xbYT6m5UTD9lY6zt5DlUvHJj1u6pP1eqcFgOhl994uzGkAxbr1A7Z8Deoauc/WQ==]",
         "google_hangout_chat_secret": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:LXK67WXR4f7i/HNglVvOBkY/EhJXtxgU:iw4DWWRZZwRvXPHSsIHpSyZ0Wh41OuUZp0+JOP2ST5PJLnErFy4hXQ==]",
         "Google_oauth2_client_id_ios": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:wHlk+emhxypfyJQAIS1u1m7ibNiOk2+I:E8U5QPyu+WXq8VSesVRSKilme1YrB1WOxsatdWWkzjXwSkGjWXnsos/OgMe45lQ5cpf0zPuunwY09UlD4gfFPnBWZuDUVXzXt7LTmKLPquh2DaaPDvwTWD7Q]",
-        "google_oauth2_client_id_iosv4_classic": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:z1ZMmThgEckj+CioWhxW8700DW8fFUYC:QZD5CBv37qUglVPAv4YFGZ+e9XKq+J1LakCcJ2/PXZNoghCsmFsuHW0+UMtt0bsYw0ueCBDgUlYf16rqlstJFUae5nVpsQp++JzQUuWf0jJ6oEjWuiOXxQ==]"
+        "google_oauth2_client_id_iosv4_classic": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:z1ZMmThgEckj+CioWhxW8700DW8fFUYC:QZD5CBv37qUglVPAv4YFGZ+e9XKq+J1LakCcJ2/PXZNoghCsmFsuHW0+UMtt0bsYw0ueCBDgUlYf16rqlstJFUae5nVpsQp++JzQUuWf0jJ6oEjWuiOXxQ==]",
+        "microsoft_outlook_token": "EJ[1:v+cDFut6FeDHP4YoxnIDnUETCASJeFJcW9FORWKimj8=:zEpSKRw0g4pDnDgGH2jpKxq0AA03N5C3:n3chg2ixJajpUrwR9bNDUTRG8pWJJwxkBDyyx+KCxgLUfO+I/RykXuP1PepVIy5W7mT/cA==]",
+        "microsoft_outlook_secret": "EJ[1:v+cDFut6FeDHP4YoxnIDnUETCASJeFJcW9FORWKimj8=:k/WBCdw3a7EzVSZ5ovN4/a/mtkiSdeaO:IWORmSFjKMDzDTKjp4pYU7lJDZ8Hs74JlFSQh8Z+DNiP4DRGvWvLom45pY0N5NGcne4=]"
       },
       "spam_watcher": {
         "_email": "dev-ops@freshdesk.com,helpdesk@noc-alerts.freshservice.com"
@@ -1474,6 +1481,18 @@
         "kbservice": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:rG6roM+Bc2TjoC/8tgKldZMSE+LtsI/RaW+lcTCPH0E=:XK5/qBMWWRkQn3n2jHLtR+uMD5xWYFtD:rJdkg1oCN68a4NFSlfTeCCGfVpTQf5Ztka9e20D1ESxIfVnfe/8Clkhp+HcO8f99]"]
+        },
+        "analytics": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:0TdZeyV7GjPzzqUUZH6KOsbmZZRX9mMabSumj3by5B4=:HVGsTQI54qAvZ0iT9Rr122nMKVS/T10H:ETuAmDnHQHueuV+U8ZUMh5+mvLbIQOOoriADU0SI8rWw9wQk4rc/eVxk7UaqtRdZyiTCm1HOsks=]"]
+        },
+        "freshdesk": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:0TdZeyV7GjPzzqUUZH6KOsbmZZRX9mMabSumj3by5B4=:yycXkHFHJWNPLkD2tTmdA0SVDcB5AaXT:BJUcymESLwlPg2a7BlgNbwScnck6M0FjgNna56sMSEWqRaIlRjBFAxxorIJm/VlyD8oT0uaq0nw=]"]
+        },
+        "search": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:0TdZeyV7GjPzzqUUZH6KOsbmZZRX9mMabSumj3by5B4=:vLehiWbadcCUH3r6+BxCIxc/K4TXO06Z:Zp3UKvvnX1fsRvxt+xKIJv2kDdtWVhYK0qiLf0xhPoFNDYyj/Y4bnPu6xCewxzVL1LuNDpqv+34=]"]
         }
       },
       "scheduler_client_keys": {
@@ -1515,6 +1534,9 @@
       "freshmarketer": {
         "access_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:KUyu0FchsgwMNDjPxU/ICcGZ9Ud3mU5k:n2UwM8DjW+uC7clIUvrnX7joHQrTQH0N6Njj1v6At+naXmb7hs7tRyV0uoYngqbm4BHBZYGzGCEPgaC8hcMcs++1]",
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
+      },
+      "kbservice": {
+        "secret_key": "EJ[1:bOgiVuMzskpSBaJh7wrWu4rNuuBPr0t+Iup4Y1/Pn3c=:MGRYL0Z6HbjexN7ZFdpl4gH5iVhvH3ZR:1G95jjDtcZpLogUILhI83HJDHYa+BRPb0zIYIVZ/ND9vbkr0FgXcu5iib0foM8yH]"
       },
       "iam": {
         "_expiry": 300,
@@ -1600,7 +1622,8 @@
         "admin_jwt_secret": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:skyCG7z+bSLkpFmdFmbQt96+gHB30j/h:flu40Mf4LGbltf8AopA9j4+zDOJT2RuXKbPoZQ69no4NYBNDJ9osYpBejnlTPK6F]",
         "_api_endpoint": "https://euc.ocr.freshdesk.com/api/v1/",
         "_auth_type": "jwt",
-        "_jwt_default_expiry": "30"
+        "_jwt_default_expiry": "30",
+        "touchstone_secret": "EJ[1:MLcL1mPdS31E4KhlTZrn82/l3NOD69F3ZKt0f0qoSng=:c83cVFMr56hq8XmlPnEJCX6GXnfmOuBK:l7BVT/WwM1Mpfpo7Frm1tbkG7cPAkgT4cvMtqqgNsWAD8gyRk/8AWGPG5OtMlI0g]"
       },
       "datadog": {
         "license_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:BgWZz9dbceP3jcSFQY2wdcKFUulxpCtq:XH0C9HO4F6LwQEDGnNs5dwx14aPLqfG9fx5ks9x6Zns7yUQTnzZr0jTmA8o6Evwc]",
@@ -1733,7 +1756,7 @@
         "_messageKey": "fd.site-announcement.sprout-banner"
       },
       "analyticsCollectorConfig": {
-        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.2.1.js",
+        "_analyticsCollectorScript": "https://assets.freshdesk.com/analytics/analytics-v1.2.4.js",
         "schedulerConfig": {
           "metricsAdapters": [
             {

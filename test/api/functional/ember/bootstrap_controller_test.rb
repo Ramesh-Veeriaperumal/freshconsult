@@ -214,14 +214,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     remove_others_redis_key TWITTER_APP_BLOCKED
   end
 
-  def test_account_with_custom_inbox_error
-    Account.current.stubs(:check_custom_mailbox_status).returns(true)
-    get :account, controller_params(version: 'private')
-    assert_response 200
-    match_json(account_pattern(Account.current, Account.current.main_portal))
-    Account.current.unstub(:check_custom_mailbox_status)  
-  end
-
   def test_account_for_email_font_parameter
     AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns({})
     get :account, controller_params(version: 'private')
@@ -361,7 +353,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
   def test_invoice_due_warning_with_skip_feature
     set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
-    Account.current.launch(:skip_invoice_due_warning)
+    Account.current.enable_setting(:skip_invoice_due_warning)
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
@@ -369,13 +361,13 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_nil invoice
   ensure
     User.any_instance.unstub(:privilege?)
-    Account.current.rollback(:skip_invoice_due_warning)
+    Account.current.disable_setting(:skip_invoice_due_warning)
   end
 
 
   def test_invoice_due_warning_with_skip_feature_with_redis_set
     set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
-    Account.current.launch(:skip_invoice_due_warning)
+    Account.current.enable_setting(:skip_invoice_due_warning)
     set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 10.days)
     get :account, controller_params(version: 'private')
     assert_response 200
@@ -384,7 +376,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_nil invoice
   ensure
     User.any_instance.unstub(:privilege?)
-    Account.current.rollback(:skip_invoice_due_warning)
+    Account.current.disable_setting(:skip_invoice_due_warning)
     remove_others_redis_key(invoice_due_key)
   end
 
@@ -576,6 +568,8 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['custom_mailbox_error']
   ensure
     Account.any_instance.unstub(:features_included?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
@@ -593,11 +587,15 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['custom_mailbox_error']
     email_config.smtp_mailbox.error_type = nil
     email_config.save!
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
   ensure
     Account.any_instance.unstub(:features_included?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
@@ -615,15 +613,91 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
-    Account.current.all_email_configs.find_by_id(email_config.id).smtp_mailbox.destroy
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['custom_mailbox_error']
+    Account.current.all_email_configs.where(id: email_config.id).first.smtp_mailbox.destroy
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
   ensure
     Account.any_instance.unstub(:features_included?)
     Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
     Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
     Account.current.email_configs.destroy(email_config)
+  end
+
+  def test_account_with_multiple_custom_outgoing_mailboxes_error_on_updation_of_mailboxes
+    Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
+    email_config.smtp_mailbox.error_type = 535
+    email_config.save!
+    email_config2 = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
+    email_config2.smtp_mailbox.error_type = 535
+    email_config2.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['custom_mailbox_error']
+    email_config.smtp_mailbox.error_type = nil
+    email_config.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['custom_mailbox_error']
+    email_config2.smtp_mailbox.error_type = nil
+    email_config2.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
+  ensure
+    Account.any_instance.unstub(:features_included?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+    Account.current.email_configs.destroy(email_config)
+    Account.current.email_configs.destroy(email_config2)
+  end
+
+  def test_account_with_multiple_custom_outgoing_mailboxes_error_on_deletion_of_mailboxes
+    Account.any_instance.stubs(:features_included?).with('mailbox').returns(true)
+    Email::MailboxDelegator.any_instance.stubs(:verify_imap_mailbox).returns(success: true, msg: '')
+    Email::MailboxDelegator.any_instance.stubs(:verify_smtp_mailbox).returns(success: true, msg: '')
+    email_config = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
+    email_config.smtp_mailbox.error_type = 535
+    email_config.save!
+    email_config2 = create_email_config(smtp_mailbox_attributes: { smtp_server_name: 'imap.gmail.com' })
+    email_config2.smtp_mailbox.error_type = 535
+    email_config2.save!
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['custom_mailbox_error']
+    Account.current.all_email_configs.where(id: email_config.id).first.smtp_mailbox.destroy
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal true, parsed_response['config']['email']['custom_mailbox_error']
+    Account.current.all_email_configs.where(id: email_config2.id).first.smtp_mailbox.destroy
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    parsed_response = parse_response response.body
+    assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
+  ensure
+    Account.any_instance.unstub(:features_included?)
+    Email::MailboxDelegator.any_instance.unstub(:verify_imap_mailbox)
+    Email::MailboxDelegator.any_instance.unstub(:verify_smtp_mailbox)
+    Account.current.email_configs.destroy(email_config)
+    Account.current.email_configs.destroy(email_config2)
   end
 
   def test_account_v1_with_freshid
@@ -674,29 +748,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     parsed_response = parse_response response.body
     assert_equal false, redis_key_exists?(key)
     assert_equal redis_key_exists?(key), parsed_response['config']['email']['rate_limited']
-  end
-
-  def test_config_with_mailbox_oauth_required_key_set
-    key = format(EMAIL_MAILBOX_OAUTH_REQUIRED, account_id: Account.current.id)
-    set_others_redis_key_if_not_present(key, 1)
-    get :account, controller_params(version: 'private')
-    assert_response 200
-    match_json(account_pattern(Account.current, Account.current.main_portal))
-    parsed_response = parse_response response.body
-    assert_equal true, redis_key_exists?(key)
-    assert_equal redis_key_exists?(key), parsed_response['config']['email']['ms_mailbox_oauth_required']
-  ensure
-    remove_others_redis_key(key)
-  end
-
-  def test_config_with_mailbox_oauth_required_key_unset
-    key = format(EMAIL_MAILBOX_OAUTH_REQUIRED, account_id: Account.current.id)
-    get :account, controller_params(version: 'private')
-    assert_response 200
-    match_json(account_pattern(Account.current, Account.current.main_portal))
-    parsed_response = parse_response response.body
-    assert_equal false, redis_key_exists?(key)
-    assert_equal redis_key_exists?(key), parsed_response['config']['email']['ms_mailbox_oauth_required']
   end
 
   def test_account_with_mailbox_oauth_error_outgoing

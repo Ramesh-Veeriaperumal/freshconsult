@@ -7,6 +7,7 @@ module ApiSolutions
     include CloudFilesHelper
     include ::Search::V2::AbstractController
     include Solution::ArticleFilters
+    include SolutionConstants
 
     SLAVE_ACTIONS = %w[index folder_articles].freeze
     STATUS_KEYS_BY_TOKEN = Solution::Article::STATUS_KEYS_BY_TOKEN
@@ -17,7 +18,7 @@ module ApiSolutions
     before_filter :language_metric_presence
     before_filter :validate_publish_solution_privilege, only: [:update, :create]
     before_filter :sanitize_chat_params, only: [:folder_articles, :search], if: :channel_v2?
-    before_filter :sanitize_prefer_published, only: [:folder_articles, :search]
+    before_filter :sanitize_boolean_params, only: [:folder_articles, :search]
     before_filter :reconstruct_params, only: [:folder_articles], if: :filters_present? && :channel_v2?
     before_filter :validate_omni_filter_params, only: [:folder_articles, :search], if: :channel_v2?
     before_filter :portal_delegator_validation, only: [:folder_articles], if: :channel_v2?
@@ -211,7 +212,11 @@ module ApiSolutions
 
       def publishable_article_properties?
         # outdated is just a flag in agent portal. that is not visible to customer. thus we can consider it as non-publishable field.
-        !(article_fields_to_update - [:outdated, :status]).empty?
+        !changed_publishable_article_properties.empty?
+      end
+
+      def changed_publishable_article_properties
+        article_fields_to_update - [:outdated, :status]
       end
 
       def only_publish?
@@ -235,10 +240,17 @@ module ApiSolutions
       def construct_article_object
         parse_attachment_params(@article_params[language_scoper]) if private_api?
         article_builder_params = { solution_article_meta: @article_params, language_id: @lang_id, tags: @tags, session: @session }
+        # from @article_params, the meta attrs will be removed after build, hence getting this beforehand
+        changed_properties = changed_publishable_article_properties
         @meta = Solution::Builder.article(article_builder_params)
         @meta.reload if @meta.solution_platform_mapping && @meta.solution_platform_mapping.destroyed?
         @item = @meta.safe_send(language_scoper)
         @item.create_draft_from_article if @status == STATUS_KEYS_BY_TOKEN[:draft] && create?
+        # Required to clear cache on publish: Either status 2 or when article properties are changed means publish event
+        if cname_params[:status] == STATUS_KEYS_BY_TOKEN[:published] || (cname_params[:status] == STATUS_KEYS_BY_TOKEN[:draft] && @item.status == STATUS_KEYS_BY_TOKEN[:published] && !changed_properties.empty?) || only_unpublish?
+          job_id = Solution::KbserviceClearCacheWorker.perform_async(entity: 'article')
+          Rails.logger.info "KBServiceClearCache:: article_publish, #{job_id}"
+        end
         !(@item.errors.any? || @item.parent.errors.any?)
       end
 
@@ -257,7 +269,7 @@ module ApiSolutions
       end
 
       def before_load_object
-        sanitize_prefer_published
+        sanitize_boolean_params
         if channel_v2?
           sanitize_chat_params
           return unless validate_omni_filter_params
@@ -296,7 +308,7 @@ module ApiSolutions
                      end
 
         article = ApiSolutions::ArticleValidation.new(
-          params[cname], @item, attachable, @lang_id, string_request_params?
+          params[cname], @item, attachable, @lang_id, params[:version], string_request_params?
         )
         unless article.valid?(action_name.to_sym)
           render_errors article.errors,
@@ -343,6 +355,7 @@ module ApiSolutions
         sanitize_user_id_params
         sanitize_seo_params
         sanitize_attachment_params
+        params[cname][:platforms] = transform_platform_params(params[cname][:platforms]) if public_api?(params[:version]) && params[cname][:platforms]
         @tags = construct_tags(params[cname][:tags]) if params[cname] && params[cname][:tags]
         @article_params = params[cname].slice(*SolutionConstants::ARTICLE_META_FIELDS)
         
@@ -358,8 +371,9 @@ module ApiSolutions
         params[:tags] = params[:tags].split(',').uniq if params[:tags].present?
       end
 
-      def sanitize_prefer_published
-        params[:prefer_published] = params[:prefer_published].to_bool if params[:prefer_published].present? && (params[:prefer_published] == "true" || params[:prefer_published] == "false")
+      def sanitize_boolean_params
+        params[:prefer_published] = params[:prefer_published].to_bool if boolean_param?(:prefer_published)
+        params[:allow_language_fallback] = params[:allow_language_fallback].to_bool if boolean_param?(:allow_language_fallback)
       end
 
       def filters_present?

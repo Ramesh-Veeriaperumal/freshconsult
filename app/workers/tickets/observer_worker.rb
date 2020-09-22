@@ -18,7 +18,6 @@ module Tickets
         evaluate_on = account.tickets.find_by_id ticket_id
         if evaluate_on.present? && Account.current.ticket_observer_race_condition_fix_enabled?
           schema_less_ticket = evaluate_on.schema_less_ticket
-          schema_less_ticket.retrigger_observer = true
         end
         evaluate_on.thank_you_note_id = args[:note_id]
         evaluate_on.current_note_id = args[:note_id] if account.next_response_sla_enabled? && evaluate_sla?
@@ -70,6 +69,7 @@ module Tickets
           end
           evaluate_on.skip_ocr_sync = true
           skip_ocr_sync_on_retry = false
+          schema_less_ticket.retrigger_observer = evaluate_on.changes.empty? ? false : true if Account.current.ticket_observer_race_condition_fix_enabled?
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|
             klass = action[:klass].constantize

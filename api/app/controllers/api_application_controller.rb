@@ -195,7 +195,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def requires_any_feature(*features)
-      features_list = feature_name.present? ? Account.current.enabled_features_list : Account.current.all_launched_features
+      features_list = Account.current.enabled_features_list + Account.current.all_launched_features
       return if (features_list & features).present?
 
       render_request_error(:require_any_feature, 403, feature: features.join(',').titleize)

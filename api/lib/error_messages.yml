@@ -32,6 +32,7 @@ api_error_messages:
   method_not_allowed: "%{fired_method} method is not allowed. It should be one of these method(s): %{methods}"
   require_feature: "The %{feature} feature(s) is/are not supported in your plan. Please upgrade your account to use it."
   require_any_feature : "Atleast one of the features required: %{feature}"
+  unwanted_feature_for_attribute: " The %{feature} feature(s) is/are should be disabled for accessing %{attribute} attribute"
   require_fsm_feature: "The Field Service Management module is not enabled in your account. Please enable it to use."
   invalid_credentials: "You have to be logged in to perform this action."
   credentials_required: "Authentication header is needed to log in."
@@ -430,6 +431,7 @@ api_error_messages:
   smtp_socket_error: 'Could not connect to the smtp server. Please verify server name, port and credentials'
   smtp_invalid_credentials: 'Error while authenticating the smtp server. Please make sure your user name and password are correct'
   smtp_error: "Error while verifying the mailbox smtp details - %{error}"
+  refresh_access_token_error: 'Error refreshing access token'
   default_primary_role_changed: "Cannot set default_reply_email to false of the default support email of a product"
   default_mailbox_product_changed: 'Cannot change product of default support email'
   file_size_limit_error: "File size cannot exceed %{file_size}."
@@ -592,3 +594,6 @@ api_error_messages:
   time_slot_count_for_channel_error: "Too many time slots for '%{value}' channel in '%{name}'"
   duplicate_holiday_date: "Duplicate holiday date is present"
   duplicate_business_day: "Duplicate business day is present"
+
+  require_filter_params: "Anyone of the following filter attributes is mandatory: %{attributes}."
+  invalid_date_time_period: "Datetime range can only be a maximum of 2 days"

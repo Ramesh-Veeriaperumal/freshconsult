@@ -66,7 +66,7 @@ module SolutionsTestHelper
     result
   end
 
-  def solution_article_pattern(expected_output = {}, _ignore_extra_keys = true, article)
+  def solution_article_pattern(expected_output = {}, _ignore_extra_keys = true, is_private = true, article)
     expected_tags = expected_output[:tags] || nil
 
     resp = {
@@ -80,7 +80,7 @@ module SolutionsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
 
-    resp[:platforms] = expected_output[:platforms].presence || platform_response(true, article.parent.solution_platform_mapping) if omni_bundle_enabled?
+    resp[:platforms] = expected_output[:platforms].presence || platform_response(is_private, article.parent.solution_platform_mapping) if omni_bundle_enabled?
 
     resp[:suggested] = (expected_output[:suggested] || article.suggested).to_i if Account.current.suggested_articles_count_enabled?
     resp[:tags] = (expected_tags || article.tags.map(&:name)) unless expected_output[:exclude_tags]

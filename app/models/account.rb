@@ -37,7 +37,7 @@ class Account < ActiveRecord::Base
 
   concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations,
                  :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods,
-                 :fluffy_methods, :patches
+                 :fluffy_methods, :patches, :settings
 
   include CustomerDeprecationMethods
 
@@ -180,7 +180,7 @@ class Account < ActiveRecord::Base
   end
 
   def freshfone_active?
-    features?(:freshfone) && freshfone_numbers.present? && !falcon_ui_enabled?(User.current)
+    false
   end
 
   def es_multilang_soln?
@@ -886,15 +886,11 @@ class Account < ActiveRecord::Base
     @no_of_ticket_fields_built ||= ticket_fields_only.select(1).count
   end
 
-  def falcon_and_encrypted_fields_enabled?
-    user = User.current
-    falcon_ui_enabled = user && user.agent? ? falcon_ui_enabled?(user) : falcon_ui_enabled?
-    falcon_ui_enabled and hipaa_and_encrypted_fields_enabled?
-  end
-
   def hipaa_and_encrypted_fields_enabled?
     custom_encrypted_fields_enabled? and hipaa_enabled?
   end
+
+  alias falcon_and_encrypted_fields_enabled? hipaa_and_encrypted_fields_enabled?
 
   def remove_encrypted_fields
     # delete ticket fields
@@ -1074,6 +1070,10 @@ class Account < ActiveRecord::Base
 
   def update_default_forum_category(new_account_name)
     update_default_forum_category_name(new_account_name)
+  end
+
+  def enable_sprout_trial_onboarding?
+    launched?(:sprout_trial_onboarding) && conversion_metric.present? && conversion_metric.sprout_trial_onboarding?
   end
 
   protected

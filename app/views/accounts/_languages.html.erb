@@ -29,74 +29,40 @@
 					<% end %>
 				</div>
 			</div>
-			<% if current_user.is_falcon_pref? %>
-				<div class="falcon-manage-link">
-					<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
-					:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
-				</div>
-			<% else %>
-			    <div class="span3 manage-link">
-					<%= pjax_link_to t("accounts.multilingual_support.manage_languages"), manage_languages_path %>
-			    </div>
-			<% end %>
+			<div class="falcon-manage-link">
+				<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
+				:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
+			</div>
 		<% elsif @account.features_included?(:enable_multilingual) %>
 			<div class="mt5">
 				<%= @account.language_object.name %>
 				<% if @account.multilingual_available? && !@account.supported_languages.present? %>
-					<% if current_user.is_falcon_pref?  %>
-						<div class="controls">
-							<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
-							:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
-						</div>
-					<% else %>
-						<span class="ml20 enable-link">
-							<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path %>
-						</span>
-					<% end %>
+					<div class="controls">
+						<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
+						:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
+					</div>
 				<% end %>
 			</div>
 		<% else %>
 			<div class="span4">
-				<% if current_account.falcon_ui_enabled?(current_user) %>
-					<%= select('account[main_portal_attributes]', :language, mint_locales_with_separator, {:selected =>  @account.main_portal.language.to_sym()}, {:style => 'width: 150px;'})%>
-					<a href="javascript:toggleMessage()">
-						<i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
-					</a>
-				<% else %>
-					<%= portal.select :language,
-								I18n.available_locales_with_name ,
-								{
-									:selected =>  @account.main_portal.language.to_sym()
-								},
-								{
-									:class => "select2 input-medium"
-								}
-					%>
-				<% end %>
+				<%= select('account[main_portal_attributes]', :language, mint_locales_with_separator, {:selected =>  @account.main_portal.language.to_sym()}, {:style => 'width: 150px;'})%>
+				<a href="javascript:toggleMessage()">
+					<i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
+				</a>
 			</div>
 			<% if @account.multilingual_available? %>
-				<% if current_user.is_falcon_pref? %>
-					<div class="falcon-manage-link">
-						<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
-							:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
-					</div>
-				<% else %>
-					<div class="span4 enable-link">
-						<div class="mt5">
-							<%= pjax_link_to t("admin.products.portal.enable_multilingual"), manage_languages_path %>
-						</div>
-					</div>
-				<% end %>
+				<div class="falcon-manage-link">
+					<%= link_to t("accounts.multilingual_support.manage_languages"), '/a/admin/account/languages',
+						:class => "btn btn-bold", :id => 'manage-language-button', :target => "_top" %>
+				</div>
 			<% end %>
 		<% end %>
 	</div>
 </div>
 
-<% if current_account.falcon_ui_enabled?(current_user) %>
-	<div class="control-group">
-		<div class="control-label"></div>
-		<div class="controls">
-			<%= render partial:'ui/falcon_languages_alert' %>
-		</div>
+<div class="control-group">
+	<div class="control-label"></div>
+	<div class="controls">
+		<%= render partial:'ui/falcon_languages_alert' %>
 	</div>
-<% end %>
+</div>

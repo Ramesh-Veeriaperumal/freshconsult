@@ -501,7 +501,8 @@ class User < ActiveRecord::Base
   end
 
   def is_falcon_pref?
-    self.preferences[:agent_preferences][:falcon_ui] || Account.current.disable_old_ui_enabled?
+    Rails.logger.warn "FALCON HELPER METHOD :: is_falcon_pref? :: #{caller[0..2]}"
+    true
   end
 
   def old_notes_first?
@@ -1366,7 +1367,7 @@ class User < ActiveRecord::Base
   end
 
   def preferred_source
-    Helpdesk::Source.ticket_source_token_by_key[preferences[:preferred_source]]
+    Helpdesk::Source.source_choices(:token_by_keys)[preferences[:preferred_source]]
   end
 
   def add_preferred_source(source)

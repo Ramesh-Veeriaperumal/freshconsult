@@ -1,4 +1,5 @@
 class ApiSolutions::ArticleValidation < ApiValidation
+  include SolutionConcern
   CHECK_PARAMS_SET_FIELDS = %w[type folder_name category_name].freeze
   attr_accessor :title, :description, :agent_id, :status, :type, :tags,
                 :seo_data, :meta_title, :meta_keywords, :meta_description,
@@ -58,9 +59,11 @@ class ApiSolutions::ArticleValidation < ApiValidation
   validates :outdated,  data_type: { rules: 'Boolean' }
   validates :prefer_published, data_type: { rules: 'Boolean' }
   validates :templates_used, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false } }
-  validates :platforms, data_type: { rules: Hash, allow_nil: false }, hash: { validatable_fields_hash: proc { |x| x.validate_platform_values } }, if: -> { create_or_update? }
+  validates :platforms, data_type: { rules: Hash, allow_nil: false }, hash: { validatable_fields_hash: proc { |x| x.validate_platform_values } }, if: -> { create_or_update? && !public_api?(@version) }
+  validates :platforms, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true },
+                                                              custom_inclusion: { in: SolutionConstants::PLATFORM_TYPES } }, if: -> { public_api?(@version) }
 
-  def initialize(request_params, article, attachable, lang_id, allow_string_param = false)
+  def initialize(request_params, article, attachable, lang_id, version, allow_string_param = false)
     super(request_params, article, allow_string_param)
     @lang_id = lang_id
     @attachable = attachable
@@ -68,6 +71,7 @@ class ApiSolutions::ArticleValidation < ApiValidation
     @cloud_file_attachments = request_params[:cloud_file_attachments] if request_params[:cloud_file_attachments]
     @folder_id = request_params[:folder_id] if request_params[:folder_id]
     @outdated = request_params[:outdated] if request_params[:outdated]
+    @version = version
 
     if request_params[:seo_data].is_a?(Hash)
       seo_data = request_params[:seo_data]

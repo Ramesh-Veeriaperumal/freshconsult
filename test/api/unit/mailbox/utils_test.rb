@@ -44,18 +44,19 @@ class Mailbox::UtilsTest < ActiveSupport::TestCase
       support_email: 'test@test12.com',
       imap_mailbox_attributes: {
         imap_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       },
       smtp_mailbox_attributes: {
         smtp_authentication: 'xoauth2',
-        with_refresh_token: true
+        with_refresh_token: true,
+        with_access_token: true
       }
     )
     mailbox.active = true
     mailbox.save!
     Mailbox::UtilsTest.any_instance.stubs(:oauth_delivery_method?).returns(true)
     Mailbox::UtilsTest.any_instance.stubs(:from).returns(['test@test12.com'])
-    Mailbox::UtilsTest.any_instance.stubs(:decrypt_refresh_token).returns('refreshtoken')
     Mailbox::UtilsTest.any_instance.stubs(:get_oauth2_access_token).raises(
       OAuth2::Error.new(
         OAuth2::Response.new(
@@ -70,6 +71,5 @@ class Mailbox::UtilsTest < ActiveSupport::TestCase
     mailbox.destroy
     Mailbox::UtilsTest.unstub(:oauth_delivery_method?)
     Mailbox::UtilsTest.unstub(:from)
-    Mailbox::UtilsTest.unstub(:decrypt_refresh_token)
   end
 end

@@ -102,7 +102,7 @@
 								<div class="help-block"><%=t('account.info4')%></div>
 					  		</div>
 						</div>
-						<% if current_account.reverse_notes_enabled? && current_account.falcon_ui_enabled?(current_user) %>
+						<% if current_account.reverse_notes_enabled?%>
 							<div class="control-group">
 								<%= f.label :sort_conversations, t('account.sort_conversations.label'), :class => "control-label"  %>
 								<div class="controls">
@@ -121,42 +121,6 @@
 		            </div>
 	            </div>
             <% end %>
-
-			            <% unless current_user.is_falcon_pref? %>
-				            <% if current_account.rebranding_enabled?%>
-								<div class="control-group">
-									<%= content_tag(:label, t('account.page_colors.title'), :class => "control-label" ) %>
-									<div class="controls">
-										<div class="row-fluid">
-										<%= portal.fields_for :preferences do |p| %>
-											<div class="span3">
-												<%= p.label :header_color, t('account.page_colors.header') %>
-												<div class="color">
-													<%= f.color_picker :class => "color_field required" , :id => "HeaderColor" , :name =>"account[main_portal_attributes][preferences][header_color]" , :value => "#{portal_pref(@account.main_portal, :header_color)}" , :maxlength => "7" %>
-												</div>
-											</div>
-											<div class="span3">
-												<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
-												<div class="color">
-													<%= f.color_picker :class => "color_field required" , :id => "TabColor" , :name =>"account[main_portal_attributes][preferences][tab_color]" , :value => "#{portal_pref(@account.main_portal, :tab_color)}" , :maxlength => "7" %>
-												</div>
-											</div>
-											<div class="span3 omega">
-												<%= p.label :bg_color, t('account.page_colors.background') %>
-												<div class="color">
-													<%= f.color_picker :class => "color_field required" , :id => "BackgroundColor" , :name =>"account[main_portal_attributes][preferences][bg_color]" , :value => "#{portal_pref(@account.main_portal, :bg_color)}" , :maxlength => "7" %>
-												</div>
-											</div>
-								  		<% end %>
-								  		</div>
-										<div class="reset-color">
-											<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
-										</div>
-									</div>
-								</div>
-							<% end %>
-
-						<% end %>
 
 						<!-- freshdesk branding -->
 					    <div class="control-group account-branding-toggle">
@@ -183,7 +147,7 @@
 			              </div>
 			            </div>
 
-						<% if current_user.is_falcon_pref? && current_account.rebranding_enabled? && !(current_account.subscription.sprout_plan?)%>
+						<% if current_account.rebranding_enabled? && !(current_account.subscription.sprout_plan?)%>
 								<div class="control-group">
 									<label class="control-label"><%= t("admin.products.portal.agent_portal") %></label>
 									<div class="controls">

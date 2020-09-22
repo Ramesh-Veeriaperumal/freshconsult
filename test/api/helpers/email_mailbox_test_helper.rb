@@ -127,6 +127,7 @@ module EmailMailboxTestHelper
       password: options[:imap_password] || 'password'
     }
     incoming_hash[:refresh_token] = options[:imap_refresh_token] || 'refreshtoken' if options[:imap_authentication] == OAUTH && options[:with_refresh_token]
+    incoming_hash[:access_token] = options[:imap_access_token] || 'accesstoken' if options[:imap_authentication] == OAUTH && options[:with_access_token]
     incoming_hash
   end
   
@@ -140,6 +141,7 @@ module EmailMailboxTestHelper
       password: options[:smtp_password] || 'password'
     }
     outgoing_hash[:refresh_token] = options[:smtp_refresh_token] || 'refreshtoken' if options[:smtp_authentication] == OAUTH && options[:with_refresh_token]
+    outgoing_hash[:access_token] = options[:smtp_access_token] || 'accesstoken' if options[:smtp_authentication] == OAUTH && options[:with_access_token]
     outgoing_hash
   end
 
@@ -147,5 +149,76 @@ module EmailMailboxTestHelper
     {
       'confirmation_code' => nil
     }
+  end
+
+  def redis_hash(options = {})
+    {
+      oauth_token: 'ya29.Il-vB0K5x3',
+      support_email: 'testactivefilter@fd.com',
+      refresh_token: 'xugvqw377',
+      type: options[:type] || 'new',
+      oauth_email: options[:oauth_email] || 'test@gmail.com'
+    }
+  end
+
+  def xoauth_incoming_options_hash(options = {})
+    {
+      support_email: 'testactivefilter@fd.com',
+      imap_authentication: 'xoauth2',
+      imap_user_name: options[:imap_user_name] || 'test@gmail.com',
+      imap_password: '',
+      reference_key: options[:redis_key],
+      access_type: 'incoming'
+    }
+  end
+
+  def xoauth_outgoing_options_hash(options = {})
+    {
+      support_email: 'testactivefilter@fd.com',
+      smtp_authentication: 'xoauth2',
+      smtp_user_name: options[:smtp_user_name] || 'test@gmail.com',
+      smtp_password: '',
+      reference_key: options[:redis_key],
+      access_type: 'outgoing'
+    }
+  end
+
+  def xoauth_both_options_hash(options = {})
+    {
+      support_email: 'testactivefilter@fd.com',
+      imap_authentication: 'xoauth2',
+      smtp_authentication: 'xoauth2',
+      imap_user_name: options[:imap_user_name] || 'test@gmail.com',
+      smtp_user_name: options[:smtp_user_name] || 'test@gmail.com',
+      imap_password: '',
+      smtp_password: '',
+      reference_key: options[:redis_key],
+      access_type: 'both'
+    }
+  end
+
+  def imap_params(mailbox, options = {})
+    imap_params_hash = { mailbox_attributes: { id: mailbox.id,
+                                               user_name: mailbox.user_name,
+                                               password: mailbox.password,
+                                               server_name: mailbox.server_name,
+                                               server_port: mailbox.port,
+                                               authentication: mailbox.authentication,
+                                               delete_from_server: mailbox.delete_from_server,
+                                               folder_list: { 'standard' => ['inbox'] },
+                                               use_ssl: mailbox.use_ssl,
+                                               to_email: options[:to_email],
+                                               account_id: mailbox.account_id,
+                                               time_zone: Account.current.time_zone,
+                                               timeout: mailbox.timeout,
+                                               domain: Account.current.full_domain,
+                                               application_id: imap_application_id },
+                         action: 'create' }
+    if mailbox.authentication == OAUTH
+      imap_params_hash[:mailbox_attributes][:password] = mailbox.refresh_token
+      imap_params_hash[:mailbox_attributes][:email_provider_type] = options[:provider]
+      imap_params_hash[:mailbox_attributes][:password_enc_algorithm] = 'plain'
+    end
+    imap_params_hash
   end
 end

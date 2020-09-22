@@ -3,7 +3,7 @@
   <ul class="table-list" id="table-list">
     <% disp_header = 0
     no_custom_app = true
-    falcon_enabled = current_account.falcon_ui_enabled?(current_user)
+    falcon_enabled = true
     applications.each do |application| %>
       <% next if falcon_enabled && skip_falcon_render?(application.name) %>
       <% if application.name == "slack" %>

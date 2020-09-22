@@ -316,4 +316,8 @@ class ConversionMetric < ActiveRecord::Base
   def msegments
     try(:[], :session_json).try(:[], :mSegment)
   end
+
+  def sprout_trial_onboarding?
+    GrowthHackConfig[:freshdesk_free_websites].any? { |key| (referrer.present? && referrer.include?(key)) || (current_session_url.present? && current_session_url.include?(key)) }
+  end
 end

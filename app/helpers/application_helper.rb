@@ -1710,11 +1710,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
 
     def onclick_strategy(auth_redirect_url)
-      if current_account.falcon_ui_enabled?(current_user)
-        "parent.location.href='#{auth_redirect_url}'"
-      else
-        "window.location.href='#{auth_redirect_url}'"
-      end
+      "parent.location.href='#{auth_redirect_url}'"
     end
 
     def social_tab
@@ -1763,7 +1759,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def check_custom_mailbox_status
     if feature?(:mailbox)
-      custom_mail_box_faliure = current_account.custom_mailbox_errors_present
+      custom_mail_box_faliure = redis_key_exists?(format(CUSTOM_MAILBOX_STATUS_CHECK, account_id: current_account.id))
       if custom_mail_box_faliure
         return content_tag('div', "<a href='javascript:void(0)'></a> #{t('custom_mailbox_error')} <a href='/admin/email_configs' target='_blank'> #{t('imap_mailbox_error')} </a>".html_safe, :class =>
             "alert-message block-message warning full-width")
@@ -2098,7 +2094,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def inline_manual_people_tracing
     role = current_user.privilege?(:admin_tasks) ? "admin" : "agent"
-    ui_preference = current_account.falcon_ui_enabled?(current_user) ? 'mint' : 'oldui'
+    ui_preference = 'mint'
     state  = current_account.subscription.state
     bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
     bucket_split = split_with_separator bucket
@@ -2191,7 +2187,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def show_sandbox_notification
-    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled? && current_user.is_falcon_pref?
+    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled?
   end
 
   def support_mint_applicable?

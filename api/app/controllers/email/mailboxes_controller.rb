@@ -125,7 +125,7 @@ class Email::MailboxesController < ApiApplicationController
 
     def sanitize_incoming_params_for_oauth
       update_cached_values(IMAP) && return if valid_reference?
-      cname_params[:imap_mailbox_attributes][:password] = @item.imap_mailbox.decrypt_password(@item.imap_mailbox.password) if update? && @item.imap_mailbox.present?
+      cname_params[:imap_mailbox_attributes][:access_token] = @item.imap_mailbox.access_token if update? && @item.imap_mailbox.present?
       update_incoming_and_outgoing(IMAP) && return if update? && incoming_to_be_updated?
       render_errors(error: :invalid_oauth_reference) if update? && invalid_incoming_update?
     end
@@ -143,20 +143,20 @@ class Email::MailboxesController < ApiApplicationController
       mailbox_type = type == SMTP ? IMAP_MAILBOX : SMTP_MAILBOX
       mailbox = @item.safe_send(mailbox_type)
       attribute = "#{type}_mailbox_attributes".to_sym
-      cname_params[attribute][:password] = mailbox.decrypt_password(mailbox.password)
-      cname_params[attribute][:refresh_token] = mailbox.decrypt_refresh_token(mailbox.refresh_token)
+      cname_params[attribute][:access_token] = mailbox.access_token
+      cname_params[attribute][:refresh_token] = mailbox.refresh_token
     end
 
     def update_cached_values(type)
       oauth_token, refresh_token = fetch_cached_auth_values
       attribute = "#{type}_mailbox_attributes".to_sym
-      cname_params[attribute][:password] = oauth_token
+      cname_params[attribute][:access_token] = oauth_token
       cname_params[attribute][:refresh_token] = refresh_token
     end
 
     def sanitize_outgoing_params_for_oauth
       update_cached_values(SMTP) && return if valid_reference?
-      cname_params[:smtp_mailbox_attributes][:password] = @item.smtp_mailbox.decrypt_password(@item.smtp_mailbox.password) if update? && @item.smtp_mailbox.present?
+      cname_params[:smtp_mailbox_attributes][:access_token] = @item.smtp_mailbox.access_token if update? && @item.smtp_mailbox.present?
       update_incoming_and_outgoing(SMTP) && return if update? && outgoing_to_be_updated?
       render_errors(error: :invalid_oauth_reference) if update? && invalid_outgoing_update?
     end

@@ -5,6 +5,7 @@ require_relative '../../test_helper'
 ['account_helper.rb', 'user_helper.rb'].each { |file| require Rails.root.join('spec', 'support', file) }
 ['skills_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', 'admin', file) }
 ['social_tickets_creation_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['users_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class ArchiveTicketsTest < ActiveSupport::TestCase
   include ArchiveTicketsTestHelper # helper for central payload
@@ -16,6 +17,7 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
   include TicketFieldsTestHelper
   include Admin::SkillsTestHelper
   include SocialTicketsCreationHelper
+  include CoreUsersTestHelper
 
   ARCHIVE_DAYS = 120
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
@@ -59,11 +61,9 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_payload_with_custom_text_field_and_custom_file
-    flexifield_def = FlexifieldDef.where(account_id: @account.id, 'module': 'Ticket').first
     attachment = create_file_ticket_field_attachment
     custom_text_field = create_custom_field(Faker::Lorem.word, 'text')
-    file_field_col_name = flexifield_def.first_available_column('file')
-    custom_file_field = create_custom_field_dn('test_file_field', 'file', false, false, flexifield_name: file_field_col_name)
+    custom_file_field = create_custom_field_dn('test_file_field', 'file', false, false, flexifield_name: 'dn_slt_009')
     create_archive_ticket_with_assoc(
       created_at: @ticket_update_date,
       updated_at: @ticket_update_date,
@@ -81,9 +81,8 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
       archive_ticket.destroy
     end
   ensure
-    attachment.destroy
-    custom_file_field.destroy
-    custom_text_field.destroy
+    @account.ticket_fields.custom_fields.map(&:destroy)
+    attachment.try(:destroy)
   end
 
   def test_central_publish_payload_with_custom_dropdown_field_and_date_field
@@ -239,5 +238,25 @@ class ArchiveTicketsTest < ActiveSupport::TestCase
     end
   ensure
     ticket.destroy
+  end
+
+  def test_for_archive_ticket_disallow_payload
+    create_archive_ticket_with_assoc(
+      created_at: @ticket_update_date,
+      updated_at: @ticket_update_date,
+      create_association: true,
+      header_info: { received_at: Time.now.utc.iso8601 }
+    )
+    stub_archive_assoc_for_show(@archive_association) do
+      new_user = add_new_user(@account)
+      archive_ticket = @account.archive_tickets.where(ticket_id: @archive_ticket.id).first
+      central_publish_options = { model_changes: { requester_id: [archive_ticket.requester_id, new_user.id] } }
+      archive_ticket.attributes = { requester_id: new_user.id }
+      archive_ticket.save
+      payload = archive_ticket.manual_publish(nil, [:update, central_publish_options], false)
+      assert_nil payload
+      archive_ticket.destroy
+      new_user.destroy
+    end
   end
 end

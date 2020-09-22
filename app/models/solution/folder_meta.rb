@@ -122,6 +122,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	validate :companies_limit_check
     after_commit :update_article_platform_mapping, on: :update, if: :update_article_platform_mapping?
 
+  after_commit :kb_service_clear_cache, on: :update, if: :platforms_tags_updated?
 	alias_method :children, :solution_folders
 
 	def article_count
@@ -176,6 +177,7 @@ class Solution::FolderMeta < ActiveRecord::Base
   def platforms=(platform_params)
     return if platform_params.empty?
 
+    @platforms_updated = true
     solution_platform_mapping.present? ? update_platform_mapping(platform_params) : create_platform_mapping(platform_params)
   end
 
@@ -200,7 +202,10 @@ class Solution::FolderMeta < ActiveRecord::Base
 
     if solution_platform_mapping.present? && !solution_platform_mapping.try(:destroyed?)
       tag_objects = construct_tags(tag_array)
-      self.tags = tag_objects if array_of_tag_objects?(tag_objects)
+      if array_of_tag_objects?(tag_objects)
+        @tags_updated = !(tag_objects - self.tags).empty? || !(self.tags - tag_objects).empty?
+        self.tags = tag_objects
+      end
     end
   end
 
@@ -319,6 +324,15 @@ class Solution::FolderMeta < ActiveRecord::Base
   end
 
 	private
+
+    def platforms_tags_updated?
+      @platforms_updated == true || @tags_updated == true
+    end
+
+    def kb_service_clear_cache
+      job_id = Solution::KbserviceClearCacheWorker.perform_async(entity: 'folder')
+      Rails.logger.info "KBServiceClearCache:: folder_update, #{job_id}"
+    end
 
 		def delete_article_meta
 	  	Rails.logger.debug "Adding delete article_meta job for folder_meta_id: #{id}"

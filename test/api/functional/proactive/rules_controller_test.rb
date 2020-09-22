@@ -1,8 +1,11 @@
 require_relative '../../test_helper'
+
 module Proactive
   class RulesControllerTest < ActionController::TestCase
     include ::Proactive::ProactiveJwtAuth
     include EmailConfigsHelper
+    include GroupHelper
+
     def setup
       super
       Account.find(Account.current.id).make_current
@@ -152,7 +155,7 @@ module Proactive
                                                       status: 4,
                                                       type: 'Question',
                                                       priority: 4,
-                                                      group_id: 1
+                                                      group_id: @account.groups.last.id || create_group(@account).id
                                                     }
                                                   })
       HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_with_email_action('abandoned_cart').merge(status: 201))
@@ -172,7 +175,7 @@ module Proactive
                                                       status: 4,
                                                       type: 'Question',
                                                       priority: 4,
-                                                      group_id: 1
+                                                      group_id: @account.groups.last.id || create_group(@account).id
                                                     }
                                                   })
       HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_with_email_action('delivery_feedback').merge(status: 201))
@@ -192,7 +195,7 @@ module Proactive
                                                       status: 4,
                                                       type: 'Question',
                                                       priority: 4,
-                                                      group_id: 1
+                                                      group_id: @account.groups.last.id || create_group(@account).id
                                                     }
                                                   })
       HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_with_email_action('abandoned_cart').merge(status: 200))
@@ -212,7 +215,7 @@ module Proactive
                                                       status: 4,
                                                       type: 'Question',
                                                       priority: 4,
-                                                      group_id: 1
+                                                      group_id: @account.groups.last.id || create_group(@account).id
                                                     }
                                                   })
       HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_with_email_action('delivery_feedback').merge(status: 200))

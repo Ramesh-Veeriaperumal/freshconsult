@@ -312,7 +312,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def convert_to_free
-    self.state = FREE if card_number.blank?
+    self.state = 'free' if card_number.blank?
     self.agent_limit = subscription_plan.free_agents
     self.renewal_period = 1
     self.day_pass_amount = subscription_plan.day_pass_amount
@@ -729,6 +729,14 @@ class Subscription < ActiveRecord::Base
     new_plan = SubscriptionPlan.subscription_plans_from_cache.find { |plan| plan.id == to_plan }
     features_lost = account.features_list - PLANS[:subscription_plans][new_plan.canon_name][:features]
     features_lost
+  end
+
+  def update_subscription_on_signup(plan_name)
+    self.plan = SubscriptionPlan.current.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[plan_name])
+    self.state = TRIAL
+    convert_to_free if new_sprout?
+    save!
+    update_features
   end
 
   protected
