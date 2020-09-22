@@ -17,8 +17,6 @@ module Fdadmin::FeatureMethods
       feature_types = []
       if (Account::LAUNCHPARTY_FEATURES.keys + Account::LP_FEATURES).uniq.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
         feature_types << 'launchparty'
-        # will be removed after settings implementation
-        feature_types << 'bitmap' if BITMAP_FEATURES.include?(feature_name)
       end
       feature_types
     end
@@ -83,6 +81,8 @@ module Fdadmin::FeatureMethods
 
     def enable_launchparty_feature(feature_name)
       @account.launch(feature_name)
+      # will be removed after settings implementation
+      enable_bitmap_feature(feature_name) if settings_feature?(feature_name)
     end
 
     def disable_bitmap_feature(feature_name)
@@ -91,5 +91,11 @@ module Fdadmin::FeatureMethods
 
     def disable_launchparty_feature(feature_name)
       @account.rollback(feature_name)
+      # will be removed after settings implementation
+      disable_bitmap_feature(feature_name) if settings_feature?(feature_name)
+    end
+
+    def settings_feature?(feature_name)
+      Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(feature_name)
     end
 end
