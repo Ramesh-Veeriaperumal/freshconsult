@@ -139,7 +139,7 @@
       :reply_to_based_tickets: 135
       :reports_44: 136
       :disable_agent_forward: 137
-      :resource_rate_limit: 138
+      :unused_138: 138
       :domain_restricted_access: 139
       :sort_by_customer_response: 140
       :unresolved_tickets_widget_for_sprout: 141
@@ -457,7 +457,6 @@
   :public_ticket_url: false
   :id_less_tickets: false
   :collision_socket: false
-  :resource_rate_limit: false
   :domain_restricted_access: false
   :ecommerce: false
   :cobrowsing: false

@@ -202,13 +202,6 @@ GIT
       faraday_middleware (~> 0.10.0)
 
 GIT
-  remote: git@github.com:freshdesk/fd_rate_limiter.git
-  revision: 94ebd47857e65ed3de0c4e1fd8b81d5666aabde1
-  branch: dynamic_rules
-  specs:
-    fd_rate_limiter (0.0.1)
-
-GIT
   remote: git@github.com:freshdesk/fd_time_bandits
   revision: 5d1aadf2e504b9455b0ed7fbe26031231a4164e8
   tag: v1.3
@@ -1643,7 +1636,6 @@ DEPENDENCIES
   fakeweb (~> 1.3)
   faraday (= 0.9)
   faraday_middleware (~> 0.10.0)
-  fd_rate_limiter!
   fd_spam_detection_service!
   fluffy!
   fontcustom (= 1.3.3)

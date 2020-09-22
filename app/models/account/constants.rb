@@ -141,7 +141,7 @@ class Account < ActiveRecord::Base
     :gamification_enable => false, :personalized_email_replies => false,
     :id_less_tickets => false, :reply_to_based_tickets => true,
     :collision_socket => false,
-    :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
+    :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false,
     :marketplace => false, :archive_tickets => false, :compose_email => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,

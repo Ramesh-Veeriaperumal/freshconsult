@@ -216,7 +216,6 @@ gem 'i18nema', git: 'https://github.com/freshdesk/i18nema', require: false
 
 # Inhouse gems
 gem 'emailserv_request', git: 'git@github.com:freshdesk/emailserv_request.git', tag: 'v1.1' # email
-gem 'fd_rate_limiter', git: 'git@github.com:freshdesk/fd_rate_limiter.git', branch: 'dynamic_rules'
 gem 'fresh_request', git: 'git@github.com:freshdesk/fresh_request.git', branch: 'release'
 gem 'akismetor', git: 'git://github.com/freshdesk/akismetor.git'
 gem 'deadlock_retry', git: 'git://github.com/freshdesk/deadlock_retry.git'

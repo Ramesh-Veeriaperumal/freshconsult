@@ -1,6 +1,5 @@
 class Helpdesk::Note < ActiveRecord::Base
 
-  # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_notes'] }, :if => lambda{|obj| obj.rl_enabled? }
 
   # Any changes related to note or reply made in this file should be replicated in
   # send_and_set_helper if required
