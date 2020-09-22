@@ -68,8 +68,4 @@ class PopulateAccountSetupData < BaseWorker
 	def twitter_markable?
 		Account.current.twitter_handles.count > 0
 	end
-
-	def freshfone_number_markable?
-		Account.current.all_freshfone_numbers.count > 0
-	end
 end

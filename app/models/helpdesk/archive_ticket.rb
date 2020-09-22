@@ -41,7 +41,6 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   has_many :time_sheets_with_users, :class_name => 'Helpdesk::TimeSheet',:as => 'workable', :order => "executed_at", :include => {:user => :avatar}
   has_one :tweet, :as => :tweetable, :class_name => 'Social::Tweet', :dependent => :destroy
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy
-  has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable', :dependent => :destroy
   has_one :archive_child, :class_name => 'Helpdesk::ArchiveChild', :dependent => :destroy
   has_one :ticket, :through => :archive_child
 
@@ -628,7 +627,6 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
     def note_preload_options
       options = [:attachments, :attachments_sharable, :cloud_files, {:user => :avatar}]
-      options << :freshfone_call if Account.current.features?(:freshfone)
       options << :fb_post if facebook?
       options << :tweet if twitter?
       options

@@ -44,18 +44,6 @@
 
 			<% if current_user then %>
 			  	<div class="header-link-wrapper">
-			  		<% if current_account.freshfone_active? %>
-							<a href="#" id="freshfone-presence-toggle" class="tooltip 
-								<%= phone_disabled? %>"
-								data-placement="below"  
-								rel = "ff-hover-popover"
-								data-html="true">
-							 	<span class='freshfone-preference-tooltip tooltip' title="<%= t('freshfone.widget.unavailable') %>"
-							 	 data-placement='left'>
-							 		<i class='header-icon-freshfone <%= freshfone_presence_status_class %>'></i>
-							 	</span>
-			  			</a>
-			  		<% end %>
 			  		<% if current_user.toggle_availability? %>
 			  		<%
 			  			availabilty_tooltip = ""
@@ -73,7 +61,7 @@
 				  			<img alt="" height="35px" src="<%= spacer_image_url %>" 
                   class="header-icons-agent-roundrobin-<%= current_user.available? ? "on" : "off" %>" 
                   id="available_icon" 
-                  data-remote-url = "<%= toggle_availability_agent_path(current_user.id) %>">
+                    data-remote-url = "<%= toggle_availability_agent_path(current_user.id) %>">
 				  		</a>
 				  	<% end %>
 					<a href="#" class="nav-trigger" menuid="#LoggedOptions" id="header-profile-avatar">
@@ -141,23 +129,6 @@
 								<%= render :partial => "/notification/user_notification" %>
 						</div>
 					<% end %>
-
-			    <% unless freshfone_trial? || freshfone_trial_expired? %>
-				    <div class="ff_presence_options hide" id="FreshfonePresenceOptions">
-				    	<div class="ff_available"> 
-				    		<div class="online_availability_text hide"><%=t('freshfone.online_availability_text')%> </div>
-				    		<div class="acw_availability_text hide"><%=t('freshfone.acw_availability_text')%> </div> 
-				    	</div>
-	  					<div class="availabilityOnPhone" data-to_phone='false' id="availableOnBrowser">
-	  						<i class="ficon-ff-on-browser fsize-20 <%= 'active' unless current_user.available_on_phone? %>"></i>
-	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_browser')%></span>
-	  					</div>
-	  					<div class="availabilityOnPhone" data-to_phone='true' id="availableOnPhone">
-	  						<i class="ficon-ff-on-mobile fsize-20  <%= 'active' if current_user.available_on_phone? %>"></i>
-	  					 <span class="ff-dropdown-text ellipsis"><%=t('freshfone.via_phone')%></span>
-	  					</div>
-	  				</div>
-  				<%end%>
   			<%end%>	
 			<% end %>
 		</div>

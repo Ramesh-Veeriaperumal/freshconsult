@@ -12,7 +12,6 @@ module Helpdesk::Permission
     #uncomment canned response and remove account after moving canned response attachments to attachments table
       ['Account',                          :manage_account,          false],
       ['Portal',                           :view_admin,              false],
-      ['Freshfone::Call',                  :edit_ticket_properties,  true],  #check
       ['DataExport',                       nil,                      false],
       ['UserDraft',                        nil,                      false],
       ['Helpdesk::TicketTemplate' ,        :manage_ticket_templates, true]
@@ -52,15 +51,6 @@ module Helpdesk::Permission
 
     def can_view_post?
       owner_object.forum.visible?(::User.current)
-    end
-
-    def can_view_freshfone_call?
-      return true if ::Account.current.launched?(:relax_fone_calls) || (::User.current && ::User.current.agent?)
-      permission = false
-      if owner_object.present?
-        permission = (owner_object.notable_type == 'Helpdesk::Note') ? !owner_object.notable.private? : true
-      end
-      permission
     end
 
     def can_view_data_export?

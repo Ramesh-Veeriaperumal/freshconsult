@@ -3708,25 +3708,6 @@
       "note": ""
     },
     {
-      "warning_type": "Redirect",
-      "warning_code": 18,
-      "fingerprint": "de9655dd4cdf4d95d8e8ec58afc60dd82b18fd5d98ea55439b78257bdb6a325e",
-      "message": "Possible unprotected redirect",
-      "file": "app/controllers/freshfone/ivrs_controller.rb",
-      "line": 18,
-      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
-      "code": "redirect_to(scoper.build(params[nscname]))",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Freshfone::IvrsController",
-        "method": "create"
-      },
-      "user_input": "params[nscname]",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
       "warning_type": "Command Injection",
       "warning_code": 14,
       "fingerprint": "dee8fcea81c5fed12ccda999b8db62a7612f9a31fba9d63e1e036dee8cdeddbf",
@@ -3800,26 +3781,6 @@
         "template": "helpdesk/collab_tickets/show/_note"
       },
       "user_input": "(Unresolved Model).new.kind",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
-      "warning_type": "Mass Assignment",
-      "warning_code": 17,
-      "fingerprint": "df34213fca8c06b615e8a8ed6d4ed0020f350d0f0ba8ceb5aaaeab9073caa0ad",
-      "check_name": "MassAssignment",
-      "message": "Unprotected mass assignment",
-      "file": "app/models/freshfone/call.rb",
-      "line": 326,
-      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "self.update_attributes!(build_recording_delete_params(user_id))",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Freshfone::Call",
-        "method": "delete_recording"
-      },
-      "user_input": null,
       "confidence": "Weak",
       "note": ""
     },

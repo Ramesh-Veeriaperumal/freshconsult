@@ -78,10 +78,10 @@ class Mobile::SettingsController < ApplicationController
     render :json => response
   end
 
-# Mobile devices to fetch admin level settings
-# Deprecated - use configurations
+  # Mobile devices to fetch admin level settings
+  # Deprecated - use configurations
   def mobile_pre_loader
-    render :json => {ff_feature: current_account.freshfone_account, view_social: can_view_social? && handles_associated? , portal_name: current_account.portal_name, portal_id: current_account.id, host_name: current_account.host, user_id: current_user.id,ff_conference: current_account.features?(:freshfone_conference) }
+    render :json => {view_social: can_view_social? && handles_associated? , portal_name: current_account.portal_name, portal_id: current_account.id, host_name: current_account.host, user_id: current_user.id }
   end
 
   def deliver_activation_instructions
@@ -99,7 +99,7 @@ class Mobile::SettingsController < ApplicationController
     features_list = current_account.features_list
     account_configs = {:add_watcher => features_list.include?(:add_watcher), :sla_management => features_list.include?(:sla_management),
                        :traffic_cop => features_list.include?(:traffic_cop)}
-    render :json => { userdetail: current_user.as_config_json.merge(current_account.as_config_json), ff_nodeurl: FreshfoneConfig['node_url'], agent_collision_url: agent_collision_url, freshfone_new_notifications: true, account_configs: account_configs, iris_notification_host: iris_notification_host }
+    render :json => { userdetail: current_user.as_config_json.merge(current_account.as_config_json), agent_collision_url: agent_collision_url, account_configs: account_configs, iris_notification_host: iris_notification_host }
   end
 
   def iris_notification_host
