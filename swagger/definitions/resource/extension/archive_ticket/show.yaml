@@ -1,8 +1,6 @@
   
   type: object
   properties:
-    freshfone_call:
-      $ref: '#/definitions/freshfone_call'
     fb_post:
       allOf:
         - $ref: '#/definitions/fb_post'

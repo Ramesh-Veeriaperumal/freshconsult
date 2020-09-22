@@ -8,8 +8,6 @@ FreshopsSubdomains =  AppConfig['freshops_subdomain'].map { |k,v| v }.flatten
 
 NodeConfig = YAML.load_file(File.join(Rails.root, 'config', 'node_js.yml'))[Rails.env]
 
-FreshfoneConfig = YAML.load_file(File.join(Rails.root, 'config', 'freshfone.yml'))[Rails.env]
-
 FreshcallerConfig = YAML.load_file(Rails.root.join('config', 'freshcaller.yml'))[Rails.env]
 
 MailgunConfig = YAML.load_file(File.join(Rails.root, 'config', 'mailgun.yml'))[Rails.env]

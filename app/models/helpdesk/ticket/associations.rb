@@ -112,7 +112,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :time_sheets_with_users, :class_name => 'Helpdesk::TimeSheet', :as => 'workable',
     :order => "executed_at", :include => {:user => :avatar}
 
-  has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
   has_one :freshcaller_call, :class_name => 'Freshcaller::Call', :as => 'notable'
   
   accepts_nested_attributes_for :tweet, :fb_post

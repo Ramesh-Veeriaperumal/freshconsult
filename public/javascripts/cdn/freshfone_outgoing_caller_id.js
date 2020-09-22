@@ -1,1 +1,0 @@
-//= require freshfone/freshfone_outgoing_caller_id

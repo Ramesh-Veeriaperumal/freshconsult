@@ -59,8 +59,6 @@ allOf:
         $ref: '#/definitions/fb_post'
       tweet:
         $ref: '#/definitions/tweet_post'
-      freshfone_call:
-        $ref: '#/definitions/freshfone_call'
       survey_result:
         $ref: '#/definitions/survey_result'
       meta:

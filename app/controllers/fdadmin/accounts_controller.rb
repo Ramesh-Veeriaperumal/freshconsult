@@ -54,10 +54,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:api_limit] = account.api_limit
     account_summary[:api_v2_limit] = get_api_redis_key(params[:account_id], account_summary[:subscription][:subscription_plan_id])
     account_summary[:fluffy_api_v2_limit] = fluffy_api_v2_limit(account)
-    account_summary[:freshfone_account_details] = get_freshfone_details(account)
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
-    account_summary[:freshfone_feature] = account.features?(:freshfone) || account.features?(:freshfone_onboarding)
     account_summary[:spam_details] = ehawk_spam_details
     account_summary[:disable_emails] = account.launched?(:disable_emails)
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
@@ -101,7 +99,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:social] = fetch_social_info(account)
     feature_info[:chat] = {:enabled => account.features?(:chat), :active => (account.chat_setting.active && account.chat_setting.site_id?)}
     feature_info[:mailbox] = account.features?(:mailbox)
-    feature_info[:freshfone] = account.features?(:freshfone)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
     feature_info[:launch_party] = account.all_launched_features
@@ -1230,17 +1227,6 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           end
         end
       end
-    end
-
-    def get_freshfone_details(account)
-      return get_account_details(account
-      ) if freshfone_details_preconditions?(account)
-      {disabled: true}
-    end
-
-    def freshfone_details_preconditions?(account)
-      account.freshfone_account.present? || account.features?(:freshfone) ||
-          freshfone_activation_requested?(account)
     end
 
     def spam_blacklisted? account

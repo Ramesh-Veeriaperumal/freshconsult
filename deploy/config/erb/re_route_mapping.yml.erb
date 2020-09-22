@@ -8,8 +8,8 @@
 "^/contacts/filter.*": "/a/contacts/"
 "^/agents/.*": "/a/admin/"
 "^/support.*": "/a/"
-<% if node[:opsworks][:instance][:layers].any? && !node[:opsworks][:instance][:layers].include?("hk-app-freshfone-twilio") %>
-"^/contacts/\d+/.+": "/a/contacts/" 
+<% if node[:opsworks][:instance][:layers].any? %>
+"^/contacts/\d+/.+": "/a/contacts/"
 "^/companies/\d+/.+": "/a/companies/"
 "^/groups/\d+/.+": "/a/admin/"
 <%end%>

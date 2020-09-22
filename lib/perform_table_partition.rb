@@ -5,7 +5,7 @@ module PerformTablePartition
                       'survey_handles', 'survey_results', 'survey_result_data', 'helpdesk_schema_less_tickets',
                       'helpdesk_schema_less_notes', 'support_scores', 'helpdesk_dropboxes',
                       'helpdesk_external_notes', 'helpdesk_ticket_bodies', 'helpdesk_note_bodies', 'user_emails',
-                      'freshfone_calls', 'archive_tickets', 'archive_notes', 'archive_ticket_associations',
+                      'archive_tickets', 'archive_notes', 'archive_ticket_associations',
                       'archive_note_associations', 'archive_childs', 'contact_notes', 'contact_note_bodies',
                       'company_notes', 'company_note_bodies', 'denormalized_flexifields', 'ticket_field_data'].freeze
   PARTITION_SIZE = 128

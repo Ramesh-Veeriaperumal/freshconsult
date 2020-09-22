@@ -1,4 +1,0 @@
-show_ajax_flash page
-page << "jQuery('.ivr-disabled-message').hide();"
-page << "jQuery('.ivr-enabled-message').show();"
-page << "jQuery('.freshfone_welcome_message_alert').show();"

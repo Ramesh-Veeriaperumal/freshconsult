@@ -202,8 +202,6 @@ properties:
             properties:
               livechat_deprecation:
                 type: boolean
-              freshfone_deprecation:
-                type: boolean
               downgrade_policy_reminder:
                 type: boolean
               next_renewal_date:
