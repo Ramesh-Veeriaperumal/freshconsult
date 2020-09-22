@@ -491,7 +491,7 @@
         "api_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:HwQ3Mzz+sgotKkh8AOL4M2odnxpb+h9j:XGhHeZXVndlYKnmaoL0b6juBTfptJp8gHh3hfzMWgfjd4RbQLhJQ4xCvnBIxZ7RO]"
       },
       "iris": {
-        "shared_secret": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:oZQ54DcOOxboXNE0HWdbKaDTQb6Rxr4B:OPAPQUqnYZ0a5qEchb9aqJAxVDLJaubO7A==]",
+        "shared_secret": "EJ[1:hEApOUDLyIKJFqqQU39NYlIVq5CQLQYqz1IitMpRFQM=:HMreD0OD576aaWPygm0DtoomDwWXvMAe:M4cplCn+9FsinOpyKWj/+op6Fg/K+uMIdmfXh1LPo/rzG3C+niY8HAO2Tk+tRUCtCIiLwR2COyMER3TZ4PTtvkvQMxa6TwRwwRuHTenEnVA=]",
         "service_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:3Qo5wN/2f8+5rrYGl6yVY4oDLP2mMUeJ:5NF0yr0WyPqeASrohjCuVvc4VrsX3Kw8u8gyp6kosQbP+N5AieNWrmUHsbSa7HuW0z0XzrdEGY1x93/G]",
         "_service_name": "freshdesk",
         "_socketiourl": "https://dzvv3qu02a8s8.cloudfront.net/socket.io-1.0.js",
