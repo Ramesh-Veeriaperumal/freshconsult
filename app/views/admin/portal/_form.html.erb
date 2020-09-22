@@ -177,14 +177,12 @@
     jQuery('#solution_categories').add_clear(opts);
   });
 
-  <% if current_account.falcon_ui_enabled?(current_user) %>
-    jQuery(document).ready(function(){
-      var faviconElement = parent.document.querySelector("link[rel='shortcut icon']")
-      var currentFavicon = faviconElement.href;
-      var portalFavicon = "<%= current_portal.fetch_fav_icon_url %>";
-      if(currentFavicon !== portalFavicon) {
-        faviconElement.href = portalFavicon;
-      }
-    });
-  <% end %>
+  jQuery(document).ready(function(){
+    var faviconElement = parent.document.querySelector("link[rel='shortcut icon']")
+    var currentFavicon = faviconElement.href;
+    var portalFavicon = "<%= current_portal.fetch_fav_icon_url %>";
+    if(currentFavicon !== portalFavicon) {
+      faviconElement.href = portalFavicon;
+    }
+  });
 <% end %>

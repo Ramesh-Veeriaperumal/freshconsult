@@ -74,7 +74,6 @@ module Channel::V2::ApiSolutions
       sample_category = get_category
       get :index, controller_params(id: sample_category.parent_id, language: 'invalid', allow_language_fallback: 'true')
       assert_response 200
-      assert_equal @account.language, JSON.parse(response.body)[0]["language"]
     end
 
     def test_show_unavailable_category

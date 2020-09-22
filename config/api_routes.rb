@@ -375,6 +375,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :admin do
+      resources :groups, only: [:index, :show, :destroy] do
+        member do
+          match 'agents' => 'groups/agents#index', via: :get
+          match 'agents' => 'groups/agents#update', via: :patch
+        end
+      end
+    end
+
     resources :help_widgets do
       resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules', only: [:create, :update, :destroy, :index]
     end
@@ -1003,6 +1012,7 @@ Helpkit::Application.routes.draw do
       end
       collection do
         get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
+        post :sync
       end
     end
     resources :conversations, controller: 'channel/v2/conversations', only: [:update]
@@ -1012,17 +1022,29 @@ Helpkit::Application.routes.draw do
         get :verify_agent_privilege
       end
     end
+    match '/notes/sync', to: 'channel/v2/conversations#sync', via: [:post]
     post '/canned_responses', to: 'channel/v2/canned_responses#create'
     post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
     match '/account/update_freshchat_domain', to: 'channel/v2/accounts#update_freshchat_domain', via: [:post]
     match '/authenticate', to: 'channel/v2/iam/authentication#authenticate', via: [:get, :post, :put, :delete]
+    resources :groups, controller: 'channel/v2/groups' do
+      collection do
+        post 'sync', to: 'channel/v2/groups#sync'
+      end
+    end
     post '/iam/token', to: 'channel/v2/iam/authentication#iam_authenticate_token'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index, :update]
     resources :fbms, controller: 'channel/v2/fbms' do
       collection do
         post :update_post_id
+      end
+    end
+    resources :central_resync, controller: 'channel/v2/central_resync', only: [:show]
+    resources :ticket_fields, controller: 'channel/v2/ticket_fields' do
+      collection do
+        post 'sync', to: 'channel/v2/ticket_fields#sync'
       end
     end
 

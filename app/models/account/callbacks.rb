@@ -378,7 +378,7 @@ class Account < ActiveRecord::Base
       @launch_party_features ||= []
       changes.each do |key, features|
         features.each do |feature|
-          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key)
+          @launch_party_features << { "#{key}": [feature] } if (FeatureClassMapping.get_feature_class(feature.to_s) || FeatureClassMapping.get_central_launchparty_class(feature.to_s)) && [:launch, :rollback].include?(key) && (lp_central_publish_on_signup?(feature) || FeatureClassMapping.get_feature_class(feature.to_s))
         end
       end
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
@@ -387,12 +387,17 @@ class Account < ActiveRecord::Base
       trigger_launchparty_feature_callbacks unless self.id_changed?
     end
 
+    def lp_central_publish_on_signup?(feature_name)
+      return true unless signup_in_progress?
+      CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES.fetch(feature_name, true)
+    end
+
     # define your callback method in this format ->
     # eg:  on launch  feature_name => falcon, method_name => def falcon_on_launch ; end
     #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
     def trigger_launchparty_feature_callbacks
       return if @launch_party_features.blank?
-      args = { :features => @launch_party_features, :account_id => self.id }
+      args = { features: @launch_party_features, account_id: self.id, signup_in_progress: signup_in_progress? }
       LaunchPartyActionWorker.perform_async(args)
       @launch_party_features = nil
     end
@@ -476,6 +481,13 @@ class Account < ActiveRecord::Base
 
         plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
+
+          # Adding the settings that are under the feature
+          next unless self.launched?(:feature_based_settings)
+          
+          (AccountSettings::FeatureToSettingsMapping[key] || []).each do |setting|
+            bitmap_value = self.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
+          end
         end
         self.selectable_features_list.each do |feature_name, enable_on_signup|
           bitmap_value = enable_on_signup ? self.set_feature(feature_name) : bitmap_value

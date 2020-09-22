@@ -6,6 +6,7 @@ module Dashboard::Custom::WidgetConfigValidationMethods
   ALL_PRODUCTS = 0
   PRODUCT_NONE = -1
   ALL_TYPES = 0
+  ALL_QUEUES = 0
 
   #  :default_requester and :default_company removed considering the huge count
   VALID_GROUP_BY_FIELDS = [:default_source, :default_internal_group, :default_internal_agent,

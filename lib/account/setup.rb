@@ -79,7 +79,7 @@ module Account::Setup
   end
 
   def forums_eligible?
-    self.falcon_ui_enabled?(User.current) && self.features_included?(:forums)
+    self.features_included?(:forums)
   end
 
   # TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
@@ -95,7 +95,7 @@ module Account::Setup
 
 	FALCON_SETUP_KEYS.each do |setup_key|
 		define_method "#{setup_key}_eligible?" do
-			self.falcon_ui_enabled?(User.current)
+			true
 		end
 	end
 

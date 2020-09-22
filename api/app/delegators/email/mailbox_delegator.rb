@@ -2,10 +2,8 @@ class Email::MailboxDelegator < BaseDelegator
   include MailboxValidator
   include Email::Mailbox::Constants
 
-  MAILBOX_ATTRIBUTES = %w[server_name port use_ssl delete_from_server authentication user_name password].freeze
-
-  validate :imap_mailbox, if: -> { @record.imap_mailbox.present? && @record.imap_mailbox.changed? && !incoming_oauth? }
-  validate :smtp_mailbox, if: -> { @record.smtp_mailbox.present? && @record.smtp_mailbox.changed? && !outgoing_oauth? }
+  validate :imap_mailbox, if: -> { @record.imap_mailbox.present? && @record.imap_mailbox.changed? }
+  validate :smtp_mailbox, if: -> { @record.smtp_mailbox.present? && @record.smtp_mailbox.changed? }
   validate :group_presence, if: -> { group_id && attr_changed?('group_id') }
   validate :product_presence, if: -> { product_id && attr_changed?('product_id') }
   validate :changes_to_default_primary_role, unless: -> { primary_role && attr_changed?('primary_role') }
@@ -18,14 +16,12 @@ class Email::MailboxDelegator < BaseDelegator
   end
 
   def imap_mailbox
-    verified_result = verify_imap_mailbox(
-      @record.imap_mailbox.attributes.slice(*MAILBOX_ATTRIBUTES).with_indifferent_access)
+    verified_result = verify_imap_mailbox(@record.imap_mailbox)
     errors[:incoming] = verified_result[:msg] unless verified_result[:success]
   end
 
   def smtp_mailbox
-    verified_result = verify_smtp_mailbox(
-      @record.smtp_mailbox.attributes.slice(*MAILBOX_ATTRIBUTES).with_indifferent_access)
+    verified_result = verify_smtp_mailbox(@record.smtp_mailbox)
     unless verified_result[:success]
       errors[:outgoing] = verified_result[:msg]
       error_options[:outgoing] = verified_result[:options] if verified_result[:options].present?

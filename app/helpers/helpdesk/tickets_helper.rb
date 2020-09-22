@@ -362,7 +362,7 @@ module Helpdesk::TicketsHelper
     current_page = options[:current_page]
     per_page = params[:per_page]
     no_of_pages = options[:total_pages]
-    no_count_query = no_of_pages.nil? #no_of_pages can be nil, when no_list_view_count_query feature is enabled
+    no_count_query = no_of_pages.nil?
     if no_count_query
       last_page = tickets_in_current_page==30 ? current_page+1 : current_page
     else

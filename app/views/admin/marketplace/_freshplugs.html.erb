@@ -29,8 +29,7 @@
                           accApiPollRetryLimit: "<%= MarketplaceConfig::ACCOUNT_API_POLL_RETRY_LIMIT %>"
                         }
 
-  var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
-                              : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
+  var platformVersion = '<%= Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]%>'
   var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName, platformVersion);
 
   tf_lang = {

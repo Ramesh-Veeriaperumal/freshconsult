@@ -463,11 +463,32 @@ class Ember::GroupsControllerTest < ActionController::TestCase
                                    allow_agents_to_change_availability: true,
                                    assignment_type: 1)
     assert_response 201
-    pattern = private_group_pattern(Group.last).merge(allow_agents_to_change_availability: true)
-    match_json(pattern)
+    match_json(private_group_pattern_with_normal_round_robin(Group.last))
   ensure
     @account.rollback :agent_statuses
     @account.revoke_feature :round_robin
+  end
+
+  def test_group_with_agent_availability_with_agent_statuses_with_sbrr
+    @account.launch :agent_statuses
+    @account.add_feature :round_robin
+    @account.add_feature :skill_based_round_robin
+    post :create, construct_params(version: 'private', name: Faker::Lorem.characters(10),
+                                   description: Faker::Lorem.paragraph,
+                                   business_hour_id: 1,
+                                   escalate_to: 1,
+                                   agent_ids: [1],
+                                   unassigned_for: '30m',
+                                   allow_agents_to_change_availability: true,
+                                   assignment_type: 1,
+                                   round_robin_type: 3,
+                                   capping_limit: 5)
+    assert_response 201
+    match_json(private_group_pattern_with_sbrr(Group.last))
+  ensure
+    @account.rollback :agent_statuses
+    @account.revoke_feature :round_robin
+    @account.revoke_feature :skill_based_round_robin
   end
 
   def test_group_with_agent_availability_with_agent_statuses_without_round_robin

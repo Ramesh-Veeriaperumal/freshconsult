@@ -613,7 +613,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/social/twitter_handle"
     resource :"solution/article", :only => [:change_author]
     resource :"helpdesk/ticket", :only => [:update_all_tickets]
-    resource :"helpdesk/select_all_ticket_action"
     resource :"helpdesk/dashboard",:only => [:agent_status,:load_ffone_agents_by_group ]
     resource :"integrations/xero", :only => [:authorize, :authdone, :update_params]
     resource :"integrations/github", :only => [:new, :install, :edit, :update, :oauth_install]

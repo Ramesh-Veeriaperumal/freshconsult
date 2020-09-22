@@ -110,3 +110,5 @@ OmniChannelDashboardConfig = YAML.load_file(Rails.root.join('config', 'omni_chan
 OmniChannelBundleConfig = YAML.load_file(Rails.root.join('config', 'omni_channel_bundle.yml'))[Rails.env]
 
 TracingConfig = YAML.load_file(Rails.root.join('config', 'tracing.yml'))[Rails.env]
+
+KbServiceConfig = YAML.load_file(Rails.root.join('config', 'kbservice.yml'))[Rails.env]

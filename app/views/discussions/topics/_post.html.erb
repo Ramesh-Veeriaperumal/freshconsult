@@ -7,7 +7,7 @@ spam_post_id = "spam_post_#{post.id}"
 unpublished =  !original && !post.published
 
 %>
-<div class="conversation <%= "spam #{spam_post_id}" if unpublished %> <%= 'agent' if !original && post.user.agent? %> <%= 'reload-page' if current_account.falcon_ui_enabled?(current_user)%>" id="<%= dom_id(post) %>">
+<div class="conversation <%= "spam #{spam_post_id}" if unpublished %> <%= 'agent' if !original && post.user.agent? %> <%= 'reload-page'%>" id="<%= dom_id(post) %>">
 	<% if unpublished  %>
 	<div class="spam_info">
 		<p><%= t("topic.spam_info.#{post.spam? ? 'spam' : 'waiting'}") %>

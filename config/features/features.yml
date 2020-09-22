@@ -62,7 +62,7 @@
       :mailbox: 57
       :whitelisted_ips: 58
       :branding: 59
-      :toggle_branding: 60
+      :unused_60: 60
       :unused_61: 61
       :basic_dkim: 62
       :advanced_dkim: 63
@@ -129,7 +129,7 @@
       :unused_125: 125
       :unused_126: 126
       :id_less_tickets: 127
-      :no_list_view_count_query: 128
+      :unused_128: 128
       :saml_unspecified_nameid: 129
       :euc_hide_agent_metrics: 130
       :open_solutions: 131
@@ -148,9 +148,9 @@
       :field_service_management_toggle: 144
       :parent_child_infra: 145
       :enable_multilingual: 146
-      :countv2_writes: 147
+      :unused_147: 147
       :marketplace: 148
-      :fa_developer: 149
+      :unused_149: 149
       :es_multilang_solutions: 150
       :compose_email: 151
       :wild_cards_10: 152
@@ -162,7 +162,7 @@
       :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
-      :countv2_reads: 161
+      :unused_161: 161
       :reverse_notes: 162
       :opt_out_analytics: 163
       :disable_old_ui: 164
@@ -220,7 +220,7 @@
       :unused_216: 216
       :seafarers_1: 217
       :unused_218: 218
-      :portal_cc: 219
+      :unused_219: 219
       :disable_rr_toggle: 220
       :unused_221: 221
       :XX_unused_222: 222
@@ -268,7 +268,7 @@
       :analytics_survey_results: 264
       :analytics_articles: 265
       :analytics_knowledge_base: 266
-      :reports_45: 267
+      :analytics_knowledge_base_report: 267
       :reports_46: 268
       :reports_47: 269
       :reports_48: 270
@@ -314,14 +314,14 @@
       :reports_88: 310
       :reports_89: 311
       :reports_90: 312
-      :reports_91: 313
-      :reports_92: 314
-      :reports_93: 315
-      :reports_94: 316
-      :reports_95: 317
-      :reports_96: 318
-      :reports_97: 319
-      :reports_98: 320
+      :untitled_feature_3_dependency_toggle: 313
+      :basic_settings_feature: 314
+      :untitled_feature_1_dependency_toggle: 315
+      :untitled_feature_2_dependency_toggle: 316
+      :untitled_setting_1: 317
+      :untitled_setting_2: 318
+      :untitled_setting_3: 319
+      :untitled_setting_4: 320
       :field_service_geolocation: 321
       :reports_99: 322
       :freshreports_analytics: 323
@@ -332,7 +332,7 @@
       :business_hours: 328
       :scenario_automations: 329
       :social_revamp: 330
-      :spam_dynamo: 331
+      :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
       :article_versioning: 334
@@ -406,6 +406,13 @@
       :solutions_agent_portal: 402
       :fetch_ticket_from_ref_first: 403
       :skip_ticket_threading: 404
+      :helpdesk_tickets_by_product: 405
+      :skip_invoice_due_warning: 406
+      :allow_wildcard_ticket_create: 407
+      :supervisor_contact_field: 408
+      :bypass_signup_captcha: 409
+      :disable_freshchat: 410
+      :whatsapp_channel: 411
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -430,13 +437,10 @@
   :disable_agent_forward: false
   :compose_email: false
   :enable_multilingual: false
-  :countv2_writes: false
-  :countv2_reads: false
   :archive_tickets: false
   :call_quality_metrics: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
-  :undo_send: false
   :anonymous_tickets: true
   :open_solutions: true
   :auto_suggest_solutions: true
@@ -452,7 +456,6 @@
   :forum_captcha_disable: false
   :public_ticket_url: false
   :id_less_tickets: false
-  :no_list_view_count_query: false
   :collision_socket: false
   :resource_rate_limit: false
   :domain_restricted_access: false
@@ -467,7 +470,6 @@
   :disable_old_reports: false
   :report_field_regenerate: false
   :saml_old_issuer: false
-  :spam_dynamo: true
   :es_multilang_solutions: false
   :sort_by_customer_response: false
   :saml_unspecified_nameid: false
@@ -475,7 +477,6 @@
   :single_session_per_user: false
   :proactive_spam_detection: true
   :bi_reports: false
-  :portal_cc: false
   :disable_rr_toggle: false
   :social_revamp: true
   :activity_revamp: true
@@ -496,3 +497,10 @@
   :solutions_agent_portal: false
   :fetch_ticket_from_ref_first: false
   :skip_ticket_threading: false
+  :helpdesk_tickets_by_product: false
+  :whatsapp_channel: false
+  :skip_invoice_due_warning: false
+  :allow_wildcard_ticket_create: false
+  :supervisor_contact_field: false
+  :bypass_signup_captcha: false
+  :disable_freshchat: false

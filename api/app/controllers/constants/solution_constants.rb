@@ -46,6 +46,10 @@ module SolutionConstants
 
   EXPORT_FIELDS = (%w[portal_id language article_fields] | FILTER_AND_EXPORT_ATTRIBUTES).freeze
 
+  PUBLISHABLE_FOLDER_META_PROPERTIES = %w[visibility article_order solution_category_meta_id].freeze
+  PUBLISHABLE_FOLDER_PROPERTIES = %w[name description].freeze
+  BULK_UPDATE_PUBLISHABLE_ARTICLE_PROPERTIES = %w[folder_id agent_id tags status].freeze
+
   IGNORE_PARAMS = %w[folder_id attachments_list cloud_file_attachments unlock].freeze
 
   ARTICLE_ATTRIBUTES_TO_BE_STRIPPED = %w[title category_name folder_name].freeze
@@ -72,7 +76,7 @@ module SolutionConstants
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content, :filter, :untranslated_articles, :suggested, :folder_filter].freeze
 
   INDEX_FIELDS = %w[language prefer_published].freeze
-  CATEGORY_FOLDERS_FIELDS = %w[language prefer_published allow_language_fallback].freeze
+  CATEGORY_FOLDERS_FIELDS = (%w[allow_language_fallback] | INDEX_FIELDS | ApiConstants::DEFAULT_INDEX_FIELDS).freeze
 
   SHOW_FIELDS = %w[language prefer_published status allow_language_fallback].freeze
 

@@ -301,7 +301,6 @@ module Helpdesk::TicketActions
         @ticket_count = filtered_collab_tickets.count
       end
     else
-      unless current_account.features_included?(:no_list_view_count_query)
         total_entries = params[:total_entries]
         if(total_entries.blank? || total_entries.to_i == 0)
           load_cached_ticket_filters
@@ -324,10 +323,6 @@ module Helpdesk::TicketActions
           end
         end
         @ticket_count = total_entries.to_i
-      else
-        load_cached_ticket_filters
-        render 'no_paginate' 
-      end
     end
   end
 

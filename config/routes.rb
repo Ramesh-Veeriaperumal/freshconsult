@@ -1839,16 +1839,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :select_all_ticket_actions do
-      collection do
-        get :select_all_message_content
-        put :close_multiple
-        put :spam
-        put :delete
-        put :update_multiple
-      end
-    end
-
     resources :merge_tickets do
       collection do
         post :complete_merge
@@ -2668,7 +2658,6 @@ Helpkit::Application.routes.draw do
           get :check_contact_import
           put :reset_login_count
           post :contact_import_destroy
-          post :select_all_feature
           post :sha256_enabled_feature
           post :sha1_enabled_feature
           post :api_jwt_auth_feature

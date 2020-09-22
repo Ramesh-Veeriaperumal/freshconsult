@@ -55,5 +55,9 @@ module OmniChannelRouting
       Rails.logger.debug "X-OCR-UUID :: #{request.headers['X-OCR-UUID']}"
     end
 
+    def touchstone_request?
+      @touchstone_request ||= request.headers['X-Touchstone'].presence == TOUCHSTONE_SECRET
+    end
+
   end
 end
