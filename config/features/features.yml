@@ -412,6 +412,7 @@
       :supervisor_contact_field: 408
       :bypass_signup_captcha: 409
       :disable_freshchat: 410
+      :whatsapp_channel: 411
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -510,6 +511,7 @@
   :fetch_ticket_from_ref_first: false
   :skip_ticket_threading: false
   :helpdesk_tickets_by_product: false
+  :whatsapp_channel: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
