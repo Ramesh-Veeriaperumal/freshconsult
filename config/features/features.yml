@@ -411,6 +411,7 @@
       :allow_wildcard_ticket_create: 407
       :supervisor_contact_field: 408
       :bypass_signup_captcha: 409
+      :disable_freshchat: 410
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -513,3 +514,4 @@
   :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
+  :disable_freshchat: false
