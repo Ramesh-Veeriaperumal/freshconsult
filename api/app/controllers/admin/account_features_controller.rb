@@ -17,8 +17,8 @@ class Admin::AccountFeaturesController < ApiApplicationController
       end
     else
       modify_feature :enable
+      head 204
     end
-    head 204
   end
 
   def destroy
