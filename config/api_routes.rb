@@ -385,7 +385,7 @@ Helpkit::Application.routes.draw do
     end
 
     namespace :admin do
-      resources :groups, only: [:index, :show, :destroy] do
+      resources :groups, only: [:index, :show, :destroy, :create, :update] do
         member do
           match 'agents' => 'groups/agents#index', via: :get
           match 'agents' => 'groups/agents#update', via: :patch
