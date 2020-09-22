@@ -64,7 +64,12 @@ class ConfigDecorator < ApiDecorator
       email_config[:custom_mailbox_error] = false
     end
     email_config[:rate_limited] = redis_key_exists?(format(EMAIL_RATE_LIMIT_BREACHED, account_id: Account.current.id))
-    email_config[:mailbox_oauth_reauth_required] = mailbox_oauth_reauthorization_required?
+    mailbox_reauthorization_required = mailbox_reauthorization_required? ? true : false
+    if Account.current.launched?(:mailbox_ms365_oauth)
+      email_config[:mailbox_reauth_required] = mailbox_reauthorization_required
+    elsif mailbox_reauthorization_required
+      email_config[:custom_mailbox_error] = true
+    end
     email_config
   end
 
