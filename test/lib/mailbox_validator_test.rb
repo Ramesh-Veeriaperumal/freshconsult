@@ -252,6 +252,7 @@ class MailboxValidatorTest < ActionView::TestCase
   ensure
     Net::SMTP.any_instance.unstub(:enable_starttls)
     Net::SMTP.any_instance.unstub(:start)
+    mailbox.destroy
   end
 
   def test_verify_smtp_mailbox_with_ssl_port
@@ -261,13 +262,14 @@ class MailboxValidatorTest < ActionView::TestCase
         smtp_port: 465
       }
     )
-    Net::SMTP.any_instance.stubs(:enable_starttls).returns(true)
+    Net::SMTP.any_instance.stubs(:enable_ssl).returns(true)
     Net::SMTP.any_instance.stubs(:start).returns(true)
     verified_result = verify_smtp_mailbox(mailbox.smtp_mailbox)
     assert_equal verified_result[:success], true
   ensure
     Net::SMTP.any_instance.unstub(:enable_ssl)
     Net::SMTP.any_instance.unstub(:start)
+    mailbox.destroy
   end
 
   def test_verify_imap_mailbox
@@ -283,6 +285,7 @@ class MailboxValidatorTest < ActionView::TestCase
   ensure
     Net::IMAP.any_instance.unstub(:login)
     Net::IMAP.any_instance.unstub(:logout)
+    mailbox.destroy
   end
 
   def test_verify_imap_mailbox_with_login_authentication_type
@@ -298,6 +301,7 @@ class MailboxValidatorTest < ActionView::TestCase
   ensure
     Net::IMAP.any_instance.unstub(:authenticate)
     Net::IMAP.any_instance.unstub(:logout)
+    mailbox.destroy
   end
 
   def test_verify_imap_mailbox_on_idle_not_supported_error
@@ -313,6 +317,7 @@ class MailboxValidatorTest < ActionView::TestCase
   ensure
     Net::IMAP.any_instance.unstub(:login)
     Net::IMAP.any_instance.unstub(:capability)
+    mailbox.destroy
   end
 
   def test_verify_imap_mailbox_on_imap_socket_error
@@ -326,6 +331,7 @@ class MailboxValidatorTest < ActionView::TestCase
     assert_equal verified_result[:success], false
   ensure
     Net::IMAP.any_instance.unstub(:login)
+    mailbox.destroy
   end
 
   def test_verify_imap_mailbox_on_imap_exceptions
@@ -339,6 +345,7 @@ class MailboxValidatorTest < ActionView::TestCase
     assert_equal verified_result[:success], false
   ensure
     Net::IMAP.any_instance.unstub(:login)
+    mailbox.destroy
   end
 
   def test_verify_smtp_mailbox_with_timeout_error
@@ -354,6 +361,7 @@ class MailboxValidatorTest < ActionView::TestCase
   ensure
     Net::SMTP.any_instance.unstub(:enable_starttls)
     Net::SMTP.any_instance.unstub(:start)
+    mailbox.destroy
   end
 
   def test_verify_smtp_mailbox_on_smtp_socket_error
@@ -369,6 +377,7 @@ class MailboxValidatorTest < ActionView::TestCase
   ensure
     Net::SMTP.any_instance.unstub(:enable_starttls)
     Net::SMTP.any_instance.unstub(:start)
+    mailbox.destroy
   end
 
   def test_verify_smtp_mailbox_on_smtp_authentication_error
@@ -384,6 +393,7 @@ class MailboxValidatorTest < ActionView::TestCase
   ensure
     Net::SMTP.any_instance.unstub(:enable_starttls)
     Net::SMTP.any_instance.unstub(:start)
+    mailbox.destroy
   end
 
   def test_verify_smtp_mailbox_on_smtp_exception
@@ -399,6 +409,7 @@ class MailboxValidatorTest < ActionView::TestCase
   ensure
     Net::SMTP.any_instance.unstub(:enable_starttls)
     Net::SMTP.any_instance.unstub(:start)
+    mailbox.destroy
   end
 
   def test_verify_smtp_mailbox_for_xoauth2_mailbox
@@ -429,6 +440,8 @@ class MailboxValidatorTest < ActionView::TestCase
     Net::SMTP.any_instance.unstub(:enable_starttls)
     Net::SMTP.any_instance.unstub(:start)
     MailboxValidatorTest.any_instance.unstub(:access_token_expired?)
+    MailboxValidatorTest.any_instance.unstub(:get_oauth2_access_token)
+    mailbox.destroy
   end
 
   def test_verify_smtp_mailbox_for_xoauth2_mailbox_with_error
@@ -457,6 +470,7 @@ class MailboxValidatorTest < ActionView::TestCase
     Net::SMTP.any_instance.unstub(:start)
     MailboxValidatorTest.any_instance.unstub(:access_token_expired?)
     MailboxValidatorTest.any_instance.unstub(:get_oauth2_access_token)
+    mailbox.destroy
   end
 
   def test_verify_imap_mailbox_for_xoauth2_mailbox
@@ -487,6 +501,8 @@ class MailboxValidatorTest < ActionView::TestCase
     Net::IMAP.any_instance.unstub(:authenticate)
     Net::IMAP.any_instance.unstub(:logout)
     MailboxValidatorTest.any_instance.unstub(:access_token_expired?)
+    MailboxValidatorTest.any_instance.unstub(:get_oauth2_access_token)
+    mailbox.destroy
   end
 
   def test_verify_imap_mailbox_for_xoauth2_mailbox_with_error
@@ -515,5 +531,6 @@ class MailboxValidatorTest < ActionView::TestCase
     Net::IMAP.any_instance.unstub(:logout)
     MailboxValidatorTest.any_instance.unstub(:access_token_expired?)
     MailboxValidatorTest.any_instance.unstub(:get_oauth2_access_token)
+    mailbox.destroy
   end
 end
