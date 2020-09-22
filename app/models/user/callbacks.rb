@@ -12,7 +12,7 @@ class User < ActiveRecord::Base
   before_create :update_agent_default_preferences, if: :agent?
 
   before_update :populate_privileges, :if => :roles_changed?
-  before_update :destroy_user_roles, :delete_freshfone_user, :delete_user_authorizations, :if => :deleted?
+  before_update :destroy_user_roles, :delete_user_authorizations, :if => :deleted?
 
   before_update :backup_user_changes, :clear_redis_for_agent
 
@@ -305,10 +305,6 @@ class User < ActiveRecord::Base
     Rails.logger.debug "Exception while decoding contact name : #{self.name}, 
                         Account ID : #{self.account_id},
                         Error : #{e.message} #{e.backtrace}".squish
-  end
-
-  def delete_freshfone_user
-    freshfone_user.destroy if freshfone_user
   end
   
   def delete_forum_moderator

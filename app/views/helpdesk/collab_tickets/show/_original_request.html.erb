@@ -75,8 +75,6 @@
       <%= @ticket.description_html.html_safe %>
   </div>
 
-  <%= freshfone_audio_dom  if current_account.features?(:freshfone) %>
-
   <% if current_account.features?(:forums) and @ticket.ticket_topic.present? %>
     <div class="info-highlight">
       <%= t("helpdesk.tickets.show.linked_ticket") %>

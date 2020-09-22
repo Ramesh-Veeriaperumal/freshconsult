@@ -193,7 +193,7 @@ properties:
                 type: string
               rate_limited:
                 type: boolean
-              mailbox_oauth_reauth_required:
+              mailbox_reauth_required:
                 type: boolean
           zendesk_app_id:
             type: integer
@@ -201,8 +201,6 @@ properties:
             type: object
             properties:
               livechat_deprecation:
-                type: boolean
-              freshfone_deprecation:
                 type: boolean
               downgrade_policy_reminder:
                 type: boolean

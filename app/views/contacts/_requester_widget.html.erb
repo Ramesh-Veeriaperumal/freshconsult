@@ -1,7 +1,6 @@
 <% user ||= @user %>
 <% show_recent_tickets ||= :filter %>
 <% link_target = local_assigns.has_key?(:new_tab) ? "_blank" : "_self"  %>
-<% strange_number = strange_number?(user.available_number) if user.available_number.present? %>
 <% requester_field_count = get_user_default_fields_count(user, company) + get_user_custom_fields_count(user,company) %>
 <div class="contact_hover requester_widget clearfix" id="requester_contact_info">
   <%= user_avatar(user, :thumb, 'preview_pic small') %>

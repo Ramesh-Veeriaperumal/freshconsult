@@ -18,7 +18,6 @@ module ConfigTestHelper
   def warn_list_pattern
     warn_items = {}
     warn_items[:livechat_deprecation] = livechat_deprecation?
-    warn_items[:freshfone_deprecation] = freshfone_deprecation?
     if admin?
       warn_items.merge!(card_expired?)
     end  
@@ -57,7 +56,12 @@ module ConfigTestHelper
       email_config[:custom_mailbox_error] = false
     end
     email_config[:rate_limited] = redis_key_exists?(format(EMAIL_RATE_LIMIT_BREACHED, account_id: Account.current.id))
-    email_config[:mailbox_oauth_reauth_required] = mailbox_oauth_reauthorization_required?
+    mailbox_reauthorization_required = mailbox_reauthorization_required? ? true : false
+    if Account.current.launched?(:mailbox_ms365_oauth)
+      email_config[:mailbox_reauth_required] = mailbox_reauthorization_required
+    elsif mailbox_reauthorization_required
+      email_config[:custom_mailbox_error] = true
+    end
     email_config
   end
 

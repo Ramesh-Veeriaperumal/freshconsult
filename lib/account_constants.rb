@@ -103,7 +103,7 @@ module AccountConstants
   ANONYMOUS_EMAIL = 'freshdeskdemo'.freeze
   ANONYMOUS_ACCOUNT_NAME = 'Example'.freeze
 
-  WIDGET_COUNT_FOR_PLAN = { sprout: 1, non_sprout: 5 }.freeze
+  WIDGET_COUNT_FOR_PLAN = { sprout: 1, non_sprout: 10 }.freeze
   FRESHSALES_SUBSCRIPTION_URL = 'https://%{domain}/subscription'.freeze
   DEFAULT_SKILL_LIMIT = 180
   MULTI_PRODUCT_LIMIT = 5

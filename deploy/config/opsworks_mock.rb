@@ -243,13 +243,6 @@ class OpsWorks
     layers.any? {|layer| layer.include?(@node[:falcon][:shoryuken][:layer])}
   end
 
-  # Checks for exact name
-  def resque_layer?()
-    layers = Array::new()
-    layers = @node[:opsworks][:instance][:layers]
-    layers.any? {|layer| layer.include?(@node[:falcon][:resque][:prefix])}
-  end
-
   def utility_layer?()
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]

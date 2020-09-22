@@ -211,8 +211,43 @@ class CloudElementsServiceTest < ActionView::TestCase
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.unstub
   end
 
+  def test_receive_update_custom_object_with_504_from_cloud_elements
+    app = Integrations::InstalledApplication.new
+    success_response = OpenStruct.new('status' => 200)
+    valid_failure_response = OpenStruct.new('status' => 504)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:http_get).returns(valid_failure_response, valid_failure_response).then.returns(success_response)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:find).returns([{ Id: '1' }.stringify_keys!])
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
+    custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_update_custom_object
+    assert_equal nil, custom_obj
+  ensure
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.unstub
+  end
+
   def test_receive_update_custom_object_with_500_from_cloud_elements
     valid_failure_response = OpenStruct.new('status' => 503)
+    failure_response = OpenStruct.new('status' => 500)
+    VaRule.any_instance.stubs(:save).returns(true)
+    Integrations::InstalledApplication.any_instance.stubs(:save).returns(true)
+    Integrations::InstalledApplication.any_instance.stubs(:save!).returns(true)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:http_get).returns(valid_failure_response, valid_failure_response).then.returns(failure_response)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:find).returns([{ Id: '1' }.stringify_keys!])
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
+    IntegrationServices::Services::SalesforceV2Service.any_instance.stubs(:error).returns('dummy_error')
+    app = create_application('salesforce_v2')
+    app.configs[:inputs]['ticket_sync_option'] = '1'
+    app.save
+    custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_update_custom_object
+    assert_equal nil, custom_obj
+    assert_equal '0', app.configs[:inputs]['ticket_sync_option']
+  ensure
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.unstub
+    IntegrationServices::Services::SalesforceV2Service.any_instance.unstub
+    Integrations::InstalledApplication.any_instance.unstub
+  end
+
+  def test_receive_update_custom_object_with_500_from_cloud_elements_with_failure_response_504
+    valid_failure_response = OpenStruct.new('status' => 504)
     failure_response = OpenStruct.new('status' => 500)
     VaRule.any_instance.stubs(:save).returns(true)
     Integrations::InstalledApplication.any_instance.stubs(:save).returns(true)
@@ -254,9 +289,51 @@ class CloudElementsServiceTest < ActionView::TestCase
     Integrations::InstalledApplication.any_instance.unstub
   end
 
+  def test_receive_update_custom_object_with_504_from_cloud_elements_after_retries
+    valid_failure_response = OpenStruct.new('status' => 504)
+    VaRule.any_instance.stubs(:save).returns(true)
+    Integrations::InstalledApplication.any_instance.stubs(:save).returns(true)
+    Integrations::InstalledApplication.any_instance.stubs(:save!).returns(true)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:http_get).returns(valid_failure_response, valid_failure_response).then.returns(valid_failure_response)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:find).returns([{ Id: '1' }.stringify_keys!])
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
+    IntegrationServices::Services::SalesforceV2Service.any_instance.stubs(:error).returns('dummy_error')
+    app = create_application('salesforce_v2')
+    app.configs[:inputs]['ticket_sync_option'] = '1'
+    app.save
+    custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_update_custom_object
+    assert_equal nil, custom_obj
+    assert_equal '0', app.configs[:inputs]['ticket_sync_option']
+  ensure
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.unstub
+    IntegrationServices::Services::SalesforceV2Service.any_instance.unstub
+    Integrations::InstalledApplication.any_instance.unstub
+  end
+
   def test_receive_update_custom_object_when_it_succeeds
     success_response = OpenStruct.new('status' => 200)
     valid_failure_response = OpenStruct.new('status' => 503)
+    VaRule.any_instance.stubs(:save).returns(true)
+    Integrations::InstalledApplication.any_instance.stubs(:save).returns(true)
+    Integrations::InstalledApplication.any_instance.stubs(:save!).returns(true)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:http_get).returns(success_response, valid_failure_response).then.returns(valid_failure_response)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:find).returns([{ Id: '1' }.stringify_keys!])
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
+    app = create_application('salesforce_v2')
+    app.configs[:inputs]['ticket_sync_option'] = '1'
+    app.save
+    custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_update_custom_object
+    assert_equal nil, custom_obj
+    assert_equal '1', app.configs[:inputs]['ticket_sync_option']
+  ensure
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.unstub
+    IntegrationServices::Services::SalesforceV2Service.any_instance.unstub
+    Integrations::InstalledApplication.any_instance.unstub
+  end
+
+  def test_receive_update_custom_object_when_it_succeeds_with_retry_failure_response_504
+    success_response = OpenStruct.new('status' => 200)
+    valid_failure_response = OpenStruct.new('status' => 504)
     VaRule.any_instance.stubs(:save).returns(true)
     Integrations::InstalledApplication.any_instance.stubs(:save).returns(true)
     Integrations::InstalledApplication.any_instance.stubs(:save!).returns(true)

@@ -20,7 +20,6 @@
 			<div class="p-content" rel="image-enlarge">
 				<div class="p-desc">
 					{{ ticket.description_html }}
-					{{ ticket | freshfone_audio_dom }}
 				</div>
 
 				{{ ticket | ticket_attachemnts }}
@@ -44,7 +43,6 @@
 						<div class="p-desc">
 							{{ comment | custom_survey_data}}
 							{{ comment.description }}
-							{{ comment | freshfone_audio_dom }}
 						</div>
 
 						{{ comment | comment_attachments }}
