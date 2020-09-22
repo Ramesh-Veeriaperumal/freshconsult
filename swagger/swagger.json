@@ -16874,7 +16874,7 @@
                     "rate_limited": {
                       "type": "boolean"
                     },
-                    "mailbox_oauth_reauth_required": {
+                    "mailbox_reauth_required": {
                       "type": "boolean"
                     }
                   }
