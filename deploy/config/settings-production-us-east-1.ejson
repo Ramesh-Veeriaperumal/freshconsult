@@ -538,7 +538,6 @@
         "_rtsURL": "https://pubsub.rtschannel.com",
         "_rts_accId": "QWO19L3PVM",
         "_iris_url": "https://dzvv3qu02a8s8.cloudfront.net/iris-1.0.js",
-        "jwt_secret": "EJ[1:4zBh2afNy1xOCa/T16ZhLaEmy9mAQff/OUzTGfZt810=:ZNGalZ6mDONv03dCVgjf7ENE7iOcoFdd:ZSjpadvOj0ygCaYsbcc794QHCPsUKdhyYjJ5THlh5DD9s5tLaEmoLmPsTblVtfT4oJprY8BQeO9mECqMh7hAdZYmC74uNO6Nfj7dRSOTlOk=]",
         "_collector_host": "https://platforms.freshdesk.com"
       },
       "sendgrid_webhook": {
