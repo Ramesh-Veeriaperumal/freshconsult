@@ -1,8 +1,0 @@
-page << "jQuery('.fresfone-call-history  ##{dom_id(@parent_call)}')
-.after('#{escape_javascript(render :partial => 'call_logs',
-	:collection => @calls,
-	:as => :call,
-	:locals => { :children => true, :parent => @parent_call }) }');
-freshfonePlayerSettings();
-App.Freshfonecallhistory.CallLogs.setLocationIfUnknown();
-threeSixtyPlayer.init();"

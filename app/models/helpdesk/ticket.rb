@@ -1600,7 +1600,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def note_preload_options
       options = [:attachments, :note_body, :schema_less_note, :notable, :attachments_sharable, {:user => :avatar}, :cloud_files]
-      options << :freshfone_call if Account.current.features?(:freshfone)
       options << :freshcaller_call if Account.current.has_feature?(:freshcaller)
       options << (Account.current.new_survey_enabled? ? {:custom_survey_remark =>
                     {:survey_result => [:survey_result_data, :agent, {:survey => :survey_questions}]}} : :survey_remark)

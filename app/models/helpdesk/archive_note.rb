@@ -11,7 +11,6 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
 
   has_one :tweet, :as => :tweetable, :class_name => 'Social::Tweet', :dependent => :destroy
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy
-  has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
   has_one :freshcaller_call, :class_name => 'Freshcaller::Call', :as => 'notable'
 
   has_many :shared_attachments,

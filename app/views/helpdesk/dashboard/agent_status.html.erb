@@ -30,7 +30,7 @@
     jQuery(active_tab+'-tab').tab('show');
   }
   else{
-    active_tab_order={"tickets-tab": <%= round_robin? %>,"phone-tab": <%= freshfone_active? %>, "lc-availability-tab": <%= chat_active? %> }
+    active_tab_order={"tickets-tab": <%= round_robin? %>, "lc-availability-tab": <%= chat_active? %> }
     jQuery.each(active_tab_order,jQuery.proxy(function(index,value)  {
           if(value){
             jQuery('.'+index).tab('show');

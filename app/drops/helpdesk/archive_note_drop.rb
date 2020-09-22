@@ -62,10 +62,6 @@ class Helpdesk::ArchiveNoteDrop < BaseDrop
 	    @source.all_attachments
 	end
 
-	def freshfone_call
-		@source.freshfone_call
-	end
-
 	def cloud_files
 		@source.cloud_files 
 	end

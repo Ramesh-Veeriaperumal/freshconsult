@@ -30,7 +30,6 @@
 //= require app/search/templates/spotlight_result_recent_search
 //= require app/search/templates/spotlight_result_recent_ticket
 //= require report/date.js
-//= require freshfone/global.js
 //= require app/metrics.js
 //= require app/header.js
 //= require app/product_notifications.js
