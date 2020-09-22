@@ -40,6 +40,10 @@ window.Fjax = window.Fjax || {};
 			"/account/update_languages": 'admin',
 
 			"/search": 'search',
+			"/phone/call_history": 'freshfonecallhistory',
+			"/phone/dashboard": 'freshfonedashboard',
+
+			"/reports/phone/summary_reports": 'freshfonereports',
 			"/reports/scheduled_export": 'ticketschedule',
 			"/reports": 'helpdeskreports',
 			"/reports/v2": 'helpdeskreports',

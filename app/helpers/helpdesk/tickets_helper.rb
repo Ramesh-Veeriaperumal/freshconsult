@@ -492,6 +492,24 @@ module Helpdesk::TicketsHelper
     end
   end
 
+  def freshfone_audio_dom(notable = nil)
+      notable = notable || @ticket
+      call = notable.freshfone_call
+      dom = ""
+      if call.present? && call.recording_url
+        dom << tag(:br)
+        dom << content_tag(:span, content_tag(:b, I18n.t('freshfone.ticket.recording')))
+        if call.recording_audio
+          dom << content_tag(:div, content_tag(:div, link_to('', call.recording_audio, :type => 'audio/mp3',
+           :class => 'call_duration', :'data-time' => call.call_duration), :class => 'ui360'), :class => 'freshfoneAudio')
+          dom.html_safe
+        else
+          dom << tag(:br) << content_tag(:div, raw(I18n.t('freshfone.recording_on_process')), :class => 'freshfoneAudio_text')
+        end
+      end
+      return raw(dom)
+  end
+
   def freshcaller_audio_dom(notable = nil)
     notable ||= @ticket
     call = notable.freshcaller_call
@@ -500,7 +518,7 @@ module Helpdesk::TicketsHelper
       dom << tag(:br)
       if call.recording_completed?
         dom << content_tag(:div, content_tag(:div, link_to(I18n.t('freshcaller.ticket.recording.play'), "#{'http://localhost:3004' if Rails.env.development?}/freshcaller_proxy/recording_url?call_id=#{call.fc_call_id}", :type => 'audio/mp3',
-                                                           :class => 'call_duration freshcaller', :'data-time' => 0), class: 'ui360'), class: 'freshfoneAudio')
+         :class => 'call_duration freshcaller', :'data-time' => 0), class: 'ui360'), class: 'freshfoneAudio')
         dom.html_safe
       else
         dom << tag(:br) << content_tag(:div, raw(I18n.t('freshfone.recording_on_process')), class: 'freshfoneAudio_text')

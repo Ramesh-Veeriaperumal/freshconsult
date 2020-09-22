@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="span6">
+    <h3>Freshfone Account Actions</h3>
+    <%= form_tag({:action => 'process_freshfone_account'}, :class => "well") do %>
+      <%= label_tag :account_id %>
+      <%= text_field_tag :account_id, "", :class => "required" %>
+      <div>
+        <label class="radio inline">
+          <%= radio_button_tag(:freshfone_action, "suspend_freshfone") %>
+           <%= "Suspend Freshfone" %>
+        </label>  
+        <label class="radio inline">
+          <%= radio_button_tag(:freshfone_action, "account_closure") %>
+           <%= "Account Closure" %>
+        </label>  
+      </div>
+      <br>
+      <div><%= submit_tag "Process", :class => "btn btn-success" %></div>
+    <% end %>
+  </div>
+</div>

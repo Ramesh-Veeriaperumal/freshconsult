@@ -35,7 +35,8 @@ module SimpleCovSetup
   ].freeze
 
   IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb
-                    lib/guid.rb lib/freshops_tools_worker_methods.rb app/drops lib/helpdesk/send_and_set_helper.rb].freeze
+                    lib/guid.rb lib/freshops_tools_worker_methods.rb app/drops lib/helpdesk/send_and_set_helper.rb
+                    lib/freshfone].freeze
 
   IGNORE_FILES_SECONDARY_APP_HELPERS = %w[lib/portal/portal_filters.rb lib/portal/helpers/discussions_helper.rb
                     lib/portal/helpers/discussions_voting_helper.rb lib/portal/helpers/article.rb
@@ -60,6 +61,8 @@ module SimpleCovSetup
       add_filter 'app/mailers'
       add_filter 'app/controllers/helpdesk'
       add_filter 'app/controllers/integrations'
+      add_filter 'app/controllers/freshfone'
+      add_filter 'app/helpers/freshfone'
 
       add_filter SimpleCov::StringFilter.new("^((?!#{root}/(api|lib|app\/models|app\/workers|app\/observers|app\/drops|app\/helpers)\/).)*$")
 

@@ -756,6 +756,34 @@ ca:
         filter_report: Editar el filtre
         ticket_type: Tipus de ticket
         select_billable: Seleccionar facturable / no facturable
+    freshfone:
+      time_period: Període de temps
+      num_of_transfered: Número de transferències
+      no_agent: '- Cap agent -'
+      group: Grup
+      total_unanswered_calls: Trucades no contestades
+      call_type: Tipus de trucada
+      filter_option_all_calls: Totes les trucades
+      filter_close: Tanca
+      avg_handle_time: Temps de gestió mitjà
+      all_numbers: Tots els números
+      filter_report: Editar el filtre
+      number: Número
+      business_hours: Horari d'atenció
+      no_external: No s'inclouen les transferències realitzades a números externs
+      summary_title: 'Resum de les trucades de l''agent '
+      generate_summary: Generar
+      num_of_calls: Número de trucades
+      unanswered_transfers: Transferències sense contestar
+      unanswered_count: Sense resposta
+      select_call_type: Seleccionar un tipus de trucada
+      options:
+        all_groups: Tots els grups
+        unassigned: Sense assignar
+        incoming: Entrant
+        outgoing: Sortint
+      filter_by_title: Filtrat per
+      total_voice_mail: Missatges de veu
     select_customer: Seleccionar client
     summary_report:
       avg_1st_response_time: Mitjana de temps <br> resposta inicial
@@ -3453,6 +3481,186 @@ ca:
         other: els agrada això
   title: Títol
   free_plan_agents_v2: Agents il·limitats
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Compra un número local o gratuït i ofereix suport als clients de qualsevol part del món per telèfon
+      greetings: Salutacions
+      settings: Configuració
+      important: Important
+      toll_free: Gratuït
+      purchase_credit_text: >-
+        Compra crèdits per comprar números, fer i rebre trucades mitjançant el canal de telèfon.
+      suspended_alert: >-
+        <b>Important:</b> Desactivar el teu canal de telèfon no evitarà el pagament del lloguer mensual dels teus números de telèfon. Per evitar el pagament, elimina els números comprats.
+      freshfone_numbers_title: Telèfon
+      welcome_page:
+        title_text: Telèfon
+      number:
+        simultaneous: Trucar a tots els agents
+        round_robin: Trucar primer als agents inactius
+      numbers:
+        sidebar_content_v2: >-
+          Mitjançant el canal de telèfon, pots fer i rebre trucades a través del teu navegador, telèfon mòbil o mitjançant el canal de telèfon a les aplicacions mòbils de Freshdesk. Està estretament integrat amb el sistema de generació de tickets de Freshdesk. Així, podràs fer seguiment de les trucades de telèfon mitjançant la gravació i convertir-les en tickets sempre que calgui.<br/><br/><b> Configuració del telèfon</b></br> Per començar a utilitzar el telèfon, primer hauràs d'activar-lo i comprar un número de suport. Pots comprar números locals als països <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'> que figuren aquí </a> i fer o rebre trucades des de qualsevol lloc del món. Si els teus clients truquen als EUA, Regne Unit o Canadà, també pots comprar números de suport gratuït.<br/><br/><b>Proporcionar un suport telefònic complet</b><br/>Amb el nostre canal de telèfon, podràs<br/><ul><li>Començar a fer i rebre trucades mitjançant el navegador web o telèfons mòbils</li><li>Crear missatges de veu, reenviar trucades o transferir trucades a qualsevol agent, des de qualsevol lloc</li><li>Supervisar les trucades, entrar a la trucada quan calgui, afegir altres agents a les trucades en curs i molt més*</li></ul><br/><p>*Posa't en contacte amb <a href='mailto:support@freshdesk.com'> support@freshdesk.com </a> per activar les funcions avançades del teu compte. S'inclouen el monitoratge de trucades, entrada a les trucades, trucades en conferència, emmascarament de trucades i les mètriques de la vida útil de les trucades.</p><br/>
+        sidebar_title: Canal de telèfon
+        delete_alert: >-
+          Una vegada eliminat un número no es pot comprar de nou. Està segur que desitja eliminar el número?
+        buy_loading_text: Comprant...
+        buy_phone_numbers: Comprar números de telèfon
+        caller_id:
+          no_number_added: No s'han afegit cap identificador de trucada
+          call_id_mask: Emmascarar aquest número
+          manage_caller_id: 'Gestiona l''ID de trucada '
+          add_new: Afegeix nova
+        tour_link: Ajuda'm a configurar el canal de telèfon
+        failure_purchase: >-
+          No es pot comprar el número de telèfon. Assegura't que l'adreça sigui una adreça local vàlida a <span class='certification-country'></span>.
+        buy: Compra número
+        buy_button_text: Compra
+        address:
+          address: Adreça
+          state: Estat/província/regió
+          city: Ciutat
+          postal_code: Codi postal
+          required_field: Tots els camps són obligatoris
+          name: Empresa / Nom
+        setup:
+          info_text: >-
+            Per començar a utilitzar el canal de telèfon, primer has de comprar un número per a les trucades entrants dels teus clients. Pots comprar un número local de qualsevol <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>dels països enumerats aquí</a>. Si els teus clients et truquen des dels Estats Units, Regne Unit o Canadà, també pots oferir-los un número gratuït on trucar.<br/><br/>Pots comprar diversos números de telèfon de diversos països i configurar una línia d'ajuda gratuïta dins de Freshdesk sense utilitzar cap servei extern. Se't cobraran les tarifes estàndards per trucades entrants, sortints i de reenviament des del teu Help desk. Consulta les nostres <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>tarifes de trucades aquí</a>.<br/><br/> Un cop hagis comprat un número de telèfon per la teva línia de suport, totes les trucades entrants es distribuiran als agents que hagin iniciat la sessió al teu Help desk. A més, els teus agents poden optar per rebre les trucades al navegador o fer que aquestes es reenviïn al seu telèfon de forma automàtica.
+          title_text: Configurar un Call center
+        sidebar_content: >-
+          Mitjançant el canal de telèfon, pots fer i rebre trucades a través del teu navegador, telèfon mòbil o mitjançant el canal de telèfon de les aplicacions mòbils de Freshdesk. Està estretament integrat amb el sistema de generació de tickets de Freshdesk. Així, pots fer seguiment de les trucades de telèfon mitjançant la gravació i convertir-les en tickets sempre que calgui. <br/><br/><b>Configuració del telèfon</b></br>Per començar a utilitzar el telèfon, primer hauràs d'habilitar-lo i comprar un número de suport. Pots comprar números locals dels <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>països que figuren aquí</a> i rebre o fer trucades des de qualsevol lloc en el món. Si els teus clients truquen als EUA, Regne Unit o Canadà, també pots comprar números de suport gratuïts.<br/><br/><b>Proporcionar suport telefònic complet</b><br/>Amb el nostre canal de telèfon, pots<br/><ul><li>Començar a fer i rebre trucades mitjançant el teu navegador web o els telèfons mòbils</li><li>Crear missatges de veu, reenviar o transferir trucades a qualsevol agent, des de qualsevol lloc</li><li>Supervisar les trucades, entrar-hi quan calgui, afegir altres agents a les trucades en procés i molt més*</li></ul><br/><p>*Posa't en contacte amb <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> per habilitar les funcions avançades del teu compte. Inclouen el monitoratge de trucades, entrada a trucades, conferència de trucades, emmascarament de trucades i les mètriques de la vida útil de les trucades.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Més informació sobre les potents funcions i capacitats del telèfon</a><p>
+        not_available: No hi ha resultats retornats. Si us plau, intenta un terme de cerca diferent
+        manage: Gestionar
+        address_certification_text: >-
+          Per comprar un número de telèfon, has de proporcionar la teva adreça personal o la de la teva empresa a <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Aquest número de telèfon es facturarà <strong><span class='number-rate'></span> mensualment</strong>.
+        buy_phone_credits: Comprar crèdit telefònic
+      feature_request_content:
+        success: Et respondrem en un termini de dos dies hàbils.
+        recording_info: Grava i converteix totes les trucades en tickets
+        button_text: Sol·licitud d'activació
+        compare_trial_and_full: Comparar la versió completa i la de prova gratuïta
+        activation_disclaimer: Pots utilitzar totes les funcions durant un període il·limitat
+        learn_more: Més informació
+        ivr_info: >-
+          Utilitza el seguiment de trucades, conferències de trucades, encamina les trucades mitjançant l'IVR i molt més
+        trial_or: O
+        trial_button_text: Activar la versió de prova gratuïta
+        error_message: Ho sentim, no podem atendre la teva sol·licitud ara mateix. Torna-ho a provar més tard.
+        title_text: Telèfon
+        trial_version_disclaimer: Pots utilitzar funcions limitades durant 15 dies de forma gratuïta
+        pricing: Mostra totes les tarifes de trucades i els països admesos
+        number_info: Compra números locals i gratuïts per a més de 40 països
+        video_title: Mira el vídeo per esbrinar què pots fer amb el canal del telèfon
+        heading_text: Ofereix suport als teus clients mitjançant el canal de telèfon
+      local: Local
+      search: Cerca per xifres o frases
+      ivr:
+        turn_on: 'Encès'
+        simple_message_title: Missatge simple
+        save: Guardar
+        turn_off: 'Apagat'
+        rename: rebatejar
+        add_new_option: Afegir <b>Keypress</b> Opció
+        add_new_menu: Afegir nou <b>Menú</b>
+        male: Veu masculina
+        input_number: Introduïu el número
+        invalid_number_format: >-
+          Introdueix el número de telèfon vàlid amb el prefix "+"  i el codi de país davant del número
+        ivr_message_title: Resposta de veu interactiva de la IVR
+        message_type: Missatge tipus
+        action: Acció
+        female: Veu femenina
+        delete_menu: Esborrar menú
+        previewing: Vista prèvia...
+        saving: Guardant...
+        add_new_menu_from_option: Afegir nou menú
+        preview: Vista prèvia
+        done: fet
+        keypress: Pulsació de tecla
+        welcome_message: Missatge de benvinguda
+      number_settings:
+        read_message: Text de veu
+        queue_position_preference: Lectura en veu alta de la posició a la cua
+        greeting_message: Escriu el teu missatge aquí
+        queue_wait_message: Missatge d'espera a la cua
+        number_accessible: Accessible per
+        all_groups: Tots els grups
+        record_all: Gravar totes les trucades
+        voicemail_on: 'Encès'
+        max_queue_calls: Número màxim de trucades a la cua
+        cancel: Cancel·lar
+        routing_message: Quan diversos agents estiguin disponibles en línia...
+        non_business_hours: Acceptar trucades durant…
+        non_business_hours_message: Missatge per a horari no comercial
+        recorded_voice: Veu gravada
+        group: 'Activeu missatge per contactar amb els agents'
+        queue_position_enable: 'Activat'
+        recording_privacy_public: Visible per a clients i agents
+        call_wait_time: amb un temps màxim d'espera de
+        wait_music: Música d'espera
+        recording_help_info: Activa el micròfon. Durada <5 min.
+        record_alert: >-
+          Les pautes d'enregistrament de trucades requereixen que els clients siguin notificats que s'està gravant la trucada i la finalitat de la gravació. Si us plau, en conseqüència, configura el missatge de salutació.
+        record_none: No gravar les trucades
+        non_availability_message: Missatge no disponible
+        voicemail_message: Missatge de correu de veu
+        record_voice: Enregistra la teva veu
+        voicemail_off: 'Apagat'
+        transcript_voice: Transcripció de veu
+        hunt_type: Encaminament de trucades
+        name: Nom
+        voicemail: Correu de veu
+        record_calls: Gravar trucades
+        anytime: 24x7 Sempre
+        upload_voice: Puja arxius d'àudio
+        business_hours: Horari comercial
+        call_wait_time_suffix: ' per trucada'
+        hold_music: Música d'espera
+        start_recording: Inicia la gravació
+        title_text: Administrar el teu Call center
+        attachment_help_text: Accepta arxius d'àudio < 5mb
+        queue_position_disable: 'Desactivat'
+        queue_position_message_placeholder: 'Actualment, estàs a la cua. La teva posició a la cua és {{queue.position}}'
+        preparing_recording: Preparació del teu missatge ...
+        info_content: >-
+          <b>Assignació de trucades telefòniques als agents i grups</b></br> Pots configurar un sistema de resposta de veu interactiva (IVR) i encaminar les trucades als diferents grups o agents del teu equip. Per exemple, pots fer que les trucades dels teus clients es reenviïn al equipo de Suport si premen 1, i a algú de Vendes si premen 2.<br/>A més, pots personalitzar els missatges interactius que es reproduiran als teus clients enregistrant la teva veu, carregant un arxiu o utilitzant la funció de text a veu.<br><br><b>Personalitzar el teu número</b><br>També pots configurar cada un dels números de telèfon per separat i assignar-los conjunts propis de personalitzacions. Això inclou configuracions bàsiques como ara la quantitat màxima de persones a la cua i el temps màxim d'espera per als teus clients. Un cop que es compleixi qualsevol d'aquestes condicions, es reproduirà un missatge automàtic de no disponibilitat.<br/> Quan s'activi l'enregistrament de trucades, cada trucada telefònica rebuda a través del teu Help desk s'enregistrarà i s'adjuntarà als teus tickets, i l'enregistrament de la trucada podrà estar disponible públicament per als clients o conservar-se en privat. També pots restringir el teu canal telefònic, de manera que només es puguin rebre trucades durant l'horari laboral. Per exemple, pots configurar dos línies de suport, una de les quals estaria disponible per rebre trucades només durant l'horari laboral i una altra d'alta prioritat, disponible les 24 hores, 7 dies a la setmana.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Més informació sobre com personalitzar el teu número</a>
+        recording_privacy: Visibilitat dels enregistraments
+        audio_upload: Selecciona fitxer a pujar
+        recording_privacy_private: Visibles només per als agents
+        business_calendar: Selecciona l'horari d'atenció
+        queue_position_message_alert: >-
+          Per llegir la posició a la cua, utilitza l'espai reservat {{queue.position}} <br/> Per exemple: Actualment estàs a la cua. La teva posició a la cua és {{queue.position}}
+        name_placeholder: Introdueix un nom descriptiu per al teu número
+        welcome_message: Missatge de benvinguda
+        change: Modificar
+        stop_recording: <span></span>Atura la gravació
+      trial:
+        request_activation_msg: >-
+          Pots utilitzar només un número d'un conjunt limitat de països durant el període de prova telefònica.<br> Tanmateix, podràs comprar diversos números de 41 països quan activis la versió completa
+        activate_btn_text: Sol·licitar l'activació
+        numbers:
+          search:
+            after_activation_request: >-
+              Has sol·licitat l'activació del canal telefònic <br> Et respondrem en un termini de 2 dies hàbils.
+            buy_confirmation: Confirmes que vols triar aquest número?
+            can_use_after_activation: >-
+              Pots continuar fent servir aquest número quan activis el canal del telèfon.
+        requested_activation: Hem rebut la teva sol·licitud d'activació<br>Està en curs
+    subscription:
+      recharge_now_text: Recarrega el teu saldo amb un pagament únic
+      purchase_credits: Comprar crèdit
+      setup_auto_recharge: Configurar l'Autorecàrrega
+      auto_recharge_amt: Quantitat de la recàrrega automàtica
+      see_detailed_pricing: Veure preu detallat
+      followup_text: per valor de crèdits Freshfone
+      auto_recharge_text: Només carregarem el teu compte quan el balanç baixi de 5$
+      purchase_text: Comprar crèdits de telèfon
+      current_balance: El teu balanç actual
+      followup: per valor de crèdits Freshfone
+      no_credit_card_text: Introdueix la informació de pagament per adquirir crèdits de telèfon
   special_beta_offer: Oferta especial per a comptes Beta
   days: Dies
   tickets_filter:

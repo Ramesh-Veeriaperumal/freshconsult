@@ -14,11 +14,15 @@ module Redis::Keys::Others
   PREMIUM_GAMIFICATION_ACCOUNT            = "PREMIUM_GAMIFICATION_ACCOUNT".freeze
   WEBHOOK_DROP_NOTIFY                     = "WEBHOOK_DROP_NOTIFY:%{account_id}".freeze
   GOOGLE_OAUTH_SSO                        = "GOOGLE_OAUTH_SSO:%{random_key}".freeze
+  ADMIN_FRESHFONE_FILTER                  = "ADMIN_FRESHFONE_FILTER:%{account_id}:%{user_id}".freeze
+  ADMIN_FRESHFONE_REPORTS_FILTER          = "ADMIN_FRESHFONE_REPORTS_FILTER:%{account_id}:%{user_id}".freeze
+  ADMIN_CALLS_FILTER                      = "ADMIN_CALLS_FILTER:%{account_id}:%{user_id}".freeze
   FACEBOOK_APP_RATE_LIMIT                 = "FACEBOOK_APP_RATE_LIMIT".freeze
   FACEBOOK_LIKES                          = "FACEBOOK_LIKES".freeze
   FACEBOOK_USER_RATE_LIMIT                = "FACEBOOK_USER_RATE_LIMIT:%{page_id}".freeze
   FACEBOOK_PAGE_RATE_LIMIT                = "FACEBOOK_PAGE_RATE_LIMIT:%{account_id}:%{page_id}".freeze
   FACEBOOK_API_HIT_COUNT                  = "FACEBOOK_API_HIT_COUNT:%{page_id}".freeze
+  FRESHFONE_SIMULTANEOUS_ACCEPT           = "FRESHFONE:SIMULTANEOUS_ACCEPT:%{account_id}:%{call_id}".freeze
   CLASSIC_REPORTS_ENABLED                 = "CLASSIC_REPORTS_ENABLED".freeze
   USER_EMAIL_MIGRATED                     = "user_email_migrated".freeze
   OLD_REPORTS_ENABLED                     = "OLD_REPORTS_ENABLED".freeze
@@ -103,6 +107,7 @@ module Redis::Keys::Others
   QUOTED_TEXT_PARSING_NOT_REQUIRED        = "QUOTED_TEXT_PARSING_NOT_REQUIRED".freeze
   ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE   = "ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE".freeze
   ROUTE_EMAILS_VIA_FD_SMTP_SERVICE        = "ROUTE_EMAILS_VIA_FD_SMTP_SERVICE".freeze
+  NEW_QUEUE_MEMBER                        = "FRESHFONE:NEW_QUEUE_MEMBER:%{account_id}:%{queue_id}".freeze
   BLACKLISTED_SPAM_DOMAINS                = "BLACKLISTED_SPAM_DOMAINS".freeze
   SPAM_EMAIL_EXACT_REGEX_KEY              = "SPAM_EMAIL_EXACT_REGEX".freeze
   SPAM_EMAIL_APPRX_REGEX_KEY              = "SPAM_EMAIL_APPRX_REGEX".freeze

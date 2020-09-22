@@ -1,0 +1,55 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_message_select' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_settings' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_ivr' %>
+ 
+
+<ul data-tabs="tabs" class="tabs nav-tabs">
+	<div class="lead">
+		<%= "#{t('freshfone.admin.numbers.manage')} #{@number.display_number}" %>
+	</div>
+	<li class="active first">
+		<a id="welcome_messages-tab" href="#welcome_messages"><%= t('freshfone.admin.greetings') %></a>
+	</li>
+	<li>
+		<a id="settings-tab" href="#settings"><%= t('freshfone.admin.settings') %></a>
+	</li>
+</ul>
+<div class="tab-content">
+	<div id="welcome_messages" class="tab-pane active freshfone-ivr">
+		<%= render :partial => '/admin/freshfone/freshfone_admin_ivr' %>
+	</div>
+	<div id="settings" class="tab-pane">
+		<%= render :partial => "/admin/freshfone/numbers/freshfone_settings" %>
+	</div>
+	
+</div>
+		
+
+<%= javascript_tag do %>
+	if (typeof freshfone === "undefined") { freshfone = {}; }
+	freshfone.is_ivr_active = <%= @ivr.active %>;
+	freshfone.IVR_TURN_OFF_MESSAGE = '<%= t('freshfone.admin.ivr.turn_off') %>';
+	freshfone.IVR_TURN_ON_MESSAGE = '<%= t('freshfone.admin.ivr.turn_on') %>';
+	freshfone.number_message_settings_json = <%= @number.to_json.html_safe %>;
+	freshfone.currentNumberId = <%= @number.id %>;
+	freshfone.ivr_prefix = {
+		name_prefix : "freshfone_ivr[ivr_data][${menuId}]",
+		id_prefix : "freshfone_ivr_ivr_data_${menuId}",
+		attachment_prefix : "freshfone_ivr[attachments][${menuId}]"
+	};
+	freshfone.welcome_message_prefix = {
+		name_prefix : "freshfone_ivr[welcome_message]",
+		id_prefix : "freshfone_ivr_welcome_message",
+		attachment_prefix : "freshfone_ivr[attachments][welcome_message]"
+	};
+	freshfone.number_settings_prefix = {
+		name_prefix : "admin_freshfone_number[${type}]",
+		id_prefix : "admin_freshfone_number_${type}",
+		attachment_prefix : "admin_freshfone_number[attachments][${type}]"
+	};
+	freshfone.welcome_message_settings_json = <%= (@ivr.welcome_message || {}).to_json.html_safe %>
+	Fjax.Assets.plugin('360player');
+<% end %>
+
+<%= javascript_include_tag :'cdn/freshfone_settings' %>
+<%= javascript_include_tag :'cdn/freshfone_ivr' %>

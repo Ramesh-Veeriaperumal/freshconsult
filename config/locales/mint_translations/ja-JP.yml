@@ -767,6 +767,34 @@ ja-JP:
         filter_report: フィルタを編集
         ticket_type: チケットタイプ
         select_billable: 請求可能/請求不可能を選択する
+    freshfone:
+      time_period: 期間
+      num_of_transfered: 転送数
+      no_agent: '- エージェントなし -'
+      group: グループ
+      total_unanswered_calls: 応答されなかったコール
+      call_type: コール タイプ
+      filter_option_all_calls: すべてのコール
+      filter_close: 閉じる
+      avg_handle_time: 平均対応時間
+      all_numbers: 全ての番号
+      filter_report: フィルタを編集
+      number: 番号
+      business_hours: 営業時間
+      no_external: 外線番号への転送は含まれません
+      summary_title: 'エージェント コール概要 '
+      generate_summary: 生成
+      num_of_calls: コール数
+      unanswered_transfers: 応答されなかった転送
+      unanswered_count: 未回答
+      select_call_type: コール タイプを選択
+      options:
+        all_groups: 全てのグループ
+        unassigned: 未割り当て
+        incoming: 受信
+        outgoing: 送信
+      filter_by_title: 次の項目でフィルタ：
+      total_voice_mail: ボイスメール
     select_customer: 顧客を選択
     summary_report:
       avg_1st_response_time: 平均初回<br>応答時間
@@ -3465,6 +3493,186 @@ ja-JP:
         other: これを「好き」
   title: 役職
   free_plan_agents_v2: エージェント無制限
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        現地電話番号またはトールフリー（フリーダイヤル）番号を購入して、世界中どこからでも電話で顧客をサポートしましょう
+      greetings: こんにちは
+      settings: 設定
+      important: 重要
+      toll_free: トールフリー（フリーダイヤル）
+      purchase_credit_text: >-
+        番号を購入し、電話チャンネルを使用して電話を発信および受信するためにクレジットを購入してください。
+      suspended_alert: >-
+        <b>重要</b>電話チャンネルを無効にしても、あなたの番号に請求される月々のレンタル料金は回避できません。料金の請求を回避するには、購入した番号を削除してください。
+      freshfone_numbers_title: 電話
+      welcome_page:
+        title_text: 電話
+      number:
+        simultaneous: 全てのエージェントを呼び出す
+        round_robin: 初めに待機状態のエージェントを呼び出す
+      numbers:
+        sidebar_content_v2: >-
+          電話チャネルでは、ブラウザ・携帯電話・Freshdeskのモバイルアプリの電話チャネルを使って電話の受発信が可能です。またこれは、Freshdeskのチケットシステムと緊密に統合されています。電話を録音し、必要に応じてチケットに変換するだけで、電話の記録を行うことができます。<br/><br/><b>電話機能の設定</b></br>電話機能jを使用するには、まず電話機能を有効にしてサポート番号を購入する必要があります。ここに記載されている<a href='https://support.freshdesk.com/support/solutions/articles/169322'target='_blank'>国一覧</a>から市内番号を購入し、世界のどこからでも電話を受発信しましょう。顧客が米国・英国・カナダから電話をかけてくる場合、フリーダイヤルのサポート番号(英国ではfreephoneと呼ばれる)も購入できます。<br/><br/><b>完全な電話サポートを提供</b><br/>電話チャネルをご利用いただくと、<br/><ul><li>ウェブブラウザまたは携帯電話を使用して電話の受発信が可能となります</li><li>いつでもどこでもボイスメールの作成・通話の転送・任意のエージェントへ転送を実行しましょう。</li><li>通話モニタリング・必要に応じた通話への割り込み・通話中の他エージェント追加も可能です。*</li></ul><br/><p>*<a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>より、アカウントの高度な機能を有効にしてください。これには、通話モニタリング・通話割り込み・電話会議・通話マスキング・通話ライフタイムコールメトリクスが含まれます。</p><br/>
+        sidebar_title: 電話チャンネル
+        delete_alert: >-
+          一度削除された番号は再度購入することはできません。この番号を削除してよろしいですか？
+        buy_loading_text: 購入しています...
+        buy_phone_numbers: 電話番号を購入
+        caller_id:
+          no_number_added: 発信者識別番号は追加されていません
+          call_id_mask: この番号をマスク
+          manage_caller_id: '発信者識別番号を管理'
+          add_new: 新規追加
+        tour_link: 電話チャネル設定ヘルプ
+        failure_purchase: >-
+          電話番号を購入することができません。アドレスが <span class='certification-country'></span>の正しいローカルアドレスであることを確認してください。
+        buy: 番号を購入
+        buy_button_text: 購入
+        address:
+          address: 住所
+          state: 州 / 県 / 地域
+          city: 市町村
+          postal_code: 郵便番号
+          required_field: 全てのフィールドは必須です
+          name: 会社 / 名前
+        setup:
+          info_text: >-
+            電話チャンネルの使用を始めるには、まず顧客に提供する着信番号を購入する必要があります。現地番号は、 <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>ここをクリックして表示される国</a>であればどこでも購入できます。英国、米国、あるいはカナダにいる顧客から電話を着信する場合は、トールフリーダイアルの番号をカスタマーに提供できます。<br/><br/>さまざまな国から複数の電話番号を購入し、サードパーティのサービスを利用することなく、トールフリーのヘルプラインをFreshdesk内にセットアプすることが可能です。着信、発信、およびヘルプデスクからの転送に対して、標準的な電話料金が必要になります。電話料金については、<a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>ここ</a>をご確認ください。<br/><br/>サポートヘルプライン用の電話番号を購入すると、すべての着信電話が、ヘルプデスクにログインしているエージェントに割り振られます。また、エージェントがブラウザ内から電話を取るよう選択することも、デスクの受話器に自動で転送されるよう設定することも可能です。
+          title_text: コールセンターのセットアップ
+        sidebar_content: >-
+          電話チャンネルを利用すると、ブラウザ、携帯電話またはFreshdeskモバイルアプリの電話チャンネルを使って発信および着信を行うことができます。Freshdeskのチケットシステムと緊密に統合されているため、通話を録音して必要ならいつでもチケットに変換することで、通話をしっかりと記録することができます。<br/><br/> <b>電話のセットアップ</b></br>電話の使用を開始するには、まず電話を有効化してサポート番号を購入する必要があります。<a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>こちらのリストの国々</a>から現地の番号を購入して、世界のあらゆる場所で発信や着信を行えます。顧客が米国、英国またはカナダから電話をかけてくる場合、フリーダイヤルのサポート電話番号（英国ではフリーフォン）を購入することもできます。<br/><br/><b>完全な電話サポートを</b><br/>当社の電話チャンネルで提供しましょう。次のようなことが可能になります。<br/><ul><li>ウェブブラウザや携帯電話から電話の発信と着信</li><li>ボイスメールの作成、登録電話番号への通話の転送、またはあらゆるエージェント、あらゆる場所への通話の転送</li><li>通話のモニター、必要な場合の割り込み、進行している通話への他のエージェントの追加、その他*</li></ul><br/><p>*アカウントで高度な機能を有効化するには<a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>までお問い合わせください。ここには通話のモニタリング、通話の割り込み、電話会議、通話のマスキング、通話の継続時間指標が含まれます。</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>強力な電話の機能と特長についてさらに詳しく</a><p>
+        not_available: 結果は見つかりませんでした。違う検索語句でお試しください
+        manage: 管理
+        address_certification_text: >-
+          電話番号を購入するには<span class='certification-country'></span>国内でのあなたの会社または個人の住所を提供する必要があります。
+        purchase_alert_text: >-
+          この番号に対して<strong><span class='number-rate'></span>月々</strong>料金が請求されます。
+        buy_phone_credits: 電話クレジットの購入
+      feature_request_content:
+        success: 2営業日以内に折り返しご連絡いたします。
+        recording_info: すべての通話を録音してチケットに変換
+        button_text: 有効化のリクエスト
+        compare_trial_and_full: 正規版と無料トライアル版を比較
+        activation_disclaimer: すべての機能を無期限に利用できます
+        learn_more: 詳細はこちらから。
+        ivr_info: >-
+          通話モニタリング、電話会議、自動音声応答を利用した通話の振り分けなど、さまざまなサービスを実行
+        trial_or: または
+        trial_button_text: 無料のトライアル版を有効化
+        error_message: 申し訳ありませんが、現在リクエストを受理できなくなっています。後でもう一度お試しください。
+        title_text: 電話
+        trial_version_disclaimer: 限定された機能を15日間無料で利用できます
+        pricing: 全ての通話料金とサポートされている国を表示
+        number_info: 40を超える国々の現地電話番号とフリーダイヤル番号を購入
+        video_title: 電話チャンネルでできることについて解説したビデオをご覧ください
+        heading_text: 電話チャネルを使用して顧客をサポートしましょう
+      local: 市内電話
+      search: 桁あるいはフレーズで検索
+      ivr:
+        turn_on: 'オン'
+        simple_message_title: シンプルメッセージ
+        save: 保存
+        turn_off: 'オフ'
+        rename: 名前変更
+        add_new_option: <b>キープレス</b>オプションを追加
+        add_new_menu: 新規<b>メニュー</b>を追加
+        male: 男性の声
+        input_number: 番号を入力
+        invalid_number_format: >-
+          +から始まる国番号がついた有効な電話番号を入力してください
+        ivr_message_title: 自動音声応答（IVR）
+        message_type: メッセージタイプ
+        action: アクション
+        female: 女性の声
+        delete_menu: メニューを削除
+        previewing: プレビュー中・・・
+        saving: 保存中...
+        add_new_menu_from_option: 新規メニューを追加
+        preview: プレビュー
+        done: 終了
+        keypress: キープレス
+        welcome_message: ウェルカムメッセージ
+      number_settings:
+        read_message: テキスト音声化
+        queue_position_preference: キューの位置を読み取る
+        greeting_message: メッセージをここに入力してください
+        queue_wait_message: キュー待機メッセージ
+        number_accessible: '次からアクセス可能: '
+        all_groups: 全てのグループ
+        record_all: すべての通話を録音
+        voicemail_on: 'オン'
+        max_queue_calls: 順番待ち通話数の上限
+        cancel: キャンセル
+        routing_message: 複数のエージェントがオンラインで対応可能なとき...
+        non_business_hours: 電話受付時間・・・
+        non_business_hours_message: 業務時間外メッセージ
+        recorded_voice: 録音済み音声
+        group: 'メッセージを再生してエージェントを呼び出す：　'
+        queue_position_enable: 'オン'
+        recording_privacy_public: 顧客とエージェントが閲覧可能
+        call_wait_time: 待ち時間の上限
+        wait_music: 音楽を待つ
+        recording_help_info: マイクをオンにしてください。継続時間は5分未満です。
+        record_alert: >-
+          通話録音のガイドラインにより、ほとんどの国で、通話が録音されていることを顧客に知らせることが義務付けられています。挨拶のメッセージは、これに従って作成してください。
+        record_none: 通話を録音しない
+        non_availability_message: 応答不可メッセージ
+        voicemail_message: ボイスメールメッセージ
+        record_voice: 音声を録音
+        voicemail_off: 'オフ'
+        transcript_voice: 音声をトランスクリプト化
+        hunt_type: コール ルーティング
+        name: 名前
+        voicemail: ボイスメール
+        record_calls: 通話を録音
+        anytime: 24/7年中無休
+        upload_voice: オーディオファイルをアップロード
+        business_hours: 営業時間
+        call_wait_time_suffix: '　通話につき'
+        hold_music: 音楽の保留
+        start_recording: 録音を開始
+        title_text: コールセンターの管理
+        attachment_help_text: 5MB未満のオーディオファイルに対応可能
+        queue_position_disable: 'オフ'
+        queue_position_message_placeholder: '現在、順番にご案内しています。お客様の順番は{{queue.position}}です'
+        preparing_recording: メッセージを準備中・・・
+        info_content: >-
+          <b>エージェントやグループへの電話の割り当て</b></br>インタラクティブな応答システム（IVR: Interactive Voice Response）をセットアップすると、電話をチーム内の複数のグループやエージェントに割り振ることができます。たとえば、顧客が「1」を押したときにはその電話をサポートチームに転送し、「2」を押したときにはセールスチームの誰かに転送するといったことが可能です。<br/>また、音声を録音、ファイルをアップロード、あるいはテキスト/音声変換機能を使用するという方法で、顧客に再生されるメッセージをカスタマイズできます。<br><br><b>番号のカスタマイズ</b><br>また、すべての電話番号に個別の設定を割り当て、それぞれを独自にカスタマイズすることができます。応答を待っている顧客の最大数や、最長の待ち時間などの基本的な設定も可能で、いずれかの制限に達したとき、応答できないことを伝えるメッセージを自動で再生することもできます。<br/>通話記録を有効にすると、ヘルプデスクでの電話がすべて録音され、チケットに添付されます。電話記録は顧客に公開することも、あるいは非公開にすることもできます。また、電話チャンネルの着信を営業時間内のみに制限することも可能です。たとえば、サポートラインを2つセットアップして、1つは営業時間外の着信を制限し、もう1つは優先度の高いヘルプラインとして24時間対応にできます。<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>番号のカスタマイズについて詳しくは、こちらをご覧ください</a>
+        recording_privacy: 録音の視聴可能者
+        audio_upload: アップロードするファイルを選択
+        recording_privacy_private: エージェントだけが視聴可能
+        business_calendar: 業務時間を選択
+        queue_position_message_alert: >-
+          キューの位置を読み取るには、プレースホルダ{{queue.position}}を使用します <br/> 例: 現在、順番にご案内しています。お客様の順番は{{queue.position}}です
+        name_placeholder: あなたの番号にフレンドリーな名前をつけましょう
+        welcome_message: ウェルカムメッセージ
+        change: 変更
+        stop_recording: <span></span>録音を停止
+      trial:
+        request_activation_msg: >-
+          電話トライアル期間に利用できる番号は1つだけで、選べる国も限られています。<br>しかし正規版を有効化すると、41か国から複数の番号を購入できます。
+        activate_btn_text: 有効化をリクエスト
+        numbers:
+          search:
+            after_activation_request: >-
+              電話チャンネル有効化のリクエストを受け付けました<br>2営業日以内に連絡を差し上げます。
+            buy_confirmation: この番号を選択してよろしいですか？
+            can_use_after_activation: >-
+              電話チャンネルを有効化すると引き続きこの番号をご利用いただけます。
+        requested_activation: 有効化リクエストを受け取りました<br>現在処理中です
+    subscription:
+      recharge_now_text: 一時払いで残高を補充
+      purchase_credits: クレジットの購入
+      setup_auto_recharge: 自動再課金を設定
+      auto_recharge_amt: 自動再課金額
+      see_detailed_pricing: 料金の詳細を見る
+      followup_text: 電話クレジットに相当
+      auto_recharge_text: 残高が$5未満になったときだけあなたのアカウントに課金します
+      purchase_text: 電話クレジットを購入
+      current_balance: 現在の残高
+      followup: 電話クレジットに相当
+      no_credit_card_text: 電話クレジット購入のためのお支払情報を入力
   special_beta_offer: ベータアカウント用のスペシャルオファー
   days: 日
   tickets_filter:

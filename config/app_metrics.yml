@@ -1,0 +1,5 @@
+kissmetrics:
+ freshfone: 
+  production: d1d3ba61a93197aee1237b894b7da317a7266310
+  staging: dd3a6b3aa13874947209d57df9ddca938d0ffe5c
+  development: dd3a6b3aa13874947209d57df9ddca938d0ffe5c

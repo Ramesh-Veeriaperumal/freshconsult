@@ -1,0 +1,11 @@
+<div>
+	Hi <%=@account.admin_first_name%>,<div><br></div>
+	<div>We want to let you know that your phone channel has been temporarily suspended due to insufficient balance.</div>
+	<div>You will not be able to answer or make calls during this period.</div>
+	<div><br></div>
+	<div>Please <%= link_to "recharge your phone credits", "http://#{@account.full_domain}/subscription" %> immediately to avoid losing your phone numbers.</div>
+	<div><br></div>
+	<div>Regards,</div>
+	<div>The Freshdesk Team</div>
+	<div><br></div>
+</div>

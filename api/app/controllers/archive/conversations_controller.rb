@@ -51,6 +51,7 @@ class Archive::ConversationsController < ::ConversationsController
       elsif @ticket.twitter?
         preload_options << :tweet
       end
+      preload_options << :freshfone_call if current_account.freshfone_enabled?
       preload_options << :user if sideload_options.include?('requester')
       preload_options
     end

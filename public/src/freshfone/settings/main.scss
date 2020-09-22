@@ -1,0 +1,226 @@
+@import "../../settings/settings";
+@import "../variables";
+
+.number-settings .settings-label {
+	@include margin-right(15px);
+	font-weight: 600;
+	width:150px;
+}
+
+.phone_features_info{
+  ul {
+    list-style-type:disc
+  }
+  li{
+    line-height:1.4em;
+    @include margin(0 0 5px 25px);
+    color:#444;
+  }
+}
+
+.general-settings .row-fluid{
+	margin-bottom: 12px;
+}
+.togglable_message{
+	margin-top: 15px;
+}
+.togglable_options_title{
+	font-weight: 500;
+	color: #666;
+}
+.number-settings {
+	.menu-label {
+		margin-top: 8px;
+	}
+	.settings-label {
+		@include margin-right(15px);
+		margin-bottom: 20px;
+		font-weight: 600;
+		width:150px;
+	}
+	.message_value_container {
+		margin-bottom: 10px;
+		display: inline-block;
+		padding-top: 0;
+		@include margin-left(5px);
+	}
+	.recording-alert{
+		padding: 6px 0;
+		span{
+			@include margin-right(7px);
+			line-height: 1.4em;
+		}
+	}
+	.Message-alert{
+		padding: 6px 0;
+		@include text-align(center);
+		@include margin-left(150px);
+	}
+	.freshfone-controls {
+		.select2-container { @include margin-left(0); }
+		.toggle-button {
+			margin-top: 3px;
+			@include margin-left(0);
+		}
+	}
+.access_groups_control {
+			height: 30px;
+		}
+	.wait_message, .hold_message {
+		.message-container{
+			padding: 0;
+		}
+		.message_value_container {
+			margin: 0;
+			.custom-file-upload{
+				margin-left:0;
+			}
+		}
+	}
+}
+.freshfone-title{
+	font-size: 18px;
+	font-weight: 300;
+	margin-bottom: 20px;
+	display: inline-block;
+}
+
+.max_queue_length_select2{
+	display: inline-block;
+	width: 70px;
+}
+
+.queue_setting_div.main {
+  border-left: 1px solid #bbb;
+  padding-left: 10px;
+  margin-top: 15px;
+  .message-container {
+  	padding-left: 0;
+  	.message-type {
+  		margin-left: 0;
+  	}
+  }
+  .queue_position_controls {
+  	padding-top: 10px;
+  	textarea {
+			width: 417px;
+			max-height: 80px;
+  	}
+  	.recording-alert {
+  		padding-left: 2px;
+  	}
+  }
+
+  .settings-label {
+  	max-width: 185px;
+  	font-weight: normal;
+  }
+  .controls {
+  	margin-left: 160px;
+  }
+}
+.queue_wait_time{
+	display: inline-block;
+	.queue_wait_time_options{
+		.queue_wait_time_select2{
+			display: inline-block;
+		}
+		 label{
+			display:inline-block;
+			vertical-align: bottom;
+		}
+	}
+}
+
+.multi_business_hours {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	.business_calendar_select2{
+		width: 150px;
+	}
+}
+.freshfone_welcome_message_alert{
+	margin-bottom: 10px;
+}
+.toggle_freshfone_form{
+	display: inline-block;
+	@include padding-right(10px);
+}
+.freshfone-disabled-alert{
+	margin-bottom: 25px;
+}
+.selectGroupAccess{
+	cursor: pointer;
+}
+.freshfone_video {
+  margin: 20px 50px 20px 60px;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0px 10px 10px 10px;
+  background: #eee;
+  .title {
+    padding: 10px 10px 10px 2px;
+	  display: block;
+	  line-height: 1;
+  }
+}
+.ff_seperator {
+  margin: 20px 0 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+
+.ff_numbers_trial_usage {
+  border: 1px solid #EEE;
+  background: #FFE;
+  padding: 11px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  .trial_msg {
+    margin:4px;
+    .usage_container{
+      width:30px;
+      @include margin-right(10px);
+    }
+    .usage_info {
+      width: 120px;
+      .error{
+        color: #A90329;
+      }
+    }
+  }
+  .error{
+    color: #A90329;
+  }
+  .content{
+    width: 70%;
+  }
+  .graph{
+    width: 27%;
+  }
+  .btn {
+    margin-top:10px;
+    width: 137px;
+  }
+}
+
+.caller_id {
+  width : 190px;
+}
+
+.call_id_mask{
+  @include micro-position(7px);
+  .toggle-button{
+    margin-left: 0px;
+    float: left;
+    top: -2px;
+  }
+  .caller_id_container{
+    @include micro-position(-5px);
+  }
+}
+
+.no-number-added{
+  color: #888;
+}

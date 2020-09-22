@@ -1,4 +1,10 @@
 module Onboarding::AccountChannels
+  include Admin::Freshfone::RequestFeature
+
+  def enable_phone_channel
+    request_freshfone
+    add_freshfone_request_to_redis
+  end
 
   def toggle_forums_channel enable=true
     enable ? current_account.features.forums.save : current_account.features.forums.destroy

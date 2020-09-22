@@ -23,6 +23,7 @@ stylesheets:
   :ie_hacks  => [ "app/ie"],
   :tour_my_app  => [ "plugins/tourmyapp_initial","plugins/tourmyapp"],
   :codemirror  => [ "plugins/codemirror"],
+  :player360  => [ "freshfone/360player"],
   :fileupload => ["plugins,fileupload"],
   :freshwidget  => [ "freshwidget"],
   :tkt_details  => [ "page/tkt_details/tkt_details","page/tkt_details/tkt_details_sprites"],
@@ -35,7 +36,7 @@ stylesheets:
   :portal_print  => [ "print/support"],
   :getting_started  => [ "page/getting_started"],
   :subscription  => [ "subscription/subscription","plugins"],
-  :portal_utils  => [ "portal/portal_utils"],
+  :portal_utils  => [ "portal/portal_utils","freshfone/record_playback","freshfone/360player"],
   :preview  => [ "portal/preview"],
   :community  => [ "page/community/community"],
   :widget  => [ "portal/widget"],
@@ -43,12 +44,19 @@ stylesheets:
   :facebook  => [ "portal/facebook"],
   :social  => [ "social/social"],
   :survey  => [ "portal/survey"],
+  :freshfone  => [ "freshfone/freshfone","freshfone/jquery.keypad","freshfone/call_history","ui.daterangepicker"],
+  :freshfone_ivr  => [ "freshfone/ivr/main"],
+  :freshfone_settings  => [ "freshfone/settings/main"],
+  :freshfone_admin  => [ "freshfone/admin"],
+  :freshfone_message_select  => [ "freshfone/message_select"],
+  :freshfone_recording_playback  => [ "freshfone/record_playback"],
   :freshcaller_widget => ["freshcaller/widget"],
   :livechat_admin  => [ "chat/admin","chat/visitor"],
   :livechat_mini_dashboard  => [ "chat/mini-dashboard"],
   :ui_daterangepicker => ["ui.daterangepicker"],
   :remote_configurations  => [ "page/remote-configurations"],
   :cti => ["cti/cti"],
+  :freshfone_livechat => ["freshfone_livechat"],
   :canned_form => ["portal/canned_form"]
 } %>
 
@@ -184,6 +192,7 @@ javascripts:
     - public/javascripts/navsearch.js
     - app/views/shared/spotlight_result.jst
     - public/javascripts/report/date.js
+    - public/javascripts/freshfone/global.js
     - public/javascripts/app/metrics.js
     - public/javascripts/app/dashboard.js
     - public/javascripts/app/product_notifications.js
@@ -332,18 +341,82 @@ javascripts:
   custom_widget:
     - public/javascripts/custom_widget.js
 
+  freshfone_ticket_search:
+    - public/javascripts/freshfone/plugin/ticket_search.js
+
+  freshfone:
+    - public/javascripts/freshfone.js
+
   freshcaller_widget:
     - public/javascripts/freshcaller/widget.js
 
   freshcaller_signup:
     - public/javascripts/freshcaller/signup.js
 
+  freshfone_client:
+    - public/javascripts/freshfone/list.js
+    - public/javascripts/frameworks/plugins/jquery.popupbox.js
+    - public/javascripts/freshfone/components/calls.js
+    - public/javascripts/freshfone/components/user_info.js
+    - public/javascripts/freshfone/components/connections.js
+    - public/javascripts/freshfone/components/notifications.js
+    - public/javascripts/freshfone/components/desktop_notification.js
+    - public/javascripts/freshfone/components/user.js
+    - public/javascripts/freshfone/components/widget.js
+    - public/javascripts/freshfone/components/timer.js
+    - public/javascripts/freshfone/components/socket.js
+    - public/javascripts/freshfone/components/end_call_form.js
+    - public/javascripts/freshfone/components/network_error.js
+    - public/javascripts/freshfone/components/components_main.js
+    - public/javascripts/freshfone/intlTelInput.js
+    - public/javascripts/freshfone/device.js
+    - public/javascripts/freshfone/client.js
+    - public/javascripts/freshfone/phoneformatutil.js
+    - public/javascripts/freshfone/dialpad.js
+    - public/javascripts/freshfone/ongoing_call_dialpad.js
+    - public/javascripts/freshfone/dialpad_events.js
+    - public/javascripts/freshfone/components/contact_search.js
+    - public/javascripts/freshfone/components/call_transfer.js
+    - public/javascripts/freshfone/freshfone_logger.js
+    - public/javascripts/freshfone/freshfone_monitor.js
+    - public/javascripts/freshfone/components/freshfone_conference_connection.js
+    - public/javascripts/freshfone/components/agent_conference.js
+    - public/javascripts/freshfone/components/warm_transfer.js
+
+  freshfone_call_history:
+    - public/javascripts/report/daterangepicker.jQuery.js
+
+  freshfonecallhistory:
+    - public/javascripts/report/daterangepicker.jQuery.js
+    - public/javascripts/freshfone/call_history/call_history.js
+    - public/javascripts/freshfone/call_history/call_logs.js
+    - public/javascripts/freshfone/call_history/call_block.js
+    - public/javascripts/freshfone/call_history/call_filters.js
+
+  freshfone_settings:
+    - public/javascripts/freshfone/message_selector.js
+    - public/javascripts/freshfone/settings/settings.js
+
+  freshfone_ivr:
+    - public/javascripts/freshfone/ivr/ivr.js
+    - public/javascripts/freshfone/ivr/menu.js
+    - public/javascripts/freshfone/ivr/option.js
+    - public/javascripts/freshfone/ivr/ivr_main.js
+    - public/javascripts/frameworks/plugins/jquery.form.js
+
+  freshfone_welcome_page:
+    - public/javascripts/freshfone/freshfone_admin_welcome_page.js
+
+  freshfonereports:
+    - public/javascripts/app/freshfonereports.js
   soundmanager:
     - public/javascripts/sound/soundmanager2-jsmin.js
 
   360player:
     - public/javascripts/soundmanager2/berniecode-animator.js
     - public/javascripts/soundmanager2/360player.js
+    - public/javascripts/freshfone/soundmanager_config.js
+    - public/javascripts/freshfone/freshfone_player.js
 
   portal_head:
     - public/javascripts/prototype.js
@@ -382,6 +455,13 @@ javascripts:
     - public/javascripts/portal/portal-compatibility.js
     - public/javascripts/util-dates.js
     - public/javascripts/frameworks/plugins/jquery.unveil.js
+
+  freshfone_portal:
+    - public/javascripts/sound/soundmanager2-jsmin.js
+    - public/javascripts/soundmanager2/berniecode-animator.js
+    - public/javascripts/soundmanager2/360player.js
+    - public/javascripts/freshfone/soundmanager_config.js
+    - public/javascripts/report/date.js
 
   subscription:
     - public/javascripts/prototype.js
@@ -549,6 +629,9 @@ javascripts:
 
   profile_avatar:
     - public/javascripts/profile_avatar.js
+
+  client_logger:
+    - public/javascripts/client_logger.js
 
   remote_configurations:
     - public/javascripts/jquery-1.7.1.min.js

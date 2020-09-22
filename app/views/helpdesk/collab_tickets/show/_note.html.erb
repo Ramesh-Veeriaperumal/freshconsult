@@ -100,6 +100,7 @@ end
         <%= render :partial => '/helpdesk/collab_tickets/show/custom_survey_note' , :locals => {:note => note , 
               :ticket_info => ticket_info, :notedetails => notedetails ,:question_values => question_values} %>
       <% end %>
+      <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
       <%= freshcaller_audio_dom(note) if current_account.has_feature?(:freshcaller) %>
 
       <div id="note_attachments_container_<%= note.id%>">
