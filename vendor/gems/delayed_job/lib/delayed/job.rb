@@ -196,7 +196,7 @@ module Delayed
 
         account_id = Account.current.id
 
-        if Account.current.launched?(:disable_emails)
+        if Account.current.features?(:disable_emails)
           Rails.logger.info "Outgoings emails are stopped for account #{account_id} due to :disable_emails feature."
           return
         end
