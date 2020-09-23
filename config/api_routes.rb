@@ -83,15 +83,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    namespace :api_freshfone, path: 'phone' do
-      resources :call_history, only: [:index] do
-        collection do
-          post :export
-          get '(export/:id)', to: :export_status, as: :export_status
-        end
-      end
-    end
-
     namespace :api_discussions, path: 'discussions' do
       resources :categories, except: [:new, :edit] do
         member do
@@ -385,7 +376,12 @@ Helpkit::Application.routes.draw do
     end
 
     namespace :admin do
-      resources :groups, only: [:index, :show, :destroy]
+      resources :groups, only: [:index, :show, :destroy, :create, :update] do
+        member do
+          match 'agents' => 'groups/agents#index', via: :get
+          match 'agents' => 'groups/agents#update', via: :patch
+        end
+      end
     end
 
     resources :help_widgets do

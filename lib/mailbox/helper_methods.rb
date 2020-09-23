@@ -2,6 +2,7 @@ module Mailbox::HelperMethods
 
   include Redis::OthersRedis
   include Redis::Keys::Others
+  include Email::Mailbox::Constants
 
   PUBLIC_KEY = OpenSSL::PKey::RSA.new(File.read('config/cert/public.pem'))
 
@@ -43,23 +44,39 @@ module Mailbox::HelperMethods
       mailbox.previous_changes.key?(:encrypted_access_token)
     end
 
-    def clear_custom_mailbox_status_key(account_id)
-      remove_others_redis_key(custom_mailbox_status_key(account_id))
+    def clear_custom_mailbox_status(account_id)
+      del_other_redis_hash_value(CUSTOM_MAILBOX_STATUS_CHECK, *account_id)
     end
 
-    def custom_mailbox_status_key(account_id)
-      format(CUSTOM_MAILBOX_STATUS_CHECK, account_id: account_id)
-    end
-
-    def add_custom_mailbox_status_key(account_id)
-      set_others_redis_key(custom_mailbox_status_key(account_id), 1)
+    def add_custom_mailbox_status(account_id)
+      set_others_redis_hash_set(CUSTOM_MAILBOX_STATUS_CHECK, account_id, 1)
     end
 
     def update_custom_mailbox_status(account_id)
-      if redis_key_exists?(custom_mailbox_status_key(account_id))
-        clear_custom_mailbox_status_key account_id if Account.current.imap_mailboxes.errors.blank? && Account.current.smtp_mailboxes.errors.blank?
+      if get_others_redis_hash_value(CUSTOM_MAILBOX_STATUS_CHECK, account_id)
+        clear_custom_mailbox_status account_id if Account.current.imap_mailboxes.errors.blank? && Account.current.smtp_mailboxes.errors.blank?
       elsif Account.current.imap_mailboxes.errors.present? || Account.current.smtp_mailboxes.errors.present?
-        add_custom_mailbox_status_key account_id
+        add_custom_mailbox_status account_id
       end
+    end
+
+    def clear_reauth_mailbox_status(account_id)
+      del_other_redis_hash_value(REAUTH_MAILBOX_STATUS_CHECK, *account_id)
+    end
+
+    def add_reauth_mailbox_status(account_id)
+      set_others_redis_hash_set(REAUTH_MAILBOX_STATUS_CHECK, account_id, 1)
+    end
+
+    def update_reauth_mailbox_status(account_id)
+      if get_others_redis_hash_value(REAUTH_MAILBOX_STATUS_CHECK, account_id)
+        clear_reauth_mailbox_status account_id if Account.current.imap_mailboxes.reauth_errors.blank? && Account.current.smtp_mailboxes.reauth_errors.blank?
+      elsif Account.current.imap_mailboxes.reauth_errors.present? || Account.current.smtp_mailboxes.reauth_errors.present?
+        add_reauth_mailbox_status account_id
+      end
+    end
+
+    def add_reauth_error_to_force_oauth_migration(mailbox, error)
+      mailbox.error_type = error if (Account.current.launched?(:mailbox_google_oauth) && mailbox.server_name.include?(GMAIL)) || (Account.current.launched?(:mailbox_ms365_oauth) && mailbox.server_name.include?(OFFICE365))
     end
 end

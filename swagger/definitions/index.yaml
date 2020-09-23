@@ -243,8 +243,6 @@ tweet_post:
   $ref: ./resource/tweet_post.yaml
 survey_result:
   $ref: ./resource/survey_result.yaml
-freshfone_call:
-  $ref: ./resource/freshfone_call.yaml
 ticket_topic:
   $ref: ./resource/ticket_topic.yaml
 email_spam_data:
@@ -958,6 +956,8 @@ agent_availability:
   $ref: "./resource/agent_availability.yaml"
 agent_availability_count_response:
   $ref: ./response/agents/availability_count.yaml
+channel_availability_count:
+  $ref: './response/agents/channel_availability_count.yaml'
 agent_with_availability_response:
   $ref: './response/agents/availability.yaml'
 

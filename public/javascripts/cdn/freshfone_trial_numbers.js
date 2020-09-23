@@ -1,1 +1,0 @@
-//= require freshfone/numbers/trial.js

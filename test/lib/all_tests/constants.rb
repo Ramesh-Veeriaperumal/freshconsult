@@ -58,7 +58,7 @@ SUCCESSFUL_SEARCH_TESTS = [
 ].freeze
 
 
-LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/unit/**/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb') + Dir.glob('test/lib/integration_services/**/*_test.rb') + Dir.glob('test/lib/saas/*_test.rb') + Dir.glob('test/lib/spam/*_test.rb') + Dir.glob('test/lib/integrations/**/*_test.rb') + Dir.glob('test/lib/crm/**/*_test.rb') + Dir.glob('test/lib/marketplace/*_test.rb') + Dir.glob('test/lib/reports/*_test.rb') + Dir.glob('test/lib/dashboard/*_test.rb') + Dir.glob('test/lib/email/*_test.rb') + Dir.glob('test/lib/facebook/**/*_test.rb') + Dir.glob('test/lib/redis/*_test.rb') + Dir.glob('test/lib/silkroad/*_test.rb') + Dir.glob('test/lib/channel_integrations/**/*_test.rb')
+LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/unit/**/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb') + Dir.glob('test/lib/integration_services/**/*_test.rb') + Dir.glob('test/lib/saas/*_test.rb') + Dir.glob('test/lib/spam/*_test.rb') + Dir.glob('test/lib/integrations/**/*_test.rb') + Dir.glob('test/lib/crm/**/*_test.rb') + Dir.glob('test/lib/marketplace/*_test.rb') + Dir.glob('test/lib/reports/*_test.rb') + Dir.glob('test/lib/dashboard/*_test.rb') + Dir.glob('test/lib/email/*_test.rb') + Dir.glob('test/lib/facebook/**/*_test.rb') + Dir.glob('test/lib/redis/*_test.rb') + Dir.glob('test/lib/silkroad/*_test.rb') + Dir.glob('test/lib/channel_integrations/**/*_test.rb') + Dir.glob('test/lib/launch_party/*_test.rb')
 MODEL_TESTS = Dir.glob('test/models/**/*_test.rb') + Dir.glob('test/app/models/**/*_test.rb')
 MAILER_TESTS = Dir.glob('test/app/mailers/**/*_test.rb')
 

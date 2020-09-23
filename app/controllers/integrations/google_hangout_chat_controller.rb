@@ -8,7 +8,7 @@ class Integrations::GoogleHangoutChatController < Admin::AdminController
     omniauth_host = "#{AppConfig['integrations_url'][Rails.env]}/auth/google_hangout_chat"
     redirect_url = URI.parse(omniauth_host)
     redirect_url.query = URI.encode_www_form(
-        'origin' => "id=#{current_account.id}&portal_id=#{current_portal.id}&falcon_enabled=#{current_account.falcon_ui_enabled?(current_user).to_s}"
+      'origin' => "id=#{current_account.id}&portal_id=#{current_portal.id}&falcon_enabled=true"
     )
     redirect_to redirect_url.to_s
   end
@@ -20,12 +20,12 @@ class Integrations::GoogleHangoutChatController < Admin::AdminController
     @installed_app.configs[:inputs].merge!(app_configs)
     @installed_app.save!
     flash[:notice] = t(:'integrations.google_hangout_chat.success').html_safe
-    redirect_to current_account.falcon_ui_enabled?(current_user) ? "/a/admin#{integrations_applications_path}" : integrations_applications_path
+    redirect_to "/a/admin#{integrations_applications_path}"
   rescue => e
     Rails.logger.error "Problem in installing Google Hangout Chat new application. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
     NewRelic::Agent.notice_error(e, custom_params: {description: "Problem in installing Google Hanout chat new application #{e.message}", account_id: current_account.id})
     flash[:error] = t(:'flash.application.install.error')
-    redirect_to current_account.falcon_ui_enabled?(current_user) ? "/a/admin#{integrations_applications_path}" : integrations_applications_path
+    redirect_to "/a/admin#{integrations_applications_path}"
   end
 
   protected

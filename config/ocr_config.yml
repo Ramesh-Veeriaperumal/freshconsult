@@ -4,6 +4,7 @@ defaults: &defaults
   jwt_secret: "uRmMYCtGKITr4YCgouIqVicStGRs3SPo"
   jwt_default_expiry: "30"
   admin_jwt_secret: "admin-authkey"
+  touchstone_secret: "647c69e8658c62379c0e42f04f36a61e"
 
 development:
   <<: *defaults

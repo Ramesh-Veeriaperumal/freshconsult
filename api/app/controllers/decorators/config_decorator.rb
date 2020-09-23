@@ -18,7 +18,6 @@ class ConfigDecorator < ApiDecorator
   def warn_items
     warn_items = {}
     warn_items[:livechat_deprecation] = livechat_deprecation?
-    warn_items[:freshfone_deprecation] = freshfone_deprecation?
     warn_items[:downgrade_policy_reminder] = redis_key_exists?(current_account.downgrade_policy_email_reminder_key)
     warn_items.merge!(card_expired?) if admin?
     warn_items[:invoice_overdue] = grace_period_exceeded? if invoice_due?
@@ -64,7 +63,12 @@ class ConfigDecorator < ApiDecorator
       email_config[:custom_mailbox_error] = false
     end
     email_config[:rate_limited] = redis_key_exists?(format(EMAIL_RATE_LIMIT_BREACHED, account_id: Account.current.id))
-    email_config[:mailbox_oauth_reauth_required] = mailbox_oauth_reauthorization_required?
+    mailbox_reauthorization_required = mailbox_reauthorization_required? ? true : false
+    if Account.current.launched?(:mailbox_ms365_oauth)
+      email_config[:mailbox_reauth_required] = mailbox_reauthorization_required
+    elsif mailbox_reauthorization_required
+      email_config[:custom_mailbox_error] = true
+    end
     email_config
   end
 

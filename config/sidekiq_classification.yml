@@ -27,9 +27,6 @@
     - sbrr_config_agent_group
     - sbrr_config_skill
     - collaboration_publish
-    - freshfone_notifications
-    - freshfone_node
-    - freshfone_trial_worker
     - livechat_worker
     - channel_framework_command
     - calculate_sla
@@ -44,6 +41,7 @@
     - model_destroy
     - gateway_facebook_page
     - kbase_article_versions_worker
+    - kbservice_clear_cache_worker
     - rts_account_create
     - kbase_approval_notification_worker
     - delete_solution_meta_worker
@@ -364,7 +362,6 @@
     - cron_delayedjobs_watcher
     - cron_failed_helpkit_feeds
     - cron_log_cloud_elements_sync
-    - cron_freshfone
     - cron_meta_data_check
     - cron_enable_omniroute_for_new_accounts
     - cron_archive_automation
@@ -419,9 +416,6 @@
     - sbrr_config_agent_group
     - sbrr_config_skill
     - collaboration_publish
-    - freshfone_notifications
-    - freshfone_node
-    - freshfone_trial_worker
     - livechat_worker
     - channel_framework_command
     - calculate_sla
@@ -436,6 +430,7 @@
     - model_destroy
     - gateway_facebook_page
     - kbase_article_versions_worker
+    - kbservice_clear_cache_worker
     - rts_account_create
     - kbase_approval_notification_worker
     - delete_solution_meta_worker
@@ -742,7 +737,6 @@
     - cron_delayedjobs_watcher
     - cron_failed_helpkit_feeds
     - cron_log_cloud_elements_sync
-    - cron_freshfone
     - cron_meta_data_check
     - cron_enable_omniroute_for_new_accounts
     - cron_archive_automation

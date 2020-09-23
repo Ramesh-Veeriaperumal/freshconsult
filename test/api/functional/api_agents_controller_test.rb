@@ -2401,12 +2401,14 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.current.launch(:omni_agent_availability_dashboard)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    Account.current.stubs(:agent_statuses_enabled?).returns(false)
     ApiAgentsController.any_instance.stubs(:request_service).returns(AVAILABILITY_COUNT_RESPONSE.to_json)
     get :availability_count, controller_params
     assert_response 200
     match_json(availability_count_pattern)
   ensure
     ApiAgentsController.any_instance.unstub(:request_service)
+    Account.current.unstub(:agent_statuses_enabled?)
     User.any_instance.unstub(:privilege?)
     Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
     Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
@@ -2418,6 +2420,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.current.launch(:omni_agent_availability_dashboard)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    Account.current.stubs(:agent_statuses_enabled?).returns(false)
     availability_count_response = AVAILABILITY_COUNT_RESPONSE.dup
     availability_count_response[:agents_availability_count].slice!(:freshdesk)
     ApiAgentsController.any_instance.stubs(:request_service).returns(availability_count_response.to_json)
@@ -2426,6 +2429,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     match_json(availability_count_pattern(availability_count_response))
   ensure
     ApiAgentsController.any_instance.unstub(:request_service)
+    Account.current.unstub(:agent_statuses_enabled?)
     User.any_instance.unstub(:privilege?)
     Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
     Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
@@ -2461,16 +2465,18 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.current.add_feature(:omni_channel_routing) if feature_exist
   end
 
-  def test_availability_count_without_dashboard_feature
+  def test_availability_count_without_any_of_required_feature
     feature_not_exist = Account.current.add_feature(:omni_channel_routing)
     lp_feature_exist = Account.current.launched?(:omni_agent_availability_dashboard)
     Account.current.rollback(:omni_agent_availability_dashboard) if lp_feature_exist
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    Account.current.stubs(:agent_statuses_enabled?).returns(false)
     get :availability_count, controller_params
     assert_response 403
-    match_json(request_error_pattern(:require_feature, feature: 'omni_agent_availability_dashboard'.titleize))
+    match_json(request_error_pattern(:require_any_feature, feature: 'agent_statuses,omni_agent_availability_dashboard'.titleize))
   ensure
+    Account.current.unstub(:agent_statuses_enabled?)
     User.any_instance.unstub(:privilege?)
     Account.current.launch(:omni_agent_availability_dashboard) if lp_feature_exist
     Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
@@ -2488,6 +2494,44 @@ class ApiAgentsControllerTest < ActionController::TestCase
   ensure
     User.any_instance.unstub(:privilege?)
     Account.current.rollback(:omni_agent_availability_dashboard) if !lp_feature_exist
+    Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
+  end
+
+  def test_availability_count_from_mars
+    feature_not_exist = Account.current.add_feature(:omni_channel_routing)
+    lp_feature_exist = Account.current.launched?(:agent_statuses)
+    ApiAgentsController.any_instance.stubs(:touchstone_request?).returns(false)
+    Account.current.launch(:agent_statuses)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    ApiAgentsController.any_instance.stubs(:request_service).returns(MARS_AVAILABILITY_COUNT_RESPONSE.to_json)
+    get :availability_count, controller_params
+    assert_response 200
+    match_json(MARS_AVAILABILITY_COUNT_RESPONSE[:agents_availability_count])
+  ensure
+    ApiAgentsController.any_instance.unstub(:request_service)
+    User.any_instance.unstub(:privilege?)
+    ApiAgentsController.any_instance.unstub(:touchstone_request?)
+    Account.current.rollback(:agent_statuses) if !lp_feature_exist
+    Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
+  end
+
+  def test_availability_count_for_touchstone_request
+    feature_not_exist = Account.current.add_feature(:omni_channel_routing)
+    lp_feature_exist = Account.current.launched?(:agent_statuses)
+    ApiAgentsController.any_instance.stubs(:touchstone_request?).returns(true)
+    Account.current.launch(:agent_statuses)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    ApiAgentsController.any_instance.stubs(:request_service).returns(AVAILABILITY_COUNT_RESPONSE.to_json)
+    get :availability_count, controller_params
+    assert_response 200
+    match_json(availability_count_pattern)
+  ensure
+    ApiAgentsController.any_instance.unstub(:request_service)
+    User.any_instance.unstub(:privilege?)
+    ApiAgentsController.any_instance.unstub(:touchstone_request?)
+    Account.current.rollback(:agent_statuses) if !lp_feature_exist
     Account.current.revoke_feature(:omni_channel_routing) if feature_not_exist
   end
 

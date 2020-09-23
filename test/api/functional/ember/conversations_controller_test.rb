@@ -174,6 +174,47 @@ module Ember
       assert Helpdesk::Note.last.attachments.size == attachment_ids.size
     end
 
+    def test_create_note_with_html_to_plain_text_feature
+      Account.current.launch(:html_to_plain_text)
+      body = '<div><div>test</div><div>hello</div><div>hi</div><div><br></div></div>'
+      params_hash = create_note_params_hash.merge(body: body)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
+      created_note = Helpdesk::Note.last
+      assert_equal created_note.body, Helpdesk::HTMLToPlain.plain(body)
+    ensure
+      Account.current.rollback(:html_to_plain_text)
+    end
+
+    def test_create_note_without_html_to_plain_text_feature
+      body = '<div><div>test</div><div>hello</div><div>hi</div><div><br></div></div>'
+      params_hash = create_note_params_hash.merge(body: body)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
+      created_note = Helpdesk::Note.last
+      assert_equal created_note.body, Helpdesk::HTMLSanitizer.plain(body).strip
+    end
+
+    def test_create_note_with_html_to_plain_error
+      Account.current.launch(:html_to_plain_text)
+      Helpdesk::HTMLSanitizer.stubs(:html_to_plain_text).raises(Exception)
+      body = '<div><div>test</div><div>hello</div><div>hi</div><div><br></div></div>'
+      params_hash = create_note_params_hash.merge(body: body)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
+      created_note = Helpdesk::Note.last
+      assert_equal created_note.body, Helpdesk::HTMLSanitizer.plain(body).strip
+    ensure
+      Helpdesk::HTMLSanitizer.unstub(:html_to_plain_text)
+      Account.current.rollback(:html_to_plain_text)
+    end
+
     def test_create_with_inline_attachment_ids
       inline_attachment_ids = []
       BULK_ATTACHMENT_CREATE_COUNT.times do
@@ -284,6 +325,20 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
+    end
+
+    def test_reply_with_html_to_plain_text_feature
+      Account.current.launch(:html_to_plain_text)
+      body = '<div><div>test</div><div>hello</div><div>hi</div><div><br></div></div>'
+      params_hash = reply_note_params_hash.merge(body: body)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      assert_equal latest_note.body, Helpdesk::HTMLToPlain.plain(body)
+    ensure
+      Account.current.rollback(:html_to_plain_text)
     end
 
     def test_reply_with_ticket_params
@@ -880,21 +935,6 @@ module Ember
       match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
     ensure
       @controller.unstub(:is_allowed_to_assume?)
-    end
-
-    def test_ticket_conversations_with_fone_call
-      # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
-      Account.any_instance.stubs(:freshfone_enabled?).returns(true)
-      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-      ticket = new_ticket_from_call
-      remove_wrap_params
-      assert ticket.notes.all.map { |n| n.freshfone_call.present? || nil }.compact.present?
-      get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
-      assert_response 200
-      match_json(conversations_pattern(ticket))
-    ensure
-      MixpanelWrapper.unstub(:send_to_mixpanel)
-      Account.any_instance.unstub(:freshfone_enabled?)
     end
 
     def test_ticket_conversations_with_freshcaller_call

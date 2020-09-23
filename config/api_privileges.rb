@@ -155,7 +155,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/freddy"
     resource :"ember/flow"
     resource :'ember/omni_channel', only: [:index]
-    resource :'admin/group', only: [:show, :index]
+    resource :'admin/group', only: [:show, :index, :update]
   end
 
   delete_ticket do
@@ -204,7 +204,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
     resource :"admin/api_business_calendar", only: [:index, :show, :create, :update, :destroy]
     resource :agent_status, only: [:show, :create, :update, :destroy]
-    resource :'admin/group', only: [:index, :show, :destroy]
+    resource :'admin/group', only: [:index, :show, :destroy, :create, :update]
+    resource :"admin/groups/agent", only: [:index, :update]
   end
 
   edit_ticket_properties do

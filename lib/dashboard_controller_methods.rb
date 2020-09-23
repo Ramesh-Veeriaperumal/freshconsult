@@ -35,7 +35,7 @@ module DashboardControllerMethods
     @filter_params[:workload] = params[:workload] if params[:workload]
     @widget_name = params[:widget_name].to_sym if params[:widget_name]
     @filter_params[:widget_name] = params[:widget_name] || ""
-    @es_enabled = current_account.features?(:countv2_reads)
+    @es_enabled = current_account.count_es_enabled?
   end
 
   def unresolved_tickets_dashboard
