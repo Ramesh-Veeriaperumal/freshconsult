@@ -15,4 +15,4 @@
   freshcaller.widgetUrl = '<%= Rails.env.development? ? 'http://localhost:4201/widget/' : "https://#{current_account.freshcaller_account.domain}/widget/" %>';
   freshcaller.widgetLoaderUrl = '<%= FreshcallerConfig["widget_loader_url"] %>';
 <% end %>
-<%= javascript_include_tag :'app/models/account/constants.rb' %>
+<%= javascript_include_tag :'cdn/freshcaller_widget' %>
