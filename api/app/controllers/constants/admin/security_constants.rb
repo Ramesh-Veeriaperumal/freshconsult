@@ -6,12 +6,13 @@ module Admin::SecurityConstants
   SSO_TYPES = ['simple', 'saml'].freeze
   VALIDATION_CLASS = 'Admin::SecurityValidation'
   DELEGATOR_CLASS = 'Admin::SecurityDelegator'
-  UPDATE_SECURITY_FIELDS = ['whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy'].freeze
+  UPDATE_SECURITY_FIELDS = ['whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy', 'allow_iframe_embedding'].freeze
   WHITELISTED_IP_NOT_CONFIGURED = {
     enabled: false
   }.freeze
   WHITELISTED_SECURITY_FIELDS = [
     :notification_emails,
+    :allow_iframe_embedding,
     whitelisted_ip: [
       :enabled,
       :applies_only_to_agents,

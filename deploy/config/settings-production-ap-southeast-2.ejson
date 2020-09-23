@@ -1696,7 +1696,7 @@
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
-      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/",
+      "_vault_service_url": "https://vault-service-aus.freshworks.com",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
       "google_map_api_key": "EJ[1:RfeA6XQ8RpoQwKgf2qP5Ivp/M5SghI8fdxIGAgmKIxw=:JZ72foqAyPqpaDa/pExAoGDQb9tHj7/a:KbwlYiis/1ixuvaLtLiPZHy63mUrLenXLVMNu715qLaUg3Sa9e7rmD/JrfndlCCauwpsoYY9gA==]",
       "blue": {
