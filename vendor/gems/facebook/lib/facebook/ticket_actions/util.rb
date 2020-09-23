@@ -14,7 +14,7 @@ module Facebook
       end
 
       def ticket_attributes
-        group_id = Account.current.features?(:social_revamp) ? @fan_page.default_stream.ticket_rules.first.group_id : @fan_page.group_id
+        group_id = @fan_page.default_stream.ticket_rules.first.group_id
         {
           group_id: group_id,
           product_id: @fan_page.product_id
