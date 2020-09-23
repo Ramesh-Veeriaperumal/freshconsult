@@ -1,0 +1,502 @@
+@import "../settings/settings";
+@import "variables";
+.playing {
+  .sm2-360ui .sm2-timing,
+  .sm2-360ui .sm2-360btn:hover + .sm2-timing,
+  .sm2-360ui.sm2_paused .sm2-timing {
+    position: relative;
+    @include left(37px);
+    font-size: 13px;
+    color: #666;
+    top: -4px;
+    visibility: visible;
+  }
+}
+.modal-body{
+  .recording_delete_warning{
+    border-radius: 4px;
+  }
+}
+.fresfone-call-history {
+  //	change css
+  overflow: hidden;
+  .table-striped{
+    table-layout:fixed;
+    tr:nth-child(odd) td {
+      background-color: $ch-cells-background;
+    }
+  }
+  .relative {
+    position: relative;
+  }
+  .normal {
+    font-weight: 400;
+  }
+  .call_history_sorting_div > #sorting_dropdown {
+    margin-left: 10px;
+  }
+  .filter-name {
+    color: #666;
+  }
+  .ui360 .sm2-360ui.sm2_playing .sm2-360btn:hover + .sm2-timing {
+    visibility:visible;
+  }
+  .ui360 .sm2-360ui.sm2_paused .sm2-360btn:hover + .sm2-timing,
+  .ui360 .sm2-360ui.sm2_paused .sm2-timing {
+    visibility:visible;
+  }
+  .loading-box {
+    background-repeat: no-repeat;
+  }
+  .dropdown.open .dropdown-toggle {
+    background: none;
+    color:$ch-dropdown-toggle;
+  }
+  .ticksymbol {
+    margin-top: 0;
+  }
+  .freshfone-number-caret {
+    margin-top: 10px;
+    @include triangle(down, $ch-number-caret-border, 5px)
+  }
+  td{
+    width:40px;
+    /* 2 */
+    &.user_details {
+      @include float(none);
+    }
+    &.width1 {
+      width:20%;
+      /* 2 */
+    }
+    &.width2 {
+      width:15%;
+      /* 1 */
+    }
+    &.width3 {
+      width:12%;
+      /* 2 */
+    }
+    &.width4 {
+      width:9%;
+      /* 1 */
+    }
+  }
+  .assigned_ticket {
+    @include margin-right(12px);
+    .spinner{
+      @include left(12px !important);
+    }
+  }
+  .btn-round{
+    [class*="#{$font-class}"]{
+      position: relative;
+      top: 10px;
+      display: block;
+    }
+    border-radius: 50%;
+    cursor: pointer;
+    @include size(36px, 36px);
+    padding: 0;
+    text-align: center;
+    box-shadow: none;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    &:hover{
+      background-color:#f9f9f9;
+      border-color:#aaa;
+    }
+  }
+  .call_user {
+    @extend .btn-round;
+    .restrict-call,.can-make-calls {
+      margin: 0 auto;
+      @include size(30px, 30px);
+      display: block;
+      direction: ltr;
+      padding-top: 3px;
+      font-size: 20px;
+      line-height:30px;
+    }
+    .restrict-call{
+      cursor: default;
+    }
+  }
+  .preview_pic img,	.callhistory_helpdesk_avatar {
+    width:35px;
+    height:35px;
+  }
+  .freshfone_customer {
+    &:hover {
+      .blacklist-toggle.blacklist{
+        display: block;
+      }
+    }
+  }
+  .blacklist-toggle {
+    position: absolute;
+    top: 31px;
+    @include left(12px);
+    z-index: 3;
+    display: block;
+    background-radius: 1;
+    border-radius: 8px;
+    width: 14px;
+    height: 15px;
+    padding-left: 2px;
+    padding-top: 1px;
+  }
+  .blacklist-toggle.blacklist {
+    display: none;
+  }
+
+  .ff-user-location {
+    font-size: 12px;
+    margin-top: 4px;
+    text-transform: capitalize;
+  }
+  .curved_border{
+    height:40px;
+    width:100px;
+    border:1px solid $ch-ui360-border;
+    @include border-radius(20px);
+    .spinner{
+      padding-top:19px;
+      @include padding-left(1px);
+    }
+  }
+  .ui360 {
+    @extend .curved_border;
+    background-color: $ch-ui360-background;
+    float:left;
+    cursor:pointer;
+    &:hover{
+      border-color:#aaaaaa;
+      background-color:#eee;
+    }
+  }
+  .recording_delete{
+    position:relative;
+    top:10px;
+    float:right;
+  }
+  .show_recording_delete{
+    height:43px;
+    width:100%;
+    &:hover .recording_delete{
+      display:block;
+    }
+  }
+  .recording_deleted{
+    @extend .curved_border;
+    background-repeat: repeat;
+    span{
+      font-size:13px;
+      color:#999;
+      @include text-shadow(0px 2px 1px #fff);
+      top:4px;
+      position:relative;
+    }
+    &:before{
+      font-size:25px;
+      top : 10px;
+      position: relative;
+      color:#ccc;
+      @include right(7px);
+    }
+  }
+  .playing, .playing:hover {
+    background-color: $ch-ui360-playing-background;
+    border-color: $ch-ui360-playing-border;
+    @include box-shadow(inset -1px 0px 7px -1px $ch-ui360-playing-shadow);
+  }
+  .child_calls {
+    cursor: pointer;
+    display: block;
+    font-weight: 700;
+    @include text-align(center);
+    padding-right:15px;
+    color: $ch-child-call-text;
+  }
+  .no_call_history {
+    @include text-align(center);
+    padding: 40px;
+    font-size: 22px;
+    color: $ch-no-call-log-text;
+    font-weight: 200;
+  }
+  .ficon-abandoned-call {
+    color: #e3acac;
+  }
+  .call_direction {
+    width:40px;
+    height:24px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    cursor: default;
+  }
+  .converted_ticket{
+    background-color:#f9f9f9;
+    border-color:#eee;
+    span{
+      @include size(100%,100%);
+    }
+  }
+  .transfer_call {
+    td:first-child {
+      @include border-left(4px solid $ch-transfered-call-border);
+    }
+  }
+  .transfer_agent_pointer {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    top: -22px;
+    @include left(15px);
+    color: #B3B3B3;
+    font-size: 16px;
+  }
+  .callhistory_helpdesk_avatar {
+    @include margin-right(10px);
+    @include border-radius(6px);
+  }
+  .helpdesk_number {
+    font-size: 12px;
+    display: inline-block;
+    margin-top: 3px;
+  }
+  .number_select_label{
+    padding: 3px 24px;
+    font-size: 14px;
+    color: #888;
+    font-style: italic;
+  }
+  .empty_active_numbers{
+    padding: 3px 24px;
+    font-size: 14px;
+    color: #bbb;
+    min-height: 4px;
+  }
+  .freshfone_call_filter{
+    @include border-radius(9px);
+    border: 3px solid #eee;
+    position: relative;
+    padding: 5px;
+    @include float(left);
+    width: 17.64706%;
+    @include margin-right(2.94118%);
+  }
+  .freshfone_logs{
+    position: relative;
+    min-height: 450px;
+    @include left(-235px);
+  }
+  .list-page-slide{
+    position: absolute;
+    @include float(right);
+    width: 99%;
+    @include margin-right(0);
+    @include border-radius(5px);
+  }
+
+  .list-page-header{
+    position: relative;
+  }
+  .list-page-body{
+    position: relative;
+  }
+
+  .call_history_export_div > .dropdown-menu {
+    min-width: 75px;
+    width : auto;
+  }
+
+  .call_history_export_div {
+    padding: 0 10px;
+    color: #000;
+  }
+  .export_help_text {
+    display: inline-block;
+    position: relative;
+    left: 65px;
+    top: 18px;
+    color: #aaa;
+    font-size: 12px;
+  }
+
+  .call_history_export_div * span {
+    color: #000;
+  }
+
+  .call_history_export_div * .caret {
+    border-top: 4px solid #000;
+  }
+
+  .disabled > #export_dropdown > span  {
+    color: #888;
+  }
+
+  .disabled > #export_dropdown > .caret {
+    border-top: 4px solid #888;
+  }
+
+  .filter_title {
+    label{
+      font-weight: 500;
+      padding: 10px 0 5px;
+    }
+  }
+
+  .filter_tool {
+    border: 2px #000;
+    @include margin-left(10px);
+    width: 154px;
+  }
+  .filter_tool_select2
+  {
+    @include margin(3px);
+    .select2-container{
+      width: 194px;
+    }
+  }
+
+  .filter_footer{
+    padding: 10px;
+    @include margin-left(15px);
+  }
+
+  #date_range{
+    width: 102%;
+  }
+
+  .fliter_detail_slide{
+    @include border-radius(5px);
+    border: 1px solid #cccccc;
+    background: #f8f8f8;
+    width: 99.7%;
+    position: relative;
+    #sliding{
+      @include margin(5px);
+    }
+    #filterdetails{
+      @include margin(5px);
+      display: inline;
+    }
+  }
+  .list-page-freshfone-numbers{
+    background-color: #f1f1f1;
+    padding: 10px 20px;
+    @include border-top-left-radius(5px);
+    @include border-top-right-radius(5px);
+  }
+  .call_history_sorting_div {
+    display: inline;
+    b {
+      margin-top: 7px;
+    }
+  }
+}
+
+#ff_number{
+  width:200px;
+}
+.call-history-page{
+  background: #fff;
+  @include border-radius(5px);
+}
+.filter-close{
+  @include cursor(pointer);
+  font-size: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  line-height: 20px;
+  color: #000;
+  @include text-shadow(0 1px 0 #FFF);
+  @include opacity(0.2);
+  &:hover, &:focus{
+    @include opacity(0.4);
+    text-decoration: none;
+  }
+}
+.call_history_sorting_div, .filter_freshfone_number {
+  .ff_display_name {
+    font-weight: 500;
+  }
+  .ff_display_number {
+    color: #888;
+  }
+}
+.title-start, .title-end {
+  color: #000;
+}
+.no-search .select2-search {
+  display: block;
+  position: absolute;
+  @include left(-10000px);
+}
+.callhistory-payment-loader {
+  width: 20px;
+}
+
+.slide-content{
+  width: 78.41176%;
+  float: right;
+  display: none;
+  margin:0;
+}
+.slide-filter{
+  width: 17.64706%;
+  display: none;
+  float: left;
+  margin-right: 2.94118%;
+}
+.filter-subheader {
+  display: table;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.filter-subheader div {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 5px 0;
+}
+.filter-container {
+  width: 84%;
+}
+
+.freshfone_filter_sorting {
+  width: 25%;
+  @include border-left(1px solid #ccc);
+  text-align: left;
+  min-height: 20px;
+  .filter_title {
+    padding-left: 10px;
+  }
+}
+.date_range {
+  text-indent: 5px;
+}
+.call-history-header-icon {
+  margin-right: 20px;
+}
+.list-page-freshfone-numbers .freshfone-lead {
+  margin-bottom: 3px !important;
+  font-weight: 400;
+}
+.select2-results .select2-result-label{
+  margin: 5px;
+}
+.ff_call_cost {
+  cursor: pointer;
+}
+.freshfone-cost-splitup {
+  line-height: 20px;
+  max-width: 180px;
+  .pulse_rate { padding-left: 6px; }
+  .no_of_unit { padding-right: 6px; }
+  .total_duration_text {
+    color: #aaa;
+    font-size: 12px;
+  }
+}
