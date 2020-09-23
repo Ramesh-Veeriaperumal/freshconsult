@@ -125,8 +125,7 @@ class Account < ActiveRecord::Base
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
-    :bi_reports => false, :social_revamp => true,
-    :custom_dashboard => false, :updated_twilio_client => false,
+    :bi_reports => false, :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true, :es_multilang_solutions => false,
@@ -138,18 +137,17 @@ class Account < ActiveRecord::Base
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false, :portal_cc => false, :personalized_email_replies => false,
+    :gamification_enable => false, :personalized_email_replies => false,
     :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
     :client_debugging => false, :collision_socket => false,
-    :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
+    :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
-    :marketplace => false, :fa_developer => false,:archive_tickets => false, :compose_email => false,
+    :marketplace => false, :archive_tickets => false, :compose_email => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
     :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
     :agent_conference => false, :freshfone_warm_transfer => false, :restricted_helpdesk => false, :enable_multilingual => false,
-    :activity_revamp => true, :countv2_reads => false,
-    :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
+    :activity_revamp => true, :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
     :advanced_search => false, :advanced_search_bulk_actions => false, :chat => false, :chat_routing => false,
     :freshreports_analytics => false, :disable_old_reports => false, contact_custom_activity_api: false, assets: false, assets_toggle: false }
@@ -257,10 +255,11 @@ class Account < ActiveRecord::Base
   # Add launchparty name to CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES if the feature needs to sent to central
   # Setting feature to false, will not trigger separate account_update event on launching a key on signup
   # feature_name: true/false
-  # true -> should fire separate account_update event with feature added
-  # false -> will not fire separate account_update
+  # true -> should fire separate account_update event when feature is added
+  # false -> will not fire separate account_update event
   # the false/true value is not honoured if the key is launched after the account signup
   CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES = {
-    agent_statuses: false
+    agent_statuses: false,
+    forward_to_phone: false
   }.freeze
 end

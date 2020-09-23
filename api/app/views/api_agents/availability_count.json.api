@@ -1,1 +1,1 @@
-AgentDecorator.availability_count(@availability_count).to_json
+AgentDecorator.availability_count(@availability_count, @proxy_to_mars).to_json

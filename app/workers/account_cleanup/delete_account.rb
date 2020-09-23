@@ -31,6 +31,7 @@ class AccountCleanup::DeleteAccount < BaseWorker
 
     begin
       perform_destroy(account)
+      update_status(deleted_customer, STATUS[:deleted])
     rescue ReplicationLagError => e
       rerun_after(e.lag, account.id) if e.lag > 0
     rescue Exception => error
@@ -38,8 +39,6 @@ class AccountCleanup::DeleteAccount < BaseWorker
       NewRelic::Agent.notice_error(error)             
       return update_status(deleted_customer, STATUS[:failed])
     end
-
-    update_status(deleted_customer, STATUS[:deleted])
   end
   private 
 

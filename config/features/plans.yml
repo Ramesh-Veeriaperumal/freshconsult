@@ -27,7 +27,6 @@
   :blossom_jan_17:
     :name: Blossom
     :features:
-      - :fa_developer
       - :split_tickets
       - :add_watcher
       - :traffic_cop
@@ -75,6 +74,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_17
@@ -236,6 +236,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_19
@@ -256,7 +257,6 @@
       - :session_replay
       - :image_annotation
       - :custom_apps
-      - :fa_developer
       - :forums
       - :multi_language
       - :css_customization
@@ -456,6 +456,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_20
@@ -475,7 +476,6 @@
       - :session_replay
       - :image_annotation
       - :custom_apps
-      - :fa_developer
       - :forums
       - :multi_language
       - :css_customization

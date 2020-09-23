@@ -145,7 +145,7 @@
       },
       :import                          =>   {
         :url                           =>   redis_key_exists?(ZENDESK_IMPORT_APP_KEY) ? 
-                                              ( current_account.falcon_ui_enabled?(User.current) ?  "/integrations/applications##{ZEN_FALCON_APP_ID}" : "/integrations/applications##{ZEN_APP_ID}" ) 
+                                              "/integrations/applications##{ZEN_FALCON_APP_ID}"
                                               : "/admin/zen_import",
         :privilege                     =>   privilege?(:manage_account)
       },
@@ -448,7 +448,7 @@ HTML
   
   def facebook_settings
     fb_feature = current_account.basic_facebook_enabled? && privilege?(:admin_tasks)
-    url = (fb_feature && current_account.features?(:social_revamp)) ? "/admin/social/facebook_streams" : "/social/facebook"
+    url = "/admin/social/facebook_streams"
     {
       :url        => url,
       :privilege  => fb_feature

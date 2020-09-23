@@ -48,6 +48,32 @@ class Channel::Freshcaller::AccountsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:no_content]
   end
 
+  def test_update_domain_with_invalid_auth
+    invalid_auth_header
+    put :update, construct_params(version: 'channel', domain: 'abc.freshcaller.com')
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+  end
+
+  def test_update_domain_with_valid_params_and_basic_auth
+    set_basic_auth_header
+    put :update, construct_params(version: 'channel', domain: 'abc.freshcaller.com')
+    assert_equal @account.freshcaller_account.domain, 'abc.freshcaller.com'
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:no_content]
+  end
+
+  def test_update_domain_with_valid_params_and_jwt_auth
+    set_auth_header
+    put :update, construct_params(version: 'channel', domain: 'abc.freshcaller.com')
+    assert_equal @account.freshcaller_account.domain, 'abc.freshcaller.com'
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:no_content]
+  end
+
+  def test_update_domain_with_invalid_params
+    set_auth_header
+    put :update, construct_params(version: 'channel', invalid_domain: 'abc.freshcaller.com')
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request]
+  end
+
   private
 
     def set_auth_header

@@ -8,7 +8,7 @@ class Helpdesk::Source < Helpdesk::Choice
   SOURCE_FORMATTER = {
     all_ids: proc { source_from.map(&:account_choice_id) },
     keys_by_token: proc { source_from.map { |choice| [choice.try(:[], :from_constant) ? choice.translated_name : choice.translated_source_name(translation_record_from_ticket_fields), choice.account_choice_id] } },
-    token_by_keys: proc { Hash[*source_from.map { |choice| [choice.account_choice_id, choice.name] }.flatten] }
+    token_by_keys: proc { Hash[*source_from.map { |choice| [choice.account_choice_id, choice.default ? SOURCE_TOKENS_BY_KEY[choice.account_choice_id] : choice.name] }.flatten] }
   }.freeze
 
   private_constant :SOURCE_FORMATTER

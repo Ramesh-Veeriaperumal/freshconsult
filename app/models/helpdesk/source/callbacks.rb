@@ -5,6 +5,7 @@ class Helpdesk::Source < Helpdesk::Choice
   before_destroy :check_if_default
 
   before_validation :assign_account_choice_id, on: :create, unless: :default
+  before_save :assign_default_icon_id, on: :create, unless: :default
 
   after_commit :clear_ticket_source_cache
 
@@ -25,6 +26,12 @@ class Helpdesk::Source < Helpdesk::Choice
         Redis::DisplayIdLua.ticket_source_choice_id_lua_script_sha,
         [:keys], key.to_a
       )
+    end
+
+    def assign_default_icon_id
+      return if meta[:icon_id].present?
+
+      meta[:icon_id] = DEAFULT_CUSTOM_SOURCE_ICON_ID
     end
 
     def clear_ticket_source_cache
