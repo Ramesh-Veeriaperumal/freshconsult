@@ -36,7 +36,7 @@ module Settings
     def test_toggle_email_valid_disable
       Account.current.enable_setting(:disable_emails)
       put :toggle_email, construct_params({ version: 'pipe', disabled: false})
-      assert_not Account.current.disable_emails_enabled?
+      assert !Account.current.disable_emails_enabled?
     end
 
     def test_toggle_email_invalid_enable
