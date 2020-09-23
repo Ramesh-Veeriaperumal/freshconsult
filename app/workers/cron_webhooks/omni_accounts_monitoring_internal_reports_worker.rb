@@ -43,7 +43,7 @@ module CronWebhooks
         file_path = File.join('/tmp', REPORT_FILE_NAME_PREFIX + "#{Time.now.to_i}.csv")
         File.delete(file_path) if File.exist?(file_path)
         File.open(file_path, 'w+') { |f| f.write(csv_string) }
-        email_subject = "#{REPORT_SUBJECT_PREFIX} #{PodConfig['CURRENT_POD']} - #{Time.now.utc.ctime}"
+        email_subject = "#{REPORT_SUBJECT_PREFIX} #{PodConfig['CURRENT_POD']} - #{Time.now.utc.to_datetime.inspect}"
         to_emails = get_all_members_in_a_redis_set(OMNI_ACCOUNTS_MONITORING_MAILING_LIST) || []
         OmniChannel::EmailUtil::Emailer.export_data('supreme@freshdesk.com', to_emails.join(','), email_subject, construct_email_body, [file_path]) if to_emails.present?
         File.delete(file_path) if File.exist?(file_path)
@@ -79,7 +79,7 @@ module CronWebhooks
         freshchat_account_domain = account.freshchat_account.try(:domain)
         @failed_freshchat_accounts += 1 if freshchat_account_domain.nil?
         @failed_freshcaller_accounts += 1 if freshcaller_account_domain.nil?
-        csv_data << [account.id, account.full_domain, account.omni_bundle_id, freshchat_account_domain, freshchat_account_domain, nil]
+        csv_data << [account.id, account.full_domain, account.omni_bundle_id, freshchat_account_domain, freshcaller_account_domain, nil]
       rescue StandardError => e
         Rails.logger.info "#{MONITORTING_REPORTS_LOGGER_PREFIX} An Exception occured :: check_the_account_status :: #{e.inspect}"
         csv_data << [account.id, account.full_domain, account.omni_bundle_id, nil, nil, "Exception :: #{e.message}"]
@@ -88,21 +88,28 @@ module CronWebhooks
       end
 
       def construct_email_body
-        body = "<h3> Bundle Account Created From #{@time_start} to #{Time.now.utc.ctime} (UTC) Information </h3>"
-        body += "<p>Total bundle accounts created today - #{@total_bundle_accounts}</p>"
+        log_bundle_account_info
+        body = "<h3> Bundle Account Created From #{@time_start.to_datetime.inspect} to #{Time.now.utc.to_datetime.inspect} Information </h3>"
+        body += "<p>Total bundle accounts created - #{@total_bundle_accounts}</p>"
         body += "<p>No. of bundle accounts without freshchat - #{@failed_freshchat_accounts}</p>" if @failed_freshchat_accounts
         body += "<p>No. of bundle accounts without freshcaller - #{@failed_freshcaller_accounts}</p>" if @failed_freshcaller_accounts
         body
+      end
+
+      def log_bundle_account_info
+        Rails.logger.info "#{MONITORTING_REPORTS_LOGGER_PREFIX} INFO :: Bundle Accounts Created :: #{@total_bundle_accounts}"
+        Rails.logger.info "#{MONITORTING_REPORTS_LOGGER_PREFIX} INFO :: Bundle Accounts Without Freshchat :: #{@failed_freshchat_accounts}"
+        Rails.logger.info "#{MONITORTING_REPORTS_LOGGER_PREFIX} INFO :: Bundle Accounts Without Freshcaller :: #{@failed_freshcaller_accounts}"
       end
 
       def start_time_for_reports
         start_time = get_others_redis_key(OMNI_ACCOUNTS_MONITORING_START_TIME).to_i
         if start_time && start_time != 0 && start_time < 720
           Rails.logger.info "#{MONITORTING_REPORTS_LOGGER_PREFIX} Start Time :: start_time_for_reports :: #{start_time}"
-          return start_time.hours.ago
+          return start_time.hours.ago.utc
         else
           Rails.logger.info "#{MONITORTING_REPORTS_LOGGER_PREFIX} Start Time is greater than 720 Hours or 0 hours (4 Hrs Default) :: start_time_for_reports :: #{start_time}"
-          4.hours.ago
+          4.hours.ago.utc
         end
       end
 
