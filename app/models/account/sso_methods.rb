@@ -14,6 +14,14 @@ class Account < ActiveRecord::Base
     sso_enabled && (is_simple_sso? || is_saml_sso?)
   end
 
+  def freshdesk_sso_configurable?
+    !(freshid_org_v2_enabled? && !freshdesk_sso_enabled_wrt_freshid_sso_sync?)
+  end
+
+  def freshdesk_sso_enabled_wrt_freshid_sso_sync?
+    freshid_sso_sync_enabled? ? freshdesk_sso_enabled? : sso_enabled?
+  end
+
   def oauth2_sso_enabled?
     sso_options.present? &&
         (sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2] ||
@@ -35,6 +43,13 @@ class Account < ActiveRecord::Base
 
   def is_simple_sso?
     sso_options.present? && sso_options[:sso_type] == SsoUtil::SSO_TYPES[:simple_sso]
+  end
+
+  alias saml_sso_enabled? is_saml_sso?
+  alias simple_sso_enabled? is_simple_sso?
+
+  def current_sso_type
+    SsoUtil::SSO_TYPES.values.find { |type| safe_send("#{type}_sso_enabled?") }
   end
 
   # Freshid oauth2
@@ -184,7 +199,7 @@ class Account < ActiveRecord::Base
   def customer_oidc_logout_redirect_url
     self.sso_options[:customer_oidc_config][:logout_redirect_url] if self.customer_oidc_sso_enabled? && self.sso_options[:customer_oidc_config].present?
   end
-  
+
   # ***************************************** FOR FRESHID SAML
 
   def freshid_sso_enabled?
