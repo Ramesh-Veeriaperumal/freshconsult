@@ -27,7 +27,7 @@ module Email
     private
 
       def is_setting_enabled?(setting)
-        enabled = current_account.has_setting?(setting)
+        enabled = current_account.safe_send("#{setting}_enabled?")
         NEGATION_SETTINGS.include?(setting) ? !enabled : enabled
       end
 
@@ -68,12 +68,11 @@ module Email
       end
 
       def generate_view_hash
-        @item = {
-          personalized_email_replies: current_account.personalized_email_replies_enabled?,
-          create_requester_using_reply_to: current_account.reply_to_based_tickets_enabled?,
-          allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
-          original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
-        }
+        @item = {}
+        UPDATE_FIELDS.each do |setting|
+          setting_name = EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym
+          @item[setting.to_sym] = is_setting_enabled?(setting_name)
+        end
       end
   end
 end
