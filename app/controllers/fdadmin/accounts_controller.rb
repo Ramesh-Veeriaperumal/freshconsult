@@ -350,7 +350,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         enable_feature(@feature_name)
         result[:status] = 'success'
       else
-        result[status] = 'notice'
+        result[:status] = 'notice'
       end
     rescue RuntimeError
       result[:status] = 'error'
@@ -370,7 +370,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         disable_feature(@feature_name)
         result[:status] = 'success'
       else
-        result[status] = 'notice'
+        result[:status] = 'notice'
       end
     rescue RuntimeError
       result[:status] = 'error'
