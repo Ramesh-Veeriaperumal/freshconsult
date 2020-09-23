@@ -73,18 +73,11 @@ describe Admin::VaRulesController do
     @account.all_va_rules.find_by_id(va_rule.id).active.should be_eql(true)
   end
 
-  it "should disable cascade dispatcher rules when it is enabled" do
-    @account.enable_setting(:cascade_dispatcher)
+  it "should cascade dispatchr rules" do
+    @account.add_feature(:cascade_dispatcher)
     post :toggle_cascade, {:cascade_dispatcher=>"0","_"=>""}
     @account.reload
-    @account.cascade_dispatcher_enabled?.should be_falsey
-  end
-
-  it "should cascade dispatchr rules when it is disable" do
-    @account.disable_setting(:cascade_dispatcher)
-    post :toggle_cascade, {:cascade_dispatcher=>"0","_"=>""}
-    @account.reload
-    @account.cascade_dispatcher_enabled?.should be_truthy
+    @account.has_feature?(:cascade_dispatcher).should be_falsey
   end
 
 end
