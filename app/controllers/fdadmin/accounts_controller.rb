@@ -366,7 +366,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     @account = Account.find(params[:account_id]).make_current
     result = { account_id: @account.id, account_name: @account.name }
     begin
-      if enableable?(@feature_name)
+      if disableable?(@feature_name)
         disable_feature(@feature_name)
         result[:status] = 'success'
       else
