@@ -331,7 +331,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       render :json => {:status => "notice"}.to_json and return unless disableable?(@feature_name)
       disable_feature(@feature_name)
       result[:status] = "success"
-    rescue Exception => e
+    rescue RuntimeError
       result[:status] = "error"
     end
     respond_to do |format|
@@ -352,7 +352,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       else
         result[status] = 'notice'
       end
-    rescue Exception => e
+    rescue RuntimeError
       result[:status] = 'error'
     end
     respond_to do |format|
