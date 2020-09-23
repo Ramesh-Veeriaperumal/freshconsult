@@ -415,21 +415,6 @@
         "_socket_host_new": "agentcollision-podapsouth1.freshdesk.com",
         "_socket_autorefresh_host_new": "autorefresh-podapsouth1.freshdesk.com"
       },
-      "freshfone": {
-        "secret_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:EtHotihQvQYaqxGm63Xk+4MrEhE1Up5I:ki9WLpybJNCT3Fg7i6jyUWe00YwPUvYdDOJP7dYDsa+VRBm8EsjvAhsG9juUa5mH7feUMJ4Zt7BluoBUH09EdaW2zxDF+TUfdYnSxrxGrtE=]",
-        "twilio_account_sid": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:2vY0tA3kYFAFI8FPjmd9qa+3nfNGPCmw:dvIVQe9d688GxLl866usJQx1jEl8oc54ZWk9nF9nY4Hq9QVFiVmigk27vRhV7oDKpzI=]",
-        "auth_token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:8ExzzXbss6/V0HxV7xaZCCUAAe7bFfcU:JNlA7Lx1CAvm9iXy86k2CIxx2XudYa8Ozo69Fyzdw7IASqiXh9VcHGjg2fiJ40zk]",
-        "jwt_signing_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:IiFTn0ICBwSGPGLXcK3dBLVtp6aPPcbS:a++e2KyTVl0N7+xiHL1iiJxVRpoC6JiwWzam1Tku0YvaXW4pjA8BWxnZNxBlk+SWNhQuD+mVFRXb61Q=]",
-        "jwt_verification_keys": [
-          "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:df2Ux2Oy/8bCbivO/f+UGeQIiiJ+mJgG:dkWk4Jw7p7hkXAXK2bZvVXSopEHL10ai94+XGEsl9tsdUSwgqGRlahaQnPQq4jNUm9zNkRVbQOONUHg=]"
-        ],
-        "jwt_token_expiry": 10,
-        "_node_url": "https://aus-fone.freshdesk.com",
-        "_ops_alert_from": "+12345646409",
-        "_billing_error_email": [
-          "freshfone-ops@freshdesk.com"
-        ]
-      },
       "custom_dalli": {
         "_hosts": [
           "custom-memcached-1.internal.podapsouth1.freshdesk.com",
@@ -956,8 +941,6 @@
         "_helpdesk_reports_export_queue": "helpdesk_reports_export_production",
         "_reports_etl_msg_queue": "reports_etl_msgs_production",
         "_reports_service_export_queue": "reports_service_export_production",
-        "_freshfone_call_tracker": "freshfone_call_tracker_production",
-        "_freshfone_call_notifier_queue": "freshfone_call_notifier_production",
         "_activity_queue": "fd_activities_production",
         "_fb_message_realtime_queue": "social_fb_messenger_prod",
         "_cti_screen_pop": "cti_screen_pop_production",
@@ -1387,6 +1370,18 @@
         "kbservice": {
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:Kb4cBUcINoB2EL/IUJbjNbWDwgqoDNcItH+pkAgMbkE=:sJY7vPbF4lbg8Gs2PMfakRRRNTAw84jF:uazf/Gi3cdxK621JDA8uFxq94h/0yj/HsdELbPFNAGuxGES3qfb2eIfMdBxUyQiL]"]
+        },
+        "analytics": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:+uHgRe1fY9xRDH7qpxKE7zuMkvXnF6NzFvF/riHwhW4=:+6SbWbo/dF85jmEWVuJAEuoeWl1YgtP4:+LMeRw0jiNBQsu+AgobstR6Mkuh3gOg0JF3aVD3IvS6ZU6tQG1hEz0kpa2O/mBnLvjYvODtoGrg=]"]
+        },
+        "freshdesk": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:+uHgRe1fY9xRDH7qpxKE7zuMkvXnF6NzFvF/riHwhW4=:dl15TC51FzoMetO/F9Dn91Yz6IivaB7i:EZAhQ6MgX/5PlganG8uU37Cp1hNc/GrpQzaL1QKP5vJmb7G73pxtq+ClWupLzADgo4aNAPChPHM=]"]
+        },
+        "search": {
+          "_auth_type": "jwt",
+          "jwt_secret": ["EJ[1:+uHgRe1fY9xRDH7qpxKE7zuMkvXnF6NzFvF/riHwhW4=:w0VxM+nRl/qcipyw4gZJdXKCijV+Ktgy:Js3Q+4hp+1NX2I9Lmt+odfxsZf6aeC2hQozSd6tezvqHWUe5b2QXibZwHavFoM8scH0vPL273Jg=]"]
         }
       },
       "scheduler_client_keys": {
@@ -1428,6 +1423,9 @@
       "freshmarketer": {
         "access_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:RGZ7hlabNblU8fMAsrFP8ggddZ2L/7Jb:bgjFV5HjfmF1C0Gv2UkIJVJmBP4Wxlf4/ZekPz4JcUEN1OgmaeRcjnf3HDwxGvYUa7RUFS+39YrDfwCbyt24xGEl]",
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
+      },
+      "kbservice": {
+        "secret_key": "EJ[1:52FxyhjAmhMzBDlUZl07k8+z04YsUZ6bsgKRZrrmvh8=:WZvUqDCUP72jOrMPf1KDi9ofn05qmj8C:QKeZGKAnhb6wui7RPTp4ISzcDFnnpiyKHBgU7oDrrf4Ihs4DIJWOJpPpYZqTpnly]"
       },
       "iam": {
         "_expiry": 300,
@@ -1513,7 +1511,8 @@
         "admin_jwt_secret": "EJ[1:ayxMh9ANf+BNvb58fZ2B2/IU2fK3VO5jYtrV0DvOh3I=:9UcAaXab2Al7uz0sve4U5fpS8FFY7aNt:wHXGpglyTgfyK054zLOVE1VFWWS0c6JEKF0qXKWNQb0ngxgUIXXYeT4Fpzbqc2dT]",
         "_api_endpoint": "https://ap-south-1.ocr.freshdesk.com/api/v1/",
         "_auth_type": "jwt",
-        "_jwt_default_expiry": "30"
+        "_jwt_default_expiry": "30",
+        "touchstone_secret": "EJ[1:aSGBAMI+Djk+08Iyn8lZn7BMShQbkMBbDYvrbyB0sW4=:CvvVlswy/EHggfg0VmcUnJVoDQfJyoek:3jaLb5HEiksXQUwTMMKwqkT/AhXbAkrVVIak+6rHq6xHPShM9Z9g+oB6cVSwTaQF]"
       },
       "datadog": {
         "license_key": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:2r5I+9ycADNwDWT8QzWb4nCnDU7wTZHn:1YayhZ+Ht1azKh53CoKzQt40nq5Vbg6Spi/LO1aP71aTCFsmR8wQ5h3v6UrPWKe7]",
@@ -1889,8 +1888,6 @@
     },
     "fc-bg-shoryuken-analytics": {
     },
-    "hk-app-freshfone-twilio": {
-    },
     "hk-app-trial": {
     },
     "fc-app-api-sling": {
@@ -1908,8 +1905,6 @@
     "hk-app-pipeline": {
     },
     "hk-app-solution": {
-    },
-    "hk-app-freshfone": {
     },
     "hk-bg-shoryuken": {
     },

@@ -146,9 +146,6 @@ class SAAS::AccountDataCleanup
 
   def handle_custom_apps_drop_data
     Integrations::Application.freshplugs(account).destroy_all
-    # Remove fa_developer feature - To prevent the developer from using Marketplac Developer portal
-    account.features.fa_developer.destroy if account.features_included?(:fa_developer)
-
     # Remove the installed custom apps from Marketplace
     custom_apps = log_on_error mkp_custom_apps
     return if custom_apps.blank?

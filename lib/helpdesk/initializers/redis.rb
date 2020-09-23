@@ -51,6 +51,8 @@ Redis::DisplayIdLua.load_display_id_lua_script_to_redis
 Redis::DisplayIdLua.load_picklist_id_lua_script
 Redis::DisplayIdLua.load_ticket_source_choice_id_lua_script
 
+Redis::ResyncRatelimitterLua.load_resync_ratelimitter_lua_script
+
 Redis::Redlock.load_unlock_lua_script_to_redis
 
 Redis.class_eval {add_method_tracer :set}

@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
-    :prevent_wc_ticket_create, :allow_wildcard_ticket_create, :requester_privilege,
+    :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
@@ -44,7 +44,7 @@ class Account < ActiveRecord::Base
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
-    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :skip_ticket_threading, :channel_command_reply_to_sidekiq
+    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :skip_ticket_threading, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :disable_freshchat, :html_to_plain_text
   ].freeze
 
   BITMAP_FEATURES = [
@@ -70,7 +70,7 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
@@ -81,9 +81,15 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
-    :fetch_ticket_from_ref_first, :skip_ticket_threading, :helpdesk_tickets_by_product
+    :fetch_ticket_from_ref_first, :skip_ticket_threading, :helpdesk_tickets_by_product, :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
+
+  LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal, :helpdesk_tickets_by_product,
+    :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create,
+    :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat
+  ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
@@ -231,7 +237,7 @@ class Account < ActiveRecord::Base
   end
 
   def count_es_enabled?
-    launched?(:count_service_es_reads) || features?(:countv2_reads)
+    launched?(:count_service_es_reads)
   end
 
   def count_es_api_enabled?
@@ -244,10 +250,6 @@ class Account < ActiveRecord::Base
 
   def customer_sentiment_enabled?
     launched?(:customer_sentiment)
-  end
-
-  def freshfone_enabled?
-    features?(:freshfone) and freshfone_account.present?
   end
 
   def freshcaller_enabled?
@@ -268,10 +270,6 @@ class Account < ActiveRecord::Base
 
   def freshchat_routing_enabled?
     livechat_enabled? and features?(:chat_routing)
-  end
-
-  def supervisor_feature_launched?
-    features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end
 
   def compose_email_enabled?
@@ -335,12 +333,11 @@ class Account < ActiveRecord::Base
   end
 
   def falcon_ui_enabled?(current_user = :no_user)
+    Rails.logger.warn "FALCON FEATURE METHOD :: falcon_ui_enabled? :: #{caller[0..2]}"
     return true if current_user
   end
 
-  def falcon_support_portal_theme_enabled?
-    falcon_ui_enabled? && falcon_portal_theme_enabled?
-  end
+  alias falcon_support_portal_theme_enabled? falcon_portal_theme_enabled?
 
   #this must be called instead of using launchparty in console or from freshops to set all necessary things needed
   def enable_falcon_ui
@@ -441,43 +438,28 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def solutions_agent_metrics_enabled?
-    launched?(:solutions_agent_metrics)
+  def allow_wildcard_ticket_create_enabled?
+    launched?(:allow_wildcard_ticket_create)
   end
 
-  def fetch_ticket_from_ref_first_enabled?
-    launched?(:fetch_ticket_from_ref_first)
+  def skip_invoice_due_warning_enabled?
+    launched?(:skip_invoice_due_warning)
   end
 
-  def skip_ticket_threading_enabled?
-    launched?(:skip_ticket_threading)
+  def supervisor_contact_field_enabled?
+    launched?(:supervisor_contact_field)
   end
 
-  def forums_agent_portal_enabled?
-    launched?(:forums_agent_portal)
+  def bypass_signup_captcha_enabled?
+    launched?(:bypass_signup_captcha)
   end
 
-  def solutions_agent_portal_enabled?
-    launched?(:solutions_agent_portal)
-  end
-
-  def helpdesk_tickets_by_product_enabled?
-    launched?(:helpdesk_tickets_by_product)
+  def disable_freshchat_enabled?
+    launched?(:disable_freshchat)
   end
 
   def features
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
   end
 
-  # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
-  def enable_setting(setting)
-    launch(setting) if LP_FEATURES.include?(setting)
-    add_feature(setting) if BITMAP_FEATURES.include?(setting)
-  end
-
-  # CAUTION:: Temporary implementation to unblock UI development for settings. This will be changed soon!
-  def disable_setting(setting)
-    rollback(setting) if LP_FEATURES.include?(setting)
-    revoke_feature(setting) if BITMAP_FEATURES.include?(setting)
-  end
 end

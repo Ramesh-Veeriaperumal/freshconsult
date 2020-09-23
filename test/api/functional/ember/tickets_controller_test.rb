@@ -599,18 +599,6 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
-    def test_ticket_show_with_fone_call
-      # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
-      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-      ticket = new_ticket_from_call
-      remove_wrap_params
-      assert ticket.reload.freshfone_call.present?
-      get :show, construct_params({ version: 'private', id: ticket.display_id }, false)
-      assert_response 200
-      match_json(ticket_show_pattern(ticket))
-      MixpanelWrapper.unstub(:send_to_mixpanel)
-    end
-
     def test_ticket_show_with_ticket_topic
       ticket = new_ticket_from_forum_topic
       remove_wrap_params
@@ -701,6 +689,19 @@ module Ember
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_size} MB")])
       assert_response 400
+    end
+
+    def test_create_with_html_to_plain_text_feature
+      Account.current.launch(:html_to_plain_text)
+      description = '<div><div>test</div><div>hello</div><div>hi</div><div><br></div></div>'
+      params_hash = ticket_params_hash.merge!(description: description)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      response_body = JSON.parse(response.body)
+      created_ticket = Helpdesk::Ticket.last
+      assert_equal created_ticket.description, Helpdesk::HTMLToPlain.plain(description)
+    ensure
+      Account.current.rollback(:html_to_plain_text)
     end
 
     def test_create_ticket_with_file_field

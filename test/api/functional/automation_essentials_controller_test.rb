@@ -251,181 +251,100 @@ class AutomationEssentialsControllerTest < ActionController::TestCase
   # For now, enable/disable setting function in account/features.rb will add to LP or Bitmap or both
   # based on if the feature is present in the list.
   # This will change once the settings implementation is ready
-  def test_enable_setting_for_lp
-    put :enable_setting, controller_params(version: 'v2', feature: @test_bitmap_feature_name)
+
+  def test_enable_settings_for_lp_and_bitmap_feature
+    put :enable_setting, controller_params(version: 'v2', feature: @test_setting_bitmap_and_lp_name)
     assert_response 200
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
+    assert_equal Account.current.send("#{@test_setting_bitmap_and_lp_name}_enabled?"), true
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), true
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), true
     match_json(features: Account.current.enabled_features_list)
   end
 
-  def test_disable_setting_for_lp
-    Account.current.launch(@test_lp_feature_name)
-    assert_equal Account.current.launched?(@test_lp_feature_name), true
-    put :disable_setting, controller_params(version: 'v2', feature: @test_lp_feature_name)
+  def test_disable_setting_for_lp_and_bitmap_feature
+    Account.current.launch(@test_setting_bitmap_and_lp_name)
+    Account.current.add_feature(@test_setting_bitmap_and_lp_name)
+    assert Account.current.launched?(@test_setting_bitmap_and_lp_name)
+    assert Account.current.has_feature?(@test_setting_bitmap_and_lp_name)
+    put :disable_setting, controller_params(version: 'v2', feature: @test_setting_bitmap_and_lp_name)
     assert_response 200
-    assert_equal Account.current.launched?(@test_lp_feature_name), false
+    assert_equal Account.current.send("#{@test_setting_bitmap_and_lp_name}_enabled?"), false
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), false
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), false
     match_json(features: Account.current.enabled_features_list)
   end
 
-  def test_enable_setting_for_bitmap
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), false
-    put :enable_setting, controller_params(version: 'v2', feature: @test_bitmap_feature_name)
-    assert_response 200
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
-    match_json(features: Account.current.enabled_features_list)
-  end
-
-  def test_disable_setting_for_bitmap
-    Account.current.add_feature(@test_bitmap_feature_name)
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
-    put :disable_setting, controller_params(version: 'v2', feature: @test_bitmap_feature_name)
-    assert_response 200
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), false
-    match_json(features: Account.current.enabled_features_list)
-  end
-
-  def test_enable_setting_for_production_env_for_lp
-    assert_equal Account.current.launched?(@test_lp_feature_name), false
+  def test_enable_setting_for_production_env_for_lp_and_bitmap_feature
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), false
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), false
     Rails.env.stubs(:production?).returns(true)
-    put :enable_setting, controller_params(version: 'v2', feature: @test_lp_feature_name)
+    put :enable_setting, controller_params(version: 'v2', feature: @test_setting_bitmap_and_lp_name)
     assert_response 400
-    assert_equal Account.current.launched?(@test_lp_feature_name), false
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), false
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), false
     match_json(request_error_pattern(:unsupported_environment))
     Rails.env.unstub(:production?)
   end
 
-  def test_enable_setting_for_production_env_for_bitmap
-    assert_equal Account.current.has_feature?(@test_bitmap_feature_name), false
+  def test_disable_setting_for_production_env_for_lp_and_bitmap_feature
+    Account.current.launch(@test_setting_bitmap_and_lp_name)
+    Account.current.add_feature(@test_setting_bitmap_and_lp_name)
+    assert Account.current.launched?(@test_setting_bitmap_and_lp_name)
+    assert Account.current.has_feature?(@test_setting_bitmap_and_lp_name)
     Rails.env.stubs(:production?).returns(true)
-    put :enable_setting, controller_params(version: 'v2', feature: @test_bitmap_feature_name)
+    put :disable_setting, controller_params(version: 'v2', feature: @test_setting_bitmap_and_lp_name)
     assert_response 400
-    assert_equal Account.current.has_feature?(@test_bitmap_feature_name), false
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), true
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), true
     match_json(request_error_pattern(:unsupported_environment))
     Rails.env.unstub(:production?)
   end
 
-  def test_disable_setting_for_production_env_for_lp
-    Account.current.launch(@test_lp_feature_name)
-    assert_equal Account.current.launched?(@test_lp_feature_name), true
-    Rails.env.stubs(:production?).returns(true)
-    put :disable_setting, controller_params(version: 'v2', feature: @test_lp_feature_name)
-    assert_response 400
-    assert_equal Account.current.launched?(@test_lp_feature_name), true
-    match_json(request_error_pattern(:unsupported_environment))
-    Rails.env.unstub(:production?)
-  end
-
-  def test_disable_setting_for_production_env_for_bitmap
-    Account.current.add_feature(@test_bitmap_feature_name)
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
-    Rails.env.stubs(:production?).returns(true)
-    put :disable_setting, controller_params(version: 'v2', feature: @test_bitmap_feature_name)
-    assert_response 400
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
-    match_json(request_error_pattern(:unsupported_environment))
-    Rails.env.unstub(:production?)
-  end
-
-  def test_enable_setting_without_privilege_for_lp
-    assert_equal Account.current.launched?(@test_lp_feature_name), false
+  def test_enable_setting_without_privilege_for_lp_and_bitmap_feature
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), false
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), false
     User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
-    put :enable_setting, controller_params(version: 'v2', feature: @test_lp_feature_name)
+    put :enable_setting, controller_params(version: 'v2', feature: @test_setting_bitmap_and_lp_name)
     assert_response 403
-    assert_equal Account.current.launched?(@test_lp_feature_name), false
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), false
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), false
     match_json(request_error_pattern(:access_denied))
     User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
   end
 
-  def test_enable_setting_without_privilege_for_bitmap
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), false
+  def test_disable_setting_without_privilege_for_lp_and_bitmap_feature
+    Account.current.launch(@test_setting_bitmap_and_lp_name)
+    Account.current.add_feature(@test_setting_bitmap_and_lp_name)
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), true
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), true
     User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
-    put :enable_setting, controller_params(version: 'v2', feature: @test_bitmap_feature_name)
+    put :disable_setting, controller_params(version: 'v2', feature: @test_setting_bitmap_and_lp_name)
     assert_response 403
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), false
+    assert_equal Account.current.launched?(@test_setting_bitmap_and_lp_name), true
+    assert_equal Account.current.has_feature?(@test_setting_bitmap_and_lp_name), true
     match_json(request_error_pattern(:access_denied))
     User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
   end
 
-  def test_disable_setting_without_privilege_for_lp
-    Account.current.launch(@test_lp_feature_name)
-    assert_equal Account.current.launched?(@test_lp_feature_name), true
-    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
-    put :disable_setting, controller_params(version: 'v2', feature: @test_lp_feature_name)
-    assert_response 403
-    assert_equal Account.current.launched?(@test_lp_feature_name), true
-    match_json(request_error_pattern(:access_denied))
-    User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
-  end
-
-  def test_disable_setting_without_privilege_bitmap
-    Account.current.add_feature(@test_bitmap_feature_name)
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
-    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
-    put :disable_setting, controller_params(version: 'v2', feature: @test_bitmap_feature_name)
-    assert_response 403
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
-    match_json(request_error_pattern(:access_denied))
-    User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
-  end
-
-  def test_enable_setting_without_params_for_lp
-    assert_equal Account.current.launched?(@test_lp_feature_name), false
+  def test_enable_setting_without_params
     put :enable_setting, controller_params(version: 'v2')
     assert_response 400
-    assert_equal Account.current.launched?(@test_lp_feature_name), false
     match_json(request_error_pattern(:missing_params))
   end
 
-  def test_disable_setting_without_params_for_lp
-    Account.current.launch(@test_lp_feature_name)
-    assert_equal Account.current.launched?(@test_lp_feature_name), true
+  def test_disable_setting_without_params
     put :disable_setting, controller_params(version: 'v2')
     assert_response 400
-    assert_equal Account.current.launched?(@test_lp_feature_name), true
     match_json(request_error_pattern(:missing_params))
   end
 
-  def test_enable_setting_without_params_for_bitmap
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), false
-    put :enable_setting, controller_params(version: 'v2')
-    assert_response 400
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), false
-    match_json(request_error_pattern(:missing_params))
-  end
-
-  def test_disable_setting_without_params_for_bitmap
-    Account.current.add_feature(@test_bitmap_feature_name)
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
-    put :disable_setting, controller_params(version: 'v2')
-    assert_response 400
-    assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), true
-    match_json(request_error_pattern(:missing_params))
-  end
-
-  def test_enable_setting_with_invalid_params_for_lp
-    assert_equal Account.current.launched?(@invalid_feature_name), false
-    put :enable_setting, controller_params(version: 'v2', feature: @invalid_feature_name)
-    assert_response 400
-    assert_equal Account.current.launched?(@invalid_feature_name), false
-    match_json(request_error_pattern(:invalid_values, fields: 'feature'))
-  end
-
-  def test_disable_setting_with_invalid_params_for_lp
-    Account.current.launch(@invalid_feature_name)
-    assert_equal Account.current.launched?(@invalid_feature_name), true
-    put :disable_setting, controller_params(version: 'v2', feature: @invalid_feature_name)
-    assert_response 400
-    assert_equal Account.current.launched?(@invalid_feature_name), true
-    match_json(request_error_pattern(:invalid_values, fields: 'feature'))
-  end
-
-  def test_enable_setting_with_invalid_params_for_bitmap
+  def test_enable_setting_with_invalid_feature_params
     put :enable_setting, controller_params(version: 'v2', feature: @invalid_feature_name)
     assert_response 400
     match_json(request_error_pattern(:invalid_values, fields: 'feature'))
   end
 
-  def test_disable_setting_with_invalid_params_for_bitmap
+  def test_disable_setting_with_invalid_feature_params
     put :disable_setting, controller_params(version: 'v2', feature: @invalid_feature_name)
     assert_response 400
     match_json(request_error_pattern(:invalid_values, fields: 'feature'))
@@ -436,8 +355,11 @@ class AutomationEssentialsControllerTest < ActionController::TestCase
     @test_lp_feature_name = VALID_LP_FEATURES.sample
     @invalid_feature_name = INVALID_FEATURES.sample
     @test_bitmap_feature_name = VALID_BITMAP_FEATURES.sample
+    @test_setting_bitmap_and_lp_name = Account::LP_TO_BITMAP_MIGRATION_FEATURES.sample
     Account.current.rollback(@test_lp_feature_name)
     Account.current.rollback(@invalid_feature_name)
+    Account.current.rollback(@test_setting_bitmap_and_lp_name)
     Account.current.revoke_feature(@test_bitmap_feature_name)
+    Account.current.revoke_feature(@test_setting_bitmap_and_lp_name)
   end
 end

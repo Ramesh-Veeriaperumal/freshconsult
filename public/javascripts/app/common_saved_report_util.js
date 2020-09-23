@@ -5,7 +5,7 @@
  * There will be tight coupling between this util and report specific js to build saved reports.
  * This unfriendly coupling will reduce code redundancy and maintainence.
 
- * @sample:refer freshfonereports.js or livechat/reports.js 
+ * @sample:refer livechat/reports.js
  *
  */
 var Helpkit = Helpkit || {};

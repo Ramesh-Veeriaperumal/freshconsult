@@ -22,16 +22,9 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
   def install 
   # also updates
     Rails.logger.debug "Installing application with id "+params[:id]
-    if @installing_application.cti?
-      if current_account.cti_installed_app_from_cache
-        flash[:notice] = t(:'flash.application.install.cti_error')
-        redirect_to integrations_applications_path and return
-      end
-      if current_account.freshfone_active?
-        flash[:notice] = t(:'flash.application.install.freshfone_alert')
-        redirect_to :controller=> 'applications', :action => 'index'
-        return
-      end
+    if @installing_application.cti? && current_account.cti_installed_app_from_cache
+      flash[:notice] = t(:'flash.application.install.cti_error')
+      redirect_to integrations_applications_path and return
     end
     begin
       successful = @installed_application.save!
@@ -89,19 +82,15 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
       @installed_application.configs_password = '' unless @installed_application.configs_password.blank?
 
       if @installing_application.name == Integrations::Constants::APP_NAMES[:shopify]
-        if current_account.falcon_ui_enabled?(current_user)
-          primary_store = { shop_name: @installed_application.configs[:inputs]['shop_name'], shop_display_name: @installed_application.configs[:inputs]['shop_display_name'] || @installed_application.configs[:inputs]['shop_name'] }
-          additional_stores = []
-          if @installed_application.configs[:inputs]['additional_stores'].present?
-            @installed_application.configs[:inputs]['additional_stores'].keys.each do |key|
-              additional_stores << { shop_name: key, shop_display_name: @installed_application.configs[:inputs]['additional_stores'][key]['shop_display_name'] || key }
-            end
+        primary_store = { shop_name: @installed_application.configs[:inputs]['shop_name'], shop_display_name: @installed_application.configs[:inputs]['shop_display_name'] || @installed_application.configs[:inputs]['shop_name'] }
+        additional_stores = []
+        if @installed_application.configs[:inputs]['additional_stores'].present?
+          @installed_application.configs[:inputs]['additional_stores'].keys.each do |key|
+            additional_stores << { shop_name: key, shop_display_name: @installed_application.configs[:inputs]['additional_stores'][key]['shop_display_name'] || key }
           end
-          @stores = [ primary_store, additional_stores ].flatten
-          render "integrations/installed_applications/shopify/falcon_edit"
-        else
-          render "integrations/installed_applications/shopify/helpkit_edit"
         end
+        @stores = [primary_store, additional_stores].flatten
+        render 'integrations/installed_applications/shopify/falcon_edit'
       end
     else
       render "integrations/applications/edit"

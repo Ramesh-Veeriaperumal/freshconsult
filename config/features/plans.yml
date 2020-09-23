@@ -27,7 +27,6 @@
   :blossom_jan_17:
     :name: Blossom
     :features:
-      - :fa_developer
       - :split_tickets
       - :add_watcher
       - :traffic_cop
@@ -75,6 +74,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_17
@@ -93,6 +93,8 @@
       - :help_widget_predictive
       - :article_versioning
       - :suggested_articles_count
+      - :analytics_articles
+      - :analytics_knowledge_base_report
     :inherits:
       - :blossom_jan_17
     :exclude: []
@@ -129,12 +131,11 @@
       - :twitter_field_automation
       - :solutions_templates
       - :contact_custom_activity_api
-      - :analytics_articles
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_17
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
   :forest_jan_17:
     :name: Forest
     :features:
@@ -147,7 +148,7 @@
       - :article_approval_workflow
     :inherits:
       - :estate_jan_17
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
   :sprout_jan_19:
     :name: Sprout
     :features:
@@ -235,6 +236,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_19
@@ -255,7 +257,6 @@
       - :session_replay
       - :image_annotation
       - :custom_apps
-      - :fa_developer
       - :forums
       - :multi_language
       - :css_customization
@@ -279,6 +280,8 @@
       - :advanced_automations
       - :article_versioning
       - :suggested_articles_count
+      - :analytics_articles
+      - :analytics_knowledge_base_report
     :inherits:
       - :blossom_jan_19
     :exclude: []
@@ -344,18 +347,17 @@
       - :next_response_sla
       - :twitter_field_automation
       - :solutions_templates
-      - :analytics_articles
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_19
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
   :estate_omni_jan_19:
     :name: Estate Omni Channel
     :features: []
     :inherits:
       - :estate_jan_19
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
   :forest_jan_19:
     :name: Forest
     :features:
@@ -367,7 +369,7 @@
       - :article_approval_workflow
     :inherits:
       - :estate_jan_19
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
   :sprout_jan_20:
     :name: Sprout
     :features:
@@ -454,6 +456,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :untitled_feature_1_dependency_toggle
+      - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:
       - :sprout_jan_20
@@ -473,7 +476,6 @@
       - :session_replay
       - :image_annotation
       - :custom_apps
-      - :fa_developer
       - :forums
       - :multi_language
       - :css_customization
@@ -496,6 +498,8 @@
       - :help_widget_predictive
       - :advanced_automations
       - :suggested_articles_count
+      - :analytics_articles
+      - :analytics_knowledge_base_report
     :inherits:
       - :blossom_jan_20
     :exclude: []
@@ -555,18 +559,17 @@
       - :twitter_field_automation
       - :fb_ad_posts
       - :solutions_templates
-      - :analytics_articles
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
     :inherits:
       - :garden_jan_20
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
   :estate_omni_jan_20:
     :name: Estate Omni Channel
     :features: []
     :inherits:
       - :estate_jan_20
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
   :forest_jan_20:
     :name: Forest
     :features:
@@ -588,7 +591,7 @@
       - :triage
     :inherits:
       - :estate_jan_20
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
     :freddy_sessions: 5000
   :forest_omni_jan_20:
     :name: Forest Omni Channel
@@ -598,5 +601,5 @@
       - :botflow
     :inherits:
       - :forest_jan_20
-    :exclude: []
+    :exclude: [:analytics_knowledge_base_report]
     :freddy_sessions: 5000

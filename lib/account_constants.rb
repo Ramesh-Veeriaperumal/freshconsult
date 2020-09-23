@@ -103,13 +103,15 @@ module AccountConstants
   ANONYMOUS_EMAIL = 'freshdeskdemo'.freeze
   ANONYMOUS_ACCOUNT_NAME = 'Example'.freeze
 
-  WIDGET_COUNT_FOR_PLAN = { sprout: 1, non_sprout: 5 }.freeze
+  WIDGET_COUNT_FOR_PLAN = { sprout: 1, non_sprout: 10 }.freeze
   FRESHSALES_SUBSCRIPTION_URL = 'https://%{domain}/subscription'.freeze
   DEFAULT_SKILL_LIMIT = 180
   MULTI_PRODUCT_LIMIT = 5
   IGNORE_SIGNUP_PARAMS = ['company_name'].freeze
 
   DEFAULT_AGENT_AVAILABILITY_REFRESH_TIME = 60
+
+  FM_TRIAL_EVENT_NAME = 'Fdesk Trial Plan'.freeze
 
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT

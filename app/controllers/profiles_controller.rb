@@ -56,7 +56,7 @@ class ProfilesController < ApplicationController
         @check_session.destroy
         current_user_session.destroy
         @password_failed = false
-        if current_account.falcon_ui_enabled?(current_user) and current_user.agent?
+        if current_user.agent?
           render :partial => '/profiles/change_password.rjs'
         else
           redirect_to new_user_session_url
@@ -120,21 +120,13 @@ private
       if @profile.update_attributes(params[:agent])
         format.html { 
           flash[:notice] = 'Your profile has been updated successfully.'
-          if request.xhr? || current_account.falcon_ui_enabled?(current_user)
-            render :nothing => true
-          else
-            redirect_to(edit_profile_url)
-          end
+          render :nothing => true
         }
         format.xml  { head :ok }
         format.nmobile {render :json => { :success => true }}
       else
         format.html { 
-          if request.xhr? || current_account.falcon_ui_enabled?(current_user)
-            head :unprocessable_entity
-          else
-            redirect_to(edit_profile_url, flash: { error: activerecord_error_list(@profile.errors) })
-          end
+          head :unprocessable_entity
         }
         format.xml  { render :xml => @profile.errors, :status => :unprocessable_entity }
         format.nmobile {render :json => { :success => false }}
@@ -147,10 +139,8 @@ private
 
     if current_user.customer?
       redirect_to edit_support_profile_path
-    elsif current_account.falcon_ui_enabled?(current_user)
-      render partial: '/profiles/change_password.rjs'
     else
-      redirect_to edit_profile_path # redirect_to used to fix breadcrums issue in Freshservice
+      render partial: '/profiles/change_password.rjs'
     end
   end
 

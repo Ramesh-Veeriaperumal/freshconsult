@@ -86,9 +86,6 @@
 		jQuery('div.attach-error').parents('.commentbox').find('.seperator').addClass('overlapping');
 		jQuery(".search_field_item input").keypress(function(event) { return event.keyCode != 13; });
 	});
-	try {
-		freshfonePlayerSettings();
-	} catch(e) {console.log("freshfonePlayerSettings not loaded");}
 	!function(){
 		"use strict";
 		Fjax.bodyClass = 'ticket_details';
@@ -133,7 +130,7 @@ jQuery('body').one('assetLoaded.fjax', function() {
 		<% end %>
 	<% end %>
 });
-<% add_to_reply = !(@ticket.facebook? || @ticket.twitter? || @ticket.freshfone_call.present?) %>
+<% add_to_reply = !(@ticket.facebook? || @ticket.twitter?) %>
 <% if add_to_reply %>
   Helpdesk.MultipleFileUpload.addToRply.init();
 <% end %>

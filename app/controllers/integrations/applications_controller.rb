@@ -62,7 +62,7 @@ class Integrations::ApplicationsController < Admin::AdminController
   end
 
   def show
-    if current_account.falcon_ui_enabled?(current_user) && @installing_application.name == Integrations::Constants::APP_NAMES[:shopify]
+    if @installing_application.name == Integrations::Constants::APP_NAMES[:shopify]
       render "integrations/applications/shopify/add_store"
     end
   end

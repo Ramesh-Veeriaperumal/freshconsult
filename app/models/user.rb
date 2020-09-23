@@ -1122,7 +1122,6 @@ class User < ActiveRecord::Base
       self.cti_phone = nil
       agent.destroy
       deliver_password_reset_instructions!(nil) if freshid_integration_enabled_account?
-      freshfone_user.destroy if freshfone_user
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date =>
@@ -1367,7 +1366,7 @@ class User < ActiveRecord::Base
   end
 
   def preferred_source
-    Helpdesk::Source.ticket_source_token_by_key[preferences[:preferred_source]]
+    Helpdesk::Source.source_choices(:token_by_keys)[preferences[:preferred_source]]
   end
 
   def add_preferred_source(source)

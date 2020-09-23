@@ -17,7 +17,7 @@ Mail::Message.class_eval do
         end
       rescue Net::SMTPAuthenticationError => e
         Rails.logger.info "Net::SMTPAuthenticationError while sending email - #{e.message}"
-        update_mailbox_error_type if e.inspect.include?(Email::Mailbox::Constants::SMTP_AUTH_ERROR_CODE)
+        update_mailbox_error_type if valid_auth_error?(e)
       rescue Net::SMTPFatalError => e
         Rails.logger.info "Net::SMTPFatalError while sending email by deliver - #{e.message}"
         raise if e.to_s.downcase.include?('line length exceeded')
@@ -38,7 +38,7 @@ Mail::Message.class_eval do
       response = delivery_method.deliver!(self)
     rescue Net::SMTPAuthenticationError => e
       Rails.logger.info "Net::SMTPAuthenticationError while sending email by deliver! - #{e.message}"
-      update_mailbox_error_type if e.inspect.include?(Email::Mailbox::Constants::SMTP_AUTH_ERROR_CODE)
+      update_mailbox_error_type if valid_auth_error?(e)
       log_mail_message
       raise e
     rescue Net::SMTPFatalError => e
@@ -93,6 +93,10 @@ Mail::Message.class_eval do
 
       def log_mail_message
         Rails.logger.info "Mail::Message - #{self.inspect}"
+      end
+
+      def valid_auth_error?(message)
+        message.to_s[0..2].eql?(Email::Mailbox::Constants::SMTP_AUTH_ERROR_CODE)
       end
 end
 

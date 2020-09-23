@@ -44,10 +44,6 @@ Sidekiq.configure_client do |config|
       "ManualPublishWorker",
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
-      "Freshfone::CallQueueWorker",
-      "Freshfone::AcwWorker",
-      "Freshfone::TranscriptAttachmentWorker",
-      "Freshfone::CallTimeoutWorker",
       "Freshcaller::AccountDeleteWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
@@ -93,7 +89,7 @@ Sidekiq.configure_client do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
-      'AccountCleanup::OldSuspendedAccountsWorker',
+      'AccountCleanup::RebalancedAccountDeleteWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'
@@ -184,10 +180,6 @@ Sidekiq.configure_server do |config|
       "ManualPublishWorker",
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
-      "Freshfone::CallQueueWorker",
-      "Freshfone::AcwWorker",
-      "Freshfone::TranscriptAttachmentWorker",
-      "Freshfone::CallTimeoutWorker",
       "Freshcaller::AccountDeleteWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
@@ -233,7 +225,7 @@ Sidekiq.configure_server do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
-      'AccountCleanup::OldSuspendedAccountsWorker',
+      'AccountCleanup::RebalancedAccountDeleteWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'
@@ -278,7 +270,8 @@ Sidekiq.configure_server do |config|
       :priority => ['account_id', 'shard_name'], 
       :required_classes => [
         'Archive::AccountTicketsWorker',
-        'Archive::TicketWorker'
+        'Archive::TicketWorker',
+        'CentralPublisher::CentralReSyncWorker'
     ]
     chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
   end
@@ -292,10 +285,6 @@ Sidekiq.configure_server do |config|
       "ManualPublishWorker",
       "Tickets::SelectAll::BatcherWorker",
       "Sidekiq::Batch::Callback",
-      "Freshfone::CallQueueWorker",
-      "Freshfone::AcwWorker",
-      "Freshfone::TranscriptAttachmentWorker",
-      "Freshfone::CallTimeoutWorker",
       "Freshcaller::AccountDeleteWorker",
       "Ecommerce::EbayWorker",
       "Ecommerce::EbayUserWorker",
@@ -342,7 +331,7 @@ Sidekiq.configure_server do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
-      'AccountCleanup::OldSuspendedAccountsWorker',
+      'AccountCleanup::RebalancedAccountDeleteWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'

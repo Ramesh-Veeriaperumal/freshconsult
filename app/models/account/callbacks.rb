@@ -22,7 +22,6 @@ class Account < ActiveRecord::Base
                :update_google_domain, :update_route_info, :update_users_time_zone
 
   after_update :clear_domain_cache, :if => :account_domain_changed?
-  after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
@@ -379,7 +378,7 @@ class Account < ActiveRecord::Base
       @launch_party_features ||= []
       changes.each do |key, features|
         features.each do |feature|
-          @launch_party_features << { "#{key}": [feature] } if FeatureClassMapping.get_class(feature.to_s) && [:launch, :rollback].include?(key) && lp_central_publish_on_signup?(feature)
+          @launch_party_features << { "#{key}": [feature] } if (FeatureClassMapping.get_feature_class(feature.to_s) || FeatureClassMapping.get_central_launchparty_class(feature.to_s)) && [:launch, :rollback].include?(key) && (lp_central_publish_on_signup?(feature) || FeatureClassMapping.get_feature_class(feature.to_s))
         end
       end
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
@@ -398,7 +397,7 @@ class Account < ActiveRecord::Base
     #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
     def trigger_launchparty_feature_callbacks
       return if @launch_party_features.blank?
-      args = { :features => @launch_party_features, :account_id => self.id }
+      args = { features: @launch_party_features, account_id: self.id, signup_in_progress: signup_in_progress? }
       LaunchPartyActionWorker.perform_async(args)
       @launch_party_features = nil
     end
@@ -579,12 +578,6 @@ class Account < ActiveRecord::Base
 
     def remove_from_master_queries
       remove_member_from_redis_set(MASTER_QUERIES,self.id)
-    end
-
-    def update_freshfone_voice_url
-      if full_domain_changed? or ssl_enabled_changed?
-        freshfone_account.update_voice_url
-      end
     end
 
     def update_currency_for_anonymous_account

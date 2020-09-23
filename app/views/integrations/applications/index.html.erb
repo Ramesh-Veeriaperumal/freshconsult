@@ -110,8 +110,7 @@
                             };
 
 
-      var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
-                                : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
+      var platformVersion = '<%= Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]%>'
       var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages, platformVersion);
 
       marketplaceBrowser.toggleAppsMessage(marketplaceBrowser.getAppsLength() > 0 );
@@ -134,7 +133,7 @@
         var app_info = hash_value.split('_');
         app_id = app_info[0]
 
-        <% zendesk_app_id = current_account.falcon_ui_enabled?(User.current) ? ZendeskAppConfig::FALCON_APP_ID : ZendeskAppConfig::APP_ID%>
+        <% zendesk_app_id = ZendeskAppConfig::FALCON_APP_ID%>
         if(app_id == <%= zendesk_app_id.to_s %> && jQuery('#ext-<%=zendesk_app_id%>').length != 0) {
           jQuery('#ext-<%=zendesk_app_id%>').find('.btn-settings').trigger('click');
         }else if(hash.match('^#[0-9]')) {

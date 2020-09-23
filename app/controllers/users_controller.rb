@@ -195,7 +195,7 @@ class UsersController < ApplicationController
   end
 
   def set_conversation_preference
-    current_user.set_notes_pref(params[:oldest_on_top]) if current_account.falcon_ui_enabled?(current_user) && params[:oldest_on_top].present?
+    current_user.set_notes_pref(params[:oldest_on_top]) if params[:oldest_on_top].present?
     head :no_content
   end
 
