@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
     :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
-    :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product,:migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
+    :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log,
     :requester_widget_timeline, :sprout_trial_onboarding,
