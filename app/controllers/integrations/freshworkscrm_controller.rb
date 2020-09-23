@@ -124,15 +124,15 @@ class Integrations::FreshworkscrmController < Admin::AdminController
 
     def default_configs
       config_hash = {}
-      config_hash['contact_fields'] = 'display_name'
-      config_hash['account_fields'] = 'name'
-      config_hash['contact_labels'] = 'Full name'
-      config_hash['account_labels'] = 'Name'
-      config_hash['deal_view'] = '0'
+      config_hash['contact_fields'] = DISPLAY_NAME_FIELD
+      config_hash['account_fields'] = NAME_FIELD
+      config_hash['contact_labels'] = FULL_NAME_FIELD
+      config_hash['account_labels'] = NAME_FIELD
+      config_hash['deal_view'] = DEFAULT_DEAL_VIEW
       config_hash
     end
 
     def app_name
-      'freshworkscrm'
+      FRESHWORKSCRM
     end
 end
