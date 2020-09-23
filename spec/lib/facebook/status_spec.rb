@@ -11,7 +11,6 @@ RSpec.describe Facebook::Core::Post do
   
   before(:all) do
     @account.make_current
-    @account.features.send(:social_revamp).create
     User.reset_current_user
     @fb_page        = create_test_facebook_page(@account)
     @default_stream = @fb_page.default_stream

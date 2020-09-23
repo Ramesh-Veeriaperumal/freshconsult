@@ -331,7 +331,7 @@
       :auto_article_order: 327
       :business_hours: 328
       :scenario_automations: 329
-      :social_revamp: 330
+      :unused_330: 330
       :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
@@ -490,7 +490,6 @@
   :bi_reports: false
   :updated_twilio_client: false
   :disable_rr_toggle: false
-  :social_revamp: true
   :activity_revamp: true
   :hide_first_response_due: false
   :fluffy_forest: false

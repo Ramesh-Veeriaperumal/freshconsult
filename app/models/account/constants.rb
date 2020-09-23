@@ -125,8 +125,7 @@ class Account < ActiveRecord::Base
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
-    :bi_reports => false, :social_revamp => true,
-    :custom_dashboard => false, :updated_twilio_client => false,
+    :bi_reports => false, :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true, :es_multilang_solutions => false,
