@@ -81,15 +81,12 @@ class Email::SettingsControllerTest < ActionController::TestCase
   end
 
   def test_update_setting_when_dependent_feature_disabled
-    params = { personalized_email_replies: true, original_sender_as_requester_for_forward: true }
-    params.each do |setting|
-      dependent_feature = AccountSettings::SettingsConfig[:personalized_email_replies][:feature_dependency][EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting] || setting]
-      Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
-    end
+    params = { personalized_email_replies: true}
+    dependent_feature = AccountSettings::SettingsConfig[:personalized_email_replies][:feature_dependency]
+    Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
     put :update, construct_params({}, params)
-    assert_response 400
-    match_json([bad_request_error_pattern('personalized_email_replies', :require_feature, code: :invalid_value, feature: :personalized_email_replies),
-                bad_request_error_pattern('original_sender_as_requester_for_forward', :require_feature, code: :invalid_value, feature: :original_sender_as_requester_for_forward)])
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: :personalized_email_replies.to_s))
   ensure
     Account.any_instance.unstub(:has_feature?)
   end

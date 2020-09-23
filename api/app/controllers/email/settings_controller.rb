@@ -1,6 +1,7 @@
 module Email
   class SettingsController < ApiApplicationController
     skip_before_filter :load_object
+    before_filter :validate_settings, only: [:update]
     include HelperConcern
     include Redis::RedisKeys
     include Redis::OthersRedis
@@ -40,7 +41,7 @@ module Email
 
       #  This method can be removed once redis feature check is cleanedup and :compose_email can be added to NEGATION_SETTINGS
       def toggle_compose_email_setting(setting, value)
-        if value != check_compose_email_enabled?
+        if value != current_account.compose_email_enabled?
           if value
             current_account.disable_setting(setting)
           else
@@ -56,18 +57,21 @@ module Email
 
       def validate_params
         validate_body_params
-        validate_delegator(nil, params[cname])
       end
 
-      def check_compose_email_enabled?
-        !current_account.has_setting?(COMPOSE_EMAIL_SETTING) || ismember?(COMPOSE_EMAIL_ENABLED, current_account.id)
+      def validate_settings
+        params[cname].each_key do |setting|
+          unless Account.current.admin_setting_for_account?(EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym)
+            return render_request_error(:require_feature, 403, feature: setting)
+          end
+        end
       end
 
       def generate_view_hash
         @item = {
           personalized_email_replies: current_account.personalized_email_replies_enabled?,
           create_requester_using_reply_to: current_account.reply_to_based_tickets_enabled?,
-          allow_agent_to_initiate_conversation: check_compose_email_enabled?,
+          allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
           original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
         }
       end

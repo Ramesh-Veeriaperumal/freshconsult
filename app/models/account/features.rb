@@ -280,10 +280,6 @@ class Account < ActiveRecord::Base
     features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end
 
-  def compose_email_enabled?
-    !has_setting?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
-  end
-
   def helpdesk_restriction_enabled?
     features?(:helpdesk_restriction_toggle) || launched?(:restricted_helpdesk)
   end
