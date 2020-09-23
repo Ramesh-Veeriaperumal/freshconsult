@@ -56,7 +56,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
     assert_response 200
     match_json(all_features_params)
   ensure
-    Account.any_instance.unstub(:has_feature?)
+    Account.any_instance.unstub(:has_setting?)
   end
 
   def test_show_without_privilege
@@ -77,6 +77,20 @@ class Email::SettingsControllerTest < ActionController::TestCase
     assert_response 200
     assert_equal(false, $redis_others.perform_redis_op('smembers', COMPOSE_EMAIL_ENABLED).include?(@account.id))
     params[:allow_agent_to_initiate_conversation] = true
+    Account.any_instance.unstub(:has_feature?)
+  end
+
+  def test_update_setting_when_dependent_feature_disabled
+    params = { personalized_email_replies: true, original_sender_as_requester_for_forward: true }
+    params.each do |setting|
+      dependent_feature = AccountSettings::SettingsConfig[:personalized_email_replies][:feature_dependency][EmailSettingsConstants::EMAIL_CONFIG_PARAMS[setting] || setting]
+      Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
+    end
+    put :update, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('personalized_email_replies', :require_feature, code: :invalid_value, feature: :personalized_email_replies),
+                bad_request_error_pattern('original_sender_as_requester_for_forward', :require_feature, code: :invalid_value, feature: :original_sender_as_requester_for_forward)])
+  ensure
     Account.any_instance.unstub(:has_feature?)
   end
 

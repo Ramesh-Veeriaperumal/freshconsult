@@ -13,8 +13,8 @@ class Email::SettingsDelegator < BaseDelegator
   def valid_settings_to_toggle?
     @settings.each_key do |setting|
       unless Account.current.admin_setting_for_account?(EmailSettingsConstants::EMAIL_CONFIG_PARAMS[setting.to_sym] || setting.to_sym)
-        errors[:name] << :require_feature
-        @error_options[:feature] = setting
+        errors[setting.to_sym] << :require_feature
+        error_options.merge!(setting.to_sym => { feature: setting })
       end
     end
   end
