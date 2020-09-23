@@ -21,6 +21,7 @@ module Freshcaller::Util
     freshcaller_params = freshcaller_response['account']
     Freshcaller::Account.create(account_id: account.id, freshcaller_account_id: freshcaller_params['id'], domain: freshcaller_params['domain'])
     enable_freshcaller
+    disable_freshfone if account.freshfone_enabled?
     freshcaller_response
   end
 
@@ -85,6 +86,7 @@ module Freshcaller::Util
     def freshcaller_activation_actions(freshcaller_response)
       add_freshcaller_account(freshcaller_response)
       enable_freshcaller
+      disable_freshfone if current_account.freshfone_enabled?
     end
 
     def add_freshcaller_account(freshcaller_response)
@@ -94,6 +96,11 @@ module Freshcaller::Util
     def enable_freshcaller
       current_account.add_feature(:freshcaller)
       current_account.add_feature(:freshcaller_widget)
+    end
+
+    def disable_freshfone
+      current_account.freshfone_account.suspend
+      current_account.features.freshfone.destroy
     end
 
     def add_freshcaller_agent(freshcaller_response)

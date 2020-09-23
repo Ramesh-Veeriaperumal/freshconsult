@@ -2626,6 +2626,7 @@ ja-JP:
         success: アプリは正常にインストールされました。
         error: アプリインストール中のエラー。
         cti_error: 複数のCTIアプリを有効化することはできません。
+        freshfone_alert: 電話チャンネルが有効だとCTIアプリは有効化できません。
       update:
         success: アプリは正常に更新されました。
         error: アプリ更新中のエラー。
@@ -2678,6 +2679,21 @@ ja-JP:
       domain_restriction: ドメイン制限がかかっています。このEメールは許可されません。
       use_admin_cred: リンクを有効化するには管理者認証情報を使用してください。
       wrong_admin_cred: 入力された認証情報は正しくないようです。
+    freshfone:
+      credits:
+        successful_purchase: 電話クレジットが正常に購入されました。
+        unsuccessful_purchase: 電話クレジットの購入でエラーが発生しました。
+        invalid_recharge_amount: 有効な再課金額を入力してください
+      number:
+        successful_purchase: 電話番号が正常に購入されました。
+        unsuccessful_purchase: 電話番号購入でエラーが発生しました
+        invalide_address_error: '番号を購入することができません。アドレスが%{country}の正しい現地アドレスであることを確認してください。'
+        blank_message: '%{num_type}を空白にしておくことはできません'
+        invalid_message_length: '%{num_type}は4096文字以下で入力してください'
+        add_blacklist_success: 番号が正常にブロックされました
+        add_blacklist_failure: 番号をブロックできませんでした
+        remove_blacklist_success: 番号が正常にブロックされました
+        remove_blacklist_failure: 番号をブロック解除できませんでした
     profile:
       api_key:
         reset_success: APIキーは再設定されました。
@@ -6582,8 +6598,21 @@ ja-JP:
         no_agents: '-エージェントなし-'
         back: 戻る
       freshfone:
+        phone: 電話
+        sort_by: '並び順:'
+        last_modified: 前回のアクティビティ
+        name: 名前
         accepting: 応答する
         not_accepting: 応答しない
+        call_in_progress: 電話中
+        in_busy_state: 話し中
+        agent_on_call: コール中のエージェント
+        no_agents: '-エージェントなし-'
+        no_activity: アクティビティがありません
+        queued_calls: 待機中
+        active_calls: 会話中
+        no_queue_calls: キューのコールはありません
+        no_active_calls: 進行中のコールはありません
       livechat:
         chat: ライブチャット
         accepting: 応答中
@@ -8741,6 +8770,51 @@ ja-JP:
     customer_activity_title: 活動報告
     helpdesk_activity_title: ヘルプデスク活動報告
     satisfaction_title: 満足度レポート
+    freshfone:
+      options:
+        incoming: 受信
+        outgoing: 送信
+        all_groups: 全てのグループ
+        unassigned: 未割り当て
+      range_exceed: 範囲は90日までです
+      filter_by_title: 次の項目でフィルタ：
+      time_period: 期間
+      ff_report_title: 電話の概要
+      summary_title: 'エージェント コール概要 '
+      agent: エージェント
+      group: グループ
+      call_type: コール タイプ
+      business_hours: 業務時間
+      filter_option_all_calls: すべてのコール
+      filter_option_within_business_hours: 業務時間内
+      filter_option_outside_business_hours: 業務時間外
+      filter_report: フィルタを編集
+      select_agent: エージェントを選択
+      select_group: グループを選択
+      select_call_type: コール タイプを選択
+      select_number: 番号を選択
+      all_numbers: 全ての番号
+      all_call_types: 全て
+      number: 番号
+      avg_handle_time: 平均対応時間
+      num_of_calls: コール数
+      total_answered: 応答されたコール
+      total_voice_mail: ボイスメール
+      total_duration: 合計所要時間
+      agent_calls_count: コール
+      total_unanswered_calls: 応答されなかったコール
+      num_of_transfered: 転送数
+      num_of_external_transfers: 外線転送
+      unanswered_transfers: 応答されなかった転送
+      answered_percentage: 応答率
+      generate_summary: 生成
+      filter_close: 閉じる
+      unanswered_count: 未回答
+      others: その他
+      external: 外線番号
+      includes_transfer: 転送されたコールを含む
+      no_agent: '- エージェントなし -'
+      no_external: 外線番号への転送は含まれません
     time_sheets:
       billable: 請求可能な時間
       non_billable: 請求不可能な時間
@@ -10038,6 +10112,564 @@ ja-JP:
     recording_on_process: >-
       録音を処理中です。数分してから<a href='#' target='_parent'
       id='checkfreshfoneaudio'>チェック</a>してください
+    not_enough_credit: クレジットが足りません！
+    recharge: 再課金
+    ff_number: 電話番号
+    via_browser: ブラウザ/アプリ経由
+    via_phone: 電話経由
+    subscription:
+      auto_recharge_text: 残高が$5未満になったときだけあなたのアカウントに課金します
+      current_balance: 現在の残高
+      purchase_text: 電話クレジットを購入
+      setup_auto_recharge: 自動再課金を設定
+      no_credit_card_text: 電話クレジット購入のためのお支払情報を入力
+      recharge_now_text: 一時払いで残高を補充
+      auto_recharge_amt: 自動再課金額
+      see_detailed_pricing: 料金の詳細を見る
+      followup: 電話クレジットに相当
+      followup_text: 電話クレジットに相当
+      purchase_credits: クレジットの購入
+    dialpad:
+      not_valid_number: 有効な数字を入力してください
+      could_be_invalid_number: 無効な番号でも結構です。
+      invalid_number_continue_call: 通話ボタンをもう一度押してください
+      not_enough_credit: クレジットが足りません
+      restricted_country: 制限された国
+      already_in_call: 電話の同時発信は制限されています
+      strange_number: 制限された番号に電話することはできません
+      move_to_dialer: ダイヤラーに戻る
+      connect_call: 通話
+      dialpad_placeholder: 名前または番号を入力
+    search:
+      work_phone: 仕事
+      mobile_phone: モバイル
+    call_status:
+      default: ''
+      completed: 完了済み
+      blocked: ブロック済み
+      busy: 話し中
+      missedcall: 不在着信
+      noanswer: 無応答
+      canceled: キャンセル済み
+      failed: 失敗
+      in_progress: 進行中
+      voicemail: ボイスメール
+      restricted: 制限あり
+      all_calls: 全てのコール
+      answered: 回答済み
+      on-hold: 保留中
+      queued: キューに追加済み
+      ringing_abandon: 対応されなかったコール(着信中)
+      ivr_abandon: 対応されなかったコール(IVR)
+      queue_abandon: 対応されなかったコール(キュー)
+    general:
+      suspended_account_msg: 電話チャンネルは現在停止されています。電話を発信および着信するには、電話を有効にしてください。
+      suspended_on_low_balance_msg: 電話チャンネルは、残金不足のため停止されています。課金してからご使用ください。
+      trial_expired: 電話チャンネルトライアルは期限切れです。発信と着信を行うには有効化してください。
+    dashboard:
+      title: 電話
+      in_conversation: 会話中
+      in_queue: 待機中
+      waiting: 待機中
+      available_agents: 応答可能なエージェント
+      unavailable_agents: 対応中のエージェント
+      freshfone_recharge_alert_new: 電話クレジットが不足しているため発信または着信を行えません。アカウント管理者にお問い合わせください。
+      admin_freshfone_recharge_alert_new: >-
+        電話クレジットが不足しているため発信または着信を行えません。<a
+        href='/subscription'>リチャージ</a>をお願いいたします。
+      low_credit: クレジット不足
+      trial:
+        title: トライアル
+        expired_title: トライアル期限切れ
+        inbound_minutes_left:
+          one: 着信：残り1分
+          other: '着信：残り%{minutes}分'
+        outbound_minutes_left:
+          one: 発信：残り1分
+          other: '発信：残り%{minutes}分'
+        trial_days_left:
+          one: トライアルの残り1日
+          other: 'トライアルの残り%{days}日'
+        activate: >-
+          <div data-removable='true'>電話チャンネルの利用を続けるには電話アカウントを<a href='#'
+          id='freshfone_feature_request'>有効化</a>してください</div>
+      join: 参加
+      leave: 退出
+      oncall: オンコール
+    widget:
+      ignore: 無視
+      accept: 承認
+      answer: 応答
+      answering: 応答中...
+      end_call: 通話を終了
+      mute: ミュート
+      unmute: ミュート解除
+      hold: 保留
+      holding: |-
+        保留できません…
+        後で試してください…
+      hold_success: 通話保留中
+      add_or_transfer_call: 通話を追加または転送
+      add_agent_to_call: 追加して通話
+      transfer_call: 電話を転送
+      dialpad: ダイアルパッド
+      cancel: キャンセル
+      call_notes: 通話メモ
+      phone_icon: 電話
+      on_phone: 電話で使用可能
+      on_browser: ブラウザで使用可能
+      invalid_phone_number: プロフィール設定で電話番号を+から始まる国番号のついたものに更新してください
+      no_calls: 最近の通話はありません
+      available: 応答する電話
+      unavailable: 応答しない電話
+      busy: 進行中のコール
+      recent_calls: 最近の通話
+      transferring: <span>電話を転送しています</span><br />お待ちください・・・
+      transfer_agents: エージェントまたはグループの名前を入力・・・
+      transfer_numbers: 外線番号を入力してください...
+      unavailable_agents: 電話転送に対応できるエージェントがいません
+      no_transfers: 最近の転送はありません
+      agents_count_in_group: 'エージェント数: %{count}'
+      agents_count:
+        one: エージェント
+        other: エージェント
+      ticket_info: メモと録音を使用して新規チケットを作成または既存のチケットにメモを追加しましょう。　
+      add_note: メモを追加
+      note_placeholder: 通話メモを追加・・・
+      title: チケットに変換
+      new_ticket: 新規チケットとして保存
+      save_to_existing: 既存チケットに保存
+      ignore_ticket: チケットに変換しない
+      ignore_ticket_info: 録音は通話履歴で確認できます
+      back: チケットに変換
+      subject: チケットサブジェクト
+      requester_name: 名前
+      requester_email: 電子メール
+      requester_phone: 電話
+      strange_number_message: 不明な番号からの通話には電子メールまたは電話番号が必要です
+      contact_betails_blank_message: 電子メールまたは電話番号を入力してください
+      invalid_email_message: 有効な電子メールを入力してください
+      invalid_number_message: 有効な電話番号を入力してください
+      requester_details: リクエスター詳細
+      email_phone: または
+      save: 保存
+      saving: 保存中…
+      call_quality: 通話品質
+      imperfect_audio: 音声が不完全
+      dropped_call: 通話が途切れる
+      audio_latency: 音声の遅延
+      one_way_audio: 片道音声
+      other_issues: その他の問題
+      select_issue: 問題を選択
+      good_call: 良い
+      bad_call: 悪い
+      additional_comments: 問題を説明
+      notes: メモ
+      add_note_text: メモの追加
+      edit_note_text: メモの編集
+      recent_tickets: 最近のチケット
+      no_recent_tickets: 最近のチケットはありません
+      view_all: すべて表示
+      new_requester: 新規リクエスタ
+      low_credit: 電話クレジットが不足しています。アカウント管理人までお問い合わせください。
+      forward_number_alert: あなたの電話に通話を転送するには、プロフィール設定で電話番号を更新してください
+      desktop_notification: デスクトップ通知をオンにする
+      network_error: インターネット接続を確認してください
+      browser_alert: 'Chromeの最近の変更により、発信または着信を行うにはSSL（https://）を使用した安全な接続が義務づけられています'
+      read_more: <b>もっと読む</b>
+      agent_conference:
+        connecting: 接続先：
+        canceled: キャンセル済み
+        cancelling: キャンセル中
+        add_agent_initiated: 開始済み
+        connected: 接続済み
+        no_answer: 利用できません
+        busy: 無視
+        end_call: 通話が終了しました
+        cancel_add_agent: キャンセル
+        in_call: オンコール
+      transfer:
+        tranfer_via: 経由
+        to: 宛先：
+        transferring: 転送中…
+        transfer_canceled: 無視
+        tranfer_no_answer: 利用できません
+        tranfer_connected: 転送
+        group_tranfer_no_answer: 利用できるエージェントはありません
+        group_tranfer_connected: 顧客と接続
+        close: 閉じる
+        resume: 再開
+        cancel: キャンセル
+        cancelling: キャンセルしています…
+        resuming: 再開しています…
+    call_history:
+      title: 通話履歴
+      sort_by: 並び順：
+      singular_active_number: アクティブな番号
+      none_active_number: '- なし -'
+      active_number: アクティブな番号
+      singular_deleted_number: 削除された番号
+      deleted_number: 削除された番号
+      block_number: ブロック
+      cancel: キャンセル
+      blacklist_confirmation: ブロックしてよろしいですか
+      show_deleted: 削除された番号を表示
+      filtered_by: 次のアイテムでフィルタ：
+      filter_by_number: 番号
+      filter_by_time: 期間
+      filter_by_agent: エージェント
+      filter_by_group: グループへの着信
+      filter_by_call_status: コール タイプ
+      filter_by_caller: リクエスター
+      filter_by_business_hours: 業務時間
+      received_date: 日付
+      duration: 所要時間
+      cost: コスト
+      asc: 昇順
+      desc: 降順
+      all_time: 全期間
+      today: 今日
+      yesterday: 昨日
+      this_week: 直近７日間
+      this_month: 直近３０日間
+      month: '過去%{month}か月'
+      custom: 日付範囲
+      no_calls: 通話が見つかりません
+      view_transferred_calls: 転送された電話を表示
+      save_ticket: チケットに変換
+      convert: 変換
+      helpdesk: ヘルプデスク
+      external: 外部
+      unblock_number: ブロック解除
+      block_number_title: 番号をブロック
+      filter_option_all_agents: 全てのエージェント
+      filter_option_all_calls: 全てのコール
+      filter_option_received_calls: 着信
+      filter_option_outgoing_calls: 発信
+      filter_option_missed_calls: 不在着信
+      filter_option_voicemail: ボイスメール
+      filter_option_blocked_calls: ブロックされています
+      filter_option_within_business_hours: 業務時間内
+      filter_option_outside_business_hours: 業務時間外
+      recording_delete:
+        done_by: '削除者: '
+        tooltip: 記録を削除
+        confirmation_btn: 削除
+        confirmation_heading: 確定してください...
+        confirmation_warning: この操作により、記録されたメッセージが削除されます。
+        confirmation_notification: 削除してよろしいですか?
+        successful: 通話記録が正常に削除されました!
+        unsuccessful: 通話記録を削除できませんでした。しばらくしてからもう一度お試しください
+        error: 通話記録の削除中にエラーが発生しました!!! しばらくしてからもう一度お試しください
+      strange_numbers: null
+      restricted: 制限あり
+      blocked: ブロック済み
+      unknown: 不明
+      anonymous: 匿名
+      empty: 空白
+      total_duration: 所要時間
+      minutes: 分
+    ticket:
+      recording: メッセージを再生
+      ticket_desc_with_name: >-
+        <b>%{customer_name}
+        さん</b>（%{customer_number}、%{location}）と<b>%{agent}</b>（%{agent_number}）<br/
+        >との会話
+      ticket_desc_with_out_name: >-
+        %{customer_number}（%{location}）さんと<b>%{agent}</b>（%{agent_number}）<br/
+        >との会話
+      voicemail_ticket_desc_with_out_name: '%{customer_number}（%{location}）から%{freshfone_number} へのボイスメール'
+      voicemail_ticket_desc_with_name: >-
+        <b>%{customer_name}
+        さん</b>（%{customer_number}、%{location}）から%{freshfone_number} へのボイスメール
+      agent_detail: 'と<b>%{agent}</b>（%{agent_number}）<br/ >'
+      dial_a_number_with_name: >-
+        <b>%{customer_name} さんとの会話</b>（%{customer_number}、%{location}）。コールはIVR
+        ダイレクト ダイヤルから接続されました
+      dial_a_number_with_out_name: >-
+        <b>%{customer_name} さんとの会話</b>（%{customer_number}、%{location}）。コールはIVR
+        から次の番号に接続されました: %{direct_dial_number}
+      default_subject: '%{call_date}の%{customer}との通話'
+      voicemail_subject: '%{customer}からのボイスメール'
+      human_name: チケット
+      view: 表示
+    note:
+      human_name: メモ
+      view: 表示
+    create:
+      success:
+        with_link: '%{human_name}が作成されました%{link}'
+    admin:
+      important: 重要
+      general: 一般
+      settings: 設定
+      greetings: こんにちは
+      messages: メッセージ
+      freshfone_numbers_title: 電話番号
+      suspended_alert: >-
+        <b>重要</b>電話チャンネルを無効にしても、あなたの番号に請求される月々のレンタル料金は回避できません。料金の請求を回避するには、購入した番号を削除してください。
+      purchase_credit_text: 番号を購入し、電話チャンネルを使用して電話を発信および受信するためにクレジットを購入してください。
+      purchase_numbers_text: 現地電話番号またはトールフリー（フリーダイヤル）番号を購入して、世界中どこからでも電話でカスタマーをサポートしましょう
+      search: 桁あるいはフレーズで検索
+      local: 市内電話
+      toll_free: トールフリー（フリーダイヤル）
+      number:
+        simultaneous: 全てのエージェントを呼び出す
+        round_robin: 初めに待機状態のエージェントを呼び出す
+      trial:
+        request_activation_msg: >-
+          電話トライアル期間に利用できる番号は1つだけで、選べる国も限られています。<br>しかし正規版を有効化すると、41か国から複数の番号を購入できます。
+        activate_btn_text: 有効化をリクエスト
+        requested_activation: 有効化リクエストを受け取りました<br>現在処理中です
+        expired: 電話トライアル期限が切れました
+        activate_to_call_expired: 発信または着信を行うには電話アカウントを有効化してください
+        activate_to_call_outgoing: 発信するには電話アカウントを有効化してください
+        contact_admin_for_expired: 発信または着信を続けるには管理者にお問い合わせください
+        contact_admin_for_call_outgoing: 発信を続けるには管理者にお問い合わせください
+        period_to_expire: 電話トライアルが期限切れを迎えます
+        incoming_minutes_to_exhaust:
+          one: <span class='min_left error hide'>1</span>分の無料着信が残っています
+          other: <span class='min_left error hide'></span>分の無料着信が残っています
+        outgoing_minutes_to_exhaust:
+          one: <span class='min_left error hide'>1</span>分の無料発信が残っています
+          other: <span class='min_left error hide'></span>分の無料発信が残っています
+        outbound_usage_exhausted: 無料発信の分数を使い切りました
+        get_more_credits: さらにクレジットを入手するにはアカウントを有効化する必要があります
+        minutes_usage_exhausted: 電話トライアルの分数を使い切りました
+        days_left:
+          one: <span class='days_left error hide'>1</span>日で
+          other: <span class='days_left error hide'></span>日で
+        numbers:
+          delete_not_allowed: 電話トライアルで番号を削除することはできません
+          normal_trial_usage: 現在使用しているのは、機能が制限された電話チャンネルのトライアル版です
+          activate_to_use_all: 番号をさらに購入してすべての機能を使用するには、電話アカウントを有効化してください
+          incoming_minutes_exhausted: 無料着信の分数を使い切りました
+          incoming_minutes_exhausted_description: 着信を行うには電話アカウントを有効化してクレジットを購入してください
+          outgoing_minutes_exhausted: 無料発信の分数を使い切りました
+          outgoing_minutes_exhausted_description: 発信を行うには電話アカウントを有効化してクレジットを購入してください
+          free_minutes_exhausted: 無料の分数を使い切りました
+          cannot_make_or_receive_calls: 発信または着信を行うには電話アカウントを有効化してクレジットを購入してください
+          used_minutes: '%{used}／%{total}分を使用済み'
+          purchase_limit: '電話トライアルでは%{limit}件の番号のみ購入できます'
+          purchase_warning_expired: 電話トライアルが終了すると番号検索はできません
+          expired: 電話トライアル期間が終了しました
+          ivr:
+            direct_dial: トライアルでは「番号に発信」オプションは利用できません
+          search:
+            after_activation_request: 電話チャンネル有効化のリクエストを受け付けました<br>2営業日以内に連絡を差し上げます。
+            buy_button: はい
+            can_use_after_activation: 電話チャンネルを有効化すると引き続きこの番号をご利用いただけます。
+            buy_confirmation: この番号を選択してよろしいですか？
+      number_settings:
+        title_text: コールセンターの管理
+        info_content: >-
+          <b>エージェントやグループへの電話の割り当て</b></br>インタラクティブな応答システム（IVR: Interactive Voice
+          Response）をセットアップすると、電話をチーム内の複数のグループやエージェントに割り振ることができます。たとえば、カスタマーが「1」を押したときにはその電話をサポートチームに転送し、「2」を押したときにはセールスチームの誰かに転送するといったことが可能です。<br/>また、音声を録音、ファイルをアップロード、あるいはテキスト/音声変換機能を使用するという方法で、カスタマーに再生されるメッセージをカスタマイズできます。<br><br><b>番号のカスタマイズ</b><br>また、すべての電話番号に個別の設定を割り当て、それぞれを独自にカスタマイズすることができます。応答を待っているカスタマーの最大数や、最長の待ち時間などの基本的な設定も可能で、いずれかの制限に達したとき、応答できないことを伝えるメッセージを自動で再生することもできます。<br/>通話記録を有効にすると、ヘルプデスクでの電話がすべて録音され、チケットに添付されます。電話記録はカスタマーに公開することも、あるいは非公開にすることもできます。また、電話チャンネルの着信を営業時間内のみに制限することも可能です。たとえば、サポートラインを2つセットアップして、1つは営業時間外の着信を制限し、もう1つは優先度の高いヘルプラインとして24時間対応にできます。<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target='_blank'>番号のカスタマイズについて詳しくは、こちらをご覧ください</a>
+        non_business_hours: 電話受付時間・・・
+        business_calendar: 業務時間を選択
+        transcript_voice: 音声をトランスクリプト化
+        text_to_speech: テキスト音声化
+        record_calls: 通話を録音
+        voicemail: ボイスメール
+        voicemail_on: オン
+        voicemail_off: オフ
+        record_all: すべての通話を録音
+        record_none: 通話を録音しない
+        record_alert: >-
+          通話録音のガイドラインにより、ほとんどの国で、通話が録音されていることをカスタマーに知らせることが義務付けられています。挨拶のメッセージは、これに従って作成してください。
+        max_queue_calls: 順番待ち通話数の上限
+        call_wait_time: 待ち時間の上限
+        call_wait_time_suffix: 　通話につき
+        queue_wait_message: キュー待機メッセージ
+        non_availability_message: 応答不可メッセージ
+        voicemail_message: ボイスメールメッセージ
+        non_business_hours_message: 業務時間外メッセージ
+        welcome_message_alert: IVRが有効なときはウェルカムメッセージを再生しない
+        welcome_message: ウェルカムメッセージ
+        record_voice: 音声を録音
+        upload_voice: オーディオファイルをアップロード
+        read_message: テキスト音声化
+        start_recording: 録音を開始
+        stop_recording: <span></span>録音を停止
+        preparing_recording: メッセージを準備中・・・
+        recorded_voice: 録音済み音声
+        audio_upload: アップロードするファイルを選択
+        greeting_message: メッセージをここに入力してください
+        attachment_help_info: 5MB未満のオーディオファイル（mp3）に対応可能
+        attachment_help_text: 5MB未満のオーディオファイルに対応可能
+        recording_help_info: マイクをオンにしてください。継続時間は5分未満です。
+        cancel: キャンセル
+        change: 変更
+        group: メッセージを再生してエージェントを呼び出す：　
+        call_hunting_group: グループ
+        all_groups: 全てのグループ
+        business_hours: 業務時間
+        anytime: 24/7年中無休
+        name: 名前
+        name_placeholder: あなたの番号にフレンドリーな名前をつけましょう
+        hunt_type: コール ルーティング
+        routing_message: 複数のエージェントがオンラインで対応可能なとき...
+        recording_privacy: 録音の視聴可能者
+        recording_privacy_public: カスタマーとエージェントが視聴可能
+        recording_privacy_private: エージェントだけが視聴可能
+        name_maxlength: 名前を255文字より大きくすることはできません
+        number_accessible: '次からアクセス可能: '
+        wait_music: 音楽を待つ
+        hold_music: 音楽の保留
+        queue_position_preference: キューの位置を読み取る
+        queue_position_message: キューの位置メッセージ
+        queue_position_message_placeholder: '現在、順番にご案内しています。お客様の順番は{{queue.position}}です'
+        queue_position_message_alert: >-
+          キューの位置を読み取るには、プレースホルダ{{queue.position}}を使用します <br/> 例:
+          現在、順番にご案内しています。お客様の順番は{{queue.position}}です
+        queue_position_enable: オン
+        queue_position_disable: オフ
+      numbers:
+        sidebar_title: 電話チャンネル
+        sidebar_content: >-
+          電話チャンネルを利用すると、ブラウザ、携帯電話またはFreshdeskモバイルアプリの電話チャンネルを使って発信および着信を行うことができます。Freshdeskのチケットシステムと緊密に統合されているため、通話を録音して必要ならいつでもチケットに変換することで、通話をしっかりと記録することができます。<br/><br/>
+          <b>電話のセットアップ</b></br>電話の使用を開始するには、まず電話を有効化してサポート番号を購入する必要があります。<a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>こちらのリストの国々</a>から現地の番号を購入して、世界のあらゆる場所で発信や着信を行えます。顧客が米国、英国またはカナダから電話をかけてくる場合、フリーダイヤルのサポート電話番号（英国ではフリーフォン）を購入することもできます。<br/><br/><b>完全な電話サポートを</b><br/>当社の電話チャンネルで提供しましょう。次のようなことが可能になります。<br/><ul><li>ウェブブラウザや携帯電話から電話の発信と着信</li><li>ボイスメールの作成、登録電話番号への通話の転送、またはあらゆるエージェント、あらゆる場所への通話の転送</li><li>通話のモニター、必要な場合の割り込み、進行している通話への他のエージェントの追加、その他*</li></ul><br/><p>*アカウントで高度な機能を有効化するには<a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a>までお問い合わせください。ここには通話のモニタリング、通話の割り込み、電話会議、通話のマスキング、通話の継続時間指標が含まれます。</p><br/><p><a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>強力な電話の機能と特長についてさらに詳しく</a><p>
+        purchase_number: 番号を購入
+        purchase_phone_number: '番号を購入（%{number}）'
+        buy: 番号を購入
+        buy_button_text: 購入
+        purchase_loading_text: 購入中・・・
+        buy_loading_text: 購入しています...
+        purchase_alert_text: この番号に対して<strong><span class='number-rate'></span>月々</strong>料金が請求されます。
+        not_available: 結果は見つかりませんでした。違う検索語句でお試しください
+        address_certification_text: >-
+          電話番号を購入するには<span
+          class='certification-country'></span>国内でのあなたの会社または個人の住所を提供する必要があります。
+        purchase_confirm: 本当によろしいですか？
+        delete_alert: 一度削除された番号は再度購入することはできません。この番号を削除してよろしいですか？
+        manage: 管理
+        failure_purchase: >-
+          電話番号を購入することができません。アドレスが <span
+          class='certification-country'></span>の正しいローカルアドレスであることを確認してください。
+        low_credits: 新規番号を購入するための電話クレジットが不足しています。課金してからもう一度お試しください
+        address:
+          name: 会社 / 名前
+          address: 住所
+          city: 市
+          state: 州 / 県 / 地域
+          postal_code: 郵便番号
+          country: 国
+          required_field: 全てのフィールドは必須です
+        setup:
+          title_text: コールセンターのセットアップ
+          info_text: >-
+            電話チャンネルの使用を始めるには、まずカスタマーに提供する着信番号を購入する必要があります。現地番号は、 <a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>ここをクリックして表示される国</a>であればどこでも購入できます。英国、米国、あるいはカナダにいるカスタマーから電話を着信する場合は、トールフリーダイアルの番号をカスタマーに提供できます。<br/><br/>さまざまな国から複数の電話番号を購入し、サードパーティのサービスを利用することなく、トールフリーのヘルプラインをFreshdesk内にセットアプすることが可能です。着信、発信、およびヘルプデスクからの転送に対して、標準的な電話料金が必要になります。電話料金については、<a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>ここ</a>をご確認ください。<br/><br/>サポートヘルプライン用の電話番号を購入すると、すべての着信電話が、ヘルプデスクにログインしているエージェントに割り振られます。また、エージェントがブラウザ内から電話を取るよう選択することも、デスクの受話器に自動で転送されるよう設定することも可能です。
+        caller_id:
+          manage_caller_id: 発信者識別番号を管理
+          add_another: ／別の番号を追加
+          enter_code: 電話を取って確認コードを入力します
+          enter_number: 発信者識別番号として追加したい番号を入力します
+          verify_number: この番号を確認
+          another_caller: 他の番号を追加
+          delete: 削除
+          number_added: 番号が追加されました
+          no_number_added: 発信者識別番号は追加されていません
+          ok: OK
+          add_new: 新規追加
+          add_new_caller_id: 新規発信者識別番号を追加
+          wait: お待ちください...
+          error_message: 申し訳ございません。問題が発生しました。再試行してください。
+          simultaneous_verification_error: 申し訳ございません。すでに番号を確認しています
+          invalid_number: 無効な電話番号です！
+          calling: 通話中
+          call_id_mask: この番号をマスク
+          twilio_errors:
+            not_allowed: >-
+              申し訳ございません。この番号を発信者識別番号として追加中に問題が発生しました。再試行してください。問題が解決しない場合は<a
+              href='mailto:support@freshdesk.com'>support@freshdesk.com</a>までお問い合わせください
+            invalid_number: >-
+              申し訳ございません。番号が無効のようです。再試行してください。問題が解決しない場合は<a
+              href='mailto:support@freshdesk.com'>support@freshdesk.com</a>までお問い合わせください
+            already_verified: お客様のアカウントですでに電話番号が確認されています！
+        sidebar_content_v2: >-
+          電話チャネルでは、ブラウザ・携帯電話・Freshdeskのモバイルアプリの電話チャネルを使って電話の受発信が可能です。またこれは、Freshdeskのチケットシステムと緊密に統合されています。電話を録音し、必要に応じてチケットに変換するだけで、電話の記録を行うことができます。<br/><br/><b>電話機能の設定</b></br>電話機能jを使用するには、まず電話機能を有効にしてサポート番号を購入する必要があります。ここに記載されている<a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'target='_blank'>国一覧</a>から市内番号を購入し、世界のどこからでも電話を受発信しましょう。顧客が米国・英国・カナダから電話をかけてくる場合、フリーダイヤルのサポート番号(英国ではfreephoneと呼ばれる)も購入できます。<br/><br/><b>完全な電話サポートを提供</b><br/>電話チャネルをご利用いただくと、<br/><ul><li>ウェブブラウザまたは携帯電話を使用して電話の受発信が可能となります</li><li>いつでもどこでもボイスメールの作成・通話の転送・任意のエージェントへ転送を実行しましょう。</li><li>通話モニタリング・必要に応じた通話への割り込み・通話中の他エージェント追加も可能です。*</li></ul><br/><p>*<a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a>より、アカウントの高度な機能を有効にしてください。これには、通話モニタリング・通話割り込み・電話会議・通話マスキング・通話ライフタイムコールメトリクスが含まれます。</p><br/>
+        buy_phone_numbers: 電話番号を購入
+        tour_link: 電話チャネル設定ヘルプ
+        buy_phone_credits: 電話クレジットの購入
+      invalid_attachment: '添付ファイル「%{name}」は有効なオーディオファイルではありません/容量が5MBを超えています'
+      ivr:
+        simple_message_title: シンプルメッセージ
+        ivr_message_title: 自動音声応答（IVR）
+        welcome_message: ウェルカムメッセージ
+        message_type: メッセージタイプ
+        transcript_voice: 音声をトランスクリプト化
+        text_to_speech: テキスト音声化
+        turned_off: ウェルカムメッセージがオフになっています。すべての着信電話は直接ヘルプデスクにつながります。
+        turned_on: ウェルカムメッセージがすべての着信電話に再生されます。
+        turn_on: オン
+        turn_off: オフ
+        add_new_menu: 新規<b>メニュー</b>を追加
+        add_new_menu_from_option: 新規メニューを追加
+        add_new_option: <b>キープレス</b>オプションを追加
+        keypress: キープレス
+        input_number: 番号を入力
+        action: アクション
+        male: 男性の声
+        female: 女性の声
+        rename: 名前変更
+        done: 終了
+        save: 保存
+        saving: 保存中...
+        preview: プレビュー
+        previewing: プレビュー中・・・
+        delete_menu: メニューを削除
+        jump_to: 移動先：
+        call_agent: エージェントに電話
+        call_agent_group: エージェントグループに電話
+        call_number: 番号に電話
+        back_to_menu: メインメニューに戻る
+        invalid_performer_type: 無効なパフォーマータイプ
+        invalid_number: 'メニュ%{menu}の無効な数字'
+        restricted_country: 'メニュー内%{menu}の制限された国の番号'
+        invalid_jump_to: '非ルートメニュー%{menu}に「移動先」は使用できません'
+        seed_message: カスタマーサポートへようこそ
+        seed_menu_name: ウェルカム/スタートメニュ
+        invalid_number_format: +から始まる国番号がついた有効な電話番号を入力してください
+      welcome_page:
+        title_text: 電話番号
+      feature_request_content:
+        title_text: 電話番号
+        heading_text: 電話チャンネルを使用してカスタマーをサポートしてください
+        trial_description: >-
+          電話チャンネルを利用すると、ブラウザ、携帯電話またはFreshdeskモバイルアプリの電話チャンネルを使って発信および着信を行うことができます。Freshdeskのチケットシステムと緊密に統合されているため、通話を録音して必要ならいつでもチケットに変換することで、通話をしっかりと記録することができます。
+        number_info: 40を超える国々の現地電話番号とフリーダイヤル番号を購入
+        ivr_info: 通話モニタリング、電話会議、自動音声応答を利用した通話の振り分けなど、さまざまなサービスを実行
+        recording_info: すべての通話を録音してチケットに変換
+        learn_more: 詳細を見る
+        pricing: 全ての通話料金とサポートされている国を表示
+        request_subject: '電話リクエスト - %{account_name}'
+        email_message: Freshfone の機能が必要です
+        success: 2営業日以内に折り返しご連絡いたします。
+        error_message: 申し訳ありませんが、現在リクエストを受理できなくなっています。後でもう一度お試しください。
+        additional_info: アカウントで電話チャンネルが有効になると、番号を購入して電話の発信と着信が可能になります
+        button_text: 有効化のリクエスト
+        video_title: 電話チャンネルでできることについて解説したビデオをご覧ください
+        trial_version_disclaimer: 限定された機能を15日間無料で利用できます
+        activation_disclaimer: すべての機能を無期限に利用できます
+        trial_version_numbers: 特定の番号のみ選択
+        trial_version_calls: 限定された着信および発信
+        trial_version_number_purchse: 番号を1つだけ購入可能
+        trial_button_text: 無料のトライアル版を有効化
+        trial_or: または
+        compare_trial_and_full: 正規版と無料トライアル版を比較
   livechat:
     feature_request:
       title: ライブチャットへようこそ

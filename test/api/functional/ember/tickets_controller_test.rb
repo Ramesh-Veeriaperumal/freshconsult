@@ -599,6 +599,18 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
+    def test_ticket_show_with_fone_call
+      # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      ticket = new_ticket_from_call
+      remove_wrap_params
+      assert ticket.reload.freshfone_call.present?
+      get :show, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+      MixpanelWrapper.unstub(:send_to_mixpanel)
+    end
+
     def test_ticket_show_with_ticket_topic
       ticket = new_ticket_from_forum_topic
       remove_wrap_params

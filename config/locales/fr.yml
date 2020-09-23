@@ -3280,6 +3280,9 @@ fr:
         success: L'application a été installée.
         error: Erreur lors de l'installation de l'application.
         cti_error: Impossible d'activer plusieurs applications CTI.
+        freshfone_alert: >-
+          Impossible d'activer une application CTI lorsque votre canal
+          téléphonique est activé.
         cloud_element_success: L'intégration a été activée avec la configuration par défaut.
         cloud_element_settings_failure: Vérifiez votre configuration et procédez à la réactivation.
         no_feature_error: >-
@@ -3365,6 +3368,23 @@ fr:
         Veuillez utiliser des informations d'identification d'administrateur
         pour activer le lien.
       wrong_admin_cred: Les informations d'identification semblent incorrectes.
+    freshfone:
+      credits:
+        successful_purchase: Achat de crédits téléphoniques réussi.
+        unsuccessful_purchase: Erreur d'achat de crédits téléphoniques.
+        invalid_recharge_amount: Saisissez un montant de recharge valide.
+      number:
+        successful_purchase: Numéro de téléphone acheté.
+        unsuccessful_purchase: Erreur d'achat du numéro de téléphone.
+        invalide_address_error: >-
+          Impossible d'acheter le numéro. Veillez à ce que l'adresse soit valide
+          en %{country}.
+        blank_message: '%{num_type} ne peut pas être vide.'
+        invalid_message_length: '%{num_type} ne doit pas dépasser 4 096 caractères.'
+        add_blacklist_success: Numéro bloqué avec succès
+        add_blacklist_failure: Impossible de bloquer le numéro
+        remove_blacklist_success: Numéro débloqué avec succès
+        remove_blacklist_failure: Impossible de débloquer le numéro
     profile:
       api_key:
         reset_success: La clé API a été correctement réinitialisée.
@@ -4629,6 +4649,10 @@ fr:
       support_email_description: >-
         Faites apparaître vos messages client dans Freshdesk en ajoutant votre
         adresse e-mail d'assistance.
+      freshfone_number_title: Acheter un numéro de téléphone
+      freshfone_number_description: >-
+        Achetez un numéro de téléphone et commencez à accepter les appels de vos
+        clients.
       twitter_title: Ajouter votre compte Twitter
       twitter_description: >-
         Découvrez des mentions et des mots-clés importants qui vous concernent
@@ -9178,8 +9202,21 @@ fr:
         no_agents: '- Aucun agent -'
         back: Précédent
       freshfone:
+        phone: Téléphone
+        sort_by: Triés par
+        last_modified: Dernière activité
+        name: Nom
         accepting: Acceptation
         not_accepting: Refus
+        call_in_progress: Appel en cours
+        in_busy_state: Occupé
+        agent_on_call: Agent en ligne
+        no_agents: '- Aucun agent -'
+        no_activity: Aucune activité
+        queued_calls: En file d'attente
+        active_calls: En conversation
+        no_queue_calls: Pas d'appels en file d'attente
+        no_active_calls: Pas d'appels en cours
       livechat:
         chat: Chat en direct
         accepting: Acceptation
@@ -12162,6 +12199,51 @@ fr:
     customer_activity_title: Rapport d'activité
     helpdesk_activity_title: Rapport d'activité du centre de support
     satisfaction_title: Rapport de satisfaction
+    freshfone:
+      options:
+        incoming: Entrant
+        outgoing: Sortant
+        all_groups: Tous les groupes
+        unassigned: Non attribués
+      range_exceed: La plage ne peut pas dépasser 90 jours
+      filter_by_title: Filtré par
+      time_period: Période
+      ff_report_title: Résumé téléphonique
+      summary_title: 'Synthèse des appels de l''agent '
+      agent: Agent
+      group: Groupe
+      call_type: Type d'appel
+      business_hours: Heures d'ouverture
+      filter_option_all_calls: Tous les appels
+      filter_option_within_business_hours: Pendant les heures d'ouverture
+      filter_option_outside_business_hours: En dehors des heures d'ouverture
+      filter_report: Modifier le filtre
+      select_agent: Sélectionner un agent
+      select_group: Sélectionner un groupe
+      select_call_type: Sélectionner un type d'appel
+      select_number: Sélectionnez un numéro
+      all_numbers: Tous les numéros
+      all_call_types: Tous
+      number: Numéro
+      avg_handle_time: Temps d'attente moyen
+      num_of_calls: Nombre d'appels
+      total_answered: Appels traités
+      total_voice_mail: Messages vocaux
+      total_duration: Durée totale
+      agent_calls_count: Appels
+      total_unanswered_calls: Appels non traités
+      num_of_transfered: Nombre de transferts
+      num_of_external_transfers: Transferts externes
+      unanswered_transfers: Transferts non traités
+      answered_percentage: Réponse %
+      generate_summary: Générer
+      filter_close: Fermer
+      unanswered_count: Sans réponse
+      others: Autres
+      external: Numéros externes
+      includes_transfer: Inclut les appels transférés
+      no_agent: '- Aucun agent -'
+      no_external: Les transferts effectués vers des numéros externes ne sont pas inclus
     time_sheets:
       billable: Heures facturables
       non_billable: Heures non facturables
@@ -13887,6 +13969,790 @@ fr:
     recording_on_process: >-
       L'enregistrement est en cours de traitement. <a href='#' target='_parent'
       id='checkfreshfoneaudio'>Revérifiez dans quelques minutes.</a>
+    not_enough_credit: Crédit insuffisant !
+    recharge: Recharger
+    ff_number: Numéro de téléphone
+    online_availability_text: 'Disponible :'
+    acw_availability_text: 'Déplacer dans Disponible :'
+    via_browser: via Navigateur / Appli
+    via_phone: via Téléphone
+    forwarded_call_message: '%{caller_info} vous appelle. Appuyez sur 1 pour répondre, 2 pour ignorer.'
+    invalid_input_message: Veuillez saisir une donnée valide.
+    subscription:
+      auto_recharge_text: "Nous ne facturerons votre compte que lorsque votre crédit sera inférieur à 5 $"
+      current_balance: Votre solde actuel
+      purchase_text: Acheter des crédits téléphoniques
+      setup_auto_recharge: Configurer le rechargement automatique
+      no_credit_card_text: >-
+        Entrez vos informations de paiement pour acheter des crédits
+        téléphoniques
+      recharge_now_text: Créditez votre compte à l'aide d'un paiement unique
+      auto_recharge_amt: Montant du rechargement automatique
+      see_detailed_pricing: Voir la tarification détaillée
+      followup: équivalent à des crédits téléphoniques
+      followup_text: équivalent à des crédits téléphoniques
+      purchase_credits: Acheter des crédits
+    dialpad:
+      not_valid_number: Veuillez saisir un nombre valide
+      could_be_invalid_number: Le numéro n'est peut-être pas valide.
+      invalid_number_continue_call: Appuyez à nouveau sur le bouton d'appel.
+      not_enough_credit: Crédit insuffisant
+      restricted_country: Pays interdit
+      already_in_call: Appels sortants simultanés interdits
+      in_acw_state: >-
+        Désactivez l'état de travail d'après appel pour commencer à passer des
+        appels
+      strange_number: Impossible d'appeler un numéro interdit
+      move_to_dialer: Retour au cadran de numérotation
+      connect_call: Appeler
+      dialpad_placeholder: Saisir un nom ou un numéro
+    search:
+      work_phone: Professionnel
+      mobile_phone: Mobile
+    call_status:
+      default: ''
+      completed: Terminé
+      blocked: Bloqués
+      busy: Occupé
+      missedcall: Appel en absence
+      noanswer: Pas de réponse
+      canceled: Annulé
+      failed: Échec
+      in_progress: En cours
+      voicemail: Message vocal
+      restricted: Interdit
+      all_calls: Tous les appels
+      answered: Répondu
+      on-hold: En attente
+      queued: Mis en file d'attente
+      ringing_abandon: Appel d'abandon (sonnerie)
+      ivr_abandon: Appel d'abandon (IVR)
+      queue_abandon: Appel d'abandon (file d'attente)
+    transfer_type:
+      blind: Transfert aveugle
+      warm: Transfert avisé
+    general:
+      suspended_account_msg: >-
+        Votre canal téléphonique est actuellement suspendu. Veuillez activer le
+        téléphone pour passer des appels.
+      suspended_on_low_balance_msg: >-
+        Votre canal téléphonique a été suspendu en raison d'un solde faible.
+        Veuillez recharger pour le réactiver.
+      trial_expired: >
+        Votre version d'évaluation du canal téléphonique a expiré. Activez-le
+        pour passer des appels.
+    dashboard:
+      title: Téléphone
+      in_conversation: En conversation
+      in_queue: En file d'attente
+      waiting: En attente
+      available_agents: Agents disponibles
+      unavailable_agents: Agents occupés
+      freshfone_recharge_alert_new: >-
+        Votre crédit téléphonique est trop faible pour passer ou recevoir des
+        appels. Contactez l'administrateur.
+      admin_freshfone_recharge_alert_new: >-
+        Votre crédit téléphonique est trop faible pour passer ou recevoir des
+        appels. <a href='/subscription'>Rechargez</a>.
+      low_credit: CRÉDIT FAIBLE
+      trial:
+        title: ÉVALUATION
+        expired_title: VERSION D'ÉVALUATION EXPIRÉE
+        inbound_minutes_left:
+          one: 'entrant : 1 mn restante'
+          other: 'entrant : %{minutes} mns restantes'
+        outbound_minutes_left:
+          one: 'Sortant : 1 mn restante'
+          other: 'Sortant : %{minutes} mns restantes'
+        trial_days_left:
+          one: 1 jour restant dans votre version d'évaluation
+          other: '%{days} jours restants dans votre version d''évaluation'
+        activate: >-
+          <div data-removable='true'>Pour continuer à utiliser le canal
+          téléphonique, <a href='#' id='freshfone_feature_request'>activez</a>
+          votre compte téléphonique.</div>
+      join: Rejoindre
+      leave: Quitter
+      oncall: EnLigne
+    widget:
+      ignore: Ignorer
+      accept: Accepter
+      answer: Réponse
+      answering: Réponse...
+      end_call: Terminer l'appel
+      mute: Désactiver le son
+      unmute: Réactiver le son
+      hold: En attente
+      holding: |-
+        Désolés, mise en attente impossible...
+        Veuillez réessayer plus tard...
+      hold_success: Appel mis en attente actuellement
+      add_or_transfer_call: Ajouter ou transférer l'appel
+      add_agent_to_call: Ajouter à l'appel
+      warm_transfer: Transfert avisé
+      blind_transfer: Transfert aveugle
+      transfer_call: Transférer l'appel
+      dialpad: Clavier numérique
+      cancel: Annuler
+      call_notes: Notes de l'appel
+      phone_icon: Téléphone
+      on_phone: Disponible sur le téléphone
+      on_browser: Disponible sur le navigateur
+      invalid_phone_number: >-
+        Veuillez mettre à jour votre numéro de téléphone avec le préfixe + et le
+        code pays dans Paramètres du profil
+      no_calls: Aucun appel récent
+      available: Acceptation des appels
+      unavailable: Refus des appels
+      busy: Appel entrant
+      acw: Conclusion
+      recent_calls: Appels récents
+      transferring: <span>Transfert de l'appel en cours</span><br />Veuillez patienter...
+      transfer_agents: Saisissez le nom d'un agent ou d'un groupe...
+      transfer_numbers: Entrez un numéro externe...
+      unavailable_agents: Les agents ne sont pas disponibles pour transférer l'appel
+      no_transfers: Aucun transfert récent
+      agents_count_in_group: '%{count} agents'
+      agents_count:
+        one: Agent
+        other: Agents
+      ticket_info: >-
+        Créer un nouveau ticket ou ajouter une note au ticket existant contenant
+        des notes et enregistrements.
+      add_note: Ajouter des notes
+      note_placeholder: Ajouter des notes d'appel...
+      title: Convertir en ticket
+      new_ticket: Enregistrer comme nouveau ticket
+      save_to_existing: Enregistrer dans un ticket existant
+      ignore_ticket: Ne pas convertir en ticket
+      ignore_ticket_info: Vos enregistrements seront disponibles dans l'historique des appels
+      back: Convertir en ticket
+      subject: Objet du ticket
+      requester_name: Nom
+      requester_email: Adresse e-mail
+      requester_phone: Téléphone
+      strange_number_message: >-
+        Les appels à partir d'un numéro inconnu nécessitent une adresse e-mail
+        ou un numéro de téléphone
+      contact_betails_blank_message: Veuillez entrer une adresse e-mail ou un numéro de téléphone
+      invalid_email_message: Veuillez saisir une adresse e-mail valide
+      invalid_number_message: Veuillez saisir un numéro de téléphone valide
+      requester_details: Détails du demandeur
+      email_phone: OU
+      save: Enregistrer
+      saving: Enregistrement en cours...
+      call_quality: Qualité de l'appel
+      imperfect_audio: Son défectueux
+      dropped_call: Appel abandonné
+      audio_latency: Latence audio
+      one_way_audio: Son unidirectionnel
+      other_issues: Autres problèmes
+      select_issue: Sélectionnez un problème
+      good_call: Bonne
+      bad_call: Mauvaise
+      additional_comments: Décrivez le problème
+      notes: Notes
+      add_note_text: Ajouter une note
+      edit_note_text: Modifier une note
+      recent_tickets: Tickets récents
+      no_recent_tickets: Aucun ticket récent
+      view_all: Afficher tout
+      new_requester: Nouveau demandeur
+      low_credit: >-
+        Crédit téléphonique faible. Veuillez contacter l'administrateur de votre
+        compte.
+      forward_number_alert: >-
+        Indiquez votre numéro de téléphone dans les paramètres du profil pour
+        transférer les appels vers votre téléphone.
+      desktop_notification: Activer les notifications de bureau
+      network_error: Vérifiez votre connexion Internet
+      browser_alert: >-
+        Les récents changements de Chrome réclament une connexion sécurisée
+        utilisant le SSL (https://) pour passer des appels
+      read_more: <b>En savoir plus</b>
+      save_ticket_to_call: Enregistrer l'appel dans ce ticket
+      agent_conference:
+        connecting: Connexion à
+        canceled: Annulé
+        cancelling: Annulation en cours
+        add_agent_initiated: Lancé
+        connected: Connecté
+        no_answer: Non disponible
+        busy: Ignoré
+        end_call: déconnecté
+        cancel_add_agent: Annuler
+        in_call: en ligne
+        transfer_via: 'via '
+      transfer:
+        transfer_via: 'via '
+        tranfer_via: 'via '
+        to: 'À : '
+        transferring: Transfert en cours...
+        transfer_canceled: Ignoré
+        tranfer_no_answer: Non disponible
+        tranfer_connected: Transféré
+        group_tranfer_no_answer: Aucun agent disponible
+        group_tranfer_connected: Connecté avec un client
+        close: Fermer
+        resume: Reprendre
+        resumed: Repris
+        resuming: Reprise...
+        cancel: Annuler
+        cancelling: Annulation en cours...
+        transferring_to: Transfert en cours vers
+        on_call: en ligne
+        connected: Connecté
+        canceled: Annulé
+        add_customer: Ajouter le client à l'appel
+        end_call: déconnecté
+    call_history:
+      title: Historique téléphonique
+      sort_by: 'Triés par :'
+      singular_active_number: Numéro actif
+      none_active_number: '- aucun -'
+      active_number: Numéro actif
+      singular_deleted_number: Numéro supprimé
+      deleted_number: Numéro supprimé
+      block_number: Bloquer
+      cancel: Annuler
+      blacklist_confirmation: Êtes-vous sûr de vouloir bloquer ce numéro ?
+      show_deleted: Afficher les numéros supprimés
+      filtered_by: 'Filtré par :'
+      filter_by_number: Numéro
+      filter_by_time: Période
+      filter_by_agent: Agent
+      filter_by_group: Appels entrants vers groupe
+      filter_by_call_status: Type d'appel
+      filter_by_caller: Demandeur
+      filter_by_business_hours: Heures d'ouverture
+      received_date: Date
+      duration: Durée
+      cost: Coût
+      asc: Ordre croissant
+      desc: Ordre décroissant
+      all_time: Toutes les périodes
+      today: Aujourd’hui
+      yesterday: Hier
+      this_week: Les 7 derniers jours
+      this_month: Les 30 derniers jours
+      month: 'Les %{month} derniers mois'
+      custom: Plage de dates
+      no_calls: Aucun appel n'a été trouvé
+      view_transferred_calls: Afficher les appels transférés
+      save_ticket: Convertir en ticket
+      convert: Convertir
+      helpdesk: Service d'assistance
+      external: Externe
+      unblock_number: Débloquer
+      block_number_title: Bloquer le numéro
+      filter_option_all_agents: Tous les agents
+      filter_option_all_calls: Tous les appels
+      filter_option_received_calls: Entrant
+      filter_option_outgoing_calls: Sortant
+      filter_option_missed_calls: Manqués
+      filter_option_voicemail: Message vocal
+      filter_option_blocked_calls: Bloqué
+      filter_option_within_business_hours: Pendant les heures d'ouverture
+      filter_option_outside_business_hours: En dehors des heures d'ouverture
+      requester_not_found: Aucun demandeur correspondant trouvé
+      recording_delete:
+        done_by: Supprimé par
+        tooltip: Supprimer l'enregistrement
+        confirmation_btn: Supprimer
+        confirmation_heading: Veuillez confirmer...
+        confirmation_warning: Cette opération supprimera le message enregistré de façon définitive.
+        confirmation_notification: Êtes-vous sûr(e) de vouloir supprimer ?
+        successful: Enregistrement d'appel supprimé !
+        unsuccessful: >-
+          Impossible de supprimer l'enregistrement d'appel. Veuillez réessayer
+          dans quelques minutes.
+        error: >-
+          Erreur lors de la suppression d'un enregistrement d'appel. Veuillez
+          réessayer dans quelques minutes.
+      strange_numbers:
+        restricted: INTERDIT
+        blocked: BLOQUÉ
+        unknown: INCONNU
+        anonymous: ANONYME
+        empty: VIDE
+        '': null
+      restricted: INTERDIT
+      blocked: BLOQUÉ
+      unknown: INCONNU
+      anonymous: ANONYME
+      empty: VIDE
+      total_duration: Durée
+      minutes: Minutes
+    ticket:
+      recording: Écouter le message
+      ticket_desc_with_name: >-
+        Conversation avec <b> %{customer_name} </b> (%{customer_number},
+        %{location} et <b>%{agent}</b> (%{agent_number})<br/ >
+      ticket_desc_with_out_name: >-
+        Conversation avec %{customer_number} (%%{location}) et <b>%{agent}</b>
+        (%{agent_number})<br/ >
+      voicemail_ticket_desc_with_out_name: >-
+        Message vocal de %{customer_number} (%{location}) vers
+        %{freshfone_number}
+      voicemail_ticket_desc_with_name: >-
+        Message vocal de <b>%{customer_name}</b> (%{customer_number},
+        %{location}) vers %{freshfone_number}
+      transcribed_note_desc: >-
+        <b>Texte transcrit du message téléphonique de l'appel ci-dessus de
+        %{customer_name}</b><br/><br/>
+      agent_detail: 'et <b>%{agent}</b> (%{agent_number})<br/ >'
+      dial_a_number_with_name: >-
+        Conversation avec <b>%{customer_name}</b> (%{customer_number},
+        %{location}). Appel connecté à partir d'un numéro direct de l'IVR
+      dial_a_number_with_out_name: >-
+        Conversation avec %{customer_number} (%%{location}). Appel connecté à
+        partir de l'IVR vers le numéro suivant : %{direct_dial_number}
+      default_subject: 'Appel de %{customer} le %{call_date}'
+      voicemail_subject: 'Message vocal de %{customer}'
+      human_name: ticket
+      view: Afficher
+    note:
+      human_name: note
+      view: Afficher
+    create:
+      success:
+        with_link: 'Le %{human_name}a été créé %{link}'
+    admin:
+      important: "Important "
+      general: Général
+      settings: Paramètres
+      greetings: Salutations
+      messages: Messages
+      freshfone_numbers_title: Téléphone
+      suspended_alert: "<b>Important :</b> la désactivation de votre canal téléphonique n'annule pas les frais mensuels liés à vos numéros. Afin d'éviter d'être facturé, veuillez supprimer les numéros achetés."
+      purchase_credit_text: >-
+        Achetez des crédits pour acquérir des numéros, passer et recevoir des
+        appels à l'aide du canal téléphonique.
+      purchase_numbers_text: >-
+        Achetez un numéro local ou gratuit et proposez un support téléphonique à
+        vos clients partout dans le monde
+      search: Recherche par chiffre ou expression
+      local: Local
+      toll_free: Gratuit
+      mobile: Local (mobile)
+      number:
+        simultaneous: Appeler tous les agents
+        round_robin: Appeler d'abord les agents inactifs
+      trial:
+        request_activation_msg: >-
+          Vous pouvez choisir d'utiliser un seul numéro d'un ensemble limité de
+          pays pendant une période d'essai téléphonique.<br>Toutefois, vous
+          pouvez acheter plusieurs numéros de 41 pays quand vous activez la
+          version complète.
+        activate_btn_text: Demande d'activation
+        requested_activation: >-
+          Nous avons reçu votre demande d'activation.<br>Elle est en cours de
+          traitement.
+        expired: Votre version d'évaluation téléphonique a expiré.
+        activate_to_call_expired: Activez votre compte téléphonique pour passer des appels.
+        activate_to_call_outgoing: Activez votre compte téléphonique pour passer des appels.
+        contact_admin_for_expired: Contactez l'administrateur pour continuer à passer des appels.
+        contact_admin_for_call_outgoing: Contactez l'administrateur pour continuer à passer des appels.
+        period_to_expire: Votre version d'essai téléphonique va expirer.
+        incoming_minutes_to_exhaust:
+          one: >-
+            <span class='min_left error hide'>1</span> minute entrante gratuite
+            restante
+          other: >-
+            <span class='min_left error hide'></span> minutes entrantes
+            gratuites restantes
+        outgoing_minutes_to_exhaust:
+          one: >-
+            <span class='min_left error hide'>1</span> minute sortante gratuite
+            restante
+          other: >-
+            <span class='min_left error hide'></span> minutes sortantes
+            gratuites restantes
+        outbound_usage_exhausted: Minutes sortantes gratuites épuisées
+        get_more_credits: >-
+          Pour avoir des crédits supplémentaires, vous devez activer votre
+          compte.
+        minutes_usage_exhausted: Vos minutes d'évaluation téléphonique ont été épuisées.
+        days_left:
+          one: dans <span class='days_left error hide'>1</span> jour
+          other: dans <span class='days_left error hide'></span> jours
+        numbers:
+          delete_not_allowed: >-
+            La suppression des numéros sur une version d'évaluation téléphonique
+            n'est pas autorisée.
+          normal_trial_usage: >-
+            Vous utilisez actuellement la version d'évaluation du canal
+            téléphonique avec des fonctionnalités limitées.
+          activate_to_use_all: >-
+            activez votre compte téléphonique pour acheter plus de numéros et
+            utiliser toutes les fonctionnalités.
+          incoming_minutes_exhausted: Vous avez épuisé vos minutes entrantes gratuites.
+          incoming_minutes_exhausted_description: >-
+            Activez votre compte téléphonique et achetez des crédits pour
+            recevoir des appels entrants.
+          outgoing_minutes_exhausted: Vous avez épuisé vos minutes sortantes gratuites.
+          outgoing_minutes_exhausted_description: >-
+            Activez votre compte téléphonique et achetez des crédits pour passer
+            des appels sortants.
+          free_minutes_exhausted: Vous avez épuisé vos minutes gratuites.
+          cannot_make_or_receive_calls: >-
+            Activez votre compte téléphonique et achetez des crédits pour passer
+            des appels.
+          used_minutes: '%{used} mns sur %{total} utilisées'
+          purchase_limit: >-
+            Seul(s) %{limit} numéro(s) peuvent être achetés pour une version
+            d'évaluation téléphonique.
+          purchase_warning_expired: >-
+            Les numéros de recherche ne sont pas autorisés pour une version
+            d'évaluation téléphonique expirée.
+          expired: >-
+            La période de validité de votre version d'évaluation téléphonique a
+            expiré.
+          ivr:
+            direct_dial: >-
+              Option d'appel de numéro non autorisée dans une version
+              d'évaluation
+          search:
+            after_activation_request: >-
+              Vous avez demandé une activation du canal téléphonique.<br>Nous
+              allons prendre contact avec vous d'ici 2 jours ouvrables.
+            buy_button: Oui
+            can_use_after_activation: >-
+              Vous pouvez continuer à utiliser ce numéro une fois le canal
+              téléphonique activé.
+            buy_confirmation: Souhaitez-vous vraiment choisir ce numéro ?
+      number_settings:
+        title_text: Gestion de votre centre d'appels
+        info_content: >-
+          <b>Attribution d'appels téléphoniques à des agents et des
+          groupes</b></br>Vous pouvez configurer un système de réponse vocale
+          interactive (SVI) et diriger les appels vers différents groupes ou
+          agents de votre équipe. Par exemple, les appels de vos clients peuvent
+          être transmis à votre équipe de support quand les clients appuient sur
+          la touche 1, ou à un conseiller commercial quand ils appuient sur la
+          touche 2.<br/>En outre, vous pouvez personnaliser les messages qui
+          seront lus à vos clients en enregistrant votre voix, en chargeant un
+          fichier ou en utilisant la fonction de reconnaissance
+          vocale.<br><br><b>Personnalisation de votre numéro</b><br>Vous
+          pourriez également configurer chaque numéro de téléphone séparément et
+          paramétrer les options pour chacun d'entre eux. Ceci comprend les
+          paramètres de base, comme le nombre maximum de personnes dans la file
+          d'attente et le délai d'attente maximal pour vos clients. En cas de
+          dépassement, un message d'indisponibilité est automatiquement lu à vos
+          clients.<br/>Quand vous activez l'enregistrement des appels, chaque
+          appel vers votre centre de support est enregistré et associé à vos
+          tickets. L'enregistrement peut être rendu public pour les clients, ou
+          rester privé. Vous pouvez aussi empêcher votre canal téléphonique
+          d'accepter des appels pendant les heures de fermeture. Par exemple,
+          vous pourriez configurer deux lignes de support : la première est
+          disponible pour répondre aux appels pendant les heures d'ouverture, et
+          l'autre est destinée aux urgences, disponible 24 h/24, 7
+          j/7.<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target='_blank'>En savoir plus sur la personnalisation de votre
+          numéro</a>
+        non_business_hours: Accepter les appels pendant…
+        business_calendar: Sélectionner les heures d'ouverture
+        transcript_voice: Transcription des voix
+        text_to_speech: Synthèse vocale
+        record_calls: Enregistrer les appels
+        voicemail: Messagerie vocale
+        voicemail_on: Activé
+        voicemail_off: Désactivé
+        record_all: Enregistrer tous les appels
+        record_none: Ne pas enregistrer les appels
+        record_alert: >-
+          Les directives concernant l'enregistrement des appels nécessitent,
+          dans la plupart des pays, d'informer les clients que les appels sont
+          enregistrés. Veuillez rédiger votre message d'accueil en conséquence.
+        max_queue_calls: Nombre maximal d'appels en attente
+        call_wait_time: avec un délai d'attente maximal de
+        call_wait_time_suffix: ' par appel'
+        queue_wait_message: Message de file d'attente
+        non_availability_message: Message d'indisponibilité
+        voicemail_message: Message de messagerie vocale
+        non_business_hours_message: Message pour les heures de fermeture
+        welcome_message_alert: Message d'accueil désactivé lorsque l'IVR est activé
+        welcome_message: Message d'accueil
+        record_voice: Enregistrer votre voix
+        upload_voice: Télécharger des fichiers audio
+        read_message: Synthèse vocale
+        start_recording: Démarrer l'enregistrement
+        stop_recording: <span></span>Arrêter l'enregistrement
+        preparing_recording: Préparation de votre message en cours...
+        recorded_voice: Voix enregistrée
+        audio_upload: Charger
+        greeting_message: Saisissez votre message ici
+        attachment_help_info: Accepte les fichiers audio (MP3) < 5 Mo
+        attachment_help_text: "Accepte les fichiers audio (MP3) < 5 Mo"
+        recording_help_info: "Allumez le microphone. Durée < 5 minutes."
+        cancel: Annuler
+        change: Modifier
+        group: 'Lire le message et appeler les agents de '
+        call_hunting_group: Groupe
+        all_groups: Tous les groupes
+        business_hours: Heures d'ouverture
+        anytime: "7 j/7, 24 h/24"
+        name: Nom
+        name_placeholder: Saisissez un pseudonyme pour votre numéro
+        hunt_type: Routage d'appel
+        routing_message: Lorsque plusieurs agents sont disponibles en ligne...
+        recording_privacy: Visibilité de l'enregistrement
+        recording_privacy_public: Visible pour les clients et les agents
+        recording_privacy_private: Visible uniquement pour les agents
+        name_maxlength: Le nom ne peut contenir plus de 255 caractères
+        number_accessible: Accessible par
+        wait_music: Musique d'attente
+        hold_music: Musique d'attente
+        queue_position_preference: Indiquer la position dans la file d'attente
+        queue_position_message: Message de la position en file d'attente
+        queue_position_message_placeholder: >-
+          Vous êtes actuellement placé en file d'attente. Votre position dans la
+          file est {{queue.position}}
+        queue_position_message_alert: >-
+          Pour dire la position en file d'attente, utilisez l'emplacement
+          réservé {{queue.position}} <br/> Ex. : vous êtes actuellement placé en
+          file d'attente. Votre position dans la file est {{queue.position}}
+        queue_position_enable: ACTIF
+        queue_position_disable: INACTIF
+      numbers:
+        sidebar_title: Canal téléphonique
+        sidebar_content: >-
+          Avec le canal téléphonique, vous pouvez passer et recevoir des appels
+          à l'aide de votre navigateur, téléphone mobile ou des applications
+          mobiles de Freshdesk. Il est étroitement intégré au système de tickets
+          de Freshdesk. Ainsi, vous gardez un œil sur les appels téléphoniques
+          en les enregistrant et en les convertissant en tickets, si
+          nécessaire.<br/><br/> <b>Configuration du téléphone</b></br>Pour
+          commencer à utiliser le téléphone, vous devez l'activer et acheter un
+          numéro de support. Achetez des numéros locaux dans les <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>pays de cette liste</a> et passez ou recevez des
+          appels dans les quatre coins du monde. Si vos clients vous appellent
+          des États-Unis, du Royaume-Uni ou du Canada, vous pouvez aussi acheter
+          des numéros de support gratuits (ou « freephone » au
+          Royaume-Uni).<br/><br/><b>Offrez un support téléphonique
+          complet</b><br/>Avec notre canal téléphonique, vous
+          pouvez<br/><ul><li>passer et recevoir des appels depuis votre
+          navigateur Web ou vos téléphones mobiles</li><li>créer des messages
+          vocaux, transmettre des appels ou transférer des appels à vos agents,
+          n'importe où</li><li>Surveiller les appels, intervenir quand il le
+          faut, ajouter des agents aux appels en cours,
+          etc.*</li></ul><br/><p>*Veuillez envoyer un e-mail à <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> pour
+          activer les fonctionnalités avancées de votre compte. Elles incluent
+          la surveillance des appels, l'intervention pendant les appels, les
+          téléconférences, le masquage des appels et les indicateurs de durée
+          des appels.</p><br/><p><a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>En savoir plus sur les capacités et fonctionnalités
+          puissantes du téléphone</a><p>
+        sidebar_content_v2: >-
+          Avec le canal téléphonique, vous pouvez passer des appels depuis votre
+          navigateur, téléphone mobile ou les applications mobiles de Freshdesk.
+          Il est étroitement intégré au système de tickets de Freshdesk. Ainsi,
+          vous pouvez garder une trace des appels téléphoniques en les
+          enregistrant et en les convertissant en tickets, si
+          nécessaire.<br/><br/><b>Configuration du téléphone</b>
+
+          </br>Pour commencer à utiliser le téléphone, vous devez d'abord
+          l'activer et acheter un numéro de support. Vous pouvez acheter des
+          numéros locaux dans les <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>pays indiqués à cette adresse</a> et ils vous
+          permettent de passer ou de recevoir des appels dans le monde entier.
+          Si vos clients vous appellent des États-Unis, du Royaume-Uni ou du
+          Canada, vous pouvez aussi acheter des numéros de support gratuits (ou
+          « freephone », au Royaume-Uni).<br/><br/><b>Offrez un support
+          téléphonique complet</b><br/>Avec notre canal téléphonique, vous
+          pouvez <br/><ul><li>commencer à passer des appels depuis votre
+          navigateur Web ou téléphone mobile</li><li>créer des messages
+          téléphoniques, transmettre des appels ou transférer des appels à des
+          agents partout dans le monde</li><li>surveiller les appels,
+          interrompre un appel en cas de besoin, ajouter d'autres agents à des
+          appels en cours, etc.*</li></ul><br/><p>*Veuillez contacter l'adresse
+          <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> pour
+          activer les fonctions avancées de votre compte. Parmi elles, on peut
+          citer la surveillance des appels, l'interruption des appels, la
+          conférence téléphonique, le masquage des appels et les indicateurs de
+          durée des appels.</p><br/>
+        tour_link: Aidez-moi à configurer le canal téléphonique
+        purchase_number: Acheter un numéro
+        purchase_phone_number: 'Acheter un numéro (%{number})'
+        buy: Acheter un numéro
+        buy_button_text: Acheter
+        purchase_loading_text: Achat en cours...
+        buy_loading_text: Achat en cours...
+        purchase_alert_text: >-
+          Ce numéro de téléphone sera facturé <strong><span
+          class='number-rate'></span> par mois</strong>.
+        not_available: Aucun résultat trouvé. Essayez un autre terme de recherche
+        address_certification_text: >-
+          Pour acheter un numéro de téléphone, vous devez fournir l'adresse de
+          votre société ou votre adresse personnelle dans le pays suivant :
+          <span class='certification-country'></span>.
+        purchase_confirm: Êtes-vous sûr ?
+        delete_alert: "Une fois supprimé, un numéro ne peut pas être acheté à nouveau. Souhaitez-vous vraiment supprimer ce numéro ?"
+        manage: Gérer
+        failure_purchase: >-
+          Impossible d'acheter le numéro de téléphone. Vérifiez que l'adresse
+          est une adresse locale valide en <span
+          class='certification-country'></span>.
+        low_credits: >-
+          Votre crédit téléphonique est insuffisant pour acheter un nouveau
+          numéro. Veuillez le recharger et réessayer.
+        address:
+          name: Société/nom
+          address: Adresse
+          city: Ville
+          state: État/département-province/région
+          postal_code: Code postal
+          country: Pays
+          required_field: Tous les champs sont obligatoires
+        setup:
+          title_text: Configuration d'un centre d'appels
+          info_text: >-
+            Pour commencer à utiliser le canal téléphonique, vous devez d'abord
+            acheter un numéro d'appel que vous communiquerez à vos clients. Vous
+            pouvez acheter un numéro local dans l'un des <a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>pays répertoriés ici</a>. Si vos clients vous
+            appellent depuis les États-Unis, le Royaume-Uni ou le Canada, vous
+            pouvez également acquérir un numéro d'appel gratuit.<br/><br/>Il est
+            possible d'acheter plusieurs numéros de téléphone à partir de
+            différents pays et configurer des services de support téléphonique
+            gratuits au sein de Freshdesk, sans avoir à utiliser un service
+            tiers. Vous serez facturé aux tarifs standard pour les appels
+            entrants, sortants et transférés, issus de votre centre de support.
+            Consultez les <a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>tarifs des communications ici</a>.<br/><br/> Après
+            avoir acheté un numéro de téléphone pour votre service de support
+            téléphonique, tous les appels entrants sont répartis vers les agents
+            connectés à votre service. De plus, vos agents peuvent choisir de
+            répondre aux appels depuis leur navigateur ou les transférer
+            automatiquement sur leur téléphone de bureau.
+        caller_id:
+          manage_caller_id: 'Gérer l''ID d''appelant '
+          add_another: / Ajouter autre
+          enter_code: Décrochez votre téléphone et entrez un code de validation.
+          enter_number: Entrez le numéro que vous souhaitez ajouter comme ID de l'appelant.
+          verify_number: Vérifier ce numéro
+          another_caller: Ajouter autre
+          delete: Supprimer
+          number_added: Numéro ajouté
+          no_number_added: Aucun ID d'appelant ajouté
+          ok: OK
+          add_new: Ajouter nouveau
+          add_new_caller_id: Ajouter un nouvel ID d'appelant
+          wait: Veuillez patienter...
+          error_message: Désolé ! Un problème est survenu. Veuillez réessayer.
+          simultaneous_verification_error: Désolé ! Numéro déjà en cours de vérification.
+          invalid_number: Numéro de téléphone non valide !
+          calling: 'Appel en cours '
+          call_id_mask: Masquer ce numéro
+          twilio_errors:
+            not_allowed: >-
+              Désolé, une erreur s'est produite lors de l'ajout de ce numéro en
+              tant qu'ID d'appelant. Veuillez réessayer. Si le problème
+              persiste, contactez-nous à l'adresse <a
+              href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+            invalid_number: >-
+              Désolé, ce numéro semble incorrect. Veuillez réessayer. Si le
+              problème persiste, contactez-nous à l'adresse <a
+              href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
+            already_verified: Numéro de téléphone déjà vérifié pour votre compte !
+        buy_phone_numbers: Acheter des numéros de téléphone
+        buy_phone_credits: Acheter des crédits téléphoniques
+      invalid_attachment: >-
+        La pièce jointe « %{name} » n'est pas un fichier audio valide/sa taille
+        est supérieure à 5 Mo.
+      ivr:
+        simple_message_title: Message simple
+        ivr_message_title: Serveur vocal interactif (SVI)
+        welcome_message: Message d'accueil
+        message_type: Type de message
+        transcript_voice: Voix de transcription
+        text_to_speech: Synthèse vocale
+        turned_off: >-
+          Le message d'accueil est désactivé. Tous les appels entrants seront
+          automatiquement dirigés vers votre service d'assistance.
+        turned_on: Le message d'accueil sera diffusé pour tous les appels entrants.
+        turn_on: Activé
+        turn_off: Désactivé
+        add_new_menu: Ajouter un nouveau <b>menu</b>
+        add_new_menu_from_option: Ajouter un nouveau menu
+        add_new_option: Ajouter une option de <b>touche</b>
+        keypress: Touche
+        input_number: Saisir le numéro
+        action: Action
+        male: Voix masculine
+        female: Voix féminine
+        rename: renommer
+        done: terminé
+        save: Enregistrer
+        saving: Enregistrement...
+        preview: Aperçu
+        previewing: Génération de l'aperçu...
+        delete_menu: Supprimer le menu
+        jump_to: Passer à
+        call_agent: Appeler agent
+        call_agent_group: Appeler groupe d'agents
+        call_number: Numéro d'appel
+        back_to_menu: Revenir au menu principal
+        invalid_performer_type: Type d'exécutant invalide
+        invalid_number: 'Numéro invalide dans le menu %{menu}'
+        restricted_country: 'Numéro de pays interdit dans le menu %{menu}'
+        invalid_jump_to: '« Passer à » impossible pour le menu non-racine %{menu}'
+        seed_message: Bienvenue au service clients
+        seed_menu_name: Menu d'accueil
+        invalid_number_format: >-
+          Saisissez un numéro de téléphone valide avec le préfixe « + » et le
+          code pays devant le numéro
+      welcome_page:
+        title_text: Téléphone
+      feature_request_content:
+        title_text: Téléphone
+        heading_text: Offrez du support à vos clients à l'aide du canal téléphonique
+        trial_description: >-
+          Avec le canal téléphonique, vous pouvez passer des appels depuis votre
+          navigateur, téléphone mobile ou à l'aide du canal téléphonique dans
+          les applications mobiles Freshdesk. Il est étroitement intégré au
+          système de génération de tickets de Freshdesk. Vous pouvez ainsi
+          garder une trace des appels téléphoniques en les enregistrant et en
+          les convertissant en tickets, quand c'est nécessaire.
+        number_info: "Achetez des numéros locaux et gratuits pour plus de 40 pays"
+        ivr_info: >-
+          Surveillez les appels, lancez une téléconférence, acheminez les appels
+          à l'aide du SVI, etc.
+        recording_info: Enregistrez et convertissez tous vos appels en tickets
+        learn_more: En savoir plus
+        pricing: Afficher tous les tarifs des appels et les pays pris en charge
+        request_subject: 'Demande téléphonique - %{account_name}'
+        email_message: Fonctionnalité Freshfone requise
+        success: Nous vous recontacterons d'ici deux jours ouvrables.
+        error_message: >-
+          Désolé, nous ne pouvons pas créer votre demande pour le moment.
+          Veuillez réessayer plus tard.
+        additional_info: >-
+          Vous pourrez acheter des numéros et passer des appels une fois le
+          canal téléphonique activé dans votre compte.
+        button_text: Demande d'activation
+        video_title: >-
+          Regardez la vidéo pour découvrir ce que vous pouvez faire avec le
+          canal téléphonique
+        trial_version_disclaimer: >-
+          Vous pouvez utiliser gratuitement les fonctionnalités limitées pendant
+          15 jours.
+        activation_disclaimer: >-
+          Vous pouvez utiliser toutes les fonctionnalités pour une période
+          illimitée
+        trial_version_numbers: Choisissez uniquement des numéros spécifiques.
+        trial_version_calls: Appels entrants et sortants limités
+        trial_version_number_purchse: Peut acheter un seul numéro
+        trial_button_text: Activer la version d'évaluation gratuite
+        trial_or: OU
+        compare_trial_and_full: Comparer la version complète avec la version d'évaluation gratuite
   livechat:
     feature_request:
       title: Bienvenue dans le chat en direct

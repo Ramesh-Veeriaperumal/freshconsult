@@ -36,7 +36,7 @@ class SearchSidekiq::RemoveFromIndex < SearchSidekiq::BaseWorker
       query = Tire.search do |search|
         search.query { |q| q.term :account_id, Account.current.id }
       end
-      klasses = [ User, Helpdesk::Ticket, Solution::Article, Topic, Customer, Helpdesk::Note, Helpdesk::Tag, Admin::CannedResponses::Response, ScenarioAutomation ]
+      klasses = [ User, Helpdesk::Ticket, Solution::Article, Topic, Customer, Helpdesk::Note, Helpdesk::Tag, Freshfone::Caller, Admin::CannedResponses::Response, ScenarioAutomation ]
       search_aliases = Search::EsIndexDefinition.searchable_aliases(klasses, Account.current.id)
       search_aliases.each do |index_alias|
         remove_by_query(index_alias, query)

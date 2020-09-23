@@ -531,7 +531,7 @@ ar:
           اترك مسافة بادئة قبل العناصر بضغط مفتاح TAB مرة أو مرتين. سنقوم بتحويل
           النص إلى قائمة منسدلة وفقاً للمسافات البادئة، لذا يرجى الانتباه أثناء
           إدخال المسافات البادئة.  <a target='_blank' href=%{learn_more}>أعرف
-          أكثر</a>
+          أكثر</a> 
         dropdown_items_edit: عناصر القائمة المنسدلة - وضع التعديل
         dropdown_items_preview: عناصر القائمة المنسدلة - المعاينة
         status_choices: خيارات الحالة
@@ -623,7 +623,7 @@ ar:
           اترك مسافة بادئة قبل العناصر بضغط مفتاح TAB مرة أو مرتين. سنقوم بتحويل
           النص إلى قائمة منسدلة وفقاً للمسافات البادئة، لذا يرجى الانتباه أثناء
           إدخال المسافات البادئة.  <a target='_blank' href=%{learn_more}>أعرف
-          أكثر</a>
+          أكثر</a> 
         dropdown_items_edit: عناصر القائمة المنسدلة - التحرير
         dropdown_items_preview: عناصر القائمة المنسدلة - المعاينة
         status_choices: خيارات الحالة
@@ -937,7 +937,7 @@ ar:
             يسمح لك Freshdesk بإدارة استفسارات العملاء الواردة إلى حساب eBay
             الخاص بك من داخل مكتب الدعم. بمجرد الإعداد، سيتم تحويل جميع
             استفسارات العملاء من eBay إلى تذاكر تلقائيًا. كما ويمكنك الرد عليها
-            مباشرةً من داخل Freshdesk.
+            مباشرةً من داخل Freshdesk. 
       index:
         title: حسابات التجارة الإلكترونية
         renew: جدّد الرمز المميز
@@ -1731,7 +1731,7 @@ ar:
           من وإلى Freshdesk
         customer_portal_ssl_warning: >-
           بما أنه قد تمت تهيئة عنوان URL مخصص لمكتب الدعم لديك، فستتم إعادة
-          توجيهك إلى
+          توجيهك إلى 
         multiple_product_ssl_warning: لا يمكن تطبيق SSL في حال تهيئة عدة منتجات.
         enabled: ممكَّن
         disabled: معطَّل
@@ -2314,7 +2314,7 @@ ar:
       bulk_merge_success: >-
         تم دمج معرفات التذاكر %{merged_tickets} إلى  <a
         href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject}
-        #%{target_ticket}</a>
+        #%{target_ticket}</a> 
       link:
         success: The ticket has been successfully linked to the tracker
         delay_link: >-
@@ -2360,6 +2360,7 @@ ar:
         success: تم تمكين التكامل بنجاح!
         error: حدث خطأ في تمكين التكامل.
         cti_error: لا يمكن تمكين تكاملات متعددة من نوع CTI.
+        freshfone_alert: لا يمكن تمكين تكامل CTI عندما تكون قناة هاتفك ممكّنة.
         cloud_element_success: Integration has been enabled with default configuration.
         cloud_element_settings_failure: check your configuration and enable again.
         no_feature_error: Please contact support and enable the crm sync feature first
@@ -2428,6 +2429,23 @@ ar:
       domain_restriction: يوجد تقييد للمجال. لا يُسمَح بهذا البريد الإلكتروني.
       use_admin_cred: Please use an admin credential to enable the link.
       wrong_admin_cred: Credentials given seems to be wrong.
+    freshfone:
+      credits:
+        successful_purchase: تم شراء رصيد الهاتف بنجاح.
+        unsuccessful_purchase: خطأ أثناء شراء رصيد الهاتف.
+        invalid_recharge_amount: أدخل مبلغ إعادة شحن صالح
+      number:
+        successful_purchase: تم شراء رقم الهاتف بنجاح.
+        unsuccessful_purchase: خطأ أثناء شراء رقم الهاتف.
+        invalide_address_error: >-
+          تعذر شراء الرقم. يرجى التأكد من أن العنوان الوارد هو عنوان صحيح في
+          %{country}.
+        blank_message: 'لا يمكن أن يكون %{num_type} فارغًا'
+        invalid_message_length: '%{num_type} لا ينبغي أن يتجاوز 4096 حرفاً.'
+        add_blacklist_success: تم حظر الرقم بنجاح
+        add_blacklist_failure: يتعذر حظر الرقم
+        remove_blacklist_success: تم إلغاء حظر الرقم بنجاح
+        remove_blacklist_failure: يتعذر إلغاء حظر الرقم
     profile:
       api_key:
         reset_success: تمت إعادة تعيين مفتاح API بنجاح.
@@ -2487,7 +2505,7 @@ ar:
         قد تستغرق عملية الاستيراد بضع دقائق بناء على حجم البيانات
       info1: >-
         تم الاستيراد بنجاح. يمكنك فتح مكتب المساعدة و الانتقال إلى
-        العميل->%{uc_type} لعرض %{type} المضاف مؤخراً.
+        العميل->%{uc_type} لعرض %{type} المضاف مؤخراً. 
       info2: >-
         لم نتمكن من استيراد جميع %{type} من ملف CSV الذي حددته. يرجى الاضطلاع
         على التقرير الموجز أدناه:
@@ -2996,8 +3014,21 @@ ar:
         no_agents: '- لا يوجد مندوبين -'
         back: عودة
       freshfone:
+        phone: الهاتف
+        sort_by: مرتبة حسب
+        last_modified: آخر نشاط
+        name: الاسم
         accepting: يستقبل
         not_accepting: لا يستقبل
+        call_in_progress: مكالمة جارية
+        in_busy_state: مشغول
+        agent_on_call: الوكيل لديه مكالمة
+        no_agents: '- لا يوجد مندوبين -'
+        no_activity: لا نشاط
+        queued_calls: في قائمة الانتظار
+        active_calls: في محادثة
+        no_queue_calls: لا يوجد مكالمات في قائمة الانتظار
+        no_active_calls: لا يوجد مكالمات قيد التقدم
       livechat:
         chat: محادثة مباشرة
         accepting: يستقبل
@@ -3336,7 +3367,7 @@ ar:
           zero: 'لم يتم دمج أي بطاقات في البطاقة %{target_ticket_id}.'
           one: >-
             تم دمج البطاقة %{source_tickets} في البطاقة %{target_ticket_id}.
-            ستتم إضافة المحادثة في غضون دقائق.
+            ستتم إضافة المحادثة في غضون دقائق. 
           two: >-
             تم دمج البطاقتين %{source_tickets} في البطاقة %{target_ticket_id}.
             ستتم إضافة المحادثة في غضون دقائق.
@@ -3356,7 +3387,7 @@ ar:
         info1: الردود الجاهزة هي قوالب رد جاهزة يمكن إرسالها كردود على التذاكر.
         info2: >-
           يمكنك استخدام العناصر النائبة لإدراج محتوى حيوي متغير كاسم الطالب و
-          معرّف التذكرة و الروابط داخل الردود.
+          معرّف التذكرة و الروابط داخل الردود. 
       folders:
         helpnote:
           title: ردود جاهزة
@@ -3364,7 +3395,7 @@ ar:
           info1: الردود الجاهزة هي قوالب رد جاهزة يمكن إرسالها كردود على التذاكر.
           info2: >-
             يمكنك استخدام العناصر النائبة لإدراج محتوى حيوي متغير كاسم الطالب و
-            معرّف التذكرة و الروابط داخل الردود.
+            معرّف التذكرة و الروابط داخل الردود. 
       responses:
         edit:
           title: تحرير الرد الجاهز
@@ -4442,11 +4473,11 @@ ar:
   reauthorize_facebook: جدد تخويل حسابك في Facebook.
   twitter_reauth: >-
     تعذر الوصول إلى قناة Twitter الخاصة بك. يبدو أنه قد تم تغيير اسم المستخدم أو
-    كلمة المرور مؤخراً.
+    كلمة المرور مؤخراً. 
   reauthorize_twitter: جدد تخويل معرّف twitter.
   ecommerce_reauth: >-
     تعذر الوصول إلى حساب التجارة الإلكترونية الخاص بك. يبدو أن الرمز المميز
-    للمصادقة قد انتهت صلاحيته.
+    للمصادقة قد انتهت صلاحيته. 
   reauthorize_ecommerce: جدد تخويل حساب التجارة الإلكترونية الخاص بك.
   schedule_a_complimentary_session: جدولة جلسة مجانية
   choose_a_plan: اختر خطة
@@ -4607,13 +4638,13 @@ ar:
         استخدم نموذج جزء النص المجاني أدناه لإضافة عناصر أو تحريرها للعنصر
         المنسدل، وضع مسافة بادئة للعناصر بالضغط على مفتاح التنقل مرة أو مرتين.
         سوف نحولها إلى عناصر منسدلة بناء على المسافة البادئة، يرجى الانتباه قدر
-        الإمكان. <a target='_blank' href=%{learn_more}>التعرف على المزيد</a>
+        الإمكان. <a target='_blank' href=%{learn_more}>التعرف على المزيد</a> 
       nested_field_helptext: >-
         استخدم جزء النص أدناه لإضافة عناصر أو تحريرها للعنصر المنسدل، وضَعْ
         مسافة بادئة للعناصر بالضغط على مفتاح التنقل مرة أو مرتين. سوف نحولها إلى
         عناصر منسدلة بناءً على المسافة البادئة. <a target='_blank'
         href='https://support.freshdesk.com/solution/categories/45957/folders/74594/articles/37599-using-dependent-fields'>التعرف
-        على المزيد</a>
+        على المزيد</a> 
       dropdown_items_edit: عناصر منسدلة - تحرير العرض
       drop_down_items_edit: عناصر منسدلة - تحرير
       dropdown_items_preview: عناصر منسدلة - معاينة
@@ -5058,7 +5089,7 @@ ar:
     not_authorized: أنت غير مصادق من قبل Facebook
     realtime: >-
       <b>توقف تطبيق جلب تغذية تدفق الوقت الفعلي</b> بسب بعض التغيرات في حساب
-      Facebook هذا <a href='%{realtime_url}' > إعادة المصادقة والتمكين.</a>
+      Facebook هذا <a href='%{realtime_url}' > إعادة المصادقة والتمكين.</a> 
     user_creation_failed: >-
       Error while creating user in Freshdesk. Please retry after sometime or
       contact support@freshdesk.com
@@ -5435,7 +5466,7 @@ ar:
       ticket_merge:
         short: >-
           قام {{user_path}} بدمج البطاقة {{notable_path}} في
-          {{merge_ticket_path}}
+          {{merge_ticket_path}} 
         long: >-
           قام {{user_path}} بدمج البطاقة {{notable_path}} في
           {{merge_ticket_path}}
@@ -5829,6 +5860,8 @@ ar:
       support_email_description: >-
         Bring your customer messages into Freshdesk by adding your support
         email.
+      freshfone_number_title: Purchase a phone number
+      freshfone_number_description: Buy a phone number and start accepting calls from your customers.
       twitter_title: Add your Twitter account
       twitter_description: Look out for mentions and important keywords related to you on Twitter.
       automation_title: Set up an automation rule
@@ -6134,7 +6167,7 @@ ar:
       page to view the child tickets.
     parent_not_accessible: >-
       Oops! Looks like we are not able to access the ticket templates to create
-      child tickets.
+      child tickets. 
     limit_exceeded: >-
       Unable to apply the template as the number of child tickets would exceed
       the prescribed limit of %{limit}.
@@ -7404,11 +7437,11 @@ ar:
         ملفات تعريف الارتباط، أو أنك تتبع حمية، فيمكنك تعطيلها تمامًا. فقط تجدر
         الإشارة إلى أن خدمة Freshdesk تعتمد على ملفات تعريف الارتباط بدرجة كبيرة
         (نحب رقائق الشوكولاتة)، وبعض أقسام Freshdesk قد لا تعمل بشكل صحيح إذا
-        قمت بتعطيل ملفات تعريف الارتباط.
+        قمت بتعطيل ملفات تعريف الارتباط. 
       cookie_dialog_info3: >-
         كما أننا نفترض موافقتك على طريقة استخدامنا لملفات تعريف الارتباط وقبولك
         لها حسب وصفها في %{privacy_link}، ما لم تختر تعطيلها تمامًا من خلال
-        المستعرض الخاص بك.
+        المستعرض الخاص بك. 
       privacy_policy: سياسة الخصوصية
     no_topics_in_this_view: ~ لا توجد موضوعات في طريقة العرض هذه ~
     reported: المبلّغ عنها
@@ -8042,7 +8075,7 @@ ar:
     info15: يمكن حفظ المقالات كـ <b>مسوّدة</b> أو كـ <b>منشورة</b> مباشرةً.
     info16: >-
       <b>منشورة</b> ستكون المقالات مرئية في بوابة الخدمة الذاتية وستظهر كذلك في
-      نتائج البحث.
+      نتائج البحث. 
     info17: >-
       <b>مسوّدة</b> تكون المقالات مرئية للوكلاء فقط، وستظهر فقط في نتائج البحث
       الخاصة بالوكلاء.
@@ -8483,7 +8516,7 @@ ar:
           {{ticket.url}} ليسهل على المندوبين الوصول إليها. <br /><br />إذا كنت
           قد أعددت عدة لغات للدعم في مكتب المساعدة، يمكنك تخصيص رسالة تذكرة
           جديدة لكل لغة بشكل منفصل. الرمز <i class="common-icon-outdated"></i>
-          يعني أن ترجمات الإخطارات إلى لغات أخرى قد تكون قديمة.
+          يعني أن ترجمات الإخطارات إلى لغات أخرى قد تكون قديمة. 
       agent_template_3:
         topic: تم تعيين البطاقة إلى وكيل
         info1: >-
@@ -8492,7 +8525,7 @@ ar:
           الوصول إليها.<br/><br/>إذا كنت قد أعددت عدة لغات للدعم في مكتب
           المساعدة، يمكنك تخصيص رسالة تذكرة جديدة لكل لغة بشكل منفصل. الرمز <i
           class="common-icon-outdated"></i> يعني أن ترجمات الإخطارات إلى لغات
-          أخرى قد تكون قديمة.
+          أخرى قد تكون قديمة. 
       agent_template_11:
         topic: لا توجد البطاقة في مجموعة
         info1: >-
@@ -9526,7 +9559,7 @@ ar:
     performed: ' performed '
     system_activity_timestamp: >-
       <strong class='muted'>System</strong> %{system_rule} <abbr
-      data-livestamp='%{timestamp}'></abbr> (%{note_date})
+      data-livestamp='%{timestamp}'></abbr> (%{note_date}) 
     requestor_info: معلومات مقدم الطلب
     view_twitter: اعرض على تويتر
     view_facebook: اعرض على الفيسبوك
@@ -10470,7 +10503,7 @@ ar:
     latest: الأحدث
     no_custom_apps: >-
       You have no custom apps installed. Create and Install a new custom app by
-      clicking
+      clicking 
     all_categories: All categories
     in_dev_apps: التطبيقات قيد التطوير
     all: الكل
@@ -12008,16 +12041,16 @@ ar:
         <br/><br/> قم بنسخ عنوان URL لواجهة برمجة التطبيقات من قسم 'معلومات
         الحساب ولصقه في حقل عنوان URL لواجهة برمجة التطبيقات هنا. أدخل اسم
         مستخدم iContact الخاص بك وكلمة مرور واجهة برمجة التطبيقات وانقر فوق
-        تحديث.
+        تحديث. 
       form:
         app_id: معرف التطبيق
         username: اسم مستخدم iContact
         api_password: كلمة مرور واجهة برمجة التطبيقات
         api_url: عنوان URL لواجهة برمجة التطبيقات
         api_url_info: >-
-          للحصول على عنوان URL لواجهة برمجة التطبيقات الخاص بك، انتقل إلى
+          للحصول على عنوان URL لواجهة برمجة التطبيقات الخاص بك، انتقل إلى 
           https://app.icontact.com/icp/core/externallogin وقم بنسخ عنوان URL
-          لواجهة برمجة التطبيقات من قسم &#039;معلومات الحساب&#039;.
+          لواجهة برمجة التطبيقات من قسم &#039;معلومات الحساب&#039;. 
     dropbox:
       label: DropBox
       desc: إرفاق بياناتك/ملفاتك ومشاركتها من DropBox.
@@ -12337,6 +12370,51 @@ ar:
     customer_activity_title: تقرير النشاط
     helpdesk_activity_title: تقرير نشاط مكتب الدعم
     satisfaction_title: تقرير الرضى
+    freshfone:
+      options:
+        incoming: واردة
+        outgoing: صادرة
+        all_groups: كل المجموعات
+        unassigned: غير معين
+      range_exceed: لا يجب أن تتعدى الفترة 90 يوماً
+      filter_by_title: تمت التصفية حسب
+      time_period: المدة الزمنية
+      ff_report_title: ملخص الهاتف
+      summary_title: 'ملخص مكالمة المندوب '
+      agent: الوكيل
+      group: المجموعة
+      call_type: نوع المكالمة
+      business_hours: ساعات العمل
+      filter_option_all_calls: جميع المكالمات
+      filter_option_within_business_hours: أثناء ساعات العمل
+      filter_option_outside_business_hours: خارج ساعات العمل
+      filter_report: تحرير عامل تصفية
+      select_agent: تحديد وكيل
+      select_group: تحديد مجموعة
+      select_call_type: حدّد نوع المكالمة
+      select_number: حدد رقمًا
+      all_numbers: كل الأرقام
+      all_call_types: الكل
+      number: الرقم
+      avg_handle_time: متوسط وقت المعالجة
+      num_of_calls: عدد المكالمات
+      total_answered: مكالمات تم الرد عليها
+      total_voice_mail: رسائل البريد الصوتي
+      total_duration: إجمالي المدة
+      agent_calls_count: عدد المكالمات
+      total_unanswered_calls: مكالمات لم يتم الرد عليها
+      num_of_transfered: عدد التحويلات
+      num_of_external_transfers: التحويلات الخارجية
+      unanswered_transfers: تحويلات لم يتم الرد عليها
+      answered_percentage: الرد %
+      generate_summary: إنشاء
+      filter_close: إغلاق
+      unanswered_count: لم تتم الإجابة
+      others: أخرى
+      external: أرقام خارجية
+      includes_transfer: 'ملاحظة: عدد المكالمات يتضمن المكالمات المحوّلة'
+      no_agent: '- لا يوجد مندوب -'
+      no_external: لا يتضمن التحويلات التي تمت إلى أرقام خارجية
     time_sheets:
       billable: الساعات القابلة للفوترة
       non_billable: الساعات غير القابلة للفوترة
@@ -12855,7 +12933,7 @@ ar:
       info1: الردود الجاهزة هي قوالب رد جاهزة يمكن إرسالها كردود على التذاكر.
       info2: >-
         يمكنك استخدام العناصر النائبة لإدراج محتوى حيوي متغير كاسم الطالب و
-        معرّف التذكرة و الروابط داخل الردود.
+        معرّف التذكرة و الروابط داخل الردود. 
     folders:
       helpnote:
         title: ردود جاهزة
@@ -12863,7 +12941,7 @@ ar:
         info1: الردود الجاهزة هي قوالب رد جاهزة يمكن إرسالها كردود على التذاكر.
         info2: >-
           يمكنك استخدام العناصر النائبة لإدراج محتوى حيوي متغير كاسم الطالب و
-          معرّف التذكرة و الروابط داخل الردود.
+          معرّف التذكرة و الروابط داخل الردود. 
     responses:
       edit:
         title: تحرير الرد الجاهز
@@ -13305,7 +13383,7 @@ ar:
     widget:
       ticket_info: >-
         قم بإنشاء تذكرة جديدة أو إضافة ملاحظة لتذكرة موجودة بالملاحظات و
-        التسجيلات.
+        التسجيلات. 
       note_placeholder: إضافة ملاحظات مكالمة...
       new_ticket: حفظ كتذكرة جديدة
       save_to_existing: حفظ إلى تذكرة موجودة
@@ -13322,6 +13400,721 @@ ar:
     recording_on_process: >-
       جارٍ معالجة التسجيل. <a href='#' target='_parent'
       id='checkfreshfoneaudio'>تحقق</a> مرة أخرى في غضون دقائق
+    not_enough_credit: لا يوجد رصيد كافٍ!
+    recharge: إعادة الشحن
+    ff_number: رقم هاتف
+    online_availability_text: 'Available:'
+    acw_availability_text: 'Move to Available:'
+    via_browser: عبر المتصفح / التطبيق
+    via_phone: عبر الهاتف
+    forwarded_call_message: >-
+      You are getting a call from %{caller_info}. Press 1 to answer, 2 to
+      ignore.
+    invalid_input_message: Please enter a valid input.
+    subscription:
+      auto_recharge_text: ستقوم بشحن حسابك عندما يصبح رصيدك أقل من $5 فقط
+      current_balance: رصيدك الحالي
+      purchase_text: شراء رصيد هاتف
+      setup_auto_recharge: إعداد إعادة الشحن التلقائي
+      no_credit_card_text: قم بإدخال معلومات الدفع لشراء رصيد الهاتف
+      recharge_now_text: إعادة تعبئة رصيدك بعملية دفع واحدة
+      auto_recharge_amt: مبلغ إعادة الشحن التلقائي
+      see_detailed_pricing: رؤية سعر تفصيلي
+      followup: قيمة رصيد الهاتف
+      followup_text: قيمة رصيد الهاتف
+      purchase_credits: شراء أرصدة
+    dialpad:
+      not_valid_number: يرجى إدخال رقم صالح
+      could_be_invalid_number: قد يكون الرقم غير صحيح.
+      invalid_number_continue_call: اضغط زر الاتصال مرة أخرى
+      not_enough_credit: لا يوجد رصيد كافٍ
+      restricted_country: دولة محظورة
+      already_in_call: تمت إعادة توجيه مكالمة صادرة متزامنة
+      in_acw_state: Move out of "After Call Work State" to start making calls
+      strange_number: لا يمكن الاتصال برقم مقيد
+      move_to_dialer: عودة إلى الطالِب
+      connect_call: اتصال
+      dialpad_placeholder: اكتب الاسم أو الرقم
+    search:
+      work_phone: العمل
+      mobile_phone: الجوال
+    call_status:
+      default: ''
+      completed: مكتمل
+      blocked: محظور
+      busy: مشغول
+      missedcall: مكالمة مفقودة
+      noanswer: لا يوجد رد
+      canceled: تم الإلغاء
+      failed: فشل
+      in_progress: قيد التقدم
+      voicemail: البريد الصوتي
+      restricted: محظورة
+      all_calls: جميع المكالمات
+      answered: تمت الإجابة
+      on-hold: معلق
+      queued: Queued
+      ringing_abandon: ترك مكالمة (رنين)
+      ivr_abandon: ترك مكالمة (IVR)
+      queue_abandon: ترك مكالمة (قائمة انتظار)
+    transfer_type:
+      blind: Blind Transfer
+      warm: Warm Transfer
+    general:
+      suspended_account_msg: >-
+        قناة الهاتف الخاصة بك معلقة حالياً. يرجى تمكين الهاتف لإجراء واستقبال
+        المكالمات.
+      suspended_on_low_balance_msg: >-
+        تم تعليق قناة الهاتف الخاصة بك بسبب انخفاض رصيدك. يرجى إعادة الشحن
+        لتفعيلها.
+      trial_expired: >-
+        Your phone channel trial is expired. Please activate to make and receive
+        calls.
+    dashboard:
+      title: الهاتف
+      in_conversation: في محادثة
+      in_queue: في قائمة الانتظار
+      waiting: Waiting
+      available_agents: وكلاء متوفرين
+      unavailable_agents: وكلاء مشغولون
+      freshfone_recharge_alert_new: رصيدك لا يكفي لإجراء أو استقبال مكالمات. يرجى إعادة الشحن للاستمرار.
+      admin_freshfone_recharge_alert_new: >-
+        رصيدك لا يكفي لإجراء أو استقبال مكالمات. يرجى <a href='/subscription'>
+        إعادة الشحن </a> للاستمرار.
+      low_credit: CREDIT LOW
+      trial:
+        title: TRIAL
+        expired_title: TRIAL EXPIRED
+        inbound_minutes_left:
+          zero: 'Incoming : %{minutes} mins left'
+          one: 'Incoming : 1 min left'
+          two: 'Incoming : %{minutes} mins left'
+          few: 'Incoming : %{minutes} mins left'
+          many: 'Incoming : %{minutes} mins left'
+          other: 'Incoming : %{minutes} mins left'
+        outbound_minutes_left:
+          zero: 'Outgoing : %{minutes} mins left'
+          one: 'Outgoing : 1 min left'
+          two: 'Outgoing : %{minutes} mins left'
+          few: 'Outgoing : %{minutes} mins left'
+          many: 'Outgoing : %{minutes} mins left'
+          other: 'Outgoing : %{minutes} mins left'
+        trial_days_left:
+          zero: '%{days} days left in your trial'
+          one: 1 day left in your trial
+          two: '%{days} days left in your trial'
+          few: '%{days} days left in your trial'
+          many: '%{days} days left in your trial'
+          other: '%{days} days left in your trial'
+        activate: >-
+          <div data-removable='true'>To continue using phone channel, please <a
+          href='#' id='freshfone_feature_request'>activate</a> your phone
+          account</div>
+      join: Join
+      leave: Leave
+      oncall: OnCall
+    widget:
+      ignore: تجاهل
+      accept: قبول
+      answer: Answer
+      answering: Answering...
+      end_call: إنهاء المكالمة
+      mute: كتم الصوت
+      unmute: Unmute
+      hold: تعليق
+      holding: |-
+        عذرًا، يتعذر تعليق...
+        يرجى المحاولة لاحقًا...
+      hold_success: المكالمة معلقة الآن
+      add_or_transfer_call: Add or Transfer Call
+      add_agent_to_call: Add to Call
+      warm_transfer: Warm Transfer
+      blind_transfer: Blind Transfer
+      transfer_call: تحويل المكالمة
+      dialpad: لوحة الاتصال
+      cancel: إلغاء
+      call_notes: ملاحظات المكالمات
+      phone_icon: الهاتف
+      on_phone: متوفر على الهاتف
+      on_browser: متوفر على المستعرض
+      invalid_phone_number: يرجى تحديث رقم هاتف بالبادئة '+' ورمز البلد في إعدادات ملف التعريف
+      no_calls: لم يتم العثور على مكالمات أخيرة
+      available: أنت متاح لاستلام مكالمات
+      unavailable: أنت غير متاح لا ستلام مكالمات
+      busy: مكالمة جارية
+      acw: Wrapping Up
+      recent_calls: مكالمات أخيرة
+      transferring: <span>تحويل مكالمة</span><br />يرجى الانتظار...
+      transfer_agents: بحث عن وكلاء متوفرين...
+      transfer_numbers: أدخل رقم خارجي...
+      unavailable_agents: الوكلاء غير متوفرين لتحويل مكالمة
+      no_transfers: لا التحويلات مؤخراً
+      agents_count_in_group: '%{count} مندوبين'
+      agents_count:
+        zero: Agents
+        one: Agent
+        two: Agents
+        few: Agents
+        many: Agents
+        other: Agents
+      ticket_info: >-
+        قم بإنشاء بطاقة جديدة أو إضافة ملاحظة إلى بطاقة موجودة بالملاحظات
+        والتسجيل.
+      add_note: إضافة ملاحظات
+      note_placeholder: إضافة ملاحظات مكالمة...
+      title: Convert to ticket
+      new_ticket: حفظ كبطاقة جديدة
+      save_to_existing: حفظ إلى بطاقة موجودة
+      ignore_ticket: عدم التحويل إلى بطاقة
+      ignore_ticket_info: ستتوفر تسجيلاتك في سجل المكالمات
+      back: رجوع للخلف
+      subject: موضوع البطاقة
+      requester_name: اسم مقدم الطلب
+      requester_email: البريد الإلكتروني لمقدم الطلب
+      requester_phone: Phone
+      strange_number_message: Calls from unknown number requires Email or Phone number
+      contact_betails_blank_message: Please enter Email or Phone number
+      invalid_email_message: Please enter a valid Email
+      invalid_number_message: Please enter a valid Phone number
+      requester_details: Requester details
+      email_phone: OR
+      save: حفظ
+      saving: جارٍ الحفظ...
+      call_quality: Call quality
+      imperfect_audio: Imperfect Audio
+      dropped_call: Dropped call
+      audio_latency: Audio Latency
+      one_way_audio: One-way audio
+      other_issues: Other issues
+      select_issue: Select issue
+      good_call: Good
+      bad_call: Bad
+      additional_comments: Describe the issue
+      notes: ملاحظات
+      add_note_text: إضافة ملاحظة
+      edit_note_text: تحرير ملاحظة
+      recent_tickets: أحدث بطاقات
+      no_recent_tickets: لا توجد بطاقات حديثة
+      view_all: عرض الكل
+      new_requester: مقدم طلب جديد
+      low_credit: رصيد الهاتف منخفض. يرجى الاتصال بمسؤول حسابك.
+      forward_number_alert: يرجى تحديث رقم هاتفك في إعدادات ملف التعريف لتحويل مكالمات إلى هاتفك
+      desktop_notification: تشغيل إشعار سطح المكتب
+      network_error: تحقق من اتصالك بالإنترنت
+      browser_alert: >-
+        Recent Changes in Chrome mandates a secure connection using
+        SSL(https://) to make or receive calls
+      read_more: <b>Read More</b>
+      save_ticket_to_call: Save call to this ticket
+      agent_conference:
+        connecting: Connecting to
+        canceled: Canceled
+        cancelling: Cancelling
+        add_agent_initiated: initiated
+        connected: Connected
+        no_answer: Not available
+        busy: Ignored
+        end_call: disconnected
+        cancel_add_agent: Cancel
+        in_call: on call
+        transfer_via: 'via '
+      transfer:
+        transfer_via: 'via '
+        tranfer_via: بواسطة
+        to: 'إلى: '
+        transferring: جارٍ التحويل...
+        transfer_canceled: تم تجاهلها
+        tranfer_no_answer: غير متوفرة
+        tranfer_connected: تم تحويلها
+        group_tranfer_no_answer: لا يوجد وكلاء متوفرين
+        group_tranfer_connected: تم الاتصال بالعميل
+        close: إغلاق
+        resume: استئناف
+        resumed: Resumed
+        resuming: جارٍ الاستئناف...
+        cancel: إلغاء
+        cancelling: جارٍ الإلغاء...
+        transferring_to: Transferring to
+        on_call: on call
+        connected: Connected
+        canceled: Canceled
+        add_customer: Add Customer to Call
+        end_call: disconnected
+    call_history:
+      title: سجل المكالمات
+      sort_by: 'فرز حسب:'
+      singular_active_number: رقم نشط
+      none_active_number: '- بلا -'
+      active_number: أرقام نشطة
+      singular_deleted_number: رقم محذوف
+      deleted_number: أرقام محذوفة
+      block_number: حظر
+      cancel: إلغاء
+      blacklist_confirmation: هل تريد الحظر بالتأكيد
+      show_deleted: إظهار الأرقام المحذوفة
+      filtered_by: 'تصفية حسب:'
+      filter_by_number: 'الرقم '
+      filter_by_time: الفترة الزمنية
+      filter_by_agent: المندوب
+      filter_by_group: المكالمات الواردة للمجموعة
+      filter_by_call_status: نوع المكالمة
+      filter_by_caller: الطالب
+      filter_by_business_hours: ساعات العمل
+      received_date: التاريخ
+      duration: المدة
+      cost: التكلفة
+      asc: تصاعدي
+      desc: تنازلي
+      all_time: طول الوقت
+      today: اليوم
+      yesterday: الأمس
+      this_week: هذا الأسبوع
+      this_month: هذا الشهر
+      month: 'آخر %{month} شهور'
+      custom: نطاق التاريخ
+      no_calls: لم يتم العثور على مكالمات
+      view_transferred_calls: عرض المكالمات المحولة
+      save_ticket: تحويل إلى بطاقة
+      convert: تحويل
+      helpdesk: مكتب الدعم
+      external: خارجي
+      unblock_number: إلغاء الحظر
+      block_number_title: حظر رقم
+      filter_option_all_agents: جميع المندوبين
+      filter_option_all_calls: جميع المكالمات
+      filter_option_received_calls: واردة
+      filter_option_outgoing_calls: صادرة
+      filter_option_missed_calls: فائتة
+      filter_option_voicemail: البريد الصوتي
+      filter_option_blocked_calls: محظورة
+      filter_option_within_business_hours: أثناء ساعات العمل
+      filter_option_outside_business_hours: خارج ساعات العمل
+      requester_not_found: No matching requesters found
+      recording_delete:
+        done_by: حذف بواسطة
+        tooltip: حذف التسجيل
+        confirmation_btn: حذف
+        confirmation_heading: يرجى التأكيد..
+        confirmation_warning: سيؤدي ذلك إلى حذف الرسالة المسجلة بشكل دائم.
+        confirmation_notification: هل أنت متأكد أنك تريد الحذف؟
+        successful: تم حذف تسجيل المكالمة بنجاح!
+        unsuccessful: تعذر حذف تسجيل المكالمة، يرجى المحاولة مرة أخرى بعد قليل
+        error: حدث خطأ أثناء حذف سجل مكالمات!!! يرجى المحاولة في وقت لاحق
+      strange_numbers:
+        restricted: RESTRICTED
+        blocked: BLOCKED
+        unknown: UNKNOWN
+        anonymous: ANONYMOUS
+        empty: EMPTY
+        '': null
+      restricted: مقيد
+      blocked: محظور
+      unknown: غير معروف
+      anonymous: مجهول
+      empty: فارغ
+      total_duration: المدة
+      minutes: دقائق
+    ticket:
+      recording: تشغيل الرسالة
+      ticket_desc_with_name: >-
+        محادثة مع <b> %{customer_name} </b> (%{customer_number}, %{location}) و
+        <b>%{agent}</b> (%{agent_number})<br/ >
+      ticket_desc_with_out_name: >-
+        محادثة مع %{customer_number} (%{location}) و <b>%{agent}</b>
+        (%{agent_number})<br/ >
+      voicemail_ticket_desc_with_out_name: 'بريد صوتي من  %{customer_number}  (%{location}) إلى %{freshfone_number}'
+      voicemail_ticket_desc_with_name: >-
+        بريد صوتي من <b>%{customer_name}</b> (%{customer_number}, %{location})
+        إلى %{freshfone_number}
+      transcribed_note_desc: >-
+        <b>Transcribed Voicemail Text for the above Call from
+        %{customer_name}</b><br/><br/>
+      agent_detail: 'و <b>%{agent}</b> (%{agent_number})<br/ >'
+      dial_a_number_with_name: >-
+        محادثة مع <b>%{customer_name}</b> (%{customer_number}، %{location}) . تم
+        توصيل مكالمة من اتصال مباشر لاستجابة صوتية تفاعلية: 
+      dial_a_number_with_out_name: >-
+        محادثة مع %{customer_number} (%{location}). مكالمة IVR إلى الرقم:
+        %{direct_dial_number}
+      default_subject: 'مكالمة مع %{customer} في %{call_date}'
+      voicemail_subject: 'بريد صوتي من %{customer}'
+      human_name: بطاقة
+      view: عرض
+    note:
+      human_name: ملاحظة
+      view: عرض
+    create:
+      success:
+        with_link: 'تم إنشاء %{human_name} في %{link}'
+    admin:
+      important: هام
+      general: عام
+      settings: الإعدادات
+      greetings: الترحيب
+      messages: رسائل
+      freshfone_numbers_title: الهاتف
+      suspended_alert: >-
+        <b>هام:</b> تعطيل قناة هاتفك لن يوقف أجور الاستئجار الشهرية على أرقامك
+        تلقائياً. لتجنب الرسوم، يرجى حذف الأرقام التي تم شراؤها.
+      purchase_credit_text: >-
+        قم بشراء رصيد لشراء الأرقام و لإجراء و استقبال المكالمات عبر قناة الهاتف
+        الخاصة بك.
+      purchase_numbers_text: >-
+        يمكنك شراء أرقام محلية أو مجانية في أي مكان في العالم لدعم عملائك عبر
+        الهاتف.
+      search: بحث بالحروف أو العبارات
+      local: محلي
+      toll_free: مجاني
+      mobile: Local (mobile)
+      number:
+        simultaneous: الاتصال بجميع المندوبين
+        round_robin: الاتصال بالمندوبين المتاحين أولاً
+      trial:
+        request_activation_msg: >-
+          يمكنك اختيار استخدام رقم واحد فقط من مجموعة محدودة من البلدان خلال
+          فترة التجربة الهاتفية. <br> ولكن ، يمكنك شراء أرقام متعددة من 41 دولة
+          عند تنشيط الإصدار الكامل
+        activate_btn_text: طلب للتفعيل
+        requested_activation: لقد تلقينا طلبك للتنشيط <br>إنه قيد الإعداد
+        expired: Your Phone trial has expired
+        activate_to_call_expired: Please activate your phone account to make or receive calls
+        activate_to_call_outgoing: Please activate your phone account to make calls
+        contact_admin_for_expired: Please contact your admin to continue making or receiving calls
+        contact_admin_for_call_outgoing: Please contact your admin to continue making calls
+        period_to_expire: Your phone trial will expire
+        incoming_minutes_to_exhaust:
+          zero: <span class='min_left error hide'></span> free incoming minutes left
+          one: <span class='min_left error hide'>1</span> free incoming minute left
+          two: <span class='min_left error hide'></span> free incoming minutes left
+          few: <span class='min_left error hide'></span> free incoming minutes left
+          many: <span class='min_left error hide'></span> free incoming minutes left
+          other: <span class='min_left error hide'></span> free incoming minutes left
+        outgoing_minutes_to_exhaust:
+          zero: <span class='min_left error hide'></span> free outgoing minutes left
+          one: <span class='min_left error hide'>1</span> free outgoing minute left
+          two: <span class='min_left error hide'></span> free outgoing minutes left
+          few: <span class='min_left error hide'></span> free outgoing minutes left
+          many: <span class='min_left error hide'></span> free outgoing minutes left
+          other: <span class='min_left error hide'></span> free outgoing minutes left
+        outbound_usage_exhausted: Free outgoing minutes exhausted
+        get_more_credits: 'To get more credits, you need to activate your account'
+        minutes_usage_exhausted: Your phone trial minutes has been exhausted
+        days_left:
+          zero: in <span class='days_left error hide'></span> days
+          one: in <span class='days_left error hide'>1</span> day
+          two: in <span class='days_left error hide'></span> days
+          few: in <span class='days_left error hide'></span> days
+          many: in <span class='days_left error hide'></span> days
+          other: in <span class='days_left error hide'></span> days
+        numbers:
+          delete_not_allowed: Deleting numbers on Phone Trial is not permitted
+          normal_trial_usage: >-
+            You are currently using the trial version of the phone channel with
+            limited features
+          activate_to_use_all: >-
+            please activate your phone account to buy more numbers and use all
+            the features
+          incoming_minutes_exhausted: You have exhausted your free incoming minutes
+          incoming_minutes_exhausted_description: >-
+            Please activate your phone account and purchase credits to receive
+            incoming calls
+          outgoing_minutes_exhausted: You have exhausted your free outgoing minutes
+          outgoing_minutes_exhausted_description: >-
+            Please activate your phone account and purchase credits to make
+            outgoing calls
+          free_minutes_exhausted: You have exhausted your free minutes
+          cannot_make_or_receive_calls: >-
+            Please activate your phone account and purchase credits to make or
+            receive calls
+          used_minutes: '%{used} of %{total} mins used'
+          purchase_limit: 'On Phone Trial only %{limit} number(s) are allowed for purchase'
+          purchase_warning_expired: Searching Numbers are not allowed on Phone Trial Expiry
+          expired: Your Phone trial period has expired
+          ivr:
+            direct_dial: Call to Number option not allowed in Trial
+          search:
+            after_activation_request: لقد طلبت تنشيط قناة الهاتف <br> سنعود إليك في غضون يومي عمل.
+            buy_button: 'Yes'
+            can_use_after_activation: يمكنك متابعة استخدام هذا الرقم عند تنشيط قناة الهاتف.
+            buy_confirmation: هل تريد بالتأكيد اختيار هذا الرقم؟
+      number_settings:
+        title_text: إدارة مركز الاتصال الخاص بك
+        info_content: >-
+          <b>تعيين المكالمات الهاتفية للمندوبين والمجموعات</b></br>يمكنك إعداد
+          نظام الرد الصوتي التفاعلي (IVR) وتوجيه المكالمات إلى مجموعات أو
+          مندوبين في فريقك. على سبيل المثال، يمكن إعادة توجيه مكالمات عملائك إلى
+          فريق الدعم عند ضغط 1، و إلى فريق المبيعات عند ضغط 2.<br/>بالإضافة إلى
+          ذلك، يمكنك تخصيص الرسائل الصوتية المسجلة التي يستمع إليها عملاؤك
+          بتسجيل صوتك أو برفع ملف صوتي أو باستخدام ميزة تحويل النص إلى
+          كلام.<br><br><b>تخصيص رقمك</b><br>يمكنك تهيئة كل رقم على حدة بتخصيصات
+          منفصلة. يتضمن ذلك الإعدادات الأساسية كسعة قائمة الانتظار و الحد الأقصى
+          لوقت الانتظار على الخط. عند وصول الحد الأقصى لقائمة الانتظار أو لوقت
+          الانتظار، سيتم تشغيل رسالة صوتية تلقائياً تُعلم المتصل بأن الخط
+          مشغول.<br/>عند تمكين تسجيل المكالمات، يتم تسجيل كل مكالمة هاتفية عبر
+          مكتب المساعدة الخاص بك و ربط تلك التسجيلات بالتذاكر المعنية. يمكن أن
+          تسمح للعملاء بالوصول إلى تلك التسجيلات أو حفظها كتسجيلات خاصة. يمكنك
+          أيضاً إعداد قناة الهاتف بحيث لا تستقبل المكالمات خارج ساعات العمل. على
+          على سبيل المثال، يمكنك إعداد خط هاتف يستقبل المكالمات أثنا ساعات العمل
+          فقط، و خط آخر يستقبل المكالمات على مدار الساعة للمشاكل ذات الأولوية
+          العالية.<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target='_blank'>اقرأ المزيد حول تخصيص رقم هاتفك</a>
+        non_business_hours: قبول مكالمات خلال...
+        business_calendar: تحديد ساعات العمل
+        transcript_voice: نسخة صوتية
+        text_to_speech: نص إلى كلام
+        record_calls: تسجيل المكالمات
+        voicemail: البريد الصوتي
+        voicemail_on: تشغيل
+        voicemail_off: إيقاف
+        record_all: تسجيل كافة المكالمات
+        record_none: عدم تسجيل مكالمات
+        record_alert: >-
+          تتطلب توجيهات تسجيل المكالمات إشعار العملاء عند بدء تسجيل المكالمة
+          والغرض من التسجيل. يرجى تكوين رسائل الترحيب وفقًا لذلك.
+        max_queue_calls: أقصى عدد للمكالمات في قائمة الانتظار
+        call_wait_time: بأقصى وقت انتظار
+        call_wait_time_suffix: لكل مكالمة
+        queue_wait_message: رسالة انتظار قائمة الانتظار
+        non_availability_message: رسالة عدم توفر
+        voicemail_message: رسالة البريد الصوتي
+        non_business_hours_message: رسالة ساعات غير العمل
+        welcome_message_alert: عدم تشغيل رسالة الترحيب عند تمكين الاستجابة الصوتية التفاعلية
+        welcome_message: رسالة ترحيب
+        record_voice: تسجيل صوتك
+        upload_voice: تحميل ملفات صوتية
+        read_message: نص إلى كلام
+        start_recording: بدء التسجيل
+        stop_recording: <span></span>إيقاف التسجيل
+        preparing_recording: تحضير رسالتك...
+        recorded_voice: الصوت المسجَّل
+        audio_upload: تحديد ملف لتحميله
+        greeting_message: أدخل رسالتك هنا
+        attachment_help_info: يقبل ملفات صوت (mp3)‏ < 5 ميجابايت
+        attachment_help_text: يقبل ملفات صوت (mp3)‏ < 5 ميجابايت
+        recording_help_info: تشغيل الميكروفون. المدة < 5 دقائق
+        cancel: إلغاء
+        change: تغيير
+        group: تشغيل رسالة والاتصال بوكلاء في
+        call_hunting_group: المجموعة
+        all_groups: كافة المجموعات
+        business_hours: ساعات العمل
+        anytime: أي وقت خلال 24 ساعة 7 أيام في الأسبوع
+        name: الاسم
+        name_placeholder: أدخل اسمًا ملائمًا لرقمك
+        hunt_type: تحويل المكالمات
+        routing_message: عند توفر أكثر من مندوب...
+        recording_privacy: خصوصية التسجيل
+        recording_privacy_public: يراه المندوبون و العملاء
+        recording_privacy_private: يراه العملاء فقط
+        name_maxlength: لا يجب أن يتجاوز الاسم 255 حرفاً
+        number_accessible: يمكن الوصول إليها من قبل
+        wait_music: انتظار الموسيقى
+        hold_music: تعليق الموسيقى
+        queue_position_preference: استخراج وضع قائمة الانتظار من الذاكرة
+        queue_position_message: رسالة وضع قائمة الانتظار
+        queue_position_message_placeholder: >-
+          أنت الآن في قائمة الانتظار. وضعك في قائمة الانتظار هو
+          {{queue.position}}
+        queue_position_message_alert: >-
+          لاستخراج وضع قائمة الانتظار من القائمة، استخدم العنصر النائب
+          {{queue.position}}<br/> مثال: أنت الآن في قائمة الانتظار وضعك في قائمة
+          الانتظار هو {{queue.position}}
+        queue_position_enable: تشغيل
+        queue_position_disable: إيقاف
+      numbers:
+        sidebar_title: قناة الهاتف المدمج في Freshdesk
+        sidebar_content: >-
+          باستخدام قناة الهاتف، يمكنك إجراء واستقبال المكالمات من خلال متصفحك أو
+          هاتفك الجوال أو باستخدام قناة الهاتف في تطبيقات الجوال في Freshdesk.
+          تتكامل قناة الهاتف تماماً مع نظام التذاكر في Freshdesk. لذا يمكنك تتبع
+          مكالماتك بتسجيلها وتحويلها إلى تذاكر كلما اقتضت الحاجة. <br/><br/>
+          <b>إعداد الهاتف</b></br>للبدء في استخدام الهاتف، عليك أولاً تمكينه
+          وشراء رقم دعم. يمكنك شراء الأرقام المحلية من <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>البلدان المذكورة هنا</a> وإجراء أو استقبال المكالمات
+          من أي مكان في العالم. إذا كان عملاؤك في الولايات المتحدة أو المملكة
+          المتحدة أو كندا يمكنك أيضاً شراء أرقام دعم مجانية (أو freephone في
+          المملكة المتحدة). <br/><br/><b> استخدام IVR الذكية</b><br/> يمكنك
+          إنشاء أنظمة استجابة صوتية متكاملة (IVR) ذكية لتحسين عملية تصنيف
+          العملاء عند الاتصال برقم الدعم، و توجيه مكالماتهم إلى القسم أو الفريق
+          أو المندوب الصحيح. </b><br/><br/> <a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>اقرأ المزيد حول إمكانيات الهاتف</a>.
+        sidebar_content_v2: >-
+          باستخدام قناة الهاتف، يمكنك إجراء واستقبال المكالمات من خلال متصفحك أو
+          هاتفك المحمول أو باستخدام قناة الهاتف في تطبيقات Freshdesk المحمولة.
+          تم دمجها بدقة مع نظام التذاكر الخاص بـ Freshdesk. يمكنك تتبع المكالمات
+          الهاتفية عن طريق تسجيلها وتحويلها إلى تذاكر كلما دعت الضرورة.
+          <br/><br/> <b> إعداد الهاتف </b></br> لبدء استخدام الهاتف ، ستحتاج
+          أولاً إلى تمكينه وشراء رقم الدعم. يمكنك شراء الأرقام المحلية من <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>البلدان المدرجة هنا </a> وإجراء مكالمات أو تلقيها من
+          أي مكان فى العالم. إذا كان عملاؤك سيتصلون بك من الولايات المتحدة أو
+          المملكة المتحدة أو كندا ، فيمكنك أيضًا شراء أرقام الدعم المجانية (أو
+          الهاتف المجاني في المملكة المتحدة). <br/><br/><b> توفير خدمة دعم كاملة
+          عبر الهاتف </b><br/> من خلال قناة الهاتف لدينا ، يمكنك <br/><ul><li>
+          البدء في إجراء المكالمات وتلقيها باستخدام متصفح الويب الخاص بك أو
+          الهواتف المحمولة </ li> <li> قم بإنشاء رسائل بريد صوتي أو مكالمات
+          محولة أو قم بتحويل المكالمات إلى أي عميل، في أي مكان </li><li> مراقبة
+          المكالمات وإضافة عملاء آخرين إلى المكالمات الجارية ، والمزيد *
+          </li></ul><br/><p> * يرجى الاتصال بـ <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> لتمكين
+          الميزات المتقدمة لحسابك. وتشمل هذه مراقبة المكالمات ، وحظر المكالمات ،
+          ومكالمات المؤتمرات، وإخفاء المكالمات ، ومقاييس عمر المكالمة. </p><br/>
+        tour_link: ساعدني في إعداد قناة الهاتف
+        purchase_number: شراء رقم
+        purchase_phone_number: 'شراء رقم (%{number})'
+        buy: شراء رقم
+        buy_button_text: شراء
+        purchase_loading_text: جارٍ الشراء...
+        buy_loading_text: شراء...
+        purchase_alert_text: >-
+          تكلفة هذا الرقم <strong><span class='number-rate'></span>
+          شهرياً.</strong>
+        not_available: لم يتم إرجاع نتائج. يرجى محاولة استخدام مصطلح بحث مختلف
+        address_certification_text: >-
+          لشراء رقم هاتف، عليك تزويدنا بشركتك أو عنوانك الشخصي داخل <span
+          class='certification-country'></span>.
+        purchase_confirm: هل أنت متأكد؟
+        delete_alert: بمجرد حذف رقم لا يمكن شراؤه مرة أخرى. هل تريد حذف الرقم بالتأكيد؟
+        manage: إدارة
+        failure_purchase: >-
+          تعذر شراء رقم الهاتف. يرجى التأكد من أن العنوان الوارد هو عنوان صحيح
+          في <span class='certification-country'></span>.
+        low_credits: رصيدك لا يكفي لشراء رقم جديد. يرجى إعادة الشحن و المحاولة مرة أخرى.
+        address:
+          name: الشركة / الاسم
+          address: العنوان
+          city: المدينة
+          state: الولاية/المقاطعة/المنطقة
+          postal_code: الرمز البريدي
+          country: الدولة
+          required_field: جميع الحقول مطلوبة
+        setup:
+          title_text: إنشاء مركز الاتصال
+          info_text: >-
+            للبدء باستخدام قناة الهاتف، عليك أولا شراء رقم هاتف ليتصل به عملاؤك.
+            يمكنك شراء رقم محلي من أي من <a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>البلدان المذكورة هنا</a>. إذا كان عملاؤك في الولايات
+            المتحدة أو المملكة المتحدة أو كندا يمكنك أيضاً شراء أرقام دعم
+            مجانية.<br/><br/>يمكنك شراء أرقام هاتف متعددة من عدة بلدان و إعداد
+            خطوط هاتفية مجانية في Freshdesk  دون استخدام أي خدمات أطراف ثالثة.
+            تفرض رسوم على كل من المكالمات الواردة و الصادرة و الموجهة من مكتب
+            المساعدة. ألقِ نظرة على <a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>أسعار المكالمات هنا</a>.<br/><br/> بعد شرائك لرقم
+            لخط الدعم، سيتم توزيع جميع المكالمات إلى المندوبين المسجلين الدخول
+            إلى مكتب المساعدة. بالإضافة إلى ذلك، يمكن للمندوبين استقبال
+            المكالمات عبر المتصفح أو إعادة توجيهها تلقائياً إلى هاتف المكتب.
+        caller_id:
+          manage_caller_id: 'إدارة معرف المتصل '
+          add_another: / Add another
+          enter_code: Pick up your phone and enter the validation code
+          enter_number: Enter the number you want to add as caller id
+          verify_number: Verify this number
+          another_caller: Add another
+          delete: Delete
+          number_added: Number Added
+          no_number_added: لم يتم إضافة معرف المتصل
+          ok: OK
+          add_new: إضافة جديد
+          add_new_caller_id: Add new Caller ID
+          wait: Please wait...
+          error_message: Sorry! There was some issue. Please try again
+          simultaneous_verification_error: Sorry! already verifying number
+          invalid_number: Invalid phone number!
+          calling: 'Calling '
+          call_id_mask: إخفاء هذا الرقم
+          twilio_errors:
+            not_allowed: >-
+              Sorry there was an issue while adding this number as caller ID.
+              Please try again. If the issue persists contact us at <a
+              href='mailto:support@freshdesk.com'>support@freshdesk.com</a>
+            invalid_number: >-
+              Sorry it seems that the number is invalid. Please try again. If
+              the issue persists contact us at <a
+              href='mailto:support@freshdesk.com'>support@freshdesk.com</a>
+            already_verified: Phone number already verified for your account!
+        buy_phone_numbers: اشترِ أرقام هواتف
+        buy_phone_credits: اشترِ رصيد للهاتف
+      invalid_attachment: 'المرفق ''%{name}'' ليس ملف صوتي صالح/ يزيد حجمه عن 5 ميجابايت'
+      ivr:
+        simple_message_title: رسالة بسيطة
+        ivr_message_title: استجابة صوتية تفاعلية (IVR)
+        welcome_message: رسالة ترحيب
+        message_type: نوع الرسالة
+        transcript_voice: نسخة صوتية
+        text_to_speech: نص إلى كلام
+        turned_off: >-
+          تم إيقاف تشغيل رسالة الترحيب. ستصل كافة المكالمات الواردة إلى مكتب
+          الدعم لديك مباشرةً.
+        turned_on: سيتم تشغيل رسالة ترحيب لكافة المكالمات الواردة.
+        turn_on: تشغيل
+        turn_off: إيقاف
+        add_new_menu: إضافة <b>قائمة</b> جديدة
+        add_new_menu_from_option: إضافة قائمة جديدة
+        add_new_option: إضافة خيار <b>مفتاح ضغط</b>
+        keypress: مفتاح ضغط
+        input_number: أدخل رقمًا
+        action: إجراء
+        male: صوت مذكر
+        female: صوت مؤنث
+        rename: إعادة تسمية
+        done: تم
+        save: حفظ
+        saving: جارٍ الحفظ...
+        preview: معاينة
+        previewing: جارٍ المعاينة...
+        delete_menu: حذف قائمة
+        jump_to: انتقال سريع إلى
+        call_agent: اتصال بوكيل
+        call_agent_group: اتصال بمجموعة وكلاء
+        call_number: رقم اتصال
+        back_to_menu: رجوع إلى القائمة الرئيسية
+        invalid_performer_type: نوع المؤدي غير صالح
+        invalid_number: 'رقم غير صالح في القائمة %{menu}'
+        restricted_country: 'رقم دولة محظورة في القائمة %{menu}'
+        invalid_jump_to: 'يتعذر وجود ''انتقال سريع إلى'' لقائمة بدون جذر %{menu}'
+        seed_message: مرحبًا بك في دعم العملاء
+        seed_menu_name: قائمة الترحيب/البدء
+        invalid_number_format: أدخل رقم هاتف صالح ببادئة '+' ورمز البلد في بداية الرقم
+      welcome_page:
+        title_text: الهاتف
+      feature_request_content:
+        title_text: الهاتف
+        heading_text: ادعم العملاء باستخدام قناة الهاتف
+        trial_description: >-
+          Using the phone channel, you can make and receive calls through your
+          browser, mobile phone or using the phone channel in Freshdesk’s mobile
+          apps. It is tightly integrated with Freshdesk’s ticketing system. So
+          you can keep track of phone calls by recording them and converting
+          them into tickets whenever necessary.
+        number_info: اشترِ الأرقام المحلية و المجانية من جميع أنحاء العالم
+        ivr_info: وجه المكالمات إلى المجموعات و المندوبين باستخدام IVR
+        recording_info: >-
+          سجّل المكالمات و حولها إلى تذاكر، تماماً كرسائل البريد البريد
+          الإلكتروني
+        learn_more: أعرف أكثر
+        pricing: انظر أسعار المكالمات والبلدان المدعومة
+        request_subject: 'طلب هاتف - %{account_name}'
+        email_message: تحتاج ميزة Freshfone
+        success: سوف نرد عليك خلال يومي عمل.
+        error_message: عذرًا، لا يمكننا تنفيذ طلبك الآن. حاول مرة أخرى لاحقًا.
+        additional_info: >-
+          حال تمكين قناة الهاتف في حسابك سيكون بإمكانك شراء الأرقام و إجراء
+          المكالمات.
+        button_text: طلب هاتف
+        video_title: شاهد الفيديو لتتعلم المزيد حول قناة الهاتف
+        trial_version_disclaimer: يمكنك استخدام ميزات محدودة لمدة 15 يومًا مجانًا
+        activation_disclaimer: يمكنك استخدام جميع الميزات لفترة غير محدودة
+        trial_version_numbers: Choose only specific numbers
+        trial_version_calls: Limited incoming and outgoing calls
+        trial_version_number_purchse: Can buy only one number
+        trial_button_text: تمكين الإصدار التجريبي المجاني
+        trial_or: أو
+        compare_trial_and_full: مقارنة النسخة التجريبية المجانية بالكاملة
   livechat:
     feature_request:
       title: Welcome to Live Chat
@@ -14097,7 +14890,7 @@ ar:
       نظرًا لبعض التغيرات الأخيرة على علامة تبويب صفحة Facebook الخاصة بنا، نطلب
       إعادة مصادقة التطبيق. <b>يرجى ملاحظة أنه سيتم تعطيل التطبيق في صفحة
       facebook الخاصة بك إذا لم تتم إعادة المصادقة عليه بحلول 12 أكتوبر</b>
-      <br/> <a href='%{page_tab_url}' >إعادة المصادقة وتمكين</a>
+      <br/> <a href='%{page_tab_url}' >إعادة المصادقة وتمكين</a> 
     page_tab_info: يرجى إعادة مصادقة علامة تبويب صفحة Facebook
     no_contact: يتعذر الاتصال بخوادم Facebook لعلامات تبويب الصفحة في الوقت الحالي
     portal:
@@ -14622,7 +15415,7 @@ ar:
         authorize_text3: >-
           Agree to <a target='_blank'
           href='http://developers.freshdesk.com/docs/terms-of-use/'>Developer
-          Terms of Use </a> and authorize
+          Terms of Use </a> and authorize 
         later: Later
         authorize_text1: Authorize
         authorize_text2: to use your account?

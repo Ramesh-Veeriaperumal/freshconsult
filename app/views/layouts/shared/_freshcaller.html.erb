@@ -1,0 +1,18 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/freshfone' %>
+<%= stylesheet_link_tag_with_rtl :'cdn/freshcaller_widget' %>
+<div class="freshfone_widget">
+  <ul class="popupbox-tabs outgoing">
+    <li class="dialpad_popup">
+      <a id="fcall-widget-button" class="showDialpad" data-toggle="popupbox" data-offset=1 title="<%= t('freshfone.widget.phone_icon') %>">
+        <div class='sloading loading-small' id='widget-loader'></div>
+        <%= font_icon "ff-phone", :size => 16, :class => 'hide' %>
+      </a>
+    </li>
+  </ul>
+</div>
+<%= javascript_tag do %>
+  if (typeof freshcaller === "undefined") { freshcaller = {}; }
+  freshcaller.widgetUrl = '<%= Rails.env.development? ? 'http://localhost:4201/widget/' : "https://#{current_account.freshcaller_account.domain}/widget/" %>';
+  freshcaller.widgetLoaderUrl = '<%= FreshcallerConfig["widget_loader_url"] %>';
+<% end %>
+<%= javascript_include_tag :'cdn/freshcaller_widget' %>

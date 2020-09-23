@@ -1,0 +1,79 @@
+<ul class="popupbox-tabs ongoing hide">
+	<li class="call_details no_action">
+		<!--<div id="incall_user_info"></div>-->
+		<div class ="end_call tooltip" title="<%= t('freshfone.widget.end_call') %>">
+		<a href="#no_popup" class="end_call_icon " >
+		<%= font_icon "ff-phone-reject", :size => 24 %></a>
+		<a href="#no_popup" id="call_timings" class="call_duration">00:00</a>
+		</div>
+	</li>
+	<li>
+		<a href="#no_popup" id="mute" class="mute tooltip <%=freshfone_non_conference_class%>" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.mute') %>"><%= font_icon "ff-mic", :size => 18 %><%= font_icon "ff-mute", :size => 18 %></a>
+	</li>
+	<% if current_account.features?(:freshfone_conference) %>
+	<li>
+		<a href="#no_popup" id="hold" class="hold tooltip" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.hold') %>">
+			 <%= font_icon "ff-hold", :size => 18, :class => "ff-hold-button" %>
+			 <div class='sloading loading-tiny ff-loader loading-align-center'></div>
+			</a>
+	</li>
+	<% end %>
+	<li>
+		<a href="#freshfone_available_agents" class="transfer_call tooltip <%=freshfone_non_conference_class%>" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.transfer_call') %>"><%= font_icon "user", :size => 24 %>
+			 <%= font_icon "cross", :size => 22 %></a>
+	</li><li>
+		<a href="#ongoing_dialpad" class="ongoingDialpad tooltip <%=freshfone_non_conference_class%>" data-toggle="popupbox"
+			 title="<%= t('freshfone.widget.dialpad') %>"><%= font_icon "ff-dialpad", :size => 18 %>
+			 <%= font_icon "cross", :size => 22 %></a>
+	</li>
+	<li class="minimised-ongoing-dialpad" >
+	</li >	
+	<!-- <li>
+		<a href="#recent_tickets" class="recent_tickets" data-toggle="popupbox"></a>
+	</li> -->
+	<!-- <li class="pause">
+		<a href="#" data-toggle="popupbox"></a>
+	</li> -->
+</ul>
+<div class="browser_notify hide" id="alert_message">
+ <div class="dbl_left arrow adjust_arrow "></div>
+ 	<div class="ff_alert_card inner">
+ 		<div class="content">
+   		<div><%= t('freshfone.widget.browser_alert').html_safe %></div><br/>
+   		<a href="https://support.freshdesk.com/support/solutions/articles/207922"><%= t('freshfone.widget.read_more').html_safe %></a>
+		</div>
+	</div>	
+</div>
+<ul class="popupbox-tabs outgoing hide">
+	<li class="dialpad_popup tooltip">
+		<a href="#freshfone_dialpad" class="showDialpad tooltip" data-toggle="popupbox"
+			 data-offset=1 title="<%= t('freshfone.widget.phone_icon') %>"><%= font_icon "ff-phone", :size => 16 %></a>
+	</li>
+
+	<div class="browser_alert hide">
+	  <a class="alert_popup" href="#" title="phoneicon" data-placement="above" rel="ff-alert-popover"><i class="ficon-alert active fsize-20"></i></a> 
+	</div>
+
+</ul>	
+<ul class="popupbox-tabs supervisor hide">
+	<li class="no_action">
+		<div class="end_supervisor_call tooltip" title="<%= t('freshfone.widget.end_call') %>">
+			<a href="#no_popup" class="hangup_btn" >
+				<%= font_icon "hangup", :size => 24 %>
+			</a>
+			<a href="#no_popup" id="supervisor_call_timings" class="call_duration">00:00</a>
+		</div>
+	</li>
+	<li class="divider">
+	</li>
+	<li class="unmute_item">
+		<a href="#no_popup" id="unmute" class="unmute tooltip" 
+			 title="<%= t('freshfone.widget.unmute') %>"><%= font_icon "ff-mute", :size => 16 %><%= font_icon "ff-mic", :size => 16 %>
+			<div class='sloading loading-tiny ff-loader loading-align-center'></div>
+		</a>
+	</li>
+	<li class="minimised-supervisor-dialpad"></li>
+</ul>

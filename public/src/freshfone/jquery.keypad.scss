@@ -1,0 +1,121 @@
+$baseFontFamily: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+/* Main style sheet for jQuery Keypad v1.5.1. */
+button.keypad-trigger {
+	width: 25px;
+	padding: 0px;
+}
+img.keypad-trigger {
+	margin: 2px;
+	vertical-align: middle;
+}
+.keypad-popup, .keypad-inline, .keypad-key, .keypad-special {
+	font-family: $baseFontFamily;
+	font-size: 14px;
+}
+.keypad-popup {
+	display: none;
+	z-index: 10;
+	margin: 0;
+	padding: 0;
+	background-color: #fff;
+	color: #000;
+	border: 1px solid #888;
+	-moz-border-radius: 0.25em;
+	-webkit-border-radius: 0.25em;
+	border-radius: 0.25em;
+}
+.keypad-keyentry {
+	display: none;
+}
+.keypad-inline {
+	background-color: #fff;
+	border: 1px solid #888;
+	border-radius: 0.25em;
+	-moz-border-radius: 0.25em;
+	-webkit-border-radius: 0.25em;
+}
+.keypad-disabled {
+	position: absolute;
+	z-index: 100;
+	background-color: white;
+	opacity: 0.5;
+	filter: alpha(opacity=50);
+}
+.keypad-rtl {
+	direction: rtl;
+}
+.keypad-prompt {
+	clear: both;
+	text-align: center;
+}
+.keypad-prompt.ui-widget-header {
+	margin: 0.125em;
+}
+.keypad-row {
+	width: 100%;
+}
+.keypad-space {
+	display: inline-block;
+	margin: 0.125em;
+	width: 2em;
+}
+.keypad-half-space {
+	display: inline-block;
+	margin: 0.125em 0.0625em;
+	width: 1em;
+}
+.keypad-key, .keypad-special {
+	margin: 0.125em;
+	/*padding: 0em;*/
+	padding: 10px 25px 10px 18px;
+	width: 88px;
+	height: 38px;
+	background-color: #f4f4f4;
+	-moz-border-radius: 0.25em;
+	-webkit-border-radius: 0.25em;
+	border-radius: 0.25em;
+	text-align: center;
+	cursor: pointer;
+	border: 1px solid #CCC;
+
+	/*box-shadow: 0px 3px 5px #CCC;
+	-moz-box-shadow: 0px 3px 5px #CCC;
+	-webkit-box-shadow: 0px 3px 5px #CCC;*/
+	&:hover, &:active {
+		box-shadow: none;
+		/*border: 1px solid #999;*/
+		-moz-box-shadow:none;
+		-webkit-box-shadow:none;
+	}
+}
+.keypad-key[disabled] {
+	border: 0.125em outset;
+}
+.keypad-key-down {
+}
+.keypad-special {
+	width: 4.25em;
+}
+.keypad-spacebar {
+	width: 13.25em;
+}
+.keypad-tab {
+	width: 2em;
+}
+.keypad-clear, .keypad-back, .keypad-close, .keypad-shift {
+	/*color: #fff;*/
+  /*padding: 10px 20px;*/
+	font-weight: bold;
+}
+.keypad-clear {
+	/*background-color: #a00;*/
+}
+.keypad-back {
+	/*background-color: #00a;*/
+}
+.keypad-close {
+	/*background-color: #0a0;*/
+}
+.keypad-shift {
+	/*background-color: #0aa;*/
+}

@@ -252,6 +252,10 @@ class Account < ActiveRecord::Base
     launched?(:customer_sentiment)
   end
 
+  def freshfone_enabled?
+    features?(:freshfone) and freshfone_account.present?
+  end
+
   def freshcaller_enabled?
     has_feature?(:freshcaller) and freshcaller_account.present?
   end
@@ -270,6 +274,10 @@ class Account < ActiveRecord::Base
 
   def freshchat_routing_enabled?
     livechat_enabled? and features?(:chat_routing)
+  end
+
+  def supervisor_feature_launched?
+    features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end
 
   def compose_email_enabled?

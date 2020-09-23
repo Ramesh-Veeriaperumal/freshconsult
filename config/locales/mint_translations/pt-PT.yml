@@ -757,6 +757,34 @@ pt-PT:
         filter_report: Editar filtro
         ticket_type: Tipo de ticket
         select_billable: Selecionar faturável/não faturável
+    freshfone:
+      time_period: Período de tempo
+      num_of_transfered: N.º de transferências
+      no_agent: '- Nenhum agente -'
+      group: Grupo
+      total_unanswered_calls: Chamadas não atendidas
+      call_type: Tipo de chamada
+      filter_option_all_calls: Todas as chamadas
+      filter_close: Fechar
+      avg_handle_time: Tempo médio de atendimento
+      all_numbers: Todos os números
+      filter_report: Editar filtro
+      number: Número
+      business_hours: Horário de atendimento
+      no_external: Não estão incluídas as transferências feitas para números externos
+      summary_title: 'Resumo de chamadas do agente '
+      generate_summary: Gerar
+      num_of_calls: N. º de chamadas
+      unanswered_transfers: Transferências não atendidas
+      unanswered_count: Sem resposta
+      select_call_type: Selecionar tipo de chamada
+      options:
+        all_groups: Todos os grupos
+        unassigned: Não atribuído
+        incoming: Recebido
+        outgoing: Enviado
+      filter_by_title: Filtrado por
+      total_voice_mail: Mensagens de voz
     select_customer: Selecionar cliente
     summary_report:
       avg_1st_response_time: Tempo médio <br> de primeira resposta
@@ -3455,6 +3483,186 @@ pt-PT:
         other: gostam disto
   title: Título
   free_plan_agents_v2: Agentes ilimitados
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Adquira um número local ou gratuito e ofereça apoio telefónico aos seus clientes de todo o mundo
+      greetings: Saudações
+      settings: Definições
+      important: Importante
+      toll_free: Gratuito
+      purchase_credit_text: >-
+        Adquira créditos para comprar números, fazer e receber chamadas através do canal telefónico.
+      suspended_alert: >-
+        <b>Importante:</b> Desativar o seu canal telefónico não impedirá o débito mensal pelos seus números. Para evitar a cobrança, apague os números adquiridos.
+      freshfone_numbers_title: Telefone
+      welcome_page:
+        title_text: Telefone
+      number:
+        simultaneous: Ligar a todos os agentes
+        round_robin: Ligar primeiro para um agente desocupado
+      numbers:
+        sidebar_content_v2: >-
+          Com o canal telefónico, pode fazer e receber chamadas no seu navegador, telemóvel ou no canal telefónico das aplicações para dispositivos móveis do Freshdesk. Ele vem integrado no sistema de tickets do Freshdesk, permitindo-lhe monitorizar as suas chamadas telefónicas gravando-as e convertendo-as em tickets sempre que necessário. <br/><br/> <b>Configurar o telefone</b></br>Para começar a usar o telefone, terá primeiro de o ativar e de adquirir um número de apoio. Pode comprar números locais dos <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>países aqui listados</a> e fazer ou receber chamadas de qualquer lugar do mundo. Se os seus clientes residirem nos EUA, no Reino Unido ou no Canadá, também poderá adquirir números de apoio gratuitos (ou o freephone no Reino Unido). <br/><br/><b>Ofereça um apoio telefónico completo</b><br/>Com o nosso canal telefónico, pode<br/><ul><li>Começar a fazer e a receber chamadas através do seu navegador web ou de um telemóvel</li><li>Criar mensagens de voz, encaminhar ou transferir chamadas para qualquer agente, em qualquer lugar</li><li>Monitorizar chamadas, interrompê-las quando necessário, adicionar agentes a chamadas em curso e muito mais*</li></ul><br/><p>*Envie um e-mail para <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> para ativar as funcionalidades avançadas na sua conta. Estas incluem a monitorização de chamadas, a interrupção de chamadas, teleconferências, o mascaramento de chamadas e métricas do ciclo de vida de chamada.</p><br/>
+        sidebar_title: Canal telefónico
+        delete_alert: >-
+          Depois de eliminado, não é possível voltar a adquirir um número. Tem a certeza de que deseja eliminar o número?
+        buy_loading_text: A comprar...
+        buy_phone_numbers: Comprar números de telefone
+        caller_id:
+          no_number_added: Nenhum ID de chamada adicionado
+          call_id_mask: Mascarar este número
+          manage_caller_id: 'Gerir o ID do autor da chamada '
+          add_new: Adicionar novo
+        tour_link: Ajudem-me a configurar o canal telefónico
+        failure_purchase: >-
+          Não foi possível adquirir o número de telefone. Confirme se o endereço é um endereço local válido em <span class='certification-country'></span>.
+        buy: Comprar número
+        buy_button_text: Comprar
+        address:
+          address: Morada
+          state: Distrito/Região
+          city: Cidade
+          postal_code: Código postal
+          required_field: Todos os campos são obrigatórios
+          name: Empresa/Nome
+        setup:
+          info_text: >-
+            Para começar a usar o canal telefónico, precisa de adquirir primeiro um número que possa disponibilizar aos seus clientes. Pode comprar números locais em qualquer <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>país listado aqui</a>. Se os seus clientes residirem nos EUA, no Reino Unido ou no Canadá, pode adquirir números gratuitos.<br/><br/>É possível adquirir diversos números de vários países e configurar linhas gratuitas no Freshdesk sem recorrer a serviços de terceiros. Estará sujeito às taxas fixas para as chamadas feitas, recebidas e encaminhadas a partir do seu helpdesk. Consulte as <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>tarifas de chamadas aqui</a>.<br/><br/>Depois de adquirir um número para a sua linha de apoio, todas as chamadas recebidas serão distribuídas pelos agentes ligados ao seu helpdesk. Os seus agentes também podem optar por atender as chamadas diretamente no navegador ou por encaminhá-las automaticamente para um telefone fixo.
+          title_text: Configurar um centro de atendimento telefónico
+        sidebar_content: >-
+          Com o canal telefónico, pode fazer e receber chamadas através do seu navegador, telemóvel ou do canal telefónico das aplicações para dispositivos móveis do Freshdesk. Ele vem integrado no sistema de tickets do Freshdesk, permitindo-lhe monitorizar as suas chamadas telefónicas gravando-as e convertendo-as em tickets sempre que necessário. <br/><br/> <b>Configurar o telefone</b></br>Para começar a usar o telefone, terá primeiro de o ativar e de adquirir um número de apoio. Pode comprar números locais dos <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>países aqui listados</a> e fazer ou receber chamadas de qualquer lugar do mundo. Se os seus clientes residirem nos EUA, no Reino Unido ou no Canadá, também poderá adquirir números de apoio gratuitos (ou o freephone no Reino Unido). <br/><br/><b>Ofereça um apoio telefónico completo</b><br/>Com o nosso canal telefónico, pode<br/><ul><li>Começar a fazer e a receber chamadas através do seu navegador web ou de um telemóvel</li><li>Criar mensagens de voz, encaminhar ou transferir chamadas para qualquer agente, em qualquer lugar</li><li>Monitorizar chamadas, interrompê-las quando necessário, adicionar agentes a chamadas em curso e muito mais*</li></ul><br/><p>*Envie um e-mail para <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> para ativar as funcionalidades avançadas na sua conta. Estas incluem a monitorização de chamadas, a interrupção de chamadas, teleconferências, o mascaramento de chamadas e métricas do ciclo de vida de chamada.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Mais informações sobre os recursos e funcionalidades avançadas do seu telefone</a><p>
+        not_available: Não foram encontrados resultados. Tente um termo de pesquisa diferente
+        manage: Gerir
+        address_certification_text: >-
+          Para comprar um número de telefone, tem de indicar a morada da sua empresa ou a sua morada pessoal em <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Este número de telefone será faturado <strong><span class='number-rate'></span>mensalmente</strong>.
+        buy_phone_credits: Comprar créditos telefónicos
+      feature_request_content:
+        success: Entraremos em contacto no prazo de dois dias úteis.
+        recording_info: Grave e converta todas as suas chamadas em tickets
+        button_text: Pedido de ativação
+        compare_trial_and_full: Compare as versões completa e gratuita
+        activation_disclaimer: Pode usar todas as funcionalidades sem limitação de tempo
+        learn_more: Mais informações
+        ivr_info: >-
+          Monitorize chamadas, faça teleconferências, encaminhe ligações através de respostas vocais interativas e muito mais
+        trial_or: OU
+        trial_button_text: Ativar a versão de avaliação gratuita
+        error_message: Lamentamos, mas não podemos fazer o seu pedido neste momento. Tente de novo mais tarde.
+        title_text: Telefone
+        trial_version_disclaimer: Pode usar funcionalidades limitadas durante 15 dias gratuitamente
+        pricing: Veja todas as tarifas de chamadas e os países admitidos
+        number_info: Adquira números locais e gratuitos em mais de 40 países
+        video_title: Veja o vídeo para descobrir o que pode fazer com o canal telefónico
+        heading_text: Ofereça apoio aos seus clientes com o canal telefónico
+      local: Local
+      search: Pesquisar por dígitos ou frases
+      ivr:
+        turn_on: 'Ativado'
+        simple_message_title: Mensagem simples
+        save: Guardar
+        turn_off: 'Desligado'
+        rename: mudar o nome
+        add_new_option: Adicionar opção de <b>pressão de tecla</b>
+        add_new_menu: Adicionar novo <b>menu</b>
+        male: Voz masculina
+        input_number: Insira o número
+        invalid_number_format: >-
+          Insira um número de telefone válido com o prefixo '+' e o código do país antes do número
+        ivr_message_title: Resposta Vocal Interativa (IVR)
+        message_type: Tipo de mensagem
+        action: Ação
+        female: Voz feminina
+        delete_menu: Eliminar menu
+        previewing: A pré-visualizar...
+        saving: A guardar...
+        add_new_menu_from_option: Adicionar novo menu
+        preview: Pré-visualizar
+        done: feito
+        keypress: Pressão de tecla
+        welcome_message: Mensagem de boas-vindas
+      number_settings:
+        read_message: Conversão de texto em voz
+        queue_position_preference: Ler posição na fila em voz alta
+        greeting_message: Introduza aqui a sua mensagem
+        queue_wait_message: Mensagem de fila de espera
+        number_accessible: Acessível por
+        all_groups: Todos os grupos
+        record_all: Gravar todas as chamadas
+        voicemail_on: 'Ativado'
+        max_queue_calls: Máximo de chamadas em fila
+        cancel: Cancelar
+        routing_message: Quando houver vários agentes disponíveis online...
+        non_business_hours: Aceitar chamadas durante…
+        non_business_hours_message: Mensagem para chamadas fora do horário de atendimento
+        recorded_voice: Voz gravada
+        group: 'Reproduzir mensagem e ligar aos agentes em '
+        queue_position_enable: 'LIGADO'
+        recording_privacy_public: Visível para clientes e agentes
+        call_wait_time: com um tempo de espera máximo de
+        wait_music: Música de espera
+        recording_help_info: Ligue o microfone. Duração < 5 min.
+        record_alert: >-
+          Na maioria dos países, as diretrizes de gravação de chamadas obrigam a que os clientes sejam informados de que a chamada está a ser gravada. Configure as mensagens de saudação em conformidade.
+        record_none: Não gravar chamadas
+        non_availability_message: Mensagem de indisponibilidade
+        voicemail_message: Mensagem de correio de voz
+        record_voice: Grave a sua voz
+        voicemail_off: 'Desligado'
+        transcript_voice: Transcrição de voz
+        hunt_type: Encaminhamento de chamadas
+        name: Nome
+        voicemail: Correio de voz
+        record_calls: Gravação de chamadas
+        anytime: 24/7, a qualquer altura
+        upload_voice: Carregar ficheiros de áudio
+        business_hours: Horário de atendimento
+        call_wait_time_suffix: ' por chamada'
+        hold_music: Música de espera
+        start_recording: Começar a gravação
+        title_text: Gerir o seu centro de atendimento telefónico
+        attachment_help_text: Aceita ficheiros de áudio (mp3) < 5 MB
+        queue_position_disable: 'DESLIGADO'
+        queue_position_message_placeholder: 'Encontra-se em fila. A sua posição na fila é {{queue.position}}'
+        preparing_recording: A preparar a sua mensagem...
+        info_content: >-
+          <b>Atribuir chamadas telefónicas a agentes e grupos</b></br>Pode configurar um sistema de Resposta Vocal Interativa (IVR) e encaminhar chamadas para diferentes grupos ou agentes da sua equipa. Os seus clientes podem ser direcionados para a equipa de apoio ao pressionarem 1, por exemplo, e para um representante de vendas ao pressionarem 2.<br/>Além disso, pode personalizar as mensagens que os seus clientes ouvem, gravando uma mensagem de voz, carregando um ficheiro ou usando o recurso de conversão de texto em fala.<br><br><b>Personalizar o seu número</b><br>Também pode configurar os seus números separadamente, para que tenham as suas próprias personalizações, incluindo as configurações básicas, como número máximo de pessoas em fila e tempo máximo de espera para os clientes. Assim que um destes limites for atingido, será reproduzida automaticamente uma mensagem de indisponibilidade.<br/>Se a funcionalidade de gravação de chamadas estiver ativa, todas as chamadas telefónicas do seu helpdesk serão gravadas e anexadas aos tickets, podendo a gravação ficar publicamente disponível para os clientes ou ser mantida em privado. Pode igualmente impedir a receção de chamadas fora do seu horário de atendimento. Pode, por exemplo, configurar duas linhas de apoio: uma para receber chamadas durante o horário de atendimento e outra, disponível 24 horas por dia, para atender chamadas de alta prioridade.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Leia mais sobre como personalizar o seu número</a>
+        recording_privacy: Visibilidade das gravações
+        audio_upload: Carregar
+        recording_privacy_private: Visíveis apenas para agentes
+        business_calendar: Selecionar horário de atendimento
+        queue_position_message_alert: >-
+          Para ler a posição na fila em voz alta, use o marcador de posição {{queue.position}} <br/> Ex.: Encontra-se em fila de espera. A sua posição na fila é {{queue.position}}
+        name_placeholder: Insira um nome fácil de associar ao seu número
+        welcome_message: Mensagem de boas-vindas
+        change: Alterar
+        stop_recording: <span></span>Interromper a gravação
+      trial:
+        request_activation_msg: >-
+          Pode usar apenas um número de um conjunto limitado de países durante o período de avaliação do telefone.<br> No entanto, pode adquirir vários números dos 41 países quando ativar a versão completa
+        activate_btn_text: Pedido de ativação
+        numbers:
+          search:
+            after_activation_request: >-
+              Solicitou a ativação do canal telefónico <br> Entraremos em contacto no prazo de 2 dias úteis.
+            buy_confirmation: Tem a certeza de que deseja escolher este número?
+            can_use_after_activation: >-
+              Pode continuar a usar este número quando ativar o canal telefónico.
+        requested_activation: Recebemos o seu pedido de ativação<br>Está a ser tratado
+    subscription:
+      recharge_now_text: Recarregue o seu saldo com um pagamento único
+      purchase_credits: Comprar créditos
+      setup_auto_recharge: Configurar recarga automática
+      auto_recharge_amt: Valor da recarga automática
+      see_detailed_pricing: Ver preços detalhados
+      followup_text: equivalente a créditos telefónicos
+      auto_recharge_text: Debitaremos a sua conta apenas quando o saldo for inferior a $5
+      purchase_text: Comprar créditos telefónicos
+      current_balance: O seu saldo atual
+      followup: equivalente a créditos telefónicos
+      no_credit_card_text: Insira os dados de pagamento para comprar créditos telefónicos
   special_beta_offer: Oferta especial para contas Beta
   days: dias
   tickets_filter:

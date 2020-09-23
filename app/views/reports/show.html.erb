@@ -232,3 +232,10 @@ jQuery(document).ready(function() {
 		<%end%>
 	</table>	
 </div>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
+  	<%= javascript_tag do %>
+  		if(App.Kissmetrics != undefined){
+  			App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");	
+  		}	
+	<% end %>
+<% end %>

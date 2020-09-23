@@ -1,0 +1,110 @@
+<div class="row">
+  <div class="span4">
+    <h3>Add Credits </h3>
+    <%= form_tag({:action => 'add_credits'}, :class => "well") do %>
+      <%= label_tag :account_id%>
+      <%= text_field_tag :account_id, "", :class => "required" %>
+      <%= label_tag :credits %>
+      <%= text_field_tag :credits, "", :class => "required" %>
+      <%= label_tag :status_message, "Status Message<span class='required_star'>*</span>".html_safe %>
+      <%= text_field_tag :status_message, "", :class => "required",
+       :placeholder => "use &quot;promotional&quot; for free credits" %>
+      <div><%= submit_tag "Add Credit", :class => "btn btn-success" %></div>
+    <% end %>
+  </div>
+  <div class="span3">
+    <h3>Refund Credits </h3>
+    <%= form_tag({:action => 'refund_credits'}, :class => "well") do %>
+      <%= label_tag :account_id%>
+      <%= text_field_tag :account_id, "", :class => "required" %>
+      <div><%= submit_tag "Refund credits", :class => "btn btn-success" %></div>
+    <% end %>
+  </div>
+
+ <div class="span3" id="country_restriction">
+    <h3>Country Restriction</h4>
+    <div class="well">  
+      <label class="control-label">Account </label>
+      <input type="text" name="account_id" id="country_restriction_account_id"/>
+      <input type="submit" id="fetch_country_permissions" value="Fetch Country Permissions" class="btn btn-success" style="margin-bottom:15px" />   
+      <select class="country list hide" id="country_list" style="width:220px"></select>   
+      <input type="submit" id="country_status" class="btn btn-success hide" style="margin-top:15px;margin-bottom:5px"/>  
+      <div class="alert alert-block alert-notice hide" id="country_restriction_status">
+        <a class="close" data-hide="alert">×</a>
+        <p id="restriction_message"></p>
+      </div> 
+    </div>
+ </div> 
+</div>
+
+<%= javascript_tag do %>
+  (function($){
+    $(document).on('click','#fetch_country_permissions',function () {
+    var account_id = $('#country_restriction_account_id').val();
+    if ($.trim(account_id) == ""){  
+      var message = "Account required";
+      info_message(message);
+    }else{
+     $.ajax({
+          type: 'GET',
+          url: '/freshfone_actions/get_country_list',
+          dataType: "json",
+          data: { account_id: account_id },
+          success: function (outcome) {
+              add_attributes(outcome["to_whitelist"],"whitelist");
+              add_attributes(outcome["to_blacklist"],"blacklist");
+              $('#country_list').select2(); 
+              $('#country_list').trigger('change');   
+            }
+        });
+      }
+    });  
+
+    $(document).on('click','#country_status',function () {
+      var account_id = $('#country_restriction_account_id').val(),
+          status = $('#country_status').val(),
+          country_list = $('#country_list option:selected').val() ;
+        $.ajax({
+            type: 'POST',
+            url: '/freshfone_actions/country_restriction',
+            dataType: "html",
+            data: { account_id: account_id , status: status , country_list: country_list },
+            success: function (outcome) {  
+              var message,result = $(outcome).find('#country_restriction').html();
+              message = status == "Whitelist" ? "Whitelisted"  : "Blacklisted";
+              $("#country_restriction").html(result);  
+              info_message(message);
+            }
+          });
+    });
+
+    $(document).on('click','[data-hide]',function () {
+        $(this).closest("." + $(this).attr("data-hide")).hide();
+    });
+
+    $(document).on('change','#country_list',function () {
+        $('#country_list option:selected').attr('data-status') == "whitelist" ? $('#country_status').val("Whitelist")
+                                           : $('#country_status').val("Blacklist");
+        $('#country_status').show(); 
+    });
+
+    function add_attributes (countries,status) {
+      $.each(countries, function (index,country_name) {  
+         $('#country_list')
+         .append($("<option></option>")
+         .val(country_name)
+         .attr("data-status",status)
+         .text(country_name)); 
+      });
+    }
+
+    function info_message (message) {
+      $("#restriction_message").text(message);
+      $("#country_restriction_status").show();
+      setTimeout(function(){ $('#country_restriction_status').hide(); }, 5000);      
+    }
+  })(jQuery);
+<%end%>
+
+
+

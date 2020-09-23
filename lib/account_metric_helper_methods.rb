@@ -6,7 +6,7 @@ module AccountMetricHelperMethods
                       Integrations::Widget, Moderatorship, PasswordReset, PodShardCondition, ShardMapping, SQSPost,
                       Subscription::Addon, Subscription::Currency, Subscription::PlanAddon,
                       SubscriptionAffiliate, SubscriptionAnnouncement, SubscriptionPlan,
-                      GoogleDomain, Helpdesk::UserAccess, Helpdesk::GroupAccess,
+                      Freshfone::Address, GoogleDomain, Helpdesk::UserAccess, Helpdesk::GroupAccess,
                       DeletedCustomers, Wf::Filter, Integrations::GoogleAccount].freeze
 
   MODEL_META = [

@@ -51,3 +51,10 @@ reports_DATE_30DAYS: Date Type Last 30 Days was selected (Reports)
 reports_DATE_90DAYS: Date Type Last 90 Days was selected (Reports)
 reports_DATE_RANGE: Date Type Specific Date Range was selected (Reports)
 add_note_click: Add Notes Clicked
+freshfone_recent_tickets_click: Freshfone recent tickets Clicked
+ADMIN_PHONE_PAGE_LOADED: Phone Page Visited By NonFreshfone Accounts
+ADMIN_PHONE_PAGE_LOADED_IN_TRIAL: Phone Page Visited by NonFreshfone Accounts with Onboarding Enabled
+TRY_PHONE: Try Phone Clicked
+ACTIVATE_PHONE_FROM_TRIAL: Activation Requests From Trial
+
+

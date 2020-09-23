@@ -1,0 +1,131 @@
+<%#= render :partial => 'layouts/shared/freshfone/freshfone' %>
+ 
+<%= stylesheet_link_tag_with_rtl :'cdn/freshfone' %>
+<%= javascript_include_tag :'cdn/freshfone_ticket_search' %>
+<div>
+	<%= render 'layouts/shared/freshfone/freshfone_notification' %>
+</div>
+<div class="freshfone_widget">
+	<div id="failed_hold" class='hide failed_hold'>
+  	<div class='ffone_hold_message popupbox-content'>
+    	<span class='message'> <%= t('freshfone.widget.holding') %></span>
+    	<span class="triangle"></span>
+  	</div>
+	</div>
+	<%= render 'layouts/shared/freshfone/freshfone_popup_tabs' %>
+</div>
+<div class="freshfone-context-container hide" >
+	<%=render 'layouts/shared/freshfone/freshfone_context_container' %>
+</div>
+<div class="popupbox-content supervisor_call_details hide">
+		<%= render 'layouts/shared/freshfone/freshfone_supervisor_call_details' %>
+</div>
+<div class="grey_widget_background hide" data-freshfone=false data-chat=false></div>
+<div class="popupbox-content hide freshfone_content_container" rel="freshfone_widget">
+	<%= render 'layouts/shared/freshfone/freshfone_popupbox_content' %>
+</div>
+<div>
+	<%= render 'layouts/shared/freshfone/freshfone_widget_network_error' %>
+</div>
+
+<%= javascript_tag do %>
+	if (typeof freshfone === "undefined") { freshfone = {}; }
+	freshfone.original_stringify = JSON.stringify;
+	freshfone.country_preference = <%= recent_countries.html_safe %>;
+	freshfone.current_user = <%= current_user.id %>;
+	freshfone.current_account = <%= current_account.id%>;
+	freshfone.user_phone = "<%= current_user.available_number %>";
+	freshfone.current_status = "<%= current_user.freshfone_user.presence %>";
+	freshfone.current_preference = "<%= current_user.freshfone_user_incoming_preference ||
+	  Freshfone::User::PRESENCE[:offline]%>";
+  <% freshfone_account = current_account.freshfone_account %>
+	freshfone.isAgentConferenceEnabled = <%= current_account.features?(:agent_conference)%>;
+  <% freshfone_numbers = current_account_freshfone_numbers %>
+  freshfone.isWarmTransferEnabled = <%= warm_transfer_enabled? %>;
+	freshfone.below_threshold = <%= !freshfone_trial_states? && freshfone_below_threshold? %>;
+	freshfone.available_on_phone = <%= current_user.available_on_phone? || false %>;
+	freshfone.recent_calls_path = "<%= recent_calls_freshfone_call_history_index_path %>";
+	freshfone.transfer_list_path = "<%= available_agents_freshfone_call_transfer_index_path %>";
+	freshfone.available_on_phone_text = "<%= t('freshfone.widget.on_phone') %>";
+	freshfone.available_on_browser_text = "<%= t('freshfone.widget.on_browser') %>";
+	freshfone.freshfone_user_online_text = "<%= t('freshfone.widget.available') %>";
+	freshfone.freshfone_user_offline_text = "<%= t('freshfone.widget.unavailable') %>";
+	freshfone.freshfone_user_busy_text = "<%= t('freshfone.widget.busy') %>";
+	<% if current_account.features?(:freshfone_acw) %>
+		freshfone.freshfone_user_in_acw_text = "<%= t('freshfone.widget.acw') %>";
+		freshfone.acw_timeout = <%= current_account.freshfone_account.acw_timeout.minutes %>;
+		freshfone.isAcwEnabled = true;
+	<% end %>
+	freshfone.forward_number_alert = "<%= t('freshfone.widget.forward_number_alert') %>";
+	freshfone.invalid_user_number_text = "<%= t('freshfone.widget.invalid_phone_number_text').html_safe%>";
+	freshfone.widget_inactive = "<%= t('freshfone.widget.low_credit') %>";
+	freshfone.new_requester = "<%= t('freshfone.widget.new_requester') %>";
+	freshfone.add_note_text = "<%= t('freshfone.widget.add_note_text') %>";
+	freshfone.edit_note_text = "<%= t('freshfone.widget.edit_note_text') %>";
+	freshfone.transfer_call = "<%= t('freshfone.widget.transfer_call')%>";
+	if (freshfone.isAgentConferenceEnabled) {
+		freshfone.add_or_transfer_call = "<%= t('freshfone.widget.add_or_transfer_call')%>";
+	} else {
+		freshfone.add_or_transfer_call = "<%= t('freshfone.widget.transfer_call')%>";
+	}
+	freshfone.dialpad = "<%= t('freshfone.widget.dialpad')%>";
+	freshfone.cancel = "<%= t('freshfone.widget.cancel')%>";
+	freshfone.freshfone_nodejs_url = "<%= FreshfoneConfig['node_url'] %>";
+	freshfone.full_domain = '<%= current_account.full_domain %>';
+	freshfone.account_url = '<%= current_account.url_protocol + "://" + current_account.full_domain %>';
+	freshfone.numbersHash = <%= Hash[*current_account_freshfone_number_hash.collect(&:reverse).flatten].to_json.html_safe %>;
+	freshfone.namesHash = <%= Hash[*current_account_freshfone_names.flatten].to_json.html_safe %>;
+	freshfone.ringingTimeOutHash = <%= Hash[*account_numbers.map { |n| [n.id, n.ringing_time] }.flatten].to_json.html_safe %>;
+	freshfone.rrTimeOutHash = <%= Hash[*account_numbers.map { |n| [n.id, n.rr_timeout] }.flatten].to_json.html_safe%>;
+	freshfone.requester_autocomplete_path = '<%= requester_search_freshfone_autocomplete_index_path %>';
+	freshfone.isDebuggingMode = <%= current_account.features?(:client_debugging)%>;
+	freshfone.isConferenceMode = <%= current_account.features?(:freshfone_conference)%>;
+	freshfone.isCallMonitoringMode = <%= current_account.features?(:freshfone_call_monitoring)%>;
+	freshfone.isCallQualityMetricsEnabled = <%= current_account.features?(:call_quality_metrics)%>;
+	freshfone.agent_count = "<%= t('freshfone.widget.agents_count.one') %>";
+	freshfone.agents_count = "<%= t('freshfone.widget.agents_count.other') %>";
+	freshfone.newNotifications = true;
+	
+  freshfone.ringingTime = <%= freshfone_numbers.present? ?  freshfone_numbers.first.ringing_time : 30 %>;
+  freshfone.isAdmin = <%= current_user.privilege?(:admin_tasks) %>
+  freshfone.current_user_details = {
+          'id'        : '<%=current_user.id%>',
+          'username'  : '<%=current_user.name%>',
+          'email'     : '<%=current_user.email%>',
+          'account_id': '<%= current_account.id%>'
+  };
+  jQuery(window).on("load",function(){
+  	soundManager.setup({debugMode: false});
+	  freshfone.networkErrorSound = soundManager.createSound({
+	  	id: "freshfoneNetworkErrorSound",
+	  	url: '<%= audio_path("/assets/call_disconnected_due_to_network.mp3") %>'
+	  });
+	  freshfone.networkErrorSound.load();
+    freshfone.callRingingSound = soundManager.createSound({
+      id: "freshfoneCallRingingSound",
+      url: '<%= audio_path("/assets/incoming.mp3") %>'
+    });
+    freshfone.callRingingSound.load();
+  });
+  freshfone.isActiveOrTrial = <%= freshfone_active_or_trial? %>;
+  freshfone.strangeNumbers = <%= Freshfone::CallerLookup::STRANGE_NUMBERS.to_json.html_safe %>;
+  freshfone.env = "<%= Rails.env %>";
+  <% if freshfone_trial_states? %>
+    freshfone.request_success_message = "<%= t('freshfone.admin.feature_request_content.success')%>" ;
+    freshfone.request_error_message = "<%= t('freshfone.admin.feature_request_content.error_message')%>" ;
+    freshfone.trialOutgoingExhausted = <%= freshfone_account.subscription.outbound_usage_exceeded? %>
+    freshfone.isTrial = true;
+    freshfone.trialExpired = <%= freshfone_account.trial_expired? %>;
+    freshfone.activationRequested = <%= freshfone_activation_requested? %>;
+  <% end %>
+<% end %>
+<%= javascript_include_tag :'cdn/freshfone_client' %>
+<%= javascript_include_tag :'cdn/freshfone_subscription' if freshfone_trial_states? %>
+<%= javascript_include_tag :'cdn/freshfone_agent_conference' if current_account.features?(:agent_conference) %>
+<%= javascript_include_tag :'cdn/freshfone_warm_transfer' if current_account.features?(:freshfone_warm_transfer) %>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
+  <%= javascript_tag do %>	
+  App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
+  App.Phone.Metrics.start(<%= AppMetrics::FRESHFONE_METRIC_EVENTS.to_json.html_safe %>);
+  <% end %>
+<% end %>

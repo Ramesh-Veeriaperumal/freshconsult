@@ -69,6 +69,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       destroy_user_archive_tickets
       destroy_user_replies
       destroy_user_topics
+      destroy_user_calls
       destroy_custom_survey_results
       destroy_survey_results
       destroy_user
@@ -199,6 +200,10 @@ class Users::ContactDeleteForeverWorker < BaseWorker
         post.destroy_attachments
         post.destroy
       end
+    end
+
+    def destroy_user_calls
+      find_in_batches_and_destroy(@user.freshfone_calls)
     end
 
     def destroy_user

@@ -955,6 +955,34 @@ is:
         filter_report: Breyta síu
         ticket_type: Tegund miða
         select_billable: Veldu Gjaldhæft / Ógjaldhæft
+    freshfone:
+      time_period: Tímabil
+      num_of_transfered: Ekkert af millifærslum
+      no_agent: '- Enginn starfsmaður -'
+      group: Hópur
+      total_unanswered_calls: Ósvöruð símtöl
+      call_type: Tegund símtala
+      filter_option_all_calls: Öll símtöl
+      filter_close: Loka
+      avg_handle_time: Meðaltals meðhöndlunartíma
+      all_numbers: Öll númer
+      filter_report: Breyta síu
+      number: Númer
+      business_hours: Opnunartími
+      no_external: Millifærslur sem gerðar eru á ytri númer eru ekki innifalin
+      summary_title: 'Yfirlit símtöl starfsmanna '
+      generate_summary: Búa til
+      num_of_calls: Fjöldi símtala
+      unanswered_transfers: Ósvarað millifærslur
+      unanswered_count: Ósvarað
+      select_call_type: Veldu tegund hringingar
+      options:
+        all_groups: Allir hópar
+        unassigned: Óskipað
+        incoming: Innkomandi
+        outgoing: Útfarandi
+      filter_by_title: Síað eftir
+      total_voice_mail: Talpóstur
     select_customer: Veldu viðskiptavin
     summary_report:
       avg_1st_response_time: Meðaltals fyrsti <br> Svartími
@@ -4427,6 +4455,292 @@ is:
       related_articles: Tengdar greinar...
   title: Titill
   free_plan_agents_v2: Ótakmarkaðir starfsmenn
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Kauptu staðbundið eða gjaldfrjálst númer og stutt við viðskiptavini hvar
+        sem er um allan heim í gegnum síma
+      greetings: Kveðjur
+      settings: Stillingar
+      important: Mikilvægt
+      toll_free: Gjaldfrjálst
+      purchase_credit_text: >-
+        Keyptu inneign til að kaupa númer, hringja og svara símtölum með
+        símanum.
+      suspended_alert: >-
+        <b>Mikilvægt:</b> slökkva á símarásinni þinni kemur ekki í veg fyrir
+        mánaðarlega leigu á númerunum þínum. Til að forðast að verða gjaldfærður
+        skaltu eyða númerunum sem þú keyptir.
+      freshfone_numbers_title: Sími
+      welcome_page:
+        title_text: Sími
+      number:
+        simultaneous: Hringdu í alla starfsmenn
+        round_robin: Hringdu fyrst í starfsmann
+      numbers:
+        sidebar_content_v2: >-
+          Með því að nota símarásina er hægt að hringja og svara símtölum í
+          vafranum þínum, farsíma eða með því að nota símarásina í
+          farsímaforritum Freshdesk. Það er þétt samofið aðgöngumiðakerfi
+          Freshdesk. Svo þú getur fylgst með símtölum með því að taka þau upp og
+          umbreyta þeim í miða þegar nauðsyn krefur. <br/><br/> <b>Uppsetning
+          síma</b></br>Til að byrja að nota síma þarftu fyrst að virkja hann og
+          kaupa stuðningsnúmer. Þú getur keypt staðbundin númer frá þeim <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>löndum sem skráð eru hér</a> og hringt eða hringt hvar
+          sem er í heiminum. Ef viðskiptavinir þínir munu hringja í þig í
+          Bandaríkjunum, Bretlandi eða Kanada geturðu einnig keypt gjaldfrjáls
+          stuðningsnúmer (eða ókeypis farsíma í Bretlandi). <br/><br/><b>Veittu
+          fullkominn símastuðning</b><br/>Með símarásinni okkar
+          geturðu<br/><ul><li>Byrjað að hringja og hringja í vafranum þínum eða
+          farsíma</li><li>Búa til talhólf, framsenda símtöl eða flytja símtöl
+          til hvaða umboðs sem er, hvar sem er</li><li>Skjár hringja, pramma
+          þegar þess er þörf, bæta við öðrum umboðsmönnum í áframhaldandi símtöl
+          og fleira *</li></ul><br/><p>* Vinsamlegast hafðu samband við <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> til að
+          virkja háþróaða eiginleika fyrir reikninginn þinn. Má þar nefna
+          eftirlit með símtölum, útilokun símtala, símafundum, grímuviðræðum og
+          mælingum á líftíma símtala.</p><br/>
+        sidebar_title: Símarás
+        delete_alert: >-
+          Ekki er hægt að kaupa númer aftur sem einu sinni hefur verið eytt.
+          Ertu viss um að þú viljir eyða númerinu?
+        buy_loading_text: Kaupi...
+        buy_phone_numbers: Kaupa símanúmer
+        caller_id:
+          no_number_added: Engu auðkenni bætt við
+          call_id_mask: Fela þetta númer
+          manage_caller_id: 'Umsjón með auðkenni '
+          add_new: Bæta við nýju
+        tour_link: Hjálpaðu mér að setja upp símarás
+        failure_purchase: >-
+          Ekki tókst að kaupa símanúmerið. Gakktu úr skugga um að heimilisfangið
+          sé gilt staðfang í <span class='certification-country'></span>.
+        buy: Kaupa númer
+        buy_button_text: Kaupa
+        address:
+          address: Heimilisfang
+          state: Ríki / hérað / svæði
+          city: Borg
+          postal_code: Póstnúmer
+          required_field: Krafist er að fylla allra reita
+          name: Nafn fyrirtækis
+        setup:
+          info_text: >-
+            Til að byrja að nota símarásina þarftu fyrst að kaupa
+            innhringingarnúmer til að bjóða viðskiptavinum þínum. Þú getur keypt
+            staðarnúmer í hvaða <a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>löndum sem skráð eru hér</a>. Ef viðskiptavinir
+            þínir hringja í þig frá Bandaríkjunum, Bretlandi eða Kanada, geturðu
+            einnig boðið þeim gjaldfrjálst númeraval.<br/><br/>Þú getur keypt
+            mörg símanúmer frá ýmsum löndum og sett gjaldfrjálsar hjálpargögn í
+            Freshdesk án þess að nota þjónustu frá þriðja aðila. Þú verður
+            rukkaður um venjulegt verð fyrir símtöl, sendan og sendan símtal frá
+            þjónustuverinu þínu. Skoðaðu <a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>símtaxtaverð hér</a>.<br/><br/> Þegar þú hefur keypt
+            símanúmer fyrir þjónustudeildina þína verður öllum símtölum dreift
+            til umboðsmanna sem eru skráðir inn í þjónustuverið þitt. Að auki
+            geta umboðsmenn þínir valið að ná símtölum innan úr vafranum eða
+            látið þá senda sjálfkrafa á skrifborðsímann sinn.
+          title_text: Setja upp símaþjónustuver
+        sidebar_content: >-
+          Með því að nota símarásina er hægt að hringja og svara símtölum í
+          vafranum þínum, farsíma eða með því að nota símarásina í
+          farsímaforritum Freshdesk. Það er þétt samofið aðgöngumiðakerfi
+          Freshdesk. Svo þú getur fylgst með símtölum með því að taka þau upp og
+          umbreyta þeim í miða þegar nauðsyn krefur. <br/><br/> <b>Uppsetning
+          síma</b></br>Til að byrja að nota síma þarftu fyrst að virkja hann og
+          kaupa stuðningsnúmer. Þú getur keypt staðbundin númer frá þeim <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>löndum sem skráð eru hér</a> og hringt eða hringt hvar
+          sem er í heiminum. Ef viðskiptavinir þínir munu hringja í þig í
+          Bandaríkjunum, Bretlandi eða Kanada geturðu einnig keypt gjaldfrjáls
+          stuðningsnúmer (eða ókeypis farsíma í Bretlandi). <br/><br/><b>Veittu
+          fullkominn símastuðning</b><br/>Með símarásinni okkar
+          geturðu<br/><ul><li>Byrjað að hringja og hringja í vafranum þínum eða
+          farsíma</li><li>Búa til talhólf, framsenda símtöl eða flytja símtöl
+          til hvaða umboðs sem er, hvar sem er</li><li>Skjár hringja, pramma
+          þegar þess er þörf, bæta við öðrum umboðsmönnum í áframhaldandi símtöl
+          og fleira *</li></ul><br/><p>* Vinsamlegast hafðu samband við <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> til að
+          virkja háþróaða eiginleika fyrir reikninginn þinn. Má þar nefna
+          eftirlit með símtölum, útilokun símtala, símafundum, grímuviðræðum og
+          mælingum á líftíma símtala.</p><br/><p><a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>Frekari upplýsingar um öfluga getu og eiginleika
+          símans</a><p>
+        not_available: Engar niðurstöður fundust. Prófaðu annað leitarorð
+        manage: Stjórna
+        address_certification_text: >-
+          Til að kaupa símanúmer þarf að gefa upp fyrirtæki þitt eða netfang
+          innan <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Þetta símanúmer verður rukkað <strong><span
+          class='number-rate'></span> mánaðarlega</strong>.
+        buy_phone_credits: Kauptu síma inneign
+      feature_request_content:
+        success: Við munum hafa samband við þig innan tveggja virkra daga.
+        recording_info: Taktu upp og breyttu öllum símtölum þínum í miða
+        button_text: Beiðni um virkjun
+        compare_trial_and_full: Berðu saman greidda og ókeypis útgáfu
+        activation_disclaimer: Þú getur notað alla eiginleika í ótakmarkaðan tíma
+        learn_more: Læra meira
+        ivr_info: >-
+          Hafa eftirlit með símtölum, símafundum, leiðsímtölum með IVR og margt
+          fleira
+        trial_or: EÐA
+        trial_button_text: Virkja ókeypis prufuútgáfu
+        error_message: >-
+          Því miður getum við ekki lagt fram beiðni þína núna. Reyndu aftur
+          seinna.
+        title_text: Sími
+        trial_version_disclaimer: Þú getur notað takmarkaða eiginleika í 15 daga ókeypis
+        pricing: Sjá öll símtalsverð og lönd sem eru í boði
+        number_info: Keyptu staðbundin og gjaldfrjáls númer í yfir 40 löndum
+        video_title: >-
+          Horfðu á myndbandið til að komast að því hvað þú getur gert með
+          símarásinni
+        heading_text: Styðjið viðskiptavini ykkar með símanum
+      local: Staðbundin
+      search: Leitaðu að tölum eða setningum
+      ivr:
+        turn_on: Kveikt
+        simple_message_title: Einföld skilaboð
+        save: Vista
+        turn_off: Slökkt
+        rename: endurnefna
+        add_new_option: Bæta við <b>takka</b> valkosti
+        add_new_menu: Bæta við nýrri <b>valmynd</b>
+        male: Karla rödd
+        input_number: Sláðu inn númer
+        invalid_number_format: >-
+          Sláðu inn gilt símanúmer með '+' forskeyti og landsnúmeri fyrir framan
+          númerið
+        ivr_message_title: Gagnvirkt raddsvörun (IVR)
+        message_type: Gerð skilaboða
+        action: Aðgerð
+        female: Kvenn rödd
+        delete_menu: Eyða valmyndinni
+        previewing: Forskoðun ...
+        saving: Vistar ...
+        add_new_menu_from_option: Bæta við nýrri valmynd
+        preview: Forskoðun
+        done: gert
+        keypress: Lyklaborðið
+        welcome_message: Velkomin skilaboð
+      number_settings:
+        read_message: Texti til ræðu
+        queue_position_preference: Lestu biðröð
+        greeting_message: Sláðu inn skilaboðin þín hér
+        queue_wait_message: Skilaboð um biðröð
+        number_accessible: Aðgengilegt fyrir
+        all_groups: Allir hópar
+        record_all: Taktu upp öll símtöl
+        voicemail_on: Kveikt
+        max_queue_calls: Hámarks símtöl í biðröð
+        cancel: Hætta við
+        routing_message: Þegar margir starfsmenn eru fáanleg á netinu...
+        non_business_hours: Samþykkja símtöl á…
+        non_business_hours_message: Skilaboð utan opnunartíma
+        recorded_voice: Upptaka rödd
+        group: 'Spilaðu skilaboð og hringdu í starfsmenn '
+        queue_position_enable: KVEIKT
+        recording_privacy_public: Sýnilegt viðskiptavinum og starfsmönnum
+        call_wait_time: með hámarks biðtíma á
+        wait_music: Biðtónlist
+        recording_help_info: Kveiktu á hljóðnemanum. Lengd <5 mín.
+        record_alert: >-
+          Leiðbeiningar um upptöku símtala í flestum löndum krefjast þess að
+          viðskiptavinir láti vita að símtöl séu tekin upp. Vinsamlegast stillið
+          kveðjuna í samræmi við það.
+        record_none: Ekki taka upp símtöl
+        non_availability_message: Ekki við skilaboð
+        voicemail_message: Talhólfsskilaboð
+        record_voice: Taktu upp rödd þína
+        voicemail_off: Slökkt
+        transcript_voice: Handrit rödd
+        hunt_type: Áframsending hringingu
+        name: Nafn
+        voicemail: Talhólf
+        record_calls: Takta upp símtöl
+        anytime: 24/7 Hvenær sem er
+        upload_voice: Hlaða upp hljóðskrám
+        business_hours: Opnunartími
+        call_wait_time_suffix: ' pr. símtal'
+        hold_music: Biðtónlist
+        start_recording: Byrjaðu að taka upp
+        title_text: Annast símaverið
+        attachment_help_text: Samþykki hljóðskrá (mp3) <5mb
+        queue_position_disable: AF
+        queue_position_message_placeholder: >-
+          Þú ert sem stendur í biðröð. Þú ert númer {{queue.position}} í
+          biðröðinni
+        preparing_recording: Undirbýr skilaboðin þín ...
+        info_content: >-
+          <b>Úthlutað símtölum til umboðsmanna og hópa</b></br>Þú getur sett upp
+          gagnvirkt raddsvörunarkerfi (IVR) og leiðs hringt til mismunandi hópa
+          eða umboðsmanna í þínu liði. Til dæmis gætirðu látið viðskiptavini
+          þína hringja á framfæri við stuðningsteymið þitt þegar þeir ýta á 1,
+          og til einhvers frá sölu þegar þeir ýta á 2.<br/>Að auki geturðu
+          einnig sérsniðið skilaboðin sem verða spiluð til viðskiptavina þinna
+          með því að taka upp rödd þína , hlaðið inn skrá eða nota
+          text-til-talaðgerðina.<br><br><b>Sérsniðið númerið þitt</b><br>Þú
+          getur líka stillt hvert símanúmer fyrir sig og látið það hafa sitt
+          eigið stillingar. Þetta felur í sér grunnstillingar eins og
+          hámarksfjölda fólks í biðröð og hámarks biðtími fyrir viðskiptavini
+          þína. Þegar annar hvor þeirra er náð verða skilaboð sem ekki eru
+          tiltæk spiluð sjálfkrafa til viðskiptavina þinna.<br/>Þegar þú gerir
+          kleift að taka upp símtöl er hvert símtal í þjónustuverinu tekið upp
+          og fest við miðana þína og upptakan getur verið aðgengileg almenningi
+          fyrir viðskiptavini eða haldið persónulegum. Þú getur einnig takmarkað
+          rás símans þíns frá því að hringja á ekki vinnutíma. Til dæmis gætirðu
+          sett upp tvær stuðningslínur, þar af ein sem er tiltæk til að taka
+          símtöl aðeins á vinnutíma, og önnur hjálparmiðstöð með forgang sem
+          verður tiltæk 24x7.<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target='_blank'>Lestu meira um að sérsníða númerið þitt</a>
+        recording_privacy: Sýnileiki upptöku
+        audio_upload: Hlaða upp
+        recording_privacy_private: Aðeins sýnilegt starfsmönnum
+        business_calendar: Veldu opnunartíma
+        queue_position_message_alert: >-
+          Notaðu staðsetningar {{queue.position}} <br/> Td: Þú ert sem stendur í
+          biðröð til að lesa upp biðröð. Staða þín í biðröð er
+          {{queue.position}}
+        name_placeholder: Sláðu inn vinalegt nafn fyrir númerið þitt
+        welcome_message: Velkomin skilaboð
+        change: Breyta
+        stop_recording: <span></span>Hætta upptöku
+      trial:
+        request_activation_msg: >-
+          Þú getur valið að nota aðeins eitt númer frá takmörkuðu setti landa á
+          prufutíma símans.<br> Þú getur samt keypt mörg númer frá 41 löndum
+          þegar þú virkjar alla útgáfuna
+        activate_btn_text: Beiðni um virkjun
+        numbers:
+          search:
+            after_activation_request: >-
+              Þú hefur beðið um að virkja símarásina <br> Við munum snúa aftur
+              til þín innan tveggja virkra daga.
+            buy_confirmation: Ertu viss um að þú viljir velja þetta númer?
+            can_use_after_activation: >-
+              Þú getur haldið áfram að nota þetta númer þegar þú virkjar rás
+              símans.
+        requested_activation: Við höfum móttekið beiðni þína um virkjun<br>Hún er í vinnslu
+    subscription:
+      recharge_now_text: Fylltu á inneign þína með einni greiðslu
+      purchase_credits: Kaupa inneign
+      setup_auto_recharge: Setja upp sjálfvirkt endurhleðslu
+      auto_recharge_amt: Upphæð sjálfkrafa
+      see_detailed_pricing: Skoða sundurliðuð verð
+      followup_text: virði símainneignar
+      auto_recharge_text: Við munum aðeins rukka reikninginn þinn þegar staðan er undir $ 5
+      purchase_text: Kaupa símainneign
+      current_balance: Núverandi inneign þín
+      followup: virði símainneignar
+      no_credit_card_text: Sláðu inn greiðsluupplýsingar til að kaupa inneign í símann
   special_beta_offer: Sértilboð fyrir Beta reikninga
   days: Dagar
   tickets_filter:

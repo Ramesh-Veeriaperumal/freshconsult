@@ -756,6 +756,34 @@ ro:
         filter_report: Editați filtrul
         ticket_type: Tip tichet
         select_billable: Selectați Facturabil/Non-Facturabil
+    freshfone:
+      time_period: Perioadă de timp
+      num_of_transfered: Nr. Transferuri
+      no_agent: '- Niciun agent -'
+      group: Grup
+      total_unanswered_calls: Apeluri nepreluate
+      call_type: Tip apel
+      filter_option_all_calls: Toate apelurile
+      filter_close: Închidere
+      avg_handle_time: Durata medie de tratare
+      all_numbers: Toate numerele
+      filter_report: Editați filtrul
+      number: Număr
+      business_hours: Ore de lucru
+      no_external: Transferurile efectuate la numere externe nu sunt incluse
+      summary_title: 'Rezumat apeluri agenți '
+      generate_summary: Generați
+      num_of_calls: Număr de apeluri
+      unanswered_transfers: Transferuri Nepreluate
+      unanswered_count: Fara raspuns
+      select_call_type: Selectați Tip apel
+      options:
+        all_groups: Toate grupurile
+        unassigned: Nealocat
+        incoming: Primit
+        outgoing: Efectuat
+      filter_by_title: Filtrate după
+      total_voice_mail: Mesaje Vocale
     select_customer: Selectați Client
     summary_report:
       avg_1st_response_time: Timpul mediu de <br> prim răspuns
@@ -3464,6 +3492,186 @@ ro:
         other: ii place asta
   title: Titlu
   free_plan_agents_v2: Agenți nelimitați
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Cumpărați un număr local sau gratuit și acordați asistență clienților oriunde în întreaga lume, prin telefon
+      greetings: Salutări
+      settings: Setari
+      important: Important
+      toll_free: Fără taxă
+      purchase_credit_text: >-
+        Cumpărați credite pentru a achiziționa numere, efectua și primi apeluri folosind canalul de telefonie.
+      suspended_alert: >-
+        <b>Important:</b> Dezactivarea canalului de telefonie nu va împiedica închirierea lunară a numerelor dvs. Pentru a evita taxarea, vă rugăm să ștergeți numerele cumpărate.
+      freshfone_numbers_title: Telefon
+      welcome_page:
+        title_text: Telefon
+      number:
+        simultaneous: Apelare toți agenții
+        round_robin: Apelați mai întâi agentul inactiv
+      numbers:
+        sidebar_content_v2: >-
+          Folosind canalul de telefonie, puteți efectua și primi apeluri prin browserul dvs., telefonul mobil sau utilizând canalul de telefonie în aplicațiile mobile Freshdesk. Este integrat foarte bine cu sistemul de ticketing de laFreshdesk. Astfel, puteți urmări apelurile telefonice înregistrându-le și convertindu-le în tichete ori de câte ori este necesar. <br/><br/><b>Configurarea telefonului</b></br> Pentru a începe utilizarea telefonului, mai întâi va trebui să îl activați și să achiziționați un număr de asistență. Puteți achiziționa numere locale din <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'> țările enumerate aici</a> și să efectuați sau să preluați apeluri de oriunde din lume. Dacă clienții dvs. vă vor suna din SUA, Marea Britanie sau Canada, puteți achiziționa și numere de asistență fără taxă (sau telefon gratuit în Marea Britanie) <br/><br/><b> Furnizați asistență telefonică completă</b><br/> Cu canalul nostru de telefonie, puteți <br/><ul><li> Începe să efectuați și să preluați apeluri folosind browserul dvs. sau telefoanele mobile</li><li> Crea mesaje vocale, înainta apeluri sau transfera apeluri către oricare agent, oriunde</li><li> Monitoriza apelurile, respinge când este nevoie, adăuga alți agenți la apeluri și multe altele* </li></ul><br/><p> *Vă rugăm să accesați <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> pentru a activa funcțiile avansate pentru contul dvs. Acestea includ monitorizarea apelurilor, negocierea apelurilor, conferința de apeluri, mascarea apelurilor și indicatori generali ai apelurilor. </p><br/>
+        sidebar_title: Freshdesk’s built-in phone channel
+        delete_alert: >-
+          Un număr odată șters nu mai poate fi achiziționat din nou. Sigur doriți să ștergeți numărul?
+        buy_loading_text: Cumpărare...
+        buy_phone_numbers: Cumpărați numere de telefon
+        caller_id:
+          no_number_added: Nu a fost adăugat niciun ID de apelant
+          call_id_mask: Mascați acest număr
+          manage_caller_id: 'Gestionare ID apelant '
+          add_new: Adăuga un nou
+        tour_link: Ajutați-mă să configurez canalul de telefonie
+        failure_purchase: >-
+          Nu se poate achiziționa numărul de telefon. Vă rugăm să vă asigurați că adresa este o adresă locală valabilă în <span class='certification-country'></span>.
+        buy: Achiziționează un număr
+        buy_button_text: Cumpărare
+        address:
+          address: Adresa
+          state: Stat/Provincie/Regiune
+          city: Oraș
+          postal_code: Cod poștal
+          required_field: Toate câmpurile sunt necesare
+          name: Nume / Companie
+        setup:
+          info_text: >-
+            Pentru a începe să utilizați canalul de telefonie, va trebui mai întâi să achiziționați un număr de apelare pentru a-l oferi clienților dumneavoastră. Puteți achiziționa un număr local în orice țări <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'> enumerate aici</a>. Dacă clienții dvs. vă vor suna din SUA, Marea Britanie sau Canada, le puteți oferi și numere fără taxă. <br/><br/> Puteți achiziționa mai multe numere de telefon în diferite țări și să configurați linii de asistență fără taxă în cadrul Freshdesk fără a utiliza niciun serviciu terț. Vi se vor percepe tarife standard pentru apelurile primite, efectuate și redirecționate din serviciul de asistență. Consultați <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>tarifele de apelare aici</a>. <br/><br/> După ce ați achiziționat un număr de telefon pentru biroul dvs. de asistență, toate apelurile primite vor fi distribuite agenților conectați la biroul dvs. de asistență. În plus, agenții dvs. pot alege să preia apeluri telefonice din interiorul browserului sau să le înainteze automat către telefonul de la birou.
+          title_text: Configurarea unui centru de apeluri
+        sidebar_content: >-
+          Using the phone channel, you can make and receive calls through your browser, mobile phone or using the phone channel in Freshdesk’s mobile apps. It is tightly integrated with Freshdesk’s ticketing system. So you can keep track of phone calls by recording them and converting them into tickets whenever necessary. <br/><br/> <b>Setting up Phone</b></br>To start using phone, you will first need to enable it and purchase a support number. You can purchase local numbers from the <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>countries listed here</a> and make or take calls from anywhere in the world. If your customers will be calling you in the US, UK or Canada you can also purchase toll-free support numbers (or freephone in the UK). <br/><br/><b> Using Smart IVRs</b><br/> You can create smart Integrated Voice Response (IVR) systems to better categorize customers when they call your support number, and channelize them to the right department, team or agent. </b><br/><br/> <a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Read more about what you can do with phone</a>.
+        not_available: Nu s-au returnat rezultate. Vă rugăm să încercați un alt termen de căutare
+        manage: Gestionare
+        address_certification_text: >-
+          Pentru a cumpăra un număr de telefon, trebuie să furnizați adresa companiei sau personală în <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Acest număr de telefon va fi tarifat <strong><span class = 'rate-number'>> </span> lunar </strong>.
+        buy_phone_credits: Cumpărați credite de telefonie
+      feature_request_content:
+        success: Vă vom reveni în termen de două zile lucrătoare.
+        recording_info: Record and convert calls to tickets, just like your emails
+        button_text: Request for phone
+        compare_trial_and_full: Comparați versiunea de testare completă și gratuită
+        activation_disclaimer: Puteți utiliza toate funcțiile pentru o perioadă nelimitată
+        learn_more: Află mai multe
+        ivr_info: >-
+          Route calls to the right agent and group using IVR
+        trial_or: SAU
+        trial_button_text: Activați versiunea de încercare gratuită
+        error_message: Ne pare rău că nu vă putem executa cererea chiar acum. Încercați mai târziu.
+        title_text: Telefon
+        trial_version_disclaimer: Puteți utiliza funcții limitate timp de 15 zile gratuit
+        pricing: Vedeți toate tarifele de apel și țările acceptate
+        number_info: Purchase local and toll-free numbers from across the globe
+        video_title: Urmăriți videoclipul pentru a afla ce puteți face cu canalul de telefonie
+        heading_text: Sprijiniți-vă clienții folosind canalul de telefonie
+      local: Local
+      search: Căutați după cifre sau fraze
+      ivr:
+        turn_on: 'Pe'
+        simple_message_title: Mesaj simplu
+        save: Savalți
+        turn_off: 'Oprit'
+        rename: redenumiți
+        add_new_option: Adăugați opțiunea <b>Keypress</b>
+        add_new_menu: Adăugați <b>Meniu</b> nou
+        male: Voce masculină
+        input_number: Introduceți numărul
+        invalid_number_format: >-
+          Introduceți numărul de telefon valid cu prefixul „+” și codul țării în fața numărului
+        ivr_message_title: Răspuns vocal interactiv (IVR)
+        message_type: Tip mesaj
+        action: Actiune
+        female: Voce feminină
+        delete_menu: Ștergeți meniu
+        previewing: Previzualizare...
+        saving: Salvare...
+        add_new_menu_from_option: Adăugați meniu nou
+        preview: Previzualizare
+        done: efectuat
+        keypress: Apăsare tastă
+        welcome_message: Mesaj de bun venit
+      number_settings:
+        read_message: Text to speech
+        queue_position_preference: Citiți poziția în coadă
+        greeting_message: Introduceti mesajul dvs. aici
+        queue_wait_message: Mesaj de așteptare la coadă
+        number_accessible: Accesibil prin
+        all_groups: Toate grupurile
+        record_all: Înregistrează toate apelurile
+        voicemail_on: 'Pe'
+        max_queue_calls: Maximum apeluri la coadă
+        cancel: Anuleaza
+        routing_message: Când mai mulți agenți sunt disponibili online...
+        non_business_hours: Acceptați apelurile în timpul…
+        non_business_hours_message: Mesaj în afara programului de lucru
+        recorded_voice: Voce înregistrată
+        group: 'Redați mesaj și agenți de apeluri în '
+        queue_position_enable: 'PORNIT'
+        recording_privacy_public: Vizibil pentru clienți și agenți
+        call_wait_time: cu timpul maxim de așteptare de
+        wait_music: Așteptați Muzica
+        recording_help_info: Turn on the microphone. Duration &lt; 5 mins.
+        record_alert: >-
+          Ghidul de înregistrare a apelurilor în majoritatea țărilor necesită notificarea clienților că apelurile lor sunt înregistrate. Vă rugăm să configurați mesajul de început în consecință.
+        record_none: Nu înregistra apelurile
+        non_availability_message: Mesaj de indisponibilitate
+        voicemail_message: Mesaj căsuță vocală
+        record_voice: Înregistrați mesajul
+        voicemail_off: 'Oprit'
+        transcript_voice: Transcriere voce
+        hunt_type: Rutarea apelurilor
+        name: Nume
+        voicemail: Apel vocal
+        record_calls: Înregistrare apeluri
+        anytime: 24/7 Oricând
+        upload_voice: Încărcați fișiere audio
+        business_hours: Ore de lucru
+        call_wait_time_suffix: ' per apel'
+        hold_music: Muzică așteptare
+        start_recording: Pornire înregistrare
+        title_text: Gestionarea call center-ului
+        attachment_help_text: Accepts audio file (mp3) &lt; 5mb
+        queue_position_disable: 'OPRIT'
+        queue_position_message_placeholder: 'În prezent sunteți la coadă. Poziția dvs. la coadă este {{queue.position}}'
+        preparing_recording: Se pregătește mesajul...
+        info_content: >-
+          <b>Alocarea apelurilor telefonice către agenți și grupuri </b></br> Puteți configura un sistem interactiv de răspuns vocal (IVR) și puteți dirija apeluri către diferite grupuri sau agenți din echipa dvs. De exemplu, puteți ruta apelurile clienților către echipa dvs. de asistență atunci când apasă 1 și către cineva de la Vânzări când apasă 2. <br/>În plus, puteți personaliza și mesajele care vor fi redate clienților dvs. prin înregistrarea vocii, încărcarea unui fișier sau utilizarea funcției text-în-vorbire. <br><br><b>Personalizarea numărului </b><br>Puteți configura fiecare număr de telefon separat pentru a avea propriul set de personalizări. Acestea includ setări de bază, cum ar fi numărul maxim de persoane la coadă și timpul maxim de așteptare pentru clienții dvs. Odată ce oricare dintre condiții va fi atinsă automat, un mesaj de indisponibilitate va fi redat automat clienților dvs. <br/>Când activați înregistrarea apelurilor, fiecare apel telefonic din biroul dvs. de asistență va fi înregistrat și atașat la tichetele dvs., iar înregistrarea poate fi disponibilă public pentru clienți sau privată. Puteți și să restricționați canalul de telefonie pentru apelurile din afara programului de lucru. De exemplu, puteți configura două linii de asistență, dintre care una va fi disponibilă pentru a primi apeluri doar în timpul programului de lucru și o altă linie de asistență cu prioritate înaltă, care va fi disponibilă 24/7. <br/><br/> <a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Citiți mai multe despre personalizarea numărului dvs. </a>
+        recording_privacy: Vizibilitate înregistrare
+        audio_upload: Select file to upload
+        recording_privacy_private: Vizibilă doar pentru agenți
+        business_calendar: Selectați program de lucru
+        queue_position_message_alert: >-
+          Pentru a citi poziția cozii, utilizați substituentul {{queue.position}} <br/>De exemplu: sunteți în prezent la coadă. Poziția dvs. la coadă este {{queue.position}}
+        name_placeholder: Introduceți un pseudonim pentru numărul dvs.
+        welcome_message: Mesaj de bun venit
+        change: Schimba
+        stop_recording: <span></span> Opriți înregistrare
+      trial:
+        request_activation_msg: >-
+          Puteți alege să utilizați un singur număr dintr-un set limitat de țări în timpul perioadei de încercare. <br> Cu toate acestea, puteți achiziționa mai multe numere din 41 de țări atunci când activați versiunea completă
+        activate_btn_text: Cerere de activare
+        numbers:
+          search:
+            after_activation_request: >-
+              Ați solicitat activarea canalului de telefonie <br> Vom reveni în termen de 2 zile lucrătoare.
+            buy_confirmation: Sigur doriți să alegeți acest număr?
+            can_use_after_activation: >-
+              Puteți continua să utilizați acest număr atunci când activați canalul de telefonie.
+        requested_activation: Am primit cererea dvs. de activare. <br> Este în curs de procesare
+    subscription:
+      recharge_now_text: Încărcați soldul cu o plată unică
+      purchase_credits: Achiziționează credite
+      setup_auto_recharge: Setup Auto Recharge
+      auto_recharge_amt: Auto Recharge Amount
+      see_detailed_pricing: See Detailed Pricing
+      followup_text: cu care se pot efectua apeluri telefonice
+      auto_recharge_text: Vă vom taxa contul doar atunci când soldul scade sub 5 USD
+      purchase_text: Purchase Phone Credits
+      current_balance: Soldul dvs. curent
+      followup: cu care se pot efectua apeluri telefonice
+      no_credit_card_text: Introduceți informațiile de plată pentru a achiziționa credite de telefonie
   special_beta_offer: Oferte speciale pentru clientii Beta
   days: Zile
   tickets_filter:

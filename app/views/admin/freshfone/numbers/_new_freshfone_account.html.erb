@@ -1,0 +1,18 @@
+<div class="new_freshfone_number_search">
+	<% if current_account.freshfone_credit.blank? %>
+		<div class="number_purchase_info">
+			<%= t('freshfone.admin.purchase_credit_text') %>
+		</div>
+		<%= link_to t("freshfone.admin.numbers.buy_phone_credits"), subscription_url, :class => "btn btn-primary" %>
+		<div class="ff_seperator"></div>
+		<div class='freshfone_video'>
+			<span class='title'><%= t('freshfone.admin.feature_request_content.video_title')%></span>
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/0sHT9Zt_F10?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+		</div>
+	<% else %>
+		<div class="number_purchase_info">
+			<%= t('freshfone.admin.purchase_numbers_text') %>
+		</div>
+		<%= link_to t("freshfone.admin.numbers.buy_phone_numbers"), search_admin_freshfone_index_path, :class => "btn btn-primary" %>	
+	<% end %>
+</div>

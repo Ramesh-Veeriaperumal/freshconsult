@@ -1,0 +1,8 @@
+<ul class="inline" >
+  <li><%=t('reports.freshfone.filter_by_title')%>:</li>
+  <li><%=t('reports.freshfone.time_period')%> : <strong><%= date_range %></strong></li>
+
+  <% select_hash.each do |filter_option| %>
+      <li> <%= filter_option['name'] %> : <strong> <%= filter_option['value'] %> </strong></li>
+  <% end %>
+</ul>
