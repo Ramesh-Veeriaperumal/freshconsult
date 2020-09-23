@@ -1,0 +1,196 @@
+// popupbox component styles
+$popup-content-border: #444;
+$popuptab-toggle-active:#547b37;
+
+// dashboard colors
+$dashboard-right-arrow: #666;
+$dashboard-cells-background: #F2F2F2;
+$dashboard-cells-header: #666;
+
+// outgoing related components starts
+$numbers-list-background:#333;
+$numbers-list-text:#FFF;
+$info-text:#D1B3B3;
+
+// numpad styles starts
+$key-background:#F8F8F8;
+$key-hover-background:#F0F0F0;
+
+// keypressed state
+$keydown-background:#999;
+$keydown-text:#F8F8F8;
+$keydown-border:#FFF;
+$keydown-text-shadow:#666;
+$keydown-shadow:#444;
+
+// keypad call button
+$keypad-call-text:#008000;
+$keypad-call-text-shadow:#EEE;
+$keypad-call-background:#D3D3D3;
+
+// keypad back button
+$keypad-back-background:#646464;
+$keypad-back-text:#FFF;
+$keypad-triangle-background:#444;
+$keypad-triangle-border:#646464;
+
+$keypad-plus:#CCC;
+
+$keypad-input-background:#444;
+$keypad-input-text:#FFF;
+
+// numpad styles end
+
+// recent calls
+$recent-calls-background:#FCFCFC;
+
+// for each recent call entry
+$recent-call-border:#CCC;
+$recent-call-hover-background:#F7F7F7;
+$recent-call-username:#333;
+$recent-call-duration:#333;
+// outgoing related components ends
+
+// ongoing related components start
+$ongoing-border:#ccc;
+$ongoing-background:#BBB;
+$ongoing-tabs-background:#AAA;
+$ongoing-active-tabs-background:#444;
+$ongoing-hover-tabs-background:#888;
+$ongoing-tabs-shadow:#fff;
+$ongoing-end-call-background:#9E3624;
+$ongoing-context-border:1px solid #AAA;
+$ongoing-caller-context-bottom-border:#EEE;
+$ongoing-call-notes-background: #FFFFE4;
+$ongoing-popup-right:14px;
+$ongoing-popup-left:14px;
+$ongoing-popup-width:325px;
+$ongoing-box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.1);
+$ongoing-popup-z-index: 999;
+
+$end-call-text:#FFF;
+
+$call-details-text:#fff;
+$call-details-background:#9E3624;
+
+$call-duration-background:#F0F0F0;
+
+$popup-content-header:#444;
+$popup-content-header-text:#FFF;
+
+$endcall-background:#F1F1F1;
+
+$transfer-call-background:#FFF;
+$transfer-search-border:#eee;
+
+$available-agent-border:#eee;
+$available-agent-name:#666;
+
+$transfering-call-background:#fcf4df;
+$transfering-call-text:#666;
+$transfer-info-details-background: #fff;
+
+$call-notes-background:#FEFBD8;
+$call-notes-text:#4B4B4B;
+
+// convert to ticket popup starts
+// ec -end-call
+$ec-ticket-search-border:#CCC;
+$ec-ticket-header-border:#CCC;
+$ec-search-results-background:#FFF;
+$ec-autocomplete-result-color:#2A70DA;
+$ec-autocomplete-result-border:#E1E1E1;
+$ec-result-hover-background:#F3F3F3;
+
+$ec-newticket-form-border:#CCC;
+$ec-newticket-form-background:#F1F1F1;
+
+$ec-go-back:#2A70DA;
+$ec-btn-text:#999;
+$ec-btn-right-arrow:#939393;
+// convert to ticket popup ends
+// ongoing related components end
+
+
+// ivr components start
+$ivr-360ui-playing-text:#666;
+
+$ivr-tabs-background:#FBFBFB;
+$ivr-fieldset-background:#FFF;
+$ivr-fieldset-border:#E2E2E2;
+
+$ivr-menu-header-background:#FAFAFA;
+$ivr-menu-header-border:#E2E2E2;
+
+$ivr-add-keypress-background:#FAFAFA;
+$ivr-menu-title-background:#F0F0F0;
+$ivr-menu-title-focus-background:rgba(236,236,236,.8);
+$ivr-menu-title-focus-shadow:rgba(0,0,0,.075);
+$ivr-menu-title-focus-shadow1:rgba(236,236,236,.6);
+$ivr-menu-title-hover:#F0F0F0;
+
+// common for add menu and add option
+$ivr-add-new-text:#0087D3;
+$ivr-add-new-border:#E2E2E2;
+$ivr-add-new-background:#FAFAFA;
+$ivr-add-new-hover-text:#333;
+
+$ivr-new-menu-border:#E2E2E2;
+// ivr components end
+
+// message select components start
+// ms -> message-select
+$ms-record-background:#FEFEFE;
+$ms-record-border:#CCC;
+$ms-recording-background:#ef3535;
+$ms-stop-recording-text:rgb(239, 53, 53);
+
+$ms-muted-text:#CCC;
+$ms-type-selector:#CCC;
+$ms-active-type-background:#ddd;
+
+$ms-attachment-container-border:#CCC;
+$ms-remove-attachment-text:#2A70DA;
+$ms-custom-file-upload-border:rgb(204, 204, 204);
+$ms-custom-file-upload-text:#333;
+
+$ms-recording-animation-start:rgba(239, 53, 53, 0.1);
+$ms-recording-animation-end:rgba(239, 53, 53, 0.3);
+// message select components end
+
+// call history components start
+// ch -> call-history
+$ch-cells-background:#FFF;
+$ch-dropdown-toggle:#222;
+$ch-number-caret-border:#000;
+$ch-cells-text:#666;
+$ch-assigned-ticket:#06C;
+$ch-call-user-border:#CCC;
+$ch-user-name-text:#666;
+$ch-user-location-text:#999;
+$ch-ui360-border:#efefef;
+$ch-ui360-background:#FFF;
+$ch-ui360-playing-background:#FEFEF2;
+$ch-ui360-playing-border:#CCC;
+$ch-ui360-playing-shadow:#DDD;
+$ch-child-call-text:#06C;
+$ch-no-call-log-text:#999;
+
+$ch-transfered-call-border:#999;
+// call history components end
+
+// admin components start
+// fa -> freshfone-admin
+$fa-instruct-text:#999;
+$fa-active-tab-background:#FFD;
+$fa-available-number-background:#CCC;
+$fa-phone-location-text:#777;
+$fa-no-number-available-text:#666;
+$fa-phone-search-background:#EEE;
+$fa-phone-search-border:#CCC;
+$fa-recharge-now-border:#CCC;
+// admin components end
+
+// Font icon start
+$font-class: "ficon-";
+// Font icon end
