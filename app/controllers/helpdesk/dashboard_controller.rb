@@ -1,7 +1,6 @@
 class Helpdesk::DashboardController < ApplicationController
   helper  Helpdesk::TicketsHelper #by Shan temp
 
-  include Freshfone::FreshfoneUtil
   include Reports::GamificationReport
   include Cache::Memcache::Account
   include Redis::RedisKeys
@@ -28,7 +27,7 @@ class Helpdesk::DashboardController < ApplicationController
   before_filter :check_account_state, :redirect_to_mobile_url, :set_mobile, :show_password_expiry_warning, :only => [:index]  
   before_filter :check_dashboard_privilege, :set_ui_preference, :only => [:index]
   before_filter :set_selected_tab
-  before_filter :round_robin_filter, :load_ffone_agents_by_group, :only => [:agent_status]
+  before_filter :round_robin_filter, :only => [:agent_status]
   around_filter :run_on_slave,            :only => [:latest_activities,:activity_list, :unresolved_tickets_data, :tickets_summary, :trend_count, :overdue, :due_today, :unresolved_tickets_dashboard, :unresolved_tickets_workload, :survey_info, :available_agents]
   before_filter :load_unresolved_filter,  :only => [:unresolved_tickets_data]
   skip_after_filter :set_last_active_time, :only => [:latest_activities]
@@ -120,7 +119,6 @@ class Helpdesk::DashboardController < ApplicationController
 
   def agent_status
     load_ticket_assignment if current_account.features?(:round_robin)
-    load_freshfone if view_context.freshfone_active?
     load_livechat_groups if current_account.features?(:chat)
     respond_to do |format|
       format.html # index.html.erb
@@ -154,28 +152,6 @@ class Helpdesk::DashboardController < ApplicationController
     render :json => achievements_hash.to_json
   end
 
-  def load_ffone_agents_by_group 
-    if params[:freshfone_group_id].present?
-      if (params[:freshfone_group_id]==Freshfone::Number::ALL_NUMBERS) 
-        set_others_redis_key(freshfone_filter_key,params[:freshfone_group_id], 86400 * 7)
-        render :json => { :id => Freshfone::Number::ALL_NUMBERS }
-      else  
-        @freshfone_group = current_account.groups.find_by_id(params[:freshfone_group_id])
-        @agent_ids = @freshfone_group.agents.inject([]){ |result, agent| result << agent.id }
-        render :json => { :id => @agent_ids }
-        if @freshfone_group
-           set_others_redis_key(freshfone_filter_key,params[:freshfone_group_id], 86400 * 7)
-        end
-      end  
-    else
-        @freshfone_group_current= get_others_redis_key(freshfone_filter_key) 
-        if @freshfone_group_current
-          @freshfone_group = current_account.groups.find_by_id(@freshfone_group_current)  
-        end  
-
-    end   
-  end 
-
   protected
     def recent_activities(activity_id)
       if activity_id
@@ -204,10 +180,6 @@ class Helpdesk::DashboardController < ApplicationController
 
     @available_agents   = all_agents[true] || []
     @unavailable_agents = all_agents[false] || []
-  end
-
-  def load_freshfone
-     @freshfone_agents = current_account.freshfone_users.agents_with_avatar
   end
 
   def load_livechat_groups
@@ -259,10 +231,6 @@ class Helpdesk::DashboardController < ApplicationController
 
   def round_robin_filter_key
     ADMIN_ROUND_ROBIN_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
-  end
-  
-  def freshfone_filter_key
-    ADMIN_FRESHFONE_FILTER % {:account_id => current_account.id, :user_id => current_user.id}
   end
 
   #### Functions for new dashboard start here

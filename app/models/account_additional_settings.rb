@@ -15,7 +15,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   serialize :secret_keys, Hash
   validates_length_of :email_cmds_delimeter, :minimum => 3, :message => I18n.t('email_command_delimeter_length_error_msg')
   after_update :handle_email_notification_outdate, :if => :had_supported_languages?
-  after_initialize :set_default_rlimit, :backup_change, :load_state
+  after_initialize :backup_change, :load_state
   before_create :set_onboarding_version, :enable_freshdesk_freshsales_bundle
   after_commit :clear_cache
   after_commit :update_help_widget_languages, if: -> { Account.current.help_widget_enabled? && @portal_languages_changed }
@@ -408,10 +408,6 @@ class AccountAdditionalSettings < ActiveRecord::Base
   def clear_cache
     self.account.clear_account_additional_settings_from_cache
     self.account.clear_api_limit_cache
-  end
-
-  def set_default_rlimit
-    self.resource_rlimit_conf = self.resource_rlimit_conf.presence || DEFAULT_RLIMIT
   end
 
   def load_state

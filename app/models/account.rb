@@ -37,7 +37,7 @@ class Account < ActiveRecord::Base
 
   concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations,
                  :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods,
-                 :fluffy_methods, :patches
+                 :fluffy_methods, :patches, :settings
 
   include CustomerDeprecationMethods
 
@@ -177,10 +177,6 @@ class Account < ActiveRecord::Base
 
   def validate_required_ticket_fields?
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
-  end
-
-  def freshfone_active?
-    false
   end
 
   def es_multilang_soln?

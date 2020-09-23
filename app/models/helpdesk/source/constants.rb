@@ -30,4 +30,5 @@ class Helpdesk::Source < Helpdesk::Choice
   API_UPDATE_EXCLUDED_VALUES = [SOURCE_KEYS_BY_TOKEN[:twitter], SOURCE_KEYS_BY_TOKEN[:facebook], SOURCE_KEYS_BY_TOKEN[:whatsapp]].freeze
   CUSTOM_SOURCE_BASE_SOURCE_ID = 100
   CUSTOM_SOURCE_ICON_RANGE = (101..114).to_a.freeze
+  DEAFULT_CUSTOM_SOURCE_ICON_ID = 101
 end

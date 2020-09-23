@@ -81,7 +81,6 @@ module ArchiveTicketTestHelper
     ticket = params[:create_twitter_ticket] ? create_twitter_ticket(params_hash) : create_ticket(params_hash)
     build_conversations(ticket, params) if params[:create_conversations]
     new_ticket_from_freshcaller_call(ticket) if params[:create_freshcaller_call]
-    new_ticket_from_call(ticket) if params[:create_freshfone_call]
     ticket.updated_at = params[:updated_at] if params[:updated_at].present?
     ticket.save
 

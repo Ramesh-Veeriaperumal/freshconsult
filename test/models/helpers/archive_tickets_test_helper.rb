@@ -5,6 +5,7 @@ module ArchiveTicketsTestHelper
     ret_hash = {
       id: ticket.id,
       display_id: ticket.display_id,
+      ticket_id: ticket.ticket_id,
       account_id: ticket.account_id,
       responder_id: ticket.responder_id,
       group_id: ticket.group_id,

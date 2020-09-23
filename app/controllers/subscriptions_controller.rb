@@ -18,7 +18,6 @@ class SubscriptionsController < ApplicationController
   before_filter :load_coupon, :only => [:calculate_amount, :plan, :billing]
   before_filter :modify_addons_temporarily, only: [:calculate_amount, :plan]
   before_filter :load_billing, :validate_subscription, :only => :billing
-  before_filter :load_freshfone_credits, :only => [:show]
   before_filter :valid_currency?, :only => :plan
   before_filter :check_fsm_requirements, :only =>[:plan] , if: -> {fsm_addon_present_in_request?}
 
@@ -284,10 +283,6 @@ class SubscriptionsController < ApplicationController
         scoper.additional_info = scoper.additional_info.except(:freddy_session_packs)
       end
       scoper.freddy_sessions = calculate_freddy_session(@addons, scoper, @subscription_plan.name.parameterize.underscore.to_sym, params[:billing_cycle]) if current_account.launched?(:freddy_subscription)
-    end
-
-    def load_freshfone_credits
-      @freshfone_credit = current_account.freshfone_credit || Freshfone::Credit.new
     end
 
     def build_free_subscription

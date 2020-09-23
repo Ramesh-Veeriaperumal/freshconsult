@@ -30,6 +30,9 @@ module Email::Mailbox::Constants
   AUTH_ERROR = 401
   SMTP_AUTHENTICATION_ERROR_CODE = 535
 
+  IMAP_AUTH_ERROR = 541
+  SMTP_AUTH_ERRORS = [401, 535].freeze
+
   TEST_MAIL_VERIFY_DURATION = 30.minutes
 
   # TODO: should this be part of stack setting
