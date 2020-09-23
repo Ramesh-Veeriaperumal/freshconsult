@@ -83,7 +83,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
   def test_update_setting_when_dependent_feature_disabled
     params = { personalized_email_replies: true, original_sender_as_requester_for_forward: true }
     params.each do |setting|
-      dependent_feature = AccountSettings::SettingsConfig[:personalized_email_replies][:feature_dependency][EmailSettingsConstants::EMAIL_CONFIG_PARAMS[setting] || setting]
+      dependent_feature = AccountSettings::SettingsConfig[:personalized_email_replies][:feature_dependency][EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting] || setting]
       Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
     end
     put :update, construct_params({}, params)

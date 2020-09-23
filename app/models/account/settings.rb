@@ -52,7 +52,7 @@ class Account < ActiveRecord::Base
 
   # Can combine this with valid_setting once LP's are migrated to BITMAP
   def has_setting?(setting)
-    AccountSettings::SettingsConfig[setting][:feature_dependency] && has_feature?(setting)
+    has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) && has_feature?(setting)
   end
 
   private
