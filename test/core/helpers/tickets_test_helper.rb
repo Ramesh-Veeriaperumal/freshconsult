@@ -74,7 +74,10 @@ module CoreTicketsTestHelper
                                          :created_at => params[:created_at],
                                          :account_id => account_id,
                                          :custom_field => params[:custom_field],
-                                         :to_emails => params[:to_emails]
+                                         :to_emails => params[:to_emails],
+                                         :channel_id => params[:channel_id],
+                                         :channel_profile_unique_id => params[:profile_unique_id],
+                                         :channel_message_id => params[:channel_message_id]
                                        )
     test_ticket.sender_email = params[:sender_email] if params[:sender_email].present?
     test_ticket.tag_ids = params[:tag_ids] if params.key?(:tag_ids)
