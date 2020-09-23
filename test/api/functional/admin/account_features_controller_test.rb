@@ -26,8 +26,7 @@ class Admin::AccountFeaturesControllerTest < ActionController::TestCase
     @account.revoke_feature(:basic_settings_feature)
     delete :create, controller_params(name: 'cascade_dispatcher')
     assert_response 403
-    match_json('code' => 'require_feature',
-      'message' => 'The cascade_dispatcher feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+    match_json({ 'code' => 'require_feature', 'message' => 'The cascade_dispatcher feature(s) is/are not supported in your plan. Please upgrade your account to use it.' })
   end
 
   def test_disable_setting_with_feature_dependency
@@ -40,8 +39,7 @@ class Admin::AccountFeaturesControllerTest < ActionController::TestCase
     @account.revoke_feature(:basic_settings_feature)
     delete :destroy, controller_params(name: 'cascade_dispatcher')
     assert_response 403
-    match_json('code' => 'require_feature',
-      'message' => 'The cascade_dispatcher feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
+    match_json({ 'code' => 'require_feature', 'message' => 'The cascade_dispatcher feature(s) is/are not supported in your plan. Please upgrade your account to use it.' })
   end
 
   def test_disable_feature_for_valid_input
