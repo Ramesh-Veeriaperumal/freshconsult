@@ -419,6 +419,7 @@
       :skip_portal_cname_chk: 415
       :stop_contacts_count_query: 416
       :force_index_tickets: 417
+      :es_v2_splqueries: 418
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -518,3 +519,4 @@
   :gamification_perf: false
   :stop_contacts_count_query: false
   :force_index_tickets: false
+  :es_v2_splqueries: false
