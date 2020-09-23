@@ -20,7 +20,7 @@ module IntegrationServices::Services
       end
 
       def fetch_form_fields
-        url = "#{@service.instance_url}/api/settings/forms"
+        url = "#{server_url}/settings/forms"
         response = http_get url
         process_response(response, 200) do |resource|
           return process_result(resource['forms'])

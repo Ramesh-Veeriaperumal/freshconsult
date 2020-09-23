@@ -2,8 +2,8 @@
 
 class Integrations::FreshworkscrmController < Admin::AdminController
   include Integrations::ControllerMethods
+  include Integrations::FreshworkscrmConstants
 
-  skip_before_filter :check_privilege
   before_filter :load_installed_app, only: [:install, :edit, :update]
   before_filter :check_installed_app, only: [:new, :settings_update]
 
@@ -73,7 +73,7 @@ class Integrations::FreshworkscrmController < Admin::AdminController
     end
 
     def api_params
-      { 'domain' => "https://#{params['configs']['domain']}/crm/sales", 'auth_token' => params['configs']['auth_token'], 'ghostvalue' => params['configs']['ghostvalue'] }
+      { 'domain' => format(CRM_DOMAIN, crm_domain: params['configs']['domain']), 'auth_token' => params['configs']['auth_token'], 'ghostvalue' => params['configs']['ghostvalue'] }
     end
 
     def render_settings

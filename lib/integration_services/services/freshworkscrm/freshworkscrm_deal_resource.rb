@@ -9,12 +9,6 @@ module IntegrationServices::Services
                             'deal_product_id' => 'deal_products', 'deal_payment_status_id' => 'deal_payment_statuses',
                             'sales_account_id' => 'sales_accounts', 'territory_id' => 'territories' }.freeze
 
-      def fetch_fields
-        request_url = "#{server_url}/settings/deals/fields.json"
-        response = http_get request_url
-        process_response(response, 200, &format_fields_block)
-      end
-
       def get_selected_fields(fields, value)
         return { 'deals' => [], 'type' => 'deal' } if value[:account_id].blank?
 

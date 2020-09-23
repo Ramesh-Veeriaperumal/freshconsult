@@ -12,11 +12,11 @@ module IntegrationServices::Services
     end
 
     def receive_contact_fields
-      contact_resource.fetch_fields
+      contact_resource.fetch_fields('contacts', 'display_name' => 'Full name')
     end
 
     def receive_account_fields
-      account_resource.fetch_fields
+      account_resource.fetch_fields('sales_accounts')
     end
 
     def self.construct_default_integration_params(params)
@@ -24,7 +24,7 @@ module IntegrationServices::Services
     end
 
     def receive_deal_fields
-      deal_resource.fetch_fields
+      deal_resource.fetch_fields('deals')
     end
 
     def receive_fetch_form_fields

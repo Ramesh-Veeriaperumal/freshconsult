@@ -9,12 +9,6 @@ module IntegrationServices::Services
                             'parent_sales_account_id' => ['parent_sales_account', 'parent_sales_accounts'],
                             'creater_id' => ['creater', 'users'], 'updater_id' => ['updater', 'users'] }.freeze
 
-      def fetch_fields
-        request_url = "#{server_url}/settings/sales_accounts/fields.json"
-        response = http_get request_url
-        process_response(response, 200, &format_fields_block)
-      end
-
       def get_selected_fields(fields, value)
         return { 'sales_accounts' => [], 'type' => 'sales_account' } if value[:company].blank? && value[:email].blank?
 

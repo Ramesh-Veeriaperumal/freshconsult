@@ -35,13 +35,6 @@ module IntegrationServices::Services
         process_response(response, 200) { |contact| return process_result(contact, fields, relational_fields, 'contact') }
       end
 
-      def fetch_fields
-        request_url = "#{server_url}/settings/contacts/fields.json"
-        response = http_get request_url
-        opt_fields = { 'display_name' => 'Full name' }
-        process_response(response, 200, &format_fields_block(opt_fields))
-      end
-
       private
 
         def process_create_response(response, _web_meta, *success_codes, &_block)

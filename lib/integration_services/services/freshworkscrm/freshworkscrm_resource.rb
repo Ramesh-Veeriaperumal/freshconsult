@@ -15,6 +15,12 @@ module IntegrationServices::Services
         b.headers['Authorization'] = "Token token=#{@service.configs['auth_token']}"
       end
 
+      def fetch_fields(resource, opt_fields = {})
+        request_url = "#{server_url}/settings/#{resource}/fields.json"
+        response = http_get request_url
+        process_response(response, 200, &format_fields_block(opt_fields))
+      end
+
       def format_fields_block(opt_fields = {})
         fields_block = lambda do |fields_hash|
           fields_hash = fields_hash['fields']
