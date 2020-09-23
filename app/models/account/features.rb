@@ -43,7 +43,7 @@ class Account < ActiveRecord::Base
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
     :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :disable_freshchat, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
-    :feedback_widget_captcha, :gamification_perf
+    :feedback_widget_captcha, :gamification_perf, :force_index_tickets
   ].freeze
 
   BITMAP_FEATURES = [
@@ -81,7 +81,7 @@ class Account < ActiveRecord::Base
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
     :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel, :feedback_widget_captcha,
-    :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query
+    :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -89,7 +89,8 @@ class Account < ActiveRecord::Base
     :new_es_api, :filter_factory,
     :solutions_agent_metrics,
     :skip_invoice_due_warning, :allow_wildcard_ticket_create,
-    :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query
+    :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query,
+    :force_index_tickets
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -461,6 +462,10 @@ class Account < ActiveRecord::Base
 
   def supervisor_contact_field_enabled?
     launched?(:supervisor_contact_field)
+  end
+
+  def force_index_tickets_enabled?
+    launched?(:force_index_tickets)
   end
 
   def disable_freshchat_enabled?

@@ -50,7 +50,7 @@ class Reports::NoActivityWorker < BaseWorker
 
   def default_scoper
     account = Account.current
-    if account.launched?(:force_index_tickets)
+    if account.force_index_tickets_enabled?
       account.tickets.use_index("index_helpdesk_tickets_status_and_account_id").where(spam:false,deleted:false).unresolved
     else
       account.tickets.where(spam:false,deleted:false).unresolved
