@@ -1074,6 +1074,7 @@ Helpkit::Application.routes.draw do
   channel_routes = proc do
     resources :freshcaller_calls, controller: 'channel/freshcaller/calls', only: %i[create update]
     delete '/freshcaller/account', to: 'channel/freshcaller/accounts#destroy'
+    put '/freshcaller/account', to: 'channel/freshcaller/accounts#update'
     get '/freshcaller/contacts/:id/activities', to: 'channel/freshcaller/contacts#activities'
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
