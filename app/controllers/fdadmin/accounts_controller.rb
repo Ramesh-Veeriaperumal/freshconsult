@@ -342,14 +342,16 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def add_launch_party
-    result = {}
     @account = Account.find(params[:account_id])
     @account.make_current
     result = { account_id: @account.id, account_name: @account.name }
     begin
-      render :json => { status: 'notice' }.to_json && return unless enableable?(@feature_name)
-      enable_feature(@feature_name)
-      result[:status] = 'success'
+      if enableable?(@feature_name)
+        enable_feature(@feature_name)
+        result[:status] = 'success'
+      else
+        result[status] = 'notice'
+      end
     rescue Exception => e
       result[:status] = 'error'
     end
@@ -364,9 +366,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     @account = Account.find(params[:account_id]).make_current
     result = { account_id: @account.id, account_name: @account.name }
     begin
-      render :json => { status: 'notice'}.to_json && return unless disableable?(@feature_name)
-      disable_feature(@feature_name)
-      result[:status] = 'success'
+      if enableable?(@feature_name)
+        disable_feature(@feature_name)
+        result[:status] = 'success'
+      else
+        result[status] = 'notice'
+      end
     rescue Exception => e
       result[:status] = 'error'
     end

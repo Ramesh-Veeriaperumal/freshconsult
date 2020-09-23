@@ -24,10 +24,6 @@ module Fdadmin::FeatureMethods
     def bitmap_feature_enabled?(feature_name)
       @account.has_feature?(feature_name)
     end     
-    
-    def db_feature_enabled?(feature_name)
-      @account.features?(feature_name)
-    end
 
     def launchparty_feature_enabled?(feature_name)
       @account.launched?(feature_name)
@@ -82,7 +78,7 @@ module Fdadmin::FeatureMethods
     def enable_launchparty_feature(feature_name)
       @account.launch(feature_name)
       # will be removed after settings implementation
-      enable_bitmap_feature(feature_name) if settings_feature?(feature_name)
+      enable_bitmap_feature(feature_name) if temporary_migration_feature?(feature_name)
     end
 
     def disable_bitmap_feature(feature_name)
@@ -92,10 +88,10 @@ module Fdadmin::FeatureMethods
     def disable_launchparty_feature(feature_name)
       @account.rollback(feature_name)
       # will be removed after settings implementation
-      disable_bitmap_feature(feature_name) if settings_feature?(feature_name)
+      disable_bitmap_feature(feature_name) if temporary_migration_feature?(feature_name)
     end
 
-    def settings_feature?(feature_name)
+    def temporary_migration_feature?(feature_name)
       Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(feature_name)
     end
 end
