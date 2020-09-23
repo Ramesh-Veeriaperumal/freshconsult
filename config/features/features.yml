@@ -314,7 +314,7 @@
       :reports_88: 310
       :reports_89: 311
       :reports_90: 312
-      :reports_91: 313
+      :untitled_feature_3_dependency_toggle: 313
       :basic_settings_feature: 314
       :untitled_feature_1_dependency_toggle: 315
       :untitled_feature_2_dependency_toggle: 316
@@ -410,6 +410,7 @@
       :skip_invoice_due_warning: 406
       :allow_wildcard_ticket_create: 407
       :supervisor_contact_field: 408
+      :bypass_signup_captcha: 409
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -508,3 +509,4 @@
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
+  :bypass_signup_captcha: false
