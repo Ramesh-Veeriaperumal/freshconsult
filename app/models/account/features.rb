@@ -80,7 +80,7 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
-    :fetch_ticket_from_ref_first, :skip_ticket_threading, :helpdesk_tickets_by_product, :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel
+    :helpdesk_tickets_by_product, :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
