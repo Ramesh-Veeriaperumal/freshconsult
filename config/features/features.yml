@@ -139,7 +139,7 @@
       :reply_to_based_tickets: 135
       :reports_44: 136
       :disable_agent_forward: 137
-      :resource_rate_limit: 138
+      :unused_138: 138
       :domain_restricted_access: 139
       :sort_by_customer_response: 140
       :unresolved_tickets_widget_for_sprout: 141
@@ -331,7 +331,7 @@
       :auto_article_order: 327
       :business_hours: 328
       :scenario_automations: 329
-      :social_revamp: 330
+      :unused_330: 330
       :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
@@ -457,7 +457,6 @@
   :public_ticket_url: false
   :id_less_tickets: false
   :collision_socket: false
-  :resource_rate_limit: false
   :domain_restricted_access: false
   :ecommerce: false
   :cobrowsing: false
@@ -478,7 +477,6 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :disable_rr_toggle: false
-  :social_revamp: true
   :activity_revamp: true
   :hide_first_response_due: false
   :fluffy_forest: false

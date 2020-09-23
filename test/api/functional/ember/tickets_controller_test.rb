@@ -691,6 +691,19 @@ module Ember
       assert_response 400
     end
 
+    def test_create_with_html_to_plain_text_feature
+      Account.current.launch(:html_to_plain_text)
+      description = '<div><div>test</div><div>hello</div><div>hi</div><div><br></div></div>'
+      params_hash = ticket_params_hash.merge!(description: description)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      response_body = JSON.parse(response.body)
+      created_ticket = Helpdesk::Ticket.last
+      assert_equal created_ticket.description, Helpdesk::HTMLToPlain.plain(description)
+    ensure
+      Account.current.rollback(:html_to_plain_text)
+    end
+
     def test_create_ticket_with_file_field
       attachment = create_file_ticket_field_attachment
       custom_field = create_custom_field_dn('test_file_field', 'file')

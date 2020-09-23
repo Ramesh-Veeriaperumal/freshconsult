@@ -125,8 +125,7 @@ class Account < ActiveRecord::Base
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
-    :bi_reports => false, :social_revamp => true,
-    :custom_dashboard => false,
+    :bi_reports => false, :custom_dashboard => false,
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true, :es_multilang_solutions => false,
@@ -141,7 +140,7 @@ class Account < ActiveRecord::Base
     :gamification_enable => false, :personalized_email_replies => false,
     :id_less_tickets => false, :reply_to_based_tickets => true,
     :collision_socket => false,
-    :resource_rate_limit => false, :disable_agent_forward => false, :call_quality_metrics => false,
+    :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false,
     :marketplace => false, :archive_tickets => false, :compose_email => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,

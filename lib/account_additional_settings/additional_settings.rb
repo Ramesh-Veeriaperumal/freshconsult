@@ -3,8 +3,6 @@ module AccountAdditionalSettings::AdditionalSettings
   include AccountConstants
   include Onboarding::OnboardingRedisMethods
 
-  DEFAULT_RLIMIT = {'helpdesk_tickets' => {'enable' => false},'helpdesk_notes' => {'enable' => false},
-    'solution_articles' => {'enable' => false}}
   ONBOARDING_VERSION_MAXIMUM_RETRY = 5
   
   def email_template_settings

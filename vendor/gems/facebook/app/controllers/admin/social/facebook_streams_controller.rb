@@ -6,7 +6,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   include Admin::Social::FacebookAuthHelper
   before_filter { access_denied unless current_account.basic_facebook_enabled? }
 
-  before_filter :social_revamp_enabled?
   before_filter :fb_client,         :only => [:index, :edit]
   before_filter :set_session_state, :only => [:index]
   before_filter :load_item,         :only => [:edit, :update]
@@ -194,10 +193,4 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   def fb_call_back_url(action = "index") 
     url_for(:host => current_account.full_domain, :action => action)
   end
-  
-  def social_revamp_enabled?
-    redirect_to social_facebook_index_url unless current_account.features?(:social_revamp)
-  end
-
-
 end

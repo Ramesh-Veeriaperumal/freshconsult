@@ -263,7 +263,7 @@ class UserNotifier < ActionMailer::Base
       sent_on: Time.now
     }
     headers.merge!(make_header(nil, nil, account.id, "Notify Facebook Reauth"))
-    @facebook_url    = social_facebook_index_url(:host => account.host)
+    @facebook_url    = admin_social_facebook_streams_url(:host => account.host)
     @fb_page         = facebook_page
     @admin_name      = account.admin_first_name
     mail(headers) do |part|

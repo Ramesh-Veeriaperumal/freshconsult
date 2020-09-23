@@ -73,7 +73,7 @@ module Facebook
 
         def add_as_ticket(thread_key, message)
           message = message.deep_symbolize_keys
-          group_id = Account.current.features?(:social_revamp) ? @fan_page.dm_stream.ticket_rules.first.group_id : @fan_page.group_id
+          group_id = @fan_page.dm_stream.ticket_rules.first.group_id
 
           return if !message || @account.facebook_posts.exists?(post_id: message[:id])
 

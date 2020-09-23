@@ -55,11 +55,11 @@ module Concerns::ApplicationViewConcern
   end
 
   def custom_mailbox_error?
-    redis_key_exists?(format(CUSTOM_MAILBOX_STATUS_CHECK, account_id: Account.current.id))
+    get_others_redis_hash_value(CUSTOM_MAILBOX_STATUS_CHECK, Account.current.id)
   end
 
-  def mailbox_oauth_reauthorization_required?
-    Account.current.check_mailbox_oauth_status || false
+  def mailbox_reauthorization_required?
+    get_others_redis_hash_value(REAUTH_MAILBOX_STATUS_CHECK, Account.current.id)
   end
 
   def livechat_deprecation?

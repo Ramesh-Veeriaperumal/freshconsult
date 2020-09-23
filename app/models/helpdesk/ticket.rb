@@ -1276,11 +1276,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
      (!survey.nil? && survey.can_send?(self,s_while))
   end
 
-  # Instance level spam watcher condition
-  # def rl_enabled?
-  #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?
-  # end
-
   def show_reply?
     (self.twitter? or self.fb_replies_allowed? or self.from_email.present? or self.mobihelp? or self.allow_ecommerce_reply?)
   end
@@ -1620,11 +1615,5 @@ class Helpdesk::Ticket < ActiveRecord::Base
       time_taken = Benchmark.realtime { yield }
       Rails.logger.debug "Time taken: #{time_taken} Ticket: #{display_id} Account: #{account_id}"
     end
-
-    # def rl_exceeded_operation
-    #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
-    #                                                          :user_id => self.requester_id }
-    #   $spam_watcher.perform_redis_op("rpush", ResourceRateLimit::NOTIFY_KEYS, key)
-    # end
 
 end

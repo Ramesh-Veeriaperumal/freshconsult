@@ -50,7 +50,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     assert_nil JSON.parse(response.body)['agent_password_policy']
     assert_equal password_policy.stringify_keys, JSON.parse(response.body)['contact_password_policy']
   ensure
-    Account.any_instance.unstub(:custom_password_policy_enabled?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
   end
 
   def test_account_current_ip
@@ -83,15 +83,41 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.current.unstub(:freshid_migration_in_progress)
   end
 
+  def test_account_freshid_sso_enabled
+    Account.current.stubs(:freshid_sso_enabled?).returns(true)
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    assert_equal true, response.api_meta[:freshid_sso_enabled]
+  ensure
+    Account.current.unstub(:freshid_sso_enabled)
+  end
+
   def test_security_index_public_api
     stub_account
     CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
     get :show, controller_params(version: 'v2')
     assert_response 200
-    match_json(security_index_api_response_pattern)
+    match_json(security_index_api_response_pattern(public_api: true))
   ensure
     unstub_account
     CustomRequestStore.unstub(:read)
+  end
+
+  def test_security_index_public_api_sso
+    stub_account
+    CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
+    Account.any_instance.stubs(:sso_enabled).returns(true)
+    Account.any_instance.stubs(:freshdesk_sso_enabled?).returns(true)
+    Account.any_instance.stubs(:sso_options).returns(HashWithIndifferentAccess.new(sso_type: 'simple', login_url: 'abc.com'))
+    get :show, controller_params(version: 'v2')
+    assert_response 200
+    match_json(security_index_api_response_pattern(public_api: true))
+  ensure
+    unstub_account
+    CustomRequestStore.unstub(:read)
+    Account.any_instance.unstub(:sso_enabled)
+    Account.any_instance.unstub(:freshdesk_sso_enabled?)
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_security_index_private_api
@@ -101,6 +127,90 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     match_json(security_index_api_response_pattern)
   ensure
     unstub_account
+  end
+
+  def test_security_index_private_api_in_non_freshid_v2_accounts_saml
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    Account.any_instance.stubs(:sso_enabled).returns(true)
+    sso_option = HashWithIndifferentAccess.new(sso_type: 'saml', saml_login_url: 'saml_url', saml_logout_url: 'logout_url')
+    Account.any_instance.stubs(:sso_options).returns(sso_option)
+    stub_account
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal sso_option[:sso_type], response_body['sso']['type']
+    assert_equal sso_option[:saml_login_url], response_body['sso']['saml']['login_url']
+    assert_equal sso_option[:saml_logout_url], response_body['sso']['saml']['logout_url']
+  ensure
+    unstub_account
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    Account.any_instance.unstub(:sso_options)
+    Account.any_instance.unstub(:sso_enabled)
+  end
+
+  def test_security_index_private_api_in_non_freshid_v2_accounts_simple_sso
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    Account.any_instance.stubs(:sso_enabled).returns(true)
+    sso_option = HashWithIndifferentAccess.new(sso_type: 'simple', login_url: 'simple_url', logout_url: 'logout_url')
+    Account.any_instance.stubs(:sso_options).returns(sso_option)
+    stub_account
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal sso_option[:sso_type], response_body['sso']['type']
+    assert_equal sso_option[:login_url], response_body['sso']['simple']['login_url']
+    assert_equal sso_option[:logout_url], response_body['sso']['simple']['logout_url']
+  ensure
+    unstub_account
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    Account.any_instance.unstub(:sso_options)
+    Account.any_instance.unstub(:sso_enabled)
+  end
+
+  def test_security_index_private_api_in_oauth2_accounts
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    Account.any_instance.stubs(:sso_enabled).returns(true)
+    sso_option = HashWithIndifferentAccess.new(sso_type: 'oauth2', customer_oauth2: true)
+    Account.any_instance.stubs(:sso_options).returns(sso_option)
+    stub_account
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal sso_option[:sso_type], response_body['sso']['type']
+  ensure
+    unstub_account
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    Account.any_instance.unstub(:sso_options)
+    Account.any_instance.unstub(:sso_enabled)
+  end
+
+  def test_security_index_private_api_in_freshid_saml_accounts
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    Account.any_instance.stubs(:sso_enabled).returns(true)
+    sso_option = HashWithIndifferentAccess.new(sso_type: 'freshid_saml', agent_freshid_saml: true)
+    Account.any_instance.stubs(:sso_options).returns(sso_option)
+    stub_account
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal sso_option[:sso_type], response_body['sso']['type']
+  ensure
+    unstub_account
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    Account.any_instance.unstub(:sso_options)
+    Account.any_instance.unstub(:sso_enabled)
+  end
+
+  def test_security_index_private_api_in_freshid_v2_sso
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(false)
+    stub_account
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    refute response_body.key?(:sso)
+  ensure
+    unstub_account
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
   end
 
   def test_update_notification_emails
@@ -597,9 +707,8 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern(:input, :invalid_field, attribute: 'input')])
   end
-end
 
-private
+  private
 
     def stub_account
       Account.current.stubs(:whitelisted_ips_enabled?).returns(true)
@@ -621,18 +730,20 @@ private
 
     def create_whitelisted_ip(whitelisted_ip)
       Account.current.whitelisted_ip_attributes = whitelisted_ip
-      whitelisted_ips = @account.whitelisted_ip
-      whitelisted_ips.load_ip_info(User.current.current_login_ip)
+      Account.current.whitelisted_ip.load_ip_info(User.current.current_login_ip)
+      Account.current.whitelisted_ip.save
     end
 
     def create_password_policy(password_policy)
-      Account.current.agent_password_policy = PasswordPolicy.new(password_policy)
+      Account.current.build_agent_password_policy(password_policy)
+      Account.current.agent_password_policy.save
     end
 
     def destroy_whitelisted_ip
-      Account.current.whitelisted_ip.destroy
+      Account.current.whitelisted_ip.try(:destroy)
     end
 
     def destroy_password_policy
-      Account.current.agent_password_policy.destroy
+      Account.current.agent_password_policy.try(:destroy)
     end
+end
