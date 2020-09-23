@@ -109,8 +109,8 @@
 			<%= content_tag(:h4, t('agent_info_title'), :class => "title") %>
 			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}".html_safe) unless @user.email.blank? %>
 			<%= content_tag(:div, "#{content_tag(:span,
-									t('user.phone_no'))}".html_safe) if @user.phone.present? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}".html_safe) if @user.mobile.present? %>
+									t('user.phone_no'))}  #{can_make_phone_calls(@user)}".html_safe) if @user.phone.present? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{can_make_mobile_calls(@user)}".html_safe) if @user.mobile.present? %>
 			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}".html_safe) %>
 		</div>
 		<% if ((@user.deleted || !@user.active?) && privilege?(:manage_users)) %>

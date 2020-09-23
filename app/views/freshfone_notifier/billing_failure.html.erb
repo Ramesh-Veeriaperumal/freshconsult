@@ -1,0 +1,13 @@
+<div>
+  Error occured in account <%= @account.id %> :: <%= @account.full_domain %> while calculating the call charge for <%= @args[:call_sid] %>.
+  <div><br></div>
+  Options received :: <%= @args.inspect %>
+  <div><br></div>
+  And the current call is :: <%= @call.inspect %>
+  <div><br></div>
+  And the caller is :: <%= @call.caller.inspect %>
+  <div><br></div>
+  The exception is <%= @exception.message %> : 
+  <div><br></div>
+  <%= @exception.backtrace.first(5).join(":::") %>
+</div>

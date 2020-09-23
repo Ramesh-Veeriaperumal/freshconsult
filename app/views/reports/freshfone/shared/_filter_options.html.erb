@@ -1,0 +1,149 @@
+<!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
+<%= form_tag(export_csv_reports_freshfone_summary_reports_url, { :method => :post, :id => 'report_filters' }) do %>
+<ul class="unstyled">
+
+<li>
+  <h3 class="lead"><%= t('reports.freshfone.filter_report') %>
+    <span class="muted report-close pull-right" id="filter-close-icon">×</span>
+  </h3>
+  </li>
+  <li>
+     <%date_range = @report_date.blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  @report_date
+      %>
+      <label class="control-label"><%= t('reports.select_time_period').html_safe%></label>
+      <%= text_field_tag :date_range, date_range, :class => "required input-large" %>
+  </li>
+  <li>
+    <label class="control-label"><%=t('reports.freshfone.number')%></label>  
+    <input type="hidden" id="freshfone_number"  name="freshfone_number" class="ff_item" />
+  </li>
+  <li>
+      <label class="control-label"><%=t('reports.freshfone.group')%></label>  
+
+      <input type="hidden" id='group_id' name='group_id' class = "filter_item ff_item"/>
+
+      <label class="control-label"><%=t('reports.freshfone.call_type')%></label>
+      <%= select_tag :call_type, options_for_select(call_types,@call_type.to_i), 
+              { :multiple => false, 
+                :class => "select2 filter_item report-metric",
+                      "data-placeholder".to_sym() => t('reports.freshfone.select_call_type')} %>
+
+      <label class="control-label"><%=t('reports.freshfone.business_hours')%></label>  
+
+      <input type="hidden" id='ff_business_hours' name='business_hours' class = "filter_item ff_item"/>
+  </li> 
+    <li>
+      <br/>
+      <a class="btn btn-primary" id="submit" href="javascript:void(0)"><%=t('reports.freshfone.generate_summary')%></a>
+      <a class="btn" id="cancel" href="javascript:void(0)"><%=t('reports.freshfone.filter_close')%></a>
+      <%= submit_tag "Generate PDF", :class => "hide", :id => "generate-pdf" %>
+    </li>
+  </ul>
+<% end %>
+<%= javascript_tag do %>
+jQuery(document).ready(function() {
+  var dateFormat = getDateFormat('mediumDate').toUpperCase();
+  var date_lag = 0;
+  moment.lang('en');
+  var date = { 
+      1:                    moment().subtract((1   + date_lag),"days").format(dateFormat), 
+      7:                    moment().subtract((6   + date_lag),"days").format(dateFormat),
+      30:                   moment().subtract((29  + date_lag),"days").format(dateFormat),
+      90:                   moment().subtract((89  + date_lag),"days").format(dateFormat),
+      endDate:              moment().subtract(date_lag,"days").format(dateFormat),
+      this_week_start:      moment().startOf('isoWeek').format(dateFormat),
+      previous_week_start:  moment().subtract(1, 'weeks').startOf('isoWeek').format(dateFormat),
+      previous_week_end:    moment().subtract(1, 'weeks').endOf('isoWeek').format(dateFormat),
+      this_month_start:     moment().startOf('month').format(dateFormat),
+      previous_month_start: moment().subtract(1,'months').startOf('month').format(dateFormat),
+      previous_month_end:   moment().subtract(1,'months').endOf('month').format(dateFormat),
+      last_3_months:        moment().subtract(2,'months').startOf('month').format(dateFormat),
+      last_6_months:        moment().subtract(5,'months').startOf('month').format(dateFormat),
+      this_year_start:      moment().startOf('year').format(dateFormat)
+}
+
+ jQuery("#date_range").daterangepicker({
+    latestDate: new Date(),
+    presetRanges: [
+          { text: '<%= t('helpdesk_reports.today') %>', 
+            dateStart: 'Today', 
+            dateEnd: 'Today',
+            period : 'today'
+          },
+          { text: '<%= t('helpdesk_reports.yesterday') %>', 
+            dateStart: 'Today-1', 
+            dateEnd: 'Today-1',
+            period : 'yesterday' 
+          },
+          { text: '<%= t('helpdesk_reports.this_week') %>', 
+            dateStart: date.this_week_start, 
+            dateEnd: date.endDate ,
+            period : "this_week" 
+          },
+          { text: '<%= t('helpdesk_reports.previous_week') %>', 
+            dateStart: date.previous_week_start, 
+            dateEnd: date.previous_week_end ,
+            period : "previous_week" 
+          },
+          { text: '<%= t('helpdesk_reports.last_num_days', num: 7) %>', 
+            dateStart: 'Today-6', 
+            dateEnd: 'Today' ,
+            period : "last_7"
+          },
+          { text: '<%= t('helpdesk_reports.this_month') %>',
+            dateStart: date.this_month_start,
+            dateEnd: 'Today',
+            period : "this_month"
+          },
+          { text: '<%= t('helpdesk_reports.previous_month') %>',
+            dateStart: date.previous_month_start,
+            dateEnd: date.previous_month_end,
+            period : "previous_month"
+          },
+          { text: '<%= t('helpdesk_reports.last_num_days', num: 30) %>',
+            dateStart: 'Today-29', 
+            dateEnd: 'Today',
+            period : "last_30"
+          },
+          {
+            text: "<%= t('helpdesk_reports.last_num_months', :num => 3 ) %>",
+            dateStart: date.last_3_months,
+            dateEnd: 'Today',
+            period : "last_3_months"
+          },
+          { 
+            text: '<%= t('helpdesk_reports.last_num_days', num: 90) %>',
+            dateStart: 'Today-89',  
+            dateEnd: 'Today',
+            period : "last_90"
+          },
+          {
+            text: "<%= t('helpdesk_reports.last_num_months', :num => 6) %>",
+            dateStart: date.last_6_months,
+            dateEnd: 'Today',
+            period : "last_6_months"
+          },
+          {
+            text: "<%= t('helpdesk_reports.this_year') %>",
+            dateStart: date.this_year_start,
+            dateEnd: 'Today',
+            period : "this_year"
+          }
+    ],
+    presets: {
+      dateRange: '<%= t('helpdesk_reports.date_range') %>'
+    },
+    dateFormat: getDateFormat('datepicker'),
+    closeOnSelect: true,
+    earliestDate: Date.parse('t - 6 m'),
+    rangeDurationMonths: parseInt('<%=Reports::FreshfoneReport::MAX_ALLOWED_MONTHS%>'),
+    presetRangesCallback : true
+  });
+  
+
+  jQuery("#date_range").bind('keypress keyup keydown', function(ev) {
+    ev.preventDefault();
+    return false;
+  });
+ });
+<% end %>

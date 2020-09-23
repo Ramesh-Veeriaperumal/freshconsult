@@ -1,0 +1,28 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_dashboard' %>
+
+<ul data-tabs="tabs" class="tabs nav-tabs roundrobin-tabs freshfone-dashboard-nav-tabs" id='freshfone_calls_dashboard'>
+  <li class="first">
+    <a id="queued_calls-tab" href="#queued_calls"><%= t('helpdesk.dashboard.freshfone.queued_calls') %> (<span class='freshfone_queue_call_count'><%= @queued_calls.count %></span>)</a>
+  </li>
+  <li>
+    <a id="active_calls-tab" href="#active_calls"><%= t('helpdesk.dashboard.freshfone.active_calls') %> (<span class='freshfone_active_call_count'><%= @freshfone_active_calls.count %></span>) </a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div id="queued_calls" class="tab-pane freshfone-queued-calls">
+    <%= render :partial => "freshfone_queued_calls" %>
+  </div>
+  <div id="active_calls" class="tab-pane freshfone-active-calls">
+    <%= render :partial => "freshfone_active_calls" %>
+  </div>
+</div>
+<div class='hide' id='freshfone_dashboard_events'></div>
+
+<%= javascript_tag do %>
+    if (typeof freshfone === "undefined") { freshfone = {}; }
+    freshfone.join="<%= t('freshfone.dashboard.join') %>";
+    freshfone.leave="<%= t('freshfone.dashboard.leave') %>";
+    freshfone.oncall="<%= t('freshfone.dashboard.oncall') %>";
+    freshfone.mute="<%= t('freshfone.widget.mute') %>";
+    freshfone.unmute="<%= t('freshfone.widget.unmute') %>";
+<% end %>

@@ -115,6 +115,15 @@
 		</div>
 <% end %>
 
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
+  	<%= javascript_tag do %>
+  	jQuery(document).ready(function(){
+  		if(App.Kissmetrics != undefined){	
+	 		App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
+	 	}
+	 });
+	<% end %>
+<% end %>
 <script type="text/javascript">
 	window.HelpdeskReports = window.HelpdeskReports || {};
 	HelpdeskReports.locals = HelpdeskReports.locals || {};

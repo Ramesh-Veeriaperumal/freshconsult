@@ -1,0 +1,64 @@
+<% if freshfone_allowed?  %>
+
+	<%= stylesheet_link_tag_with_rtl :'cdn/freshfone_admin' %>
+	<div class="freshfone_subscription">
+		<div class="freshfone_subscription_header row-fluid">
+      <h3 class= "title span8"><%= t("Phone") %></h3>
+      <a href="http://freshdesk.com/freshfone/pricing" target="_blank" class="pull-right mt10"><%= t('freshfone.subscription.see_detailed_pricing') %></a>
+    </div>
+		<ul class="ui-form">
+			<li class="current-balance">
+				<p class="current-balance-text"><%= t('freshfone.subscription.current_balance') %></p>
+				<div class="current-balance-amt"><%= current_freshfone_balance(@freshfone_credit) %></div>
+				<% unless default_currency? %>
+					<p class="current-balance-followup">(<%= t('freshfone.subscription.followup') %>)</p>
+				<% end %>
+			</li>
+		  <li class="recharge-now">
+		  	<% if current_account.subscription.active? and current_account.has_credit_card? %>
+		  		<% if @freshfone_credit.new_record? %>
+            <%= render :partial => "purchase_freshfone_credits" %>
+			  	<% else %>
+			  		<div class="choose-plan-title"><a class="recharge-funds" href="#"> <%= t('freshfone.subscription.purchase_text') %> </a></div>
+            <div class="show-freshfone-credits" style="display:none;" >
+              <%= render :partial => "purchase_freshfone_credits" %>
+            </div>
+            <div class="choose-plan-title"><a class="auto-recharge" href="#"> <%= t('freshfone.subscription.setup_auto_recharge') %> </a></div>
+            <div class="show-freshfone-auto-recharge" style="display:none;" >
+              <%= render :partial => "freshfone_auto_recharge" %>
+            </div>
+			  	<% end %>
+				<% else %>
+			  	<p class="alert alert-error">
+						<strong><%= t('admin.day_passes.index.no_credit_card') %> </strong> <br /> <%= t('freshfone.subscription.no_credit_card_text') %>
+						<br />
+						<br />
+						<%= link_to( t('admin.day_passes.index.add_payment_info'), billing_subscription_url, :class => "btn" ) %>
+				 </p>
+			 <% end %>
+		  </li>
+		</ul>
+	</div>
+<% end %>
+
+<script type="text/javascript">
+	(function($){
+
+    $(".recharge-funds").on("click", function(ev){
+      ev.preventDefault();
+      $('.show-freshfone-credits').animate({
+        height: ['toggle', 'linear']
+      }, 100, 'easeInOut');
+      //$(".recharge-funds").toggleClass("plan-expand-click");
+    });
+
+    $(".auto-recharge").on("click", function(ev){
+      ev.preventDefault();
+      $('.show-freshfone-auto-recharge').animate({
+        height: ['toggle', 'linear']
+      }, 100, 'easeInOut');
+      //$(".recharge-funds").toggleClass("plan-expand-click");
+    });
+
+  })(jQuery);
+</script>

@@ -39,8 +39,7 @@ module Facebook
           # When a comment is added on a cover photo and is not by the company
           elsif convert_cover_photo_comment_to_ticket?(self)
             self.fd_item = add_as_ticket(self.fan_page, self.koala_comment, ticket_attributes, self.koala_post)
-          #Post will be converted to a ticket only when social_revamp is enabled 
-          elsif social_revamp_enabled? && convert_comment_to_ticket?(self, convert_company_comment_to_ticket) && !cover_photo_comment
+          elsif convert_comment_to_ticket?(self, convert_company_comment_to_ticket) && !cover_photo_comment
             # This gets the root parent post.
             original_post = get_koala_feed(POST_TYPE[:post], post_id)
             self.fd_item = add_as_ticket(self.fan_page, self.koala_comment, ticket_attributes, original_post)

@@ -756,6 +756,34 @@ id:
         filter_report: Laporan Filter oleh
         ticket_type: Jenis Tiket
         select_billable: Pilih ditagih/Non-Ditagih
+    freshfone:
+      time_period: Periode Waktu
+      num_of_transfered: Jumlah Transfer
+      no_agent: '- Tidak ada Agen -'
+      group: Kelompok
+      total_unanswered_calls: Panggilan Tak Terjawab
+      call_type: Tipe Panggilan
+      filter_option_all_calls: Semua Panggilan
+      filter_close: Tutup
+      avg_handle_time: Waktu Menangani Rata-Rata
+      all_numbers: Semua Nomor
+      filter_report: Laporan Filter oleh
+      number: Nomor
+      business_hours: Jam Kerja
+      no_external: Transfer yang dibuat ke nomor eksternal tidak termasuk
+      summary_title: 'Ringkasan Panggilan Agen '
+      generate_summary: Menghasilkan
+      num_of_calls: Jumlah Panggilan
+      unanswered_transfers: Transfer Tidak Terjawab
+      unanswered_count: Tidak terjawab
+      select_call_type: Pilih Tipe Panggilan
+      options:
+        all_groups: Semua Grup
+        unassigned: Batal ditugaskan
+        incoming: Masuk
+        outgoing: Keluar
+      filter_by_title: Difilter menurut
+      total_voice_mail: Surat Suara
     select_customer: Pilih Pelanggan
     summary_report:
       avg_1st_response_time: Rata-rata pertama <br> waktu respon
@@ -3452,6 +3480,186 @@ id:
         other: menyukai ini
   title: Jabatan
   free_plan_agents_v2: Agen tanpa batas
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Beli nomor lokal atau bebas pulsa dan dukung pelanggan di mana saja di seluruh dunia melalui telepon
+      greetings: Salam
+      settings: Pengaturan
+      important: Penting
+      toll_free: Bebas Pulsa
+      purchase_credit_text: >-
+        Beli kredit untuk membeli nomor, buat dan terima panggilan menggunakan saluran telepon.
+      suspended_alert: >-
+        <b>Penting:</b> Menonaktifkan saluran telepon Anda tidak akan mencegah sewa bulanan pada nomor Anda. Untuk menghindari pembebanan, hapuslah nomor yang dibeli.
+      freshfone_numbers_title: Telepon
+      welcome_page:
+        title_text: Telepon
+      number:
+        simultaneous: Panggil semua agen
+        round_robin: Hubungi terlebih dahulu agen diam
+      numbers:
+        sidebar_content_v2: >-
+          Menggunakan saluran telepon, Anda dapat membuat dan menerima panggilan melalui peramban Anda, ponsel, atau menggunakan saluran telepon di aplikasi seluler Freshdesk. Ini terintegrasi erat dengan sistem tiket Freshdesk. Jadi, Anda dapat melacak panggilan telepon dengan merekamnya dan mengonversinya menjadi tiket kapan pun diperlukan. <br/><br/> <b>Menyiapkan Telepon</b></br>Untuk mulai menggunakan ponsel, Anda harus mengaktifkannya terlebih dahulu dan membeli nomor dukungan. Anda dapat membeli nomor lokal dari <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'> negara-negara yang tercantum di sini</a> dan melakukan atau menerima panggilan dari mana saja di seluruh dunia. Jika pelanggan Anda akan menelepon Anda di AS, Inggris Raya, atau Kanada, Anda juga dapat membeli nomor dukungan bebas pulsa (atau freephone di Inggris Raya). <br/><br/><b>Berikan Dukungan Telepon Lengkap</b><br/>Dengan saluran telepon kami, Anda dapat<br/><ul><li>Mulai membuat dan menerima panggilan menggunakan peramban web atau ponsel</li><li>Membuat pesan suara, panggilan terusan, atau mentransfer panggilan kepada agen mana pun, di mana pun</li><li>memantau panggilan, nimbrung saat diperlukan, menambahkan agen lain ke dalam panggilan yang sedang berlangsung, dan banyak lagi*</li></ul><br/><p>*Hubungi <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> untuk mengaktifkan fitur-fitur tingkat lanjut untuk akun Anda. Ini termasuk pemantauan panggilan, call barging, konferensi panggilan, masking panggilan, dan metrik durasi panggilan.</p><br/>
+        sidebar_title: Saluran telepon
+        delete_alert: >-
+          Nomor yang pernah dihapus tidak dapat dibeli lagi. Anda yakin ingin menghapus nomornya?
+        buy_loading_text: Membeli...
+        buy_phone_numbers: Beli Nomor telepon
+        caller_id:
+          no_number_added: Tidak ada ID penelepon yang ditambahkan
+          call_id_mask: Samarkan nomor ini
+          manage_caller_id: 'Kelola ID Pemanggil '
+          add_new: Tambah Baru
+        tour_link: Bantu saya menyiapkan saluran telepon
+        failure_purchase: >-
+          Tidak dapat membeli nomor telepon. Pastikan alamat tersebut adalah alamat lokal yang valid di <span class='certification-country'></span>.
+        buy: Beli Nomor
+        buy_button_text: Beli
+        address:
+          address: Alamat
+          state: Negara bagian/Provinsi/Wilayah
+          city: Kota
+          postal_code: Kode Pos
+          required_field: Semua bidang diperlukan
+          name: Perusahaan/Nama
+        setup:
+          info_text: >-
+            Sebelum mulai menggunakan saluran telepon, Anda harus terlebih dahulu membeli nomor panggilan untuk diberikan kepada pelanggan Anda. Anda dapat membeli nomor lokal di <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'> negara-engara yang tercantum di sini </a>. Jika pelanggan Anda akan menelepon Anda dari AS, Inggris Raya, atau Kanada, Anda juga dapat menawarkan nomor telepon bebas pulsa. <br/><br/>Anda dapat membeli beberapa nomor telepon dari berbagai negara dan menyiapkan helpline bebas pulsa di dalam Freshdesk tanpa menggunakan layanan pihak ketiga. Anda akan dikenakan tarif standar untuk panggilan masuk, keluar, dan terusan dari helpdesk Anda. Lihat <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>tarif panggilan di sini</a>.<br/><br/>Setelah Anda membeli nomor telepon untuk helpline dukungan Anda, semua panggilan masuk akan didistribusikan kepada agen yang masuk ke helpdesk Anda. Selain itu, agen Anda dapat menerima panggilan telepon dari dalam peramban atau meneruskannya ke telepon kerja mereka secara otomatis.
+          title_text: Menyiapkan pusat panggilan
+        sidebar_content: >-
+          Menggunakan saluran telepon, Anda dapat membuat dan menerima panggilan melalui peramban Anda, ponsel, atau menggunakan saluran telepon di aplikasi seluler Freshdesk. Ini terintegrasi erat dengan sistem tiket Freshdesk. Jadi, Anda dapat melacak panggilan telepon dengan merekamnya dan mengonversinya menjadi tiket kapan pun diperlukan. <br/><br/> <b>Menyiapkan Telepon</b></br>Untuk mulai menggunakan ponsel, Anda harus mengaktifkannya terlebih dahulu dan membeli nomor dukungan. Anda dapat membeli nomor lokal dari <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>negara-negara yang tercantum di sini</a> dan melakukan atau menerima panggilan dari mana saja di seluruh dunia. Jika pelanggan Anda akan menelepon Anda di AS, Inggris Raya, atau Kanada, Anda juga dapat membeli nomor dukungan bebas pulsa (atau freephone di Inggris Raya). <br/><br/><b>Berikan Dukungan Telepon Lengkap</b><br/>Dengan saluran telepon kami, Anda dapat<br/><ul><li>Mulai membuat dan menerima panggilan menggunakan peramban web atau ponsel</li><li>Membuat pesan suara, panggilan terusan, atau mentransfer panggilan kepada agen mana pun, di mana pun</li><li>memantau panggilan, nimbrung saat diperlukan, menambahkan agen lain ke dalam panggilan yang sedang berlangsung, dan banyak lagi*</li></ul><br/><p>*Hubungi <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> untuk mengaktifkan fitur-fitur tingkat lanjut untuk akun Anda. Ini termasuk pemantauan panggilan, call barging, konferensi panggilan, masking panggilan, dan metrik durasi panggilan.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Pelajari selengkapnya tentang kemampuan dan fitur hebat dari telepon</a><p>
+        not_available: Tidak ada hasil yang dikembalikan. Cobalah istilah pencarian yang lain
+        manage: Kelola
+        address_certification_text: >-
+          Untuk membeli nomor telepon, Anda harus memberikan alamat kantor atau pribadi di <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Nomor telepon ini akan dibebankan <strong><span class='number-rate'></span> bulanan</strong>.
+        buy_phone_credits: Beli Pulsa Telepon
+      feature_request_content:
+        success: Kami akan menghubungi Anda dalam waktu dua hari kerja.
+        recording_info: Merekam dan mengonversikan semua panggilan Anda menjadi tiket
+        button_text: Minta Aktifkan
+        compare_trial_and_full: Bandingkan versi uji coba gratis dan lengkap
+        activation_disclaimer: Anda dapat menggunakan semua fitur untuk periode tak terbatas
+        learn_more: pelajari lebih banyak
+        ivr_info: >-
+          Melakukan pemantauan panggilan, konferensi panggilan, pengarahan panggilan menggunakan IVR, dan banyak lagi
+        trial_or: ATAU
+        trial_button_text: Aktifkan versi uji coba gratis
+        error_message: Maaf kami tidak dapat memenuhi permintaan anda saat ini. Coba lagi nanti.
+        title_text: Telepon
+        trial_version_disclaimer: Anda dapat menggunakan gratis fitur terbatas selama 15 hari
+        pricing: Lihat semua tarif panggilan dan negara yang didukung
+        number_info: Beli nomor lokal dan bebas pulsa untuk lebih dari 40 negara
+        video_title: Tonton video untuk mengetahui apa yang dapat Anda lakukan dengan saluran telepon
+        heading_text: Dukung pelanggan Anda menggunakan saluran telepon
+      local: Lokal
+      search: Menurut digit atau frasa
+      ivr:
+        turn_on: 'Pada'
+        simple_message_title: Pesan Sederhana
+        save: Simpan
+        turn_off: 'Mati'
+        rename: namai ulang
+        add_new_option: Tambah Opsi <b>Tekan Tombol</b>
+        add_new_menu: Tambah <b>Menu</b> Baru
+        male: Suara Pria
+        input_number: Masukkan nomor
+        invalid_number_format: >-
+          Masukkan nomor telepon dengan awalan '+' dan kode negara di depannya
+        ivr_message_title: Respons suara interaktif (IVR)
+        message_type: Tipe Pesan
+        action: Tindakan
+        female: Suara Wanita
+        delete_menu: Hapus menu
+        previewing: Mempratinjau...
+        saving: Menyimpan...
+        add_new_menu_from_option: Tambah menu baru
+        preview: Pratinjau
+        done: selesai
+        keypress: Tekan Tombol
+        welcome_message: Pesan Sambutan
+      number_settings:
+        read_message: Teks ke suara
+        queue_position_preference: Bacakan posisi antrean
+        greeting_message: Masukkan pesan Anda di sini
+        queue_wait_message: Pesan tunggu antrean
+        number_accessible: Dapat diakses oleh
+        all_groups: Semua Grup
+        record_all: Rekam semua panggilan
+        voicemail_on: 'Pada'
+        max_queue_calls: Panggilan Maksimum dalam Antrean
+        cancel: Membatalkan
+        routing_message: Ketika beberapa agen tersedia secara daring...
+        non_business_hours: Terima Panggilan selama…
+        non_business_hours_message: Pesan di luar jam buka
+        recorded_voice: Suara Terekam
+        group: 'Putar pesan dan hubungi agen dalam '
+        queue_position_enable: 'HIDUP'
+        recording_privacy_public: Terlihat oleh pelanggan dan agen
+        call_wait_time: dengan waktu tunggu maksimum
+        wait_music: Musik Tunggu
+        recording_help_info: Hidupkan mikrofon. Durasi <5 mnt.
+        record_alert: >-
+          Pedoman rekaman panggilan di sebagian besar negara mewajibkan untuk memberi tahu pelanggan bahwa panggilannya sedang direkam. Sesuaikan konfigurasi pesan sapaan dengan benar.
+        record_none: Jangan rekam panggilan
+        non_availability_message: Pesan Ketidaktersediaan
+        voicemail_message: Pesan Surat Suara
+        record_voice: Rekam suara Anda
+        voicemail_off: 'Mati'
+        transcript_voice: Suara Transkrip
+        hunt_type: Pengarahan Panggilan
+        name: Nama
+        voicemail: Pesan Suara
+        record_calls: Rekam Panggilan
+        anytime: Selalu Sedia
+        upload_voice: Unggah berkas audio
+        business_hours: Jam Kerja
+        call_wait_time_suffix: ' per panggilan'
+        hold_music: Musik Tahan
+        start_recording: Mulai perekaman
+        title_text: Mengelola pusat panggilan Anda
+        attachment_help_text: Menerima berkas audio (MP3) < 5 MB
+        queue_position_disable: 'MATI'
+        queue_position_message_placeholder: 'Anda sedang dalam antrean. Posisi antrean Anda adalah {{queue.position}}'
+        preparing_recording: Mempersiapkan pesan Anda...
+        info_content: >-
+          <b>Menugaskan panggilan telepon kepada agen dan grup</b></br>Anda dapat menyiapkan sistem respons suara interaktif (IVR) dan mengarahkan panggilan kepada grup atau agen yang berbeda di tim Anda. Misalnya, panggilan pelanggan dapat diteruskan kepada tim Dukungan ketika pelanggan menekan 1, atau kepada tim Penjualan ketika pelanggan menekan 2.<br/>Selain itu, Anda juga dapat menyesuaikan pesan interaktif yang akan dimainkan kepada pelanggan dengan cara merekam suara Anda, mengunggah berkas, atau menggunakan fitur teks ke suara.<br><br><b>Menyesuaikan nomor Anda</b><br>Anda juga dapat mengonfigurasikan masing-masing nomor secara terpisah dan memiliki sekumpulan kustomisasi sendiri. Ini termasuk pengaturan dasar seperti jumlah maksimum orang dalam antrean dan waktu tunggu maksimum untuk pelanggan Anda. Jika salah satunya terpenuhi, pesan tak tersedia akan dimainkan kepada pelanggan Anda secara otomatis.<br/>Saat Anda mengaktifkan perekaman panggilan, setiap panggilan telepon di seluruh helpdesk Anda direkam dan terhubung ke tiket Anda, dan rekaman dapat dibuat tersedia untuk pelanggan ataupun dirahasiakan. Anda juga dapat membatasi saluran telepon Anda dari menerima panggilan di luar jam buka. Misalnya, Anda dapat menyiapkan dua jalur dukungan, satu untuk menerima panggilan hanya selama jam kerja, sedangkan satu lagi helpline prioritas tinggi yang akan senantiasa tersedia.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Baca selengkapnya mengenai cara menyesuaikan nomor Anda</a>
+        recording_privacy: Visibilitas Perekaman
+        audio_upload: Unggah
+        recording_privacy_private: Terlihat hanya oleh agen
+        business_calendar: Pilih Jam Buka
+        queue_position_message_alert: >-
+          Untuk membaca posisi antrean, gunakan placeholder {{queue.position}} <br/>, mis. Anda sedang dalam antrean. Posisi antrean Anda adalah {{queue.position}}
+        name_placeholder: Masukkan nama yang mudah untuk nomor Anda
+        welcome_message: Pesan Sambutan
+        change: mengubah
+        stop_recording: <span></span>Stop Perekaman
+      trial:
+        request_activation_msg: >-
+          Anda dapat memilih untuk menggunakan hanya satu nomor dari sejumlah negara terbatas selama periode uji coba telepon.<br> Namun, Anda dapat membeli beberapa nomor dari 41 negara jika Anda mengaktifkan versi penuhnya
+        activate_btn_text: Minta aktifkan
+        numbers:
+          search:
+            after_activation_request: >-
+              Anda telah meminta aktivasi saluran telepon <br> Kami akan menghubungi Anda dalam 2 hari kerja.
+            buy_confirmation: Anda yakin ingin mengambil nomor ini?
+            can_use_after_activation: >-
+              Anda dapat terus menggunakan nomor ini ketika Anda mengaktifkan saluran telepon.
+        requested_activation: Kami telah menerima permintaan aktivasi Anda<br>Permintaan sedang diproses
+    subscription:
+      recharge_now_text: Isi ulang saldo Anda dengan pembayaran satu kali
+      purchase_credits: Beli Kredit
+      setup_auto_recharge: Siapkan isi ulang otomatis
+      auto_recharge_amt: Isi ulang otomatis nominal
+      see_detailed_pricing: Lihat penetapan harga lengkap
+      followup_text: senilai pulsa telepon
+      auto_recharge_text: Kami hanya akan menagih akun Anda ketika saldo di bawah $5
+      purchase_text: Beli saldo telepon
+      current_balance: Sisa saldo Anda
+      followup: senilai pulsa telepon
+      no_credit_card_text: Masukkan informasi pembayaran untuk membeli pulsa telepon
   special_beta_offer: Penawaran khusus untuk akun Beta
   days: Hari
   tickets_filter:

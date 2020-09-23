@@ -61,6 +61,7 @@ class OmniChannelUpgrade::FreshchatAccountTest < ActionView::TestCase
   end
 
   def test_freshchat_account_worker_succeeds_without_errors
+    Account.any_instance.stubs(:freshfone_enabled?).returns(false)
     fc_account_object = Freshchat::Account.new(app_id: 'app-bundle-id')
     Account.any_instance.stubs(:create_freshchat_account).returns(fc_account_object)
     Account.any_instance.stubs(:freshchat_account).returns(fc_account_object)
@@ -77,6 +78,7 @@ class OmniChannelUpgrade::FreshchatAccountTest < ActionView::TestCase
     assert_equal Freshid::V2::AccountDetailsUpdate.jobs.size, 1
     assert_equal Billing::FreshchatSubscriptionUpdate.jobs.size, 1
   ensure
+    Account.any_instance.unstub(:freshfone_enabled?)
     Account.any_instance.unstub(:create_freshchat_account)
     Account.any_instance.unstub(:freshchat_account)
     Account.any_instance.unstub(:omni_chat_agent_enabled?)

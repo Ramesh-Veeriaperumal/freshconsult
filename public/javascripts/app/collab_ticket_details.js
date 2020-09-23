@@ -115,6 +115,9 @@ window.App = window.App || {};
           $('[rel=activity_container]').prepend(response);
           self.updateShowMore();
           trigger_event("ticket_show_more",{})
+          try {
+            freshfonePlayerSettings();
+          } catch (e) { console.log("freshfonePlayerSettings not loaded");}
         });
       });
     },

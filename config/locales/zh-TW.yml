@@ -2641,6 +2641,7 @@ zh-TW:
         success: 應用程式已成功安裝。
         error: 安裝應用程式時發生錯誤。
         cti_error: 無法啟用多種 CTI 應用程式。
+        freshfone_alert: 啟用您的電話管道時，無法啟用 CTI 應用程式。
         cloud_element_success: 整合已透過預設設定啟用。
         cloud_element_settings_failure: 檢查設定並重新啟用。
         no_feature_error: 請聯絡支援人員並先啟用 CRM 同步功能
@@ -2697,6 +2698,21 @@ zh-TW:
       domain_restriction: 網域限制的地方。此電子郵件是不允許的。
       use_admin_cred: 請使用管理員憑證以啟用連結。
       wrong_admin_cred: 給定的憑證似乎錯誤。
+    freshfone:
+      credits:
+        successful_purchase: 成功地採買電話信用額度。
+        unsuccessful_purchase: 採買電話額度時出現錯誤。
+        invalid_recharge_amount: 輸入一個有效的充值金額
+      number:
+        successful_purchase: 成功購買電話號碼。
+        unsuccessful_purchase: 購買電話號碼發生錯誤。
+        invalide_address_error: '無法購買電話號碼。請確認該地址在%{country}是有效的本地地址。'
+        blank_message: '%{num_type}不能為空'
+        invalid_message_length: '%{num_type}不能超過4096個字。'
+        add_blacklist_success: 號碼成功封鎖
+        add_blacklist_failure: 號碼不能被封鎖
+        remove_blacklist_success: 號碼成功解鎖
+        remove_blacklist_failure: 號碼不能被解鎖
     profile:
       api_key:
         reset_success: API密鑰已成功重設。
@@ -3603,6 +3619,8 @@ zh-TW:
       agents_description: 將團隊新增至帳戶，讓團隊與您一起探索 Freshdesk。
       support_email_title: 設定支援電子郵件
       support_email_description: 新增支援電子郵件，以將客戶訊息傳送至 Freshdesk
+      freshfone_number_title: 購買電話號碼
+      freshfone_number_description: 購買電話號碼並開始接聽來自客戶的電話。
       twitter_title: 新增 Twitter 帳號
       twitter_description: 在 Twitter 尋找與您相關的提及內容和重要關鍵字。
       automation_title: 設定自動化規則
@@ -7037,8 +7055,21 @@ zh-TW:
         no_agents: '-沒有客服-'
         back: 返回
       freshfone:
+        phone: 電話
+        sort_by: 排序方式依據
+        last_modified: 最近活動
+        name: 名稱
         accepting: 接受
         not_accepting: 不接受
+        call_in_progress: 通話中
+        in_busy_state: 忙碌
+        agent_on_call: 客服待命中
+        no_agents: '-沒有客服-'
+        no_activity: 沒有活動
+        queued_calls: 在等待隊列中
+        active_calls: 在交談
+        no_queue_calls: 沒有通話在等待隊列中
+        no_active_calls: 沒有通話正在進行
       livechat:
         chat: 即時聊天
         accepting: 接受
@@ -9343,6 +9374,51 @@ zh-TW:
     customer_activity_title: 活動報告
     helpdesk_activity_title: 幫助台活動報告
     satisfaction_title: 客戶滿意度報告
+    freshfone:
+      options:
+        incoming: 傳入的
+        outgoing: 傳出的
+        all_groups: 所有群組
+        unassigned: 未分發; 未分配
+      range_exceed: 範圍不能超過90天
+      filter_by_title: 篩選依據
+      time_period: 時間區間
+      ff_report_title: 電話摘要
+      summary_title: '處理人電話摘要 '
+      agent: 客服
+      group: 群組
+      call_type: 通話型態
+      business_hours: 營業時間
+      filter_option_all_calls: 所有通話
+      filter_option_within_business_hours: 工作時間之內
+      filter_option_outside_business_hours: 工作時間以外
+      filter_report: 編輯篩選器
+      select_agent: 選擇客服
+      select_group: 選擇群組
+      select_call_type: 選擇聊天類型
+      select_number: 選擇一個號碼
+      all_numbers: 所有號碼
+      all_call_types: 所有的
+      number: 號碼; 數字
+      avg_handle_time: 平均處理時間
+      num_of_calls: 通話數
+      total_answered: 回應的通話
+      total_voice_mail: 語音郵件
+      total_duration: 總持續時間
+      agent_calls_count: 通話
+      total_unanswered_calls: 未接電話
+      num_of_transfered: 轉接數
+      num_of_external_transfers: 外部轉接
+      unanswered_transfers: 未回應轉接
+      answered_percentage: 答覆率 ％
+      generate_summary: 產生
+      filter_close: 關閉
+      unanswered_count: 未答復的
+      others: 其他的
+      external: 外部號碼
+      includes_transfer: 包含轉接通話
+      no_agent: '-沒有處理人-'
+      no_external: 外部號碼的轉接不包括在內
     time_sheets:
       billable: 計費時間
       non_billable: 非計費時間
@@ -10736,6 +10812,591 @@ zh-TW:
     recording_on_process: >-
       記錄正在處理中。<a href='#' target='_parent'
       id='checkfreshfoneaudio'>在幾分鐘後再確認</a>一次
+    not_enough_credit: 沒有足夠信用額度！
+    recharge: 充值
+    ff_number: 電話號碼
+    online_availability_text: 可用：
+    acw_availability_text: 移至可用：
+    via_browser: 透過瀏覽器/應用程式
+    via_phone: 透過電話
+    forwarded_call_message: '您正收到來自 %{caller_info} 的電話。請按 1 以接聽，按 2 以忽略。'
+    invalid_input_message: 請輸入有效的輸入內容。
+    subscription:
+      auto_recharge_text: 當餘額低於$5我們將向您的帳戶索取費用
+      current_balance: 你目前的餘額
+      purchase_text: 購買電話信用額度
+      setup_auto_recharge: 設定自動加值
+      no_credit_card_text: 輸入付款資料以購買電話信用額度
+      recharge_now_text: 重填您一次性付款的餘額
+      auto_recharge_amt: 自動加值金額
+      see_detailed_pricing: 檢視詳細價格
+      followup: 電話額度總值
+      followup_text: 電話額度總值
+      purchase_credits: 購買額度
+    dialpad:
+      not_valid_number: 請輸入有效的數字
+      could_be_invalid_number: 可能是無效的數字。
+      invalid_number_continue_call: 再按一次通話鍵
+      not_enough_credit: 沒有足夠信用額度
+      restricted_country: 受限制的國家
+      already_in_call: 同時撥出限制
+      in_acw_state: 從「通話後工作狀態」移出以開始撥打電話
+      strange_number: 不能撥打一個受限制的號碼
+      move_to_dialer: 回到撥號器
+      connect_call: 通話
+      dialpad_placeholder: 鍵入名稱和號碼
+    search:
+      work_phone: 工作; 職業
+      mobile_phone: 手機
+    call_status:
+      default: ''
+      completed: 完成
+      blocked: 被封鎖的
+      busy: 忙碌
+      missedcall: 未接來電
+      noanswer: 沒回應
+      canceled: 取消的
+      failed: 失敗的
+      in_progress: 進行中
+      voicemail: 語音信箱
+      restricted: 受限制的
+      all_calls: 所有通話
+      answered: 回應的
+      on-hold: 保留
+      queued: 排隊的
+      ringing_abandon: 放棄通話（Ringing）
+      ivr_abandon: 放棄通話（IVR）
+      queue_abandon: 放棄通話（Queue）
+    transfer_type:
+      blind: 盲轉
+      warm: 熱轉接
+    general:
+      suspended_account_msg: 你的電話渠道目前已暫停。請啟用電話撥打和接聽電話。
+      suspended_on_low_balance_msg: 你的電話渠道已經暫停，由於餘額不足。請充值來啟用。
+      trial_expired: 您的電話管道試用已過期。請啟動以撥打和接聽電話。
+    dashboard:
+      title: 電話
+      in_conversation: 交談中
+      in_queue: 在等待隊列中
+      waiting: 等候中
+      available_agents: 可聯繫的客服
+      unavailable_agents: 忙碌的客服
+      freshfone_recharge_alert_new: 你的電話信用額度不足，無法撥打或接聽電話。請聯繫您的帳戶管理員。
+      admin_freshfone_recharge_alert_new: 你的電話信用額度不足，無法撥打或接聽電話。請<a href='/subscription'>充值</a>
+      low_credit: 額度過低
+      trial:
+        title: 試用
+        expired_title: 試用已過期
+        inbound_minutes_left:
+          one: 來電：剩餘 1 分鐘
+          other: '來電：剩餘 %{minutes} 分鐘'
+        outbound_minutes_left:
+          one: 撥出：剩餘 1 分鐘
+          other: '撥出：剩餘 %{minutes} 分鐘'
+        trial_days_left:
+          one: 試用期剩餘 1 天
+          other: '試用期剩餘 %{days} 天'
+        activate: >-
+          <div data-removable='true'>若要持續使用電話管道，請<a href='#'
+          id='freshfone_feature_request'>啟動</a>您的電話帳戶</div>
+      join: 加入
+      leave: 離開
+      oncall: 待命的
+    widget:
+      ignore: 忽略
+      accept: 接受
+      answer: 接聽
+      answering: 接聽中…
+      end_call: 結束通話
+      mute: 靜音
+      unmute: 取消靜音
+      hold: 保留
+      holding: 很抱歉，無法保留..請稍後再試...
+      hold_success: 保留現在通話
+      add_or_transfer_call: 新增或轉接通話
+      add_agent_to_call: 加入通話
+      warm_transfer: 熱轉接
+      blind_transfer: 盲轉
+      transfer_call: 通話轉接
+      dialpad: 撥號盤
+      cancel: 取消
+      call_notes: 電話備註
+      phone_icon: 電話號碼
+      on_phone: 可在電話
+      on_browser: 可在瀏覽器
+      invalid_phone_number: 在個人檔案設定裡更新您的電話號碼，在國碼前面使用"+"符號。
+      no_calls: 未找到最近通話
+      available: 接受通話
+      unavailable: 不接受通話
+      busy: 正在進行的通話
+      acw: 包裝
+      recent_calls: 最近的通話
+      transferring: <span>通話轉接中</span><br />請稍候...
+      transfer_agents: 鍵入客服或群組名稱...
+      transfer_numbers: 鍵入外部號碼...
+      unavailable_agents: 客服無法轉接電話
+      no_transfers: 沒有最近的轉接電話
+      agents_count_in_group: '%{count}個客服'
+      agents_count:
+        one: 客服
+        other: 客服
+      ticket_info: 創建新工單或加註到現有的工單的備註和記錄。
+      add_note: 添加備註
+      note_placeholder: 添加通話備註...
+      title: 轉換為工單
+      new_ticket: 儲存為一個新工單
+      save_to_existing: 儲存為一個存在的工單
+      ignore_ticket: 沒有轉換成工單
+      ignore_ticket_info: 您的記錄將可在通話記錄取得
+      back: 轉換成工單
+      subject: 工單主旨
+      requester_name: 姓名
+      requester_email: 電子郵件
+      requester_phone: 電話
+      strange_number_message: 來自未知號碼撥打電話需要電子郵件或電話號碼
+      contact_betails_blank_message: 請輸入電子郵件或電話號碼
+      invalid_email_message: 請輸入一個有效的電子郵件地址
+      invalid_number_message: 請輸入一個有效的電話號碼
+      requester_details: 請求者的詳細信息
+      email_phone: 或
+      save: 儲存
+      saving: 儲存中...
+      call_quality: 通話品質
+      imperfect_audio: 不完美的音訊
+      dropped_call: 斷訊通話
+      audio_latency: 音訊延遲
+      one_way_audio: 單向音訊
+      other_issues: 其他問題
+      select_issue: 選擇問題
+      good_call: 良好
+      bad_call: 差
+      additional_comments: 說明問題
+      notes: 備註
+      add_note_text: 添加備註
+      edit_note_text: 編輯備註
+      recent_tickets: 最近的工單
+      no_recent_tickets: 沒有近期的工單
+      view_all: 檢視所有
+      new_requester: 新的請求者
+      low_credit: 電話號碼費用額度不足，請聯繫您的帳戶管理員。
+      forward_number_alert: 請在個人檔案設定裡更新您的手機號碼，可轉接所有的來電到你的電話號碼。
+      desktop_notification: 開啟桌面通知
+      network_error: 請檢查您的網路連線
+      browser_alert: '在Chrome近期的變更，強制要求安全連接使用SSL（https://)來撥打或接聽電話'
+      read_more: <b>了解更多信息</b>
+      save_ticket_to_call: 將通話儲存至此工單
+      agent_conference:
+        connecting: 正在連接至
+        canceled: 已取消
+        cancelling: 取消中
+        add_agent_initiated: 已啟動
+        connected: 已連接
+        no_answer: 不適用
+        busy: 已忽略
+        end_call: 已中斷連接
+        cancel_add_agent: 取消
+        in_call: 待命中
+        transfer_via: '透過 '
+      transfer:
+        transfer_via: '透過 '
+        tranfer_via: 透過
+        to: '寄送至 (To:)'
+        transferring: 轉換中...
+        transfer_canceled: 忽略
+        tranfer_no_answer: 不可; 不適用
+        tranfer_connected: 轉移
+        group_tranfer_no_answer: 沒有客服可聯繫
+        group_tranfer_connected: 與客戶聯繫
+        close: 關閉的
+        resume: 摘由
+        resumed: 已繼續
+        resuming: 恢復中...
+        cancel: 取消
+        cancelling: 取消中...
+        transferring_to: 正在轉接至...
+        on_call: 待命中
+        connected: 已連接
+        canceled: 已取消
+        add_customer: 讓客戶加入通話
+        end_call: 已中斷連接
+    call_history:
+      title: 通話記錄
+      sort_by: 排序方式：
+      singular_active_number: 活動數量
+      none_active_number: '- 無 -'
+      active_number: 活動數量
+      singular_deleted_number: 刪號
+      deleted_number: 刪號
+      block_number: 封鎖
+      cancel: 取消
+      blacklist_confirmation: '您確定要封鎖,,,'
+      show_deleted: 顯示刪除數量
+      filtered_by: 篩選：
+      filter_by_number: 號碼
+      filter_by_time: 時間區間
+      filter_by_agent: 客服
+      filter_by_group: 傳入通話到群組
+      filter_by_call_status: 通話型態
+      filter_by_caller: 請求者
+      filter_by_business_hours: 工作時間
+      received_date: 日期
+      duration: 持續時間
+      cost: 成本
+      asc: 遞增排序
+      desc: 遞減排序
+      all_time: 所有時間
+      today: 今天
+      yesterday: 昨天
+      this_week: 前7天
+      this_month: 前30天
+      month: '前%{month}個月'
+      custom: 日期範圍
+      no_calls: 沒有通話
+      view_transferred_calls: 檢視轉接通話
+      save_ticket: 轉成工單
+      convert: 轉換
+      helpdesk: 幫助台
+      external: 外部的
+      unblock_number: 未被封鎖的
+      block_number_title: 封鎖號碼
+      filter_option_all_agents: 所有客服
+      filter_option_all_calls: 所有通話
+      filter_option_received_calls: 內寄的
+      filter_option_outgoing_calls: 外寄的
+      filter_option_missed_calls: 未接
+      filter_option_voicemail: 語音信箱
+      filter_option_blocked_calls: 被封鎖的
+      filter_option_within_business_hours: 工作時間之內
+      filter_option_outside_business_hours: 工作時間以外
+      requester_not_found: 找不到相符的請求者
+      recording_delete:
+        done_by: 刪除的依據
+        tooltip: 刪除記錄
+        confirmation_btn: 刪除
+        confirmation_heading: 請確認...
+        confirmation_warning: 將永久刪除留言記錄。
+        confirmation_notification: 您確定要刪除？
+        successful: 通話的紀錄已成功刪除！
+        unsuccessful: 通話記錄無法刪除，請過一段時間重試
+        error: 刪除通話記錄時出現錯誤，請過一段時間重試
+      strange_numbers:
+        restricted: 已限制
+        blocked: 已封鎖
+        unknown: 未知
+        anonymous: 匿名
+        empty: 空白
+        '': null
+      restricted: 受限制的
+      blocked: 被封鎖的
+      unknown: 未知的
+      anonymous: 匿名的
+      empty: 空白的
+      total_duration: 持續時間
+      minutes: 分鐘
+    ticket:
+      recording: 播放留言
+      ticket_desc_with_name: >-
+        對話<b>%{customer_name}</b>（%{customer_number},
+        %{location}）和<b>%{agent}</b> (%{agent_number})<br/ >
+      ticket_desc_with_out_name: '對話%{customer_number}（%{location}和%{agent}</b>(%{agent_number})<br/ >'
+      voicemail_ticket_desc_with_out_name: '語音信箱從%{customer_number}(%{location}) 到%{freshfone_number}'
+      voicemail_ticket_desc_with_name: >-
+        語音信箱從<b>%{customer_name} (%{customer_number}, %{location})
+        到%{freshfone_number}
+      transcribed_note_desc: '<b>轉譯以上來自 %{customer_name} 通話的語音信箱文字</b><br/><br/>'
+      agent_detail: ' 和<b>%{agent}</b>（%{agent_number}）<br/ >'
+      dial_a_number_with_name: >-
+        對話<b>%{customer_name}</b> (%{customer_number}, %{location})
+        。從交互式語音應答(IVR)直撥所有連接的電話。
+      dial_a_number_with_out_name: >-
+        對話與%{customer_number}（%{location}），透過從交互式語音應答(IVR)撥號到號碼：%{direct_dial_number}
+      default_subject: '通話與%{customer}於%{call_date}'
+      voicemail_subject: '來自%{customer}的語音信箱'
+      human_name: 工單
+      view: 檢視
+    note:
+      human_name: 備註
+      view: 檢視
+    create:
+      success:
+        with_link: '%{human_name}已經被創建%{link}'
+    admin:
+      important: 重要
+      general: 一般的
+      settings: 設定
+      greetings: 歡迎，招呼
+      messages: 訊息; 留言
+      freshfone_numbers_title: 電話
+      suspended_alert: <b>重點提示：</b>停用您的手機渠道將不會停止您手機號碼每月收取的費用。避免繼續支付費用，請刪除購買的號碼。
+      purchase_credit_text: 購買用來買電話號碼的信用額度，使用電話渠道來撥打與接聽電話。
+      purchase_numbers_text: 購買本地或免費電話號碼和透過電話提供支援服務給世界各地的客戶
+      search: 透過數字或詞組搜索
+      local: 當地
+      toll_free: 免費電話
+      mobile: 當地（手機）
+      number:
+        simultaneous: 與所有處理人通話
+        round_robin: 先撥給閒置的處理人
+      trial:
+        request_activation_msg: 您可在電話試用期間選擇僅使用一個來自限定國家的號碼。<br>不過，您可以在啟動完整版本後，從 41 個國家購買多個號碼
+        activate_btn_text: 申請啟用
+        requested_activation: 我們已收到您的啟用申請<br>目前正在處理中
+        expired: 您的電話試用已過期
+        activate_to_call_expired: 請啟動您的電話帳戶以撥打或接聽電話
+        activate_to_call_outgoing: 請啟動您的電話帳戶以撥打電話
+        contact_admin_for_expired: 請聯絡您的管理員以繼續撥打或接聽電話
+        contact_admin_for_call_outgoing: 請聯絡您的管理員以繼續撥打電話
+        period_to_expire: 您的電話試用已過期
+        incoming_minutes_to_exhaust:
+          one: 剩餘 <span class='min_left error hide'>1</span> 分鐘的免費來電
+          other: 剩餘 <span class='min_left error hide'></span> 分鐘的免費來電
+        outgoing_minutes_to_exhaust:
+          one: 剩餘 <span class='min_left error hide'>1</span> 分鐘的免費撥打
+          other: 剩餘 <span class='min_left error hide'></span> 分鐘的免費撥打
+        outbound_usage_exhausted: 免費撥出分鐘數已用盡
+        get_more_credits: 若要取得更多額度，需要啟動帳戶
+        minutes_usage_exhausted: 您的電話試用分鐘數已用盡
+        days_left:
+          one: <span class='days_left error hide'>1</span> 天內
+          other: <span class='days_left error hide'></span> 天內
+        numbers:
+          delete_not_allowed: 不可在試用版電話上刪除號碼
+          normal_trial_usage: 您目前正在使用功能有限的電話管道試用版本
+          activate_to_use_all: 請啟動您的電話帳戶以購買更多號碼並使用所有功能
+          incoming_minutes_exhausted: 您已用盡免費來電分鐘數
+          incoming_minutes_exhausted_description: 請啟動您的電話帳戶並購買額度以接聽來電
+          outgoing_minutes_exhausted: 您已用盡免費撥打分鐘數
+          outgoing_minutes_exhausted_description: 請啟動您的電話帳戶並購買額度以撥打電話
+          free_minutes_exhausted: 您已用盡免費分鐘數
+          cannot_make_or_receive_calls: 請啟動您的電話帳戶並購買額度以撥打或接聽電話
+          used_minutes: '共 %{total} 分鐘，已使用其中 %{used} 分鐘'
+          purchase_limit: '在試用版電話上，只允許 %{limit} 個成員購買'
+          purchase_warning_expired: 試用版電話過期後，不允許搜尋號碼
+          expired: 您的電話試用期已過期
+          ivr:
+            direct_dial: 試用期內不允許使用撥打號碼選項
+          search:
+            after_activation_request: 您已申請電話管道啟動<br>我們將會在 2 個工作天內回覆您。
+            buy_button: 是
+            can_use_after_activation: 您可以在啟動電話管道後繼續使用此號碼。
+            buy_confirmation: 您確定要選取此號碼嗎？
+      number_settings:
+        title_text: 管理你的呼叫中心
+        info_content: >-
+          <b>分派來電電話給處理人與群組</b>
+
+          </br>您可以設定交互式語音應答系統（IVR）和設定電話路徑到不同的群組或客服。例如，當他們按1時，將客戶電話轉發到您的支援服務團隊，當他們按2時，轉給銷售團隊的一員。
+
+          <br/>此外，您還可以錄製您的聲音檔上傳或使用將文本轉成語音的功能來自訂您的語音留言，用來播放回覆給客戶。<br><br><b>自訂你的電話號碼</b>
+
+          <br>您也可以分別配置每一個電話號碼讓他擁有各自的定義。這包含基本設定如針對客戶設定最大排隊等候的人數和最常等待的時間。一旦有其一中一項達到時，目前沒有可以解決的處理人的留言會自動播放給客戶。<br/>當您啟用通話紀錄，每通進入您幫助台的電話都會被記錄且附加到您的工單。並且記錄可以公開提供給客戶或是保留為私人的。您可以在非工作時間時限制電話管道的電話接聽。
+          例如，您可以設定兩個支援服務專線，其中一線只在工作時間提供接聽電話，而另一個優先順序高的支援專線將會是全年全天候可以接聽。<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target='_blank'>了解更多關於自訂您的電話號碼</a>
+        non_business_hours: 接受通話在......期間
+        business_calendar: 選擇工作時間
+        transcript_voice: 轉錄語音
+        text_to_speech: 文本轉換語音
+        record_calls: 記錄通話
+        voicemail: 語音信箱
+        voicemail_on: 於
+        voicemail_off: 關閉
+        record_all: 記錄所有通話
+        record_none: 不進行通話錄音
+        record_alert: 在大多數國家，通話錄音準則要求通知客戶他們的通話被錄音紀錄。請相應地配置問候語音訊息。
+        max_queue_calls: 在順序的最大通話
+        call_wait_time: 最長等待時間
+        call_wait_time_suffix: 每一通電話
+        queue_wait_message: 排隊等候的訊息
+        non_availability_message: 不可用的訊息
+        voicemail_message: 語音信箱留言
+        non_business_hours_message: 非工作時間訊息
+        welcome_message_alert: 當交互式語音應答(IVR)啟用時，歡迎訊息不播放
+        welcome_message: 歡迎訊息
+        record_voice: 記錄你的聲音
+        upload_voice: 上傳的聲音檔案
+        read_message: 文本轉換語音
+        start_recording: 開始記錄
+        stop_recording: <span></span>停止錄音
+        preparing_recording: 準備您的留言...
+        recorded_voice: 錄音
+        audio_upload: 上傳
+        greeting_message: 在這輸入您的訊息
+        attachment_help_info: 接受聲音檔（mp3) 檔案大小< 5mb
+        attachment_help_text: 接受聲音檔（mp3) 檔案大小< 5mb
+        recording_help_info: 打開麥克風。連續時間<五分鐘
+        cancel: 取消
+        change: 更改
+        group: '播放留言和撥打電話給處理人 '
+        call_hunting_group: 群組
+        all_groups: 所有群組
+        business_hours: 營業時間
+        anytime: 7天24小時隨時; 全年無休
+        name: 姓名
+        name_placeholder: 為您的號碼輸入一個好記的名稱
+        hunt_type: 電話路由
+        routing_message: 當多個處理人在線上...
+        recording_privacy: 記錄能見度
+        recording_privacy_public: 客戶和處理人都可看到的
+        recording_privacy_private: 只有處理人可以看見的
+        name_maxlength: 名稱不能超過255個字符
+        number_accessible: 可以存取由
+        wait_music: 等待音樂
+        hold_music: 保留音樂
+        queue_position_preference: 讀出排隊等候的位置
+        queue_position_message: 排隊等候的位置訊息
+        queue_position_message_placeholder: '目前您在排隊等候中。你的排隊位置為{{queue.position}}'
+        queue_position_message_alert: >-
+          要讀出排隊等候的位置，使用佔位符號{{queue.position}}
+          <br/>例如：目前您在排隊等候中。你的排隊位置為{{queue.position}}
+        queue_position_enable: 開啟
+        queue_position_disable: 關閉
+      numbers:
+        sidebar_title: 電話管道
+        sidebar_content: >-
+          使用電話管道，您可以透過瀏覽器、手機或使用 Freshdesk 行動應用程式的電話管道撥打和接聽電話。這與 Freshdesk
+          工單系統密切整合。因此您可以在必要時錄下通話並轉換為工單，藉此追蹤通話。<br/><br/><b>設定電話</b></br>若要開始使用電話，首先必須啟用並購買支援服務號碼。您可以從<a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>此處列出的國家</a>購買當地的電話號碼，並從世界各地撥打或接聽電話。如果您的客戶將從美國、英國或加拿大撥電話給您，您也可以購買免付費的支援服務號碼（或英國的免費電話）。<br/><br/><b>提供完整的電話支援</b><br/>透過我們的電話管道，您可以<br/><ul><li>使用網頁瀏覽器或手機開始撥打和接聽電話</li><li>建立語音信箱、轉接通話或將通話轉接給各地客服</li><li>監聽通話、在需要時插撥、在進行中的通話新增其他處理人等*</li></ul><br/><p>*請聯絡
+          <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>
+          為您的帳戶啟用進階功能。這包括通話監聽、通話插撥、電話會議、電話屏蔽和通話週期度量。</p><br/><p><a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>瞭解更多強大的電話性能和功能</a><p>
+        sidebar_content_v2: >-
+          使用電話管道時，您可以透過瀏覽器、行動電話或使用 Freshdesk 行動應用程式中的電話管道撥打和接聽電話。這會與 Freshdesk
+          的工單系統密切整合。因此您可以在必要時錄下通話並轉換為工單，藉此持續追蹤通話。<br/><br/><b>設定電話</b></br>若要開始使用電話，首先需要啟用並購買支援號碼。您可以從<a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>此處列出的國家</a>購買當地號碼並從世界各地撥打或接聽電話。若您的客戶將會在美國、英國或加拿大撥打電話給您，您也可以購買免付費支援號碼（或英國的免費電話）。<br/><br/><b>提供完整的電話支援</b><br/>透過我們的電話管道，您可以使用網頁瀏覽器或行動電話<br/><ul><li>開始撥打和接聽電話</li><li>建立語音信箱、轉接通話或將通話轉接至各地客服</li><li>監聽通話、在需要時插播、將其他處理人新增至進行中的通話等*</li></ul><br/><p>*請聯絡
+          <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>
+          啟用帳戶的進階功能。這包括通話監聽、通話插撥、電話會議、電話屏蔽和通話週期度量。</p><br/>
+        tour_link: 協助我設定電話管道
+        purchase_number: 採購電話號碼
+        purchase_phone_number: '採買電話號碼(%{number})'
+        buy: 購買電話號碼
+        buy_button_text: 購買
+        purchase_loading_text: 購買中...
+        buy_loading_text: 購買...
+        purchase_alert_text: 該電話號碼將被收取費用<strong><span class='number-rate'></span>每月</strong>。
+        not_available: 沒有結果返回。請嘗試不同的搜索詞
+        address_certification_text: 購買一個電話號碼，您需要提供您的公司或個人的地址<span class='certification-country'></span>
+        purchase_confirm: 您確定？
+        delete_alert: 一旦刪除號碼，將無法再次購買。你確定要刪除的號碼？
+        manage: 管理
+        failure_purchase: 無法購買的電話號碼。請確保該地址是有效的本地地址<span class='certification-country'></span>。
+        low_credits: 你的電話信用額度不足，無法購買一個新的號碼。請充值後再次一次。
+        address:
+          name: 公司/名稱
+          address: 地址
+          city: 城市
+          state: 州/省/地區
+          postal_code: 郵政編碼
+          country: 國家
+          required_field: 所有欄位都必填。
+        setup:
+          title_text: 建立一個通訊中心
+          info_text: >-
+            為了開始使用手機管道，你首先需要購買一個可供撥打的號碼提供給你的客戶。您可以購買任何一個在此</a>國家列表<a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>的國家的本地電話號碼。如果您的客戶將從美國、英國或加拿大撥電話給您，您也可以為他們，您也可以為他們提供一個免費撥打的號碼。<br/><br/>您可以在Freshdesk內購買多個不同國家的電話號碼並設定免費撥打熱線，無需使用任何第三方服務。將依照從您的幫助台撥進、撥出和轉接電話的標準來收取費用。點擊此處<a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>查看通話費率</a>。<br/><br/>
+            一旦您購買了一個電話號碼作為您的支援服務專線。所有的來電將分配給登入您幫助台的處理人。此外，可以選擇讓您的處理人直接在瀏覽器內接起電話或是將它們自動轉發到處理人桌上的電話。
+        caller_id:
+          manage_caller_id: '管理來電者 ID '
+          add_another: / 新增另一個
+          enter_code: 接起您的電話並輸入驗證代碼
+          enter_number: 輸入您要新增為來電者 ID 的號碼
+          verify_number: 驗證此號碼
+          another_caller: 新增另一個
+          delete: 刪除
+          number_added: 號碼已新增
+          no_number_added: 沒有新增任何來電者 ID
+          ok: 確定
+          add_new: 新增
+          add_new_caller_id: 新增來電者 ID
+          wait: 請稍候...
+          error_message: 很抱歉！發生問題。請稍後重試
+          simultaneous_verification_error: 很抱歉！已在驗證號碼
+          invalid_number: 無效的電話號碼！
+          calling: '正在撥打 '
+          call_id_mask: 遮蓋此號碼
+          twilio_errors:
+            not_allowed: >-
+              很抱歉，將此號碼新增為來電者 ID 時發生問題。請重試。若問題持續存在，請透過 <a
+              href='mailto:support@freshdesk.com'>support@freshdesk.com</a> 聯絡我們
+            invalid_number: >-
+              很抱歉，該號碼似乎無效。請重試。若問題持續存在，請透過 <a
+              href='mailto:support@freshdesk.com'>support@freshdesk.com</a> 聯絡我們
+            already_verified: 已為您的帳戶驗證電話號碼！
+        buy_phone_numbers: 購買電話號碼
+        buy_phone_credits: 購買電話儲值額度
+      invalid_attachment: '附件%{name}不是有效的音頻檔案/它的容量大於5MB'
+      ivr:
+        simple_message_title: 簡單留言
+        ivr_message_title: 互動式語音應答（IVR）
+        welcome_message: 歡迎訊息
+        message_type: 訊息型態
+        transcript_voice: 轉錄語音
+        text_to_speech: 文本轉換語音
+        turned_off: 歡迎留言已關閉。所有來電都會直接傳送到您的服務支援平台。
+        turned_on: 歡迎訊息會撥放在每一通打進來的電話。
+        turn_on: 於
+        turn_off: 關閉
+        add_new_menu: 添加新的<b>菜單</b>
+        add_new_menu_from_option: 添加新的菜單
+        add_new_option: 添加<b>按鍵</b>選項
+        keypress: 按鍵
+        input_number: 輸入數字
+        action: 動作
+        male: 男聲
+        female: 女聲
+        rename: 重新命名
+        done: 做完; 好了
+        save: 儲存
+        saving: 儲存中...
+        preview: 預覽
+        previewing: 預覽中...
+        delete_menu: 刪除菜單
+        jump_to: 跳到
+        call_agent: 撥打電話給客服
+        call_agent_group: 電話客服群組
+        call_number: 撥打電話號碼
+        back_to_menu: 返回主選單
+        invalid_performer_type: 無效的顯示類型
+        invalid_number: '在選單%{menu}上無效的電話號碼'
+        restricted_country: '在選單%{menu}上，受限制國家的數量'
+        invalid_jump_to: '不能有“彈入”的non-root 選單%{menu}'
+        seed_message: 歡迎來到客戶服務支援
+        seed_menu_name: 歡迎/開始 選單
+        invalid_number_format: 輸入有效的電話號碼，需在前面加上"＋“和國碼
+      welcome_page:
+        title_text: 電話
+      feature_request_content:
+        title_text: 電話
+        heading_text: 使用電話管道支援您的客戶
+        trial_description: >-
+          使用電話管道時，您可以透過瀏覽器、行動電話或使用 Freshdesk 行動應用程式中的電話管道撥打和接聽電話。這會與 Freshdesk
+          的工單系統密切整合。因此您可以在必要時錄下通話並轉換為工單，藉此持續追蹤通話。
+        number_info: 購買超過 40 個國家的當地和免付費電話號碼
+        ivr_info: 使用 IVR 執行通話監聽、電話會議、傳送通話等
+        recording_info: 記錄所有通話並轉換為工單
+        learn_more: 瞭解詳情
+        pricing: 查看所有通話費率和支援的國家
+        request_subject: '電話請求-%{account_name}'
+        email_message: 需要Freshfone的功能
+        success: 我們會盡快在兩個工作日內給您回覆。
+        error_message: 很抱歉，我們現在無法獲取您的請求。請稍後再試。
+        additional_info: 一旦手機頻道在您的帳戶中啟用，你將能夠購買電話號碼、撥打和接聽電話。
+        button_text: 申請啟用
+        video_title: 觀看此影片，看看你可以用手機頻道做什麼
+        trial_version_disclaimer: 您可以免費使用 15 天的有限功能
+        activation_disclaimer: 您可以無限期使用所有功能
+        trial_version_numbers: 僅選擇特定號碼
+        trial_version_calls: 有限的來電和撥出電話
+        trial_version_number_purchse: 只能購買一個號碼
+        trial_button_text: 啟用免費試用版本
+        trial_or: 或
+        compare_trial_and_full: 比較完整版本和免費試用版本
   livechat:
     feature_request:
       title: 歡迎來到即時聊天

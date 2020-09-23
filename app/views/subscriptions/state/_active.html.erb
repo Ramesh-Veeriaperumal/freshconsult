@@ -266,6 +266,8 @@
   <%= render :partial => '/subscriptions/annual_savings_banner', :locals => { :savings_amount => savings_amount }%>
 <% end %>
 
+<%= render :partial => "/subscriptions/freshfone_subscription" %>
+
 <% unless @offline_subscription || @reseller_paid_account %>
 <div class="plan-section-title">
 <% if omni_account %>

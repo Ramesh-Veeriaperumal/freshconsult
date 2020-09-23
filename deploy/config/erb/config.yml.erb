@@ -58,6 +58,11 @@ reseller_portal:
   portal_url:
     <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:reseller_portal_portal_url] %>
 
+client_debugging:
+  bugsnag:
+    <%= node[:opsworks][:environment] %>:
+      api_key: <%= node[:ymls][:config][:bugsnag_api_key] %>
+
 freshchat:
   <%= node[:opsworks][:environment] %>:
     token: <%= node[:ymls][:config][:freshchat][:token] %>

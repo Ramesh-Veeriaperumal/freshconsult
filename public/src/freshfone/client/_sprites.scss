@@ -1,0 +1,142 @@
+/*Report tab icons */
+@import "cdn-ignored/sprites/flags/*.png";
+$flags-layout:horizontal;
+@include all-flags-sprites(true);
+
+$freshfone-sprite: sprite-map("cdn-ignored/sprites/freshfone/*.png");
+
+.freshfone-sprite{ background-image: sprite-url($freshfone-sprite); }
+
+@mixin freshfone-sprite($sprite-name, $offset-x: 0, $offset-y: 0) {
+	@extend .freshfone-sprite;
+	background-position:sprite-position($freshfone-sprite, #{$sprite-name}, $offset-x, $offset-y);
+}
+
+.notifier-container-slimmer {
+	.accept { @include freshfone-sprite(accept-call); }
+	.ignore { @include freshfone-sprite(ignore-call); }
+}
+
+
+.popupbox-content .keypad-call:before {
+	content:"";
+	display: inline-block;
+	padding: 20px 16px;
+	width: 0;
+	height: 0;
+	margin-top: -20px;
+	position: relative;
+	top: 12px;
+	@include margin-right(5px);
+	
+	@include freshfone-sprite(call-agent);
+}
+
+.message-container {
+	
+	.record_voice { @include freshfone-sprite(ivr-record-icon); }
+	.upload_voice { @include freshfone-sprite(ivr-upload-icon); }
+	.read_message { @include freshfone-sprite(ivr-transcript-icon); }
+	.attach-file-done { @include freshfone-sprite(attached-file); }
+
+}
+
+.outgoing_call_icon { @include freshfone-sprite(call-history-outgoing); }
+.outgoing_missed_call_icon { @include freshfone-sprite(call-history-outgoing-miss); }
+.incoming_call_icon { @include freshfone-sprite(call-history-incoming); }
+.incoming_missed_call_icon { @include freshfone-sprite(call-history-incoming-miss); }
+.blocked_call_icon { @include freshfone-sprite(call-history-incomplete); }
+.recent_call_entry {
+	.incoming_call_icon, .incoming_missed_call_icon {
+		@include freshfone-sprite(recentcall-incoming);
+	}
+	.outgoing_call_icon { @include freshfone-sprite(recentcall-outgoing); }
+	.outgoing_missed_call_icon { @include freshfone-sprite(recentcall-missed); }
+}
+.callhistory_helpdesk_avatar { @include freshfone-sprite(callhistory-helpdesk); }
+.callhistory-payment-loader { background-image: image-url('/assets/animated/payment-loader.gif') }
+.dialpad_background_pattern {@include freshfone-sprite(ff-watermark-pattern-1x);}
+
+.recording_deleted{
+	background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAH0lEQVQIW2NkQAWSjEh8SQYGhucwATAHJAkSgHNAAgBJLgMeVQZnUgAAAABJRU5ErkJggg==');
+}
+// font icon styles
+.freshfone_widget{
+	.popupbox-tabs{
+		&.outgoing{
+			[class*="#{$font-class}"]{
+				color: #fff;
+				line-height: 27px;
+			}
+		}
+		li{
+			text-align: center;
+			float: left;
+		}
+		[class*="#{$font-class}"]{
+			line-height: 32px;
+		}
+		.availabilityOnPhone{
+			.#{$font-class}ff-on-call{
+				display:none;
+			}
+			&.active{
+				.#{$font-class}ff-on-call{
+					display:block;
+				}
+				.#{$font-class}ff-on-browser{
+					display:none;
+				}
+			}
+		}
+		.mute{
+			.#{$font-class}ff-mic{
+				display:none;
+			}
+			&.active{
+				.#{$font-class}ff-mute{
+					display:none;
+				}
+				.#{$font-class}ff-mic{
+					display:block;
+				}
+			}
+	
+		}
+		.transfer_call{
+			.#{$font-class}cross{
+				display:none;
+			}
+			&.active{
+				.#{$font-class}cross{
+					display:block;
+				}
+				.#{$font-class}user{
+					display:none;
+				}
+			}
+			&.transferring_state{
+				.#{$font-class}cross{
+					display:none;
+				}
+				.#{$font-class}user{
+					display:block;
+				}
+			}
+		}
+
+		.ongoingDialpad{
+			.#{$font-class}cross{
+				display:none;
+			}
+			&.active{
+				.#{$font-class}cross{
+					display:block;
+				}
+				.#{$font-class}ff-dialpad{
+					display:none;
+				}
+			}
+		}
+	}
+}

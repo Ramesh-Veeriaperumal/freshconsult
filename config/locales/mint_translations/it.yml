@@ -756,6 +756,34 @@ it:
         filter_report: Modifica filtro
         ticket_type: Tipo di ticket
         select_billable: Seleziona fatturabile/non fatturabile
+    freshfone:
+      time_period: Periodo di tempo
+      num_of_transfered: N. di trasferimenti
+      no_agent: '- Nessun operatore -'
+      group: Gruppo
+      total_unanswered_calls: Chiamate senza risposta
+      call_type: Tipo di chiamata
+      filter_option_all_calls: Tutte le chiamate
+      filter_close: Chiudi
+      avg_handle_time: Tempo medio di gestione
+      all_numbers: Tutti i numeri
+      filter_report: Modifica filtro
+      number: Numero
+      business_hours: Orari di ufficio
+      no_external: I trasferimenti a numeri esterni non sono inclusi
+      summary_title: 'Riepilogo chiamate operatore '
+      generate_summary: Genera
+      num_of_calls: N. di chiamate
+      unanswered_transfers: Trasferimenti senza risposta
+      unanswered_count: Senza risposta
+      select_call_type: Seleziona tipo di chiamata
+      options:
+        all_groups: Tutti i gruppi
+        unassigned: Non assegnati
+        incoming: In arrivo
+        outgoing: In uscita
+      filter_by_title: Filtrato per
+      total_voice_mail: Messaggi vocali
     select_customer: Seleziona cliente
     summary_report:
       avg_1st_response_time: Tempo medio <br> di prima risposta
@@ -3453,6 +3481,186 @@ it:
         other: hanno cliccato mi piace
   title: Titolo
   free_plan_agents_v2: Agenti illimitati
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Acquista numeri locali o numeri verdi e fornisci assistenza telefonica ai tuoi clienti in tutto il mondo
+      greetings: Saluti
+      settings: Impostazioni
+      important: Importante
+      toll_free: Numero verde
+      purchase_credit_text: >-
+        Acquista crediti per comprare i numeri, fai e ricevi telefonate usando il canale telefonico.
+      suspended_alert: >-
+        <b>Importante:</b> la disattivazione del tuo canale telefonico non annullerà il costo del noleggio mensile dei tuoi numeri. Per evitare tale addebito, devi eliminare i numeri che hai acquistato.
+      freshfone_numbers_title: Telefono
+      welcome_page:
+        title_text: Telefono
+      number:
+        simultaneous: Chiama tutti gli operatori
+        round_robin: Chiama prima gli operatori liberi
+      numbers:
+        sidebar_content_v2: >-
+          Utilizzando il canale telefonico, puoi effettuare e ricevere chiamate dal tuo browser, cellulare o tramite il canale telefonico nelle app per dispositivi mobili di Freshdesk. La funzionalità è strettamente integrata con il sistema di ticketing di Freshdesk. In questo modo potrai monitorare le telefonate registrandole e convertirle in ticket se necessario. <br/><br/> <b>Configurazione del telefono</b></br>Per iniziare a utilizzare il telefono, devi prima attivarlo e acquistare un numero di assistenza. Puoi acquistare numeri locali dei <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>paesi elencati qui</a> ed effettuare o rispondere a chiamate da qualsiasi parte del mondo. Se i tuoi clienti ti chiamano da USA, Regno Unito o Canada puoi acquistare anche numeri verdi di assistenza di questi paesi. <br/><br/><b> Offri assistenza telefonica completa</b><br/>Grazie al nostro canale telefonico puoi<br/><ul><li>Iniziare a fare e a rispondere a telefonate usando browser o cellulari</li><li>Creare segreterie telefoniche, inoltrare le chiamate o trasferirle a qualsiasi operatore, ovunque si trovi</li><li>Monitorare le chiamate, intervenire quando necessario, inserire altri operatori nella chiamata e molto altro*</li></ul><br/><p>*Contatta<a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>per attivare le funzioni avanzate nel tuo account, fra cui: monitoraggio delle telefonate, intervento durante la chiamata, teleconferenza, mascheramento del numero e metriche delle chiamate.</p><br/>
+        sidebar_title: Canale telefonico
+        delete_alert: >-
+          Un numero eliminato non può essere riacquistato. Confermi di voler eliminare il numero?
+        buy_loading_text: Acquisto in corso...
+        buy_phone_numbers: Acquista numeri di telefono
+        caller_id:
+          no_number_added: Nessun ID chiamante aggiunto
+          call_id_mask: Maschera questo numero
+          manage_caller_id: 'Gestisci ID chiamante '
+          add_new: Aggiungi nuovo
+        tour_link: Aiutami a impostare il canale telefonico
+        failure_purchase: >-
+          Impossibile acquistare il numero di telefono. Assicurati che il tuo indirizzo sia un indirizzo locale valido in <span class='certification-country'></span>.
+        buy: Acquista numero
+        buy_button_text: Acquista
+        address:
+          address: Indirizzo
+          state: Stato/Provincia/Regione
+          city: Città
+          postal_code: Codice postale
+          required_field: Tutti i campi sono obbligatori
+          name: Azienda / Nome
+        setup:
+          info_text: >-
+            Per cominciare a usare il canale telefonico, dovrai prima acquistare un numero di telefono con accesso che i tuoi clienti possano chiamare. Puoi acquistare un numero locale di uno dei <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>paesi elencati qui</a>. Se i tuoi clienti ti chiameranno dagli Stati Uniti, dal Regno Unito o dal Canada, puoi offrire loro anche un numero verde locale.<br/><br/>Puoi acquistare più numeri di telefono multipli di vari paesi e configurare linee di assistenza con numero verde all’interno di Freshdesk senza ricorrere a servizi di terzi. Ti verranno addebitate tariffe standard per le chiamate in arrivo, in uscita e inoltrate dal tuo helpdesk. Verifica le <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>tariffe telefoniche qui</a>.<br/><br/> Una volta acquistato un numero per il tuo servizio di assistenza telefonica, tutte le chiamate in arrivo saranno distribuite agli operatori che in quel momento sono connessi al tuo helpdesk. Inoltre, i tuoi operatori possono scegliere di rispondere alle telefonate direttamente dal browser o inoltrarle automaticamente al telefono della propria scrivania.
+          title_text: Configurare un call center
+        sidebar_content: >-
+          Utilizzando il canale telefonico puoi effettuare e ricevere chiamate da browser, cellulare o usando il canale telefonico delle app per dispositivi mobili di Freshdesk. La funzionalità è strettamente integrata con il sistema di ticketing di Freshdesk. In questo modo potrai monitorare le telefonate registrandole e convertirle in ticket quando necessario. <br/><br/> <b>Configurazione del telefono</b></br>Per iniziare a utilizzare il telefono, dovrai prima attivarlo e acquistare un numero di assistenza. Puoi acquistare numeri locali dei <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>paesi elencati qui</a> ed effettuare o rispondere a chiamate da qualsiasi parte del mondo. Se i tuoi clienti ti chiamano da USA, Regno Unito o Canada, puoi acquistare anche numeri verdi di assistenza di questi paesi. <br/><br/><b> Offri assistenza telefonica completa</b><br/>Grazie al nostro canale telefonico puoi<br/><ul><li>Iniziare a fare e a rispondere a telefonate utilizzando browser o cellulari</li><li>Creare segreterie telefoniche, inoltrare le chiamate o trasferirle a qualsiasi operatore, ovunque si trovi</li><li>Monitorare le chiamate, intervenire quando necessario, inserire altri operatori nella chiamata e molto altro*</li></ul><br/><p>*Accedi a<a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>per attivare le funzioni avanzate nel tuo account, fra cui: monitoraggio delle telefonate, intervento durante la chiamata, teleconferenza, mascheramento del numero e metriche delle chiamate.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Ulteriori informazioni sulle caratteristiche e sulle potenti funzionalità del canale telefonico</a><p>
+        not_available: Nessun risultato restituito. Prova con un altro termine di ricerca
+        manage: Gestisci
+        address_certification_text: >-
+          Per acquistare un numero di telefono, è necessario fornire l’indirizzo dell’azienda o personale in <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Questo numero di telefono sarà addebitato con frequenza <strong><span class='number-rate'></span> mensile</strong>.
+        buy_phone_credits: Acquista crediti telefonici
+      feature_request_content:
+        success: Ti ricontatteremo entro due giorni lavorativi.
+        recording_info: Registra e converti tutte le chiamate in ticket
+        button_text: Richiesta di attivazione
+        compare_trial_and_full: Confronta la versione di prova e quella completa
+        activation_disclaimer: Puoi usare tutte le funzionalità per un periodo illimitato
+        learn_more: Ulteriori informazioni
+        ivr_info: >-
+          Monitora le chiamate, avvia una teleconferenza, inoltra le chiamate con IVR e molto altro
+        trial_or: O
+        trial_button_text: Attiva versione di prova gratuita
+        error_message: Siamo spiacenti di non poter rispondere alla tua richiesta in questo momento. Ti invitiamo a riprovare in seguito.
+        title_text: Telefono
+        trial_version_disclaimer: Puoi utilizzare gratuitamente funzionalità limitate per 15 giorni
+        pricing: Vedi tutte le tariffe telefoniche e i paesi supportati
+        number_info: Acquista numeri di telefono locali e numeri verdi in più di 40 paesi
+        video_title: Guarda il video per scoprire cosa puoi fare con il canale telefonico
+        heading_text: Assisti i tuoi clienti utilizzando il canale telefonico
+      local: Locale
+      search: Ricerca per numeri o frasi
+      ivr:
+        turn_on: 'Il'
+        simple_message_title: Messaggio semplice
+        save: Salva
+        turn_off: 'Disattivato'
+        rename: rinomina
+        add_new_option: Aggiungi opzione <b>tasto</b>
+        add_new_menu: Aggiungi nuovo <b>menu</b>
+        male: Voce maschile
+        input_number: Inserisci il numero
+        invalid_number_format: >-
+          Inserisci un numero di telefono valido preceduto dal segno “+” e dal prefisso internazionale del paese
+        ivr_message_title: Risposta vocale interattiva (IVR)
+        message_type: Tipo di messaggio
+        action: Azione
+        female: Voce femminile
+        delete_menu: Elimina menu
+        previewing: Creazione anteprima in corso...
+        saving: Salvataggio in corso…
+        add_new_menu_from_option: Aggiungi nuovo menu
+        preview: Anteprima
+        done: fatto
+        keypress: Tasto
+        welcome_message: Messaggio di benvenuto
+      number_settings:
+        read_message: Sintesi vocale
+        queue_position_preference: Leggi la posizione nella coda
+        greeting_message: Inserisci il tuo messaggio qui
+        queue_wait_message: Messaggio di attesa in coda
+        number_accessible: Accessibile da
+        all_groups: Tutti i gruppi
+        record_all: Registra tutte le chiamate
+        voicemail_on: 'Il'
+        max_queue_calls: Chiamate massime in coda
+        cancel: Annulla
+        routing_message: Quando più operatori sono disponibili online...
+        non_business_hours: Accetta le chiamate durante...
+        non_business_hours_message: Messaggio al di fuori degli orari di ufficio
+        recorded_voice: Voce registrata
+        group: 'Riproduci messaggio e chiama gli operatori di '
+        queue_position_enable: 'ACCESO'
+        recording_privacy_public: Visibile a clienti e operatori
+        call_wait_time: con tempo di attesa massimo di
+        wait_music: Musica di attesa
+        recording_help_info: Attiva il microfono. Durata < 5 min.
+        record_alert: >-
+          Nella maggior parte di paesi, i requisiti per la registrazione delle telefonate prevedono l’obbligo di informare i clienti che le loro conversazioni vengono registrate. Puoi configura il messaggio di saluto a questo scopo.
+        record_none: Non registrare le chiamate
+        non_availability_message: Messaggio di indisponibilità
+        voicemail_message: Messaggio in segreteria telefonica
+        record_voice: Registra la tua voce
+        voicemail_off: 'Disattivato'
+        transcript_voice: Trascrivi voce
+        hunt_type: Instradamento chiamate
+        name: Nome
+        voicemail: Segreteria telefonica
+        record_calls: Registra chiamate
+        anytime: 24/7 in qualsiasi momento
+        upload_voice: Carica file audio
+        business_hours: Orari di ufficio
+        call_wait_time_suffix: 'per chiamata'
+        hold_music: Musica di attesa
+        start_recording: Avvia registrazione
+        title_text: Gestire il tuo call center
+        attachment_help_text: Accetta file audio (mp3) < 5 MB
+        queue_position_disable: 'SPENTO'
+        queue_position_message_placeholder: 'Attualmente sei in coda. La tua posizione nella coda è {{queue.position}}'
+        preparing_recording: Preparazione del tuo messaggio in corso...
+        info_content: >-
+          <b>Assegnazione di telefonate a operatori e gruppi</b></br>Puoi configurare un sistema di risposta vocale interattiva (IVR) e inoltrare le chiamate a gruppi e operatori diversi del tuo team. Ad esempio, puoi inoltrare le chiamate dei clienti al team di assistenza premendo 1 e al reparto commerciale premendo 2.<br/>Inoltre puoi anche personalizzare i messaggi che saranno fatti ascoltare ai clienti registrando la tua voce, caricando un file o utilizzando la funzione di sintesi vocale.<br><br><b>Personalizzazione del tuo numero</b><br>Puoi anche configurare separatamente ciascun numero di telefono con una serie di personalizzazioni proprie, che comprende impostazioni di base come il numero massimo di persone in coda e il tempo di attesa massimo per i clienti. Una volta raggiunto uno di questi due valori, ai clienti verrà fatto ascoltare automaticamente un messaggio di indisponibilità.<br/>Quando attivi la registrazione delle chiamate, ogni telefonata del tuo helpdesk verrà registrata e allegata ai ticket; la registrazione può essere messa a disposizione dei clienti pubblicamente o tenuta riservata. Puoi anche impedire che il tuo canale telefonico risponda alle chiamate al di fuori degli orari di ufficio. Ad esempio puoi configurare due linee di assistenza, una operativa durante gli orari di lavoro e un’altra per i soli casi urgenti disponibile 24/7.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Ulteriori informazioni sulla personalizzazione del tuo numero</a>
+        recording_privacy: Visibilità registrazione
+        audio_upload: Carica
+        recording_privacy_private: Visibile solo agli operatori
+        business_calendar: Seleziona orario di ufficio
+        queue_position_message_alert: >-
+          Per leggere la posizione nella coda, usa il segnaposto {{queue.position}} <br/> Es.: Attualmente sei in coda. La tua posizione nella coda è {{queue.position}}
+        name_placeholder: Inserisci un nome facilmente comprensibile per il tuo numero
+        welcome_message: Messaggio di benvenuto
+        change: Modifica
+        stop_recording: <span></span>Interrompi registrazione
+      trial:
+        request_activation_msg: >-
+          Puoi scegliere di usare un solo numero di un gruppo limitato di paesi durante il periodo di prova del telefono.<br> Tuttavia, quando attivi la versione completa, puoi acquistare più numeri di 41 paesi
+        activate_btn_text: Richiesta di attivazione
+        numbers:
+          search:
+            after_activation_request: >-
+              Hai richiesto l’attivazione del canale telefonico <br> Ti ricontatteremo entro 2 giorni lavorativi.
+            buy_confirmation: Confermi di voler scegliere questo numero?
+            can_use_after_activation: >-
+              Puoi continuare a utilizzare questo numero quando attivi il canale telefonico.
+        requested_activation: Abbiamo ricevuto la tua richiesta di attivazione<br> che è in fase di elaborazione
+    subscription:
+      recharge_now_text: Ricarica il tuo saldo con un pagamento una tantum
+      purchase_credits: Acquista crediti
+      setup_auto_recharge: Imposta ricarica automatica
+      auto_recharge_amt: Importo ricarica automatica
+      see_detailed_pricing: Vedi listino dettagliato
+      followup_text: vale crediti telefonici
+      auto_recharge_text: Addebiteremo il tuo account solo quando il saldo è inferiore a 5 $
+      purchase_text: Acquista crediti telefonici
+      current_balance: Il tuo saldo attuale
+      followup: vale crediti telefonici
+      no_credit_card_text: Inserisci i dati di pagamento per acquistare crediti telefonici
   special_beta_offer: Offerta speciale per gli account Beta
   days: Giorni
   tickets_filter:

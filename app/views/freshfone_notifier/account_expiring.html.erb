@@ -1,0 +1,11 @@
+<div>
+	Hi <%=@account.admin_first_name%>,<div><br></div>
+	<div>We want to let you know that your phone channel will expire in <%=@remaining_days%> due to insufficient balance.</div>
+	<div>Upon expiry, your phone numbers will be deleted permanently and cannot be restored.</div>
+	<div><br></div>
+	<div>Please <%= link_to "recharge your phone credits", "http://#{@account.full_domain}/subscription" %> immediately to avoid losing your phone numbers.</div>
+	<div><br></div>
+	<div>Regards,</div>
+	<div>The Freshdesk Team</div>
+	<div><br></div>
+</div>
