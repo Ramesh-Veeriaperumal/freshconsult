@@ -649,6 +649,9 @@
 /admin/security_keys/widget/regenerate:
   $ref: ./admin/security_keys/widget/regenerate.yaml
 
+/admin/security:
+  $ref: ./admin/security/show_and_update.yaml
+
 #Audit log export
 /audit_log/export:
   $ref: ./audit_logs/export.yaml
