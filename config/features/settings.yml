@@ -2,7 +2,7 @@ settings:
   :untitled_setting_1:
     default: false
     internal: false
-    feature_dependency: :untitled_feature_1_dependency_toggle # from blossom plan.Rename to actual feature
+    feature_dependency: :untitled_feature_3_dependency_toggle # from blossom plan.Rename to actual feature
   :untitled_setting_2:
     default: true
     internal: true
@@ -23,3 +23,7 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :helpdesk_tickets_by_product:
+    default: false
+    internal: false
+    feature_dependency: :multi_product

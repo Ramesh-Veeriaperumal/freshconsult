@@ -49,7 +49,7 @@ module Freshcaller::CallsTestHelper
   def convert_call_to_note_params(call_id, status)
     ticket = create_ticket
     params = convert_call_params(call_id, status)
-    params.merge(ticket_display_id: ticket.id,
+    params = params.merge(ticket_display_id: ticket.display_id.to_s,
                  duration: Faker::Number.between(1, 3000),
                  note: Faker::Lorem.sentence(3))
     params

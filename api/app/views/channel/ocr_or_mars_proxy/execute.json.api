@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+if @proxy_response.present? && @proxy_response.is_a?(Hash)
+  @proxy_response.to_json
+elsif @proxy_response.present? && @proxy_response.is_a?(String)
+  @proxy_response
+end

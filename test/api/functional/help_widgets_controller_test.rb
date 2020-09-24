@@ -145,7 +145,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       pattern << widget_list_pattern(help_widget)
     end
     assert_response 200
-    assert_equal response.api_meta[:limit], 5
+    assert_equal response.api_meta[:limit], 10
     match_json(pattern)
     Subscription.any_instance.unstub(:sprout?)
   end

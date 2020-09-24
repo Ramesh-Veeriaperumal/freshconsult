@@ -2,11 +2,11 @@ module OmniChannelRouting
   module Util
     include ::OmniChannelRouting::Constants
 
-    def request_service(client_service, http_method, path, payload = {}, use_mars = false)
+    def request_service(client_service, http_method, path, payload = {}, use_mars = false, jwt_token = nil)
       request_params = {}
       request_params[:method] = http_method.to_sym
       request_params[:payload] = payload if http_method.to_sym == :put
-      request_params[:headers] = ocr_headers(client_service)
+      request_params[:headers] = ocr_headers(client_service, jwt_token)
       request_params[:timeout] = 10
       request_params[:open_timeout] = 10
       request_params[:url] = use_mars ? mars_url(path) : ocr_url(path)
@@ -25,9 +25,10 @@ module OmniChannelRouting
       use_mars ? MARS_PATHS : OCR_PATHS
     end
 
-    def ocr_headers(client_service)
+    def ocr_headers(client_service, jwt_token)
+      jwt_token ||= ocr_jwt_token(client_service)
       {
-        'Authorization' => "Token #{ocr_jwt_token(client_service)}",
+        'Authorization' => "Token #{jwt_token}",
         'Content-Type'  => 'application/json',
         'X-Request-ID'  => "#{Thread.current[:message_uuid].try(:first)}"
       }

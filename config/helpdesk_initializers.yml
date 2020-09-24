@@ -48,7 +48,6 @@ helpdesk:
     - query_trace
     - rabbit_mq
     - redis
-    - resource_rate_limit
     - redshift
     - resque
     - ruby193_monkey_patches

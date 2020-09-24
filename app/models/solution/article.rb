@@ -31,7 +31,6 @@ class Solution::Article < ActiveRecord::Base
   include Solution::SolutionMethods
 
   spam_watcher_callbacks
-  rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['solution_articles'] }, :if => lambda{|obj| obj.rl_enabled? }
 
   acts_as_voteable
 
@@ -422,11 +421,6 @@ class Solution::Article < ActiveRecord::Base
   def self.article_status_option
     STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
-  
-  # Instance level spam watcher condition
-  def rl_enabled?
-    self.account.features?(:resource_rate_limit)
-  end
 
   def create_draft_from_article(opts = {})
     draft = build_draft_from_article(opts)
@@ -576,12 +570,6 @@ class Solution::Article < ActiveRecord::Base
         "language"      =>  language,
         "hits"          =>  hits
       }
-    end
-
-    def rl_exceeded_operation
-      key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
-            :user_id => self.user_id }
-      $spam_watcher.perform_redis_op("rpush", ResourceRateLimit::NOTIFY_KEYS, key)
     end
     
     def check_for_spam_content

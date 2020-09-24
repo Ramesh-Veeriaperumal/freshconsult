@@ -7,10 +7,14 @@ module Admin
     extend ActsAsApi::Base
     acts_as_api
 
-    delegate :whitelisted_ip, :help_widget_secret, :notification_emails, :contact_password_policy, :agent_password_policy, to: :record
+    delegate :whitelisted_ip, :help_widget_secret, :notification_emails, :contact_password_policy, :agent_password_policy, :sso_options, :shared_secret, :sso_enabled, :current_sso_type, :freshdesk_sso_enabled?, :allow_iframe_embedding, to: :record
 
     def to_hash
-      as_api_response(:security_api)
+      if private_api?
+        as_api_response(:private_api)
+      else
+        as_api_response(:public_api)
+      end
     end
 
     api_accessible :security_api do |u|
@@ -19,6 +23,50 @@ module Admin
       u.add :notification_emails
       u.add :contact_password_policy_hash, if: proc { Account.current.custom_password_policy_enabled? }, as: :contact_password_policy
       u.add :agent_password_policy_hash, if: proc { |obj| obj.show_agent_password_policy? }, as: :agent_password_policy
+      u.add :allow_iframe_embedding
+    end
+
+    api_accessible :private_api, extend: :security_api do |u|
+      u.add :private_sso, if: proc { Account.current.freshdesk_sso_configurable? }, as: :sso
+    end
+
+    api_accessible :public_api, extend: :security_api do |u|
+      u.add :public_sso, if: proc { Account.current.freshdesk_sso_configurable? }, as: :sso
+    end
+
+    def private_sso
+      {}.tap do |sso|
+        sso[:enabled] = sso_enabled
+        sso[:type] = current_sso_type
+        sso[current_sso_type.to_sym] = safe_send("#{current_sso_type}_sso_settings") if freshdesk_sso_enabled?
+        sso[:simple] ||= { shared_secret: shared_secret }
+      end
+    end
+
+    def public_sso
+      {}.tap do |sso|
+        sso[:enabled] = sso_enabled
+        if sso_enabled
+          sso[:type] = current_sso_type
+          sso[current_sso_type.to_sym] = safe_send("#{current_sso_type}_sso_settings") if freshdesk_sso_enabled?
+        end
+      end
+    end
+
+    def simple_sso_settings
+      {
+        login_url: sso_options[:login_url],
+        logout_url: sso_options[:logout_url],
+        shared_secret: shared_secret
+      }
+    end
+
+    def saml_sso_settings
+      {
+        login_url: sso_options[:saml_login_url],
+        logout_url: sso_options[:saml_logout_url],
+        saml_cert_fingerprint: sso_options[:saml_cert_fingerprint]
+      }
     end
 
     def whitelisted_ip_settings

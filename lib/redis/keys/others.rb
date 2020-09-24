@@ -247,7 +247,8 @@ module Redis::Keys::Others
 
   SUPPORT_TICKET_LIMIT = "SUPPORT_TICKET_LIMIT:%{account_id}%{user_id}".freeze
 
-  CUSTOM_MAILBOX_STATUS_CHECK = 'CUSTOM_MAILBOX_STATUS_CHECK:%{account_id}'.freeze
+  CUSTOM_MAILBOX_STATUS_CHECK = 'CUSTOM_MAILBOX_STATUS_CHECK'.freeze
+  REAUTH_MAILBOX_STATUS_CHECK = 'REAUTH_MAILBOX_STATUS_CHECK'.freeze
   MAILBOX_OAUTH = 'OAUTH:%{provider}:%{account_id}:%{user_id}:%{random_number}'.freeze
   OAUTH_ACCESS_TOKEN_VALIDITY = 'OAUTH_ACCESS_TOKEN:%{provider}:%{account_id}:%{smtp_mailbox_id}'.freeze
 
