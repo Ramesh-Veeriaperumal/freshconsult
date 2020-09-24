@@ -19,34 +19,16 @@ describe Support::SolutionsController do
     @test_article_meta2 = create_article({:folder_id => @test_folder_meta1.id, :status => "1", :art_type => "1", :user_id => "#{@agent.id}"})
   end
 
-  before(:each) do
-    @account.features.open_solutions.create
-  end
-
   it "should show folder without logging in" do
     get 'index'
     response.body.should =~ /#{@test_folder_meta1.name}/
     response.should render_template("support/solutions/index")
   end
 
-  it "should not show folder without logging in while open solution feature is disabled" do
-    @account.features.open_solutions.destroy
-    get 'index'
-    response.body.should_not =~ /#{@test_folder_meta3.name}/
-    response.should redirect_to(login_path)    
-  end
-
   it "should not show folder without logging in" do
     get 'index'
     response.body.should_not =~ /#{@test_folder_meta2.name}/
     response.should redirect_to(login_path)    
-  end
-
-  it "should not show solutions" do
-    @account.features.open_solutions.destroy
-    get 'index'
-    response.body.should_not =~ /Solutions/ 
-    response.should redirect_to(login_path)
   end
 
   it "should show category" do
