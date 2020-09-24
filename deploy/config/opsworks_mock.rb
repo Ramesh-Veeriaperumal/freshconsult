@@ -100,7 +100,7 @@ class Node < Hash
 
     self[:shoryuken] = @settings[:shoryuken].deep_merge(ShoryukenConfig::get_settings(self))
 
-    self[:sidekiq] = SidekiqConfig::get_settings(self)
+    self[:sidekiq] = SidekiqConfig.getsettings
   end
 
   def get_cpu_count

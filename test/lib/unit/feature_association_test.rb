@@ -17,7 +17,8 @@ class FeaturesTest < ActiveSupport::TestCase
   end
 
   def create_test_features
-    [:open_forums, :open_solutions].each { |feature| @account.features.safe_send(feature).create }
+    [:basic_settings_feature, :forums].each { |feature| @account.add_feature(feature) }
+    [:open_forums, :open_solutions].each { |setting| @account.enable_setting(setting) }
     assert @account.has_feature? :open_forums
     assert @account.has_feature? :open_solutions
     features = @account.features.map(&:to_sym)
