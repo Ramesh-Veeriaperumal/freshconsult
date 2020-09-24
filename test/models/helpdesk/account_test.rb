@@ -1,12 +1,12 @@
 require_relative '../test_helper'
-require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('spec', 'support', 'account_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'test_case_methods.rb')
 
 class AccountTest < ActiveSupport::TestCase
-  include AccountTestHelper
+  include AccountHelper
 
   def setup
-    @account = Account.first || create_new_account
+    @account = Account.first || create_test_account
     @account.make_current
   end
 
@@ -39,50 +39,49 @@ class AccountTest < ActiveSupport::TestCase
     @account.revoke_feature(:private_inline)
   end
 
-  def test_enable_setting_with_launch_party
-    launch_party = Account::LP_FEATURES.last
-    is_lp_enabled = @account.send("#{launch_party}_enabled?")
-    @account.rollback(launch_party)
-    assert_equal @account.send("#{launch_party}_enabled?"), false
-    @account.enable_setting(launch_party)
-    assert @account.send("#{launch_party}_enabled?")
+  def test_update_features_method_with_setting_dependency_disabled
+    params = { features: { signup_link: true } }
+
+    dependent_feature = :basic_settings_feature
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
+
+    setting = :signup_link
+    @account.add_feature(dependent_feature)
+    @account.disable_setting(setting)
+
+    @account.revoke_feature(dependent_feature)
+
+    refute @account.has_feature?(setting), 'setting should be false'
+    refute @account.has_feature?(dependent_feature), 'dependent_feature should be false'
+
+    assert_raise RuntimeError do
+      @account.update_attributes!(params)
+      refute @account.has_feature?(setting), 'setting should be false'
+    end
   ensure
-    is_lp_enabled ? @account.launch(launch_party) : @account.rollback(launch_party)
+    is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
-  def test_disable_setting_with_launch_party
-    launch_party = Account::LP_FEATURES.last
-    is_lp_enabled = @account.send("#{launch_party}_enabled?")
-    @account.enable_setting(launch_party)
-    @account.disable_setting(launch_party)
-    assert_equal @account.send("#{launch_party}_enabled?"), false
-  ensure
-    is_lp_enabled ? @account.launch(launch_party) : @account.rollback(launch_party)
-  end
+  def test_update_features_method_with_setting_dependency_enabled
+    params = { features: { signup_link: true } }
 
-  def test_enable_setting_with_feature
-    feature = Account::BITMAP_FEATURES.last
-    is_feature_enabled = @account.send("#{feature}_enabled?")
-    @account.revoke_feature(feature)
-    assert_equal @account.send("#{feature}_enabled?"), false
-    @account.enable_setting(feature)
-    assert @account.send("#{feature}_enabled?")
-  ensure
-    is_feature_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
-  end
+    dependent_feature = :basic_settings_feature
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
+    @account.add_feature(dependent_feature)
 
-  def test_disable_setting_with_feature
-    feature = Account::BITMAP_FEATURES.last
-    is_feature_enabled = @account.send("#{feature}_enabled?")
-    @account.enable_setting(feature)
-    @account.disable_setting(feature)
-    assert_equal @account.send("#{feature}_enabled?"), false
-  ensure
-    is_feature_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
-  end
+    setting = :signup_link
+    is_setting_enabled = @account.has_feature?(setting)
+    @account.disable_setting(setting)
 
-  def test_disable_setting_with_invalid_value_doesnt_raise_error
-    @account.disable_setting(:abcd)
+    refute @account.has_feature?(setting), 'setting should be false'
+    assert @account.has_feature?(dependent_feature), 'dependent_feature should be true'
+
+    @account.update_attributes!(params)
+
+    assert @account.has_feature?(setting), 'setting should be true'
+  ensure
+    is_setting_enabled ? @account.enable_setting(setting) : @account.disable_setting(setting)
+    is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
   def test_publish_lp_onsignup_as_false
@@ -92,7 +91,7 @@ class AccountTest < ActiveSupport::TestCase
       feature_name: 'CentralPublishLaunchpartyFeatures'
     }
     stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
-      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
+      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS', feature_class_mapping) do
         @account.launch :feature_name
       end
     end
@@ -110,9 +109,7 @@ class AccountTest < ActiveSupport::TestCase
       feature_name: 'CentralPublishLaunchpartyFeatures'
     }
     stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
-      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
-        @account.launch :feature_name
-      end
+      @account.launch :feature_name
     end
 
     # @launch_party_features is set to nil only if the lp publish worker is enqueued
@@ -128,9 +125,7 @@ class AccountTest < ActiveSupport::TestCase
       feature_name: 'CentralPublishLaunchpartyFeatures'
     }
     stub_const(Account, 'CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES', central_publish_lp_stub_const) do
-      stub_const(FeatureClassMapping, 'FEATURE_TO_CLASS_WITH_CENTRAL_FEATURE', feature_class_mapping) do
-        @account.launch :feature_name
-      end
+      @account.launch :feature_name
     end
     assert @account.instance_variable_get(:@launch_party_features).empty?
   ensure

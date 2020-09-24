@@ -79,7 +79,7 @@
 					 'tickets_on_behalf_of_others')%>
 				<br><br>
 			</div>
-			<% if current_account.allow_auto_suggest_solutions_enabled? %>
+			<% if current_account.admin_setting_for_account?(:auto_suggest_solutions) %>
 				<div class="checkbox">
 					<%= f.feature_check_box :auto_suggest_solutions, {:id => "auto_suggest_solutions"} %>
 					<%= label_for(t('.auto_suggest_solutions'), 'auto_suggest_solutions')%>
@@ -92,7 +92,7 @@
 		</div>
 	</div>
 
-	<% if current_account.public_url_toggle_enabled? && !current_account.falcon_and_encrypted_fields_enabled? %>
+	<% if current_account.admin_setting_for_account?(:public_ticket_url) && !current_account.falcon_and_encrypted_fields_enabled? %>
 		<div class="control-group sub-section">
 			<div class="control-label"><%= t('.public_ticket_urls_label') %></div>
 			<div class="controls">
@@ -112,7 +112,8 @@
 						:open_solutions => t('.everyone')}) %>
 		</div>
 	</div>
-	<% if current_account.features_included?(:forums) %>
+	<% if current_account.admin_setting_for_account?(:open_forums) &&
+		current_account.admin_setting_for_account?(:forum_captcha_disable) %>
 		<div class="control-group">
 			<div class="control-label"><%= t('.view_forums') %></div>
 			<div class="controls">
@@ -132,7 +133,8 @@
 		</div>
 	<% end %>
 </div>
-<% if current_account.features_included?(:forums) %>
+<% if current_account.admin_setting_for_account?(:moderate_posts_with_links) &&
+	current_account.admin_setting_for_account?(:moderate_all_posts) %>
 	<div class="portal-section">
 		<%= content_tag( :div,  t('.moderation'),	:class => "heading" ) %>
 		<div class="span6 right-border ml0">

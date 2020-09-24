@@ -62,7 +62,7 @@
       :mailbox: 57
       :whitelisted_ips: 58
       :branding: 59
-      :toggle_branding: 60
+      :unused_60: 60
       :freshfone_vm_transcription: 61
       :basic_dkim: 62
       :advanced_dkim: 63
@@ -139,7 +139,7 @@
       :reply_to_based_tickets: 135
       :freshfone: 136
       :disable_agent_forward: 137
-      :resource_rate_limit: 138
+      :unused_138: 138
       :domain_restricted_access: 139
       :sort_by_customer_response: 140
       :unresolved_tickets_widget_for_sprout: 141
@@ -150,7 +150,7 @@
       :enable_multilingual: 146
       :unused_147: 147
       :marketplace: 148
-      :fa_developer: 149
+      :unused_149: 149
       :es_multilang_solutions: 150
       :compose_email: 151
       :wild_cards_10: 152
@@ -162,7 +162,7 @@
       :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
-      :countv2_reads: 161
+      :unused_161: 161
       :reverse_notes: 162
       :opt_out_analytics: 163
       :disable_old_ui: 164
@@ -196,7 +196,7 @@
       :freddy_ultimate: 192
       :agent_scope: 193
       :social_tab: 194
-      :public_url_toggle: 195
+      :unused_195: 195
       :add_to_response: 196
       :customer_journey: 197
       :customize_table_view: 198
@@ -220,7 +220,7 @@
       :unused_216: 216
       :seafarers_1: 217
       :unused_218: 218
-      :portal_cc: 219
+      :unused_219: 219
       :disable_rr_toggle: 220
       :unused_221: 221
       :XX_unused_222: 222
@@ -314,7 +314,7 @@
       :reports_88: 310
       :reports_89: 311
       :reports_90: 312
-      :reports_91: 313
+      :untitled_feature_3_dependency_toggle: 313
       :basic_settings_feature: 314
       :untitled_feature_1_dependency_toggle: 315
       :untitled_feature_2_dependency_toggle: 316
@@ -331,7 +331,7 @@
       :auto_article_order: 327
       :business_hours: 328
       :scenario_automations: 329
-      :social_revamp: 330
+      :unused_330: 330
       :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
@@ -409,6 +409,11 @@
       :helpdesk_tickets_by_product: 405
       :skip_invoice_due_warning: 406
       :allow_wildcard_ticket_create: 407
+      :supervisor_contact_field: 408
+      :bypass_signup_captcha: 409
+      :disable_freshchat: 410
+      :whatsapp_channel: 411
+      :feedback_widget_captcha: 412
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -434,7 +439,6 @@
   :disable_agent_forward: false
   :compose_email: false
   :enable_multilingual: false
-  :countv2_reads: false
   :freshfone_onboarding: false
   :archive_tickets: false
   :call_quality_metrics: false
@@ -442,24 +446,14 @@
   :freshfone_custom_forwarding: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
-  :anonymous_tickets: true
-  :open_solutions: true
-  :auto_suggest_solutions: true
   :google_signin: true
   :twitter_signin: true
   :facebook_signin: true
-  :signup_link: true
-  :moderate_posts_with_links: true
-  :open_forums: false
   :captcha: true
-  :moderate_all_posts: false
   :hide_portal_forums: false
-  :forum_captcha_disable: false
-  :public_ticket_url: false
   :id_less_tickets: false
   :client_debugging: false
   :collision_socket: false
-  :resource_rate_limit: false
   :domain_restricted_access: false
   :ecommerce: false
   :freshfone_call_metrics: false
@@ -487,9 +481,7 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :updated_twilio_client: false
-  :portal_cc: false
   :disable_rr_toggle: false
-  :social_revamp: true
   :activity_revamp: true
   :hide_first_response_due: false
   :fluffy_forest: false
@@ -508,6 +500,10 @@
   :solutions_agent_portal: false
   :fetch_ticket_from_ref_first: false
   :skip_ticket_threading: false
-  :helpdesk_tickets_by_product: false
+  :whatsapp_channel: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
+  :supervisor_contact_field: false
+  :bypass_signup_captcha: false
+  :disable_freshchat: false
+  :feedback_widget_captcha: false

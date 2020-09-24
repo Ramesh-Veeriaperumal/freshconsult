@@ -5,13 +5,6 @@ MAX_DEAD_SET_SIZE = 50_000
 
 SIDEKIQ_CLASSIFICATION = YAML::load_file(File.join(Rails.root, 'config', 'sidekiq_classification.yml'))
 
-SIDEKIQ_CLASSIFICATION_MAPPING = SIDEKIQ_CLASSIFICATION[:classification].inject({}) do |t_h, queue|
-  queue.last.each do |q|
-    t_h[q] = queue.first
-  end
-  t_h
-end
-
 SIDEKIQ_CLASSIFICATION_MAPPING_NEW = SIDEKIQ_CLASSIFICATION[:new_classification].inject({}) do |t_h, queue|
   queue.last.each do |q|
     t_h[q] = queue.first
@@ -93,7 +86,7 @@ Sidekiq.configure_client do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
-      'AccountCleanup::OldSuspendedAccountsWorker',
+      'AccountCleanup::RebalancedAccountDeleteWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'
@@ -234,7 +227,7 @@ Sidekiq.configure_server do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
-      'AccountCleanup::OldSuspendedAccountsWorker',
+      'AccountCleanup::RebalancedAccountDeleteWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'
@@ -276,14 +269,14 @@ Sidekiq.configure_server do |config|
       'PrivilegesModificationWorker',
       'Channel::MessageWorker'
     ]
-    chain.add Server::SidekiqSober, :redis_connection => $redis_others, 
-      :priority => ['account_id', 'shard_name'], 
-      :required_classes => [
-        'Archive::AccountTicketsWorker',
-        'Archive::TicketWorker',
-        'CentralPublisher::CentralReSyncWorker'
-    ]
-    chain.add Middleware::Sidekiq::Server::Throttler, :required_classes => ["WebhookV1Worker"]
+    chain.add Server::SidekiqSober, redis_connection: $redis_others,
+                                    priority: ['account_id', 'shard_name'],
+                                    required_classes: [
+                                      'Archive::AccountTicketsWorker',
+                                      'Archive::TicketWorker',
+                                      'CentralPublisher::CentralReSyncWorker'
+                                    ]
+    chain.add Middleware::Sidekiq::Server::Throttler, required_classes: ['WebhookV1Worker']
   end
   config.client_middleware do |chain|
     chain.add PrometheusExporter::Instrumentation::SidekiqClient if ENV['ENABLE_PROMETHEUS_SIDEKIQ_CLIENT'] == '1'
@@ -345,7 +338,7 @@ Sidekiq.configure_server do |config|
       'FreshidRetryWorker',
       'Admin::Sandbox::CleanupWorker',
       'Admin::Sandbox::UpdateSubscriptionWorker',
-      'AccountCleanup::OldSuspendedAccountsWorker',
+      'AccountCleanup::RebalancedAccountDeleteWorker',
       'Search::Analytics::AccountCleanupWorker',
       'Search::Analytics::TicketsCleanupWorker',
       'AccountCreation::PrecreateAccounts'

@@ -48,9 +48,9 @@ GIT
       rack
 
 GIT
-  remote: git://github.com/freshdesk/rate-limiting.git
-  revision: 8ad8a6c4da2b7f92f10fdd5061b4baf579ca3f6a
-  tag: v2.0
+  remote: git://github.com/freshworks/rate-limiting.git
+  revision: ada28d2e3d4ec27828432196a239aa0fe6768483
+  tag: v2.1
   specs:
     rate-limiting (1.2.2)
       json
@@ -202,13 +202,6 @@ GIT
       faraday_middleware (~> 0.10.0)
 
 GIT
-  remote: git@github.com:freshdesk/fd_rate_limiter.git
-  revision: 94ebd47857e65ed3de0c4e1fd8b81d5666aabde1
-  branch: dynamic_rules
-  specs:
-    fd_rate_limiter (0.0.1)
-
-GIT
   remote: git@github.com:freshdesk/fd_time_bandits
   revision: 5d1aadf2e504b9455b0ed7fbe26031231a4164e8
   tag: v1.3
@@ -283,7 +276,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 5aacb4edc59a479f2470d4893fdaed127b810e20
+  revision: b88c48d65f319225c5c83c6f0ecbd32d1f6708b1
   branch: dalli
   specs:
     opentelemetry-instrumentation-dalli (0.5.0)
@@ -324,7 +317,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 935fea2dc6050eba0bd16457b390f67831d8171c
+  revision: 0e67450f2aeec4e657ec48e434dfbeb6aba31a1d
   branch: rack
   specs:
     opentelemetry-instrumentation-rack (0.5.0)
@@ -341,7 +334,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: caa5c02afb34b5ba4e24dcf77480a6fa08368df5
+  revision: 7c5f4739a33dd9d8f0a13643c57628e4d87f0039
   branch: redis
   specs:
     opentelemetry-instrumentation-redis (0.5.0)
@@ -1643,7 +1636,6 @@ DEPENDENCIES
   fakeweb (~> 1.3)
   faraday (= 0.9)
   faraday_middleware (~> 0.10.0)
-  fd_rate_limiter!
   fd_spam_detection_service!
   fluffy!
   fontcustom (= 1.3.3)

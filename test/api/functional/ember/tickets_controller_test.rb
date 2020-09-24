@@ -170,6 +170,14 @@ module Ember
       params_hash
     end
 
+    def fc_call_info
+      {
+        description: 'sample description',
+        call_notes: 'sample call notes',
+        duration: 'sample duration'
+      }
+    end
+
     def setup_fsm
       Account.stubs(:current).returns(Account.first)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
@@ -692,6 +700,25 @@ module Ember
       Account.current.tickets.last.destroy
     end
 
+    def test_create_with_valid_freshcaller_id_and_call_info_callback
+      Account.current.launch(:freshcaller_ticket_revamp)
+      fc_call_id = Faker::Number.number(3).to_i
+      Account.current.freshcaller_calls.new(fc_call_id: fc_call_id).save
+      call = Account.current.freshcaller_calls.find_by_fc_call_id(fc_call_id)
+      call.call_info = fc_call_info
+      call.save
+      params_hash = ticket_params_hash.merge(fc_call_id: call.fc_call_id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      ticket = Account.current.tickets.last
+      call.reload
+      assert_response 201
+      assert ticket.notes.conversations.where(id: call.notable_id).present?, 'Note not linked to call!'
+    ensure
+      Account.current.rollback(:freshcaller_ticket_revamp)
+      call.destroy
+      Account.current.tickets.last.destroy
+    end
+
     def test_create_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = ticket_params_hash.merge(attachment_ids: [attachment_id])
@@ -701,6 +728,19 @@ module Ember
       Helpdesk::Attachment.any_instance.unstub(:content_file_size)
       match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_size} MB")])
       assert_response 400
+    end
+
+    def test_create_with_html_to_plain_text_feature
+      Account.current.launch(:html_to_plain_text)
+      description = '<div><div>test</div><div>hello</div><div>hi</div><div><br></div></div>'
+      params_hash = ticket_params_hash.merge!(description: description)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      response_body = JSON.parse(response.body)
+      created_ticket = Helpdesk::Ticket.last
+      assert_equal created_ticket.description, Helpdesk::HTMLToPlain.plain(description)
+    ensure
+      Account.current.rollback(:html_to_plain_text)
     end
 
     def test_create_ticket_with_file_field
@@ -6899,6 +6939,18 @@ module Ember
     ensure
       group.destroy if group.present?
       agent.destroy if agent.present?
+    end
+
+    def test_channel_ticket_show
+      Account.stubs(:current).returns(Account.first)
+      whatsapp_as_source = Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2]
+      ticket = create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
+                             channel_message_id: 'sdl892dk', source: whatsapp_as_source)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+    ensure
+      Account.unstub(:current)
     end
   end
 end

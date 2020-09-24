@@ -1,12 +1,12 @@
 get:
   tags: [plans]
-  description: "Endpoint to fetch a Freshdesk plan and its pricing details",
-  summary: "Fetch plan",
+  description: Endpoint to fetch a Freshdesk plan and its pricing details
+  summary: Endpoint to fetch a Freshdesk plan and its pricing details
   responses:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/plans'
+        $ref: '#/definitions/fetch_plan'
     403:
       description: Access denied
     404:

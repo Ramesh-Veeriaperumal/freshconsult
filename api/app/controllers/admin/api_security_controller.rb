@@ -11,7 +11,10 @@ module Admin
     def show
       response.api_meta = {}.tap do |meta|
         meta[:current_ip] = request.remote_ip if current_account.whitelisted_ips_enabled?
-        meta[:freshid_migration_in_progress] = @item.freshid_migration_in_progress? if private_api?
+        if private_api?
+          meta[:freshid_migration_in_progress] = @item.freshid_migration_in_progress?
+          meta[:freshid_sso_enabled] = @item.freshid_sso_enabled?
+        end
       end
     end
 

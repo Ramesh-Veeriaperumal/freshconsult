@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token,
                      :only => [:revert_identity, :profile_image,
-                               :profile_image_no_blank, :enable_falcon, :disable_falcon,
+                               :profile_image_no_blank, :enable_falcon,
                                :accept_gdpr_compliance, :enable_undo_send,
                                :disable_undo_send, :set_conversation_preference, :change_focus_mode]
   before_filter :set_ui_preference, :only => [:show]
@@ -150,13 +150,6 @@ class UsersController < ApplicationController
     redirect_to_falcon
   end
 
-  def disable_falcon
-    # render nothing: true, status: 400 unless get_referer.start_with?('/a/')
-    return head(401) if current_account.disable_old_ui_enabled?
-    cookies[:falcon_enabled] = false
-    return head :no_content
-  end
-
   def enable_falcon_for_all
     current_account.enable_falcon_ui
     Rails.logger.info("Falcon for all :: #{User.current.email} :: #{User.current.id} :: #{Account.current.id}")
@@ -195,7 +188,7 @@ class UsersController < ApplicationController
   end
 
   def set_conversation_preference
-    current_user.set_notes_pref(params[:oldest_on_top]) if current_account.falcon_ui_enabled?(current_user) && params[:oldest_on_top].present?
+    current_user.set_notes_pref(params[:oldest_on_top]) if params[:oldest_on_top].present?
     head :no_content
   end
 

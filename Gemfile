@@ -208,7 +208,7 @@ group :production, :staging, :test, :development do
 end
 
 # Freshdesk
-gem 'rate-limiting', git:'git://github.com/freshdesk/rate-limiting.git', tag: 'v2.0'
+gem 'rate-limiting', git:'git://github.com/freshworks/rate-limiting.git', tag: 'v2.1'
 gem 'time_bandits', git: 'git@github.com:freshdesk/fd_time_bandits', tag: 'v1.3' # for instrumenting cache-performance
 gem 'rack-ssl', require: 'rack/ssl', git: 'git://github.com/freshdesk/rack-ssl', branch: 'ssl'
 gem 'omniauth-salesforce', git: 'git://github.com/freshdesk/omniauth-salesforce.git', branch: 'master'
@@ -221,7 +221,6 @@ gem 'i18nema', git: 'https://github.com/freshdesk/i18nema', require: false
 
 # Inhouse gems
 gem 'emailserv_request', git: 'git@github.com:freshdesk/emailserv_request.git', tag: 'v1.1' # email
-gem 'fd_rate_limiter', git: 'git@github.com:freshdesk/fd_rate_limiter.git', branch: 'dynamic_rules'
 gem 'fresh_request', git: 'git@github.com:freshdesk/fresh_request.git', branch: 'release'
 gem 'akismetor', git: 'git://github.com/freshdesk/akismetor.git'
 gem 'deadlock_retry', git: 'git://github.com/freshdesk/deadlock_retry.git'

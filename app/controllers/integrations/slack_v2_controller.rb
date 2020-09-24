@@ -17,7 +17,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
   MINIMUM_LINES = 0
 
   def oauth
-    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/slack?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26user_id%3D#{current_user.id}%26falcon_enabled%3D#{current_account.falcon_ui_enabled?(current_user).to_s}"
+    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/slack?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26user_id%3D#{current_user.id}%26falcon_enabled%3Dtrue"
   end
 
   def new

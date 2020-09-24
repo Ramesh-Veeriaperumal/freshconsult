@@ -95,8 +95,6 @@ class Helpdesk::BulkReplyTickets
       note.inline_attachment_ids = inline_images_clone[ticket.id].map do |k,image| image.id end if inline_attachments?
       note.from_email = get_from_email if params[:email_config] and params[:email_config]["reply_email"]
       note.cc_emails = note.notable.cc_email_hash[:reply_cc] if note.notable.cc_email_hash.present?
-      # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
-      note.instance_variable_set(:@skip_resource_rate_limit, true)
       build_attachments note
       if note.fb_note?
         association_hash = ticket.is_fb_message? ? construct_dm_hash(ticket) : construct_post_hash(ticket)

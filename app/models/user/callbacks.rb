@@ -123,7 +123,7 @@ class User < ActiveRecord::Base
   end
 
   def falcon_ui_applicable?
-    account.falcon_ui_enabled? && helpdesk_agent_changed? && agent?
+    helpdesk_agent_changed? && agent?
   end
 
   def set_falcon_ui_preference

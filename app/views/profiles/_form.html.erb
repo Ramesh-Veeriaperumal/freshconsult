@@ -64,21 +64,19 @@ jQuery('.email').on('keyup', function(){
 		jQuery('#add_new_mail').toggleClass('disabled', !jQuery.trim(a.last().val()));
 });
 
-	<% if current_account.falcon_ui_enabled?(current_user) %>
-		jQuery('.edit_agent').submit(function(event){
-			var form = jQuery(this),
-				url = form.action;
-			event.preventDefault();
-            form.ajaxSubmit({
-			    success: function(data){
-			       top.location.reload();
-			    },
-			    error: function(data){
-			       window.location.reload();
-				}
-			});
+	jQuery('.edit_agent').submit(function(event){
+		var form = jQuery(this),
+			url = form.action;
+		event.preventDefault();
+	    form.ajaxSubmit({
+		    success: function(data){
+		       top.location.reload();
+		    },
+		    error: function(data){
+		       window.location.reload();
+			}
 		});
-	<% end %>
+	});
 <% end %>
 
 <% user = @profile %>
@@ -141,21 +139,14 @@ jQuery('.email').on('keyup', function(){
 			</li>
 			<% end %>
 			<% if feature?(:multi_language) %>
-        <% if current_account.falcon_ui_enabled?(current_user) %>
-          <li <% if freshid_integration_enabled? %> class="freshid_field" <% end %>>
-            <%= label(:user, :language, t('account.language')) %>
-            <%= select(:user, :language, mint_locales_with_separator, {:selected => user.language.to_sym()})%>
-            <a href="javascript:toggleMessage()">
-              <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
-            </a>
-            <%= render partial:'ui/falcon_languages_alert' %>
-          </li>
-        <% else %>
-  				<li <% if freshid_integration_enabled? %> class="freshid_field" <% end %>>
-  					<%= label(:user, :language, t('account.language')) %>
-  					<%= select(:user, :language, I18n.available_locales_with_name , {:selected => user.language.to_sym()})%>
-  				</li>
-        <% end %>
+	          <li <% if freshid_integration_enabled? %> class="freshid_field" <% end %>>
+	            <%= label(:user, :language, t('account.language')) %>
+	            <%= select(:user, :language, mint_locales_with_separator, {:selected => user.language.to_sym()})%>
+	            <a href="javascript:toggleMessage()">
+	              <i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
+	            </a>
+	            <%= render partial:'ui/falcon_languages_alert' %>
+	          </li>
 			<% end %>
 
 		<%unless current_user.customer?%>

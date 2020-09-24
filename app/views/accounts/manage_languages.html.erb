@@ -26,28 +26,15 @@
 									<% if multilingual_flag %>
 										<div class="mt5"><%= Language.find_by_code(@account.main_portal.language).name %></div>
 									<% else %>
-										<% if current_account.falcon_ui_enabled?(current_user) %>
-											<%= select('account[main_portal_attributes]', :language, mint_locales_with_separator, {:selected =>  @account.main_portal.language.to_sym()})%>
-											<a href="javascript:toggleMessage()">
-												<i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
-											</a>
-										<% else %>
-											<%= portal.select :language, I18n.available_locales_with_name ,
-														{ :selected =>  @account.main_portal.language.to_sym() },
-														{ :class => "select2 input-medium" }
-											%>
-										<% end %>
+										<%= select('account[main_portal_attributes]', :language, mint_locales_with_separator, {:selected =>  @account.main_portal.language.to_sym()})%>
+										<a href="javascript:toggleMessage()">
+											<i class="info help-icon-language ficon-help-icon fsize-24" size="14"></i>
+										</a>
 									<% end %>
 								</div>
-								<% if current_account.falcon_ui_enabled?(current_user) %>
-									<div class="row-fluid multilingual-warning mt5">
-										<%= render partial:'ui/falcon_languages_alert' %>
-									</div>
-								<% else %>
-									<div class="row-fluid multilingual-warning mt5">
-										<%= t('accounts.multilingual_support.warning_msg') %>
-									</div>
-								<% end %>
+								<div class="row-fluid multilingual-warning mt5">
+									<%= render partial:'ui/falcon_languages_alert' %>
+								</div>
 							</div>
 						</div>
 						<%= f.fields_for :account_additional_settings do |settings| %>

@@ -1,7 +1,11 @@
 if @only_omni_channel_availability
-  @items.map do |omni_agent|
-    AgentDecorator.new(omni_agent, {}).channel_agents_availability_data
-  end.to_json
+  if @proxy_to_mars
+    @items.to_json
+  else
+    @items.map do |omni_agent|
+      AgentDecorator.new(omni_agent, {}).channel_agents_availability_data
+    end.to_json
+  end
 else
   agent_types = Account.current.agent_types_from_cache
   @items.map do |agent|

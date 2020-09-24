@@ -80,8 +80,6 @@ def create_notes_for_ticket ticket,comment
                                 :user => user,   :account_id =>@current_account && @current_account.id,
                                 :note_body_attributes => {:body =>comment[:body] , :body_html => comment[:formatted_body]}   , :created_at => comment[:created_at].to_datetime()      
                               })
-    # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
-    @note.instance_variable_set(:@skip_resource_rate_limit, true)
     unless @note.save_note
       puts "unable to save note: #{@note.errors.inspect}"
     end

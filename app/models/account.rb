@@ -37,7 +37,7 @@ class Account < ActiveRecord::Base
 
   concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations,
                  :multilingual, :sso_methods, :presenter, :subscription_methods, :freshid_methods,
-                 :fluffy_methods, :patches
+                 :fluffy_methods, :patches, :settings
 
   include CustomerDeprecationMethods
 
@@ -180,7 +180,7 @@ class Account < ActiveRecord::Base
   end
 
   def freshfone_active?
-    features?(:freshfone) && freshfone_numbers.present? && !falcon_ui_enabled?(User.current)
+    false
   end
 
   def es_multilang_soln?
@@ -886,15 +886,11 @@ class Account < ActiveRecord::Base
     @no_of_ticket_fields_built ||= ticket_fields_only.select(1).count
   end
 
-  def falcon_and_encrypted_fields_enabled?
-    user = User.current
-    falcon_ui_enabled = user && user.agent? ? falcon_ui_enabled?(user) : falcon_ui_enabled?
-    falcon_ui_enabled and hipaa_and_encrypted_fields_enabled?
-  end
-
   def hipaa_and_encrypted_fields_enabled?
     custom_encrypted_fields_enabled? and hipaa_enabled?
   end
+
+  alias falcon_and_encrypted_fields_enabled? hipaa_and_encrypted_fields_enabled?
 
   def remove_encrypted_fields
     # delete ticket fields
@@ -1111,7 +1107,11 @@ class Account < ActiveRecord::Base
     def update_features(features)
       if features.present?
         features.each do |name, value|
-          AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+          if AccountSettings::SettingsConfig[name]
+            AccountsHelper.value_to_boolean(value) ? set_setting(name.to_sym) : reset_setting(name.to_sym)
+          else
+            AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+          end
         end
       end
     end

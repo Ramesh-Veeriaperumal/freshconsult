@@ -1,13 +1,14 @@
 class ImapMailboxObserver < ActiveRecord::Observer
 
   include Mailbox::HelperMethods
-  include Cache::Memcache::EmailConfig
   include EmailHelper
+  include Email::Mailbox::Constants
 
   def before_create mailbox
     set_account mailbox
     set_imap_timeout mailbox
     encrypt_password mailbox
+    add_reauth_error_to_force_oauth_migration(mailbox, IMAP_AUTH_ERROR) if mailbox.authentication != OAUTH
   end
 
   def before_update mailbox
@@ -19,15 +20,16 @@ class ImapMailboxObserver < ActiveRecord::Observer
   def after_commit(mailbox)
     if mailbox.safe_send(:transaction_include_action?, :create)
       commit_on_create mailbox
+      add_reauth_mailbox_status mailbox.account_id if !mailbox.error_type.nil? && mailbox.error_type == IMAP_AUTH_ERROR
     elsif mailbox.safe_send(:transaction_include_action?, :update)
-      clear_cache mailbox
       update_custom_mailbox_status(mailbox.account_id)
+      update_reauth_mailbox_status(mailbox.account_id)
       check_error_and_send_mail(mailbox)
       # Send if error_type is not present. else, send if error_type is 0.
       commit_on_update(mailbox) if !mailbox.respond_to?(:error_type) || mailbox.error_type.to_i == 0
     elsif mailbox.safe_send(:transaction_include_action?, :destroy)
-      clear_cache mailbox
       update_custom_mailbox_status(mailbox.account_id)
+      update_reauth_mailbox_status(mailbox.account_id)
       commit_on_destroy mailbox
     end
     true

@@ -421,8 +421,6 @@ def handle_ticket_import base_dir
         :account_id =>@current_account && @current_account.id,
         :note_body_attributes => {:body =>note_body}        
         })
-         # Injecting '@skip_resource_rate_limit' instance variable to skip rate limit
-         @note.instance_variable_set(:@skip_resource_rate_limit, true)
          @note.created_at = note_created_time.to_datetime()
          if @note.save_note
            puts "successfully saved"

@@ -351,7 +351,7 @@ class SupportController < ApplicationController
   end
 
   def deny_iframe
-    return unless request.format.html?
+    return unless request.format.try(:html?)
     return unless current_account.account_additional_settings.security[:deny_iframe_embedding]
 
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'

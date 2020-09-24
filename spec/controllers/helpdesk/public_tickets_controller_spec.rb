@@ -6,7 +6,6 @@ describe Public::TicketsController do
   
   before(:all) do
     @test_ticket = create_ticket({ :status => 2 })
-    @test_ticket.account.features.public_ticket_url.create
     @test_ticket.get_access_token
   end
   
@@ -45,32 +44,6 @@ describe Public::TicketsController do
     it "must redirect to access denied" do
       access_token_in_valid = rand(36**32).to_s(36)
       get :show, {:id => access_token_in_valid }
-      response.should redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE))
-    end
-  end
-
-  describe "if public_ticket_url feature is set" do
-    before(:each) do
-      @test_ticket.account.features.public_ticket_url.create unless @test_ticket.account.features?(:public_ticket_url)
-    end
-
-    it "must render show template" do
-      access_token  =  @test_ticket.access_token
-      get :show, {:id => access_token }
-      response.body.should =~ /#{@test_ticket.description}/
-      response.body.should =~ /#{access_token}/
-      response.should render_template :show
-    end
-  end
-
-  describe "if public_ticket_url feature is not set" do
-    before(:each) do
-      @test_ticket.account.features.public_ticket_url.destroy if @test_ticket.account.features?(:public_ticket_url)
-    end
-
-    it "must redirect to access denied" do
-      access_token  =  @test_ticket.access_token
-      get :show, {:id => access_token }
       response.should redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE))
     end
   end

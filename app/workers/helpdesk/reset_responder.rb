@@ -18,8 +18,9 @@ class Helpdesk::ResetResponder < BaseWorker
       return if @user.nil?
 
       Sharding.run_on_slave do
-        handle_automatic_ticket_assignments
+        ticket_ids = fetch_ticket_ids_for_automatic_assignment
         handle_agent_tickets(options)
+        handle_automatic_ticket_assignments(ticket_ids) if ticket_ids.present?
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e, args: args)
@@ -28,17 +29,20 @@ class Helpdesk::ResetResponder < BaseWorker
 
   private
 
-    def handle_automatic_ticket_assignments
+    def fetch_ticket_ids_for_automatic_assignment
+      ticket_ids = []
+      if @account.automatic_ticket_assignment_enabled?
+        status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(@account)
+        group_ids = fetch_auto_ticket_assign_groups
+        @account.tickets.visible.sla_on_tickets(status_ids).where(group_id: group_ids).assigned_to(@user).select('id').find_in_batches do |tickets|
+          ticket_ids << tickets.map(&:id)
+        end
+      end
+      ticket_ids.flatten!
+    end
+
+    def handle_automatic_ticket_assignments(ticket_ids = [])
       return unless @account.automatic_ticket_assignment_enabled?
-
-      status_ids = Helpdesk::TicketStatus.sla_timer_on_status_ids(@account)
-      group_ids = fetch_auto_ticket_assign_groups
-
-      ticket_ids = @account.tickets.visible
-                           .sla_on_tickets(status_ids)
-                           .where(group_id: group_ids)
-                           .assigned_to(@user).pluck(:id)
-      return if ticket_ids.empty?
 
       Sharding.run_on_master { reassign_tickets(ticket_ids) }
     end

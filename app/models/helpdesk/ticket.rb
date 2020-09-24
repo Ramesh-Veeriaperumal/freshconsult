@@ -30,12 +30,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include MemcacheKeys
   include TicketConstants
 
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", "channel_id", "channel_profile_unique_id",
-                            "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", "channel_message_id",
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 'channel_id', 'channel_profile_unique_id',
+                            "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 'channel_message_id',
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email",
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
                             "sentiment", "spam_score", "dynamodb_range_key", "failure_count", "subsidiary_tkts_count",
-                            "last_customer_note_id", "nr_updated_at", "nr_escalation_level", "nr_violated", 'tweet_type', 'fb_msg_type']
+                            "last_customer_note_id", "nr_updated_at", "nr_escalation_level", "nr_violated", 'tweet_type', 'fb_msg_type'].freeze
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
@@ -1276,11 +1276,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
      (!survey.nil? && survey.can_send?(self,s_while))
   end
 
-  # Instance level spam watcher condition
-  # def rl_enabled?
-  #   self.account.features?(:resource_rate_limit)) && !self.instance_variable_get(:@skip_resource_rate_limit) && self.import_id.blank?
-  # end
-
   def show_reply?
     (self.twitter? or self.fb_replies_allowed? or self.from_email.present? or self.mobihelp? or self.allow_ecommerce_reply?)
   end
@@ -1621,11 +1616,5 @@ class Helpdesk::Ticket < ActiveRecord::Base
       time_taken = Benchmark.realtime { yield }
       Rails.logger.debug "Time taken: #{time_taken} Ticket: #{display_id} Account: #{account_id}"
     end
-
-    # def rl_exceeded_operation
-    #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
-    #                                                          :user_id => self.requester_id }
-    #   $spam_watcher.perform_redis_op("rpush", ResourceRateLimit::NOTIFY_KEYS, key)
-    # end
 
 end

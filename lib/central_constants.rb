@@ -54,7 +54,7 @@ module CentralConstants
     'HelpWidget' => '0.2',
     'Helpdesk::Filters::CustomTicketFilter' => '0.2',
     'Helpdesk::Source' => '0.2',
-    'Helpdesk::ArchiveTicket' => '1.1'
+    'Helpdesk::ArchiveTicket' => '1.2'
   }
 
   HYPERTRAIL_VERSION = '0.0.1'.freeze

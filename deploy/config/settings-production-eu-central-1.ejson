@@ -1536,6 +1536,9 @@
         "access_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:KUyu0FchsgwMNDjPxU/ICcGZ9Ud3mU5k:n2UwM8DjW+uC7clIUvrnX7joHQrTQH0N6Njj1v6At+naXmb7hs7tRyV0uoYngqbm4BHBZYGzGCEPgaC8hcMcs++1]",
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
       },
+      "kbservice": {
+        "secret_key": "EJ[1:bOgiVuMzskpSBaJh7wrWu4rNuuBPr0t+Iup4Y1/Pn3c=:MGRYL0Z6HbjexN7ZFdpl4gH5iVhvH3ZR:1G95jjDtcZpLogUILhI83HJDHYa+BRPb0zIYIVZ/ND9vbkr0FgXcu5iib0foM8yH]"
+      },
       "iam": {
         "_expiry": 300,
         "password": "EJ[1:KVL1cNnTPBNTRnFFb83+ksbinnY4QOD+pNUsoGYPqnY=:haAlj4KmqqxEeWOJE5CnFYw1Ppm7Gnre:QoxDY5WaH3GkWcagO52dJudErvc9OQsrd7k=]",
@@ -1620,7 +1623,8 @@
         "admin_jwt_secret": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:skyCG7z+bSLkpFmdFmbQt96+gHB30j/h:flu40Mf4LGbltf8AopA9j4+zDOJT2RuXKbPoZQ69no4NYBNDJ9osYpBejnlTPK6F]",
         "_api_endpoint": "https://euc.ocr.freshdesk.com/api/v1/",
         "_auth_type": "jwt",
-        "_jwt_default_expiry": "30"
+        "_jwt_default_expiry": "30",
+        "touchstone_secret": "EJ[1:MLcL1mPdS31E4KhlTZrn82/l3NOD69F3ZKt0f0qoSng=:c83cVFMr56hq8XmlPnEJCX6GXnfmOuBK:l7BVT/WwM1Mpfpo7Frm1tbkG7cPAkgT4cvMtqqgNsWAD8gyRk/8AWGPG5OtMlI0g]"
       },
       "datadog": {
         "license_key": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:BgWZz9dbceP3jcSFQY2wdcKFUulxpCtq:XH0C9HO4F6LwQEDGnNs5dwx14aPLqfG9fx5ks9x6Zns7yUQTnzZr0jTmA8o6Evwc]",
@@ -1846,9 +1850,7 @@
           "_fc-bg-sidekiq-archive": 3,
           "_fc-bg-sidekiq-occasional": 3,
           "_fc-bg-sidekiq-central-realtime": 3,
-          "_fc-bg-sidekiq-maintainence": 3,
           "_fc-bg-sidekiq-realtime": 6,
-          "_fc-bg-sidekiq-hard-delete": 3,
           "_fc-bg-shoryuken-analytics": 20
         }
       }
@@ -1922,29 +1924,19 @@
     },
     "fc-app-api-public-premium": {
     },
-    "fc-bg-sidekiq-subscription": {
-    },
     "hk-app-api-contacts": {
     },
     "hk-bg-shoryuken": {
     },
     "hk-app-ecommerce": {
     },
-    "fc-bg-sidekiq-dedicated-589783": {
-    },
     "fc-bg-sidekiq-realtime": {
-    },
-    "fc-bg-sidekiq-bulk-scheduled": {
-    },
-    "fc-bg-sidekiq-email": {
     },
     "hk-app-trial": {
     },
     "hk-app-dashboard": {
     },
     "fc-bg-sidekiq": {
-    },
-    "fc-bg-sidekiq-exports": {
     },
     "fc-app-api-public-buffer": {
     },
@@ -1962,8 +1954,6 @@
     },
     "hk-app-pipeline-sling": {
     },
-    "fc-bg-sidekiq-trial": {
-    },
     "fc-bg-shoryuken-analytics": {
     },
     "fc-app": {
@@ -1980,21 +1970,11 @@
     },
     "hk-app-archive": {
     },
-    "fc-bg-sidekiq-spam": {
-    },
-    "fc-bg-sidekiq-fc-occasional": {
-    },
-    "fc-bg-sidekiq-scheduled": {
-    },
     "hk-app-mobihelp": {
     },
     "hk-app-support-theme": {
     },
-    "fc-bg-sidekiq-gamification": {
-    },
     "fc-app-api-sling": {
-    },
-    "fc-bg-sidekiq-dedicated-892785": {
     },
     "hk-app": {
     },
@@ -2020,33 +2000,19 @@
         }
       }
     },
-    "fc-bg-sidekiq-misc": {
-    },
     "hk-bg-utility": {
     },
     "hk-app-freshid": {
     },
     "hk-app-freshops": {
     },
-    "fc-bg-sidekiq-maintainence": {
-    },
     "fc-app-buffer": {
     },
     "fc-bg-resque": {
     },
-    "fc-bg-sidekiq-free": {
-    },
-    "fc-bg-sidekiq-dedicated-887984": {
-    },
     "hk-app-reports": {
     },
-    "fc-bg-sidekiq-community": {
-    },
     "hk-app-email": {
-    },
-    "fc-bg-sidekiq-mailbox-jobs": {
-    },
-    "fc-bg-sidekiq-hard-delete": {
     },
     "fc-app-api-public": {
       "envoy": {
@@ -2061,12 +2027,6 @@
     "fc-app-api-channel": {
     },
     "fc-bg-resque-freshfone": {
-    },
-    "fc-bg-sidekiq-freshfone": {
-    },
-    "fc-bg-sidekiq-search": {
-    },
-    "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
     },

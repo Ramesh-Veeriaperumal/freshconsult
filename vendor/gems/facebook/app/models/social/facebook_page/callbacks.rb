@@ -17,8 +17,8 @@ class Social::FacebookPage < ActiveRecord::Base
   before_save :create_model_changes, on: :update
 
   after_commit :subscribe_realtime, :send_mixpanel_event, on: :create
-  after_commit :build_default_streams,  on: :create,  :if => :facebook_revamp_enabled?
-  after_commit :delete_default_streams, on: :destroy, :if => :facebook_revamp_enabled?
+  after_commit :build_default_streams,  on: :create
+  after_commit :delete_default_streams, on: :destroy
   after_commit :remove_gateway_page_subscription, on: :destroy
 
   after_update :fetch_fb_wall_posts
@@ -132,10 +132,6 @@ class Social::FacebookPage < ActiveRecord::Base
 
   def send_mixpanel_event
     ::MixpanelWrapper.send_to_mixpanel(self.class.name)
-  end
-
-  def facebook_revamp_enabled?
-    Account.current.features?(:social_revamp)
   end
 
   def save_deleted_page_info
