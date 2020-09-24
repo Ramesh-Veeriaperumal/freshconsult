@@ -1,12 +1,12 @@
 require_relative '../test_helper'
-require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+require Rails.root.join('spec', 'support', 'account_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'test_case_methods.rb')
 
 class AccountTest < ActiveSupport::TestCase
-  include AccountTestHelper
+  include AccountHelper
 
   def setup
-    @account = Account.first || create_new_account
+    @account = Account.first || create_test_account
     @account.make_current
   end
 
@@ -37,6 +37,51 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal @account.private_inline_enabled?, false
   ensure
     @account.revoke_feature(:private_inline)
+  end
+
+  def test_update_features_method_with_setting_dependency_disabled
+    params = { features: { signup_link: true } }
+
+    dependent_feature = :basic_settings_feature
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
+
+    setting = :signup_link
+    @account.add_feature(dependent_feature)
+    @account.disable_setting(setting)
+
+    @account.revoke_feature(dependent_feature)
+
+    refute @account.has_feature?(setting), 'setting should be false'
+    refute @account.has_feature?(dependent_feature), 'dependent_feature should be false'
+
+    assert_raise RuntimeError do
+      @account.update_attributes!(params)
+      refute @account.has_feature?(setting), 'setting should be false'
+    end
+  ensure
+    is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
+  end
+
+  def test_update_features_method_with_setting_dependency_enabled
+    params = { features: { signup_link: true } }
+
+    dependent_feature = :basic_settings_feature
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
+    @account.add_feature(dependent_feature)
+
+    setting = :signup_link
+    is_setting_enabled = @account.has_feature?(setting)
+    @account.disable_setting(setting)
+
+    refute @account.has_feature?(setting), 'setting should be false'
+    assert @account.has_feature?(dependent_feature), 'dependent_feature should be true'
+
+    @account.update_attributes!(params)
+
+    assert @account.has_feature?(setting), 'setting should be true'
+  ensure
+    is_setting_enabled ? @account.enable_setting(setting) : @account.disable_setting(setting)
+    is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
   def test_publish_lp_onsignup_as_false

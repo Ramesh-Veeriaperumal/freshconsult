@@ -196,7 +196,7 @@
       :freddy_ultimate: 192
       :agent_scope: 193
       :social_tab: 194
-      :public_url_toggle: 195
+      :unused_195: 195
       :add_to_response: 196
       :customer_journey: 197
       :customize_table_view: 198
@@ -413,6 +413,7 @@
       :bypass_signup_captcha: 409
       :disable_freshchat: 410
       :whatsapp_channel: 411
+      :feedback_widget_captcha: 412
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -444,20 +445,11 @@
   :freshfone_conference: false
   :freshfone_custom_forwarding: false
   :custom_encrypted_fields: false
-  :anonymous_tickets: true
-  :open_solutions: true
-  :auto_suggest_solutions: true
   :google_signin: true
   :twitter_signin: true
   :facebook_signin: true
-  :signup_link: true
-  :moderate_posts_with_links: true
-  :open_forums: false
   :captcha: true
-  :moderate_all_posts: false
   :hide_portal_forums: false
-  :forum_captcha_disable: false
-  :public_ticket_url: false
   :id_less_tickets: false
   :client_debugging: false
   :collision_socket: false
@@ -507,10 +499,10 @@
   :solutions_agent_portal: false
   :fetch_ticket_from_ref_first: false
   :skip_ticket_threading: false
-  :helpdesk_tickets_by_product: false
   :whatsapp_channel: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
   :disable_freshchat: false
+  :feedback_widget_captcha: false

@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20200817171910) do
+ActiveRecord::Schema.define(version: 20200821185341) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1750,6 +1750,7 @@ ActiveRecord::Schema.define(version: 20200817171910) do
     t.datetime "created_at",                          :null => false
     t.datetime "updated_at",                          :null => false
     t.boolean  "enabled",                             :default => true
+    t.text     "settings"
   end
 
   add_index "freshcaller_accounts", ["account_id"], :name => "index_freshcaller_accounts_on_account_id"
@@ -1762,6 +1763,7 @@ ActiveRecord::Schema.define(version: 20200817171910) do
     t.string   "notable_type"
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
+    t.text     'call_info'
   end
 
   add_index "freshcaller_calls", ["account_id", "fc_call_id"], :name => "index_freshcaller_calls_on_account_id_and_fc_call_id"
@@ -1775,6 +1777,7 @@ ActiveRecord::Schema.define(version: 20200817171910) do
     t.string   "notable_type"
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
+    t.text     'call_info'
   end
 
   add_index "freshcaller_calls", ["account_id", "fc_call_id"], :name => "index_freshcaller_calls_on_account_id_and_fc_call_id"

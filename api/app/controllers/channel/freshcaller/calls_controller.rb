@@ -20,7 +20,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     call_delegator = CallDelegator.new(@item, @options.slice(:ticket_display_id, :agent_email, :call_agent_email, :contact_id))
     if call_delegator.valid?
       load_call_attributes call_delegator
-      handle_call_status_flows
+      Account.current.launched?(:freshcaller_ticket_revamp) ? add_call_info : handle_call_status_flows # We can remove this in auto ticket creation check PR
       @item.recording_status = params[:recording_status] if params[:recording_status].present?
       if @item.save
         response.api_root_key = 'freshcaller_call'
@@ -47,6 +47,16 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
       create_or_update_ticket if (incoming_missed_call? || abandoned?) && !callback_parent?
       create_or_add_to_ticket if ongoing?
       create_ticket_add_note if (voicemail? || completed? || outgoing_missed_call?) && !callback_parent?
+    end
+
+    def add_call_info
+      if params[:call_status].present?
+        @item.call_info = call_info
+        return if @ticket.blank?
+        return create_and_link_note unless update_existing_note?
+
+        update_note_body
+      end
     end
 
     def create_or_update_ticket
