@@ -124,6 +124,17 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:has_feature?)
   end
 
+  def test_update_setting_when_dependent_feature_disabled
+    params = { allow_wildcard_ticket_create: true }
+    dependent_feature = AccountSettings::SettingsConfig[:allow_wildcard_ticket_create][:feature_dependency]
+    Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
+    put :update, construct_params({}, params)
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: :allow_wildcard_ticket_create.to_s))
+  ensure
+    Account.any_instance.unstub(:has_feature?)
+  end
+
   def teardown
     $redis_others.perform_redis_op('sadd', COMPOSE_EMAIL_ENABLED, @account.id)
   end

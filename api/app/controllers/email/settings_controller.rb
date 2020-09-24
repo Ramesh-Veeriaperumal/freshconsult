@@ -1,6 +1,7 @@
 module Email
   class SettingsController < ApiApplicationController
     skip_before_filter :load_object
+    before_filter :validate_settings, only: [:update]
     include HelperConcern
     include Redis::RedisKeys
     include Redis::OthersRedis
@@ -8,7 +9,7 @@ module Email
     def update
       features = params[cname]
       features.each do |feature, enable|
-        feature_name = EmailSettingsConstants::EMAIL_CONFIG_PARAMS[feature.to_sym] || feature.to_sym
+        feature_name = EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[feature.to_sym] || feature.to_sym
         if feature_name.eql? EmailSettingsConstants::COMPOSE_EMAIL_FEATURE
           toggle_compose_email_feature(feature_name, enable)
         elsif feature_name.eql? EmailSettingsConstants::DISABLE_AGENT_FORWARD
@@ -80,6 +81,14 @@ module Email
           valid
         else
           validate_body_params
+        end
+      end
+
+      def validate_settings
+        params[cname].each_key do |setting|
+          unless Account.current.admin_setting_for_account?(EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym)
+            return render_request_error(:require_feature, 403, feature: setting)
+          end
         end
       end
 
