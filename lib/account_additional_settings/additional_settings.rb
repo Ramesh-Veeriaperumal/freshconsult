@@ -74,4 +74,12 @@ module AccountAdditionalSettings::AdditionalSettings
     end
     onboarding_types.first
   end
+
+  def deny_iframe_embedding=(value)
+    (self.additional_settings[:security] ||= {})[:deny_iframe_embedding] = value
+  end
+
+  def allow_iframe_embedding
+    security.present? && security.key?(:deny_iframe_embedding) ? !security[:deny_iframe_embedding] : true
+  end
 end

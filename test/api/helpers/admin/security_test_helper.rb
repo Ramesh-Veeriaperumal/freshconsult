@@ -8,7 +8,8 @@ module Admin
       },
       { whitelisted_ip: { enabled: true, applies_only_to_agents: true, ip_ranges: [{ start_ip: '11.11.11.00', end_ip: '11.11.11.11' }] } },
       { contact_password_policy: { minimum_characters: 9 } },
-      { agent_password_policy: { minimum_characters: 10, cannot_be_same_as_past_passwords: 4, atleast_an_alphabet_and_number: nil } }
+      { agent_password_policy: { minimum_characters: 10, cannot_be_same_as_past_passwords: 4, atleast_an_alphabet_and_number: nil } },
+      { allow_iframe_embedding: true }
     ].freeze
     INVALID_SECURITY_SETTINGS = [
       { notification_emails: 1 }, # 0
@@ -38,7 +39,9 @@ module Admin
           atleast_an_alphabet_and_number: 'pair',
           password_expiry: true
         }
-      } # 18
+      }, # 18
+      { allow_iframe_embedding: 1 },
+      { allow_iframe_embedding: nil }
     ].freeze
 
     def whitelisted_ip
@@ -85,6 +88,7 @@ module Admin
         settings[:notification_emails] = Account.current.notification_emails
         settings[:contact_password_policy] = contact_password_policy_hash if Account.current.custom_password_policy_enabled?
         settings[:agent_password_policy] = agent_password_policy_hash if show_agent_password_policy?
+        settings[:allow_iframe_embedding] = Account.current.allow_iframe_embedding
       end
     end
 
