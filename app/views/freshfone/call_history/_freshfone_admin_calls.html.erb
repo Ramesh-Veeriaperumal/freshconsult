@@ -1,0 +1,141 @@
+<div class="list-page fresfone-call-history">
+
+	<div class="list-page-header row-fluid">
+		<div class="row-fluid" id="list-page-subheader">
+			<button class="hide" id="open-blacklist-confirmation"
+				rel="freshdialog"
+				data-submit-label="<%= t('freshfone.call_history.block_number') %>"
+				data-close-label="<%= t('freshfone.call_history.cancel') %>"
+				data-target="#blacklist-confirmation"
+				data-title="<%= t('freshfone.call_history.block_number_title') %>"
+				data-width="340"></button>
+			<div id="blacklist-confirmation" class="hide">
+				<%= form_for(:caller, :url => url_for(:controller => 'freshfone/caller', 
+							 :action => 'block'), :method => 'post', :remote => true) do |f| %>
+					<%= f.hidden_field :number %>
+					<%= f.hidden_field :id %>
+				<% end %>
+				<%= t('freshfone.call_history.blacklist_confirmation') %> <span class="number"></span>?
+			</div>
+		</div>
+	</div>
+	<div class="row-fluid">
+			<div class="call-history-left-filter slide-filter" id="call-history-edit">
+				<span data-dismiss="slider" class="muted pull-right filter-close">×</span> 
+				<div class="lead"><%= t("livechat.filter") %></div>
+				<%= render :partial => 'call_history_sub_header' %>
+			</div>
+			<div class="call-history-page slide-content" id="call-history-page">
+				<div class="list-page-header row-fluid">
+					<div class="fliter_detail_slide">
+						<div class="list-page-freshfone-numbers span12">
+							<!--  start -->
+							<div class="span7">
+	              	<i class="vertical-alignment report-header-icon reports-icon-report"></i>
+		            <div class="vertical-alignment">
+		              <h1 class="freshfone-lead lead" ><%=t('freshfone.call_history.title')%></h1>
+		              <span class="filter_freshfone_number"></span>
+								</div>
+          		</div>
+          		<!-- Call History Export Start -->
+          		<span class="pull-right">    
+		          <span class="dropdown call_history_export_div"
+		            data-success-message="<%= export_messages[:success_message] %>"
+		            data-error-message="<%= export_messages[:error_message] %>"
+		            data-range-limit-message="<%= export_messages[:range_limit_message] %>">
+
+					<a role="button" class="dropdown-toggle" id="export_dropdown" data-toggle="dropdown" href="#">	<span><%= t('export_data.export') %></span>
+					  <b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu pull-right" role="menu" aria-labelledby="export_options">
+						<% export_options.each do |option| %>
+							<li>
+								<a href="#" class="export_option" data-format="<%=option[:en].downcase%>">
+									<%=option[:i18n]%>
+								</a>
+							</li>
+						<% end %>
+					</ul>
+				  </span>
+		        </span>
+		        <% if current_account.features?(:freshfone_call_metrics) %>
+		        	<p class='export_help_text pull-right'><%= t("freshfone.more_metrics_available_in_export") %></p>
+		       	<% end %>
+		        <!-- Call History Export End -->
+							<!-- report style end-->
+						</div>
+						<div class="filter-subheader">
+							<div class="vertical-alignment" >
+								<a class="btn btn-primary call-history-metrics" href="#call-history-edit" data-parent="#call-history-page" id="sliding"><%= t("livechat.edit") %></a>
+							</div>
+							<div class="filter-container">
+								<ul class='inline' id="filterdetails"></ul>	
+							</div>
+							<div class="freshfone_filter_sorting">
+									<span class="filter_title">
+										<b><%= t('freshfone.call_history.sort_by') %></b>
+									</span >
+									<span class="dropdown call_history_sorting_div">
+											<a role="button" 
+												 class="dropdown-toggle" 
+												 id="sorting_dropdown" 
+												 data-toggle="dropdown" 
+												 href="#"> 
+												 <span class="filter-name"><%= t('freshfone.call_history.received_date') %></span>
+												 <b class="caret"></b>
+											</a>
+											<ul class="dropdown-menu pull-right" 
+													role="menu" 
+													aria-labelledby="sorting_dropdown_list">
+												<% sort_by_primary_filters.each_with_index do |wf_order, i| %>
+													<li><a class="wf_order" href="#" wf_order="<%= wf_order[1] %>" >
+														<% if i == 0 %>
+															<span class="icon ticksymbol"></span>
+														<% end %>
+														<%= wf_order[0] %>
+													</a></li>
+												<% end %>
+												<span class="seperator"></span>
+												<% sort_by_secondary_filters.each_with_index do |wf_order_type, i| %>
+													<li><a class="wf_order_type" href="#" wf_order_type="<%= wf_order_type[1] %>" >
+														<% if wf_order_type[1] === :desc %>
+															<span class="icon ticksymbol"></span>
+														<% end %>
+														<%= wf_order_type[0] %>
+													</a></li>
+												<% end %>
+											</ul>
+									</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="list-page-body">
+					<%= render :partial => 'call_log_body', :locals => {:calls => @calls, :children => :false} %>
+				</div>
+			</div>
+		
+	</div>
+</div>
+<form id="SortFilterCalls" action="#">
+	<input type="hidden" name="wf_order" value="<%= params[:wf_order] || 'created_at' %>" />
+	<input type="hidden" name="wf_order_type" value="<%= params[:wf_order_type] || 'desc' %>" />    
+	<input type="hidden" name="page" value="1" />
+	<input type="hidden" name="data_hash" value="" />
+	<input type="hidden" name="number_id" value="" />
+	<input type="hidden" name="date_range_type" value="" />
+	<div rel='filter'>
+	</div>
+</form>
+
+<script id="freshfone-cost-splitup" type="text/x-jquery-tmpl" >
+  <div class='freshfone-cost-splitup center'>
+    <div>
+      <span class='total_duration_text'> <%=t('freshfone.call_history.total_duration')  %> ${total_duration} (${no_of_unit} <%=t('freshfone.call_history.minutes')  %>) </span>
+    </div>
+    <div>
+      <span class='split_up'>
+      <span class='no_of_unit'> ${no_of_unit} </span>x<span class='pulse_rate'>$${pulse_rate}</span></span>
+    </div>
+  </div>
+</script>

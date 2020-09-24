@@ -83,6 +83,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :api_freshfone, path: 'phone' do
+      resources :call_history, only: [:index] do
+        collection do
+          post :export
+          get '(export/:id)', to: :export_status, as: :export_status
+        end
+      end
+    end
+
     namespace :api_discussions, path: 'discussions' do
       resources :categories, except: [:new, :edit] do
         member do

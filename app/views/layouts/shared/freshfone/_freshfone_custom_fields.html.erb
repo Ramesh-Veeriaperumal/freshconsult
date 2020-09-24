@@ -1,0 +1,12 @@
+<% freshfone_custom_fields[:custom_field].each_with_index do |custom_record,index| %>
+	<% unless custom_record.blank? %>
+		<li class='custom-field search-result'>
+			<div class="phone-contact result-phone ellipsis"><%= custom_record %> </div>
+	  	<div class="phone-type ellipsis"><%= freshfone_custom_fields[:custom_name][index] %></div>
+      <div class="ff_call_button pull-right hide">
+        <%= font_icon "ff-phone", :size => 11 %> 
+        <%= t("Call") %>
+      </div> 
+	  </li>
+	<% end %>
+<% end %>

@@ -2900,6 +2900,11 @@ a.mobile_switchBtn {
 
 .tweet-table .search-grey-box{ margin-top: 0; }
 
+//Temp.. Should be removed from this place
+.new_freshfone_number_search{
+	@include text-align(center);
+	line-height: 3;
+}
 // -----------------------------------------------------------------------------------------------
 //											facebook-page-tab
 // -----------------------------------------------------------------------------------------------

@@ -1,0 +1,12 @@
+<div>
+  Hi <%=@account.admin_first_name%>,<div><br></div>
+  <div>
+    There has been an issue with your phone credits recharge payment <%= number_to_currency(@recharge_amount) %>. We attempted to charge the payment method on your Freshdesk account, but the recharge failed.
+  </div>
+  <div><br></div>
+  <div>Please <%= link_to "recharge your phone credits", "http://#{@account.full_domain}/subscription" %> account immediately to continue using your phone channel.</div>
+  <div><br></div>
+  <div>Regards,</div>
+  <div>The Freshdesk Team</div>
+  <div><br></div>
+</div>

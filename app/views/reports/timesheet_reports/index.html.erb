@@ -28,6 +28,13 @@
 
 
 </div>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
+  	<%= javascript_tag do %>
+  		if(App.Kissmetrics != undefined){
+  			App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
+  		}
+	<% end %>
+<% end %>
 <%= javascript_tag do %>
 	var Helpkit = Helpkit || {};
 	Helpkit.report_filter_data = <%= @report_filter_data.to_json.html_safe %>;

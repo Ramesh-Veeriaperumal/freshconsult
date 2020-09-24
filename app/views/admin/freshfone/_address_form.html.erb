@@ -1,0 +1,51 @@
+<div class='form-controls'>
+  <div class="control-group row-fluid">
+    <label class="span4 control-label">
+      <%= t('freshfone.admin.numbers.address.name') %>
+    </label>
+    <div class='span8'>
+      <%= text_field_tag :business_name%>
+    </div>
+  </div>
+
+  <div class="control-group row-fluid">
+    <label class="span4 control-label">
+      <%= t('freshfone.admin.numbers.address.address') %>
+    </label>
+    
+    <div class='span8'>
+      <%= text_field_tag :address%>
+    </div>
+  </div>
+
+  <div class="control-group row-fluid">
+    <label class="span4 control-label">
+      <%= t('freshfone.admin.numbers.address.city') %>
+    </label>
+    
+    <div class='span8'>
+      <%= text_field_tag :city%>
+    </div>
+  </div>
+
+  <div class="control-group row-fluid">
+    <label class="span4 control-label">
+      <%= t('freshfone.admin.numbers.address.state') %>      
+    </label>
+    
+    <div class='span8'>
+      <%= text_field_tag :state%>
+    </div>
+  </div>
+
+  <div class="control-group row-fluid">
+    <label class="span4 control-label">
+      <%= t('freshfone.admin.numbers.address.postal_code') %>
+    </label>
+
+    <div class='span8'>
+      <%= text_field_tag :postal_code%>
+    </div>
+  </div>
+  <%= hidden_field_tag :country%>
+</div>

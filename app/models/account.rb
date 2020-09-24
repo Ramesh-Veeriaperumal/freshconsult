@@ -179,6 +179,10 @@ class Account < ActiveRecord::Base
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
 
+  def freshfone_active?
+    false
+  end
+
   def es_multilang_soln?
     features_included?(:es_multilang_solutions) || launched?(:es_multilang_solutions)
   end

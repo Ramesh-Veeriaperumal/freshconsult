@@ -14,6 +14,7 @@ translations:
     only: [
     '*.adv_reports.*'
     , '*.helpdesk_reports.*'
+    , '*.reports.freshfone.*'
     , '*.helpdesk.time_sheets.*'
     , '*.admin.roles.*'
     , '*.helpdesk.realtime_dashboard.*'

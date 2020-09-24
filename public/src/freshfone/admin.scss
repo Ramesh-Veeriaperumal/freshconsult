@@ -1,0 +1,558 @@
+@import "../settings/settings";
+@import "variables";
+#local-numbers{
+  width: 250px;
+  height: 20px;
+  margin: 8px;
+}
+
+#number-search, #toll-free-search{
+  padding: 15px;
+}
+
+#number-search{
+  .freshfone-number-search{
+    display: inline-block;
+    .search-lbl{
+      display: inline-block;
+      @include margin-right(5px);
+      @include margin-left(10px);
+    }
+  }
+}
+
+.phone_features_info{
+  ul {
+    list-style-type:disc
+  }
+  li{
+    line-height:1.4em;
+    @include margin(0 0 5px 25px);
+    color:#444;
+  }
+}
+
+.new_search{ @include text-align(center); }
+
+.buy-new{
+  @include text-align(right);
+}
+
+.toll-free-list{
+  display: none;
+}
+
+#toll-free-search{
+  .search-toll-free{
+    margin-top: 15px;
+  }
+  .toll-free-prefixes{
+    @include float(left);
+  }
+}
+
+.select-country{
+  display: inline-block;
+  @include margin-right(5px);
+}
+
+.instruct{
+  display: block;
+  font-size: 11px;
+  color: $fa-instruct-text;
+}
+
+.search-inputs-number, .search-inputs-location{
+  @include clear(both);
+  .area-code-search{
+    display: inline-block;
+    margin-top: 13px;
+    width: 50px;
+  }
+}
+
+.search-phrase{
+  width: 250px;
+  display: inline-block;
+  @include margin-left(20px);
+}
+
+.search-inputs-location{
+  display: none;
+  .search-phrase{
+    @include margin(13px 0 0 0);
+  }
+}
+
+.twilio-countries{
+  display: inline;
+  #s2id_supported_countries, #s2id_toll_free_supported_countries{
+    width: 125px;
+    vertical-align: middle;
+    @include margin-left(5px);
+  }
+}
+
+.phone-search-results{
+  .search-caption{
+    display: inline-block;
+    margin-top: 10px;
+  }
+  .search-term{
+    font-weight: bold;
+  }
+}
+
+#local_search_results, #toll_free_search_results{
+  .result_available_number{
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 6px;
+  }
+  .buy_available_number{
+    display: inline-block;
+    @include float(right);
+  }
+  .purchase_number{
+    display: none;
+  }
+  .number_type{
+    position: relative;
+    bottom: 2px;
+    margin: 0 10px 5px 10px;
+  }
+  .available_number{
+    border: 1px solid $fa-available-number-background;
+    border-top: none;
+    padding: 11px;
+    height: 30px;
+
+    &:hover {
+      background: $fa-active-tab-background;
+      .buy_available_number{
+        margin-top: 5px;
+      }
+      .purchase_number {
+        display: inline;
+      }
+    }
+  }
+  .active{
+    background: $fa-active-tab-background;
+  }
+  .phone_location{
+    font-size: 11px;
+    font-weight: normal;
+    display: inline;
+    @include margin-left(70px);
+    text-transform: uppercase;
+    color: $fa-phone-location-text;
+  }
+  .no-numbers-available{
+    @include text-align(center);
+    font-size: 16px;
+    color: $fa-no-number-available-text;
+  }
+}
+
+.region{
+  font-size: 11px;
+}
+
+
+.search-number{
+  @include text-align(right);
+}
+
+.nested_ivrs {
+  @include margin-left(20px);
+  margin-top: 15px;
+  list-style-type: decimal-leading-zero;
+  .nested_ivrs .nested_ivrs .nested_ivrs {
+    @include margin-left(0);
+  }
+}
+
+//NEW
+
+.phone-search-bar{
+  background: $fa-phone-search-background;
+  @include border-radius(5px 5px 0px 0px);
+  border: 1px solid $fa-phone-search-border;
+  @include padding(10px 20px 10px 9px);
+	min-height: 30px;
+  #search_input{
+    height: 20px;
+  }
+  .search-input-sec{
+    width: 200px;
+    @include float(right);
+    position: relative;
+    margin-right: 18px;
+    #search_input{
+      margin-bottom: 0;
+      padding-left: 30px;
+    }
+    .searchicon{
+      top: 5px;
+      @include left(10px);
+      background: none;
+      color: #999;
+    }
+  }
+  .search-primary{
+    @include float(left);
+  }
+  .search-bar-country, .search-bar-state, .search-bar-prefix{
+    display: inline-block;
+    @include margin-right(5px);
+		.select2-container {
+			width: 130px;
+		}
+  }
+  .select2-choice{
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+    height: 25px;
+    padding: 2px 2px 2px 5px;
+    div b{
+      position: relative;
+      top: 2px;
+    }
+  }
+}
+
+.default-results-view{
+  margin-top: 25px;
+}
+
+.freshfone_subscription{
+  .credits_lbl{
+    display: inline-block;
+    margin-top: 6px;
+  }
+  #s2id_freshfone_credits_credit, #s2id_freshfone_credits_recharge_quantity{
+    width: 82px;
+  }
+}
+.ui-form li.current-balance{
+  width: 30%;
+  @include text-align(center);
+}
+.current-balance-text{
+  color: black;
+}
+.current-balance-amt{
+  font-size: 24px;
+  margin-top: 16px;
+  font-weight: bold;
+}
+.current-balance-followup{
+  color: black;
+  padding-top: 10px;
+}
+.ui-form li.recharge-now{
+  width: 50%;
+  position: relative;
+  top: 3px;
+  @include border-left(1px solid $fa-recharge-now-border);
+}
+.enabled-auto-recharge{
+  .recharge-amt-lbl{
+    color: black;
+  }
+  .recharge-amt{
+    font-weight: bold;
+    font-size: 15px;
+    @include margin-left(10px);
+  }
+  .action-links{
+    display: inline-block;
+    @include margin-left(15px);
+  }
+}
+.cancel_edit_auto_recharge{
+  display: none;
+}
+.freshfone-confirmation{
+  -webkit-border-radius:6px;
+  -moz-border-radius:6px;
+  border-radius:6px;
+  .ui-dialog-title{
+    font-size: 24px;
+  }
+
+}
+#purchase-confirmation{
+    .number-message{
+      display: inline-block;
+      .address-required-alert{
+        margin-top: 9px;
+        .seperator {
+          margin-top: 15px;
+          margin-bottom: 12px;
+          border-bottom: 1px solid #e0e0e0;
+        }
+      }
+      .label-important{
+        @include margin-right(8px);
+      }
+
+    }
+    .purchase-actions{
+      margin-top: 30px;
+      @include text-align(right);
+    }
+}
+#purchase-confirmation-content {
+  padding: 10px 20px 7px;
+}
+.address-suggestion{
+  .control-label {
+    color: #FF9F0B;
+    font-weight: bold;
+  }
+  input {
+    border: 1px solid #FF9F0B;
+  }
+}
+.freshfone_alert{
+  @include margin-left(0px);
+  @include margin-right(0px);
+}
+.content_footer {
+  font-size: 14px;
+  margin-bottom: 30px;
+  margin-top: 20px;
+}
+.content_container{
+  margin-top:42px;
+}
+
+.trial_content {
+  position: relative;
+  &:first-child{
+    @include border-right(1px solid #ccc);
+  }
+  .freshfone_trial_request{
+    font-weight:bold;
+    font-size:13px;
+    @include padding(6px 55px);
+  }
+  .circle_divider{
+    position: absolute;
+    padding: 6px;
+    @include right(-15px);
+    top: 10px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-radius: 50px;
+    background-color: #f6f6f6;
+    font-size: 10px;
+  }
+  .disclaimer{
+    @include padding(10px 65px 0 60px);
+  }
+}
+
+.freshcaller-admin {
+  max-width: 640px;
+  margin: 0 auto;
+  .signup-linking {
+    display: inline-flex;
+    margin-left: 90px;
+    .or-text {
+      margin: 30px 10px 0px 15px;
+    }
+  }
+  .freshcaller-signup, .freshcaller-linkup  {
+    text-align: center;
+    padding: 25px 0px 5px 0px;
+  }
+  .freshcaller-signup-processing, .freshcaller-content-text{
+    text-align: center;
+    .freshcaller-loader{
+      height: 30px;
+      width: 30px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  .freshcaller-linking-processing, .freshcaller-content-text{
+    text-align: center;
+    .freshcaller-loader{
+      height: 30px;
+      width: 30px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  .freshcaller-linking-form {
+    .link-settings-head {
+      text-align: center;
+      font-weight: 600;
+    }
+    .link-settings-body {
+      width: 350px;
+      margin: 0 auto;
+      padding: 30px 30px 0;
+      .url-label,
+      .password-label {
+        padding: 10px 0;
+        font-weight: 500;
+      }
+      .url-field,
+      .password-field,
+      .email-field {
+        margin: 0;
+      }
+      .btn-collection {
+        margin-top: 25px;
+        text-align: center;
+        .freshcaller_cancel_btn {
+          background-color: #ffffff;
+          border: #ffffff;
+          color: grey;
+          font-weight: 700;
+        }
+      }
+      .trialing-label {
+        display: flex;
+        align-items: center;
+        input {
+          border-radius: 3px 0 0 3px;
+        }
+        .label-text {
+          padding: 5px;
+          background: #DADFE3;
+          border-radius: 0 3px 3px 0;
+        }
+      }
+    }
+  }
+  .freshcaller-logo {
+    margin-right: 10px;
+  }
+  .freshcaller-admin-content {
+    line-height: 1.5;
+  }
+}
+
+.freshfone_admin_content {
+  p{
+    font-size: 13px;
+  }
+  .info-data {
+    font-size: 15px;
+    li {
+      @include padding(0);
+      line-height: 1.8;
+    }
+    &:after{
+      content:" ";
+      display: table;
+      clear:both;
+    }
+  }
+  .content_footer{
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+}
+.freshfone-address-form {
+  padding: 10px 0;
+}
+.fresfhone_flash_message, .small_note{
+  display: block;
+  position: relative;
+  margin-top: 10px;
+}
+.after_request{
+  height: 100px;
+}
+.success_flash, .error_flash {
+  text-align: center;
+  padding: 5px 10px 4px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  background: #fefcea;
+  @include border-radius(4px);
+}
+.error_flash {
+ color: #a90329;
+}
+.form-controls {
+  margin-top: 10px;
+}
+.row-fluid .control-group {
+    margin-bottom: 8px
+}
+.purchase-footer .address-required-alert {
+  color: #888;
+}
+.freshcaller-account-settings {
+  height: 86px;
+  border-radius: 6px;
+  background-color: #f8f8f8;
+  border: solid 1px #e4e4e4;
+  display: flex;
+  align-items: center;
+  padding-left: 25px;
+}
+.freshcaller-alert {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+.freshcaller-dew-copy {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.freshcaller-settings-link-container {
+  height: 27px;
+  font-family: HelveticaNeue;
+  font-size: 13px;
+  text-align: right;
+  margin-left: auto;
+  padding-right: 30px;
+}
+.freshcaller-settings-link{
+  color: #0066cc;
+  float: right;
+}
+.freshcaller-link-subtext{
+  color: #808080;
+}
+.freshcaller-account-url {
+  height: 21px;
+  font-family: HelveticaNeue;
+  font-size: 18px;
+  text-align: left;
+  color: #333333;
+  padding-left: 10px;
+}
+.freshfone_video {
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  @include padding (0px 10px 10px 10px);
+  background: #eee;
+  margin: 30px auto;
+  width: 560px;
+  .title {
+    @include padding(10px 10px 10px 2px);
+    display: block;
+    text-align: center;
+  }
+}
+.ff_welcome_details{
+  height: 280px;
+}
+.ff_seperator {
+  border-bottom: 1px solid #ccc;
+}
+.ff_welcome_page {
+  @include margin(20px 0 20px 0px);
+}

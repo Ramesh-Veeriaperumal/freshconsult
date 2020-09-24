@@ -1,0 +1,14 @@
+<% unless user.blank? %>
+	<b><%= h(user.display_name) %></b>
+	<div class="notifier_number"><%= number_to_phone(h(user.phone)) %></div>
+<% else %>
+	<b><%= number_to_phone(h(phone)) %> </b>
+<% end %>
+
+<div class="place-info">
+	<p class="country">
+		<i class="icon-location"></i>
+		<span><%= (call.blank? ? "Unknown" : call.caller_location) %></span>
+	</p>
+</div>
+<!-- http://api.rubyonrails.org/classes/ActionView/Helpers/NumberHelper.html#method-i-number_to_phone -->
