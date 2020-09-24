@@ -87,7 +87,7 @@
       end %>
   <% end %>
 </div>
-<% check_captcha_for_anonymous = current_account.launched?(:feedback_widget_captcha) || current_account.feedback_widget_captcha_allowed? %>
+<% check_captcha_for_anonymous = current_account.feedback_widget_captcha_enabled? || current_account.feedback_widget_captcha_allowed? %>
 <% if show_captcha?(check_captcha_for_anonymous) %>
   <div class="control-group">
     <div class="controls recaptcha-control">

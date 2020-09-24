@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token,
                      :only => [:revert_identity, :profile_image,
-                               :profile_image_no_blank, :enable_falcon, :disable_falcon,
+                               :profile_image_no_blank, :enable_falcon,
                                :accept_gdpr_compliance, :enable_undo_send,
                                :disable_undo_send, :set_conversation_preference, :change_focus_mode]
   before_filter :set_ui_preference, :only => [:show]
@@ -148,13 +148,6 @@ class UsersController < ApplicationController
     return unless current_account.falcon_ui_enabled?
     cookies[:falcon_enabled] = true
     redirect_to_falcon
-  end
-
-  def disable_falcon
-    # render nothing: true, status: 400 unless get_referer.start_with?('/a/')
-    return head(401) if current_account.disable_old_ui_enabled?
-    cookies[:falcon_enabled] = false
-    return head :no_content
   end
 
   def enable_falcon_for_all

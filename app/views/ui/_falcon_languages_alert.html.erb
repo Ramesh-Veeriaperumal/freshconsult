@@ -10,15 +10,4 @@
   toggleMessage = function() {
     jQuery('#language-message').slideToggle();
   }
-
-  switchToOld = function() {
-    var _url = '/disable_falcon';
-    var parent = window.top;
-
-    jQuery.post(_url)
-          .then(function() {
-             jQuery.cookie('falcon_enabled', false);
-             parent.location = '/helpdesk'
-          });
-  }
 </script>
