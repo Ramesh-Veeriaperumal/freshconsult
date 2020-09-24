@@ -153,11 +153,16 @@ class Account < ActiveRecord::Base
     :freshreports_analytics => false, :disable_old_reports => false, contact_custom_activity_api: false, assets: false, assets_toggle: false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
-  ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
-                            :open_forums => false, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-                            :signup_link => true, :captcha => true, :prevent_ticket_creation_for_others=> true,
-                            :moderate_all_posts => false, :moderate_posts_with_links => true, :hide_portal_forums => false,
-                            :forum_captcha_disable => false, :public_ticket_url => false }
+  ADMIN_CUSTOMER_PORTAL_FEATURES = {
+    :google_signin => true, :twitter_signin => true, :facebook_signin => true,
+    :captcha => true, :prevent_ticket_creation_for_others => true, :hide_portal_forums => false
+  }
+
+  ADMIN_CUSTOMER_PORTAL_SETTINGS = [
+    :signup_link, :anonymous_tickets, :auto_suggest_solutions,
+    :public_ticket_url, :open_solutions, :open_forums,
+    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts
+  ].freeze
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
 
@@ -213,7 +218,7 @@ class Account < ActiveRecord::Base
     skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     archive_tickets_api: false, bot_agent_response: false, fluffy: false, nested_field_revamp: true,
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
-    helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
+    article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, allow_wildcard_ticket_create: false,
     attachment_redirect_expiry: false, solutions_agent_metrics: false,
