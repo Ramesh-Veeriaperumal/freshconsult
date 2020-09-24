@@ -450,10 +450,6 @@ class Account < ActiveRecord::Base
     launched?(:allow_wildcard_ticket_create)
   end
 
-  def skip_invoice_due_warning_enabled?
-    launched?(:skip_invoice_due_warning)
-  end
-
   def supervisor_contact_field_enabled?
     launched?(:supervisor_contact_field)
   end
