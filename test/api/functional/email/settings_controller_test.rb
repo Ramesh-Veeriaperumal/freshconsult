@@ -81,7 +81,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
   end
 
   def test_update_setting_when_dependent_feature_disabled
-    params = { personalized_email_replies: true}
+    params = { personalized_email_replies: true }
     dependent_feature = AccountSettings::SettingsConfig[:personalized_email_replies][:feature_dependency]
     Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
     put :update, construct_params({}, params)

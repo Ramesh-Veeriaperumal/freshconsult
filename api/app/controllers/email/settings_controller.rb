@@ -13,7 +13,7 @@ module Email
         setting_name = EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym
         if setting_name.eql? COMPOSE_EMAIL_SETTING
           toggle_compose_email_setting(setting_name, value)
-        elsif is_setting_enabled?(setting_name) != value
+        elsif setting_enabled?(setting_name) != value
           toggle_setting setting_name, value
         end
       end
@@ -26,7 +26,7 @@ module Email
 
     private
 
-      def is_setting_enabled?(setting)
+      def setting_enabled?(setting)
         enabled = current_account.safe_send("#{setting}_enabled?")
         NEGATION_SETTINGS.include?(setting) ? !enabled : enabled
       end
@@ -71,7 +71,7 @@ module Email
         @item = {}
         UPDATE_FIELDS.each do |setting|
           setting_name = EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym
-          @item[setting.to_sym] = is_setting_enabled?(setting_name)
+          @item[setting.to_sym] = setting_enabled?(setting_name)
         end
       end
   end
