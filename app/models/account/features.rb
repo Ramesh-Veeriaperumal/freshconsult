@@ -458,10 +458,6 @@ class Account < ActiveRecord::Base
     launched?(:supervisor_contact_field)
   end
 
-  def bypass_signup_captcha_enabled?
-    launched?(:bypass_signup_captcha)
-  end
-
   def disable_freshchat_enabled?
     launched?(:disable_freshchat)
   end
