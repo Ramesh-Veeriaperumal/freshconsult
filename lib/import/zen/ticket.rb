@@ -139,8 +139,6 @@ def ticket_post_process ticket_prop , ticket
                                                                         :source => Account.current.helpdesk_sources.note_source_keys_by_token['note'] , :created_at =>comment.created_at.to_datetime()})
     note_props = note_props.to_hash.tap{|hs| hs.delete(:body)}
     @note = ticket.notes.build(note_props)
-    # Injecting '@skip_resource_rate_limit' instance variable to skip resource rate limit
-    @note.instance_variable_set(:@skip_resource_rate_limit, true)
     @note.save_note
     #set ticket_states at note level
     tkt_state = ticket.ticket_states

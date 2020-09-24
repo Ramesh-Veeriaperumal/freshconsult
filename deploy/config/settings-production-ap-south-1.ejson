@@ -1732,7 +1732,7 @@
         "_script_asset_url": "https://assets1.freshconnect.io/freshconnect-sidebar/freshconnect-sidebar.js",
         "_base_url": "https://api.freshconnect.io"
       },
-      "_vault_service_url": "https://j4zrh65je7.execute-api.us-east-1.amazonaws.com/prod/",
+      "_vault_service_url": "https://vault-service-ind.freshworks.com/",
       "_freshdesk_help_widget_url": "https://widget.freshworks.com/widgets/50000000012.js",
       "google_map_api_key": "EJ[1:vmF7wEOOa/HSzkab6dd0yTVcKEDJ4UPx/xvyJKVrDnw=:mPa6OzpDWSgcGP0hIYF+6YgajIGmBuy/:Adm7PBHq/FZ1jDQGZTQBokjC6GEB/m9sC4QkGn1fceXz80/sEVN+TYJVqYpmrfuQcS8dXKM80g==]"
     },
@@ -1754,9 +1754,7 @@
           "_fc-bg-sidekiq-archive": 3,
           "_fc-bg-sidekiq-occasional": 3,
           "_fc-bg-sidekiq-central-realtime": 3,
-          "_fc-bg-sidekiq-maintainence": 3,
           "_fc-bg-sidekiq-realtime": 6,
-          "_fc-bg-sidekiq-hard-delete": 3,
           "_fc-bg-sidekiq": 8,
           "_fc-bg-shoryuken-analytics": 20
         }
@@ -1809,19 +1807,9 @@
   "layer_settings": {
     "fc-app-db-migration": {
     },
-    "fc-bg-sidekiq-community": {
-    },
-    "fc-bg-sidekiq-mailbox-jobs": {
-    },
-    "fc-bg-sidekiq-subscription": {
-    },
-    "fc-bg-sidekiq-trial": {
-    },
     "hk-bg-utility": {
     },
     "fc-bg-resque": {
-    },
-    "fc-bg-sidekiq-scheduled": {
     },
     "hk-app-dashboard": {
     },
@@ -1829,25 +1817,17 @@
     },
     "hk-app-support": {
     },
-    "fc-bg-sidekiq-email": {
-    },
     "hk-app-attachment": {
     },
     "fc-bg-sidekiq-central-realtime": {
     },
     "hk-app-mobihelp": {
     },
-    "fc-bg-sidekiq-spam": {
-    },
-    "fc-bg-sidekiq-misc": {
-    },
     "hk-app": {
     },
     "hk-app-http-request": {
     },
     "hk-app-support-theme": {
-    },
-    "fc-bg-sidekiq-free": {
     },
     "fc-bg-sidekiq-realtime": {
     },
@@ -1877,27 +1857,13 @@
     },
     "hk-app-freshid": {
     },
-    "fc-bg-sidekiq-dedicated-887984": {
-    },
     "fc-app": {
     },
     "fc-app-merge": {
     },
     "fc-app-misc": {
     },
-    "fc-bg-sidekiq-dedicated-589783": {
-    },
-    "fc-bg-sidekiq-exports": {
-    },
     "hk-app-search": {
-    },
-    "fc-bg-sidekiq-bulk-scheduled": {
-    },
-    "fc-bg-sidekiq-dedicated-892785": {
-    },
-    "fc-bg-sidekiq-maintainence": {
-    },
-    "fc-bg-sidekiq-gamification": {
     },
     "fc-app-reports": {
     },
@@ -1929,8 +1895,6 @@
     },
     "hk-bg-shoryuken": {
     },
-    "fc-bg-sidekiq-hard-delete": {
-    },
     "hk-app-pipeline-sling": {
     },
     "hk-app-buffer": {
@@ -1942,8 +1906,6 @@
     "fc-app-merge": {
     },
     "fc-app-api-channel": {
-    },
-    "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
     },

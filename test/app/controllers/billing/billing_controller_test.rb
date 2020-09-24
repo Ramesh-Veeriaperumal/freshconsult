@@ -859,6 +859,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:update_attributes)
     Subscription.any_instance.unstub(:save)
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    @account.launch(:freddy_subscription)
     post :trigger, event_type: 'subscription_changed', content: normal_event_content, format: 'json'
     @account.reload
     assert_response 200

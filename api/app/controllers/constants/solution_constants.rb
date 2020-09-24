@@ -113,4 +113,5 @@ module SolutionConstants
   STATUS_VALUE_IN_ES_BY_KEY = Hash[*STATUS_FILTER.map { |i| [i[2], i[4]] }.flatten]
   ICON_EXT = %w[.jpg .jpeg .jpe .png].freeze
   PLATFORM_TYPES = ['web', 'ios', 'android'].freeze
+  KB_CUMULATIVE_ATTACHMENT_LIMIT = 100
 end

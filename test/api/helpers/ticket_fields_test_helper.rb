@@ -898,7 +898,7 @@ module TicketFieldsTestHelper
 
   def job_args
     {
-      queue: 'ticket_field_central_publish',
+      queue: SIDEKIQ_CLASSIFICATION_MAPPING_NEW['ticket_field_central_publish'].to_s,
       account_id: Account.current.id
     }
   end

@@ -5,7 +5,7 @@ module Admin
     include Admin::SecurityConstants
 
     attr_accessor :notification_emails, :sso, :whitelisted_ip, :contact_password_policy, :agent_password_policy,
-                  :ip_ranges, :ssl
+                  :ip_ranges, :ssl, :allow_iframe_embedding
     validates :notification_emails, data_type: { rules: Array, not_empty: true }, array: {
       data_type: { rules: String },
       custom_format: {
@@ -13,6 +13,9 @@ module Admin
         accepted: 'valid email'
       }
     }
+
+    validates :allow_iframe_embedding, data_type: { rules: 'Boolean' }
+
     validates :whitelisted_ip, data_type: { rules: Hash, not_empty: true }, hash: WHITELISTED_IP_HASH
 
     validates :contact_password_policy, data_type: { rules: Hash, not_empty: true }, hash: POLICIES_CONFIGS_HASH

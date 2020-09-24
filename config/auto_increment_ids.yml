@@ -53,6 +53,7 @@ defaults: &defaults
     shard_38_3: 65000000000
     shard_39_1: 66000000000
     shard_39_2: 67000000000
+    shard_40: 68000000000
     shard_source: 1
     sandbox_shard_us: 11000000000000
 
