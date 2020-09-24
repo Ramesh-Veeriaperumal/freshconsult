@@ -29,7 +29,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
     end
     put :update, construct_params({}, params)
     assert_response 200
-    match_json(all_features_params.merge!params)
+    match_json(all_features_params.merge!(params))
   end
 
   def test_update_with_invalid_value
