@@ -7,7 +7,7 @@ module Admin
     extend ActsAsApi::Base
     acts_as_api
 
-    delegate :whitelisted_ip, :help_widget_secret, :notification_emails, :contact_password_policy, :agent_password_policy, :sso_options, :shared_secret, :sso_enabled, :current_sso_type, :freshdesk_sso_enabled?, to: :record
+    delegate :whitelisted_ip, :help_widget_secret, :notification_emails, :contact_password_policy, :agent_password_policy, :sso_options, :shared_secret, :sso_enabled, :current_sso_type, :freshdesk_sso_enabled?, :allow_iframe_embedding, to: :record
 
     def to_hash
       if private_api?
@@ -23,6 +23,7 @@ module Admin
       u.add :notification_emails
       u.add :contact_password_policy_hash, if: proc { Account.current.custom_password_policy_enabled? }, as: :contact_password_policy
       u.add :agent_password_policy_hash, if: proc { |obj| obj.show_agent_password_policy? }, as: :agent_password_policy
+      u.add :allow_iframe_embedding
     end
 
     api_accessible :private_api, extend: :security_api do |u|

@@ -170,6 +170,14 @@ module Ember
       params_hash
     end
 
+    def fc_call_info
+      {
+        description: 'sample description',
+        call_notes: 'sample call notes',
+        duration: 'sample duration'
+      }
+    end
+
     def setup_fsm
       Account.stubs(:current).returns(Account.first)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
@@ -689,6 +697,25 @@ module Ember
       assert_response 201
     ensure
       Account.current.freshcaller_calls.find_by_fc_call_id(fc_call_id).destroy
+      Account.current.tickets.last.destroy
+    end
+
+    def test_create_with_valid_freshcaller_id_and_call_info_callback
+      Account.current.launch(:freshcaller_ticket_revamp)
+      fc_call_id = Faker::Number.number(3).to_i
+      Account.current.freshcaller_calls.new(fc_call_id: fc_call_id).save
+      call = Account.current.freshcaller_calls.find_by_fc_call_id(fc_call_id)
+      call.call_info = fc_call_info
+      call.save
+      params_hash = ticket_params_hash.merge(fc_call_id: call.fc_call_id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      ticket = Account.current.tickets.last
+      call.reload
+      assert_response 201
+      assert ticket.notes.conversations.where(id: call.notable_id).present?, 'Note not linked to call!'
+    ensure
+      Account.current.rollback(:freshcaller_ticket_revamp)
+      call.destroy
       Account.current.tickets.last.destroy
     end
 
