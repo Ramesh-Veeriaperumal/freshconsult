@@ -105,9 +105,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
     feature_info[:launch_party] = account.all_launched_features
-    feature_info[:bitmap_list] = account.all_features
-    feature_info[:engineering_settings] = account.all_engineering_settings
-    feature_info[:admin_settings] = account.all_admin_settings
+    feature_info[:bitmap_list] = account.enabled_features
+    feature_info[:engineering_settings] = account.enabled_internal_settings
+    feature_info[:admin_settings] = account.enabled_admin_settings
 
     respond_to do |format|
       format.json do
