@@ -7,7 +7,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
     params
   end
 
-  def test_successful_updation_of_all_features
+  def test_successful_updation_of_all_settings
     Redis.any_instance.stubs(:perform_redis_op).returns('OK')
     params = all_features_params
     put :update, params.merge(construct_params({ action: 'update', controller: 'email/settings' }, params))
@@ -15,11 +15,21 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json(all_features_params)
   end
 
-  def test_successful_updation_of_selected_features
+  def test_successful_updation_of_selected_settings
     params = all_features_params.except(:allow_agent_to_initiate_conversation, :original_sender_as_requester_for_forward)
     put :update, construct_params({}, params)
     assert_response 200
     match_json(all_features_params)
+  end
+
+  def test_successful_updation_of_negation_settings
+    params = {}
+    EmailSettingsConstants::NEGATION_SETTINGS.each do |setting|
+      params[setting] = Account.current.safe_send("#{setting}_enabled?")
+    end
+    put :update, construct_params({}, params)
+    assert_response 200
+    match_json(all_features_params.merge!params)
   end
 
   def test_update_with_invalid_value
@@ -70,14 +80,14 @@ class Email::SettingsControllerTest < ActionController::TestCase
 
   def test_update_redis_key_for_compose_email_feature
     Redis.any_instance.stubs(:perform_redis_op).returns([])
-    params = all_features_params.except(:personalized_email_replies, :original_sender_as_requester_for_forward, :create_requester_using_reply_to)
+    params = { allow_agent_to_initiate_conversation: false }
     params[:allow_agent_to_initiate_conversation] = false
-    Account.any_instance.stubs(:has_feature?).returns(false)
+    Account.any_instance.stubs(:has_setting?).returns(false)
     put :update, construct_params({}, params)
     assert_response 200
     assert_equal(false, $redis_others.perform_redis_op('smembers', COMPOSE_EMAIL_ENABLED).include?(@account.id))
     params[:allow_agent_to_initiate_conversation] = true
-    Account.any_instance.unstub(:has_feature?)
+    Account.any_instance.unstub(:has_setting?)
   end
 
   def test_update_setting_when_dependent_feature_disabled
