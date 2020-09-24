@@ -22,16 +22,6 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json(all_features_params)
   end
 
-  def test_successful_updation_of_negation_settings
-    params = {}
-    EmailSettingsConstants::NEGATION_SETTINGS.each do |setting|
-      params[setting] = Account.current.safe_send("#{setting}_enabled?")
-    end
-    put :update, construct_params({}, params)
-    assert_response 200
-    match_json(all_features_params.merge!(params))
-  end
-
   def test_update_with_invalid_value
     params = all_features_params.except(:allow_agent_to_initiate_conversation, :original_sender_as_requester_for_forward, :create_requester_using_reply_to)
     params[:personalized_email_replies] = 'invalid_value'
@@ -91,12 +81,13 @@ class Email::SettingsControllerTest < ActionController::TestCase
   end
 
   def test_update_setting_when_dependent_feature_disabled
-    params = { personalized_email_replies: true }
-    dependent_feature = AccountSettings::SettingsConfig[:personalized_email_replies][:feature_dependency]
+    setting = EmailSettingsConstants::UPDATE_FIELDS.sample
+    params = { setting: true }
+    dependent_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
     put :update, construct_params({}, params)
     assert_response 403
-    match_json(request_error_pattern(:require_feature, feature: :personalized_email_replies.to_s))
+    match_json(request_error_pattern(:require_feature, feature: setting))
   ensure
     Account.any_instance.unstub(:has_feature?)
   end

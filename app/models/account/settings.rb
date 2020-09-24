@@ -8,7 +8,6 @@ class Account < ActiveRecord::Base
     end
   end
 
-  # can be removed after redis check cleanup
   def compose_email_enabled?
     !has_setting?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end

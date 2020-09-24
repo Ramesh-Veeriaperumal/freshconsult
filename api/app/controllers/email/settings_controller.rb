@@ -9,15 +9,17 @@ module Email
 
     def update
       settings = params[cname]
-      settings.each do |setting, value|
+      settings.each do |setting, enable|
         setting_name = EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym
-        if setting_name.eql? COMPOSE_EMAIL_SETTING
-          toggle_compose_email_setting(setting_name, value)
-        elsif setting_enabled?(setting_name) != value
-          toggle_setting setting_name, value
+        if setting_name.eql? COMPOSE_EMAIL
+          toggle_compose_email_setting(setting_name, enable)
+        elsif setting_name.eql? DISABLE_AGENT_FORWARD
+          toggle_disable_email_setting(setting_name, enable)
+        elsif check_setting_toggled setting_name, enable
+          toggle_setting setting_name, enable
         end
+        generate_view_hash
       end
-      generate_view_hash
     end
 
     def show
@@ -26,27 +28,31 @@ module Email
 
     private
 
-      def setting_enabled?(setting)
-        enabled = current_account.safe_send("#{setting}_enabled?")
-        NEGATION_SETTINGS.include?(setting) ? !enabled : enabled
+      def check_setting_toggled(setting, enable)
+        enable != current_account.has_setting?(setting)
       end
 
-      def toggle_setting(setting, value)
-        if NEGATION_SETTINGS.include?(setting)
-          value ? current_account.disable_setting(setting) : current_account.enable_setting(setting)
-        else
-          value ? current_account.enable_setting(setting) : current_account.disable_setting(setting)
+      def toggle_setting(setting, enable)
+        enable ? current_account.enable_setting(setting) : current_account.disable_setting(setting)
+      end
+
+      def toggle_compose_email_setting(feature, enable)
+        if enable != current_account.compose_email_enabled?
+          if enable
+            current_account.disable_setting(feature)
+          else
+            current_account.enable_setting(feature)
+            $redis_others.perform_redis_op('srem', COMPOSE_EMAIL_ENABLED, current_account.id)
+          end
         end
       end
 
-      #  This method can be removed once redis feature check is cleanedup and :compose_email can be added to NEGATION_SETTINGS
-      def toggle_compose_email_setting(setting, value)
-        if value != current_account.compose_email_enabled?
-          if value
-            current_account.disable_setting(setting)
+      def toggle_disable_email_setting(feature, enable)
+        if enable == current_account.disable_agent_forward_enabled?
+          if enable
+            current_account.disable_setting(feature)
           else
-            current_account.enable_setting(setting)
-            $redis_others.perform_redis_op('srem', COMPOSE_EMAIL_ENABLED, current_account.id)
+            current_account.enable_setting(feature)
           end
         end
       end
@@ -68,11 +74,12 @@ module Email
       end
 
       def generate_view_hash
-        @item = {}
-        UPDATE_FIELDS.each do |setting|
-          setting_name = EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym
-          @item[setting.to_sym] = setting_enabled?(setting_name)
-        end
+        @item = {
+            personalized_email_replies: current_account.personalized_email_replies_enabled?,
+            create_requester_using_reply_to: current_account.reply_to_based_tickets_enabled?,
+            allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
+            original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
+        }
       end
   end
 end
