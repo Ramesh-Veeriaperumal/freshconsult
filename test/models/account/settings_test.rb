@@ -280,20 +280,20 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_fetch_admin_settings_enabled
     enabled_admin_settings = @account.enabled_admin_settings
-    @account.add_feature(:untitled_setting_1)
+    @account.enable_setting(:untitled_setting_1)
     enabled_admin_settings_after_enable = @account.enabled_admin_settings
     assert_equal enabled_admin_settings_after_enable.count, enabled_admin_settings.count + 1
   ensure
-    @account.revoke_feature(:untitled_setting_1)
+    @account.disable_setting(:untitled_setting_1)
   end
 
   def test_fetch_internal_settings_enabled
     enabled_internal_settings = @account.enabled_internal_settings
-    @account.add_feature(:untitled_setting_2)
+    @account.enable_setting(:untitled_setting_2)
     enabled_internal_settings_after_enable = @account.enabled_internal_settings
     assert_equal enabled_internal_settings_after_enable.count, enabled_internal_settings.count + 1
   ensure
-    @account.revoke_feature(:untitled_setting_2)
+    @account.disable_setting(:untitled_setting_2)
   end
 
   # Modify these test when we refactor settings methods
