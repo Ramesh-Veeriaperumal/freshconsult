@@ -35,7 +35,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email",
                             "parent_ticket", "reports_hash","sla_response_reminded","sla_resolution_reminded", "dirty_attributes",
                             "sentiment", "spam_score", "dynamodb_range_key", "failure_count", "subsidiary_tkts_count",
-                            "last_customer_note_id", "nr_updated_at", "nr_escalation_level", "nr_violated", 'tweet_type', 'fb_msg_type']
+                            "last_customer_note_id", "nr_updated_at", "nr_escalation_level", "nr_violated", 'tweet_type', 'fb_msg_type'].freeze
 
   TICKET_STATE_ATTRIBUTES = ["opened_at", "pending_since", "resolved_at", "closed_at", "first_assigned_at", "assigned_at",
                              "first_response_time", "requester_responded_at", "agent_responded_at", "group_escalated",
