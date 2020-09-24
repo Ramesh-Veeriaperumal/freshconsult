@@ -124,17 +124,16 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:has_feature?)
   end
 
-  def test_update_new_setting_when_dependent_feature_disabled_with_email_new_settings_lp_enabled
-    Account.current.launch(:email_new_settings)
-    params = { allow_wildcard_ticket_create: true }
-    dependent_feature = AccountSettings::SettingsConfig[:allow_wildcard_ticket_create][:feature_dependency]
+  def test_update_setting_when_dependent_feature_disabled
+    setting = EmailSettingsConstants::UPDATE_FIELDS.sample
+    params = { setting: true }
+    dependent_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
     put :update, construct_params({}, params)
     assert_response 403
-    match_json(request_error_pattern(:require_feature, feature: :allow_wildcard_ticket_create.to_s))
+    match_json(request_error_pattern(:require_feature, feature: setting))
   ensure
     Account.any_instance.unstub(:has_feature?)
-    Account.current.rollback(:email_new_settings)
   end
 
   def teardown
