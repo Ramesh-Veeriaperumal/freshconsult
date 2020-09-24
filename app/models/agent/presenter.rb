@@ -66,7 +66,7 @@ class Agent < ActiveRecord::Base
   def model_changes_for_central
     return {} if login_logout_action?
 
-    changes = @model_changes.merge(user_changes || {})
+    changes = (@model_changes || {}).merge(user_changes || {})
     changes.merge!(CENTRAL_SINGLE_ACCESS_TOKEN_KEY => %w[* *]) if @model_changes.key?(CENTRAL_SINGLE_ACCESS_TOKEN_KEY)
     groups_and_contribution_group_changes(changes) if group_changes.present?
     changes
