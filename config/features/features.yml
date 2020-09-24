@@ -413,6 +413,7 @@
       :bypass_signup_captcha: 409
       :disable_freshchat: 410
       :whatsapp_channel: 411
+      :feedback_widget_captcha: 412
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -515,3 +516,4 @@
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
   :disable_freshchat: false
+  :feedback_widget_captcha: false
