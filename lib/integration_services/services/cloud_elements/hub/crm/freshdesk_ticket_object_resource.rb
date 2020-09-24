@@ -22,10 +22,11 @@ module IntegrationServices::Services
       def check_fields_synced?
         request_url = "#{cloud_elements_api_url}/hubs/crm/#{FD_TICKET_OBJECT}?pageSize=1"
         url  = URI.encode(request_url.strip)
+        retry_response_statuses = [503, 504]
         AUTH_TOKEN_REFRESH_RETRIES_LIMIT.times do |retry_count|
           response = http_get url
           Rails.logger.debug "Error in CloudElements Sync for Account - #{Account.current.id}. Retrying CloudElements - #{retry_count}. Error response from CloudElements - #{response.inspect}" unless response.status == 200
-          next if response.status == 503
+          next if retry_response_statuses.include?(response.status)
 
           return response.status == 200
         end

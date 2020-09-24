@@ -2,7 +2,7 @@ class Social::FacebookStream < Social::Stream
   include Facebook::Constants
 
   publishable on: [:create, :update], if: :publish_stream?
-  after_commit :populate_ticket_rule, on: :create,  :if => :facebook_revamp_enabled?
+  after_commit :populate_ticket_rule, on: :create
   before_update :rule_snapshot_before_update
   before_save :persist_previous_changes
   after_update :rule_snapshot_after_update
@@ -77,10 +77,6 @@ class Social::FacebookStream < Social::Stream
   
   def group
     facebook_page.product ? facebook_page.product.primary_email_config.group_id : nil
-  end
-
-  def facebook_revamp_enabled?
-    Account.current.features?(:social_revamp)
   end
 
   def publish_stream?

@@ -37,7 +37,7 @@ module UsersTestHelper
       agent_deleted_forever: expected_output[:agent_deleted_forever] || contact.agent_deleted_forever?,
       marked_for_hard_delete: expected_output[:marked_for_hard_delete] || contact.marked_for_hard_delete?,
       csat_rating: contact.last_csat_rating,
-      preferred_source: Helpdesk::Source.ticket_source_token_by_key[expected_output[:preferred_source]] || contact.preferred_source
+      preferred_source: Helpdesk::Source.source_choices(:token_by_keys)[expected_output[:preferred_source]] || contact.preferred_source
     }
     result[:other_emails] = expected_output[:other_emails] ||
                             contact.user_emails.where(primary_role: false).map(&:email)

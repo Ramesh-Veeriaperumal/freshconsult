@@ -1036,4 +1036,21 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   ensure
     Account.current.unstub(:ticket_source_revamp_enabled?)
   end
+
+  def test_source_choice_creation_without_icon
+    launch_ticket_field_revamp do
+      Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+      field = @account.ticket_fields.where(field_type: 'default_source').first
+      label = 'source test 1'
+      put :update, construct_params(
+        { id: field.id },
+        choices: [{ label: label, position: 25 }]
+      )
+      assert_response 200
+      source = @account.helpdesk_sources.where(name: label).first
+      assert_equal source.meta[:icon_id], 101
+    end
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+  end
 end

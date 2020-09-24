@@ -19,18 +19,8 @@ Rails.application.routes.draw do
           
     end
   end
-  
-  namespace :social do   
-    resources :facebook, :controller => 'facebook_pages'  do
-      collection do
-        put  :enable_pages
-        post :update_page_token
-      end
-      member do
-        get :edit
-      end 
-    end
-  end
-  
+
+  match '/social/facebook', controller: 'admin/social/facebook_streams#index', via: :get
+
   filter :facebook
 end

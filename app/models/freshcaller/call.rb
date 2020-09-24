@@ -11,6 +11,8 @@ module Freshcaller
 
     belongs_to :notable, polymorphic: true, validate: true
 
+    serialize :call_info, Hash
+
     scope :recording_with_call_id, -> (call_id) { where(fc_call_id: call_id, recording_status: RECORDING_STATUS_HASH.values_at(:'in-progress', :completed)) }
 
     validates :fc_call_id, uniqueness: true
