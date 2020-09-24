@@ -708,6 +708,24 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:input, :invalid_field, attribute: 'input')])
   end
 
+  def test_update_allow_iframe
+    request_params = {
+      allow_iframe_embedding: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert_equal true, Account.current.allow_iframe_embedding
+  end
+
+  def test_update_deny_iframe_off
+    request_params = {
+      allow_iframe_embedding: false
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert_equal false, Account.current.allow_iframe_embedding
+  end
+
   private
 
     def stub_account

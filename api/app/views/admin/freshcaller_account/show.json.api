@@ -1,1 +1,5 @@
-@item.as_api_response(:api).merge(agents: @agents.map { |agent| agent.as_api_response(:api) }).to_json
+# frozen_string_literal: true
+
+@item.as_api_response(:api).merge(
+  agents: @agents.nil? ? [] : @agents.map { |agent| agent.as_api_response(:api) }
+).to_json
