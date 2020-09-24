@@ -8,7 +8,7 @@ class Admin::AccountFeaturesController < ApiApplicationController
   before_filter :get_feature_type, only: ALLOWED_METHOD_FOR_PRIVATE_API
 
   def create
-    if valid_setting?(@feature_name)
+    if AccountSettings::SettingsConfig[@feature_name].present?
       if @account.admin_setting_for_account?(@feature_name)
         @account.enable_setting(@feature_name)
         head 204
@@ -22,7 +22,7 @@ class Admin::AccountFeaturesController < ApiApplicationController
   end
 
   def destroy
-    if valid_setting?(@feature_name)
+    if AccountSettings::SettingsConfig[@feature_name].present?
       if @account.admin_setting_for_account?(@feature_name)
         @account.disable_setting(@feature_name)
         head 204
@@ -57,9 +57,5 @@ class Admin::AccountFeaturesController < ApiApplicationController
 
     def dependent_feature_error
       render_request_error(:require_feature, 403, feature: @feature_name.to_s)
-    end
-
-    def valid_setting?(setting)
-      AccountSettings::SettingsConfig[setting].present?
     end
 end
