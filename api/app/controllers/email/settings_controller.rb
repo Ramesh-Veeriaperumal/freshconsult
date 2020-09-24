@@ -10,7 +10,7 @@ module Email
     def update
       settings = params[cname]
       settings.each do |setting, enable|
-        setting_name = EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym
+        setting_name = EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym
         if setting_name.eql? COMPOSE_EMAIL
           toggle_compose_email_setting(setting_name, enable)
         elsif setting_name.eql? DISABLE_AGENT_FORWARD
@@ -67,9 +67,8 @@ module Email
 
       def validate_settings
         params[cname].each_key do |setting|
-          unless Account.current.admin_setting_for_account?(EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym)
-            return render_request_error(:require_feature, 403, feature: setting)
-          end
+          setting_name = EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym
+          return render_request_error(:require_feature, 403, feature: setting) unless Account.current.admin_setting_for_account?(setting_name)
         end
       end
 
