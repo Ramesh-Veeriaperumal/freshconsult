@@ -52,6 +52,9 @@ module IntegrationServices::Services
         end
 
         def filter_system_information(resource)
+          hidden_information = resource['fields'].find { |x| x['name'] == 'hidden_fields' }
+          hidden_fields = hidden_information['fields'] if hidden_information.present?
+          hidden_fields.reject! { |x| x['name'] == 'system_information' } if hidden_fields.present?
           basic_information = resource['fields'].select { |x| x['name'] == 'basic_information' }.first
           basic_fields = basic_information['fields']
           basic_fields.reject! { |x| x['name'] == 'system_information' }

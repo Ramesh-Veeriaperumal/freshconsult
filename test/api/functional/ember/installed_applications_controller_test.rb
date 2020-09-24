@@ -399,6 +399,8 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
                 \"label\":\"Basicinformation\",\"fields\":[{\"id\":\"7e0b636d\",
                 \"name\":\"first_name\",\"label\":\"Firstname\",\"fields\":[],\"form_id\":2000022765,
                 \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                {\"id\":\"7e0b636de\",\"name\":\"sales_accounts\",\"label\":\"Accounts\",\"fields\":[],
+                \"form_id\":2000022765,\"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
                 {\"id\":\"7e0basd636d\", \"name\":\"emails\",\"type\":\"email\",\"label\":\"Emails\",\"fields\":[],
                 \"form_id\":2000022765,\"field_class\":\"Contact\",\"visible\":\"true\",
                 \"field_options\":{\"show_in_import\":true}},{\"id\":\"c94aae94-7424-498f-863c-02bb7350724e\",
