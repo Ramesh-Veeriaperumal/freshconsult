@@ -6943,9 +6943,9 @@ module Ember
 
     def test_channel_ticket_show
       Account.stubs(:current).returns(Account.first)
-      ticket = create_ticket(channel_id: 1234, 
-        profile_unique_id: '+919798678923', channel_message_id: 'sdl892dk',
-        source: Helpdesk::Source::TICKET_SOURCES.find{ |ts| ts[0] == :whatsapp }[2])
+      whatsapp_as_source = Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2]
+      ticket = create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
+                             channel_message_id: 'sdl892dk', source: whatsapp_as_source)
       get :show, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(ticket_show_pattern(ticket))
