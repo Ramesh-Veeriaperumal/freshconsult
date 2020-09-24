@@ -4,7 +4,8 @@ class Freshcaller::Account < ActiveRecord::Base
 
   api_accessible :api do |fc|
     fc.add :domain
-    fc.add :enabled    
+    fc.add :enabled
+    fc.add :settings_hash, as: :settings
   end
 
   api_accessible :central_publish do |fc|
@@ -25,6 +26,10 @@ class Freshcaller::Account < ActiveRecord::Base
   api_accessible :touchstone do |fc|
     fc.add :freshcaller_account_id
     fc.add :domain, as: :freshcaller_domain
+  end
+
+  def settings_hash
+    Freshcaller::Account::DEFAULT_SETTINGS.deep_merge(settings)
   end
 
   def relationship_with_account
