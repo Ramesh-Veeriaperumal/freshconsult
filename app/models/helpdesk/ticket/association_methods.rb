@@ -100,17 +100,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def associates
       #get item
       @associates ||= begin
-        hash =  {
-         :key => HASH_KEY,
-         :value => "#{self.display_id}_#{self.account.id}"
-        }
-        resp = Helpdesk::Tickets::Dynamo::DynamoHelper.get_item(
-                  table_name,
-                  hash,
-                  nil,
-                  "#{HASH_KEY}, #{ASSOCIATES}",
-                  true)
-       resp_item?(resp) ? resp.data.item[ASSOCIATES].map {|e| e.to_i} : associates_from_db
+        if Account.current.launched?(:get_associates_from_db)
+          associates_from_db
+        else
+          hash = {
+            :key => HASH_KEY,
+            :value => "#{self.display_id}_#{self.account.id}"
+          }
+          resp = Helpdesk::Tickets::Dynamo::DynamoHelper.get_item(
+            table_name,
+            hash,
+            nil,
+            "#{HASH_KEY}, #{ASSOCIATES}",
+            true
+          )
+          resp_item?(resp) ? resp.data.item[ASSOCIATES].map { |e| e.to_i } : associates_from_db
+        end
       end
   end
 

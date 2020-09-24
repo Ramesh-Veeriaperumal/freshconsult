@@ -494,12 +494,6 @@ class User < ActiveRecord::Base
     save!
   end
 
-  def disable_falcon_ui
-    new_pref = { :falcon_ui => false }
-    self.merge_preferences = { :agent_preferences => new_pref }
-    save!
-  end
-
   def is_falcon_pref?
     Rails.logger.warn "FALCON HELPER METHOD :: is_falcon_pref? :: #{caller[0..2]}"
     true

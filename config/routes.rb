@@ -728,7 +728,6 @@ Helpkit::Application.routes.draw do
   match '/disable_old_helpdesk' => 'users#disable_old_helpdesk', :as => :disable_old_helpdesk, via: :post
 
   match '/enable_falcon' => 'users#enable_falcon', :as => :enable_falcon, via: :post
-  match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
   match '/enable_undo_send' => 'users#enable_undo_send', :as => :enable_undo_send, via: :post
   match '/disable_undo_send' => 'users#disable_undo_send', :as => :disable_undo_send, via: :post
   match '/change_focus_mode' => 'users#change_focus_mode', :as => :change_focus_mode, via: :post

@@ -14,7 +14,6 @@ window.App = window.App || {};
     },
     skipFalcon: function(){
       this.repositionAndCollapseModal();
-      $.post('/disable_falcon');
     },
     //collapse modal into 'switch to the new look' button in header
     repositionAndCollapseModal: function(){
