@@ -86,8 +86,10 @@ module Email
 
       def validate_settings
         params[cname].each_key do |setting|
-          unless Account.current.admin_setting_for_account?(EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym)
-            return render_request_error(:require_feature, 403, feature: setting)
+          if(AccountSettings::SettingsConfig[setting.to_sym])
+            unless Account.current.admin_setting_for_account?(EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym)
+              return render_request_error(:require_feature, 403, feature: setting)
+            end
           end
         end
       end
