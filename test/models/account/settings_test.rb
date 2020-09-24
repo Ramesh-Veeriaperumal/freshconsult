@@ -223,7 +223,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_setting_enabled_method_without_dependent_feature
     # setup
-    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    # except compose_email can be removed after Redis feature check cleanup
+    setting = AccountSettings::SettingsConfig.except("compose_email").keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     is_required_feature_enabled = @account.has_feature?(required_feature)
