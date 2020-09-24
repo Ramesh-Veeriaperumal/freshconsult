@@ -23,3 +23,7 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :helpdesk_tickets_by_product:
+    default: false
+    internal: false
+    feature_dependency: :multi_product

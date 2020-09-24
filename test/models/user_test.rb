@@ -130,14 +130,6 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  def test_user_toggle_ui_preference
-    user = add_new_user(@account)
-    result = user.toggle_ui_preference
-    assert_equal result, true
-    result = user.disable_falcon_ui
-    assert_equal result, true
-  end
-
   def test_run_without_current_user_raises_exception
     User.stubs(:reset_current_user).raises(Exception)
     NewRelic::Agent.stubs(:notice_error).returns(true)

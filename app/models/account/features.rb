@@ -31,7 +31,7 @@ class Account < ActiveRecord::Base
     :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
-    :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
+    :agent_shifts, :mailbox_google_oauth, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log,
     :requester_widget_timeline, :sprout_trial_onboarding,
@@ -81,12 +81,12 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
-    :helpdesk_tickets_by_product, :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel, :feedback_widget_captcha
+    :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel, :feedback_widget_captcha
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :solutions_agent_metrics, :helpdesk_tickets_by_product,
+    :solutions_agent_metrics,
     :skip_invoice_due_warning, :allow_wildcard_ticket_create,
     :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha
   ].freeze

@@ -212,7 +212,7 @@ class Account < ActiveRecord::Base
     skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     archive_tickets_api: false, bot_agent_response: false, fluffy: false, nested_field_revamp: true,
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
-    helpdesk_tickets_by_product: false, article_es_search_by_filter: false,
+    article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, allow_wildcard_ticket_create: false,
     attachment_redirect_expiry: false, solutions_agent_metrics: false,
