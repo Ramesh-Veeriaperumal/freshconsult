@@ -6,6 +6,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   DISALLOWED_PAYLOAD_TYPES = ['archive_ticket_update', 'archive_ticket_destroy'].freeze
 
   api_accessible :central_publish do |at|
+    at.add :ticket_id
     at.add :parent_id
     at.add proc { |x| x.utc_format(x.parse_to_date_time(x.safe_send(:archive_created_at))) }, as: :archive_created_at
     at.add proc { |x| x.utc_format(x.parse_to_date_time(x.safe_send(:archive_updated_at))) }, as: :archive_updated_at

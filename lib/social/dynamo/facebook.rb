@@ -19,16 +19,12 @@ class Social::Dynamo::Facebook
   end
 
   def insert_post_in_dynamo(post)
-    return unless social_revamp_enabled?
-       
     time = Time.now.utc
     args, parent_feed_id_hash = insert_feed_in_dynamo(post, time)  
     insert_feed_interactions(post.koala_post, args, parent_feed_id_hash, time)
   end
 
   def insert_comment_in_dynamo(comment)
-    return unless social_revamp_enabled?
-    
     time          = Time.now.utc
     koala_comment = comment.koala_comment
     fan_page      = comment.fan_page

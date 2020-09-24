@@ -127,7 +127,6 @@ class Billing::BillingController < ApplicationController
       end
       subscription_hash[:agent_limit] = @account.subscription.agent_limit = @account.full_time_support_agents.count if agent_quantity_exceeded?(billing_subscription)
       subscription_hash[:field_agent_limit] = @account.subscription.field_agent_limit if update_field_agent_limit(@account.subscription, billing_subscription)
-      subscription_hash = update_freddy_details(@account, subscription_hash, billing_subscription)
       if subscription_hash.present?
         @account.subscription.renewal_period = @subscription_data[:renewal_period]
         @account.subscription.state = @subscription_data[:state] if @subscription_data[:state].present?
@@ -136,7 +135,7 @@ class Billing::BillingController < ApplicationController
       end
       additional_info = @account.subscription.additional_info || {}
       additional_info[:auto_collection] = Subscription::AUTO_COLLECTION[@billing_data.customer.auto_collection]
-      additional_info[:freddy_billing_model] = @billing_data.subscription.cf_freddy_billing_model
+      additional_info.merge!(freddy_subscription_info(@account.subscription, billing_subscription)) if @account.launched?(:freddy_subscription)
       @subscription_data[:additional_info] = additional_info
       @subscription_data.merge!(plan_info(plan)) if @subscription_data[:subscription_plan].blank?
       @subscription_data.delete(:state) if @subscription_data[:state].blank?
