@@ -24,7 +24,7 @@ class Account < ActiveRecord::Base
     :freshid_org_v2, :hide_agent_login,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
-    :solutions_agent_portal, :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
+    :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
     :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
     :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
-    :forums_agent_portal, :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
+    :agent_shifts, :mailbox_google_oauth, :helpdesk_tickets_by_product, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log,
     :requester_widget_timeline, :sprout_trial_onboarding,
@@ -86,7 +86,7 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal, :helpdesk_tickets_by_product,
+    :solutions_agent_metrics, :helpdesk_tickets_by_product,
     :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create,
     :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat
   ].freeze
