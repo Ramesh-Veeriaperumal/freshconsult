@@ -471,6 +471,7 @@ class Portal < ActiveRecord::Base
 
     def cname_owner
       return if portal_url.blank? || Account.current.skip_portal_cname_chk_enabled?
+
       cname_validator = CustomDomain::CnameValidator.new(portal_url, domains_for_account, cname_verification_hash)
       errors.add(:base, I18n.t('flash.portal.update.invalid_cname')) unless cname_validator.cname_mapping?
       errors.add(:base, I18n.t('flash.portal.update.invalid_hash_mapping')) unless cname_validator.txt_mapping?
