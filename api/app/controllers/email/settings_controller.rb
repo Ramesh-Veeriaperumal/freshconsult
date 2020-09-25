@@ -9,7 +9,7 @@ module Email
     def update
       features = params[cname]
       features.each do |feature, enable|
-        feature_name = EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[feature.to_sym] || feature.to_sym
+        feature_name = EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_MAPPING[feature.to_sym] || feature.to_sym
         if feature_name.eql? EmailSettingsConstants::COMPOSE_EMAIL_FEATURE
           toggle_compose_email_feature(feature_name, enable)
         elsif feature_name.eql? EmailSettingsConstants::DISABLE_AGENT_FORWARD
@@ -86,10 +86,9 @@ module Email
 
       def validate_settings
         params[cname].each_key do |setting|
-          next unless AccountSettings::SettingsConfig[setting].present?
-          unless Account.current.admin_setting_for_account?(EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_NAME_CHANGES[setting.to_sym] || setting.to_sym)
-            return render_request_error(:require_feature, 403, feature: setting)
-          end
+          setting_hash = AccountSettings::SettingsConfig[EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym]
+          next if !setting_hash || current_account.has_feature?(setting_hash[:feature_dependency])
+          return render_request_error(:require_feature, 403, feature: setting)
         end
       end
 

@@ -125,13 +125,12 @@ class Email::SettingsControllerTest < ActionController::TestCase
   end
 
   def test_update_setting_when_dependent_feature_disabled
-    setting = EmailSettingsConstants::UPDATE_FIELDS.sample
-    params = { setting: true }
-    dependent_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
+    params = { EmailSettingsConstants::UPDATE_FIELDS.sample =>  true }
+    dependent_feature = AccountSettings::SettingsConfig[params.keys.first][:feature_dependency]
     Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
     put :update, construct_params({}, params)
     assert_response 403
-    match_json(request_error_pattern(:require_feature, feature: setting))
+    match_json(request_error_pattern(:require_feature, feature: params.keys.first))
   ensure
     Account.any_instance.unstub(:has_feature?)
   end
