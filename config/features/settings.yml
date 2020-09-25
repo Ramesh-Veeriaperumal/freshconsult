@@ -2,13 +2,13 @@ settings:
   :untitled_setting_1:
     default: false
     internal: false
-    feature_dependency: :untitled_feature_1_dependency_toggle # from blossom plan.Rename to actual feature
+    feature_dependency: :untitled_feature_3_dependency_toggle # from blossom plan.Rename to actual feature
   :untitled_setting_2:
     default: true
     internal: true
     feature_dependency: :untitled_feature_1_dependency_toggle
   :solutions_agent_metrics:
-    default: true
+    default: false
     internal: false
     feature_dependency: :solutions_agent_metrics_feature
   :untitled_setting_4:
@@ -55,7 +55,3 @@ settings:
     default: false
     internal: false
     feature_dependency: :multi_product
-  :solutions_agent_metrics:
-    default: false
-    internal: false
-    feature_dependency: :solutions_agent_metrics_feature
