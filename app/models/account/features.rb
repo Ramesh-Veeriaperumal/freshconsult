@@ -468,6 +468,10 @@ class Account < ActiveRecord::Base
     launched?(:feedback_widget_captcha)
   end
 
+  def skip_portal_cname_chk_enabled?
+    launched?(:skip_portal_cname_chk)
+  end
+
   def features
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
   end
