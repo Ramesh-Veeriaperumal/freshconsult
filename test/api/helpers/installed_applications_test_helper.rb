@@ -259,7 +259,7 @@ module InstalledApplicationsTestHelper
             'fields' => [],
             'form_id' => 2_000_022_765,
             'field_class' => 'Contact',
-            'field_options' => { 'show_in_import' => true, "creatable" => false, "remove_item_label" => "Remove" }
+            'field_options' => { 'show_in_import' => true, 'creatable' => false, 'remove_item_label' => 'Remove' }
           }, {
             'id' => '7e0basd636d',
             'name' => 'emails',
