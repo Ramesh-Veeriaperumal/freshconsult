@@ -40,9 +40,7 @@ module Email
       end
 
       def toggle_settings(setting, enable)
-        if current_account.admin_setting_for_account?(setting)
-          enable ? current_account.enable_setting(setting) : current_account.disable_setting(setting)
-        end
+        enable ? current_account.enable_setting(setting) : current_account.disable_setting(setting)
       end
 
       def toggle_compose_email_feature(feature, enable)
