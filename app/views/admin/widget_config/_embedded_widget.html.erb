@@ -73,7 +73,7 @@
           <label class="control-label"><%= t(".feedbackwidget_use_captcha") %> </label>
   				<div class="controls">
             <% captcha_enabled = current_account.feedback_widget_captcha_allowed? ||
-                 current_account.launched?(:feedback_widget_captcha) %>
+                 current_account.feedback_widget_captcha_enabled? %>
             <% checked = (captcha_enabled ? 'checked' : '') %>
             <input <%= checked=checked%> class="captchapseudoCheckbox" data-checked-label=<%= t('plain_yes') %> data-unchecked-label=<%= t('plain_no') %> rel="toggle" type="checkbox"/>
   				</div>

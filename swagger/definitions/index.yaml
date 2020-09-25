@@ -963,6 +963,10 @@ channel_availability_count:
 agent_with_availability_response:
   $ref: './response/agents/availability.yaml'
 
+# Admin Security
+admin_security_settings:
+  $ref: ./resource/security.yaml
+
 # Admin business hours
 business_hours_input:
   $ref: ./request/admin/business_hours.yaml

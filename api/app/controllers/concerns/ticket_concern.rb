@@ -45,6 +45,25 @@ module TicketConcern
     @statuses = Helpdesk::TicketStatus.status_objects_from_cache(Account.current)
   end
 
+  def create_fc_note
+    return unless Account.current.launched?(:freshcaller_ticket_revamp) && @ticket.freshcaller_call && @ticket.freshcaller_call.call_info.present?
+
+    call = @ticket.freshcaller_call
+    call_info = call.call_info
+    note_params = {
+      user_id: @ticket.requester_id,
+      private: true,
+      source: Account.current.helpdesk_sources.note_source_keys_by_token['note'],
+      note_body_attributes: {
+        body_html: "#{call_info[:description]} #{call_info[:duration]} #{call_info[:call_notes]}"
+      }
+    }
+    note = @ticket.notes.build(note_params)
+    note.save_note
+    call.notable = note
+    call.save!
+  end
+
   private
 
     def ticket_permission?

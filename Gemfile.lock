@@ -276,7 +276,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 5aacb4edc59a479f2470d4893fdaed127b810e20
+  revision: b88c48d65f319225c5c83c6f0ecbd32d1f6708b1
   branch: dalli
   specs:
     opentelemetry-instrumentation-dalli (0.5.0)
@@ -317,7 +317,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 935fea2dc6050eba0bd16457b390f67831d8171c
+  revision: 0e67450f2aeec4e657ec48e434dfbeb6aba31a1d
   branch: rack
   specs:
     opentelemetry-instrumentation-rack (0.5.0)
@@ -334,7 +334,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: caa5c02afb34b5ba4e24dcf77480a6fa08368df5
+  revision: 7c5f4739a33dd9d8f0a13643c57628e4d87f0039
   branch: redis
   specs:
     opentelemetry-instrumentation-redis (0.5.0)

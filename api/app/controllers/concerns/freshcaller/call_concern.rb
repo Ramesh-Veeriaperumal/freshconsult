@@ -38,6 +38,14 @@ module Freshcaller::CallConcern
     }
   end
 
+  def call_info
+    {
+      description: description,
+      duration: duration,
+      call_notes: call_notes
+    }
+  end
+
   def load_contact_from_search
     @klasses = ['User']
     @search_context = :ff_contact_by_numfields

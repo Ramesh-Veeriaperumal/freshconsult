@@ -448,7 +448,7 @@ HTML
   
   def facebook_settings
     fb_feature = current_account.basic_facebook_enabled? && privilege?(:admin_tasks)
-    url = (fb_feature && current_account.features?(:social_revamp)) ? "/admin/social/facebook_streams" : "/social/facebook"
+    url = "/admin/social/facebook_streams"
     {
       :url        => url,
       :privilege  => fb_feature
