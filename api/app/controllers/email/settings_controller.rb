@@ -29,7 +29,7 @@ module Email
     private
 
       def check_setting_toggled(setting, enable)
-        enable != current_account.has_setting?(setting)
+        enable != current_account.safe_send("#{setting}_enabled?")
       end
 
       def toggle_setting(setting, enable)

@@ -105,7 +105,7 @@ module AccountHelper
 
   def restore_default_setting(setting)
     @account.reload
-    @account.enable_setting(setting.to_sym) unless @account.has_setting?(feature.to_sym)
+    @account.enable_setting(setting.to_sym) unless @account.safe_send("#{setting}_enabled?")
   end
 
   def portal_url

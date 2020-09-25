@@ -4,12 +4,12 @@ class Account < ActiveRecord::Base
 
   AccountSettings::SettingsConfig.each_key do |setting|
     define_method "#{setting}_enabled?" do
-      has_setting?(setting.to_sym)
+      has_feature?(AccountSettings::SettingsConfig[setting.to_sym][:feature_dependency]) && has_feature?(setting.to_sym)
     end
   end
 
   def compose_email_enabled?
-    !has_setting?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+    !(basic_settings_feature_enabled? && has_feature?(:compose_email)) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   # Need to modify methods when we move all LPs to Bitmaps and validate settings throw error for invalid settings
@@ -52,11 +52,6 @@ class Account < ActiveRecord::Base
     if valid_setting(setting)
       has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) ? reset_feature(setting) : raise_invalid_setting_error(setting)
     end
-  end
-
-  # Can combine this with valid_setting once LP's are migrated to BITMAP
-  def has_setting?(setting)
-    has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) && has_feature?(setting)
   end
 
   private

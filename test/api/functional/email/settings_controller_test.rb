@@ -30,7 +30,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('personalized_email_replies', 'Value set is of type String.It should be a/an Boolean', code: :datatype_mismatch)])
   end
 
-  def test_update_with_invalid_feature_name
+  def test_update_with_invalid_setting_name
     params = invalid_field_params
     put :update, construct_params({}, params)
     assert_response 400
@@ -47,16 +47,19 @@ class Email::SettingsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:privilege?)
   end
 
-  def test_show_email_config_features
-    Account.any_instance.stubs(:has_setting?).with(:reply_to_based_tickets).returns(true)
-    Account.any_instance.stubs(:has_setting?).with(:disable_agent_forward).returns(false)
-    Account.any_instance.stubs(:has_setting?).with(:compose_email).returns(false)
-    Account.any_instance.stubs(:has_setting?).with(:personalized_email_replies).returns(true)
+  def test_show_email_config_settings
+    Account.any_instance.stubs(:reply_to_based_tickets_enabled?).returns(true)
+    Account.any_instance.stubs(:disable_agent_forward_enabled?).returns(false)
+    Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+    Account.any_instance.stubs(:personalized_email_replies_enabled?).returns(true)
     get :show, controller_params
     assert_response 200
     match_json(all_features_params)
   ensure
-    Account.any_instance.unstub(:has_setting?)
+    Account.any_instance.unstub(:reply_to_based_tickets_enabled?)
+    Account.any_instance.unstub(:disable_agent_forward_enabled?)
+    Account.any_instance.unstub(:compose_email_enabled?)
+    Account.any_instance.unstub(:personalized_email_replies_enabled?)
   end
 
   def test_show_without_privilege
@@ -68,16 +71,16 @@ class Email::SettingsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:privilege?)
   end
 
-  def test_update_redis_key_for_compose_email_feature
+  def test_update_redis_key_for_compose_email_setting
     Redis.any_instance.stubs(:perform_redis_op).returns([])
     params = { allow_agent_to_initiate_conversation: false }
     params[:allow_agent_to_initiate_conversation] = false
-    Account.any_instance.stubs(:has_setting?).returns(false)
+    Account.any_instance.stubs(:compose_email_enabled?).returns(true)
     put :update, construct_params({}, params)
     assert_response 200
     assert_equal(false, $redis_others.perform_redis_op('smembers', COMPOSE_EMAIL_ENABLED).include?(@account.id))
     params[:allow_agent_to_initiate_conversation] = true
-    Account.any_instance.unstub(:has_setting?)
+    Account.any_instance.unstub(:compose_email_enabled?)
   end
 
   def test_update_setting_when_dependent_feature_disabled
