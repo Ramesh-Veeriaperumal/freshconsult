@@ -29,9 +29,25 @@ module Admin
       Account.current.revoke_feature :advanced_freshcaller
     end
 
+    def freshcaller_account_settings_hash
+      {
+        automatic_ticket_creation: {
+          missed_calls: true,
+          abandoned_calls: false,
+          connected_calls: true
+        }
+      }
+    end
+
     def freshcaller_account_show_response
       fc_account = Account.current.freshcaller_account.as_api_response(:api)
       fc_account[:agents] = Account.current.freshcaller_agents.where(fc_enabled: true).select { |fc_agent| fc_agent.user }.map { |agent| agent.as_api_response(:api) }
+      fc_account
+    end
+
+    def freshcaller_account_update_response
+      fc_account = Account.current.freshcaller_account.as_api_response(:api)
+      fc_account[:agents] = []
       fc_account
     end
 
@@ -411,9 +427,14 @@ module Admin
       assert_response 200
       match_json(freshcaller_account_show_response)
       assert ::Freshcaller::Agent.find_by_fc_user_id(1234).present?
-      assert Account.current.freshcaller_account.present?
-      assert Account.current.freshcaller_account.domain, 'test.freshcaller.com'
-      assert Account.current.freshcaller_account.freshcaller_account_id, '1234'
+      created_account = Account.current.freshcaller_account
+      assert created_account.present?
+      assert created_account.domain, 'test.freshcaller.com'
+      assert created_account.freshcaller_account_id, '1234'
+      assert created_account.settings.present?
+      assert_equal created_account.settings[:automatic_ticket_creation][:missed_calls], true
+      assert_equal created_account.settings[:automatic_ticket_creation][:abandoned_calls], true
+      assert_equal created_account.settings[:automatic_ticket_creation][:connected_calls], false
     ensure
       delete_freshcaller_account
       remove_stubs
@@ -518,7 +539,7 @@ module Admin
       assert agent2.freshcaller_agent.present?
       assert_equal agent2.freshcaller_agent.fc_user_id, 111
       assert agent2.freshcaller_agent.fc_enabled
-      assert_response 204
+      assert_response 200
     ensure
       delete_freshcaller_account
       delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
@@ -552,7 +573,7 @@ module Admin
       assert agent2.freshcaller_agent.present?
       assert_equal agent2.freshcaller_agent.fc_user_id, 5678
       refute agent2.freshcaller_agent.fc_enabled
-      assert_response 204
+      assert_response 200
     ensure
       delete_freshcaller_account
       delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
@@ -581,7 +602,7 @@ module Admin
       assert agent2.freshcaller_agent.present?
       assert_equal agent2.freshcaller_agent.fc_user_id, 5678
       refute agent2.freshcaller_agent.fc_enabled
-      assert_response 204
+      assert_response 200
     ensure
       delete_freshcaller_account
       delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
@@ -604,7 +625,7 @@ module Admin
       assert agent1.freshcaller_agent.present?
       assert_equal agent1.freshcaller_agent.fc_user_id, 5678
       assert agent1.freshcaller_agent.fc_enabled
-      assert_response 204
+      assert_response 200
     ensure
       delete_freshcaller_account
       delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
@@ -621,11 +642,38 @@ module Admin
       end
       agent1.reload
       refute agent1.freshcaller_agent.present?
-      assert_response 204
+      assert_response 200
     ensure
       delete_freshcaller_account
       delete_freshcaller_agent unless @agent.agent.freshcaller_agent.nil?
       remove_stubs
+    end
+
+    def test_update_settings_with_valid_params
+      create_freshcaller_account unless Account.current.freshcaller_account
+      put :update, construct_params({ version: 'private', settings: freshcaller_account_settings_hash } )
+      assert_response 200
+      match_json(freshcaller_account_update_response)
+    ensure
+      delete_freshcaller_account
+    end
+
+    def test_update_settings_with_invalid_settings_params
+      create_freshcaller_account unless Account.current.freshcaller_account
+      put :update, construct_params({ version: 'private', settings: { incorrect_option: {} } })
+      assert_response 400
+      match_json([bad_request_error_pattern('incorrect_option', 'Unexpected/invalid field in request', code: :invalid_field)])
+    ensure
+      delete_freshcaller_account
+    end
+
+    def test_update_settings_with_invalid_sub_settings_params
+      create_freshcaller_account unless Account.current.freshcaller_account
+      put :update, construct_params({ version: 'private', settings: { automatic_ticket_creation: { incorrect_option: false } } })
+      assert_response 400
+      match_json([bad_request_error_pattern('incorrect_option', 'Unexpected/invalid field in request', code: :invalid_field)])
+    ensure
+      delete_freshcaller_account
     end
 
     def test_credit_info_without_caller_features
