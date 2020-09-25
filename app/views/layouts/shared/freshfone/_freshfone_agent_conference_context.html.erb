@@ -1,0 +1,45 @@
+<div class="add-agent-info"></div>
+<script id="add-agent-info-template" type="text/x-jquery-tmpl">
+{{if is_receiver}}
+<div class="add-agent-placer">
+  <span class='add-agent-status span3'>
+    <div class='receiver-in-call hide'>
+      <span class="agent_name">${user_name}</span> <%= t('freshfone.widget.agent_conference.add_agent_initiated') %>
+    </div>
+  </span>
+  <span class="add_agent_img">
+    {{html user_hover}}
+  </span>
+</div>
+{{else}}
+<div class="add-agent-placer">
+  <span class="ficon-add-call pull-left add-agent-label"></span>
+  <span class='add-agent-status span3'>
+    <div class='in_progress'><%= t('freshfone.widget.agent_conference.connecting') %> 
+      <span class="agent_name">${user_name}...</span>
+    </div>
+    <div class='busy hide'><%= t('freshfone.widget.agent_conference.busy') %></div>
+    <div class='no-answer hide'><%= t('freshfone.widget.agent_conference.no_answer') %></div>
+    <div class='connected hide'><%= t('freshfone.widget.agent_conference.connected') %></div>
+    <div class='in_call hide'>
+      <span class="agent_name">${user_name}</span> <%= t('freshfone.widget.agent_conference.in_call') %>
+    </div>
+    <div class='completed hide'><span class="agent_name">${user_name}</span> <%= t('freshfone.widget.agent_conference.end_call') %></div>
+    <div class='canceled hide'><%= t('freshfone.widget.agent_conference.canceled') %></span></div>
+    <div class='cancelling hide'><%= t('freshfone.widget.agent_conference.cancelling') %>..</span></div>
+  </span>
+  <span>
+    <a href="#" class="tooltip cancel_add_agent" title="<%= t('freshfone.widget.agent_conference.cancel_add_agent') %>">
+      <i class="ficon-cross-round"></i>
+      <i class="ficon-cross-filled hide"></i>
+    </a>
+  </span>
+  <span class="add_agent_img">
+    {{html user_hover}}
+  </span>
+</div>
+<div class="progress-bar-placer">
+    <span class='add-agent-progress-bar'></span>
+</div>
+{{/if}}
+</script>

@@ -1,0 +1,24 @@
+<%= form_for @freshfone_credit,
+						:url => {:action => "purchase", :controller => "admin/freshfone/credits"}, 
+						:html => {:class => "purchase_freshfone"} do |f| %>
+	<div class="row-fluid">
+		<div class="recharge-now-text"><%= t('freshfone.subscription.recharge_now_text') %></div>
+		<%= select_tag :credit, options_for_select(recharge_options, 
+                            :selected => default_freshfone_credit(@freshfone_credit)),
+					:class => 'select2', :'data-minimum-results-for-search' => '30' %>
+		<%= submit_tag t('freshfone.subscription.purchase_credits'), :class => "btn" %>
+		<% unless default_currency? %>
+			<div id = "fone-credit-followup">$
+      <%= multicurrency_followup_amount %> 
+      <%= t('freshfone.subscription.followup_text') %></div>
+		<% end %>
+	</div>
+<% end %>
+
+<script type="text/javascript">
+	<% unless default_currency? %>
+    jQuery("#credit").on("change", function(ev){
+      jQuery("#fone-credit-followup").html("$" + jQuery(this).val() + " <%= t('freshfone.subscription.followup_text') %>")
+    });
+   <% end %>
+</script>

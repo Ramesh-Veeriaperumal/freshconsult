@@ -22,7 +22,7 @@ module AgentConstants
     support_agent: [:support_agent, 'support_agent'],
     field_agent: [:field_agent, 'field_agent']
   }.freeze
-  AGENT_CHANNELS = { ticket_assignment: 'ticket_assignment', chat: 'live_chat' }.freeze
+  AGENT_CHANNELS = { ticket_assignment: 'ticket_assignment', chat: 'live_chat', phone: 'freshfone' }.freeze
   ALLOWED_ONLY_PARAMS = %w[available available_count with_privilege availability].freeze
   ALLOWED_INCLUDE_PARAMS = %w[user_info].freeze
   FIELD_MAPPINGS = { :"user.primary_email.email" => :email, :"user.base" => :email }.freeze

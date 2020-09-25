@@ -2498,6 +2498,7 @@ tr:
         security: Güvenlik
         email_commands_setting: Email Yorumları
         billing: Planlar ve Faturalandırmalar
+        freshfone: Freshfone
         tags: Etiketler
         mobihelp: MobiHelp
         customer-portal: Oyuncu Portalı
@@ -2850,6 +2851,7 @@ tr:
         success: Entegrasyon başarı ile devrede!
         error: Entegrasyon devredeyken hata oluştu.
         cti_error: CTI tipi çoklu entegrasyonlar etkin olamaz.
+        freshfone_enabled: CTI entegrasyonlar freshfone ile birlikte etkin olamaz.
       update:
         success: Entegrasyon başarı ile güncellendi.
         error: Entegrasyon yapılandırılırken hata oluşmuştur.
@@ -2891,6 +2893,20 @@ tr:
       page_unavailable: >-
         Üzgünüz, bu sayfa şuanda kullanılmamaktadır. Daha fazla bilgi için
         lütfen yöneticinize başvurunuz.
+    freshfone:
+      credits:
+        success: Freshfone kredileri başarı ile satın alındı.
+        error: Freshfone kredileri satın alınırken hata oluştu.
+        invalid_recharge_amount: Geçerli bir yükleme miktarı giriniz.
+      number:
+        success: Numara başarıyla Freshfone hesabınıza eklenmiştir
+        error: Satın alınırken Freshfone hesabında sorun oluşmuştur.
+        blank_message: '%{num_type} anlamsız olamaz.'
+        invalid_message_length: '%{num_type} 4096 karakteri geçmemeli'
+        add_blacklist_success: Numara başarı ile engellendi.
+        add_blacklist_failure: Numara engellenemedi.
+        remove_blacklist_success: Numara başarıyla yasaklandı.
+        remove_blacklist_failure: Numara engellenememiştir.
     profile:
       api_key:
         reset_success: API Anahtarı başarı ile sıfırlandı.
@@ -9153,6 +9169,46 @@ tr:
     customer_activity_title: Etkinlik Raporları
     helpdesk_activity_title: Yardımmasası Aktivite Raporu
     satisfaction_title: Memnuniyet Raporu
+    freshfone:
+      options:
+        incoming: Gelen
+        outgoing: Giden
+        all_groups: Bütün Gruplar
+        unassigned: Atanmamış
+      range_exceed: Boşluk 90 günü geçemez.
+      filter_by_title: Şuna göre filtrele
+      time_period: Zaman Aralığı
+      report_title: Freshfone Summary
+      summary_title: 'Temsilci Çağrı Özeti '
+      agent: Temsilci
+      group: Grup
+      call_type: Arama Tipi
+      filter_report: Filtreyi Editle
+      select_agent: Temsilci Seç
+      select_group: Grup Seç
+      select_call_type: Arama Tipi Seç.
+      select_number: Bir Numara Seç
+      all_numbers: Bütün Numaralar
+      all_call_types: Hepsi
+      number: Numara
+      avg_handle_time: Ort İşlem Süresi
+      num_of_calls: Cevapsız Çağrı
+      total_answered: Cevaplanan Çağrılar
+      total_voice_mail: Sesli Posta
+      total_duration: Toplam Süre
+      agent_calls_count: Aramalar
+      total_unanswered_calls: Cevaplanmamış Aramalar
+      num_of_transfered: Transfer Yok
+      unanswered_transfers: Cevapsız Transferler
+      answered_percentage: Cevap %
+      generate_summary: Oluştur.
+      filter_close: Kapat.
+      unanswered_count: Cevaplanmadı
+      includes_transfer: Includes transferred calls
+      no_agent: '- Temsilci Yok -'
+      business_hours: Mesai Saatleri
+      filter_option_all_calls: Tüm Aramalar
+      no_external: Harici numaralara yapılan aktarmalar dahil değildir
     time_sheets:
       billable: Faturalandırılabilir Saatler
       non_billable: Faturalandırılamayan Saatler
@@ -10079,6 +10135,577 @@ tr:
     recording_on_process: >-
       Kayıt işleniyor.Bir kaç dakika içerisinde tekrar<a href='#'
       target='_parent' id='checkfreshfoneaudio'>Kontrol Et</a>.
+    not_enough_credit: Kredi Yetersiz!
+    recharge: Yeniden yükleme yap
+    number: Freshfone numarası
+    subscription:
+      auto_recharge_text: Yalnızca bakiyeniz 5$ altına düştüğünde hesabınızdan ücret kesilecektir
+      current_balance: Anlık Bakiyeniz
+      purchase: Freshfone Kredisi Alın
+      setup_auto_recharge: Otomatik Yükleme Kurulumu
+      no_credit_card: Freshfone kredisi satın almak için ödeme bilgilerini girin
+      recharge_now_text: Bakiyenizi bir kerelik ödeme ile doldurun
+      auto_recharge_amt: Otomatik Dolum Miktarı
+      see_detailed_pricing: Detaylı Fiyat Gör
+      followup_text: Freshfone kredi bedeli
+      followup: Freshfone kredi bedeli
+      purchase_credits: Kredi Satın Al
+      purchase_text: Telefon kredisi satın alın
+      no_credit_card_text: Telefon kredisi satın alınmak için ödeme bilgilerini girin
+    dialpad:
+      not_valid_number: Lütfen geçerli bir numara giriniz
+      could_be_invalid_number: Geçersiz bir numara olabilir.
+      invalid_number_continue_call: Lütfen çağrı butonuna tekrar basınız
+      not_enough_credit: Kredi Yetersiz
+      restricted_country: Yasaklı Ülke
+      already_in_call: Yasaklanmış eş zamanlı giden çağrı
+    call_status:
+      default: ''
+      completed: Tamamlandı
+      blocked: Engellendi
+      busy: Meşgul
+      missedcall: Cevapsız Çağrı
+      noanswer: Cevap Yok
+      canceled: İptal Edildi
+      failed: Başarısız oldu
+      in_progress: Sürüyor
+      voicemail: Seslimesaj
+      restricted: Yasaklı
+      all_calls: Tüm Aramalar
+    general:
+      suspended_account: >-
+        Freshfone hesabınız askıya alınmıştır. Lütfen aramaları almak ve arama
+        yapmak için Freshfone'u etkinleştir
+      suspended_on_low_balance: >-
+        Freshfone hesabınız askıya alınmıştır. Lütfen hesabınızı aktif etmek
+        için yükleme yapınız
+    dashboard:
+      in_conversation: Konuşma
+      available_agents: Müsait Temsilciler
+      freshfone_recharge_alert: >-
+        Freshfone şu an kullanılamamaktadır. Çağrı yapmak ve almak için lütfen
+        hesap yöneticiniz ile iletişime geçiniz.
+      admin_freshfone_recharge_alert: >-
+        Yetersiz miktardan dolayı Freshfone şuanda kullanılamaz. <a
+        href='/subscription'> </a> yüklerseniz arama yapabilir ve alabilirsiniz
+    widget:
+      ignore: Yoksay
+      accept: Kabul Et
+      end_call: Çağrıyı Sonlandır
+      mute: Sessiz
+      transfer_call: Çağrıyı Aktar
+      dialpad: Arama Tuşları
+      call_notes: Çağrı Notları
+      on_phone: Telefonda Müsait
+      on_browser: Site de Müsait
+      invalid_phone_number: >-
+        Lütfen telefon numaranızı '+' ön ek ve ülke kodu ile birlikte Profil
+        Ayarlarınızdan güncelleyiniz.
+      no_calls: Yakın zaman da yapılan çağrı bulunmamaktadır
+      available: Kabul edilen çağrılar
+      unavailable: Reddedilen Çağrılar
+      busy: Süren Çağrılar
+      recent_calls: En Son Çağrılar
+      transferring: <span>Çağrı Aktarılıyor</span><br />Lütfen bekleyiniz...
+      transfer_agents: Müsait Temsilciler Aranıyor..
+      unavailable_agents: Çağrı aktarmak için müsait temsilci bulunmamaktadır
+      agents_count_in_group: '%{count} Temsilci Müsait'
+      ticket_info: 'Yeni bildirim oluştur yada var olan bildirime notları ve kayıtları ekle '
+      add_note: Not Ekle
+      note_placeholder: Çağrı Notu Ekle...
+      new_ticket: Yeni bildirim olarak kayıt et
+      save_to_existing: Var olan bildirimi kaydet
+      ignore_ticket: Bildirimi dönüştürme
+      ignore_ticket_info: Kayıtlarınız Çağrı Geçmişinde bulunabilir olacak
+      back: Geri Git
+      subject: Bildirim Konusu
+      requester_name: İsteyen İsmi
+      requester_email: İsteyen E-Postası
+      save: Kaydet
+      notes: Notlar
+      new_requester: Yeni İsteyen
+      inactive: Freshfone krediniz düşük. Hesap Yöneticiniz ile iletişime geçiniz.
+      forward_number_alert: >-
+        Lütfen çağrıları telefonunuza yönlendirmek için telefon numaranızı
+        Profil Ayarlarınızdan güncelleyiniz.
+      desktop_notification: Masaüstü bildirimlerini aç
+    call_history:
+      title: Çağrı Geçmişi
+      sort_by: 'Şuna Göre Sırala :'
+      singular_active_number: Aktif Numara
+      none_active_number: '- hiç -'
+      active_number: Akfit Numara
+      singular_deleted_number: Silinen Numara
+      deleted_number: Silinen Numara
+      block_number: Engelle
+      cancel: İptal
+      blacklist_confirmation: Engellemek istediğinize emin misiniz
+      show_deleted: Silinen Numaraları Göster
+      filtered_by: 'Şuna göre filtrele :'
+      filter_by_number: Number
+      filter_by_time: Zaman Aralığı
+      filter_by_agent: Temsilci
+      filter_by_group: Gruba gelen çağrılar
+      filter_by_call_status: Çağrı Türü
+      filter_by_caller: İsteyen
+      received_date: Tarih
+      duration: Süreç
+      cost: Gider
+      asc: Artan
+      desc: Azalan
+      all_time: Her Zaman
+      today: Bugün
+      yesterday: Dün
+      this_week: Son 7 Günde
+      this_month: Son 30 Günde
+      month: 'Son %{month} Ayda'
+      custom: Tarih Aralığı
+      no_calls: Arama Bulunamadı
+      view_transferred_calls: Aktarılan çağrıları göster
+      save_ticket: Bildirimi dönüştür
+      convert: Dönüştür
+      helpdesk: Yardım Masası
+      unblock_number: Engeli Kaldır
+      block_number_title: Numara Engelle
+      filter_option_all_agents: Tüm Temsilciler
+      filter_option_all_calls: Tüm Aramalar
+      filter_option_received_calls: Gelen
+      filter_option_outgoing_calls: Giden
+      filter_option_missed_calls: Cevapsız
+      filter_option_voicemail: Sesli Mesaj
+      filter_option_blocked_calls: Engellendi
+    ticket:
+      recording: Mesajı Dinle
+      ticket_desc_with_name: >-
+        Konuşma <b> %{customer_name} </b> (%{customer_number}, %{location}) ve
+        <b>%{agent}</b> (%{agent_number})<br/ > arasında
+      ticket_desc_with_out_name: >-
+        Konuşma %{customer_number} (%{location}) ve <b>%{agent}</b>
+        (%{agent_number})<br/ > arasında
+      voicemail_ticket_desc_with_out_name: '%{customer_number}  (%{location}) den %{freshfone_number} a sesli mesaj'
+      voicemail_ticket_desc_with_name: >-
+        <b>%{customer_name}</b> (%{customer_number}, %{location}) dan
+        %{freshfone_number} a sesli mesaj
+      agent_detail: 've <b>%{agent}</b> (%{agent_number})<br/ >'
+      dial_a_number_with_name: >-
+        <b>%{customer_name}</b> (%{customer_number}, %{location}) ile konuşma.
+        Çağrı ESY'den doğrudan çağrıya bağlandı
+      dial_a_number_with_out_name: >-
+        %{customer_number} (%{location}) ile konuşma. ESY'den şu numaraya
+        %{direct_dial_number} bağlanıldı.
+      default_subject: 'Şu tarihte %{call_date}  %{customer} ile konuşma'
+      voicemail_subject: '%{customer}''dan sesli mesaj'
+      human_name: Bildirim
+      view: Görüntüle
+    note:
+      human_name: Not
+      view: Görüntüle
+    create:
+      success:
+        with_link: '%{human_name} Oluşturuldu  %{link}'
+    admin:
+      important: Önemli
+      general: Genel
+      settings: Ayarlar
+      greetings: Selamlar
+      messages: Mesajlar
+      freshfone_numbers: Freshfone Numaraları
+      disable_alert: >-
+        <b>Önemli:</b> Freshfone hesabınızı devre dışı bırakmanız freshfone
+        numaraları üzerinde aylık kiralamanızı engelleyecektir. Ücret ödemesini
+        önlemek için satın alınan numaralarını silin 
+      purchase_credit: >-
+        Yerel veya Ücretsiz telefon numaralarını alıp Freshfone'ı kullanmaya
+        başlamak için Freshfone kredi ödemesi yapın
+      purchase_numbers: >-
+        Freshfone'ı kullanmaya başlamak ve müşterilerinize telefonla destek için
+        yerel veya ücretsiz numaralar satın alın
+      search: Basamak veya öbekleri arayarak
+      local: Yerel
+      toll_free: Ücretsiz
+      number:
+        simultaneous: Tüm Temsilcilere Çağrı Yap
+        round_robin: Boşta bulunan ilk temsilciye çağrı yap
+      number_settings:
+        title: Freshfone ile çağrı merkezinizi yönetin
+        info: >-
+          <b>Assigning phone calls to agents and groups</b><br/>You can use
+          Freshfone to setup a interactive voice response system (IVR) and route
+          calls to different groups or agents in your team. For example, you
+          could have your customers calls forwarded to your Support team when
+          they press 1, and to somebody from Sales when they press
+          2.<br/>Additionally, you can also customize the interactive messages
+          that will be played back to your customers by recording your voice,
+          uploading a file or using the text-to-speech
+          feature.<br><br><b>Customizing your Freshfone number</b><br>You could
+          also configure each and every Freshfone number separately and let it
+          have it’s own set of customizations. This includes basic settings such
+          as the maximum number of people on the queue and maximum waiting time
+          for your customers. Once either of them are reached, a
+          non-availability message will be played to your customers
+          automatically.<br/>When you enable call recording, every phone call
+          across your helpdesk is recorded and gets attached to your tickets.
+          You can also restrict Freshfone from taking calls during non-business
+          hours. For example, you could set up two support lines, one of which
+          will be available to take calls only during working hours, and another
+          high-priority helpline that will be available 24x7.<br/><br/>
+        non_business_hours: Aramaları kabul et şunun süresince..
+        business_calendar: Mesai Saatleri Seçin
+        transcript_voice: Ses Dökümleri
+        text_to_speech: Metinden Ses Kaydına
+        record_calls: Aramaları Kaydet
+        voicemail: Seslimesaj
+        voicemail_on: Açık
+        voicemail_off: Kapalı
+        record_all: Tüm Aramaları Kaydet
+        record_none: Aramaları Kaydetme
+        record_alert: >-
+          Arama kaydı kuralları çoğu ülkede, oyuncuların çağrılarının
+          kaydedildiği tebliğ gerektirir. Lütfen karşılama mesajını uygun
+          şekilde yapılandırın.
+        max_queue_calls: Maksimum Arama Sırada
+        call_wait_time: Maksimum bekleme süresi
+        call_wait_time_suffix: ' çağrı başına'
+        wait_message: Mesaj Bekle
+        non_availability_message: Hazırda Mesaj Yok
+        voicemail_message: Seslimesaj
+        non_business_hours_message: Tatil Saatleri Mesajı
+        welcome_message_alert: ESY aktifken karşılama mesajı yürütülmez.
+        welcome_message: Hoş geldiniz mesajı
+        record_voice: Sesinizi kaydedin
+        upload_voice: Ses dosyalarını karşıya yükle
+        read_message: Metin okuma
+        start_recording: Kayda Başla
+        stop_recording: <span></span> Kaydı Durdur
+        preparing_recording: Mesajınız hazırlanıyor...
+        recorded_voice: Kayıtlı Ses
+        audio_upload: Karşıya yüklemek için dosya seçin
+        greeting_message: Mesajınızı buraya giriniz
+        attachment_help_info: Kabul edilen ses dosyaları < 5MB
+        recording_help_info: Mikrofonu aç . Süre < 5dk.
+        cancel: İptal
+        change: Değiştir
+        group: 'Mesajı yürüt ve temsilciyi ara '
+        call_hunting_group: Grup
+        all_groups: Bütün Gruplar
+        business_hours: Mesai Saatleri
+        anytime: 7/24 Herzaman
+        name: Adı
+        name_placeholder: Numaranız için Kullanılan Ad Girin
+        hunt_type: Çağrı Yönlendirme
+        routing_message: Birden fazla temsilci uygun olduğunda...
+        recording_privacy: Görünürlüğü Kaydet
+        recording_privacy_public: Oyuncu ve Temsilciler tarafından görünebilir
+        recording_privacy_private: Sadece Temsilciler Görebilir
+        name_maxlength: Name cannot have more than 255 Characters
+        number_accessible: Erişebilen kişi
+        attachment_help_text: Kabul edilen ses dosyaları < 5MB
+        queue_position_preference: Sıra konumunu oku
+        queue_wait_message: Sıra bekleme mesajı
+        queue_position_enable: AÇIK
+        wait_music: Bekleme Müziği
+        hold_music: Bekletme Müziği
+        title_text: Çağrı merkezinizi yönetme
+        queue_position_disable: KAPALI
+        queue_position_message_placeholder: 'Şu anda sıradasınız. Sıradaki konumunuz {{queue.position}}'
+        info_content: >-
+          <b>Temsilcilere ve gruplara telefon çağrılarını
+          atamak</b><br/>İnteraktif sesli yanıt sistemi (IVR) kurabilir ve
+          çağrıları ekibinizdeki farklı gruplara veya temsilcilere
+          yönlendirebilirsiniz. Örneğin, 1'e bastıklarında müşterilerinizin
+          çağrılarını Destek ekibine yönlendirebilir ve 2'ye bastıklarında ise
+          Satıştan birisine yönlendirebilirsiniz.<br/>Buna ek olarak, sesinizi
+          kaydederek, bir dosya yükleyerek veya metini konuşmaya çevirme
+          özelliğini kullanarak müşterilerinize dinletilecek olan interaktif
+          mesajları özelleştirebilirsiniz.<br><br><b>Numaranızı
+          özelleştirmek</b><br>Ayrıca, her bir numarayı ayrı ayrı
+          yapılandırabilir ve hepsinin kendisine özel bazı özelliklere sahip
+          olmasını sağlayabilirsiniz. Buna sırada bekleyecek maksimum kişi
+          sayısı ve müşterileriniz için maksimum bekleme süresi gibi temel
+          ayarlar da dahildir. Bunlardan herhangi birisine ulaşıldığında,
+          müşterilerinize otomatik olarak 'müsait olmama' mesajı
+          dinletilir.<br/>Çağrı kaydını etkinleştirdiğinizde, yardım masanızdaki
+          her bir telefon çağrısı kaydedilir ve destek taleplerinize eklenir ve
+          kayıt müşterilerilerin kullanımına açık olabilir veya gizlenebilir.
+          Aynı zamanda telefon kanalınızın iş saatleri dışında çağrı almasını
+          kısıtlayabilirsiniz. Örneğin, iki destek hattı belirleyebilir ve
+          bunlardan birisinin sadece iş saatleri esnasında çağrı almasını
+          sağlayabilir, diğerini ise 7x24 ulaşılabilir, yüksek öncelikli yardım
+          hattı şeklinde ayarlayabilirsiniz.<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target='_blank'>Numaranızı özelleştirme konusunda daha fazla bilgi
+          edinin</a>
+        queue_position_message_alert: >-
+          Sıradaki konumu okumak için {{queue.position}} yer tutucusunu
+          kullanın. <br/> Örneğin: Şu anda sıradasınız. Sıradaki konumunuz
+          {{queue.position}}
+      numbers:
+        title: Freshfone ile Oyuncu desteği
+        info: >-
+          Freshfone is Freshdesk’s integrated telephony system. You can set up
+          Freshfone to receive support calls through your browser or phone, and
+          make outbound calls to customers. Freshfone also allows you to keep a
+          record of all calls, and convert interesting phone conversations into
+          tickets. You could also avoid calls from certain numbers by blocking
+          them in the call history. <br/><br/> <b>Setting up
+          Freshfone</b><br/>To start using Freshfone, you will first need to
+          enable it, and purchase an incoming support number. Freshdesk
+          currently lets you purchase phone numbers in 28 countries. If your
+          customers will be calling you in the US, UK or Canada you can also
+          purchase toll-free support numbers (or freephone in the UK).
+          <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated
+          Voice Response (IVR) systems in Freshfone to better categorize
+          customers when they call your support number, and channelize them to
+          the right department, team or agent. Freshfone lets you create upto 2
+          levels of Smart IVRs.
+        purchase_number: Harcama numarası
+        purchase_phone_number: 'Satın alma numarası (%{number})'
+        buy: Satın alma numarası
+        buy_button_text: Satın Al
+        purchase_loading_text: Alım yapılıyor...
+        buy_loading_text: Satın Alınıyor..
+        purchase_alert_text: >-
+          Bu telefon numarası <strong><span class='number-rate'></span>
+          aylık</strong>. olarak ücretlendirilecek.
+        not_available: Döndürülen sonuç yok. Lütfen farklı bir arama terimi deneyin
+        address_certification_text: >-
+          Telefon numarası almak için, Şirket veya Kişisel Adres sağlamak için
+          gerekli olan <span class='certification-country'></span>.
+        purchase_confirm: Emin misiniz ?
+        delete_alert: >-
+          Bir kez silinmiş bir numara tekrar satılamaz. Numarayı silmek
+          istediğinizden emin misiniz?
+        manage: Yönet
+        cannot_purchase: Freshfone hesabınız için numara satın alınamıyor
+        insuffcient_credits: >-
+          Freshfone krediniz yeni bir numara satın almak için çok düşüktür.
+          Lütfen yeniden yükleyin ve yeniden deneyin
+        address:
+          name: Şirket / İsim
+          address: Adres
+          city: Şehir
+          state: Eyalet/İl/Bölge
+          postal_code: Posta Kodu
+          country: İl
+          required_field: Tüm alanların doldurulması zorunludur
+        setup:
+          title: Freshfone ayarlama
+          info: >-
+            In order to get started with Freshfone, you will first need to
+            purchase a call-in number to offer your customers. You can purchase
+            a Local number in any of 28* countries that Freshfone currently
+            supports. If your customers will be calling you from the US, UK or
+            Canada, you can also offer them a Toll-free dial in
+            number.<br/><br/>You can purchase multiple Freshfone numbers from
+            various countries and setup toll-free helplines inside Freshdesk
+            without using any third party service. You will be charged standard
+            rates for incoming, outgoing and forwarding calls from your
+            helpdesk.<br/><br/> Once you have purchased a Freshfone number for
+            your support helpline, all incoming calls will be distributed to
+            agents who are logged in to your helpdesk. In addition, your agents
+            can choose to pick up phone calls from inside the browser or have
+            them forwarded to their desk phone automatically.
+          info_text: >-
+            Telefon kanalını kullanmaya başlamak için, ilk olarak
+            müşterilerinizin arayabilecekleri bir telefon numarası satın almanız
+            gerekir. <a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>Burada listelenen ülkelerden</a>herhangi birisinden
+            yerel bir numara satın alabilirsiniz. Müşterileriniz sizi ABD,
+            Birleşik Krallık veya Kanada'dan arayacaksa, onlara ücretsiz destek
+            hattı da sunabilirsiniz.<br/><br/>Birçok ülkeden birden fazla
+            telefon numarası satın alabilir ve herhangi bir üçüncü parti hizmeti
+            kullanmanıza gerek kalmadan Freshdesk içerisinde ücretsiz destek
+            hatları oluşturabilirsiniz. Gelen, giden ve yardım masanızdan
+            yönlendirilen çağrılar için standart ücretlere tabi olacaksınız. <a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>çağrı ücretlerine buradan
+            bakabilirsiniz</a>.<br/><br/>Destek hattınız için bir telefon
+            numarası satın aldığınızda, gelen tüm çağrılar yardım masanıza giriş
+            yapmış olan temsilcilere dağıtılır. Buna ek olarak, temsilcileriniz
+            tarayıcı içerisinden telefon çağrılarını yanıtlayabilir veya
+            otomatik olarak masalarındaki telefona yönlendirilmesini
+            sağlayabilir.
+          title_text: Çağrı merkezi kurma
+        caller_id:
+          manage_caller_id: 'Arayan Kimliğini Yönet '
+          no_number_added: Çağrı yapan numara eklenmedi
+          call_id_mask: Bu numarayı maskele
+          add_new: Yeni Ekle
+        sidebar_content_v2: >-
+          Telefon kanalını kullanarak tarayıcınızdan, cep telefonunuzdan veya
+          Freshdesk’in mobil uygulamalarındaki telefon kanalını kullanarak çağrı
+          yapabilir ve alabilirsiniz. Bu, Freshdesk destek talebi sistemine
+          sıkıca entegre edilmiştir. Böylece gerektiğinde, telefon görüşmelerini
+          kaydederek ve destek taleplerine dönüştürerek takip edebilirsiniz.
+          <br/><br/> <b>Telefon Kurulumu</b></br>Telefonu kullanmaya başlamak
+          için, önce telefonu etkinleştirmeniz ve bir destek numarası satın
+          almanız gerekir. <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>burada listelenen ülkelerden </a> yerel numaraları
+          satın alabilir ve dünyanın her yerinden çağrı yapabilir veya
+          alabilirsiniz. Müşterileriniz sizi ABD, İngiltere veya Kanada'dan
+          arayacaklarsa ücretsiz destek numaraları (veya İngiltere'den ücretsiz
+          telefon) da satın alabilirsiniz. <br/><br/><b>Tam Telefon Desteği
+          Sağlayın</b><br/>Telefon kanalımızla<br/><ul><li>Web tarayıcınızı veya
+          cep telefonlarınızı kullanarak çağrı yapmaya ve almaya
+          başlayabilirsiniz.</li><li>Sesli mesajlar oluşturun, çağrıları
+          yönlendirin veya çağrıları herhangi bir yere, herhangi bir temsilciye
+          aktarın</li><li>Çağrıları izleyin, gerektiğinde araya girin, devam
+          eden çağrılara başka temsilciler ekleyin ve daha fazlasını*
+          yapın</li></ul><br/><p>* Hesabınız için gelişmiş özellikleri
+          etkinleştirmek üzere lütfen <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> adresine
+          gidin. Bunlar arasında çağrı izleme, çağrı engelleme, çağrı
+          konferansı, çağrı maskeleme ve çağrıların ömür boyu ölçümleri
+          bulunur.</p><br/>
+        sidebar_title: Telefon kanalı
+        buy_phone_numbers: Telefon Numaraları Satın Al
+        tour_link: Telefon kanalı kurmama yardım et
+        failure_purchase: >-
+          Telefon numarası satın alınamıyor. Adresin belirtilen ülkede geçerli
+          bir yerel adres olduğundan emin olun: <span class
+          ='ertification-country '> </span>.
+        sidebar_content: >-
+          Telefon kanalını kullanarak tarayıcınızdan, cep telefonunuzdan veya
+          Freshdesk’in mobil uygulamalarındaki telefon kanalını kullanarak çağrı
+          yapabilir ve alabilirsiniz. Bu, Freshdesk destek talebi sistemine
+          sıkıca entegre edilmiştir. Böylece gerektiğinde, telefon görüşmelerini
+          kaydederek ve destek taleplerine dönüştürerek takip edebilirsiniz.
+          <br/><br/> <b>Telefon Kurulumu</b></br>Telefonu kullanmaya başlamak
+          için, önce telefonu etkinleştirmeniz ve bir destek numarası satın
+          almanız gerekir. <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>burada listelenen ülkelerden </a> yerel numaraları
+          satın alabilir ve dünyanın her yerinden çağrı yapabilir veya
+          alabilirsiniz. Müşterileriniz sizi ABD, İngiltere veya Kanada'dan
+          arayacaklarsa ücretsiz destek numaraları (veya İngiltere'den ücretsiz
+          telefon) da satın alabilirsiniz. <br/><br/><b>Tam Telefon Desteği
+          Sağlayın</b><br/>Telefon kanalımızla<br/><ul><li>Web tarayıcınızı veya
+          cep telefonlarınızı kullanarak çağrı yapmaya ve almaya
+          başlayabilirsiniz.</li><li>Sesli mesajlar oluşturun, çağrıları
+          yönlendirin veya çağrıları herhangi bir yere, herhangi bir temsilciye
+          aktarın</li><li>Çağrıları izleyin, gerektiğinde araya girin, devam
+          eden çağrılara başka temsilciler ekleyin ve daha fazlasını*
+          yapın</li></ul><br/><p>* Hesabınız için gelişmiş özellikleri
+          etkinleştirmek üzere lütfen <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> adresine
+          gidin. Bunlar arasında çağrı izleme, çağrı engelleme, çağrı
+          konferansı, çağrı maskeleme ve çağrıların ömür boyu ölçümleri
+          bulunur.</p><br/><p><a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>Telefonun güçlü becerileri ve özellikleri hakkında
+          daha fazla bilgi edinin</a><p>
+        buy_phone_credits: Telefon Kredisi satın al
+      invalid_attachment: >-
+        %{name} ek adı geçerli bir ses dosyası adı değildir, ve 5 MB'tan fazla
+        değildir
+      ivr:
+        simple_message_title: Basit mesaj
+        ivr_message_title: Etkileşimli Sesli Yanıt (ESY)
+        welcome_message: Hoş geldiniz mesajı
+        message_type: Mesaj Tipi
+        transcript_voice: Ses Dökümü
+        text_to_speech: Metin okuma
+        turned_off: >-
+          Karşılama mesajı kapatıldı. Tüm gelen aramalarınız doğrudan yardım
+          masasına ulaşacak.
+        turned_on: Hoş geldiniz mesajı gelen tüm aramalar için yürütülecek.
+        turn_on: Açık
+        turn_off: Kapalı
+        add_new_menu: Yeni <b>Menü</b> ekle
+        add_new_menu_from_option: Yeni Menü Ekle
+        add_new_option: Seçenekler <b>Tuşu</b> Ekle
+        keypress: Tuş
+        input_number: Numara Girin
+        action: Eylem
+        male: Erkek Ses
+        female: Kadın Ses
+        rename: yeniden adlandır
+        done: bitmiş
+        save: Kaydet
+        saving: Kaydediliyor
+        preview: Önizleme
+        previewing: Ön izleme yapılıyor..
+        delete_menu: Menüyü Sil
+        jump_to: Git
+        call_agent: Temsilci Ara
+        call_agent_group: Temsilci Grubu Ara
+        call_number: Numara Ara
+        back_to_menu: Ana menüye dön
+        invalid_performer_type: Geçersiz Oyuncu Tipi
+        invalid_number: 'Menüde geçersiz numara %{menu}'
+        restricted_country: 'Menüde ülke/il numarası sınırlı %{menu}'
+        invalid_jump_to: 'Kök dizini eksik menüye gidilemiyor %{menu}'
+        seed_message: Oyuncu Destek Bölümüne Hoş Geldiniz
+        seed_menu_name: Hoş geldiniz Menüsü
+        invalid_number_format: >-
+          Geçerli telefon numarasını önünde  '+' ön eki ile birlikte ülke kodunu
+          girin.
+      welcome_page:
+        title: Freshfone'a Hoş Geldiniz
+        title_text: Telefon
+      feature_request_content:
+        title: Freshfone
+        heading: Oyuncularınıza Freshfone ile destek verin
+        about_numbers: Dünya genelinde destek numarası satın al
+        about_ivr: Doğru ajanlara ESY ve çağrı yönlendirme oluşturma
+        about_recording: Oyuncu konuşmalarını kaydet ve her yerde erişim ver
+        read_more: Daha fazlasını oku
+        pricing: Tüm arama oranları ve desteklenen ülkeleri gör
+        email_subject: 'Freshfone Talebi- %{account_name}'
+        email_message: Freshfone İçeriği Gerekli
+        success_message_flash: >-
+          Freshfone'a olan ilginiz için teşekkürler. Kısa sürede size dönüş
+          yapacağız.
+        error_message: >-
+          Şuanda talebinizi gerçekleştiremiyoruz.Lütfen daha sonra tekrar
+          deneyiniz.
+        additional_note: Freshfone talebi iki iş günü alacaktır
+        button_label: Freshfone Talebi
+        learn_more: Daha fazla bilgi edin
+        trial_or: VEYA
+        title_text: Telefon
+        success: İki iş günü içinde size geri döneceğiz.
+        recording_info: Tüm çağrılarınızı kaydedin ve destek taleplerine dönüştürün
+        button_text: Etkinleştirme Talebi
+        compare_trial_and_full: Tam ve ücretsiz deneme sürümünü karşılaştırın
+        activation_disclaimer: Tüm özellikleri sınırsız süreli olarak kullanabilirsiniz
+        ivr_info: >-
+          Çağrı izleme, çağrı konferansı yapma, IVR kullanarak çağrıları
+          yönlendirme ve daha birçok işlemi gerçekleştirin
+        trial_button_text: Ücretsiz deneme sürümünü etkinleştir
+        trial_version_disclaimer: Sınırlı özellikleri 15 gün boyunca ücretsiz olarak kullanabilirsiniz
+        number_info: 40'tan fazla ülke için yerel ve ücretsiz numaralar satın alın
+        video_title: Telefon kanalıyla neler yapabileceğinizi öğrenmek için videoyu izleyin
+        heading_text: Müşterilerinizi telefon kanalını kullanarak destekleyin
+      freshfone_numbers_title: Telefon
+      purchase_numbers_text: >-
+        Yerel veya ücretsiz bir telefon numarası satın alın ve dünyanın her
+        yerindeki müşterileri telefonla destekleyin
+      purchase_credit_text: >-
+        Telefon kanalını kullanarak numara satın almak, çağrı yapmak ve çağrı
+        almak için kredi satın alın.
+      suspended_alert: >-
+        <b>Önemli:</b>Telefon kanalınızı devre dışı bırakmak, numaralarınızın
+        aylık kiralamasını engellemez. Ücret kesintisini önlemek için lütfen
+        satın alınan numaraları silin.
+      trial:
+        request_activation_msg: >-
+          Telefon deneme süresi boyunca sınırlı sayıda ülkeden yalnızca bir
+          numara kullanmayı seçebilirsiniz.<br> Ancak, tam sürümü
+          etkinleştirdiğinizde 41 ülkeden birden çok numara satın alabilirsiniz
+        activate_btn_text: Aktivasyon talebi
+        numbers:
+          search:
+            after_activation_request: >-
+              Telefon kanalı etkinleştirmesi talep ettiniz <br> 2 iş günü içinde
+              size geri döneceğiz.
+            buy_confirmation: Bu numarayı seçmek istediğinizden emin misiniz?
+            can_use_after_activation: >-
+              Telefon kanalını etkinleştirdiğinizde bu numarayı kullanmaya devam
+              edebilirsiniz.
+        requested_activation: Etkinleştirme talebinizi aldık<br>Devam ediyor
   livechat:
     feature_request:
       title: Live Chat'e Hoşgeldiniz

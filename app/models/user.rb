@@ -494,12 +494,6 @@ class User < ActiveRecord::Base
     save!
   end
 
-  def disable_falcon_ui
-    new_pref = { :falcon_ui => false }
-    self.merge_preferences = { :agent_preferences => new_pref }
-    save!
-  end
-
   def is_falcon_pref?
     Rails.logger.warn "FALCON HELPER METHOD :: is_falcon_pref? :: #{caller[0..2]}"
     true
@@ -1122,6 +1116,7 @@ class User < ActiveRecord::Base
       self.cti_phone = nil
       agent.destroy
       deliver_password_reset_instructions!(nil) if freshid_integration_enabled_account?
+      freshfone_user.destroy if freshfone_user
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date =>

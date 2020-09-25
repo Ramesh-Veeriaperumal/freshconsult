@@ -336,6 +336,11 @@ class AccountTest < ActionView::TestCase
     assert_equal response.status, 200
   end
 
+  def test_freshfone_active?
+    Account.current.freshfone_active?
+    assert_equal response.status, 200
+  end
+
   def test_es_multilang_soln?
     Account.current.es_multilang_soln?
     assert_equal response.status, 200

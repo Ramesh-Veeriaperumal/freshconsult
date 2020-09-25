@@ -1,0 +1,26 @@
+<script id="menu-template" type="text/x-jquery-tmpl">
+	<div class="ivr-menu" rel="new_menu">
+		<fieldset>
+			<span class="close-btn icon-trash tooltip" title="<%= t("freshfone.admin.ivr.delete_menu") %>"></span>
+			<div>
+				<!-- <span class='menu-title'>${name}</span> -->
+				<input name='<%= name_prefix %>[menu_name]' 
+							 type="text" value="${menuName}" class='menu-title hide readonly tooltip'
+							 readonly=true
+							 title="${menuName}"
+							 autocomplete="off">
+				<a href="#" rel="rename" class="edit-name"><%= t('freshfone.admin.ivr.rename') %></a>
+				<a href="#" rel="done-rename" class="hide"><%= t('freshfone.admin.ivr.done') %></a>
+				<input name='<%= name_prefix %>[menu_id]'
+							 type="hidden" value="${menuId}">
+			</div>
+			<%= render :partial => "/admin/freshfone/numbers/message_select" %>
+		</fieldset>
+		<div class="add-new new-option">
+			<div class="icon-detail">
+				<span class="symbols-add"></span>
+			</div>
+			<%= t('freshfone.admin.ivr.add_new_option').html_safe %>
+		</div>
+	</div>
+</script>

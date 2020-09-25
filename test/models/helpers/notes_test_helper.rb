@@ -68,6 +68,7 @@ module NotesTestHelper
     #   ret_hash["#{ref}_id".to_sym] = note.safe_send(ref).id if note.safe_send(ref)
     # end 
 
+    # ret_hash["freshfone_call_id"] = note.freshfone_call.id if note.freshfone_call.present?
     # ret_hash["freshcall_call_id"] = note.freshcaller_call.id if note.freshcaller_call.present?
     ret_hash
   end
@@ -84,6 +85,7 @@ module NotesTestHelper
     }
     ret_hash["feedback"] = feedback_hash(note) if note.feedback?
     # ret_hash["fb_post"] = fb_post_hash(note) if note.fb_post.present?
+    # ret_hash["freshfone_call"] = Hash if note.freshfone_call.present?
     # ret_hash["freshcaller_call"] = freshcaller_call_hash(note) if note.freshcaller_call.present?
     ret_hash
   end

@@ -13,6 +13,17 @@
 <%= javascript_include_tag :'cdn/marketplace/fa_template_dock_manager' %>
 <%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/#{MarketplaceConfig::FRESH_PARENT}" %>
 
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
+  <%= javascript_tag do %>
+    jQuery(document).ready(function(){
+      if(App.Kissmetrics != undefined){ 
+        mktplace_domain = '<%= current_account.full_domain %>';
+        App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
+      }
+    });
+  <% end %>
+<% end %>
+
 <script type="text/javascript">
   var extensionsWrapper = "#extensions";
   var tabName = "#apps";

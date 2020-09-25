@@ -57,7 +57,7 @@
       <% product.facebook_pages.each do |facebook_page| %>
         <div class="channel-text">
           <span class='product-facebook'></span>
-          <%= link_to(facebook_page.page_name, edit_social_facebook_path(facebook_page),
+          <%= link_to(facebook_page.page_name, edit_admin_social_facebook_stream_path(facebook_page),
             :title => t(".edit_facebook_page", :page_name => facebook_page.page_name )) %>
         </div>
       <% end %>

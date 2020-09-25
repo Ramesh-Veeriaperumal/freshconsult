@@ -46,4 +46,10 @@ module SecurityConcern
   def formatted_configs(configs)
     configs.each_pair { |k, v| configs[k] = v.to_s if v.present? }
   end
+
+  # **-------------- Deny iframe --------------** #
+
+  def assign_allow_iframe_embedding_settings(allow_iframe = cname_params[:allow_iframe_embedding])
+    @item.account_additional_settings.deny_iframe_embedding = !allow_iframe
+  end
 end

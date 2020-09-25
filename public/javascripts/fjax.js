@@ -67,7 +67,7 @@ window.Fjax = {
     },
 
     pjaxLimitExceeded: function (){
-      if((this.pjax_traversal_count >= this.pjax_traversal_limit) ){
+      if((this.pjax_traversal_count >= this.pjax_traversal_limit) && !(window.freshfonecalls && window.freshfonecalls.tConn) ){
         return true;
       }
       return false;

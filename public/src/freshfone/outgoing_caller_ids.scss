@@ -1,0 +1,167 @@
+@import "settings/settings";
+.call_loading{
+    width: 2px;
+    height: 2px;
+    border-radius:100%;
+    @include margin-left(45%);
+    box-shadow: 0 0 0 3px #333, 20px 0 0 4px #333, 40px 0 0 5px #333;
+    background-color: #333;
+    -webkit-animation: phonecontact 1s infinite linear;
+       -moz-animation: phonecontact 1s infinite linear;
+            animation: phonecontact 1s infinite linear;
+    transform: scale(0.6);
+  }
+  @include keyframes(phonecontact){
+    25% { box-shadow: 0 0 0 3px #333, 20px 0 0 3px #333, 40px 0 0 4px #333;}
+    50% { box-shadow: 0 0 0 5px #333, 20px 0 0 3px #333, 40px 0 0 3px #333;}
+    75% { box-shadow: 0 0 0 4px #333, 20px 0 0 5px #333, 40px 0 0 4px #333;}
+  }
+
+.innerbox {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: 2px #eee solid;
+  padding: 0px;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  height: 127px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.verify-number-box {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: 2px #eee solid;
+  padding: 0px;
+  text-align: center;
+  min-height: 127px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.verify-number-container{
+  margin-top: 50px;
+  margin-bottom: 50px; 
+}
+
+#outgoing-caller-id-container {
+  top: 67%;
+  max-height: 298px;
+}
+
+.caller-id-list{
+  background-color: #FAFAFA;
+  border: 1px #eee solid;
+  border-radius: 5px;
+  line-height: 18px;
+  position: relative;
+  overflow:  hidden;
+  max-height: 204px;
+  overflow-y: scroll;
+  li{
+    display: block;
+    overflow: hidden;
+    border-bottom: 1px #eee solid;
+    &:last-child{ border-bottom: none;}
+    .caller-delete-icon{
+      color: #de6868;
+      font-size: 16px;
+      margin-top: 2px;
+    }
+    .caller-id-number{
+      line-height: 20px;
+    }
+    .caller-list{
+      position: relative;
+      overflow: visible;
+      padding: 10px;
+    }
+    .caller-delete{
+      @include right(-127px);
+      position: absolute;
+      @include border-left(1px #ddd solid);
+      background-color: #EEE ;
+      padding: 12px;
+      bottom: 0px;
+      box-shadow: inset 4px 0px 8px -4px rgba(0,0,0,0.1);
+      .cancel-icon-wrap, .tick-icon-wrap{
+        font-size: 24px;
+        @include micro-position(4px);
+        @include margin-left(10px);
+      }
+      .cancel-icon-wrap{
+        color: #afafaf;
+      }
+      .tick-icon-wrap{
+        color: #de6868;
+      }
+      
+    }
+  }
+}
+.verify-number, .nummber-added{
+  background-color: #fff; 
+  border-top: 2px solid #EEEEEE;
+  padding: 10px;
+}
+
+.text-vertical{
+  display: table;
+  width: 100%;
+  box-sizing: border-box;
+  .text-vertical-inner{
+    display: table-cell;
+    vertical-align: middle;
+  }
+}
+
+.validation-message{
+  padding: 28px;
+}
+
+.calling-number{
+  font-size: 17px;
+  font-weight: 200;
+}
+
+.validation-code{
+  font-size: 21px;
+  font-weight: 600;
+  margin-top: 21px;
+}
+
+.number-validated{
+  font-size: 17px;
+  font-weight: 400;
+  color: #555;
+  .ficon-checkmark-round-o{
+   color: #555; 
+   font-size: 22px;
+   @include micro-position(2px);
+  }
+}
+
+#caller-number{
+  text-align: center;
+  height: 25px;
+}
+
+.caller-title{
+  font-size: 20px;
+  font-weight: 200;
+}
+
+.error-message{
+  text-align: center;
+  color: #B22222;
+  font-weight: 400;
+}
+
+.validate-caller-id{
+  background-color: #fffef4;
+}
+.verify-caller-id, .verifying-number, .validation-success, .calling-outgoing-number{
+  height: 190px;
+}

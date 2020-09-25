@@ -1,5 +1,7 @@
 module Mobile::Actions::User
 
+	include Mobile::Actions::Push_Notifier
+
   JWT_ALGO = 'HS256'
 
   CONFIG_JSON_INCLUDE = {

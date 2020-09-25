@@ -9,6 +9,7 @@ class SubscriptionPayment < ActiveRecord::Base
 
   NON_RECURRING_PAYMENTS = {
     :day_pass => "Day Pass",
+    :freshfone => "Freshfone"
   }
   
   belongs_to :subscription
@@ -70,6 +71,14 @@ class SubscriptionPayment < ActiveRecord::Base
       day_passes += payment.amount if payment.to_s.include?(NON_RECURRING_PAYMENTS[:day_pass])
     end
     day_passes
+  end
+
+  def self.freshfone_credits
+    fone_credits = 0
+    non_recurring_payments.each do |payment|
+      fone_credits += payment.amount if payment.to_s.include?(NON_RECURRING_PAYMENTS[:freshfone])
+    end
+    fone_credits
   end
 
   def self.non_recurring_payments(start_date = 1.month.ago.beginning_of_month, 

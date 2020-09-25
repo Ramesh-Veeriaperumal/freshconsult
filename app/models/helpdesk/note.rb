@@ -421,11 +421,6 @@ class Helpdesk::Note < ActiveRecord::Base
     MemcacheKeys.cache(key, ner_data, NER_DATA_TIMEOUT)
   end
 
-  # Instance level spam watcher condition
-  # def rl_enabled?
-  #   self.account.features?(:resource_rate_limit) && !self.instance_variable_get(:@skip_resource_rate_limit)
-  # end
-
   def inline_attachment_ids=(attachment_ids)
     attachment_ids ||= []
     attachment_ids = attachment_ids.split(",") if attachment_ids.is_a? String
@@ -515,12 +510,6 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
   private
-
-    # def rl_exceeded_operation
-    #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,
-    #           :user_id => self.user_id }
-    #   $spam_watcher.perform_redis_op("rpush", ResourceRateLimit::NOTIFY_KEYS, key)
-    # end
 
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != Account.current.helpdesk_sources.note_source_keys_by_token['meta'])

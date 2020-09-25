@@ -1,0 +1,97 @@
+@import "../settings/settings";
+@import "variables";
+
+.freshfone-queued-calls, .freshfone-active-calls {
+  .no_queue_calls, .no_active_calls {
+    height: 100px;
+    line-height: 100px;
+    font-size: 16px;
+  }
+  ul{
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 5px 3px 5px 1px;
+    background-color: #eee;
+  }
+  li{
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-top: 0px;
+    .ff-call-element {
+      display: inline-block;
+      padding: 12px;
+        &.user_details {
+          @include float(none);
+        }
+        &.width1 {
+          width:17%;
+        }
+        &.width2 {
+          width:40%;
+        }
+        &.width3 {
+          width:8%;
+        }
+        &.width4 {
+          width: 50px;
+        }
+    }
+    }
+  .ff_caller_details .caller_name, .user_details .agent_name {
+    a, strong {
+      display: inline-block;
+      width: 100px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+  .ff-user-location {
+    display: block;
+  }
+
+  .ff-png-icon {
+    width: 35px;
+    height: 25px;
+    color: #699E5A;
+    font-size: 25px;
+    display: inline-block;
+    &.call_direction {
+      height: 24px;
+    }
+    &.callhistory_helpdesk_avatar {
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+  }
+  .table-striped {
+      .row-fluid:nth-child(even) {
+        background-color: $tableBackgroundAccent;
+      }
+  }
+  .preview_pic img{
+    height: 40px;
+    width: 40px;
+  }
+
+  .call_to_join, .call_joined
+  {
+    font-size: 11px;
+    line-height: 10px;
+    font-weight: bold;
+    width: 55px;
+    height: 12px;
+    background: none;
+    text-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  .call_joined
+  {
+    background-color: #A23825;
+    color: #fff;
+  }
+  .supervised{
+    pointer-events: none; 
+    opacity: 0.3;
+  }
+}

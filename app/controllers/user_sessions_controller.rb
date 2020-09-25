@@ -10,6 +10,7 @@ class UserSessionsController < ApplicationController
   include Redis::TicketsRedis
   include Redis::OthersRedis
   include SsoUtil
+  include Mobile::Actions::Push_Notifier
   include Freshid::ControllerMethods
 
   prepend_around_filter :rescue_from_shard_not_found, :only => [:freshid_destroy]

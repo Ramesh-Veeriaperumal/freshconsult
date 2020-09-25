@@ -1,0 +1,66 @@
+Hi <%=@user%>,
+<br/>
+<br/>
+<%= "#{t('export_data.call_history.body.call_record_export_complete')}".html_safe %>
+<br/>
+<br/>
+<h3><%= "#{t('export_data.call_history.body.call_records_download_link', url: @url)}".html_safe %></h3>
+<br/>
+<%= t('export_data.call_history.body.conditions_header') %>
+<br/>
+<table border="0" width="100%">
+    <% if @number.present? %>
+        <tr>
+            <td><strong><%= t('freshfone.call_history.filter_by_number') %>:</strong></td>
+            <td><%= @number.to_s.html_safe %></td>
+        </tr>
+    <% end %>
+
+    <% if @range.present? %>
+        <tr>
+            <td><strong><%= t('freshfone.call_history.filter_by_time') %>:</strong></td>
+            <td><%= @range.to_s.html_safe %></td>
+        </tr>
+    <% end %>
+
+    
+        <tr>
+            <td><strong><%= t('freshfone.call_history.filter_by_call_status') %>:</strong></td>
+            <td><%= @call_type.present? ? @call_type.to_s.capitalize.html_safe : t('freshfone.call_history.filter_option_all_calls') %></td>
+        </tr>
+    
+
+    
+        <tr>
+            <td><strong><%= t('freshfone.call_history.filter_by_agent') %>:</strong></td>
+            <td><%= @agent.present? ? @agent.name.to_s.html_safe : t('freshfone.call_history.filter_option_all_agents') %></td>
+        </tr>
+    
+
+    <% if @requester.present? %>
+        <tr>
+            <td><strong><%= t('freshfone.call_history.filter_by_caller') %>:</strong></td>
+            <td><%= @requester.name.to_s.html_safe %></td>
+        </tr>
+    <% end %>
+
+    <% if @group.present? %>
+        <tr>        
+            <td><strong><%= t('freshfone.call_history.filter_by_group') %>:</strong></td>
+            <td><%= @group.name.to_s.html_safe %></td>
+        </tr>
+    <% end %>
+</table>
+<br/>
+-----
+<br/>
+<br/>
+<br/>
+<%= t('export_data.call_history.body.alternate_link') %>
+<br/>
+<%= @url %>
+<br/>
+<br/>
+<%= t('export_data.call_history.body.thanks') %>,
+<br/>
+<%= @user.account.helpdesk_name %> Support

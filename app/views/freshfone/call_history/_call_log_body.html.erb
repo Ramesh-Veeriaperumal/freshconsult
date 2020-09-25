@@ -1,0 +1,14 @@
+<% unless calls.blank? %>
+	<table class="table table-striped" id="calls-expanded">
+		<%= render :partial => "call_logs",
+		:collection => calls,
+		:as => :call,
+		:locals => {:children => false} %>
+	</table>
+	<%= will_paginate calls, :renderer => BootstrapPaginationRenderer, 
+																	:previous_label => "<b class='arrow-left'></b>",
+																	:next_label => "<b class='arrow-right'></b>",
+																	:class => "pagination pagination-centered" %>
+<% else %>
+	<p class="no_call_history"><%= t('freshfone.call_history.no_calls') %></p>
+<% end %>

@@ -100,7 +100,7 @@ class Node < Hash
 
     self[:shoryuken] = @settings[:shoryuken].deep_merge(ShoryukenConfig::get_settings(self))
 
-    self[:sidekiq] = SidekiqConfig::get_settings(self)
+    self[:sidekiq] = SidekiqConfig.getsettings
   end
 
   def get_cpu_count
@@ -241,6 +241,13 @@ class OpsWorks
     layers = Array::new()
     layers = @node[:opsworks][:instance][:layers]
     layers.any? {|layer| layer.include?(@node[:falcon][:shoryuken][:layer])}
+  end
+
+  # Checks for exact name
+  def resque_layer?()
+    layers = Array::new()
+    layers = @node[:opsworks][:instance][:layers]
+    layers.any? {|layer| layer.include?(@node[:falcon][:resque][:prefix])}
   end
 
   def utility_layer?()

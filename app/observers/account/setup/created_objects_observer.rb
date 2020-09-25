@@ -3,7 +3,7 @@ class Account::Setup::CreatedObjectsObserver < ActiveRecord::Observer
 	include Account::Setup::ObserverUtils
 
 	observe Agent, EmailConfig, VaRule, Admin::DataImport, Integrations::InstalledApplication,
-		Social::TwitterHandle, Freshcaller::Account
+		Social::TwitterHandle, Freshfone::Number, Freshcaller::Account
 
 
 	def after_commit(object)
@@ -25,6 +25,7 @@ class Account::Setup::CreatedObjectsObserver < ActiveRecord::Observer
 			"Admin::DataImport" 	=> "data_import",
 			"Integrations::InstalledApplication" => "custom_app",
 			"Social::TwitterHandle" => "twitter",
+			"Freshfone::Number" 	=> "freshfone_number",
 			"Freshcaller::Account"	=> "freshfone_number"
 		}
 	end

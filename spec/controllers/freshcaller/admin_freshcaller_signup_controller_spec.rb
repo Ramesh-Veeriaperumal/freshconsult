@@ -16,7 +16,7 @@ describe Admin::Freshcaller::SignupController do
       @account.add_feature(:freshcaller)
       Freshcaller::Account.where({:account_id => @account.id}).destroy_all
     end
-  	it 'should show freshcaller signup on navigating to admin/phone' do
+  	it 'should show freshfone signup on navigating to admin/phone' do 
       controller.stubs(:freshcaller_request).returns(freshcaller_account_signup)
       post :create
       response.should redirect_to admin_phone_path
@@ -32,7 +32,7 @@ describe Admin::Freshcaller::SignupController do
       @account.add_feature(:freshcaller)
       Freshcaller::Account.where({:account_id => @account.id}).destroy_all
     end
-    it 'should show freshcaller signup on navigating to admin/phone' do
+    it 'should show freshfone signup on navigating to admin/phone' do 
       controller.stubs(:freshcaller_request).returns(freshcaller_domain_error)
       post :create
       response.status.should eql(Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok])
@@ -51,7 +51,7 @@ describe Admin::Freshcaller::SignupController do
       controller.unstub(:freshcaller_request)
     end
     
-    it 'should show freshcaller linked account on navigating to admin/phone' do
+    it 'should show freshfone linked account on navigating to admin/phone' do 
       controller.stubs(:freshcaller_request).returns(freshcaller_account_linking)
       post :link , {:email => 'sample@freshdesk.com'}
       expect(Freshcaller::Account.where({:account_id => @account.id}).present?).to be true 

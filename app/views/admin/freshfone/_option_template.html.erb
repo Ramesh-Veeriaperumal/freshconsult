@@ -1,0 +1,55 @@
+<div id="optionTemplate" class="hide">
+	<fieldset>
+		<span class="symbols-sprite delete-symbol"></span>
+		<div class="options-keypad">
+			<%= render :partial => '/admin/freshfone/keypad', 
+					:locals => { :name => "#{name_prefix}[options][${optionId}][respond_to_key]" } %>
+		</div>
+		<div class="performer-container">
+				<label class="bold performer" 
+							 for="<%= id_prefix %>_options_${optionId}_performer">
+							 <%= t('freshfone.admin.ivr.action') %>
+				</label>
+				<%= select_tag "#{name_prefix}[options][${optionId}][performer]", 
+											 options_for_select(modify_options_for_trial(Freshfone::Option::PERFORMER_TYPE_OPTIONS)),
+											 :class => "select2 span3 action-type", :rel => :performer, 
+											 :id => "#{id_prefix}_options_${optionId}_performer",
+											 :"data-selected" => "${performerType}",
+											 :"data-minimum-results-for-search" => 5 %>
+				<% menus_list = @ivr.menus.clone; menus_list.shift; %>
+				<div class="span3 action_performer_container hide ivr_performer ">
+					<%= select_tag "#{name_prefix}[options][${optionId}][performer_id]", 
+													options_from_collection_for_select(menus_list, "menu_id", "menu_name"), 
+													:class => "select2 span3", :rel => :IVR, 
+													:"data-selected" => "${performerId}",
+													:"data-minimum-results-for-search" => 5 %>
+					<a href="#" class="hide add_new_menu_from_option" rel="createMenu">
+						<%= t('freshfone.admin.ivr.add_new_menu_from_option') %>
+					</a>
+				</div>
+				<div class="span3 action_performer_container user_performer">
+	 				<%= select_tag "#{name_prefix}[options][${optionId}][performer_id]", 
+													options_from_collection_for_select(@agents, "id", "name"), 
+	 												:class => "select2 span3", :rel => :User,
+													:"data-selected" => "${performerId}",
+													:"data-minimum-results-for-search" => 5  %>
+				</div>
+				<div class="span3 action_performer_container hide group_performer">
+					<%= select_tag "#{name_prefix}[options][${optionId}][performer_id]", 
+													options_from_collection_for_select(@groups, "id", "name"), 
+													:class => "select2 span3", :rel => :Group, 
+													:"data-selected" => "${performerId}",
+													:"data-minimum-results-for-search" => 5 %>
+				</div>
+				<div class="span3 action_performer_container hide number_performer">
+					<input type="text" placeholder="<%= t('freshfone.admin.ivr.input_number') %>"
+									class="span3 number_performer_input" value="${performerNumber}"
+									name="<%= name_prefix %>[options][${optionId}][performer_number]"
+									rel="Number">
+					<label class="js_validation_error"><%= t('freshfone.admin.ivr.invalid_number_format')%></label>
+				</div>
+				<!-- <input name='<%= name_prefix %>[options][${optionId}][performer_id]' 
+							 value="" type="hidden" rel="Back" /> -->
+		</div>
+	</fieldset>
+</div>

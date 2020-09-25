@@ -1,0 +1,101 @@
+<div class="freshfone_notification">
+	<div class="freshfone-notifier-container" id="freshfone_notification_container">
+		<script id="incomingWidget" type="text/x-jquery-tmpl">
+			<div class="notifier">
+			<div class="call-meta-notifier">					
+			</div>
+				<div class='incoming-details'>
+					<div class='user_image'>
+						<div class="user_avatar">
+						</div>
+					</div>
+					<div class='customer'>
+						<div class="customer-info">
+						</div>
+					</div>
+					<div class="call-meta">
+					</div>
+					<div class='transfer-meta hide'>
+					</div>
+				</div>
+				<div class="action">
+					<div class="ignore" id="reject_call">
+						<%= font_icon "ff-phone-reject", :size => 18 %>
+						<%= t('freshfone.widget.ignore') %>
+					</div>
+					<div class="accept" id="accept_call">
+					<%= font_icon "ff-phone-accept", :size => 18 %>
+						<span class='ff-phone-accept-text'><%= t('freshfone.widget.accept') %></span>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</script>
+	</div>
+</div>
+<script id="freshfone-contact-template" type="text/x-jquery-tmpl">
+	<b class="ellipsis">${callerName}</b>
+	<div class="notifier_number ellipsis ${strangeNumber}">${formattedNumber}</div>
+	<div class="place-info ellipsis">
+		<p class="country ellipsis">
+
+			<span> {{if callMeta.company_name}} ${callMeta.company_name} - {{/if}} ${callerLocation}</span>
+		</p>
+	</div>
+</script>
+<script id="ffone-contact-template-nameless" type="text/x-jquery-tmpl">
+	<div class="primary mt5 mb5">${formattedNumber}</div>
+	<div class="place-info mb10">
+		<p class="country ellipsis">
+			<i class="ficon-map-marker"></i>
+			<span>${callerLocation}</span>
+		</p>
+	</div>
+</script>
+<script id="freshfone-call-meta-template" type="text/x-jquery-tmpl">
+	<div class='freshfone_number_info'>
+		<div class='freshfone_number ellipsis'><%= font_icon "ff-line-phone", :size => 15 %> ${ff_number_info} </div>
+		{{if ff_group_info}}
+			<div class='group_info ellipsis'><%= font_icon "ff-group-thin", :size => 15 %> ${ff_group_info}</div>
+		{{/if}}
+	</div>
+</script>
+<script id="freshfone-call-transfer-template" type="text/x-jquery-tmpl">
+<span>${transferType} transfer by ${sourceAgent}</span>
+</script>
+<script id='freshfone-call-picked-template' type="text/x-jquery-tmpl">
+	<div class='call-pickedalert-info'>
+		<%=t('freshfone.call_was_answered')%> ${agent}
+	</div>
+</script>
+<script id='freshfone-transfer-call-notifier' type = "text/x-jquery-tmpl">
+	<div class="transferNotifier">
+		<i class="ficon-blind-transfer ff-arrow-direction"></i>
+		<div class="transfer-agent-name ellipsis"> <%= t('freshfone.widget.transfer.transfer_via') %> ${user_name}</div>
+		<div class="transfer_agent">
+			<div class="user_avatar"> {{html user_hover}} </div>
+		</div>
+	</div>
+</script>
+<script id='freshfone-add-agent-notifier' type = "text/x-jquery-tmpl">
+	<div class="add_agent_notifier">
+		<i class="ficon-add-call pull-left add-agent-label"></i>
+		<div class="add-agent-name ellipsis">
+			<%= t('freshfone.widget.agent_conference.transfer_via') %> <span class="agent_name">${user_name}</span>
+		</div>
+		<div class="add_agent">
+			<div class="user_avatar"> {{html user_hover}} </div>
+		</div>
+	</div>
+</script>
+<script id='freshfone-warm-transfer-notifier' type = "text/x-jquery-tmpl">
+	<div class="warm_transfer_notifier">
+		<i class="pull-left warm-transfer-label ficon-warm-transfer"></i>
+		<div class="warm-transfer-agent-name ellipsis">
+			<%= t('freshfone.widget.transfer.transfer_via') %> <span class="agent_name">${user_name}</span>
+		</div>
+		<div class="warm_transfer_agent">
+			<div class="user_avatar"> {{html user_hover}} </div>
+		</div>
+	</div>
+</script>

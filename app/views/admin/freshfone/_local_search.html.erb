@@ -1,0 +1,21 @@
+<div class="phone-search-bar">
+	<div class="search-primary">
+		<div class="search-bar-country">
+			<%= select_tag "supported_countries", options_for_select(supported_countries, :selected => 'US'), 
+											:class => 'select2' %>
+		</div>
+		<div class="search-bar-state" style="display:none">
+			<%= select_tag "supported_cities", (default_state_option + options_from_collection_for_select(us_cities, :code, :name)).html_safe, :class => 'select2' %> 
+		</div>
+	</div>
+	<div class="search-input-sec">
+		<%= text_field_tag :search_input, "", :placeholder => t('freshfone.admin.search') %>
+		<span class="searchicon ficon-search fsize-18"></span>
+	</div>
+</div>
+
+
+<!-- Search Results -->
+	<div class="phone-search-results">
+		<div id="local_search_results"></div>
+	</div>

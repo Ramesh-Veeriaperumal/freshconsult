@@ -1,0 +1,26 @@
+
+<% if @caller_tickets.blank? %>
+	<div class='ticket-content'>
+		<div class='no-recent-tickets'>
+			 <%= t('freshfone.widget.no_recent_tickets') %>
+		</div>
+	</div>
+<% else %>
+	<% @caller_tickets.each do |ticket| %>
+		<div class="ticket-content">
+			<div class="ticket-subject">
+			<%= pjax_link_to( h(ticket.subject).html_safe, ticket ) %> 
+			#<%= h(ticket.display_id).html_safe %> 
+			</div>
+			<div class ="ticket-state" ><abbr data-livestamp= <%= ticket.created_at.to_i %> > <%= h(ticket.created_at).html_safe%></abbr>, Status: <%= h(ticket.status_name).html_safe %>
+			</div>
+		</div>	
+	<% end %>
+	<% if @caller_tickets_count > 3 %>
+		<div class="ticket-content">
+			<div class="ticket-subject">
+				<%= pjax_link_to( t('freshfone.widget.view_all'), helpdesk_requester_filter_path(requester_id: params[:id])) %>
+			</div>
+		</div>	
+	<% end %>
+<% end %>

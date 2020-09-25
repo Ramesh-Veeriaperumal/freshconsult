@@ -955,6 +955,34 @@ lt:
         filter_report: Redaguoti filtrą
         ticket_type: Užklausos tipas
         select_billable: Pasirinkite Apmokestinama / Neapmokestinama
+    freshfone:
+      time_period: Laiko tarpas
+      num_of_transfered: Perdavimų skaičius
+      no_agent: '- Nėra agento -'
+      group: Grupė
+      total_unanswered_calls: Neatsakyti skambučiai
+      call_type: Skambučio tipas
+      filter_option_all_calls: Visi skambučiai
+      filter_close: Uždaryti
+      avg_handle_time: Vidutinė sprendimo trukmė
+      all_numbers: Visi numeriai
+      filter_report: Redaguoti filtrą
+      number: Skaičius
+      business_hours: Darbo valandos
+      no_external: Perdavimai į išorinius numerius neįtraukiami
+      summary_title: 'Agento skambučių suvestinė '
+      generate_summary: Sukurti
+      num_of_calls: Skambučių skaičius
+      unanswered_transfers: Neatsakyti perdavimai
+      unanswered_count: Neatsakyta
+      select_call_type: Pasirinkite Skambučio tipą
+      options:
+        all_groups: Visos grupės
+        unassigned: Nepriskirta
+        incoming: Įeinantis
+        outgoing: Išeinantis
+      filter_by_title: Filtruota pagal
+      total_voice_mail: Balso laiškai
     select_customer: Pasirinkite Klientą
     summary_report:
       avg_1st_response_time: Vidutinis pirmo <br> atsakymo laikas
@@ -4469,6 +4497,297 @@ lt:
       related_articles: Susiję straipsniai...
   title: Pavadinimas
   free_plan_agents_v2: Neriboti agentai
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Pirkite vietinį arba nemokamą numerį ir teikite pagalbą klientams visame
+        pasaulyje telefonu
+      greetings: Pasveikinimai
+      settings: Nustatymai
+      important: Svarbu
+      toll_free: Nemokamas
+      purchase_credit_text: >-
+        Pirkite kreditus, kad galėtumėte nusipirkti numerius, skambinti ir
+        priimti skambučius naudodami telefono kanalą.
+      suspended_alert: >-
+        <b>Svarbu:</b> Išjungus telefono kanalą, jūsų numerių mėnesinė nuoma
+        nebus nutraukta. Norėdami išvengti apmokestinimo, ištrinkite įsigytus
+        numerius.
+      freshfone_numbers_title: Telefonas
+      welcome_page:
+        title_text: Telefonas
+      number:
+        simultaneous: Skambinkite visiems agentams
+        round_robin: 'Pirmiausia skambinkite agentams, kurie laikinai nedirba'
+      numbers:
+        sidebar_content_v2: >-
+          Naudodamiesi telefono kanalu, galite skambinti ir priimti skambučius
+          per savo naršyklę, mobilųjį telefoną arba telefono kanalą „Freshdesk“
+          mobiliojo ryšio programose. Jis yra glaudžiai susijęs su „Freshdesk“
+          užklausų sistema. Taigi galite sekti telefono skambučius juos
+          įrašydami ir prireikus, konvertuodami į užklausas. <br/><br/>
+          <b>Telefono nustatymas</b></br>Norėdami pradėti naudotis telefonu,
+          pirmiausia turite jį įjungti ir įsigyti pagalbos numerį. Vietinius
+          numerius galite įsigyti iš <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>čia išvardytų šalių</a> ir skambinti arba priimti
+          skambučius iš bet kurios pasaulio vietos. Jei jūsų klientai jums
+          paskambins JAV, Jungtinėje Karalystėje ar Kanadoje, taip pat galite
+          įsigyti nemokamus pagalbos numerius (arba nemokamą telefoną JK).
+          <br/><br/><b>Suteikti pilną pagalbą telefonu</b><br/>Su mūsų telefono
+          kanalu galite<br/><ul><li>Skambinti ir priimti skambučius naudodami
+          savo interneto naršyklę ar mobiliuosius telefonus</li><li>Kurti balso
+          paštą, peradresuoti skambučius arba persiųsti skambučius bet kuriam
+          agentui, bet kur</li><li>Stebėti skambučius, baržą, kai reikia,
+          pridėti kitus agentus į esamus skambučius ir daugiau
+          *</li></ul><br/><p>* Prašome susisiekti su <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> kad
+          įgalintumėte papildomas savo paskyros funkcijas, apimančias skambučių
+          stebėjimą, skambučių nutarimus, skambučių konferencijas, skambučių
+          slėpimą ir skambučių trukmės matavimą.</p><br/>
+        sidebar_title: Telefono kanalas
+        delete_alert: >-
+          Ištrintas numeris negali būti perkamas dar kartą. Ar tikrai norite
+          ištrinti numerį?
+        buy_loading_text: Pirkimas ...
+        buy_phone_numbers: Pirkti telefono numerius
+        caller_id:
+          no_number_added: Skambinančio ID nepridėta
+          call_id_mask: Paslėpti šį numerį
+          manage_caller_id: 'Valdyti skambinančio ID '
+          add_new: Pridėti naują
+        tour_link: Padėkite nustatyti telefono kanalą
+        failure_purchase: >-
+          Nepavyko įsigyti telefono numerio. Prašome įsitikinti, kad pateikėte
+          galiojantį vietinį adresą <span class='certification-country'></span>.
+        buy: Pirkimo numeris
+        buy_button_text: Pirkti
+        address:
+          address: Adresas
+          state: Valstija / Provincija / Rajonas
+          city: Miestas
+          postal_code: Pašto kodas
+          required_field: Visi laukeliai yra privalomi
+          name: Įmonė / pavadinimas
+        setup:
+          info_text: >-
+            Norėdami pradėti naudotis telefono kanalu, pirmiausia turėsite
+            įsigyti skambučio numerį, kurį galėtumėte pasiūlyti savo klientams.
+            Vietinį numerį galite įsigyti bet kurioje <a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>čia išvardytų šalių</a>. Savo klientams
+            paskambinusiems iš JAV, Jungtinės Karalystės ar Kanados, taip pat
+            galite pasiūlyti nemokamą telefono numerį.<br/><br/>Galite įsigyti
+            kelis telefonų numerius iš įvairių šalių ir įdiegti nemokamą
+            pagalbos liniją „Freshdesk“ be jokios trečiosios šalies paslaugų.
+            Jūs būsite apmokestinami už gaunamus, išeinančius ir perduodamus
+            skambučius iš jūsų pagalbos tarnybos pagal įprastus įkainius.
+            Patikrinkite <a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>skambučių kainas čia</a>.<br/><br/> Įsigijus savo
+            pagalbos linijos numerį, visi gaunami skambučiai bus paskirstomi
+            agentams, prisijungusiems prie jūsų pagalbos tarnybos. Be to, jūsų
+            agentai gali pasirinkti skambinti telefonu iš naršyklės arba
+            automatiškai peradresuoti skambučius į savo stalinį telefoną.
+          title_text: Skambučių centro nustatymas
+        sidebar_content: >-
+          Naudodamiesi telefono kanalu, galite skambinti ir priimti skambučius
+          per savo naršyklę, mobilųjį telefoną arba telefono kanalą „Freshdesk“
+          mobiliojo ryšio programose. Jis yra glaudžiai integruotas su
+          „Freshdesk“ užklausų sistema. Taigi galite sekti telefono skambučius
+          įrašydami juos ir prireikus, konvertuodami į užklausas. <br/><br/>
+          <b>Telefono nustatymas</b></br>Norėdami pradėti naudotis telefonu,
+          pirmiausia turite jį įjungti ir įsigyti pagalbos numerį. Vietinius
+          numerius galite įsigyti iš <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>čia išvardytų šalių</a> ir skambinti arba priimti
+          skambučius iš bet kurios pasaulio vietos. Jei jūsų klientai jums
+          paskambins JAV, Jungtinėje Karalystėje ar Kanadoje, taip pat galite
+          įsigyti nemokamus pagalbos numerius (arba nemokamą telefoną JK).
+          <br/><br/><b>Suteikti pilną pagalbą telefonu</b><br/>Su mūsų telefono
+          kanalu galite<br/><ul><li>Skambinti ir priimti skambučius naudodami
+          savo interneto naršyklę ar mobiliuosius telefonus</li><li>Kurti balso
+          paštą, peradresuoti skambučius arba persiųsti skambučius bet kuriam
+          agentui, bet kur</li><li>Stebėti skambučius, baržą, kai reikia,
+          pridėti kitus agentus į esamus skambučius ir daugiau
+          *</li></ul><br/><p>* Prašome susisiekti su <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> kad
+          įgalintumėte papildomas savo paskyros funkcijas, apimančias skambučių
+          stebėjimą, skambučių nutarimus, skambučių konferencijas, skambučių
+          slėpimą ir skambučių trukmės matavimą.</p><br/><p><a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>Sužinokite daugiau apie išskirtines telefono galimybes
+          ir funkcijas</a><p>
+        not_available: Rezultatų nepateikta. Bandykite kitą paieškos terminą
+        manage: Tvarkyti
+        address_certification_text: >-
+          Norėdami nusipirkti telefono numerį, turite pateikti savo įmonės ar
+          asmeninį adresą per <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Šis telefono numeris bus apmokestintas <strong><span
+          class='number-rate'></span> kas mėnesį</strong>.
+        buy_phone_credits: Pirkite telefono kreditus
+      feature_request_content:
+        success: Mes susisieksime su jumis per dvi darbo dienas.
+        recording_info: Įrašykite ir konvertuokite visus skambučius į užklausas
+        button_text: Prašymas aktyvuoti
+        compare_trial_and_full: Palyginkite pilną ir nemokamą bandomąją versiją
+        activation_disclaimer: Galite naudoti visas funkcijas neribotą laiką
+        learn_more: Sužinokite daugiau
+        ivr_info: >-
+          Stebėkite skambučius, organizuokite pokalbių konferencijas,
+          nukreipkite skambučius su IVR ir daug daugiau
+        trial_or: ARBA
+        trial_button_text: Įgalinti nemokamą bandomąją versiją
+        error_message: >-
+          Apgailestaujame, bet dabar negalime priimti jūsų užklausos. Pabandyti
+          dar kartą vėliau.
+        title_text: Telefonas
+        trial_version_disclaimer: Jūs galite naudotis ribotomis funkcijomis 15 dienų nemokamai
+        pricing: Žiūrėti visus skambučių tarifus ir palaikomas šalis
+        number_info: Pirkite vietinius ir nemokamus numerius daugiau nei 40 šalių
+        video_title: >-
+          Žiūrėkite vaizdo įrašą ir sužinokite, ką galite daryti su telefono
+          kanalu
+        heading_text: Teikite pagalbą savo klientams naudodami telefono kanalą
+      local: Vietinis
+      search: Paieška pagal skaitmenis arba frazes
+      ivr:
+        turn_on: Įjungta
+        simple_message_title: Paprastas pranešimas
+        save: Išsaugoti
+        turn_off: Išjungta
+        rename: pervadinti
+        add_new_option: Pridėti <b>Mygtuko paspaudimą</b>
+        add_new_menu: Pridėti naują <b>Menių</b>
+        male: Vyriškas balsas
+        input_number: Įveskite numerį
+        invalid_number_format: >-
+          Įveskite galiojantį telefono numerį su „+“ ir šalies kodu numerio
+          pradžioje
+        ivr_message_title: Interaktyvus balso atsakiklis (IVR)
+        message_type: Pranešimo tipas
+        action: Veiksmas
+        female: Moteriškas balsas
+        delete_menu: Ištrinti menių
+        previewing: Peržiūrima...
+        saving: Išsaugoma ...
+        add_new_menu_from_option: Pridėti naują menių
+        preview: Peržiūra
+        done: padaryta
+        keypress: Mygtuko paspaudimas
+        welcome_message: Sveiki atvykę
+      number_settings:
+        read_message: Iš rašto į kalbą
+        queue_position_preference: Skaitykite vietą eilėje
+        greeting_message: Įveskite savo pranešimą čia
+        queue_wait_message: Laukimo eilės pranešimas
+        number_accessible: Prieinama
+        all_groups: Visos grupės
+        record_all: Įrašykite visus skambučius
+        voicemail_on: Įjungta
+        max_queue_calls: Maksimalus skambučių skaičius eilėje
+        cancel: Atšaukti
+        routing_message: Kai yra daug prisijungusių agentų...
+        non_business_hours: Priimti skambučius per…
+        non_business_hours_message: Jokių pranešimų ne darbo valandomis
+        recorded_voice: Įrašytas balsas
+        group: 'Paleisti pranešimus ir skambinti agentams '
+        queue_position_enable: ĮJUNGTA
+        recording_privacy_public: Matoma klientams ir agentams
+        call_wait_time: su maksimaliu laukimo laiku
+        wait_music: Laukimo muzika
+        recording_help_info: Įjunkite mikrofoną. Trukmė <5 min.
+        record_alert: >-
+          Daugelyje šalių skambučių įrašymo nuorods nurodymai reikalauja
+          pranešti klientams, kad jų skambučiai yra įrašomi. Atitinkamai
+          sukonfigūruokite sveikinimo pranešimą.
+        record_none: Neįrašinėti skambučių
+        non_availability_message: Pranešimas apie neprieinamumą
+        voicemail_message: Balso pašto pranešimas
+        record_voice: Įrašykite savo balsą
+        voicemail_off: Išjungta
+        transcript_voice: Transkribuoti balsą
+        hunt_type: Skambučių nukreipimas
+        name: Vardas
+        voicemail: Balso paštas
+        record_calls: Įrašykite skambučius
+        anytime: 24/7 bet kuriuo metu
+        upload_voice: Įkelkite garso failus
+        business_hours: Darbo valandos
+        call_wait_time_suffix: ' už vieną skambutį'
+        hold_music: Laukimo muziką
+        start_recording: Pradėkite įrašymą
+        title_text: Skambučių centro valdymas
+        attachment_help_text: Priima garso failą (mp3) <5 MB
+        queue_position_disable: IŠJUNGTA
+        queue_position_message_placeholder: 'Šiuo metu esate eilėje. Jūsų numeris eilėje yra {{queue.position}}'
+        preparing_recording: Jūsų pranešimas ruošiamas...
+        info_content: >-
+          <b>Skambučių priskyrimas agentams ir grupėms</b></br>Galite nustatyti
+          interaktyvią balso atsakymo sistemą (IVR) ir nukreipti skambučius
+          skirtingoms grupėms ar agentams savo komandoje. Pvz., galite
+          peradresuoti savo klientų skambučius savo pagalbos komandai, kai jie
+          paspaudžiami 1, o paspaudus 2, skambučiai keliautų Pardavimų
+          komandai.<br/>Be to, galite įrašyti balso pranešimą, kurį girdės jūsų
+          klientai; tai padarykite įkeldami failą arba naudodami teksto į kalbą
+          funkciją.<br><br><b>Jūsų telefono pritaikymas</b><br>Kiekvieną
+          telefono numerį taip pat galite konfigūruoti atskirai ir priskirti
+          skirtingus nustatymus. Tai apima pagrindinius nustatymus, pvz.,
+          maksimalų žmonių, esančių eilėje, skaičių ir maksimalų laukimo laiką
+          savo klientams. Pasiekus bet kurį iš jų, jūsų klientams automatiškai
+          bus rodomas pranešimas apie nepasiekiamumą.<br/>Kai įjungiate
+          skambučių įrašymą, kiekvienas pagalbos tarnybos telefono skambutis
+          įrašomas ir pridedamas prie jūsų užklausų, o įrašymas gali būti viešai
+          prieinamas klientams arba privatus. Taip pat galite apriboti telefono
+          kanalo skambučius ne darbo valandomis, pvz., galite sukurti dvi
+          pagalbos skambučių linijas, iš kurių viena bus galima skambinti tik
+          darbo valandomis, o kita pagalbos linija svarbiems klausimams bus
+          prieinama 24/7.<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target='_blank'>Skaityti daugiau apie savo numerio pritaikymą</a>
+        recording_privacy: Įrašymo matomumas
+        audio_upload: Įkelti
+        recording_privacy_private: Matoma tik agentams
+        business_calendar: Pasirinkite darbo valandą
+        queue_position_message_alert: >-
+          Jei norite skaityti eilės poziciją, naudokite vietos žymeklį
+          {{queue.position}} <br/> Pvz., šiuo metu esate eilėje. Jūsų numeris
+          eilėje yra {{queue.position}}
+        name_placeholder: Įveskite draugišką savo numerio pavadinimą
+        welcome_message: Sveiki atvykę
+        change: Keisti
+        stop_recording: <span></span>Sustabdyti įrašymą
+      trial:
+        request_activation_msg: >-
+          Bandomojo telefono naudojimo metu galite pasirinkti naudoti tik vieną
+          numerį iš riboto šalių skaičiaus.<br> Tačiau aktyvavęs pilną versiją,
+          galite įsigyti kelis numerius iš 41 šalies
+        activate_btn_text: Prašymas aktyvuoti
+        numbers:
+          search:
+            after_activation_request: >-
+              Jūs paprašėte aktyvuoti telefono kanalą <br> Mes susisieksime su
+              jumis per 2 darbo dienas.
+            buy_confirmation: Ar tikrai norite pasirinkti šį numerį?
+            can_use_after_activation: >-
+              Galite ir toliau naudotis šiuo numeriu, aktyvuodami telefono
+              kanalą.
+        requested_activation: Mes gavome jūsų prašymą aktyvuoti<br>Jūsų prašymas vykdomas
+    subscription:
+      recharge_now_text: Papildykite savo balansą vienkartiniu mokėjimu
+      purchase_credits: Pirkimo kreditai
+      setup_auto_recharge: Nustatykite automatinį papildymą
+      auto_recharge_amt: Automatinio papildymo suma
+      see_detailed_pricing: Peržiūrėkite išsamią kainodarą
+      followup_text: verta telefono kreditų
+      auto_recharge_text: >-
+        Nuskaitysime lėšas iš jūsų sąskaitos tik tada, kai likutis bus mažesnis
+        nei 5 Usd
+      purchase_text: Pirkite telefono kreditus
+      current_balance: Dabartinis jūsų balansas
+      followup: verta telefono kreditų
+      no_credit_card_text: 'Įveskite mokėjimo informaciją, kad įsigytumėte telefono kreditus'
   special_beta_offer: Specialus pasiūlymas bandomosioms versijoms
   days: Dienos
   tickets_filter:

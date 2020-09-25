@@ -158,6 +158,7 @@ module Reports
       :group_glance_report          => 'https://support.freshdesk.com/support/solutions/articles/203160-understanding-the-group-at-a-glance-report',
       :helpdesk_peformance_analysis => 'https://support.freshdesk.com/support/solutions/articles/203162-understanding-the-helpdesk-performance-analysis-report',
       :helpdesk_load_analysis       => 'https://support.freshdesk.com/support/solutions/articles/203161-understanding-the-helpdesk-load-analysis-report',
+      :freshfone_summary            => 'https://support.freshdesk.com/solution/categories/157866/folders/267839/articles/197502-freshfone-call-summary',
       :freshchat_summary            => 'https://support.freshdesk.com/solution/categories/149846/folders/268837/articles/203631-freshchat-summary-report'
     }
 

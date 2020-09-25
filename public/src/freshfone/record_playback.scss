@@ -1,0 +1,53 @@
+@import "../settings/settings";
+
+.freshfoneAudio {
+	.playing {
+		.sm2-360ui .sm2-timing,
+		.sm2-360ui .sm2-360btn:hover + .sm2-timing,
+		.sm2-360ui.sm2_paused .sm2-timing {
+			position: relative;
+		 @include left(37px);
+			font-size: 13px;
+			color: #666;
+			top: -4px;
+			visibility: visible;
+		}
+	}
+
+	.ui360 .sm2-360ui.sm2_playing .sm2-360btn:hover + .sm2-timing {
+			visibility:visible;
+		}
+
+	.ui360 .sm2-360ui.sm2_paused .sm2-360btn:hover + .sm2-timing,
+	.ui360 .sm2-360ui.sm2_paused .sm2-timing {
+		visibility:visible;		
+	}
+
+	.ui360 {
+			border: 1px solid #efefef;
+			border-radius: 20px;
+			width: 100px;
+			background-color: #FFF;
+		}
+
+	.playing {
+		background-color: #FEFEF2;
+		border-color: #CCC;
+		@include box-shadow(inset -1px 0px 7px -1px #DDD);
+	}
+
+	.ui360 a{
+				font-size: 13px;
+				margin-top: -9px;
+			}
+	
+}
+.freshfoneAudio_text {
+		border: 1px solid #efefef;
+		border-radius: 50px;
+		width: 389px;
+		background-color: white;
+		padding: 10px 20px;
+		background: transparent;
+		color: #999;
+	}
