@@ -414,6 +414,7 @@
       :disable_freshchat: 410
       :whatsapp_channel: 411
       :feedback_widget_captcha: 412
+      :skip_portal_cname_chk: 413
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -507,3 +508,4 @@
   :bypass_signup_captcha: false
   :disable_freshchat: false
   :feedback_widget_captcha: false
+  :skip_portal_cname_chk: false
