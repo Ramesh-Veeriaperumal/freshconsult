@@ -117,6 +117,7 @@ run "ln -nfs #{shared_path}/config/silkroad_config.yml #{node[:rel_path]}/config
 run "ln -nfs #{shared_path}/config/omni_channel_dashboard.yml #{node[:rel_path]}/config/omni_channel_dashboard.yml"
 run "ln -nfs #{shared_path}/config/omni_channel_bundle.yml #{node[:rel_path]}/config/omni_channel_bundle.yml"
 run "ln -nfs #{shared_path}/config/tracing.yml #{node[:rel_path]}/config/tracing.yml"
+run "ln -nfs #{shared_path}/config/kbservice.yml #{node[:rel_path]}/config/kbservice.yml"
 
 # supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

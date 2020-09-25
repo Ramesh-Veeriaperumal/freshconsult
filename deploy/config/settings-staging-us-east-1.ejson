@@ -2020,15 +2020,9 @@
     },
     "hk-app-suggest": {
     },
-    "fc-bg-sidekiq-dedicated": {
-    },
     "fc-bg-shoryuken": {
     },
-    "fc-bg-sidekiq-maintainence": {
-    },
     "hk-app": {
-    },
-    "fc-bg-sidekiq-free": {
     },
     "fc-app-api-sling": {
     },
@@ -2036,22 +2030,16 @@
     },
     "hk-app-reports": {
     },
-    "fc-bg-sidekiq-exports": {
-    },
     "hk-app-temp": {
       "docker": {
         "_enable": false
       }
-    },
-    "fc-bg-sidekiq-gamification": {
     },
     "hk-app-attachment": {
     },
     "hk-app-buffer": {
     },
     "hk-bg-shoryuken": {
-    },
-    "fc-bg-sidekiq-misc": {
     },
     "hk-bg-utility": {
       "docker": {
@@ -2060,21 +2048,11 @@
     },
     "fc-app-reports": {
     },
-    "fc-bg-sidekiq-scheduled": {
-    },
-    "fc-bg-sidekiq-subscription": {
-    },
     "hk-app-search": {
-    },
-    "fc-bg-sidekiq-mailbox-jobs": {
     },
     "fc-bg-sidekiq-occasional": {
     },
     "fc-bg-sidekiq-central-realtime": {
-    },
-    "fc-bg-sidekiq-hardlimit-delete": {
-    },
-    "fc-bg-sidekiq-fc-occasional": {
     },
     "hk-app-premium": {
     },
@@ -2108,8 +2086,6 @@
     },
     "hk-app-ecommerce": {
     },
-    "fc-bg-sidekiq-trial": {
-    },
     "fc-bg-shoryuken-analytics": {
     },
     "hk-app-free": {
@@ -2132,8 +2108,6 @@
     },
     "fc-app-misc": {
     },
-    "fc-bg-sidekiq-bulk-scheduled": {
-    },
     "fc-bg-sidekiq-external": {
     },
     "fc-bg-sidekiq-realtime": {
@@ -2141,10 +2115,6 @@
     "hk-app-freshops": {
     },
     "hk-app-pipeline-sling": {
-    },
-    "fc-bg-sidekiq-community": {
-    },
-    "fc-bg-sidekiq-spam": {
     },
     "hk-app-support-theme": {
     },
@@ -2154,8 +2124,6 @@
       "docker": {
         "_enable": false
       }
-    },
-    "fc-bg-sidekiq-email": {
     },
     "hk-app-email": {
     },

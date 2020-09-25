@@ -3504,19 +3504,11 @@
     },
     "hk-app-archive": {
     },
-    "fc-bg-sidekiq-exports": {
-    },
     "hk-bg-shoryuken": {
     },
     "hk-app-trial": {
     },
     "hk-app-pipeline-sling": {
-    },
-    "fc-bg-sidekiq-dedicated-589783": {
-    },
-    "fc-bg-sidekiq-subscription": {
-    },
-    "fc-bg-sidekiq-trial": {
     },
     "hk-app-support": {
     },
@@ -3524,8 +3516,6 @@
       "docker": {
         "_enable": true
       }
-    },
-    "fc-bg-sidekiq-maintainence": {
     },
     "fc-app-buffer": {
     },
@@ -3537,13 +3527,9 @@
     },
     "hk-app-ecommerce": {
     },
-    "fc-bg-sidekiq-mailbox-jobs": {
-    },
     "hk-app-reports": {
     },
     "hk-app-buffer": {
-    },
-    "fc-bg-sidekiq-dedicated-892785": {
     },
     "fc-app-api-public-buffer": {
     },
@@ -3551,10 +3537,6 @@
       "docker": {
         "_enable": true
       }
-    },
-    "fc-bg-sidekiq-fc-occasional": {
-    },
-    "fc-bg-sidekiq-dedicated-887984": {
     },
     "fc-app-api-sling": {
     },
@@ -3572,17 +3554,9 @@
     },
     "hk-app-suggest": {
     },
-    "fc-bg-sidekiq-community": {
-    },
-    "fc-bg-sidekiq-spam": {
-    },
     "hk-app-attachment": {
     },
-    "fc-bg-sidekiq-email": {
-    },
     "hk-app-api-contacts": {
-    },
-    "fc-bg-sidekiq-bulk-scheduled": {
     },
     "fc-bg-shoryuken": {
       "le": {
@@ -3602,8 +3576,6 @@
     },
     "hk-app": {
     },
-    "fc-bg-sidekiq-misc": {
-    },
     "fc-app-api-public": {
       "envoy": {
         "config": {
@@ -3614,11 +3586,7 @@
         "_enable": true
       }
     },
-    "fc-bg-sidekiq-scheduled": {
-    },
     "fc-bg-sidekiq": {
-    },
-    "fc-bg-sidekiq-free": {
     },
     "hk-app-premium": {
     },
@@ -3634,8 +3602,6 @@
     },
     "hk-app-dashboard": {
     },
-    "fc-bg-sidekiq-gamification": {
-    },
     "fc-app-reports": {
     },
     "fc-app-archive": {
@@ -3643,8 +3609,6 @@
     "fc-app-api-public-premium": {
     },
     "hk-bg-utility": {
-    },
-    "fc-bg-sidekiq-hard-delete": {
     },
     "fc-app-api-channel": {
       "envoy": {
@@ -3661,8 +3625,6 @@
     "hk-bg-shoryuken-search": {
     },
     "hk-bg-shoryuken-social": {
-    },
-    "fc-bg-sidekiq-freshcaller": {
     },
     "fc-bg-shoryuken-falcon-scheduler": {
       "le": {
@@ -3703,8 +3665,6 @@
     "hk-app-web-p1": {
     },
     "hk-app-web-p0": {
-    },
-    "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
     },

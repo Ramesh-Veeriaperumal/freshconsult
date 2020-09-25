@@ -88,7 +88,7 @@ module Freshcaller::Util
     end
 
     def add_freshcaller_account(freshcaller_response)
-      @item = current_account.create_freshcaller_account(freshcaller_account_id: freshcaller_response['freshcaller_account_id'], domain: freshcaller_response['freshcaller_account_domain'])
+      @item = current_account.create_freshcaller_account(freshcaller_account_id: freshcaller_response['freshcaller_account_id'], domain: freshcaller_response['freshcaller_account_domain'], settings: Freshcaller::Account::DEFAULT_SETTINGS)
     end
 
     def enable_freshcaller

@@ -1153,6 +1153,11 @@ Helpkit::Application.routes.draw do
     post 'trigger/:task_name', to: 'cron_webhook/web_hooks#trigger'
   end
 
+  # Temporary routes. Will be removed once ocr to mars is fully launched.
+  match '/api/v1/ocr_agents/:id', to: 'channel/ocr_or_mars_proxy#execute', via: :put, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
+  match '/api/v1/agents/next-eligible', to: 'channel/ocr_or_mars_proxy#execute', via: :get, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
+  match '/api/v1/tasks/:id', to: 'channel/ocr_or_mars_proxy#execute', via: :put, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
+
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."
     scope '/_', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
