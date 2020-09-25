@@ -53,6 +53,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
   end
 
   def create_account
+    params[:signup][:direct_signup] = true
     @signup = Signup.new(params[:signup])
     if @signup.save
       @signup.user.reset_perishable_token!
