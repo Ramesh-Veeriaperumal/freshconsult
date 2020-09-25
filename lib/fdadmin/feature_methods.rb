@@ -3,30 +3,46 @@ module Fdadmin::FeatureMethods
     BITMAP_FEATURES_WITH_VALUES = YAML.load_file(File.join(
       Rails.root, 'config/features', 'features.yml'))[:features][:plan_features][:feature_list]
 
+    SETTINGS_FEATURES = YAML.load_file(File.join(
+      Rails.root, 'config/features', 'settings.yml'))['settings']
+
+    INTERNAL_SETTINGS = SETTINGS_FEATURES.select { |x| SETTINGS_FEATURES[x]['internal'] }.keys
+
     BITMAP_FEATURES = BITMAP_FEATURES_WITH_VALUES.keys
 
-    FEATURE_TYPES = ['bitmap', 'launchparty'].freeze
+    FEATURE_TYPES = ['bitmap', 'launchparty', 'setting'].freeze
 
     BLACKLISTED_LP_FEATURES = [:freshid, :freshid_org_v2, :fluffy, :fluffy_min_level].freeze
 
     BITMAP_FEATURES_TO_IGNORE = [:support_bot, :field_service_management].freeze
 
+    LAUNCH_PARTY_ACTIONS = ['add_launch_party', 'remove_launch_party'].freeze
+
+    SETTINGS_ACTIONS = ['add_setting', 'remove_setting'].freeze
+
     private
 
     def feature_types(feature_name)
       feature_types = []
-      if (Account::LAUNCHPARTY_FEATURES.keys + Account::LP_FEATURES).uniq.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
+      if LAUNCH_PARTY_ACTIONS.include?(params['action']) && enableable_lp?(feature_name)
         feature_types << 'launchparty'
+      elsif SETTINGS_ACTIONS.include?(params['action']) && valid_setting?(feature_name)
+        feature_types << 'setting'
       end
       feature_types
     end
 
     def bitmap_feature_enabled?(feature_name)
       @account.has_feature?(feature_name)
-    end     
+    end
 
     def launchparty_feature_enabled?(feature_name)
       @account.launched?(feature_name)
+    end
+
+    def setting_feature_enabled?(feature_name)
+      (@account.internal_setting_for_account?(feature_name) && @account.safe_send("#{feature_name}_enabled?")) ||
+        (launchparty_feature_enabled?(feature_name) && bitmap_feature_enabled?(feature_name))
     end
 
     FEATURE_TYPES.each do |feature_type|
@@ -77,8 +93,10 @@ module Fdadmin::FeatureMethods
 
     def enable_launchparty_feature(feature_name)
       @account.launch(feature_name)
-      # will be removed after settings implementation
-      enable_bitmap_feature(feature_name) if temporary_migration_feature?(feature_name)
+    end
+
+    def enable_setting_feature(feature_name)
+      @account.enable_setting(feature_name)
     end
 
     def disable_bitmap_feature(feature_name)
@@ -87,11 +105,17 @@ module Fdadmin::FeatureMethods
 
     def disable_launchparty_feature(feature_name)
       @account.rollback(feature_name)
-      # will be removed after settings implementation
-      disable_bitmap_feature(feature_name) if temporary_migration_feature?(feature_name)
     end
 
-    def temporary_migration_feature?(feature_name)
-      Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(feature_name)
+    def disable_setting_feature(feature_name)
+      @account.disable_setting(feature_name)
+    end
+
+    def enableable_lp?(feature_name)
+      (Account::LAUNCHPARTY_FEATURES.keys + Account::LP_FEATURES).uniq.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
+    end
+
+    def valid_setting?(feature_name)
+      INTERNAL_SETTINGS.include?(feature_name) || Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(feature_name)
     end
 end

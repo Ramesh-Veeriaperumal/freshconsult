@@ -2988,6 +2988,7 @@ Helpkit::Application.routes.draw do
           put :change_webhook_limit
           put :add_feature
           put :add_launch_party
+          put :add_setting
           put :change_url
           get :single_sign_on
           put :change_account_name
@@ -2996,6 +2997,7 @@ Helpkit::Application.routes.draw do
           put :reactivate_account
           put :remove_feature
           put :remove_launch_party
+          put :remove_setting
           put :whitelist
           put :block_account
           get :user_info
