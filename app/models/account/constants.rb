@@ -222,7 +222,7 @@ class Account < ActiveRecord::Base
     article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, allow_wildcard_ticket_create: false,
-    attachment_redirect_expiry: false, solutions_agent_metrics: false,
+    attachment_redirect_expiry: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,

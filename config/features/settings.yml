@@ -7,10 +7,10 @@ settings:
     default: true
     internal: true
     feature_dependency: :untitled_feature_1_dependency_toggle
-  :untitled_setting_3:
+  :solutions_agent_metrics:
     default: true
     internal: false
-    feature_dependency: :untitled_feature_2_dependency_toggle # from estate plan.Rename to actual feature
+    feature_dependency: :solutions_agent_metrics_feature
   :untitled_setting_4:
     default: true
     internal: false

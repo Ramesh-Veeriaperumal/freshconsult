@@ -24,7 +24,7 @@ class Account < ActiveRecord::Base
     :freshid_org_v2, :hide_agent_login,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
-    :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
+    :fuzzy_search, :delete_trash_daily,
     :allow_wildcard_ticket_create, :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
@@ -81,14 +81,13 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
+    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :forums_agent_portal, :solutions_agent_portal,
     :fetch_ticket_from_ref_first, :skip_ticket_threading, :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel, :feedback_widget_captcha,
-    :basic_settings_feature
+    :basic_settings_feature, :solutions_agent_metrics_feature
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :solutions_agent_metrics,
     :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create,
     :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha
   ].freeze
