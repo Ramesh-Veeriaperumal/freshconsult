@@ -723,7 +723,6 @@ class Subscription < ActiveRecord::Base
 
   def update_subscription_on_signup(plan_name)
     self.plan = SubscriptionPlan.current.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[plan_name])
-    self.state = TRIAL
     convert_to_free if new_sprout?
     save!
   end
