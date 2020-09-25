@@ -76,7 +76,7 @@ class Search::SolutionsController < Search::SearchController
 		# Hack for getting language and hitting corresponding alias
 		# Probably will be moved to search/search_controller when dynamic solutions goes live
 		def detect_multilingual_search
-			if params[:language].present? and current_account.es_multilang_soln?
+			if params[:language].present? and current_account.es_multilang_solutions_enabled?
 				@search_lang = ({ :language => params[:language] })
 			end
 		end

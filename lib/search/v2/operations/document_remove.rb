@@ -16,7 +16,7 @@ class Search::V2::Operations::DocumentRemove
     SearchService::Client.new(@account_id).delete_object(@type, @doc_id)
     # Multiplexing for pinnacle sports currently
     #=> Entity will not be available to find out the locale
-    # if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
+    # if entity.is_a?(Solution::Article) && Account.current.es_multilang_solutions_enabled?
     #   locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
     #   @request_object.remove_from_multilang_es(locale)
     # end

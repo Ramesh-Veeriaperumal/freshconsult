@@ -341,11 +341,6 @@ class AccountTest < ActionView::TestCase
     assert_equal response.status, 200
   end
 
-  def test_es_multilang_soln?
-    Account.current.es_multilang_soln?
-    assert_equal response.status, 200
-  end
-
   def test_active_groups
     Account.current.active_groups
     assert_equal response.status, 200

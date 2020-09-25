@@ -183,10 +183,6 @@ class Account < ActiveRecord::Base
     false
   end
 
-  def es_multilang_soln?
-    features_included?(:es_multilang_solutions) || launched?(:es_multilang_solutions)
-  end
-
   def active_groups
     active_groups_in_account(id)
   end

@@ -474,7 +474,6 @@
   :disable_old_reports: false
   :report_field_regenerate: false
   :saml_old_issuer: false
-  :es_multilang_solutions: false
   :sort_by_customer_response: false
   :saml_unspecified_nameid: false
   :euc_hide_agent_metrics: false

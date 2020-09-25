@@ -99,7 +99,7 @@ class Solution::Article < ActiveRecord::Base
       if Account.current.launched?(:es_v2_reads)
         related_from_esv2(current_portal, search_key, size)
       else
-        @search_lang = ({ :language => current_portal.language }) if current_portal and Account.current.es_multilang_soln?
+        @search_lang = ({ :language => current_portal.language }) if current_portal and Account.current.es_multilang_solutions_enabled?
         Search::EsIndexDefinition.es_cluster(account_id)
         options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
         item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id, @search_lang), options do |search|
