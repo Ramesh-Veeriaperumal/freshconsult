@@ -187,7 +187,7 @@ module Admin
         Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
       end
 
-      def test_retry_observer_worker_with_schema_less_locking_exception_with_launch_party
+      def test_retry_observer_worker_with_schema_less_locking_exception_with_launch_party_with_model_changes
         ticket = create_ticket
         schema_less_ticket = ticket.schema_less_ticket
         args = {
@@ -201,11 +201,38 @@ module Admin
         Account.any_instance.stubs(:ticket_observer_race_condition_fix_enabled?).returns(true)
         Tickets::ObserverWorker.new.perform(args)
         Helpdesk::Ticket.any_instance.stubs(:schema_less_ticket).returns(schema_less_ticket)
+        Helpdesk::Ticket.any_instance.stubs(:changes).returns(status: [5, 2])
         ::Tickets::RetryObserverWorker.jobs.clear
         Tickets::ObserverWorker.new.perform(args)
         assert_equal 1, ::Tickets::RetryObserverWorker.jobs.size
       ensure
         Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
+        Helpdesk::Ticket.any_instance.unstub(:schema_less_ticket)
+        Helpdesk::Ticket.any_instance.unstub(:changes)
+      end
+
+      def test_retry_observer_worker_with_schema_less_locking_exception_with_launch_party_with_no_model_changes
+        ticket = create_ticket
+        schema_less_ticket = ticket.schema_less_ticket
+        args = {
+          doer_id: Account.current.agents.last.id,
+          ticket_id: ticket.id,
+          current_events: {},
+          enqueued_class: 'Helpdesk::Ticket',
+          note_id: nil,
+          original_attributes: {}
+        }
+        Account.any_instance.stubs(:ticket_observer_race_condition_fix_enabled?).returns(true)
+        Tickets::ObserverWorker.new.perform(args)
+        Helpdesk::Ticket.any_instance.stubs(:schema_less_ticket).returns(schema_less_ticket)
+        Helpdesk::Ticket.any_instance.stubs(:changes).returns({})
+        ::Tickets::RetryObserverWorker.jobs.clear
+        Tickets::ObserverWorker.new.perform(args)
+        assert_equal 0, ::Tickets::RetryObserverWorker.jobs.size
+      ensure
+        Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
+        Helpdesk::Ticket.any_instance.unstub(:schema_less_ticket)
+        Helpdesk::Ticket.any_instance.unstub(:changes)
       end
 
       def test_retry_observer_worker

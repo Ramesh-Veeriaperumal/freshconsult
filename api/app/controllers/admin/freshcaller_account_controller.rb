@@ -68,9 +68,12 @@ class Admin::FreshcallerAccountController < ApiApplicationController
   def update
     delegator = Admin::FreshcallerAccountDelegator.new(scoper)
     if delegator.valid?
+      if cname_params[:settings].present?
+        @item.update_attributes(settings: @item.settings.deep_merge(cname_params[:settings].deep_symbolize_keys))
+      end
       Freshcaller::UpdateAgentsWorker.perform_async(agent_user_ids: cname_params[:agent_ids]) if cname_params[:agent_ids]
 
-      head 204
+      render :show
     else
       render_custom_errors(delegator, true)
     end

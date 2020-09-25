@@ -81,4 +81,45 @@ module GroupConstants
     freshchat_intelliassign: 22,
     freshcaller_omniroute: 26
   }.freeze
+
+  # group v2 constants
+
+  ASSIGNMENT_TYPE_MAPPINGS = {
+    ROUND_ROBIN => 'round_robin',
+    LOAD_BASED_ROUND_ROBIN => 'load_based_round_robin',
+    SKILL_BASED_ROUND_ROBIN => 'skill_based_round_robin',
+    LBRR_BY_OMNIROUTE => 'lbrr_by_omniroute'
+  }.freeze
+
+  OMNI_CHANNEL = 'omni_channel'.freeze
+
+  CHANNEL_SPECIFIC = 'channel_specific'.freeze
+
+  CHANNEL_NAMES = { freshdesk: 'ticket' }.freeze
+
+  GROUP_V2_NEGATE_FIELDS = %w[business_hour_id assignment_type group_type include auto_assignment round_robin_type capping_limit].freeze
+
+  GROUP_V2_CREATE_FIELDS = %w[business_calendar_id type automatic_agent_assignment].freeze
+
+  AUTOMATIC_AGENT_ASSIGNMENT_PARAMS = %i[enabled type settings].freeze
+
+  AUTOMATIC_AGENT_ASSIGNMENT_SETTINGS_PARAMS = %i[channel assignment_type assignment_type_settings].freeze
+
+  ASSIGNMENT_TYPE_SETTINGS = %i[capping_limit].freeze
+
+  AUTOMATIC_AGENT_ASSIGNMENT_TYPES = [OMNI_CHANNEL, CHANNEL_SPECIFIC].freeze
+
+  GROUP_V2_INDEX_FIELDS = (%w[type] | INDEX_FIELDS - %w[group_type]).freeze
+
+  KEY_MAPPINGS = { business_hour_id: :business_calendar_id, group_type: :type }.freeze
+
+  ERROR_KEY_MAPPINGS = {
+    business_hour_id: :business_calendar_id,
+    group_type: :type,
+    assignment_type: :'automatic_agent_assignment[:settings][:assignment_type]',
+    round_robin_type: :'automatic_agent_assignment[:settings][:assignment_type]',
+    capping_limit: :'automatic_agent_assignment[:settings][:assignment_type_settings][:capping_limit]',
+    settings: :'automatic_agent_assignment[:settings]',
+    enabled: :'automatic_agent_assignment[:enabled]'
+  }.freeze
 end.freeze

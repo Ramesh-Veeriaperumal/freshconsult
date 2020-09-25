@@ -33,7 +33,7 @@ module Helpdesk::Permission
 
     def can_view_helpdesk_ticket?(ticket = owner_object)
       return false unless ::User.current
-      ::User.current.agent? ? (ticket.requester_id == ::User.current.id || ::User.current.has_ticket_permission?(ticket)) : ::User.current.has_customer_ticket_permission?(ticket)
+      ::User.current.agent? ? (ticket.requester_id == ::User.current.id || check_ticket_permission_with_scope(ticket)) : ::User.current.has_customer_ticket_permission?(ticket)
     end
 
     def can_view_helpdesk_note?
@@ -73,6 +73,10 @@ module Helpdesk::Permission
 
     def can_view_helpdesk_ticket_template?
       check_privilege(:manage_ticket_templates) || owner_object.visible_to_me?
+    end
+
+    def check_ticket_permission_with_scope(ticket)
+      Account.current.advanced_ticket_scopes_enabled? ? ::User.current.has_read_ticket_permission?(ticket) : ::User.current.has_ticket_permission?(ticket)
     end
 
     alias_method :can_view_helpdesk_archive_ticket?, :can_view_helpdesk_ticket?

@@ -1,5 +1,4 @@
 class Helpdesk::Ticket < ActiveRecord::Base
-  # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
   before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
   before_validation :validate_assoc_parent_ticket, :if => :child_ticket?
@@ -85,7 +84,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :notify_on_update, :update_activity, :stop_timesheet_timers, :fire_update_event, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
   after_commit :update_group_escalation, on: :create, :if => :model_changes?
-  after_commit :publish_to_update_channel, on: :update, :if => :model_changes?
   after_commit :subscribe_event_create, on: :create, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
   after_commit :subscribe_event_update, on: :update, :if => :allow_api_webhook?, :unless => :spam_or_deleted?
   after_commit :set_links, :on => :create, :if => :tracker_ticket?
@@ -946,16 +944,6 @@ private
 
   def fire_update_event
     fire_event(:update, @model_changes) unless disable_observer
-  end
-
-  def publish_to_update_channel
-    return unless Account.current.features?(:agent_collision)
-    agent_name = User.current ? User.current.name : ""
-    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id,
-                                                  :ticket_id => self.id,
-                                                  :agent_name => agent_name,
-                                                  :type => "updated"}
-    publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
   end
 
   def regenerate_reports_data

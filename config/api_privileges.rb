@@ -58,6 +58,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent_status, only: [:index]
     resource :api_agent, only: [:fetch_availability, :update_availability]
     resource :account_admin, only: [:preferences]
+    resource :'admin/group', only: [:index]
   end
 
   view_secure_field do
@@ -66,7 +67,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_account do
-    resource :"channel/freshcaller/account", only: [:destroy]
+    resource :"channel/freshcaller/account", only: [:update, :destroy]
     resource :"admin/trial_subscription", only: [:create, :cancel]
     resource :account_admin, only: [:update, :disable_billing_info_updation, :preferences=]
     resource :"admin/api_account", only: [:cancel, :download_file, :support_tickets, :reactivate]
@@ -154,6 +155,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/freddy"
     resource :"ember/flow"
     resource :'ember/omni_channel', only: [:index]
+    resource :'admin/group', only: [:show, :index, :update]
   end
 
   delete_ticket do
@@ -202,6 +204,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/sla_policy", only: [:index, :show, :create, :update, :destroy]
     resource :"admin/api_business_calendar", only: [:index, :show, :create, :update, :destroy]
     resource :agent_status, only: [:show, :create, :update, :destroy]
+    resource :'admin/group', only: [:index, :show, :destroy, :create, :update]
+    resource :"admin/groups/agent", only: [:index, :update]
   end
 
   edit_ticket_properties do

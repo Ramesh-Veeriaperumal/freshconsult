@@ -1,0 +1,40 @@
+get:
+  tags: [Admin Security]
+  description: Show all security settings of an account
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          security:
+            $ref: '#/definitions/admin_security_settings'
+          meta:
+            type: object
+            readOnly: true
+            properties:
+              current_ip:
+                type: string
+                description: Current IP address of logged in user
+
+put:
+  tags: [Admin Security]
+  description: Update Security settings of an account
+  parameters:
+    - name: security
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/admin_security_settings'
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          security:
+            $ref: '#/definitions/admin_security_settings'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

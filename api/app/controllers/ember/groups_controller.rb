@@ -1,6 +1,7 @@
 module Ember
   class GroupsController < ::ApiGroupsController
     include GroupConstants
+    include Admin::GroupHelper
     decorate_views
 
     def index
@@ -10,15 +11,7 @@ module Ember
 
      private
       def validate_params
-        group_params = [] unless api_current_user.privilege?(:admin_tasks)
-        group_params = if current_account.agent_statuses_enabled? && !service_group?
-                         update? ? UPDATE_PRIVATE_API_FIELDS_WITH_STATUS_TOGGLE_WITHOUT_ASSIGNMENT_CONFIG : PRIVATE_API_FIELDS_WITH_STATUS_TOGGLE_WITHOUT_ASSIGNMENT_CONFIG
-                       else
-                         update? ? UPDATE_PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG : PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG
-                       end
-        group_params=Account.current.features?(:round_robin) ? group_params | RR_FIELDS : group_params  
-        group_params=Account.current.omni_channel_routing_enabled?  ? group_params | OCR_FIELDS : group_params            
-        params[cname].permit(*group_params)        
+        params[cname].permit(*fetch_group_params)
         group=PrivateApiGroupValidation.new(params[cname],@item) 
         valid = update? ? group.valid? : group.valid?(:create)               
         render_errors group.errors, group.error_options unless valid     

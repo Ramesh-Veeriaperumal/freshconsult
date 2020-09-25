@@ -9,13 +9,12 @@ class ApiAgentsController < ApiApplicationController
   include OmniChannelRouting::Util
 
   skip_before_filter :check_privilege, only: :revert_identity
-  before_filter { |c| c.requires_feature(:omni_agent_availability_dashboard) if current_action?('availability_count') && !current_account.launched?(:omni_agent_availability_dashboard) }
   before_filter :validate_filter_params, only: [:index, :availability_count]
   before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
   before_filter :load_data_export, only: [:export_s3_url]
   before_filter :validate_params_for_export, only: [:export]
   before_filter :check_bulk_params_limit, only: %i[create_multiple]
-  before_filter :validate_feature, only: [:fetch_availability, :update_availability]
+  before_filter :validate_feature, only: [:fetch_availability, :update_availability, :availability_count]
   before_filter :check_if_agent_exists, only: [:create, :update]
   before_filter :shift_service_request, only: [:fetch_availability, :update_availability]
 
@@ -196,13 +195,14 @@ class ApiAgentsController < ApiApplicationController
   end
 
   def availability_count
-    group_filter_hash = AgentConstants::AVAILABILITY_COUNT_FIELDS.each_with_object({}) do |filter_key, hash|
+    availability_count_fields = proxy_to_mars? ? AgentConstants::NEW_AVAILABILITY_COUNT_FIELDS : AgentConstants::AVAILABILITY_COUNT_FIELDS
+    group_filter_hash = availability_count_fields.each_with_object({}) do |filter_key, hash|
       hash[filter_key.to_sym] = params[filter_key] if params[filter_key].present?
     end
-    req_path = service_paths[:get_availability_count]
+    req_path = service_paths(proxy_to_mars?)[:get_availability_count]
     req_path = [req_path, group_filter_hash.to_query].join('?') if group_filter_hash.present?
     begin
-      service_response = request_service(:admin, :get, req_path)
+      service_response = request_service(:admin, :get, req_path, nil, proxy_to_mars?)
       Rails.logger.debug "GET #{req_path}, response: #{service_response.inspect}"
       @availability_count = JSON.parse(service_response).try(:[], 'agents_availability_count')
     rescue Exception => e
@@ -227,7 +227,7 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def validate_feature
-      requires_any_feature FeatureConstants::AGENT_STATUSES, FeatureConstants::OMNI_AGENT_AVAILABILITY_DASHBOARD
+      requires_any_feature(FeatureConstants::AGENT_STATUSES, FeatureConstants::OMNI_AGENT_AVAILABILITY_DASHBOARD)
     end
 
     def constants_class
@@ -306,7 +306,7 @@ class ApiAgentsController < ApiApplicationController
       allowed_fields = if index?
         AgentConstants::INDEX_FIELDS
       elsif current_action?('availability_count')
-        AgentConstants::AVAILABILITY_COUNT_FIELDS
+        proxy_to_mars? ? AgentConstants::NEW_AVAILABILITY_COUNT_FIELDS : AgentConstants::AVAILABILITY_COUNT_FIELDS
       end
       params.permit(*allowed_fields, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @agent_filter = AgentFilterValidation.new(params)
@@ -520,7 +520,7 @@ class ApiAgentsController < ApiApplicationController
     end
 
     def proxy_to_mars?
-      @proxy_to_mars ||= Account.current.agent_statuses_enabled?
+      @proxy_to_mars ||= Account.current.agent_statuses_enabled? && !(current_action?('availability_count') && touchstone_request?)
     end
 
     def parsed_omni_agents_response(omni_agent_response)

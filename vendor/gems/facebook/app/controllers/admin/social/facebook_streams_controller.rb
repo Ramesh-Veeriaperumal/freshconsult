@@ -6,7 +6,6 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   include Admin::Social::FacebookAuthHelper
   before_filter { access_denied unless current_account.basic_facebook_enabled? }
 
-  before_filter :social_revamp_enabled?
   before_filter :fb_client,         :only => [:index, :edit]
   before_filter :set_session_state, :only => [:index]
   before_filter :load_item,         :only => [:edit, :update]
@@ -56,12 +55,8 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
 
   def fb_client
     redirect_url = "#{AppConfig['integrations_url'][Rails.env]}/facebook/page/callback"
-    if current_account.falcon_ui_enabled?(current_user)
-      falcon_uri = admin_social_facebook_streams_url.gsub("/admin/social/facebook_streams", "/a/admin/social/facebook_streams")
-      @fb_client = make_fb_client(redirect_url, falcon_uri)
-    else
-      @fb_client = make_fb_client(redirect_url, admin_social_facebook_streams_url)
-    end
+    falcon_uri = admin_social_facebook_streams_url.gsub("/admin/social/facebook_streams", "/a/admin/social/facebook_streams")
+    @fb_client = make_fb_client(redirect_url, falcon_uri)
   end
 
   def enabled_facebook_pages
@@ -102,17 +97,19 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
       filter_data = {
         :rule_type => rule_type
       }
-      
+
       if rule[:rule_type] == "#{RULE_TYPE[:optimal]}"
-        filter_data.merge!({
-          :import_company_comments  =>  "#{rule[:import_company_comments]}".to_bool,
-          :import_visitor_posts     =>  "#{rule[:import_visitor_posts]}".to_bool
-        })
+        filter_data.merge!(
+          import_company_comments: rule[:import_company_comments].to_s.to_bool,
+          import_visitor_posts: rule[:import_visitor_posts].to_s.to_bool
+        )
         filter_data.merge!({:includes => rule[:includes].split(',').flatten}) if filter_data[:import_company_comments]
+        filter_data.merge!(filter_mentions: params[:new_ticket_filter_mentions].to_s.to_bool)
       elsif rule[:rule_type] == RULE_TYPE[:strict].to_s
         @facebook_page.ad_post_stream.delete_rules
+      elsif rule[:rule_type] == RULE_TYPE[:broad].to_s
+        filter_data.merge!(filter_mentions: params[:same_ticket_filter_mentions].to_s.to_bool)
       end
-      
       rule_params = {
         :filter_data => filter_data,
         :action_data => {
@@ -139,7 +136,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   def update_ad_rule(ad_post_args)
     ad_post_args = ad_post_args.symbolize_keys
     ad_stream = @facebook_page.ad_post_stream
-    if ad_post_args[:import_ad_posts].to_bool
+    if ad_post_args[:import_ad_posts].to_s.to_bool
       begin
         ad_stream = ad_stream.facebook_ticket_rules.present? ? update_ad_ticket_rules(ad_post_args, ad_stream) : build_ad_ticket_rule(ad_post_args, ad_stream)
       rescue StandardError => error
@@ -153,7 +150,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   end
 
   def update_ad_ticket_rules(ad_post_args, ad_stream)
-    ad_stream.facebook_ticket_rules.first.attributes = { action_data: {
+    ad_stream.facebook_ticket_rules.first.attributes = { filter_data: { rule_type: RULE_TYPE[:ad_post], filter_mentions: params[:ad_posts_filter_mentions].to_s.to_bool }, action_data: {
       group_id:   (ad_post_args[:group_id].to_i if ad_post_args[:group_id].present?),
       product_id: (params[:social_facebook_page][:product_id].to_i if params[:social_facebook_page][:product_id].present?)
     } }
@@ -161,7 +158,7 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   end
 
   def build_ad_ticket_rule(ad_post_args, ad_stream)
-    ad_stream.facebook_ticket_rules.build(filter_data: { rule_type: RULE_TYPE[:ad_post] },
+    ad_stream.facebook_ticket_rules.build(filter_data: { rule_type: RULE_TYPE[:ad_post], filter_mentions: params[:ad_posts_filter_mentions].to_s.to_bool },
                                           action_data: {
                                             group_id:   (ad_post_args[:group_id].to_i if ad_post_args[:group_id].present?),
                                             product_id: (params[:social_facebook_page][:product_id].to_i if params[:social_facebook_page][:product_id].present?)
@@ -196,10 +193,4 @@ class Admin::Social::FacebookStreamsController < Admin::Social::StreamsControlle
   def fb_call_back_url(action = "index") 
     url_for(:host => current_account.full_domain, :action => action)
   end
-  
-  def social_revamp_enabled?
-    redirect_to social_facebook_index_url unless current_account.features?(:social_revamp)
-  end
-
-
 end

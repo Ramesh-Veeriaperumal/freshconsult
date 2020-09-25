@@ -4,7 +4,7 @@
       <h3 class="lead" id="current-article-title"><%= @current_item.title %></h3>
     </div>
   </div>
-  <div class="article-content <%= 'reload-page' if current_account.falcon_ui_enabled?(current_user)%>" id="current-article-description"><%= (@current_item.description || "").html_safe %></div>
+  <div class="article-content <%= 'reload-page'%>" id="current-article-description"><%= (@current_item.description || "").html_safe %></div>
 
   <div class="attachment_wrapper">
     <ul class="attachment_list">

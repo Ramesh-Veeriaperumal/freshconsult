@@ -3,8 +3,6 @@ module AccountAdditionalSettings::AdditionalSettings
   include AccountConstants
   include Onboarding::OnboardingRedisMethods
 
-  DEFAULT_RLIMIT = {'helpdesk_tickets' => {'enable' => false},'helpdesk_notes' => {'enable' => false},
-    'solution_articles' => {'enable' => false}}
   ONBOARDING_VERSION_MAXIMUM_RETRY = 5
   
   def email_template_settings
@@ -51,7 +49,9 @@ module AccountAdditionalSettings::AdditionalSettings
     metric = Account.current.conversion_metric
     member = metric.msegments if metric.present?
     self.additional_settings ||= {}
-    if member.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] &&
+    if Account.current.enable_sprout_trial_onboarding?
+      self.additional_settings[:onboarding_version] = GrowthHackConfig[:sprout_trial_onboarding]
+    elsif member.present? && metric.language == 'en' && ((metric.current_session_url == GrowthHackConfig[:freshdesk_signup] &&
        metrics_has_any_personalised_onboarding_keys?(metric.referrer)) ||
        metrics_has_any_personalised_onboarding_keys?(metric.current_session_url))
       self.additional_settings[:onboarding_ab_testing] = true
@@ -73,5 +73,13 @@ module AccountAdditionalSettings::AdditionalSettings
       return onboarding_types[result.first] if result.is_a?(Array) && result[0].present?
     end
     onboarding_types.first
+  end
+
+  def deny_iframe_embedding=(value)
+    (self.additional_settings[:security] ||= {})[:deny_iframe_embedding] = value
+  end
+
+  def allow_iframe_embedding
+    security.present? && security.key?(:deny_iframe_embedding) ? !security[:deny_iframe_embedding] : true
   end
 end

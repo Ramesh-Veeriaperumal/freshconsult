@@ -7,13 +7,15 @@ class AccountAdditionalSettings < ActiveRecord::Base
   include AccountConstants
   include SandboxConstants
   include CentralLib::Util
+  include Redis::OthersRedis
+  include Redis::Keys::Others
 
   belongs_to :account
   serialize :supported_languages, Array
   serialize :secret_keys, Hash
   validates_length_of :email_cmds_delimeter, :minimum => 3, :message => I18n.t('email_command_delimeter_length_error_msg')
   after_update :handle_email_notification_outdate, :if => :had_supported_languages?
-  after_initialize :set_default_rlimit, :backup_change, :load_state
+  after_initialize :backup_change, :load_state
   before_create :set_onboarding_version, :enable_freshdesk_freshsales_bundle
   after_commit :clear_cache
   after_commit :update_help_widget_languages, if: -> { Account.current.help_widget_enabled? && @portal_languages_changed }
@@ -101,7 +103,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def custom_dashboard_limits
     if additional_settings.present? && additional_settings[:dashboard_limits].present?
-      additional_settings[:dashboard_limits]
+      OMNI_WIDGET_LIMITS.deep_merge(additional_settings[:dashboard_limits])
     elsif Account.current.field_service_management_enabled?
       dashboard_limits = DASHBOARD_LIMITS[:min].clone
       dashboard_limits[:dashboard] += 1
@@ -122,12 +124,12 @@ class AccountAdditionalSettings < ActiveRecord::Base
     self.supported_languages = support_languages
   end
 
-  def bundle_details_setter(bundle_id, bundle_name)
+  def bundle_details_setter(bundle_id, bundle_name, new_signup = false)
     if bundle_id.present? && bundle_name.present?
       additional_settings[:bundle_id] = bundle_id
       additional_settings[:bundle_name] = bundle_name
       account.launch :omni_bundle_2020 if account.freshid_org_v2_enabled?
-      launch_other_dependent_omni_features if account.omni_bundle_2020_enabled?
+      launch_other_dependent_omni_features(new_signup) if account.omni_bundle_2020_enabled?
     end
   end
 
@@ -408,10 +410,6 @@ class AccountAdditionalSettings < ActiveRecord::Base
     self.account.clear_api_limit_cache
   end
 
-  def set_default_rlimit
-    self.resource_rlimit_conf = self.resource_rlimit_conf.presence || DEFAULT_RLIMIT
-  end
-
   def load_state
     @portal_languages_was = portal_languages
     @prev_supported_languages = supported_languages
@@ -450,7 +448,16 @@ class AccountAdditionalSettings < ActiveRecord::Base
     @old_model = attributes.deep_dup
   end
 
-  def launch_other_dependent_omni_features
+  def launch_other_dependent_omni_features(new_signup)
     account.launch :omni_agent_availability_dashboard if redis_key_exists?(OMNI_AGENT_AVAILABILITY_DASHBOARD)
+    account.launch :agent_statuses if redis_key_exists?(AGENT_STATUSES_ENABLED_ON_SIGNUP)
+    launch_conditional_omni_signup_features if new_signup
+  end
+
+  def launch_conditional_omni_signup_features
+    condition_based_launchparty_features = get_others_redis_hash(CONDITION_BASED_OMNI_LAUNCHPARTY_FEATURES)
+    if condition_based_launchparty_features.present?
+      condition_based_launchparty_features.each { |key, value| account.launch(key.to_sym) if value.to_bool }
+    end
   end
 end

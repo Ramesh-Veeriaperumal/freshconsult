@@ -36,6 +36,14 @@ module SolutionConcern
     solution_portal || current_account
   end
 
+  def public_api?(version)
+    version == 'v2'
+  end
+
+  def transform_platform_params(platform_params)
+    SolutionConstants::PLATFORM_TYPES.map { |platform| [platform, platform_params.include?(platform)] }.to_h
+  end
+
   def current_request_language
     @permitted_languages ||= fetch_permitted_languages
     if allow_kb_language_fallback? && @permitted_languages.exclude?(params[:language]) && params.key?(:language)
@@ -68,7 +76,11 @@ module SolutionConcern
   end
 
   def allow_kb_language_fallback?
-    params.key?(:allow_language_fallback) && params[:allow_language_fallback] == 'true' && get_request?
+    params.key?(:allow_language_fallback) && params[:allow_language_fallback] && get_request?
+  end
+
+  def boolean_param?(key)
+    params[key].present? && (params[key] == "true" || params[key] == "false")
   end
 
   def fetch_permitted_languages

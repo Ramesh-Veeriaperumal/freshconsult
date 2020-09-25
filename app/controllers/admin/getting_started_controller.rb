@@ -54,8 +54,7 @@ class Admin::GettingStartedController < Admin::AdminController
 
     def fb_client
       callback_url = "#{AppConfig['integrations_url'][Rails.env]}/facebook/page/callback"
-      redirect_account_url = current_account.features?(:social_revamp) ? admin_social_facebook_streams_url : social_facebook_index_url
-      @fb_client = make_fb_client(callback_url, redirect_account_url)
+      @fb_client = make_fb_client(callback_url, admin_social_facebook_streams_url)
     end
 
 end

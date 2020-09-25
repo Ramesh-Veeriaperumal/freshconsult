@@ -48,7 +48,6 @@ helpdesk:
     - query_trace
     - rabbit_mq
     - redis
-    - resource_rate_limit
     - redshift
     - resque
     - ruby193_monkey_patches
@@ -100,6 +99,7 @@ helpdesk:
     - clearbit_config
     - freshpipe
     - zendesk_app_config
+    - account_settings
     - product_feedback
     - connection_pool_patch
     - imap_patch

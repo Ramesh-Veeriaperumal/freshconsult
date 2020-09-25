@@ -18,10 +18,6 @@ if Rails.env.test?
 
   #WebMock.allow_net_connect!
 
-  FacebookTests = [
-    "spec/controllers/social/facebook_pages_controller_spec.rb"
-  ]
-
   GnipTests = [
     "spec/lib/social/gnip/rule_client_spec.rb"
   ]
@@ -224,8 +220,8 @@ if Rails.env.test?
 
   UnitTests = [ APITests, BillingTests, EmailTests,  ForumTests, FunctionalTests,
                 GnipTests, HelpdeskTests, MiddlewareSpecs, MobileAppTests, ModelTests,
-                XssTests, ChatTests, IntegrationTests, TwitterTests, FacebookTests, FreshfoneTests, FreshfoneReportsTests].flatten.uniq
-  #FacebookTests, SolutionTests, VaRulesTests
+                XssTests, ChatTests, IntegrationTests, TwitterTests, FreshfoneTests, FreshfoneReportsTests].flatten.uniq
+  # SolutionTests, VaRulesTests
 
   AllTests  = [UnitTests, ModelTests, EmailTests, IntegrationTests, ForumDynamoTests].flatten.uniq
 
@@ -387,11 +383,6 @@ if Rails.env.test?
         RSpec::Core::RakeTask.new(:twitter => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(TwitterTests+GnipTests)
-        end
-
-        RSpec::Core::RakeTask.new(:facebook => "db:test_setup") do |t|
-          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.pattern = FileList.new(FacebookTests)
         end
       end
 

@@ -1,5 +1,6 @@
 class Support::HomeController < SupportController
 
+  before_filter :redirect_to_support_home, :if => :should_redirect_to_support_home?
   before_filter :load_page_meta, :unless => :facebook?
   
   def index
@@ -15,6 +16,10 @@ class Support::HomeController < SupportController
     set_portal_page facebook? ? :facebook_home : :portal_home
   end
 
+  def redirect_to_support_home
+    redirect_to '/support/home'
+  end
+
   private
 
     def load_page_meta
@@ -25,4 +30,7 @@ class Support::HomeController < SupportController
                           support_discussions_url(:host => current_portal.host, :protocol => current_account.url_protocol)
     end
 
+    def should_redirect_to_support_home?
+      facebook? && !current_account.basic_facebook_enabled?
+    end
 end

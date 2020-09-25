@@ -525,6 +525,8 @@
   $ref: ./subscription/estimate.yaml
 /plans:
   $ref: ./subscription/plans.yaml
+/plans/id:
+  $ref: ./subscription/fetch_plan.yaml
 /subscription/update_payment:
   $ref: ./subscription/update_payment.yaml
 
@@ -646,6 +648,9 @@
 #Admin Security
 /admin/security_keys/widget/regenerate:
   $ref: ./admin/security_keys/widget/regenerate.yaml
+
+/admin/security:
+  $ref: ./admin/security/show_and_update.yaml
 
 #Audit log export
 /audit_log/export:

@@ -9,6 +9,19 @@ module AgentsTestHelper
       'freshcaller': 5
     }
   }.freeze
+
+  MARS_AVAILABILITY_COUNT_RESPONSE = {
+    "agents_availability_count": {
+      "channel_availability_count": [
+        { "channel": "freshdesk", "count": 10 },
+        { "channel": "freshchat", "count": 7 },
+        { "channel": "freshcaller", "count": 5 },
+      ],
+      "total_available": 10,
+      "total_unavailable": 2
+    }
+  }.freeze
+
   def agent_pattern(expected_output = {}, agent)
     user = {
       active: agent.user.active,

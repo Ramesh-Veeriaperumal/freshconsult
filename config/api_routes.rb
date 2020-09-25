@@ -384,6 +384,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :admin do
+      resources :groups, only: [:index, :show, :destroy, :create, :update] do
+        member do
+          match 'agents' => 'groups/agents#index', via: :get
+          match 'agents' => 'groups/agents#update', via: :patch
+        end
+      end
+    end
+
     resources :help_widgets do
       resources :suggested_article_rules, controller: 'help_widgets/suggested_article_rules', only: [:create, :update, :destroy, :index]
     end
@@ -1012,6 +1021,7 @@ Helpkit::Application.routes.draw do
       end
       collection do
         get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
+        post :sync
       end
     end
     resources :conversations, controller: 'channel/v2/conversations', only: [:update]
@@ -1021,11 +1031,17 @@ Helpkit::Application.routes.draw do
         get :verify_agent_privilege
       end
     end
+    match '/notes/sync', to: 'channel/v2/conversations#sync', via: [:post]
     post '/canned_responses', to: 'channel/v2/canned_responses#create'
     post 'tickets/bulk_archive', to: 'channel/v2/tickets/bulk_actions#bulk_archive'
     get '/account', to: 'channel/v2/accounts#show'
     match '/account/update_freshchat_domain', to: 'channel/v2/accounts#update_freshchat_domain', via: [:post]
     match '/authenticate', to: 'channel/v2/iam/authentication#authenticate', via: [:get, :post, :put, :delete]
+    resources :groups, controller: 'channel/v2/groups' do
+      collection do
+        post 'sync', to: 'channel/v2/groups#sync'
+      end
+    end
     post '/iam/token', to: 'channel/v2/iam/authentication#iam_authenticate_token'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index, :update]
@@ -1034,20 +1050,31 @@ Helpkit::Application.routes.draw do
         post :update_post_id
       end
     end
+    resources :central_resync, controller: 'channel/v2/central_resync', only: [:show]
+    resources :ticket_fields, controller: 'channel/v2/ticket_fields' do
+      collection do
+        post 'sync', to: 'channel/v2/ticket_fields#sync'
+      end
+    end
 
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
     get '/solutions/categories/:id/folders', to: 'channel/v2/api_solutions/folders#category_folders'
-    get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
     get '/solutions/folders', to: 'channel/v2/api_solutions/folders#folder_filter'
-    get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
+    get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
     get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
+    get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
+    put '/solutions/articles/:id/thumbs_up', to: 'channel/v2/api_solutions/articles#thumbs_up'
+    put '/solutions/articles/:id/thumbs_down', to: 'channel/v2/api_solutions/articles#thumbs_down'
+    put 'solutions/articles/:id/hit', to: 'channel/v2/api_solutions/articles#hit'
+    
     get '/solutions/search', to: 'channel/v2/api_solutions/articles#search'
   end
 
   channel_routes = proc do
     resources :freshcaller_calls, controller: 'channel/freshcaller/calls', only: %i[create update]
     delete '/freshcaller/account', to: 'channel/freshcaller/accounts#destroy'
+    put '/freshcaller/account', to: 'channel/freshcaller/accounts#update'
     get '/freshcaller/contacts/:id/activities', to: 'channel/freshcaller/contacts#activities'
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
@@ -1134,6 +1161,11 @@ Helpkit::Application.routes.draw do
   cron_routes = proc do
     post 'trigger/:task_name', to: 'cron_webhook/web_hooks#trigger'
   end
+
+  # Temporary routes. Will be removed once ocr to mars is fully launched.
+  match '/api/v1/ocr_agents/:id', to: 'channel/ocr_or_mars_proxy#execute', via: :put, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
+  match '/api/v1/agents/next-eligible', to: 'channel/ocr_or_mars_proxy#execute', via: :get, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
+  match '/api/v1/tasks/:id', to: 'channel/ocr_or_mars_proxy#execute', via: :put, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."

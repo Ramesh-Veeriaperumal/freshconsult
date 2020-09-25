@@ -4862,6 +4862,39 @@ module Ember
       def test_kb_increased_file_limit_feature_without_keys_in_additional_settings
         Account.any_instance.stubs(:kb_increased_file_limit_enabled?).returns(true)
 
+        file_size = 101
+        attachment_id = create_file_ticket_field_attachment(attachable_type: 'UserDraft', attachable_id: User.current.id, content_file_size: file_size.megabyte).id
+
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        folder_meta = get_folder_meta
+
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, attachments_list: [attachment_id])
+        assert_response 400
+        match_json(cumulative_attachment_size_validation_error_pattern(file_size, SolutionConstants::KB_CUMULATIVE_ATTACHMENT_LIMIT))
+      ensure
+        Account.any_instance.unstub(:kb_increased_file_limit_enabled?)
+      end
+
+      def test_kb_increased_file_limit_feature_without_keys_in_additional_settings_default_value
+        Account.any_instance.stubs(:kb_increased_file_limit_enabled?).returns(true)
+
+        file_size = 100
+        attachment_id = create_file_ticket_field_attachment(attachable_type: 'UserDraft', attachable_id: User.current.id, content_file_size: file_size.megabyte).id
+
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        folder_meta = get_folder_meta
+
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2, attachments_list: [attachment_id])
+        assert_response 201
+      ensure
+        Account.any_instance.unstub(:kb_increased_file_limit_enabled?)
+      end
+
+      def test_kb_increased_file_limit_without_feature
+        Account.any_instance.stubs(:kb_increased_file_limit_enabled?).returns(false)
+
         file_size = 100
         attachment_id = create_file_ticket_field_attachment(attachable_type: 'UserDraft', attachable_id: User.current.id, content_file_size: file_size.megabyte).id
 
@@ -4874,6 +4907,104 @@ module Ember
         match_json(cumulative_attachment_size_validation_error_pattern(file_size, Account.current.attachment_limit))
       ensure
         Account.any_instance.unstub(:kb_increased_file_limit_enabled?)
+      end
+
+      def test_should_trigger_kbservice_clear_cache_on_create_and_publish_article
+        Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+        Account.current.launch(:kbase_omni_bundle)
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).once
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 2)
+        assert_response 201
+        assert_nil Solution::Article.last.draft
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+        Account.current.rollback :kbase_omni_bundle
+      end
+
+      def test_should_not_trigger_kbservice_clear_cache_on_create_a_draft_article
+        Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+        Account.current.launch(:kbase_omni_bundle)
+        folder_meta = get_folder_meta
+        title = Faker::Name.name
+        paragraph = Faker::Lorem.paragraph
+        post :create, construct_params({ version: 'private', id: folder_meta.id }, title: title, description: paragraph, status: 1)
+        assert_response 201
+        assert Solution::Article.last.draft
+        match_json(private_api_solution_article_pattern(Solution::Article.last))
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).never
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+        Account.current.rollback :kbase_omni_bundle
+      end
+
+      def test_should_not_trigger_kbservice_clear_cache_on_update_article_as_draft
+        Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+        Account.current.launch(:kbase_omni_bundle)
+        sample_article = get_article_without_draft
+        paragraph = Faker::Lorem.paragraph
+        params_hash = { title: 'new draft title 2', description: paragraph, status: 1, agent_id: @agent.id }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        assert_response 200
+        assert sample_article.reload.draft
+        assert sample_article.reload.draft.reload.title == 'new draft title 2'
+        assert sample_article.reload.draft.reload.status == 1
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).never
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+        Account.current.rollback :kbase_omni_bundle
+      end
+
+      def test_should_trigger_kbservice_clear_cache_on_update_article_and_publish
+        Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+        Account.current.launch(:kbase_omni_bundle)
+        sample_article = get_article_without_draft
+        paragraph = Faker::Lorem.paragraph
+        params_hash = { title: 'new publish title 2', description: paragraph, status: 2, agent_id: @agent.id }
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
+        assert_response 200
+        assert_nil sample_article.reload.draft
+        assert sample_article.reload.title == 'new publish title 2'
+        assert sample_article.reload.status == 2
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+        Account.current.rollback :kbase_omni_bundle
+      end
+
+      def test_should_trigger_kbservice_clear_cache_on_update_and_publish_a_draft
+        Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+        Account.current.launch(:kbase_omni_bundle)
+        sample_article = get_article_with_draft
+        paragraph = Faker::Lorem.paragraph
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).once
+        put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, title: 'publish draft title', agent_id: @agent.id)
+        assert_response 200
+        assert_nil sample_article.reload.draft
+        assert sample_article.reload.title == 'publish draft title'
+        match_json(private_api_solution_article_pattern(sample_article.reload))
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+        Account.current.rollback :kbase_omni_bundle
+      end
+
+      def test_should_trigger_kbservice_clear_cache_on_bulk_update_tags
+        Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+        Account.current.launch(:kbase_omni_bundle)
+        article = @account.solution_articles.where(language_id: 6).first
+        tags = [Faker::Name.name, Faker::Name.name]
+        Solution::KbserviceClearCacheWorker.expects(:perform_async).at_least_once
+        put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
+        assert_response 204
+        article.reload
+        assert (tags - article.reload.tags.map(&:name)).empty?
+      ensure
+        Account.any_instance.unstub(:omni_bundle_account?)
+        Account.current.rollback :kbase_omni_bundle
       end
 
       private

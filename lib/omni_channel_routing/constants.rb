@@ -2,6 +2,7 @@ module OmniChannelRouting
   module Constants
     OCR_BASE_URL = OCR_CONFIG[:api_endpoint]
     MARS_BASE_URL = ShiftConfig['shift_service_host']
+    TOUCHSTONE_SECRET = OCR_CONFIG[:touchstone_secret]
 
     OCR_CLIENT_CONFIGS = [
       [:freshdesk, 'freshdesk', :jwt_secret],
@@ -20,7 +21,8 @@ module OmniChannelRouting
     OCR_PATHS = Hash[*OCR_PATHS_ARRAY.map { |i| [i[0], i[1]] }.flatten]
 
     MARS_PATHS_ARRAY = [
-      [:get_agents, 'api/v1/agents']
+      [:get_agents, 'api/v1/agents'],
+      [:get_availability_count, 'api/v1/agents/availability-count']
     ].freeze
     MARS_PATHS = Hash[*MARS_PATHS_ARRAY.map { |i| [i[0], i[1]] }.flatten]
 

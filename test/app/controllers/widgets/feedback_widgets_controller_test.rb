@@ -73,4 +73,18 @@ class Widgets::FeedbackWidgetsControllerTest < ActionController::TestCase
     @controller.unstub(:current_user)
     @controller.unstub(:verify_recaptcha)
   end
+
+  def test_feedback_widget_create_from_account_with_ehawk_spam_4_and_above
+    Account.any_instance.stubs(:ehawk_spam?).returns(true)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    post :create, version: :private, helpdesk_ticket: { email: user.email, ticket_type: 'Question' }
+    assert_response 403
+    error_response = JSON.parse(response.body)
+    assert_equal error_response['success'], false
+    assert_equal error_response['error'], 'You have been restricted from creating a ticket.'
+  ensure
+    Account.any_instance.unstub(:ehawk_spam?)
+  end
 end

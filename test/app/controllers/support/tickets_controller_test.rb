@@ -313,6 +313,19 @@ class Support::TicketsControllerTest < ActionController::TestCase
     user.destroy
   end
 
+  def test_create_ticket_from_account_with_ehawk_spam_4_and_above
+    Account.any_instance.stubs(:ehawk_spam?).returns(true)
+    user = add_new_user(Account.current, active: true)
+    user.make_current
+    login_as(user)
+    post :create, version: :private, helpdesk_ticket: { email: user.email }, cc_emails: Faker::Internet.email
+    assert_response 403
+    log_out
+    user.destroy
+  ensure
+    Account.any_instance.unstub(:ehawk_spam?)
+  end
+
   def test_create_ticket_for_login_user_with_feature_enabled_with_diff_email
     @account.add_feature(:prevent_ticket_creation_for_others)
     user = add_new_user(Account.current, active: true)
@@ -369,7 +382,8 @@ class Support::TicketsControllerTest < ActionController::TestCase
 
   def test_create_ticket_for_login_user_without_anonymous_tickets_and_with_prevent_ticket_creation_for_others_feature
     @account.add_feature(:prevent_ticket_creation_for_others)
-    @account.remove_feature(:anonymous_tickets)
+    @account.add_feature(:basic_settings_feature)
+    @account.disable_setting(:anonymous_tickets)
     user = add_new_user(Account.current, active: true)
     user.make_current
     login_as(user)
@@ -385,7 +399,8 @@ class Support::TicketsControllerTest < ActionController::TestCase
 
   def test_create_ticket_for_login_user_without_anonymous_tickets_feature_and_without_prevent_ticket_creation_for_others_feature
     @account.remove_feature(:prevent_ticket_creation_for_others)
-    @account.remove_feature(:anonymous_tickets)
+    @account.add_feature(:basic_settings_feature)
+    @account.disable_setting(:anonymous_tickets)
     user = add_new_user(Account.current, active: true)
     user.make_current
     login_as(user)
@@ -399,7 +414,8 @@ class Support::TicketsControllerTest < ActionController::TestCase
 
   def test_create_ticket_for_login_user_with_anonymous_tickets_feature_and_with_prevent_ticket_creation_for_others_feature
     @account.add_feature(:prevent_ticket_creation_for_others)
-    @account.add_feature(:anonymous_tickets)
+    @account.add_feature(:basic_settings_feature)
+    @account.enable_setting(:anonymous_tickets)
     user = add_new_user(Account.current, active: true)
     user.make_current
     login_as(user)
@@ -410,7 +426,7 @@ class Support::TicketsControllerTest < ActionController::TestCase
     log_out
     user.destroy
   ensure
-    @account.remove_feature(:anonymous_tickets)
+    @account.disable_setting(:anonymous_tickets)
     @account.remove_feature(:prevent_ticket_creation_for_others)
   end
 

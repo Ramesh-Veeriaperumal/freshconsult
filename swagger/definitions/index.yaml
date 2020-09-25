@@ -958,8 +958,14 @@ agent_availability:
   $ref: "./resource/agent_availability.yaml"
 agent_availability_count_response:
   $ref: ./response/agents/availability_count.yaml
+channel_availability_count:
+  $ref: './response/agents/channel_availability_count.yaml'
 agent_with_availability_response:
   $ref: './response/agents/availability.yaml'
+
+# Admin Security
+admin_security_settings:
+  $ref: ./resource/security.yaml
 
 # Admin business hours
 business_hours_input:

@@ -28,7 +28,7 @@ module Solution::ArticlesVotingMethods
   end
 
   def update_votes(incr_attr, vote)
-    return false if (@portal || @help_widget) && current_user && current_user.agent? && !current_account.solutions_agent_metrics_enabled?
+    return false if (@portal || @help_widget || channel_v2_api?) && current_user && current_user.agent? && !current_account.solutions_agent_metrics_enabled?
 
     return @article.safe_send("#{incr_attr}!") unless current_user
 
@@ -43,5 +43,9 @@ module Solution::ArticlesVotingMethods
 
   def load_vote
     @vote = @article.votes.where(user_id: current_user.id).first_or_initialize if current_user
+  end
+
+  def channel_v2_api?
+    CustomRequestStore.read(:channel_api_request)
   end
 end
