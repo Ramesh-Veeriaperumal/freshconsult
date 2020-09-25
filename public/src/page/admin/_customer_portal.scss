@@ -31,11 +31,11 @@
 		}
 		.control-label{
 			padding-top: 0;
-            width: 320px;
-    }
-    .mt-20 {
-      margin-top: 20px;
-    }
+			width: 320px;
+		}
+		.mt-20 {
+			margin-top: 20px;
+		}
 		.controls{
 			@include margin-left(320px);
 			@include padding-left(10px);
