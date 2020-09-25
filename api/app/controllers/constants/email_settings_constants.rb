@@ -5,8 +5,8 @@ module EmailSettingsConstants
   COMPOSE_EMAIL_FEATURE = :compose_email
   DISABLE_AGENT_FORWARD = :disable_agent_forward
   EMAIL_SETTINGS_PARAMS_MAPPING = {
-    create_requester_using_reply_to: COMPOSE_EMAIL_FEATURE,
+    create_requester_using_reply_to: :reply_to_based_tickets,
     original_sender_as_requester_for_forward: DISABLE_AGENT_FORWARD,
-    allow_agent_to_initiate_conversation: :compose_email
+    allow_agent_to_initiate_conversation: COMPOSE_EMAIL_FEATURE
   }.freeze
 end
