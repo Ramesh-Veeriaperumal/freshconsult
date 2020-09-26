@@ -6,7 +6,6 @@ describe 'Language prefix', :type => :request do
 
   before(:all) do
     @account.reload
-    @account.features.open_solutions.create
   	RoutingFilter.active = true
   	ActionController::Base.allow_forgery_protection = true
   	@new_agent = add_test_agent(@account,  {:role => @account.roles.first.id})

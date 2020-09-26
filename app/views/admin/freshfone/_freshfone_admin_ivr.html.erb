@@ -1,0 +1,28 @@
+<div class="lead">
+	<%= t('freshfone.admin.ivr.welcome_message') %>
+</div>
+
+<div class="fields welcome_message_type form-horizontal">
+	<div class="control-group">
+		<label class="control-label">
+			<%= t('freshfone.admin.ivr.message_type') %></label>
+		<div class="controls">
+			<div class="radio inline">
+				<%= radio_button_tag :message_type, 0, @ivr.simple_message?, :class => "radio welcome_message_select" %> 
+				<%= label_tag :voice, t('freshfone.admin.ivr.simple_message_title'), :class => "radiolabel", :value => 0 %>
+			</div>
+			<div class="radio inline">
+				<%= radio_button_tag :message_type, 1, @ivr.ivr_message?, :class => "radio welcome_message_select" %> 
+				<%= label_tag :voice, t('freshfone.admin.ivr.ivr_message_title'), :class => "radiolabel", :value => 1 %>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="numbers_simple_message <%= 'hide' if @ivr.ivr_message? %>">
+	<%= render :partial => '/admin/freshfone/numbers/freshfone_simple_message' %>
+</div>
+<div class="numbers_ivr_message <%= 'hide' if @ivr.simple_message? %>">
+	<%= render :partial => '/admin/freshfone/ivr_menu', :object => @ivr || []  %>
+</div>

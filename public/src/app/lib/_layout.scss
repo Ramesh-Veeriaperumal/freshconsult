@@ -186,7 +186,13 @@ label.overlabel{
 			}
 		}
 	}
-	i.header-icon-chat {
+	#freshfone-presence-toggle {
+		border-right: 1px solid rgba(255,255,255,0.2);
+	}
+	.freshfone-preference-tooltip{
+		display: inline-block;
+	}
+	i.header-icon-freshfone,i.header-icon-chat {
 		display: block;
 		height: 35px;
 		width: 40px;

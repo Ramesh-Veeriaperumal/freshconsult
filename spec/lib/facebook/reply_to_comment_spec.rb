@@ -10,126 +10,118 @@ describe Facebook::Core::Post do
     @account.make_current
     @fb_page = create_test_facebook_page(@account, true)
     Social::FacebookPage.update_all("import_visitor_posts = true", "page_id = #{@fb_page.page_id}")
-    
-    if @account.features?(:social_revamp)
-      @default_stream = @fb_page.default_stream
-      @ticket_rule = create_test_ticket_rule(@default_stream, @account)
-    end
+
+    @default_stream = @fb_page.default_stream
+    @ticket_rule = create_test_ticket_rule(@default_stream, @account)
   end
   
   it "should create a note when a reply to commmet arrives and the parent post is converted to a ticket" do
-    unless @account.features?(:social_revamp)
-      ticket, complete_post_id = sample_post_and_ticket
+    ticket, complete_post_id = sample_post_and_ticket
+  
+    post_id = complete_post_id.split("_").last
+    comment_id = "#{post_id}_#{get_social_id}"
+    realtime_feed = sample_realtime_comment_feed(complete_post_id, comment_id)
+    comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
     
-      post_id = complete_post_id.split("_").last
-      comment_id = "#{post_id}_#{get_social_id}"
-      realtime_feed = sample_realtime_comment_feed(complete_post_id, comment_id)
-      comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
-      
-      Koala::Facebook::API.any_instance.stubs(:get_object).returns(comment)
-      
-      Facebook::Core::Parser.new(realtime_feed).parse
-      
-      user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
-      post_comment = Social::FbPost.find_by_post_id(comment[:id])
-      post_comment.should_not be_nil
-      post_comment.is_note?.should be true
-      
-      note = post_comment.postable
-      note.notable.should eql ticket
-      note.body.should eql comment[:message]
-      note.user.id.should eql user_id   
-    end 
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(comment)
+    
+    Facebook::Core::Parser.new(realtime_feed).parse
+    
+    user_id = @account.users.find_by_fb_profile_id(comment[:from][:id]).id
+    post_comment = Social::FbPost.find_by_post_id(comment[:id])
+    post_comment.should_not be_nil
+    post_comment.is_note?.should be true
+    
+    note = post_comment.postable
+    note.notable.should eql ticket
+    note.body.should eql comment[:message]
+    note.user.id.should eql user_id   
   end
   
   
   it "should create a ticket and note when the parent post is not converted to a ticket and import visitor posts is enabled " do
-    unless @account.features?(:social_revamp)
-      feed_id = "#{@fb_page.page_id}_#{get_social_id}"
-      comment_id = "#{get_social_id}_#{get_social_id}"
-      realtime_feed = sample_realtime_comment_feed(comment_id, true, feed_id)
-      comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
-      
-      facebook_feed = sample_facebook_feed(true, feed_id, true, true)
-      
-      #stub the api call for koala
-      Koala::Facebook::API.any_instance.stubs(:get_object).returns(comment, facebook_feed)
-      
-      Facebook::Core::Parser.new(realtime_feed).parse
-      
-      post = @account.facebook_posts.find_by_post_id(feed_id)
-      post.should_not be_nil
-      post.is_ticket?.should be true
-      
-      ticket = post.postable
-      user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
-      ticket.description.should eql facebook_feed[:message]
-      ticket.requester_id.should eql user_id
+    feed_id = "#{@fb_page.page_id}_#{get_social_id}"
+    comment_id = "#{get_social_id}_#{get_social_id}"
+    realtime_feed = sample_realtime_comment_feed(comment_id, true, feed_id)
+    comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
+    
+    facebook_feed = sample_facebook_feed(true, feed_id, true, true)
+    
+    #stub the api call for koala
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(comment, facebook_feed)
+    
+    Facebook::Core::Parser.new(realtime_feed).parse
+    
+    post = @account.facebook_posts.find_by_post_id(feed_id)
+    post.should_not be_nil
+    post.is_ticket?.should be true
+    
+    ticket = post.postable
+    user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
+    ticket.description.should eql facebook_feed[:message]
+    ticket.requester_id.should eql user_id
 
-      comment_feed = facebook_feed[:comments]["data"]
-      post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
-      post_comment.should_not be_nil
-      post_comment.is_note?.should be true
-      
-      note = post_comment.postable
-      note.notable.should eql ticket
-      note.body.should eql comment_feed.first[:message]
-      
-      
-      reply_to_comment_feed = comment_feed.first[:comments]["data"]
-      reply_post_comment = @account.facebook_posts.find_by_post_id(reply_to_comment_feed.first[:id])
-      reply_post_comment.should_not be_nil
-      reply_post_comment.is_note?.should be true
-      
-      note = reply_post_comment.postable
-      note.notable.should eql ticket
-      note.body.should eql reply_to_comment_feed.first[:message]
-    end  
+    comment_feed = facebook_feed[:comments]["data"]
+    post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
+    post_comment.should_not be_nil
+    post_comment.is_note?.should be true
+    
+    note = post_comment.postable
+    note.notable.should eql ticket
+    note.body.should eql comment_feed.first[:message]
+    
+    
+    reply_to_comment_feed = comment_feed.first[:comments]["data"]
+    reply_post_comment = @account.facebook_posts.find_by_post_id(reply_to_comment_feed.first[:id])
+    reply_post_comment.should_not be_nil
+    reply_post_comment.is_note?.should be true
+    
+    note = reply_post_comment.postable
+    note.notable.should eql ticket
+    note.body.should eql reply_to_comment_feed.first[:message]
   end
   
    it "should create a ticket and note when the parent post is not converted to a ticket and import company posts in enabled and the comment is from a visitor" do
     Social::FacebookPage.update_all("import_company_posts = true", "page_id = #{@fb_page.page_id}")
     
-    unless @account.features?(:social_revamp)
-      feed_id = "#{@fb_page.page_id}_#{get_social_id}"
-      comment_id = "#{get_social_id}_#{get_social_id}"
-      realtime_feed = sample_realtime_comment_feed(comment_id, true, feed_id)
-      comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
-      facebook_feed = sample_facebook_feed(false, feed_id, true, true)
-      
-      #stub the api call for koala
-      Koala::Facebook::API.any_instance.stubs(:get_object).returns(comment, facebook_feed)
-      
-      Facebook::Core::Parser.new(realtime_feed).parse
-      
-      post = @account.facebook_posts.find_by_post_id(feed_id)
-      post.should_not be_nil
-      post.is_ticket?.should be true
-      
-      ticket = post.postable
-      user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
-      ticket.description.should eql facebook_feed[:message]
-      ticket.requester_id.should eql user_id
+    feed_id = "#{@fb_page.page_id}_#{get_social_id}"
+    comment_id = "#{get_social_id}_#{get_social_id}"
+    realtime_feed = sample_realtime_comment_feed(comment_id, true, feed_id)
+    comment = sample_facebook_comment_feed(@fb_page.page_id, comment_id, "Comment to post")
+    facebook_feed = sample_facebook_feed(false, feed_id, true, true)
+    
+    #stub the api call for koala
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(comment, facebook_feed)
+    
+    Facebook::Core::Parser.new(realtime_feed).parse
+    
+    post = @account.facebook_posts.find_by_post_id(feed_id)
+    post.should_not be_nil
+    post.is_ticket?.should be true
+    
+    ticket = post.postable
+    user_id = @account.users.find_by_fb_profile_id(facebook_feed[:from][:id]).id
+    ticket.description.should eql facebook_feed[:message]
+    ticket.requester_id.should eql user_id
 
-      comment_feed = facebook_feed[:comments]["data"]
-      post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
-      post_comment.should_not be_nil
-      post_comment.is_note?.should be true
-      
-      note = post_comment.postable
-      note.notable.should eql ticket
-      note.body.should eql comment_feed.first[:message]
-      
-      
-      reply_to_comment_feed = comment_feed.first[:comments]["data"]
-      reply_post_comment = @account.facebook_posts.find_by_post_id(reply_to_comment_feed.first[:id])
-      reply_post_comment.should_not be_nil
-      reply_post_comment.is_note?.should be true
-      
-      note = reply_post_comment.postable
-      note.notable.should eql ticket
-      note.body.should eql reply_to_comment_feed.first[:message]
-    end  
+    comment_feed = facebook_feed[:comments]["data"]
+    post_comment = @account.facebook_posts.find_by_post_id(comment_feed.first[:id])
+    post_comment.should_not be_nil
+    post_comment.is_note?.should be true
+    
+    note = post_comment.postable
+    note.notable.should eql ticket
+    note.body.should eql comment_feed.first[:message]
+    
+    
+    reply_to_comment_feed = comment_feed.first[:comments]["data"]
+    reply_post_comment = @account.facebook_posts.find_by_post_id(reply_to_comment_feed.first[:id])
+    reply_post_comment.should_not be_nil
+    reply_post_comment.is_note?.should be true
+    
+    note = reply_post_comment.postable
+    note.notable.should eql ticket
+    note.body.should eql reply_to_comment_feed.first[:message]
   end
   
   # it "should create a note when a reply_to_commmet arrives and the parent comment is converted to a ticket and replies are disabled" do

@@ -1,0 +1,41 @@
+<div id="supervisor_call_info">
+</div>
+
+<script id="supervisor_call_info_template" type="text/x-jquery-tmpl">
+<div class="ff_current_call_details">
+	<div class="ff-call-element width1 ff_caller vertical-alignment">
+		<div class="user_avatar vertical-alignment">{{html user_avatar}}</div>
+        <div class="ff_caller_details vertical-alignment">
+        	<b class='caller_name'>{{html caller_name}}</b>
+        </div>
+        <div class="ff-user-location muted user_location">{{html user_location}}</div>
+    </div>
+
+    <div align="left" class="ff-call-element width2">
+	    <div class="call_direction">{{html call_direction}}</div>
+    </div>
+    
+    <div class="ff-call-element width1 user_details vertical-alignment pull-right">
+        <div class="vertical-alignment">
+            <b class="agent_name">{{html agent_name}}</b>
+        </div>
+        <div class="agent_user_avatar vertical-alignment">{{html agent_user_avatar}}</div>
+		<div class="helpdesk_number muted">{{html helpdesk_number}}</div>
+    </div>
+</div>
+</script>
+
+<script id="supervisor_call_info_min_template" type="text/x-jquery-tmpl">
+	<div align="left" class="ff-call-element caller-name">
+		<b class='caller_name'>{{html caller_name_min}}</b>
+	</div>
+	<div align="left" class="ff-call-element call-direction">
+		<div class="call_direction">{{html call_direction}}</div>
+	</div>
+	<div align="left" class="ff-call-element agent-name">
+		<b class="agent_name">{{html agent_name_min}}</b>
+	</div>
+</script>
+
+
+

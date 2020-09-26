@@ -985,6 +985,34 @@ de:
         filter_report: Filter bearbeiten
         ticket_type: Ticket-Typ
         select_billable: Abrechenbar/Nicht abrechenbar auswählen
+    freshfone:
+      time_period: Zeitraum
+      num_of_transfered: Anz. der Übertragungen
+      no_agent: '- Kein Agent -'
+      group: Gruppe
+      total_unanswered_calls: Nicht angenommene Anrufe
+      call_type: Anruftyp
+      filter_option_all_calls: Alle Anrufe
+      filter_close: Schließen
+      avg_handle_time: Durchschn. Bearbeitungszeit
+      all_numbers: Alle Nummern
+      filter_report: Filter bearbeiten
+      number: Nummer
+      business_hours: Geschäftszeiten
+      no_external: An externe Nummern vorgenommene Übertragungen sind nicht enthalten
+      summary_title: 'Übersicht - Agentenanruf'
+      generate_summary: Erstellen
+      num_of_calls: Anz. der Anrufe
+      unanswered_transfers: Nicht angenommene Übertragungen
+      unanswered_count: Nicht angenommen
+      select_call_type: Anruftyp auswählen
+      options:
+        all_groups: Alle Gruppen
+        unassigned: Nicht zugewiesen
+        incoming: Eingehend
+        outgoing: Ausgehend
+      filter_by_title: Gefiltert nach
+      total_voice_mail: Sprachnachrichten
     select_customer: Kunde auswählen
     summary_report:
       avg_1st_response_time: Durchschnittliche <br>Erstantwortzeit
@@ -3732,6 +3760,186 @@ de:
         other: gefällt dies
   title: Titel
   free_plan_agents_v2: Unbegrenzte Agenten
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Kaufen Sie eine lokale oder gebührenfreie Nummer, sodass Sie Ihren Kunden weltweit telefonischen Support bieten können
+      greetings: Begrüßungen
+      settings: Einstellungen
+      important: Wichtig
+      toll_free: Gebührenfrei
+      purchase_credit_text: >-
+        Laden Sie Ihr Guthaben auf, um Nummern zu kaufen und im Telefonkanal Anrufe zu tätigen und entgegenzunehmen.
+      suspended_alert: >-
+        <b>Wichtig:</b> Die monatlichen Gebühren für Ihre Nummern fallen auch dann an, wenn Sie Ihren Telefonkanal deaktivieren. Um diese Gebühren zu vermeiden, löschen Sie bitte Ihre erworbenen Telefonnummern.
+      freshfone_numbers_title: Telefon
+      welcome_page:
+        title_text: Telefon
+      number:
+        simultaneous: Alle Agenten anrufen
+        round_robin: Freie Agenten zuerst anrufen
+      numbers:
+        sidebar_content_v2: >-
+          Über den Telefonkanal können Sie über Ihren Browser, per Mobiltelefon oder mit dem Telefonkanal der mobilen Apps von Freshdesk Anrufe tätigen und empfangen. Er ist eng in das Ticketingsystem von Freshdesk integriert. So können Sie Anrufe nachverfolgen, indem Sie sie bei Bedarf aufzeichnen und in Tickets umwandeln. <br/><br/> <b>Einrichtung des Telefons</b></br>Um mit der Verwendung des Telefons beginnen zu können, müssen Sie es zunächst aktivieren und eine Supportnummer erwerben. Sie können lokale Nummern in den <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>hier aufgeführten Ländern</a> erwerben und Anrufe von jedem Ort der Welt aus tätigen oder entgegennehmen. Wenn Ihre Kunden Sie in den USA, im Vereinigten Königreich oder in Kanada anrufen, können Sie auch gebührenfreie Supportnummern erwerben (bzw. „freephone“ im Vereinigten Königreich). <br/><br/><b>Vollumfänglichen Telefonsupport bieten</b><br/>Mit unserem Telefonkanal können Sie<br/><ul><li>sofort über Ihren Browser oder Ihr Mobiltelefon Anrufe tätigen und entgegennehmen</li><li>Sprachnachrichten erstellen, Anrufe weiterleiten oder an einen beliebigen Agenten an einem beliebigen Ort übertragen</li><li>Anrufe überwachen, sich bei Bedarf einmischen, weitere Agenten zu eingehenden Anrufen hinzufügen und so weiter*</li></ul><br/><p>*Bitte wenden Sie sich an <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>, um die erweiterten Funktionen für Ihr Konto zu aktivieren. Dazu gehören Überwachung von Anrufen, das Einschalten in Anrufe, Konferenzgespräche, Call Masking und Lebensdauerkennzahlen von Anrufen.</p><br/>
+        sidebar_title: Telefonkanal
+        delete_alert: >-
+          Eine gelöschte Nummer kann nicht erneut erworben werden. Sind Sie sicher, dass Sie die Nummer löschen möchten?
+        buy_loading_text: Wird gekauft...
+        buy_phone_numbers: Telefonnummer kaufen
+        caller_id:
+          no_number_added: Keine Anruferkennung hinzugefügt
+          call_id_mask: Diese Nummer verdecken
+          manage_caller_id: 'Anruferkennung verwalten '
+          add_new: Neu hinzufügen
+        tour_link: Hilfe bei der Einrichtung des Telefonkanals
+        failure_purchase: >-
+          Die Telefonnummer kann nicht erworben werden. Stellen Sie bitte sicher, dass es sich bei der Adresse um eine gültige lokale Adresse in <span class='certification-country'></span> handelt.
+        buy: Nummer kaufen
+        buy_button_text: Kaufen
+        address:
+          address: Adresse
+          state: Bundesland/Kanton/Region
+          city: Ort
+          postal_code: Postleitzahl
+          required_field: Alle Felder sind erforderlich
+          name: Unternehmen / Name
+        setup:
+          info_text: >-
+            Um mit der Nutzung des Telefonkanals zu beginnen, müssen Sie zunächst eine Einwahlnummer erwerben, die Sie Ihren Kunden bereitstellen. Sie können eine lokale Nummer in jedem <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>hier aufgeführten Land</a> kaufen. Wenn Ihre Kunden Sie aus den USA, Großbritannien oder Kanada anrufen, können Sie ihnen auch eine gebührenfreie Telefonnummer anbieten.<br/><br/>Sie können mehrere Telefonnummern aus verschiedenen Ländern erwerben und gebührenfreie Notrufnummern in Freshdesk einrichten, ohne dass Sie dazu einen Service eines Drittanbietern benötigen. Ihnen werden Standardtarife für eingehende, ausgehende und aus dem Helpdesk weitergeleitete Anrufe in Rechnung gestellt. Hier finden Sie weitere Informationen zu den  <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>Anruftarifen</a>.<br/><br/> Sobald Sie eine Telefonnummer für Ihren Support erworben haben, werden alle eingehenden Anrufe an Agenten verteilt, die in Ihrem Helpdesk angemeldet sind. Außerdem gibt es für Ihre Agenten die Option, Anrufe im Browser auszuwählen und anzunehmen oder direkt und automatisch an ihr Telefon weiterleiten zu lassen.
+          title_text: Einrichtung eines Callcenters
+        sidebar_content: >-
+          Über den Telefonkanal können Sie in Ihrem Browser, per Mobiltelefon oder mit dem Telefonkanal der mobilen Apps von Freshdesk Anrufe tätigen und empfangen. Er ist eng in das Ticketingsystem von Freshdesk integriert. So können Sie Anrufe nachverfolgen, indem Sie sie bei Bedarf aufzeichnen und in Tickets umwandeln. <br/><br/> <b>Einrichtung des Telefons</b></br>Um mit der Verwendung des Telefons beginnen zu können, müssen Sie es zunächst aktivieren und eine Supportnummer erwerben. Sie können lokale Nummern in den <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>hier aufgeführten Ländern</a> erwerben und Anrufe von jedem Ort der Welt aus tätigen oder entgegennehmen. Wenn Ihre Kunden Sie in den USA, im Vereinigten Königreich oder in Kanada anrufen, können Sie auch gebührenfreie Supportnummern erwerben (bzw. „freephone“ im Vereinigten Königreich). <br/><br/><b>Kompletten Telefonsupport bieten</b><br/>Mit unserem Telefonkanal können Sie<br/><ul><li>sofort über Ihren Browser oder Ihr Mobiltelefon Anrufe tätigen und entgegennehmen</li><li>Sprachnachrichten erstellen, Anrufe weiterleiten oder an einen beliebigen Agenten an einem beliebigen Ort übertragen</li><li>Anrufe überwachen, sich bei Bedarf einmischen, weitere Agenten zu eingehenden Anrufen hinzufügen und so weiter*</li></ul><br/><p>*Bitte wenden Sie sich an<a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>, um die erweiterten Funktionen für Ihr Konto zu aktivieren. Dazu gehören Überwachung von Anrufen, Einmischen in Anrufe, Konferenzgespräche, Verdecken von Anrufen und Lebensdauerkennzahlen von Anrufen.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Erfahren Sie mehr über die leistungsstarken Fähigkeiten und Funktionen des Telefons</a><p>
+        not_available: Keine Ergebnisse zurückgegeben. Bitte versuchen Sie einen anderen Suchbegriff.
+        manage: Verwalten
+        address_certification_text: >-
+          Um eine Telefonnummer zu kaufen, müssen Sie den Namen Ihres Unternehmens oder Ihre Privatadresse innerhalb von <span class='certification-country'></span> angeben.
+        purchase_alert_text: >-
+          Diese Telefonnummer wird <strong><span class='number-rate'></span> monatlich</strong> in Rechnung gestellt.
+        buy_phone_credits: Telefonguthaben kaufen
+      feature_request_content:
+        success: Wir werden uns innerhalb von zwei Geschäftstagen bei Ihnen melden.
+        recording_info: Zeichnen Sie alle Ihre Anrufe auf und wandeln Sie sie in Tickets um
+        button_text: Anfrage für Aktivierung
+        compare_trial_and_full: Vollversion mit kostenloser Testversion vergleichen
+        activation_disclaimer: Sie können alle Funktionen zeitlich unbegrenzt nutzen
+        learn_more: Mehr erfahren
+        ivr_info: >-
+          Nutzen Sie die Funktionen Anrufüberwachung und Konferenzgespräch, leiten Sie Anrufe über ein Sprachdialogsystem weiter und vieles mehr
+        trial_or: ODER
+        trial_button_text: Kostenlose Testversion aktivieren
+        error_message: Entschuldigen Sie, wir können Ihre Anfrage momentan nicht übermitteln. Bitte versuchen Sie es später wieder.
+        title_text: Telefon
+        trial_version_disclaimer: Sie können begrenzte Funktionen 15 Tage lang kostenlos nutzen
+        pricing: Alle Anrufgebühren und unterstützte Länder anzeigen
+        number_info: Erwerben Sie lokale und gebührenfreie Nummern für mehr als 40 Länder
+        video_title: Schauen Sie sich das Video an, um zu erfahren, welche Funktionen Ihnen im Telefonkanal bereitstehen.
+        heading_text: Bieten Sie Ihren Kunden Support über einen Telefonkanal
+      local: Lokal
+      search: Nach Ziffern oder Wortgruppen suchen
+      ivr:
+        turn_on: 'Ein'
+        simple_message_title: Einfache Nachricht
+        save: Speichern
+        turn_off: 'Aus'
+        rename: umbenennen
+        add_new_option: '  <b>Tastenoption</b> hinzufügen'
+        add_new_menu: Neues <b>Menü</b> hinzufügen
+        male: Männliche Stimme
+        input_number: Die Nummer eingeben
+        invalid_number_format: >-
+          Geben Sie eine gültige Nummer mit dem Präfix „+“ und der Ländervorwahl vor der Nummer ein.
+        ivr_message_title: Sprachdialogsystem (IVR)
+        message_type: Nachrichtentyp
+        action: Aktion
+        female: Weibliche Stimme
+        delete_menu: Menü löschen
+        previewing: Vorschau wird erstellt...
+        saving: Wird gespeichert...
+        add_new_menu_from_option: Neues Menü hinzufügen
+        preview: Vorschau
+        done: fertig
+        keypress: Tastendruck
+        welcome_message: Willkommensnachricht
+      number_settings:
+        read_message: Text in Sprache
+        queue_position_preference: Position in der Warteschleife vorlesen
+        greeting_message: Geben Sie Ihre Nachricht hier ein
+        queue_wait_message: Nachricht für Warteschleife
+        number_accessible: Zugriff möglich durch
+        all_groups: Alle Gruppen
+        record_all: Alle Anrufe aufzeichnen
+        voicemail_on: 'Ein'
+        max_queue_calls: Maximale Anrufanzahl in Warteschleife
+        cancel: Abbrechen
+        routing_message: Wenn mehrere Agenten online verfügbar sind...
+        non_business_hours: Anrufe annehmen während…
+        non_business_hours_message: Nachricht für außerhalb der Geschäftszeiten
+        recorded_voice: Aufgezeichnete Stimme
+        group: 'Nachricht wiedergeben und Agenten anrufen in '
+        queue_position_enable: 'EIN'
+        recording_privacy_public: Für Kunden und Agenten sichtbar
+        call_wait_time: mit maximaler Wartezeit von
+        wait_music: Wartemusik
+        recording_help_info: Schalten Sie das Mikrofon ein. Dauer < 5 Min.
+        record_alert: >-
+          Anfrufaufzeichnungsbestimmungen erfordern in den meisten Ländern, dass Kunden angekündigt wird, dass der Anruf aufgezeichnet wird. Bitte konfigurieren Sie die Begrüßungsnachricht entsprechend.
+        record_none: Anrufe nicht aufzeichnen
+        non_availability_message: Nichtverfügbarkeitsnachricht
+        voicemail_message: Voicemail-Nachricht
+        record_voice: Ihre Stimme aufzeichnen
+        voicemail_off: 'Aus'
+        transcript_voice: Transkriptstimme
+        hunt_type: Anrufweiterleitung
+        name: Name
+        voicemail: Sprachnachricht
+        record_calls: Anrufe aufzeichnen
+        anytime: Rund um die Uhr
+        upload_voice: Audiodateien hochladen
+        business_hours: Geschäftszeiten
+        call_wait_time_suffix: ' pro Anruf'
+        hold_music: Warteschleifenmusik
+        start_recording: Aufzeichnung starten
+        title_text: Ihr Callcenter verwalten
+        attachment_help_text: Akzeptiert Audiodateien (mp3) < 5 MB
+        queue_position_disable: 'AUS'
+        queue_position_message_placeholder: 'Sie befinden sich derzeit in der Warteschleife. Ihre Warteposition ist {{queue.position}}'
+        preparing_recording: Ihre Nachricht wird vorbereitet...
+        info_content: >-
+          <b>Zuweisung von Anrufen an Agenten und Gruppen</b></br>Sie können ein interaktives Sprachdialogsystem (IVR) einrichten und Anrufe an verschiedene Gruppen oder Agenten Ihres Teams weiterleiten. Beispiel: Ihre Kundenanrufe können an Ihr Supportteam weitergeleitet werden, wenn sie 1 drücken, oder an jemanden im Vertrieb, wenn 2 gedrückt wird.<br/>Zusätzlich können Sie die Nachrichten einrichten, die für Ihre Kunden abgespielt werden. Zeichnen Sie dazu Ihre Stimme auf und laden die Datei hoch oder verwenden die Text-in-Sprache-Funktion.<br><br><b>Anpassung Ihrer Nummern</b><br>Sie können außerdem sämtliche Ihrer Nummern unabhängig voneinander konfigurieren und anpassen. Dazu gehören Grundeinstellungen wie z. B. die maximale Zahl der Personen in der Warteschleife und die maximale Wartezeit für Ihre Kunden. Sobald eine der Nummern erreicht wird, wird Ihren Kunden automatisch eine Nichtverfügbarkeitsnachricht abgespielt.<br/>Wenn Sie die Möglichkeit zur Anrufaufzeichnung aktivieren, werden alle Telefonanrufe in Ihrem Helpdesk aufgezeichnet und diese den Tickets angehängt. Die Aufzeichnungen können den Kunden verfügbar gemacht werden oder privat bleiben. Sie können Ihren Telefonkanal so einrichten, dass außerhalb der Geschäftszeiten keine Anrufe entgegen genommen werden. Beispiel: Sie können zwei Supportleitungen bereitstellen, eine für Anrufe während der üblichen Geschäftszeiten und eine weitere Notrufnummer mit hoher Priorität, die rund um die Uhr verfügbar ist.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Hier erfahren Sie mehr über die Anpasssungsmöglichkeiten Ihrer Telefonnummer</a>
+        recording_privacy: Sichtbarkeit der Aufzeichnung
+        audio_upload: Hochladen
+        recording_privacy_private: Nur für Agenten sichtbar
+        business_calendar: Geschäftszeit auswählen
+        queue_position_message_alert: >-
+          Verwenden Sie den Platzhalter {{queue.position}}<br/>, um die Warteposition vorzulesen, z. B. Sie befinden sich derzeit in der Warteschleife. Ihre Wartepostion ist {{queue.position}}
+        name_placeholder: Geben Sie einen Anzeigenamen für Ihre Nummer ein.
+        welcome_message: Willkommensnachricht
+        change: Ändern
+        stop_recording: <span></span>Aufzeichnung stoppen
+      trial:
+        request_activation_msg: >-
+          Während des Telefon-Testzeitraums können Sie nur eine Nummer aus einem begrenzten Satz Länder verwenden.<br> Wenn Sie die Vollversion aktivieren, können Sie aber mehrere Nummern aus 41 Ländern erwerben
+        activate_btn_text: Anfrage für Aktivierung
+        numbers:
+          search:
+            after_activation_request: >-
+              Sie haben die Aktivierung Ihres Telefon-Kanals angefordert. <br> Wir werden uns innerhalb von zwei Geschäftstagen bei Ihnen melden
+            buy_confirmation: Möchten Sie diese Nummer wirklich wählen?
+            can_use_after_activation: >-
+              Sie können diese Nummer weiterhin benutzen, wenn Sie den Telefonkanal aktivieren.
+        requested_activation: Wir haben Ihre Anfrage für Aktivierung erhalten<br>Sie ist in Bearbeitung
+    subscription:
+      recharge_now_text: Erhöhen Sie Ihr Guthaben mit einer einmaligen Zahlung
+      purchase_credits: Guthaben Kaufen
+      setup_auto_recharge: Automatisches Aufladen einrichten
+      auto_recharge_amt: Betrag für automatisches Aufladen
+      see_detailed_pricing: Detaillierte Bepreisung anzeigen
+      followup_text: äquivalente Freshfone-Credits
+      auto_recharge_text: Wir belasten Ihr Konto nur, wenn das Guthaben unter 5 $ liegt
+      purchase_text: Telefon-Guthaben kaufen
+      current_balance: Ihr aktuelles Guthaben
+      followup: äquivalente Telefon-Credits
+      no_credit_card_text: Geben Sie die Zahlungsinformationen ein, um Telefon-Guthaben zu kaufen
   special_beta_offer: Sonderangebot für Beta-Konten
   days: Tage
   tickets_filter:

@@ -2,6 +2,7 @@ module EmailNotificationConstants
 
  # Email notification constants as part of adding custom variables in the email headers(for Mailgun)
 
+  REQUEST_FRESHFONE_FEATURE = 25
   PREVIEW_EMAIL = 26
   IMPORT_EMAIL = 27
   IMPORT_ERROR_EMAIL = 28
@@ -26,6 +27,7 @@ module EmailNotificationConstants
   BILLING_FAILURE = 47
   RECHARGE_FAILURE = 48
   OPS_ALERT = 49
+  FRESHFONE_OPS_NOTIFIER = 50
   ACCOUNT_CLOSING = 51
   CALL_RECORDING_DELETION_FAILURE = 52
   PHONE_TRIAL_REMINDER = 53
@@ -91,6 +93,7 @@ module EmailNotificationConstants
 
 
   NOTIFICATION_TYPES = {
+    REQUEST_FRESHFONE_FEATURE =>  "Request Freshfone Feature",
     PREVIEW_EMAIL =>  "Preview Email",
     IMPORT_EMAIL =>  "Import Email",
     IMPORT_ERROR_EMAIL =>  "Import Error Email",
@@ -115,6 +118,7 @@ module EmailNotificationConstants
     BILLING_FAILURE =>  "Billing Failure",
     RECHARGE_FAILURE =>  "Recharge Failure",
     OPS_ALERT =>  "Ops Alert",
+    FRESHFONE_OPS_NOTIFIER =>  "Freshfone Ops Notifier",
     ACCOUNT_CLOSING =>  "Account Closing",
     CALL_RECORDING_DELETION_FAILURE =>  "Call Recording Deletion Failure",
     PHONE_TRIAL_REMINDER =>  "Phone Trial Reminder",

@@ -8,7 +8,9 @@ class Freshcaller::Account < ActiveRecord::Base
 
   belongs_to_account
   publishable on: [:create, :destroy, :update]
-  concerned_with :presenter
+  concerned_with :presenter, :constants
+
+  serialize :settings, Hash
 
   before_save :construct_model_changes, on: :update
   before_destroy :save_deleted_freshchat_account_info

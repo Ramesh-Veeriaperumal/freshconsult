@@ -1,0 +1,30 @@
+development:
+  node_url: "http://localhost:5000"
+  secret_key: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
+  signing_key: "l4nWU7delNXw23nViOFLFGDHkQDKXh_mXv0w9KN_hBY"
+  verification_keys: ["iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"]
+  jwt_default_expiry: 10
+  ops_alert:
+    call:
+      from: "+12345646409"
+      to: ["+918056045905", "+917373157814"]
+    mail:
+      from: "freshfone@freshworks.com"
+      to: "freshfone@freshworks.com"
+  freshfone_request:
+    to: "support@freshfone.freshdesk.com"
+test:
+  node_url: "http://localhost:5000"
+  secret_key: "28f7d044ce559caa0b730360c75ddb2dc529fd9a82a91c151ca381a09f01ae5c"
+  signing_key: "iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"
+  verification_keys: ["iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"]
+  jwt_default_expiry: 100
+  ops_alert:
+    call:
+      from: "+12345646409"
+      to: ["+918056045905", "+917373157814"]
+    mail:
+      from: "freshfone@freshworks.com"
+      to: "freshfone@freshworks.com"
+  freshfone_request:
+    to: "support@freshfone.freshdesk.com"

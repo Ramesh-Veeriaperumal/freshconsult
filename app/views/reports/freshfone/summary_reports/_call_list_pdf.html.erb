@@ -1,0 +1,57 @@
+<!--Copyright © 2014 Freshdesk Inc. All Rights Reserved.-->
+<div id="freshfone-report-content">
+  <div class="row-fluid  report-summary" id="metric_container">
+    <div>
+      <h3 class="header-lead"><span><%= t('helpdesk_reports.summary') %>  </span>
+        <div class='pull-right'>
+          <% if external_transfers_count(calls) != 0 %>
+            <div class='report-no-external-msg muted'><%=t('reports.freshfone.no_external')%></div>
+          <%end%>
+        </div>
+      </h3>
+      <div class="row-fluid report-summary-wrapper">
+        <%= render :partial => "reports/freshfone/summary_reports/call_metrics.html.erb", :locals => { :calls => calls, :old_calls => old_calls } %>
+      </div>
+    </div>
+    <div class="row-fluid control-group">
+      <div class="vertical-alignment time-sheet-top-margin">
+        <strong><%=t('reports.freshfone.summary_title')%></strong>
+      </div>
+    </div>
+    <div class="grid-pdf report-pdf row-fluid"> 
+      <table class = "table-print-pdf" width="100%">
+        <thead>
+          <tr style="text-align:left">
+            <% table_headers.keys.each do |header| %>
+              <% concat content_tag :th, h(table_headers[header]), :class => header %>
+            <% end %>
+          </tr>
+        </thead>
+        <% if calls.size > 0 %>
+          <% max_row_limit = params[:scheduled_report] ? HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:schedule][:pdf] : HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:pdf] %>
+          <% exceeds_row_limit = false %>
+          <% if calls.size > max_row_limit %>
+            <% calls = calls.take(max_row_limit)  
+               exceeds_row_limit = true %>
+          <% end %>
+          <%= render :partial => "reports/freshfone/summary_reports/calls.html.erb", :object => calls ,:locals=>{:headers => table_headers, :call_type =>call_type.to_i, :exceeds_limit => exceeds_row_limit, :max_row_limit => max_row_limit } %>  
+        <%else%>
+          <tr style="text-align:center">
+            <td colspan="<%=table_headers.length%>">            
+              <div class="list-noinfo"><%=t('reports.no_data')%></div>
+            </td>         
+          </tr>
+        <%end%>
+      </table>
+      
+    </div>
+
+    <!--end call list-->
+  </div>
+</div>
+
+<% if exceeds_row_limit %>
+  <div class="export-exceeds-row-limit"> 
+    <%= t('helpdesk_reports.export_exceeds_row_limit_msg') % {:row_max_limit => max_row_limit}%>
+  </div>
+<% end %>

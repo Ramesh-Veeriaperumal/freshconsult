@@ -103,7 +103,7 @@ window.xhrPool = [];
     };
 
     hideActivePopovers = function (ev) {
-      $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover],[rel=more-agents-hover]').each(function(){
+      $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover],[rel=more-agents-hover],[rel=ff-alert-popover]').each(function(){
         if (ev.target != $(this).get(0))
           $(this).popover('hide');
 
@@ -169,6 +169,47 @@ window.xhrPool = [];
             if(widgetPopup) widgetPopup.popover('hide');
             hoverPopup = false;
           },1000);
+      });
+
+    $('body').on('mouseenter', "[rel=ff-alert-popover]", function(ev) {
+        ev.preventDefault();
+        var element = $(this);
+        // Introducing a slight delay so that the popover does not show up
+        // when just passing thru this element.
+        var timeoutDelayShow = setTimeout(function(){
+          clearTimeout(hidePopoverTimer);
+          hideActivePopovers(ev);
+          widgetPopup = element.popover('show');
+          hoverPopup = true;
+        }, 500);
+        element.data('timeoutDelayShow', timeoutDelayShow);
+
+      }).on('mouseleave', "[rel=ff-alert-popover]", function(ev) {
+            clearTimeout($(this).data('timeoutDelayShow'));
+            hidePopoverTimer = setTimeout(function() {
+              $('.hover-card-agent').parent().remove();
+            },300);
+      });
+
+    $('body').on('mouseenter', "a[rel=ff-hover-popover]", function(ev) {
+          ev.preventDefault();
+          if(freshfoneuser.isOffline()){ return;}
+          var element = $(this);
+          // Introducing a slight delay so that the popover does not show up
+          // when just passing thru this element.
+          var timeoutDelayShow = setTimeout(function(){
+            clearTimeout(hidePopoverTimer);
+            hideActivePopovers(ev);
+            widgetPopup = element.popover('show');
+            hoverPopup = true;
+          }, 300);
+          element.data('timeoutDelayShow', timeoutDelayShow);
+
+        }).on('mouseleave', "a[rel=ff-hover-popover]", function(ev) {
+            clearTimeout($(this).data('timeoutDelayShow'));
+            hidePopoverTimer = setTimeout(function() {
+              $('.hover-card-agent').parent().remove();
+            },1000);
       });
 
     $('body').on("click", "a[rel=widget-popover], a[rel=click-popover-below-left]", function(e){

@@ -2456,6 +2456,7 @@ sl:
         security: Varnost
         email_commands_setting: E-poštni ukazi
         billing: Naročnine & obračuni
+        freshfone: Freshfone
         tags: Tags
         mobihelp: Mobihelp
         customer-portal: Portal za kupce
@@ -2809,6 +2810,7 @@ sl:
         success: Integracija je uspešna
         error: Napaka pri vzpostavitvi integracije
         cti_error: Multiple integrations of type CTI can not be enabled.
+        freshfone_enabled: CTI integration can not be enabled along with freshfone
       update:
         success: Spremembe integracije uspešno shranjene
         error: Napaka pri nastavitvi integracije
@@ -2856,6 +2858,20 @@ sl:
       page_unavailable: >-
         Opravičujemo se, ta stran trenutno ni dostopna. Prosimo kontaktirajte
         administratorja za več informacij
+    freshfone:
+      credits:
+        success: Successfully purchased Freshfone Credits
+        error: Error purchasing Freshfone Credits
+        invalid_recharge_amount: Enter a valid recharge amount
+      number:
+        success: Number successfully added to your Freshfone account
+        error: Error purchasing number for your Freshfone account.
+        blank_message: '%{num_type} cannot be blank'
+        invalid_message_length: '%{num_type} shouldn''t exceed 4096 characters'
+        add_blacklist_success: Number blocked successfully
+        add_blacklist_failure: Number could not be blocked
+        remove_blacklist_success: Number unblocked successfully
+        remove_blacklist_failure: Number could not be unblocked
     profile:
       api_key:
         reset_success: Ključ API-ja je bil uspešno resetiran
@@ -8109,6 +8125,46 @@ sl:
     customer_activity_title: Poročilo o aktivnostih
     helpdesk_activity_title: Poročilo o aktivnostih podpore
     satisfaction_title: Poročilo o zadovoljstvu
+    freshfone:
+      options:
+        incoming: Dohodni
+        outgoing: Odhodni
+        all_groups: Vse skupine
+        unassigned: Nedodeljeno
+      range_exceed: Range cannot exceed 90 days
+      filter_by_title: Filtrirano po
+      time_period: Časovno obdobje
+      report_title: Freshfone Summary
+      summary_title: 'Povzetek klepeta z agentom '
+      agent: Agent
+      group: Skupina
+      call_type: Vrsta klica
+      filter_report: Filtiraj poročilo po
+      select_agent: Select Agent
+      select_group: Select Group
+      select_call_type: Izberite vrsto klepeta
+      select_number: Select a Number
+      all_numbers: Vse številke
+      all_call_types: All
+      number: Številka
+      avg_handle_time: Povprečni čas obravnave
+      num_of_calls: Število klicev
+      total_answered: Answered Calls
+      total_voice_mail: Glasovna pošta
+      total_duration: Total Duration
+      agent_calls_count: Calls
+      total_unanswered_calls: Neodgovorjeni klici
+      num_of_transfered: Št. prenosov
+      unanswered_transfers: Neodgovorjeni prenosi
+      answered_percentage: Answer %
+      generate_summary: Izdelaj
+      filter_close: Zapri
+      unanswered_count: Neodgovorjeno
+      includes_transfer: Includes transferred calls
+      no_agent: '- Ni agenta -'
+      business_hours: Delovni čas
+      filter_option_all_calls: Vsi klici
+      no_external: 'Prenosi, narejeni na zunanje številke, niso vključeni'
     time_sheets:
       billable: Obračunane ure
       non_billable: Neobračunane ure
@@ -8999,6 +9055,408 @@ sl:
     recording_on_process: >-
       The recording is being processed. <a href='#' target='_parent'
       id='checkfreshfoneaudio'>Check</a> again in a few minutes
+    not_enough_credit: Not Enough Credit!
+    recharge: Recharge
+    number: Freshfone Number
+    subscription:
+      auto_recharge_text: We'll only charge your account when the balance falls below $5
+      current_balance: Your current balance
+      purchase: Purchase Freshfone Credits
+      setup_auto_recharge: Setup Auto Recharge
+      no_credit_card: Enter payment information to purchase Freshfone credits
+      recharge_now_text: Refill your balance with a one-time payment
+      auto_recharge_amt: Auto Recharge Amount
+      see_detailed_pricing: See Detailed Pricing
+      followup_text: worth Freshfone credits
+      followup: worth Freshfone credits
+      purchase_credits: Nakup dobroimetja
+    dialpad:
+      not_valid_number: Please enter a valid number
+      could_be_invalid_number: Could be an invalid number.
+      invalid_number_continue_call: Press call button again
+      not_enough_credit: Not Enough Credit
+      restricted_country: Restricted country
+      already_in_call: Simultaneous outgoing call restricted
+    call_status:
+      default: ''
+      completed: Completed
+      blocked: Blocked
+      busy: Busy
+      missedcall: Missed call
+      noanswer: No answer
+      canceled: Canceled
+      failed: Failed
+      in_progress: In progress
+      voicemail: Voicemail
+      restricted: Restricted
+      all_calls: All Calls
+    general:
+      suspended_account: >-
+        Your Freshfone account is currently suspended. Please enable Freshfone
+        to make and receive calls
+      suspended_on_low_balance: >-
+        Your Freshfone account is currently suspended. Please recharge to
+        activate your account
+    dashboard:
+      in_conversation: In-conversation
+      available_agents: Available Agents
+      freshfone_recharge_alert: >-
+        Freshfone is currently unavailable. To make and receive calls please
+        contact your account administrator.
+      admin_freshfone_recharge_alert: >-
+        Freshfone is currently unavailable due to low balance. <a
+        href='/subscription'> Recharge </a> immediately to make and receive
+        calls.
+    widget:
+      ignore: Ignore
+      accept: Accept
+      end_call: End Call
+      mute: Mute
+      transfer_call: Transfer Call
+      dialpad: Dialpad
+      call_notes: Call Notes
+      on_phone: Available on Phone
+      on_browser: Available on Browser
+      invalid_phone_number: >-
+        Please update your phone number with '+' prefix and country code in
+        Profile Settings
+      no_calls: No recent calls found
+      available: Accepting calls
+      unavailable: Not accepting calls
+      busy: Ongoing Call
+      recent_calls: Recent Calls
+      transferring: <span>Transferring Call</span><br />Please wait...
+      transfer_agents: Search Available Agents...
+      unavailable_agents: Agents are not available to transfer call
+      agents_count_in_group: '%{count} agents available'
+      ticket_info: >-
+        Create new ticket or add note to existing ticket with the notes and
+        recording. 
+      add_note: Add Notes
+      note_placeholder: Add call notes...
+      new_ticket: Save as new ticket
+      save_to_existing: Save to an existing ticket
+      ignore_ticket: Do not convert to Ticket
+      ignore_ticket_info: Your recordings will be available in Call History
+      back: Go Back
+      subject: Ticket Subject
+      requester_name: Requester Name
+      requester_email: Requester Email
+      save: Save
+      notes: Notes
+      new_requester: New requester
+      inactive: Freshfone low on credit. Contact Account admin
+      forward_number_alert: >-
+        Please update your phone number in Profile Settings to forward calls to
+        your phone
+      desktop_notification: Turn on desktop notification
+    call_history:
+      title: Call History
+      sort_by: 'Sorted by:'
+      singular_active_number: Active Number
+      none_active_number: '- none -'
+      active_number: Active Number
+      singular_deleted_number: Deleted Number
+      deleted_number: Deleted Number
+      block_number: Block
+      cancel: Cancel
+      blacklist_confirmation: Are you sure to block
+      show_deleted: Show deleted numbers
+      filtered_by: 'Filtered by:'
+      filter_by_number: Number
+      filter_by_time: Time Period
+      filter_by_agent: Agent
+      filter_by_group: Incoming Calls to Group
+      filter_by_call_status: Call Type
+      filter_by_caller: Requester
+      received_date: Date
+      duration: Duration
+      cost: Cost
+      asc: Ascending
+      desc: Descending
+      all_time: All time
+      today: Today
+      yesterday: Yesterday
+      this_week: Last 7 Days
+      this_month: Last 30 Days
+      month: 'Last %{month} months'
+      custom: Date Range
+      no_calls: No Calls found
+      view_transferred_calls: View transfered calls
+      save_ticket: Convert to ticket
+      convert: Convert
+      helpdesk: Helpdesk
+      unblock_number: Unblock
+      block_number_title: Block number
+      filter_option_all_agents: All Agents
+      filter_option_all_calls: All Calls
+      filter_option_received_calls: Incoming
+      filter_option_outgoing_calls: Outgoing
+      filter_option_missed_calls: Missed
+      filter_option_voicemail: Voicemail
+      filter_option_blocked_calls: Blocked
+    ticket:
+      recording: Play message
+      ticket_desc_with_name: >-
+        Conversation with <b> %{customer_name} </b> (%{customer_number},
+        %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >
+      ticket_desc_with_out_name: >-
+        Conversation with %{customer_number} (%{location}) and <b>%{agent}</b>
+        (%{agent_number})<br/ >
+      voicemail_ticket_desc_with_out_name: 'Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}'
+      voicemail_ticket_desc_with_name: >-
+        Voicemail from with <b>%{customer_name}</b> (%{customer_number},
+        %{location}) to %{freshfone_number}
+      agent_detail: 'and <b>%{agent}</b> (%{agent_number})<br/ >'
+      dial_a_number_with_name: >-
+        Conversation with <b>%{customer_name}</b> (%{customer_number},
+        %{location}) . Call connected from IVR Direct dial
+      dial_a_number_with_out_name: >-
+        Conversation with %{customer_number} (%{location}). Call connected from
+        IVR to number: %{direct_dial_number}
+      default_subject: 'Call with %{customer} on %{call_date}'
+      voicemail_subject: 'Voicemail from %{customer}'
+      human_name: ticket
+      view: View
+    note:
+      human_name: note
+      view: View
+    create:
+      success:
+        with_link: 'The %{human_name} has been created  %{link}'
+    admin:
+      important: Pomembno
+      general: General
+      settings: Nastavitve
+      greetings: Greetings
+      messages: Messages
+      freshfone_numbers: Freshfone Numbers
+      disable_alert: >-
+        <b>Important:</b> Disabling your freshfone account will not prevent the
+        monthly rental on your freshfone numbers. To avoid getting charged,
+        please delete the purchased numbers. 
+      purchase_credit: >-
+        Purchase Freshfone credits to buy local or toll-free numbers and start
+        using Freshfone
+      purchase_numbers: >-
+        Buy local or toll-free numbers to start using Freshfone and support your
+        customers over phone
+      search: Search by digits or phrases
+      local: Lokalne
+      toll_free: Toll-Free
+      number:
+        simultaneous: Call all agents
+        round_robin: Call idle agent first
+      number_settings:
+        title: Managing your call center with Freshfone
+        info: >-
+          <b>Assigning phone calls to agents and groups</b><br/>You can use
+          Freshfone to setup a interactive voice response system (IVR) and route
+          calls to different groups or agents in your team. For example, you
+          could have your customers calls forwarded to your Support team when
+          they press 1, and to somebody from Sales when they press
+          2.<br/>Additionally, you can also customize the interactive messages
+          that will be played back to your customers by recording your voice,
+          uploading a file or using the text-to-speech
+          feature.<br><br><b>Customizing your Freshfone number</b><br>You could
+          also configure each and every Freshfone number separately and let it
+          have it’s own set of customizations. This includes basic settings such
+          as the maximum number of people on the queue and maximum waiting time
+          for your customers. Once either of them are reached, a
+          non-availability message will be played to your customers
+          automatically.<br/>When you enable call recording, every phone call
+          across your helpdesk is recorded and gets attached to your tickets.
+          You can also restrict Freshfone from taking calls during non-business
+          hours. For example, you could set up two support lines, one of which
+          will be available to take calls only during working hours, and another
+          high-priority helpline that will be available 24x7.<br/><br/>
+        non_business_hours: Accept Calls during…
+        business_calendar: Select Business Hour
+        transcript_voice: Transcript Voice
+        text_to_speech: Text to speech
+        record_calls: Record Calls
+        voicemail: Odzivnik
+        voicemail_on: Vklopljeno
+        voicemail_off: Izklopljeno
+        record_all: Snemanje vseh klicev
+        record_none: Brez snemanja klicev
+        record_alert: >-
+          Call recording guidelines in most countries require notifying
+          customers that their calls are being recorded. Please configure the
+          greetings message accordingly.
+        max_queue_calls: Maximum Calls in Queue
+        call_wait_time: with maximum wait time of
+        call_wait_time_suffix: ' per call'
+        wait_message: Wait Message
+        non_availability_message: Non-Availability Message
+        voicemail_message: Voicemail Message
+        non_business_hours_message: Non-Business hours message
+        welcome_message_alert: Welcome message not play when IVR is enabled
+        welcome_message: Welcome Message
+        record_voice: Record your voice
+        upload_voice: Upload audio files
+        read_message: Text to speech
+        start_recording: Začni snemanje
+        stop_recording: <span></span>Stop Recording
+        preparing_recording: Priprava vašega sporočila ...
+        recorded_voice: Recorded Voice
+        audio_upload: Select file to upload
+        greeting_message: Vnesite vaše sporočilo tu
+        attachment_help_info: Accepts audio files < 5mb
+        recording_help_info: Turn on the microphone. Duration < 5 mins.
+        cancel: Prekliči
+        change: Spremeni
+        group: 'Play message and call agents in '
+        call_hunting_group: Group
+        all_groups: Vse skupine
+        business_hours: Delovni čas
+        anytime: 24/7 Anytime
+        name: Ime
+        name_placeholder: Vnesite prijazno ime za številko
+        hunt_type: Call Routing
+        routing_message: When multiple agents are available online...
+        recording_privacy: Recording Visibility
+        recording_privacy_public: Visible to customers and agents
+        recording_privacy_private: Visible only to agents
+        name_maxlength: Name cannot have more than 255 Characters
+        number_accessible: Dostopno
+        attachment_help_text: Accepts audio files < 5mb
+      numbers:
+        title: Support customers with Freshfone
+        info: >-
+          Freshfone is Freshdesk’s integrated telephony system. You can set up
+          Freshfone to receive support calls through your browser or phone, and
+          make outbound calls to customers. Freshfone also allows you to keep a
+          record of all calls, and convert interesting phone conversations into
+          tickets. You could also avoid calls from certain numbers by blocking
+          them in the call history. <br/><br/> <b>Setting up
+          Freshfone</b><br/>To start using Freshfone, you will first need to
+          enable it, and purchase an incoming support number. Freshdesk
+          currently lets you purchase phone numbers in 28 countries. If your
+          customers will be calling you in the US, UK or Canada you can also
+          purchase toll-free support numbers (or freephone in the UK).
+          <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated
+          Voice Response (IVR) systems in Freshfone to better categorize
+          customers when they call your support number, and channelize them to
+          the right department, team or agent. Freshfone lets you create upto 2
+          levels of Smart IVRs.
+        purchase_number: Purchase Number
+        purchase_phone_number: 'Buy Number (%{number})'
+        buy: Nakup številke
+        buy_button_text: Kupi
+        purchase_loading_text: Purchasing...
+        buy_loading_text: Buying...
+        purchase_alert_text: >-
+          This phone number will be charged <strong><span
+          class='number-rate'></span> monthly</strong>.
+        not_available: No results returned. Please try a different search term
+        address_certification_text: >-
+          To buy a phone number, You are required to provide your company or
+          personal address within <span class='certification-country'></span>.
+        purchase_confirm: Are you sure?
+        delete_alert: >-
+          A number once deleted cannot be purchased again. Are you sure you want
+          to delete the number?
+        manage: Upravljanje
+        cannot_purchase: Unable to purchase number for your Freshfone account
+        insuffcient_credits: >-
+          Your Freshfone credit is too low to purchase a new number. Please
+          recharge and try again
+        address:
+          name: Company / Name
+          address: Naslov
+          city: Kraj
+          state: Zvezna država/provinca/regija
+          postal_code: Poštna številka
+          country: Country
+          required_field: All fields are required
+        setup:
+          title: Setting up Freshfone
+          info: >-
+            In order to get started with Freshfone, you will first need to
+            purchase a call-in number to offer your customers. You can purchase
+            a Local number in any of 28* countries that Freshfone currently
+            supports. If your customers will be calling you from the US, UK or
+            Canada, you can also offer them a Toll-free dial in
+            number.<br/><br/>You can purchase multiple Freshfone numbers from
+            various countries and setup toll-free helplines inside Freshdesk
+            without using any third party service. You will be charged standard
+            rates for incoming, outgoing and forwarding calls from your
+            helpdesk.<br/><br/> Once you have purchased a Freshfone number for
+            your support helpline, all incoming calls will be distributed to
+            agents who are logged in to your helpdesk. In addition, your agents
+            can choose to pick up phone calls from inside the browser or have
+            them forwarded to their desk phone automatically.
+        caller_id:
+          manage_caller_id: 'Upravljanje ID-ja kličočega '
+      invalid_attachment: >-
+        Attachment '%{name}' is not a valid audio file/ its size is greater than
+        5MB
+      ivr:
+        simple_message_title: Simple Message
+        ivr_message_title: Interactive voice response (IVR)
+        welcome_message: Welcome Message
+        message_type: Message Type
+        transcript_voice: Transcript Voice
+        text_to_speech: Text to speech
+        turned_off: >-
+          Welcome message is turned OFF. All incoming calls will directly reach
+          your helpdesk.
+        turned_on: Welcome message will be played for all incoming calls.
+        turn_on: Vklopljeno
+        turn_off: Izklopljeno
+        add_new_menu: Add New <b>Menu</b>
+        add_new_menu_from_option: Add new menu
+        add_new_option: Add <b>Keypress</b> Option
+        keypress: Keypress
+        input_number: Enter the number
+        action: Dejanje
+        male: Male Voice
+        female: Female Voice
+        rename: rename
+        done: končano
+        save: Shrani
+        saving: Shranjujem...
+        preview: Predogled
+        previewing: Previewing...
+        delete_menu: Delete menu
+        jump_to: Jump To
+        call_agent: Call Agent
+        call_agent_group: Call Agent Group
+        call_number: Call Number
+        back_to_menu: Back to main menu
+        invalid_performer_type: Invalid Performer Type
+        invalid_number: 'Invalid number in menu %{menu}'
+        restricted_country: 'Restricted country''s number in menu %{menu}'
+        invalid_jump_to: 'Cannot have ''Jump To'' for non-root menu %{menu}'
+        seed_message: Welcome to customer support
+        seed_menu_name: Welcome/Start Menu
+        invalid_number_format: >-
+          Enter valid phone number with '+' prefix and country code in front of
+          the number
+      welcome_page:
+        title: Welcome to Freshfone
+        title_text: Telefon
+      feature_request_content:
+        title: Freshfone
+        heading: Support your customers with Freshfone
+        about_numbers: Purchase support numbers from across the globe
+        about_ivr: Create IVR's and route calls to the right agents
+        about_recording: Record customer conversations and access it anywhere
+        read_more: Read more
+        pricing: Oglejte si vse cenike za klicanje in podprte države
+        email_subject: 'Freshfone Request - %{account_name}'
+        email_message: Need Freshfone Feature
+        success_message_flash: >-
+          Thanks for your interest in Freshfone. We will get back to you
+          shortly.
+        error_message: Sorry we can not make your request right now. Try again later.
+        additional_note: Freshfone request will take two business days
+        button_label: Request for Freshfone
+        learn_more: Več o tem
+        trial_or: ALI
+        title_text: Telefon
+      freshfone_numbers_title: Telefon
   livechat:
     feature_request:
       title: Welcome to Live Chat

@@ -92,6 +92,18 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:freshcaller_enabled?)
   end
 
+  def test_archive_ticket_conversations_with_fone_call
+    Account.any_instance.stubs(:freshfone_enabled?).returns(true)
+    archive_ticket = create_archive_ticket({ freshfone_call: true })
+    get :ticket_conversations, controller_params(id: archive_ticket.display_id)
+    archive_ticket.archive_notes.reload
+    assert_response 200
+    conversations = JSON.parse(response.body)
+    assert (conversations.any? { |note| note.key?('freshfone_call') })
+  ensure
+    Account.any_instance.unstub(:freshfone_enabled?)
+  end
+
   def test_archive_twitter_ticket_with_restricted_twitter_conversations
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
     CustomRequestStore.store[:private_api_request] = false
@@ -182,6 +194,7 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
         create_conversations: true,
         create_association: true,
         create_note_association: true,
+        create_freshfone_call: options[:freshfone_call] || false,
         create_freshcaller_call: options[:freshcaller_call] || false,
         create_twitter_ticket: options[:twitter_ticket] || false,
         tweet_type: options[:twitter_ticket] ? options[:tweet_type] : nil

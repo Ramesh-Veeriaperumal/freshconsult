@@ -71,4 +71,11 @@
   </div>
 </div>
 
+<script type="text/javascript">
+  Fjax.Assets.plugin('360player');
+  try {
+    freshfonePlayerSettings();
+  } catch(e) { console.log("freshfonePlayerSettings not loaded"); }
+</script>
+
 <% content_for :layoutType do -%>ticket_details<%- end %>

@@ -41,7 +41,7 @@ module Tickets
       end
 
       def archive_disabled?
-        render_request_error :access_denied, 403 if current_account.launched?(:disable_archive)
+        render_request_error :access_denied, 403 if current_account.disable_archive_enabled?
       end
 
       def launch_party_name

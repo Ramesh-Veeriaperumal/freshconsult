@@ -1,0 +1,870 @@
+.outgoing {
+	direction: ltr;
+	margin: 0;
+	li {
+		padding: 7px 2px;
+		.icon-headphones {
+			font-size: 22px;
+			padding: 5px 10px;
+			background-image: none;
+			margin: 0;
+			color: #FCFCF5;
+			text-shadow: -1px -1px 0px #333;
+		}
+	}
+	.availabilityOnPhone.active {
+		background-color:$popuptab-toggle-active;
+		box-shadow:0 3px 6px rgba(0,0,0,0.3) inset;
+	}
+}
+
+.popupbox-content.freshfone_content_container{
+	line-height: normal;
+	direction:ltr;
+}
+
+.popupbox-content {
+	direction: ltr;
+	.recent_calls_container{
+		p {
+			margin-bottom: 0;
+		}
+	}
+	.triangle{
+		margin: 0;
+	}
+	.caller_id_icon {
+    left: 15px;
+    color: #999;
+    position: absolute;
+    line-height: 35px;
+    font-size: 13px;
+    z-index: 999;
+    cursor:pointer;
+    &:hover{ color: #333;} 
+    &.single_number { 
+      color: #333;
+      cursor: text; 
+    }
+  }
+	#freshfone_dialpad{
+		width: 298px;
+		max-height: 432px;
+		display: inline-block;
+		border: 1px solid $popup-content-border;
+		border-bottom: 4px solid #444;
+		border-radius: 4px;
+		.ff-trial-activate{
+			background-color: #ffffff;
+			height: 430px;
+			.content{
+				font-size: 14px;
+				.activation_requested{
+					@include padding(15px 30px 0px);
+				}
+				.info{
+					padding: 10px;
+					div{
+						padding-top:5px;
+					}
+				}
+				.error{
+					padding-top: 80px;
+					font-size: 14px;
+				}
+				.btn{
+					margin-top: 20px;
+					height: 20px;
+					padding-top: 9px;
+					background-color: #ffffff;
+					color: #034FC9;
+				}
+			}
+		}
+	}
+  #recent_calls_cont{
+    height:200px;
+    width:100%;
+  }
+  #dial-pad{
+    height:78px;
+    background-color: #EAEAEA;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  } 
+  #ongoing_call_dialpad{
+    height: 224px;
+    background-color: #EAEAEA;
+    border-radius: 3px;
+    position: fixed;
+    bottom: 41px;
+    left: $ongoing-popup-left;
+    min-width: $ongoing-popup-width;
+    border:$ongoing-context-border;
+    box-shadow: 0px 10px 20px 0px rgba(0,0,0,0.1);
+    z-index: $ongoing-popup-z-index;
+  }
+	.keypad-popup {
+		border:none;
+    margin-top: 170px;
+	}
+	#ongoing_dialpad{
+		width: $ongoing-popup-width;
+		display: inline-block;
+	}
+  .ongoing_dialpad{
+  	margin: 0 !important;
+  }
+	.outgoing_numbers_list_dropdown {
+    background: white;
+		color:#333;
+		border: none;
+    box-shadow: 0 10px 40px -12px #333;
+    border-radius: 4px 4px 4px 4px;
+    left: 1px !important;
+    width: 298px !important;
+    bottom: 4px !important;
+    top: 36px !important;
+    .select2-search{
+    	padding: 0 8px 8px 7px;
+    	background-color: #EAEAEA;
+    }    
+    .select2-search input{
+    	min-height: 34px !important;
+    	font-size: 16px;
+    }
+		.select2-result-label{
+		        overflow: hidden;
+		        white-space: nowrap;
+		        text-overflow: ellipsis;  
+		}
+		.select2-results{
+             background:#fff;
+             max-height: 335px;
+             padding: 0 !important;
+             margin: 0 !important;
+            li{
+		        border-bottom: 1px solid #ddd;
+		        padding: 3px;
+		        color:#333;
+
+		    }
+		    li:last-child{
+		      border-bottom: none;
+
+		    }
+
+		    li.li_opt_selected, li.li_opt_selected:hover{
+		        background:#888 !important;
+		        color:#fff !important;
+		    }
+            .select2-highlighted{
+		    	width:100%;
+		        background:#eee !important;
+		        color:#333 !important;
+            }
+        }
+    }
+	.invalid_phone_text, .info_message, .already_in_call_text, .in_acw_state, .restricted_country, .strange_number {
+		position: absolute;
+		top: 45px;
+		font-weight: 500;
+		@include text-align(center);
+		width: 100%;
+		color: #CC0000;
+	}
+	.call_loader{
+	  width: 2px;
+	  height: 2px;
+	  border-radius:100%;
+	  margin-left: 45%;
+	  margin-top: 18%;
+	  box-shadow: 0 0 0 3px #333, 20px 0 0 4px #333, 40px 0 0 5px #333;
+    background-color: #333;
+	  -webkit-animation:loading1 1s infinite linear;
+	}
+	@-webkit-keyframes loading1{
+	  25% { box-shadow: 0 0 0 3px #333, 20px 0 0 3px #333, 40px 0 0 4px #333;}
+	  50% { box-shadow: 0 0 0 5px #333, 20px 0 0 3px #333, 40px 0 0 3px #333;}
+	  75% { box-shadow: 0 0 0 4px #333, 20px 0 0 5px #333, 40px 0 0 4px #333;}
+	}
+	.outgoing_number, .outgoing_numbers_list {
+      height: 35px;
+	}
+	.outgoing_number{
+	 	width: 220px;
+	}
+  .outgoing_numbers_list {
+  	width: 80%;
+  }
+	.outgoing_number_info{
+		width: 100% !important;
+		height: 35px;
+	}
+	.invalid_phone_num{
+	  position: absolute;
+		top: 60px;
+		color: #AEAEAE;
+		font-weight: 700;
+		@include text-align(center);
+		width: 100%;
+	}
+  .intl-tel-input {
+   	width: 100%;
+   	top: 0;
+	}
+  .intl-tel-input *{ 
+		box-sizing:border-box;
+		-moz-box-sizing:border-box 
+	}
+  .intl-tel-input .hide{ 
+  	display:none 
+	}
+  .intl-tel-input .v-hide{ 
+  	visibility:hidden 
+  }
+	.intl-tel-input input[type=text],.intl-tel-input input[type=tel]{ 
+		position:relative; 
+		z-index:0;
+		margin-top:0 !important;
+		margin-bottom:0 !important;
+		margin-left:7px;
+	}
+  .intl-tel-input .flag-dropdown{ 
+		position: absolute; 
+		bottom:0;
+    height:371px; 
+    z-index: 995;
+	}
+	.intl-tel-input .flag-dropdown:hover{
+		cursor:pointer
+	}
+	.intl-tel-input .flag-dropdown:hover .intl-tel-input input[disabled]+.flag-dropdown:hover{
+		cursor:default 
+ 	}
+ 	.intl-tel-input input[disabled]+.flag-dropdown:hover .selected-flag{ 
+ 		background-color:transparent
+	}
+	.intl-tel-input .selected-flag{ 
+		position:relative;
+		width:37px; 
+		height:33px;
+		padding:8px 0 0 7px;
+    margin-left: 7px;
+    background-color: #EAEAEA;
+    &:hover {
+      background-color: #ccc;
+    }
+	}
+	.intl-tel-input .selected-flag .flag{ 
+		position:absolute; 
+		top:50%; 
+		margin-top:-5px 
+	}
+  .intl-tel-input .selected-flag .arrow{ 
+		position:absolute;
+		top: 4px;
+		left: 18px; 
+		width:8px; 
+		height:15px; 
+		margin: 10px 15px 0 9px;
+		border-left:4px solid transparent;
+		border-right:4px solid transparent;
+		border-top:4px solid black
+	}
+ .intl-tel-input .selected-flag .arrow.up{ 
+		border-top:none; 
+		border-bottom:4px solid black 
+	}
+	.intl-tel-input .countrySearch{
+		background-color: #f8f8f8;
+		width: 297px;
+    border-radius: 4px 4px 0 0;
+	}
+  .intl-tel-input .countrySearch .backArrow{
+    display: inline;
+    padding: 9px 9px 11px 11px;
+  }
+	.intl-tel-input .countrySearch .arrow-left{
+		display: inline-block;
+		font-size: 8px;
+    top: 1px;
+	}
+ .intl-tel-input .countrySearch .symbols-search{
+		height: 20px;
+		width: 20px;
+		position: absolute;
+		margin-top: 15px;
+		display: inline-block;
+	}
+	.intl-tel-input .countrySearch .searchlist{
+		border: 0px;
+		background-color: #f8f8f8;
+	}
+  #countrySearchBar{
+    width:230px;
+    height: 36px;
+    display: inline-block;
+    margin-top: 5px;
+  }
+	.intl-tel-input .country-list{ 
+		list-style:none; 
+		position:absolute; 
+		z-index:2; 
+		box-shadow:1px 1px 4px rgba(0,0,0,0.2); 
+		background-color:#FAFAFA; 
+		width:298px; 
+		max-height:394px; 
+		overflow-y:scroll; 
+    border-radius: 3px;
+	}
+  .intl-tel-input .country-list .flag{ 
+		display:inline-block; 
+		padding-right: 14px
+	}
+	.intl-tel-input .country-list .divider{ 
+		padding-bottom:0px; 
+		margin-bottom:0px; 
+		border-bottom:1px solid #ccc
+	}
+  .intl-tel-input .country-list li{
+		line-height: 18px;
+	}
+ .intl-tel-input .country-list .country{ 
+		width:100%; 
+		display:-webkit-inline-flex; 
+		display: inline-flex;  
+		padding:5px 10px; 
+		color:#333;
+	}
+	.intl-tel-input .country .countryDetails{
+		width:85%;
+		margin-left: 6px;
+	}
+	.intl-tel-input .country-list .country .dial-code{ 
+		color:#999 
+	}
+	.intl-tel-input .country-list .country.highlight{
+		background-color:rgba(0,0,0,0.5);
+		color : #fff;
+		font-weight: 500;
+	}
+	.intl-tel-input .country-list .country.active.highlight{
+		color: #000;
+	}
+	.intl-tel-input .country-list .country.highlight .dial-code{
+		color : #fff
+	}
+	.intl-tel-input .country-list .country.active.highlight .dial-code{
+		color: #999
+	}
+	.intl-tel-input .country-list .flag,.intl-tel-input .country-list .country-name{
+		margin-right:6px 
+	}
+ .intl-tel-input .country-list .country.active{
+		font-weight:bold;
+		background-color:#ddd;
+	}
+  .intl-tel-input .preferredCountry {
+		background-color: #ffe
+  }
+  .invalid_phone_num #invalid_num{
+		font-weight: normal;
+		color: #222;
+	}
+  #search_bar {
+    top: 78px;
+    height: 309px; 
+    width: 298px;
+    right:1px;
+    background-color: white;
+    padding: 0px;
+    box-shadow: none;
+    border: none;
+    z-index: 0;
+  }
+  .contact_results_info {
+    height: inherit;
+    overflow-y: auto;
+    .direct_dial_li {
+      padding: 0;
+    }
+  }
+  .active-element{
+    background-color: #efefef;
+    width:100%;
+  }
+  .contact_results_info li{
+    width: 100%;
+    cursor: pointer;
+    border-radius: 0px;
+    border: none;
+    box-shadow: none;
+    display: inline-block;
+ 	  padding: 7px 5px 7px 0px;
+    .search-result.active-element{
+      .ff_call_button{
+        display: inline-block;
+      }
+      .phone-type {
+        display: none;
+      }
+    }
+    .ff_call_button {
+      display: none;
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      padding: 2px 11px 2px 10px;
+      font-size: 13px;
+      background-color: #fff;
+      margin-right: 10px;
+    }
+    .ficon-ff-phone {
+      color: #196019;
+    }
+  }
+  .no-search-result{
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  .searched-number{
+    width: 98.3% !important;
+    height: 35px;
+    display: inline-flex !important;
+    border-radius: 0px;
+    cursor: pointer;
+    .no_results{
+      width: 70%;
+      margin-left: 14px;
+      margin-top: 10px;
+      word-wrap: break-word;
+    }
+    .phone-icons{
+      margin-top: 7px !important;
+      &:before{
+       color: #196019 !important;
+      }
+  	}
+  	.invalid-active{
+  		margin-top: 7px !important;
+      &:before{
+       color: red !important;
+  		}
+  	}
+    .ff_call_button{
+        display: inline-block !important;
+        margin: 7px 0px;
+      }	
+  }
+  .contact_results_info li .contact{
+    margin: 0 0 1px 0;
+    width: 100%;
+    border-top: 1px solid #EEE;
+    height: 28px;
+  }
+  .contact_results_info li:first-child .contact{
+    border-top: none;
+  } 
+
+  .contact-name{
+  	display: inline-block;
+  	font-weight: 500;
+  	width: 50%;
+  	margin-left: 8px;
+  	margin-top: 5px;
+    color: #999;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .company-name{
+  	display: inline-block;
+  	float: right;
+    max-width: 40%;
+  	margin-right: 7px;
+  	margin-top: 5px;
+    color: #999;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .contact-details, .phone-details , .call-details , .custom-field{
+  	position: relative;
+  	padding: 6px 5px 0 5px ; 
+  	height: 20px;
+  	width:100%;
+  	margin: 0;
+  }
+  .contact-details-msg {
+  	background-color: #FAFAFA;
+  	height: 430px;
+  	width:99.5%;
+  	right: 1px;
+  	bottom: 4px;
+  	position: absolute;
+  	text-align: left;
+  	line-height: 24px;
+  	z-index: 999;
+  	border-radius: 3px;
+  }
+  .call-details-msg {
+  	height: 123px;
+  	margin-top: 60px;
+  	div{
+  	  text-align: center;
+  	}
+  }
+  .contact_name,.contact_number {
+  	font-size: 16px;
+  }
+  .contact_name {
+    font-weight: 500;  
+  }
+  .contact_company{
+  	color: #AEAEAE;
+    font-size: 16px;
+  	font-weight: 500;
+  }
+  .contact_avatar {
+    display: inline-block;
+    width: 100%;
+    padding-left: 130px;
+  }
+  .message-type {
+  	height: 194px;
+  	width:100%;
+  	position: relative;
+  	text-align: left;
+  	line-height: 24px;
+  	z-index: 999;
+  }
+  #cancel_call, .connect_call{
+  	cursor: pointer;
+  	background-color: white;
+		border-top: 2px solid #EAEAEA;
+		text-align: center;
+		padding: 9px;
+		height: 33px;
+		font-size: 15px;
+		font-weight: 500;
+  }
+
+  .contact-details-msg-footer {
+    line-height: 35px;
+  }
+  .connect_call{
+  	color: #196019;
+  }
+  .contact-details-msg .phone-icons{
+    &:before{
+     color: #196019 !important;
+   	}
+  }
+  .phone-contact{
+  	display: inline-block;
+    vertical-align: middle;
+  	margin-left: 8px;
+    max-width: 65%;
+  }
+  .phone-type{
+  	display: inline-block;
+    max-width: 40%;
+  	float: right;
+  	margin-right: 5px;
+  	padding-top: 1px;
+    color: #999;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .outgoing_number, .outgoing_numbers_list {
+		position: relative;
+    font-size: 12px;
+		top: 1px;
+    z-index: 999;
+	 @include left(25px); 
+	 display: inline-block;
+	 overflow: hidden;
+	 text-overflow:ellipsis;
+	     
+	}
+	.span2{
+	   margin-left: 5px !important;
+	}
+	.outgoing_number {
+	 width: 240px;
+   line-height: 31px;
+   left: 35px;
+   .ff_number_name {
+      @include padding-right(3px);
+   }
+	}
+	.outgoing_numbers_list {
+		.select2-choice {
+			background:transparent;
+			filter:none; //Background transparent Fix for IE 8,9
+			color: #333;
+			border: none;
+			line-height: 31px;
+			@include box-shadow(none);
+			span {
+				font-size: 13px;
+				@include margin-left(10px);
+				b {
+					color: #333;
+					font-weight: 500;
+				}
+			}
+		}
+		.select2-choice div {
+		 @include left(0);
+		}
+		.select2-choice .select2-arrow {
+			background: transparent;
+			margin-top: 4px;
+			color: #333;
+		}
+	}
+	.keypad-key, .keypad-special {
+		@include border-radius(0);
+		margin: 0;
+	}
+	.keypad-key {
+		width: 33.3%;
+		height: 38px;
+		padding: 10px;
+		border:none;
+		border-bottom: 1px solid #CCC;
+		background-color: #FFF;
+		font-size: 18px;
+    font-weight: 300;
+		&:hover {
+			background-color: $key-hover-background;
+		}
+		&.keypad-key-down {
+			background-color: $keydown-background;
+			color: $keydown-text;
+			border-bottom-color: $keydown-border;
+			@include padding(10px 10px 10px 10px);
+			text-shadow: -1px -1px 0px $keydown-text-shadow;
+			@include box-shadow(0 1px 3px $keydown-shadow inset);
+			@include transition(all .1s ease);
+		}
+		&.asterisk {
+			font-size: 250%;
+			padding-top: 18px;
+			vertical-align: bottom;
+		}
+	}
+	/*.keypad-call {
+		width: 100%;
+		height: 55px;
+		background-color:$keypad-call-background;
+		color: $keypad-call-text;
+		margin-top: 1px;
+		font-size: 20px;
+		text-shadow: 1px 1px $keypad-call-text-shadow;
+	}
+	.keypad-call {
+		background-repeat: no-repeat;
+	}*/
+	.keypad-back {
+		position: absolute;
+		top: 36px;
+	 @include left(89%);
+
+		width: 25px;
+		height: 16px;
+		@include padding(0 0 0 7px);
+		overflow: hidden;
+
+		background-color: $keypad-back-background;
+		color: $keypad-back-text;
+		font-size: 11px;
+		font-weight: 400;
+
+		border: none;
+		&:before {
+			content: "";
+			background-color: $keypad-triangle-background;
+			position: absolute;
+		 @include left(0);
+			top: 0;
+			@include triangle(left, $keypad-triangle-border, 8px);
+		}
+	}
+	.keypad-row {
+    z-index: 999;
+    position: relative;
+		.keypad-key:nth-child(even) {
+			@include border-left(1px solid #ccc);
+			@include border-right(1px solid #ccc);
+		}
+	}
+	.keypad-row:nth-child(1){
+	  box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+	  border-top: 1px solid #CCC;
+	}
+	.keypad-key.zero:after {
+		content: "+";
+		color: $keypad-plus;
+		position: absolute;
+		@include margin-left(10px);
+	}
+	input.user_phone {
+		width: 95%;
+		background-color: #FFF;
+		color: black;
+		border: 1px solid #AEAEAE;
+
+		@include box-shadow(none);
+		@include border-radius(0);
+		@include box-sizing(border-box);
+
+		height: 35px;
+		font-size: 14px;
+		margin: 35px 0 0 15px;
+		
+		@include padding-right(35px);
+		@include padding-left(16px);
+	}
+
+  #ongoing_number{
+    width: 93% !important;
+    margin: 20px 11px 16px 10px !important;
+  }
+  .dialpad_icon{
+    background-color: white;
+    border-top: 2px solid #EAEAEA;
+    text-align: center;
+    padding: 12px;
+    border-radius: 3px;
+  }
+  .dialpad ficon-ff-dialpad{
+    display: inline-block;
+  }
+  .dialpad_icon:hover{
+    cursor: pointer;
+  }
+	//	recent calls - starts
+	#recent_calls {
+		background-color: white;
+		height: 312px;
+	}
+
+  .recent_calls_container {
+    .recent_calls_title {
+      display: block;
+      margin-left: 12px;
+      margin-bottom: 5px;
+      padding-top: 5px;
+      color: #A5A5A5;
+    }
+    .recent_call_entry {
+      @include padding(5px 0 5px 5px);
+      min-height: 43px;
+      font-size: 11px;
+      display: inline-block;
+      width: 98%;
+      cursor: pointer;
+      vertical-align: middle;
+      .username, .user_name {
+        color: $recent-call-username;
+        font-size: 13px;
+        font-weight: 500;
+      }
+	  .ficon-incoming-call, .ficon-outgoing-call, .ficon-no-arrow-left, .ficon-no-arrow-right, .ficon-abandoned-call, .ficon-blocked-call {
+    		font-size: 15px;
+		}
+    }
+    .recent_calls_time_ago {
+      display: inline-block;
+      right: 0;
+      height: 16px;
+      max-width: 84px;
+      font-size: 12px;
+      color:#A5A5A5;
+      padding: 5px 8px 0 0;
+    }
+    .recent_call_entry.active-element {
+      .ff_call_button{
+        display: inline-block;
+      }
+      .recent_calls_time_ago {
+        display: none;
+      }
+    }
+  }
+	
+	.recent_calls_caller_details {
+		display: inline-block;
+		width: 50%;
+		padding: 0 1px 3px 0;
+    margin-top: 12px;
+		.item_actions{
+			display: inline-block;	
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: 100%;
+		}
+	}
+	.recent_calls_call_user {
+		display: inline-block;
+		vertical-align: top;
+		font-size: 10px;
+    margin: 12px 6px 0 0;
+    float: right;
+		.can-call {
+			background-repeat: no-repeat;	
+			display: block;
+			padding: 0;
+			width: 10px;
+			height: 10px;
+		}
+    .ff_call_button {
+      display: none;
+      border: 1px solid #aaa;
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 3px 12px 3px 11px;
+      font-size: 13px;
+    }
+    .ficon-ff-phone {
+      color: #196019;
+    }
+		.restrict-call {
+			cursor:default;
+		}
+	}
+	.no_call_history {
+		@include text-align(center);
+		padding: 18px;
+		font-size: 14px;
+		color: $ch-no-call-log-text;
+		font-weight: 18;
+	}
+	.recent_calls_direction {
+		width: 30px;
+		margin-top: 13px;
+		text-align: center;
+		display: inline-block;
+		height: 30px;
+		background-repeat: no-repeat;
+		vertical-align: top;
+	}
+	.recent_calls_user_number {
+    font-size: 12px;
+    color: #A5A5A5;
+	}
+	.recent_calls_call_duration {
+		display: inline-block;
+		font-weight: 700;
+		color: $recent-call-duration;
+		margin-top: 3px;
+		@include margin-right(15px);
+	}
+  .time_ago{
+    height:20px;
+    width:30px;
+    font-size: 10px;
+  }
+	
+	//  recent calls - ends
+}

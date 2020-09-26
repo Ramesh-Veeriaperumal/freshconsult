@@ -21,7 +21,8 @@ class AdminUser < ActiveRecord::Base
   ADMIN_ROLES = [
     [:super_admin, "Super Admin", 1],
     [:marketer, "Marketer", 2],
-    [:support, "Support", 3]
+    [:support, "Support", 3],
+    [:freshfone, "Freshfone", 4]
   ]
 
   ADMIN_ROLES_OPTIONS = ADMIN_ROLES.map { |i| [i[1], i[2]] }

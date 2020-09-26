@@ -2,7 +2,8 @@
 module Mobile::Actions::Ticket
   
   include ActionView::Helpers::DateHelper
-
+  include Mobile::Actions::Push_Notifier
+  
   NOTES_OPTION = {
       :only => [ :created_at, :user_id, :id, :private, :deleted ],
       :include => {
@@ -73,7 +74,7 @@ module Mobile::Actions::Ticket
                     :source_name, :is_closed, :to_emails,:conversation_count,
                     :selected_reply_email, :from_email, :is_twitter, :is_facebook,
                     :fetch_twitter_handle, :fetch_tweet_type, :is_fb_message, :formatted_created_at , 
-                    :ticket_notes, :ticket_sla_status,:ticket_sla_status_type,:public_url],
+                    :ticket_notes, :ticket_sla_status,:ticket_sla_status_type, :call_details,:public_url],
       :include => json_inlcude
     }
     as_json(options,false) 
@@ -138,6 +139,16 @@ module Mobile::Actions::Ticket
 
   def fetch_tweet_type
     tweet.tweet_type unless tweet.blank?
+  end
+
+  def call_details
+    call = self.freshfone_call
+    {:call_url => recording_audio_url, :call_duration => call.call_duration, :twilio_url => call.recording_url} if call.present?
+  end
+
+  def recording_audio_url
+    return if self.freshfone_call.recording_audio.nil?
+    AwsWrapper::S3.presigned_url(self.freshfone_call.recording_audio.content.bucket_name, self.freshfone_call.recording_audio.content.path('original'), expires: 3600.seconds, secure: true, response_content_type: self.freshfone_call.recording_audio.content_content_type)
   end
 
   def public_url

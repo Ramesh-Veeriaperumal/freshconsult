@@ -41,7 +41,7 @@ module Admin
       group_ids = create_support_agent_groups(3)
 
       pattern = []
-      User.current.groups.order(:name).all.each do |group|
+      Account.current.groups.order(:name).all.each do |group|
         pattern << group_management_v2_pattern(group)
       end
 
@@ -57,7 +57,7 @@ module Admin
     def test_get_support_agent_groups
       group_ids = create_support_agent_groups(3)
       pattern = []
-      User.current.groups.order(:name).all.each do |group|
+      Account.current.groups.order(:name).all.each do |group|
         pattern << group_management_v2_pattern(group)
       end
 
@@ -71,7 +71,7 @@ module Admin
     def test_get_support_agent_groups_with_pagination
       group_ids = create_support_agent_groups(3)
       pattern = []
-      User.current.groups.order(:name).all.each do |group|
+      Account.current.groups.order(:name).all.each do |group|
         pattern << group_management_v2_pattern(group)
       end
 
@@ -93,10 +93,10 @@ module Admin
       Account.current.add_feature(:field_service_management)
       create_field_group_type
 
-      group_id = create_group_private_api(Account.current, agent_ids: [Account.current.agents.first.user_id], group_type: GroupConstants::FIELD_GROUP_NAME).id
+      group_id = create_group(Account.current, agent_ids: [Account.current.agents.first.user_id], group_type: GroupConstants::FIELD_GROUP_NAME).id
 
       pattern = []
-      User.current.groups.field_agent_groups.order(:name).all.each do |group|
+      Account.current.groups.field_agent_groups.order(:name).all.each do |group|
         pattern << group_management_v2_pattern(group)
       end
 
@@ -113,7 +113,7 @@ module Admin
       Account.current.add_feature(:field_service_management)
       create_field_group_type
 
-      10.times { create_group_private_api(Account.current, group_type: 2) }
+      10.times { create_group(Account.current, group_type: 2) }
 
       get :index, controller_params(version: 'private', type: GroupConstants::FIELD_GROUP_NAME, page: 1, per_page: 5)
       assert_response 200
@@ -141,7 +141,7 @@ module Admin
     def test_get_field_agent_group_with_pagination
       Account.current.add_feature(:field_service_management)
       create_field_group_type
-      6.times { create_group_private_api(Account.current, group_type: 2) }
+      6.times { create_group(Account.current, group_type: 2) }
       get :index, controller_params(version: 'private', type: GroupConstants::FIELD_GROUP_NAME, page: 1, per_page: 5)
       assert_response 200
       assert_equal((JSON.parse response.body).count, 5)
@@ -197,7 +197,7 @@ module Admin
     # show tests
 
     def test_show_group_valid
-      group = create_group_private_api(Account.current)
+      group = create_group(Account.current, agent_ids: [Account.current.agents.first.user_id])
       get :show, controller_params(version: 'private', id: group.id)
       assert_response 200
       match_json(group_management_v2_pattern(Group.find(group.id)))
@@ -208,7 +208,7 @@ module Admin
     # tests for all assignment_type
 
     def test_no_assignment_type
-      group = create_group_private_api(Account.current, ticket_assign_type: 0)
+      group = create_group(Account.current, ticket_assign_type: 0)
       get :show, controller_params(version: 'private', id: group.id)
       assert_response 200
       match_json(group_management_v2_pattern(Group.find(group.id)))
@@ -217,7 +217,7 @@ module Admin
     end
 
     def test_round_robin_assignment_type
-      group = create_group_private_api(Account.current, ticket_assign_type: 1)
+      group = create_group(Account.current, ticket_assign_type: 1, agent_ids: [Account.current.agents.first.user_id])
       get :show, controller_params(version: 'private', id: group.id)
       assert_response 200
       match_json(group_management_rr_pattern(Group.find(group.id)))
@@ -226,7 +226,7 @@ module Admin
     end
 
     def test_lbrr_assignment_type
-      group = create_group_private_api(Account.current, ticket_assign_type: 1, capping_limit: 2)
+      group = create_group(Account.current, ticket_assign_type: 1, capping_limit: 2)
       get :show, controller_params(version: 'private', id: group.id)
       assert_response 200
       match_json(group_management_lbrr_pattern(Group.find(group.id)))
@@ -235,7 +235,7 @@ module Admin
     end
 
     def test_sbrr_assignment_type
-      group = create_group_private_api(Account.current, ticket_assign_type: 2, capping_limit: 2)
+      group = create_group(Account.current, ticket_assign_type: 2, capping_limit: 2, agent_ids: [Account.current.agents.first.user_id])
       get :show, controller_params(version: 'private', id: group.id)
       assert_response 200
       match_json(group_management_sbrr_pattern(Group.find(group.id)))
@@ -244,7 +244,7 @@ module Admin
     end
 
     def test_lbrr_by_onmiroute_type
-      group = create_group_private_api(Account.current, ticket_assign_type: 12)
+      group = create_group(Account.current, ticket_assign_type: 12)
       get :show, controller_params(version: 'private', id: group.id)
       assert_response 200
       match_json(group_management_v2_lbrr_by_omni_pattern(Group.find(group.id)))
@@ -386,6 +386,7 @@ module Admin
       parsed_response = JSON.parse(response.body)
       group_agent_ids = parsed_response['agent_ids']
       assert_equal agent_ids, group_agent_ids
+      existing_group.reload
       match_json(group_management_v2_pattern(existing_group))
     ensure
       existing_group.destroy
@@ -559,7 +560,7 @@ module Admin
     def test_update_group_type_invalid
       Account.current.add_feature(:field_service_management)
       create_field_group_type
-      group = create_group_private_api(@account)
+      group = create_group(@account)
       put :update, construct_params({ version: 'private', id: group.id },
                                     escalate_to: 1, unassigned_for: '30m', agent_ids: [1], type: FIELD_GROUP_NAME)
       assert_response 400
@@ -595,7 +596,7 @@ module Admin
     end
 
     def test_delete_group
-      group = create_group_private_api(@account, ticket_assign_type: 2, capping_limit: 23)
+      group = create_group(@account, ticket_assign_type: 2, capping_limit: 23)
       delete :destroy, construct_params(id: group.id)
       assert_equal ' ', @response.body
       assert_response 204
@@ -603,7 +604,7 @@ module Admin
     end
 
     def test_delete_group_without_privilege
-      group = create_group_private_api(@account, ticket_assign_type: 2, capping_limit: 23)
+      group = create_group(@account, ticket_assign_type: 2, capping_limit: 23)
       remove_privilege(@agent, :manage_account)
       remove_privilege(@agent, :admin_tasks)
       delete :destroy, construct_params(id: group.id)
@@ -619,13 +620,25 @@ module Admin
       def create_support_agent_groups(count)
         ids = []
         count.times do
-          ids << create_group_for_test.id
+          ids << create_group(Account.current, agent_ids: [Account.current.agents.first.user_id]).id
         end
         ids
       end
 
-      def create_group_for_test
-        create_group_private_api(Account.current, agent_ids: [Account.current.agents.first.user_id])
+      def create_group(account, options = {})
+        name = "#{Faker::Name.name}#{rand(1_000_000)}"
+        group = FactoryGirl.build(:group, name: name)
+        group.account_id = account.id
+        group.description = Faker::Lorem.paragraph
+        group.escalate_to = 1
+        group.group_type = options[:group_type] || GroupConstants::SUPPORT_GROUP_ID
+        group.agent_ids = options[:agent_ids] || [Account.current.agents.first.user_id]
+        group.business_calendar_id = 1
+        group.ticket_assign_type = options[:ticket_assign_type] if options[:ticket_assign_type]
+        group.ticket_assign_type = options[:round_robin_type] if options[:round_robin_type]
+        group.capping_limit = options[:capping_limit] if options[:capping_limit]
+        group.save!
+        group
       end
   end
 end
