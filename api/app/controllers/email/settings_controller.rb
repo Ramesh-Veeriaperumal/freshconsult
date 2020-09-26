@@ -86,6 +86,7 @@ module Email
         params[cname].each_key do |setting|
           setting_hash = AccountSettings::SettingsConfig[EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym]
           next if !setting_hash || current_account.has_feature?(setting_hash[:feature_dependency])
+
           return render_request_error(:require_feature, 403, feature: setting)
         end
       end
