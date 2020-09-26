@@ -10,7 +10,6 @@
       - :social_tab
       - :omni_channel
       - :customize_table_view
-      - :public_url_toggle
       - :add_to_response
       - :agent_scope
       - :performance_report
@@ -133,6 +132,7 @@
       - :contact_custom_activity_api
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_17
     :exclude: [:analytics_knowledge_base_report]
@@ -178,7 +178,6 @@
       - :sla_management_v2
       - :api_v2
       - :add_to_response
-      - :public_url_toggle
       - :social_tab
       - :scenario_automation
       - :customize_table_view
@@ -349,6 +348,7 @@
       - :solutions_templates
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_19
     :exclude: [:analytics_knowledge_base_report]
@@ -399,7 +399,6 @@
       - :sla_management_v2
       - :api_v2
       - :add_to_response
-      - :public_url_toggle
       - :social_tab
       - :scenario_automation
       - :customize_table_view
@@ -561,6 +560,7 @@
       - :solutions_templates
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_20
     :exclude: [:analytics_knowledge_base_report]

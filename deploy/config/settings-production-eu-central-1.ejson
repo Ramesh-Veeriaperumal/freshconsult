@@ -1849,9 +1849,7 @@
           "_fc-bg-sidekiq-archive": 3,
           "_fc-bg-sidekiq-occasional": 3,
           "_fc-bg-sidekiq-central-realtime": 3,
-          "_fc-bg-sidekiq-maintainence": 3,
           "_fc-bg-sidekiq-realtime": 6,
-          "_fc-bg-sidekiq-hard-delete": 3,
           "_fc-bg-shoryuken-analytics": 20
         }
       }
@@ -1925,29 +1923,19 @@
     },
     "fc-app-api-public-premium": {
     },
-    "fc-bg-sidekiq-subscription": {
-    },
     "hk-app-api-contacts": {
     },
     "hk-bg-shoryuken": {
     },
     "hk-app-ecommerce": {
     },
-    "fc-bg-sidekiq-dedicated-589783": {
-    },
     "fc-bg-sidekiq-realtime": {
-    },
-    "fc-bg-sidekiq-bulk-scheduled": {
-    },
-    "fc-bg-sidekiq-email": {
     },
     "hk-app-trial": {
     },
     "hk-app-dashboard": {
     },
     "fc-bg-sidekiq": {
-    },
-    "fc-bg-sidekiq-exports": {
     },
     "fc-app-api-public-buffer": {
     },
@@ -1965,8 +1953,6 @@
     },
     "hk-app-pipeline-sling": {
     },
-    "fc-bg-sidekiq-trial": {
-    },
     "fc-bg-shoryuken-analytics": {
     },
     "fc-app": {
@@ -1983,21 +1969,11 @@
     },
     "hk-app-archive": {
     },
-    "fc-bg-sidekiq-spam": {
-    },
-    "fc-bg-sidekiq-fc-occasional": {
-    },
-    "fc-bg-sidekiq-scheduled": {
-    },
     "hk-app-mobihelp": {
     },
     "hk-app-support-theme": {
     },
-    "fc-bg-sidekiq-gamification": {
-    },
     "fc-app-api-sling": {
-    },
-    "fc-bg-sidekiq-dedicated-892785": {
     },
     "hk-app": {
     },
@@ -2023,33 +1999,19 @@
         }
       }
     },
-    "fc-bg-sidekiq-misc": {
-    },
     "hk-bg-utility": {
     },
     "hk-app-freshid": {
     },
     "hk-app-freshops": {
     },
-    "fc-bg-sidekiq-maintainence": {
-    },
     "fc-app-buffer": {
     },
     "fc-bg-resque": {
     },
-    "fc-bg-sidekiq-free": {
-    },
-    "fc-bg-sidekiq-dedicated-887984": {
-    },
     "hk-app-reports": {
     },
-    "fc-bg-sidekiq-community": {
-    },
     "hk-app-email": {
-    },
-    "fc-bg-sidekiq-mailbox-jobs": {
-    },
-    "fc-bg-sidekiq-hard-delete": {
     },
     "fc-app-api-public": {
       "envoy": {
@@ -2064,12 +2026,6 @@
     "fc-app-api-channel": {
     },
     "fc-bg-resque-freshfone": {
-    },
-    "fc-bg-sidekiq-freshfone": {
-    },
-    "fc-bg-sidekiq-search": {
-    },
-    "fc-bg-sidekiq-cron": {
     },
     "fc-bg-shoryuken-archive": {
     },
