@@ -1,6 +1,6 @@
 <% content_for :sidebar do %>
   <%= sidebar_content %>
-  <% if params[:action] != 'agent_status' and (round_robin? or chat_active?) %>
+  <% if params[:action] != 'agent_status' and (round_robin? or freshfone_active? or chat_active?) %>
     <div class="sidepanel">
       <a class="dashboard_agent_status_link" href="/helpdesk/dashboard/agent_status"><%= t('helpdesk.dashboard.round_robin.view_agent_status') %> </a>
     </div>

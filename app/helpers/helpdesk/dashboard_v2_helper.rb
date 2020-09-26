@@ -28,9 +28,10 @@ module Helpdesk::DashboardV2Helper
       :todo           =>  true,
       :csat           =>  current_account.any_survey_feature_enabled_and_active?,
       :gamification   =>  gamification_feature?(current_account),
+      :freshfone      =>  current_account.freshfone_active?,
       :chat           =>  chat_activated? && current_account.chat_setting.active,
       :moderation     =>  current_account.features?(:forums) && privilege?(:delete_topic),
-      :agent_status   =>  (round_robin? || (chat_activated? && current_account.chat_setting.active)),
+      :agent_status   =>  (round_robin? || current_account.freshfone_active? || (chat_activated? && current_account.chat_setting.active)),
       :trend_count    =>  true
     }
   end

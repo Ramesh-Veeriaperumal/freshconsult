@@ -8,6 +8,7 @@ module Search
                         '/search',
                         '/support/search',
                         '/contact_merge/search',
+                        '/freshfone/autocomplete'
                       ]
 
       def matches?(request)

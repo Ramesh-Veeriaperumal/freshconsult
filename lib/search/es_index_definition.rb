@@ -11,7 +11,7 @@ class Search::EsIndexDefinition
   # These are table names of the searchable models.
   # Incase we want to add any new model the table name should be added here
   def models
-    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :admin_canned_responses, :scenario_automations, :ticket_templates]
+    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes, :helpdesk_tags, :freshfone_callers, :admin_canned_responses, :scenario_automations, :ticket_templates]
   end
 
   # Used for new model migrations
@@ -231,6 +231,17 @@ class Search::EsIndexDefinition
             }
   		}
 	end
+
+  def freshfone_callers 
+    {
+      :"freshfone/caller" => {
+        :properties => {
+            :number => { :type => :string, :boost => 10, :store => 'yes' },
+            :account_id => { :type => :long, :include_in_all => false }
+        }
+      }
+    }
+  end
 
   def scenario_automations
     {

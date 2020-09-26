@@ -97,7 +97,7 @@ module ContactConstants
   NO_CONTENT_TYPE_REQUIRED = [:restore, :send_invite].freeze
 
   PRELOAD_OPTIONS = {
-    bulk_delete: [:user_emails, { user_companies: [:company] }, :default_user_company, :flexifield, :primary_email, :roles, :authorizations],
+    bulk_delete: [:user_emails, { user_companies: [:company] }, :default_user_company, :flexifield, :primary_email, :roles, :authorizations, :freshfone_user],
     bulk_restore: [:user_emails, { user_companies: [:company] }, :default_user_company, :flexifield, :primary_email, :roles],
     bulk_send_invite: [:flexifield, :user_companies, :avatar, :default_user_company, :roles],
     bulk_whitelist: []

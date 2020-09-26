@@ -1,0 +1,66 @@
+<% unless @freshfone_credit.new_record? %> 
+	<div class="row-fluid auto_recharge_quantity">
+		<div class="recharge-now-text">
+			<%= t('freshfone.subscription.auto_recharge_text') %>
+		</div>
+		<% if @freshfone_credit.auto_recharge? %>
+			<div class="enabled-auto-recharge">
+				<span class="recharge-amt-lbl"><%= t('freshfone.subscription.auto_recharge_amt') %></span>
+				<span class="recharge-amt"><%= fetch_recharge_amount %></span>	
+				<% unless default_currency? %>
+					($<%= @freshfone_credit.recharge_quantity %> <%= t('freshfone.subscription.followup_text') %>)
+				<% end %>
+				<div class="action-links">
+					<%= form_tag(disable_auto_recharge_admin_freshfone_credits_path, 
+											:method => :put, 
+											:class => "disable_auto_recharge_form") do %>
+						<%= link_to t('edit'), "#", :class => "edit_auto_recharge" %> | 
+						<%= link_to t('disable'), "#", :class => "disable_auto_recharge" %>
+						
+					<% end %>
+				</div>
+			</div>
+		<% end %>
+		<%= form_for @freshfone_credit,
+						:url => {:action => "enable_auto_recharge", :controller => "admin/freshfone/credits"}, 
+						:html => {:class => "auto_recharge_form", :method => :put} do |f| %>
+
+			<%= f.label :recharge_quantity, t('freshfone.subscription.auto_recharge_amt'), :class => "credits_lbl" %>
+			<%= select_tag :recharge_quantity, options_for_select(recharge_options, 
+                            :selected => default_freshfone_auto_recharge(@freshfone_credit)),
+					:class => 'select2', :'data-minimum-results-for-search' => '30' %>
+			<%= submit_tag t('enable'), :class => "btn" %>
+			<%= link_to t('cancel'), "#", :class => "cancel_edit_auto_recharge" %>
+			<% unless default_currency? %>
+				<div id = "fone-recharge-followup"> $<%= 25 %> <%= t('freshfone.subscription.followup_text') %></div>
+			<% end %>
+		<% end %>
+	</div>
+	<script type="text/javascript">
+		(function($){
+			var isAutoRechargeEnabled = "<%= @freshfone_credit.auto_recharge? %>";
+			if(isAutoRechargeEnabled == "true"){
+				$('.auto_recharge_form').hide();
+			}
+			$('.disable_auto_recharge').click(function(ev){
+				ev.preventDefault();
+				$('.disable_auto_recharge_form').submit();
+			});
+			$('.edit_auto_recharge').click(function(ev){
+				ev.preventDefault();
+				$('.auto_recharge_form, .enabled-auto-recharge').toggle();
+				$('.cancel_edit_auto_recharge').show();
+			});
+			$('.cancel_edit_auto_recharge').click(function(ev){
+				ev.preventDefault();
+				$('.auto_recharge_form, .enabled-auto-recharge').toggle();
+			});
+		})(jQuery);
+
+		<% unless default_currency? %>
+	    jQuery("#freshfone_credits_recharge_quantity").on("change", function(ev){
+	    	jQuery("#fone-recharge-followup").html("$" + jQuery(this).val() + " <%= t('freshfone.subscription.followup_text') %>")
+	    });
+	  <% end %>
+	</script>
+<% end %>

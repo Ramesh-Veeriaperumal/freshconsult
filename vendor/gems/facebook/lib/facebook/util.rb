@@ -317,10 +317,6 @@ module Facebook
       data_set[:data].reject { |message| ((existing_msg_arr.include? message[:id]) || @fan_page.created_at > Time.zone.parse(message[:created_time])) }
     end
 
-    def social_revamp_enabled?
-      @social_revamp_enabled ||= Account.current.features?(:social_revamp)
-    end
-
     def latest_message(thread_key = nil)
       fb_msg = nil
       Sharding.run_on_slave do 

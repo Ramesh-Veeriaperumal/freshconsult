@@ -83,6 +83,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    namespace :api_freshfone, path: 'phone' do
+      resources :call_history, only: [:index] do
+        collection do
+          post :export
+          get '(export/:id)', to: :export_status, as: :export_status
+        end
+      end
+    end
+
     namespace :api_discussions, path: 'discussions' do
       resources :categories, except: [:new, :edit] do
         member do
@@ -1065,6 +1074,7 @@ Helpkit::Application.routes.draw do
   channel_routes = proc do
     resources :freshcaller_calls, controller: 'channel/freshcaller/calls', only: %i[create update]
     delete '/freshcaller/account', to: 'channel/freshcaller/accounts#destroy'
+    put '/freshcaller/account', to: 'channel/freshcaller/accounts#update'
     get '/freshcaller/contacts/:id/activities', to: 'channel/freshcaller/contacts#activities'
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
@@ -1151,6 +1161,11 @@ Helpkit::Application.routes.draw do
   cron_routes = proc do
     post 'trigger/:task_name', to: 'cron_webhook/web_hooks#trigger'
   end
+
+  # Temporary routes. Will be removed once ocr to mars is fully launched.
+  match '/api/v1/ocr_agents/:id', to: 'channel/ocr_or_mars_proxy#execute', via: :put, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
+  match '/api/v1/agents/next-eligible', to: 'channel/ocr_or_mars_proxy#execute', via: :get, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
+  match '/api/v1/tasks/:id', to: 'channel/ocr_or_mars_proxy#execute', via: :put, defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ }
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."

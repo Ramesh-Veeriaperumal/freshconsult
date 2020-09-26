@@ -3158,6 +3158,7 @@ pl:
         success: Dodatek został włączony!
         error: Podczas włączania dodatku wystąpił błąd.
         cti_error: Nie można włączyć kilku dodatków typu CTI.
+        freshfone_alert: 'Nie można włączyć dodatku CTI, gdy kanał telefoniczny jest włączony.'
       update:
         success: Dodatek został zaktualizowany!
         error: Błąd w konfiguracji dodatku.
@@ -3225,6 +3226,23 @@ pl:
         Przepraszamy. Ta strona jest w tej chwili niedostępna dla Ciebie. Aby
         uzyskać więcej informacji, skontaktuj się z administratorem.
       domain_restriction: Zastosowano ograniczenie domeny. Ten adres e-mail jest niedozwolony.
+    freshfone:
+      credits:
+        successful_purchase: Prawidłowo doładowano konto telefoniczne.
+        unsuccessful_purchase: Błąd w czasie doładowywania konta telefonicznego.
+        invalid_recharge_amount: Wprowadź prawidłową ilość doładowania
+      number:
+        successful_purchase: Kupiono numer telefonu.
+        unsuccessful_purchase: Błąd w czasie kupowania numeru telefonu.
+        invalide_address_error: >-
+          Nie można kupić numeru telefonu. Sprawdź, czy adres ma prawidłowy
+          format dla kraju: %{country}.
+        blank_message: '%{num_type} nie może być puste'
+        invalid_message_length: '%{num_type} nie może przekraczać 4096 znaków'
+        add_blacklist_success: Numer został zablokowany
+        add_blacklist_failure: Nie można zablokować numeru
+        remove_blacklist_success: Numer został odblokowany
+        remove_blacklist_failure: Nie można odblokować numeru
     profile:
       api_key:
         reset_success: Klucz API został pomyślnie zresetowany.
@@ -7886,8 +7904,21 @@ pl:
         no_agents: '- Brak konsultantów -'
         back: Wstecz
       freshfone:
+        phone: Telefon
+        sort_by: Sortowane wg
+        last_modified: Ostatnia aktywność
+        name: Nazwa
         accepting: Odbiera
         not_accepting: Nie odbiera
+        call_in_progress: Połączenie w toku
+        no_agents: '- Brak konsultantów -'
+        no_activity: Brak aktywności
+        in_busy_state: Zajęty
+        queued_calls: W kolejce
+        agent_on_call: Konsultant do dyspozycji
+        no_queue_calls: Brak połączeń w kolejce
+        no_active_calls: Brak połączeń w toku
+        active_calls: W trakcie rozmowy
       index:
         todo_title: Lista zadań
       summary:
@@ -10522,6 +10553,51 @@ pl:
     customer_activity_title: Raport dotyczący działań
     helpdesk_activity_title: Raport dotyczący działań centrum pomocy
     satisfaction_title: Raport satysfakcji
+    freshfone:
+      options:
+        incoming: Przychodzące
+        outgoing: Wychodzące
+        all_groups: Wszystkie grupy
+        unassigned: Nieprzypisany
+      range_exceed: Zakres nie może przekraczać 90 dni
+      filter_by_title: Filtrowane wg
+      time_period: Okres
+      ff_report_title: Podsumowanie połączenia
+      summary_title: 'Podsumowanie połączeń konsultanta '
+      agent: Konsultant
+      group: Grupa
+      call_type: Typ połączenia
+      filter_report: Edytuj filtr
+      select_agent: Wybierz konsultanta
+      select_group: Wybierz grupę
+      select_call_type: Wybierz typ połączenia
+      select_number: Wybierz numer
+      all_numbers: Wszystkie numery
+      all_call_types: Wszystkie
+      number: Numer
+      avg_handle_time: Średni czas rozmowy
+      num_of_calls: Liczba połączeń
+      total_answered: Odebrane połączenia
+      total_voice_mail: Skrzynka głosowa
+      total_duration: Łączny czas
+      agent_calls_count: Połączenia
+      total_unanswered_calls: Nieodebrane połączenia
+      num_of_transfered: Liczba przekierowań
+      num_of_external_transfers: Zewnętrzne przekierowania
+      unanswered_transfers: Nieodebrane przekierowania
+      answered_percentage: '% odebranych'
+      generate_summary: Generuj
+      filter_close: Zamknij
+      unanswered_count: Bez odpowiedzi
+      others: Inne
+      external: Numery zewnętrzne
+      includes_transfer: Wlicz połączenia przekierowane
+      no_agent: – Brak konsultanta –
+      no_external: Przekierowania na numery zewnętrzne nie są uwzględnione
+      filter_option_within_business_hours: W godzinach pracy
+      filter_option_all_calls: Wszystkie połączenia
+      business_hours: Godziny pracy
+      filter_option_outside_business_hours: Poza godzinami pracy
     time_sheets:
       billable: Godziny płatne
       non_billable: Godziny niepłatne
@@ -12029,6 +12105,579 @@ pl:
     recording_on_process: >-
       Trwa nagrywanie. <a href='#' target='_parent'
       id='checkfreshfoneaudio'>Sprawdź</a> ponownie za kilka minut
+    not_enough_credit: Brak wystarczającej ilości środków!
+    recharge: Doładuj
+    ff_number: Numer telefonu
+    via_browser: przez przeglądarkę / aplikację
+    via_phone: przez telefon
+    subscription:
+      auto_recharge_text: 'Obciążamy twoje konto tylko, kiedy stan konta będzie poniżej 5 USD'
+      current_balance: Twój bieżący stan konta
+      purchase_text: Doładuj konto telefoniczne
+      setup_auto_recharge: Ustaw automatyczne doładowanie
+      no_credit_card_text: 'Wpisz dane do wykonania płatności, aby doładować konto telefoniczne'
+      recharge_now_text: Doładuj swoje konto jednorazową płatnością
+      auto_recharge_amt: Kwota automatycznego doładowania
+      see_detailed_pricing: Wyświetl szczegółowy cennik
+      followup: doładowania konta telefonicznego
+      followup_text: doładowania konta telefonicznego
+      purchase_credits: Kup Środki
+    dialpad:
+      not_valid_number: Podaj prawidłowy numer
+      could_be_invalid_number: Może być nieprawidłowym numerem.
+      invalid_number_continue_call: Ponownie naciśnij przycisk Połącz
+      not_enough_credit: Brak wystarczającej ilości środków
+      restricted_country: Kraj zakazany
+      already_in_call: Ograniczenie jednocześnie wychodzącej rozmowy
+      strange_number: Nie można oddzwonić na numer zastrzeżony
+      move_to_dialer: Oddzwoń
+      connect_call: Zadzwoń
+      dialpad_placeholder: Wpisz nazwę lub numer
+    search:
+      work_phone: Praca
+      mobile_phone: Telefon komórkowy
+    call_status:
+      default: ''
+      completed: Zakończono
+      blocked: Zablokowano
+      busy: Zajęte
+      missedcall: Nieodebrane połączenie
+      noanswer: Brak odpowiedzi
+      canceled: Anulowano
+      failed: Nie powiodło się
+      in_progress: W toku
+      voicemail: Poczta głosowa
+      restricted: Zakazany
+      all_calls: Wszystkie połączenia
+      answered: Odebrane
+      on-hold: Wstrzymane
+      ringing_abandon: Opuść rozmowę (dzwonienie)
+      ivr_abandon: Opuść rozmowę (IVR)
+      queue_abandon: Opuść rozmowę (kolejka)
+    general:
+      suspended_account_msg: >-
+        Twój kanał telefoniczny jest aktualnie zawieszony. Włącz funkcję
+        telefonu, aby wykonywać i odbierać połączenia.
+      suspended_on_low_balance_msg: >-
+        Twój kanał telefoniczny został zawieszony ze względu na niski stan
+        konta. Doładuj konto, aby aktywować.
+    dashboard:
+      title: Telefon
+      in_conversation: Konwersacje wewnętrzne
+      available_agents: Dostępni konsultanci
+      freshfone_recharge_alert_new: >-
+        Stan Twojego konta telefonicznego jest za niski, aby wykonywać lub
+        odbierać połączenia. Doładuj konto, aby kontynuować.
+      admin_freshfone_recharge_alert_new: >-
+        Stan twojego konta jest za niski, aby wykonywać lub odbierać połączenia.
+        <a href='/subscription'> Doładuj konto</a>, aby kontynuować.
+      in_queue: W kolejce
+      unavailable_agents: Zajęci konsultanci
+    widget:
+      ignore: Ignoruj
+      accept: Akceptuj
+      end_call: Zakończ połączenie
+      mute: Wycisz
+      hold: Wstrzymaj
+      holding: |-
+        Niestety nie można wstrzymać połączenia...
+        Spróbuj ponownie później...
+      hold_success: Teraz wstrzymane połączenie
+      transfer_call: Przekaż połączenie
+      dialpad: Klawiatura numeryczna
+      call_notes: Notatki dot. połączenia
+      phone_icon: Zadzwoń
+      on_phone: Dostępne w telefonie
+      on_browser: Dostępne w przeglądarce
+      invalid_phone_number: >-
+        W ustawieniach profilu dodaj do swojego numeru prefiks „+” i numer
+        kodowy kraju
+      no_calls: Brak niedawnych połączeń
+      available: Odbiera połączenia
+      unavailable: Nie odbiera połączeń
+      busy: Trwające połączenie
+      recent_calls: Niedawne połączenia
+      transferring: <span>Przekazywanie połączenia</span><br />Czekaj...
+      transfer_agents: Wpisz nazwę konsultanta lub grupy...
+      transfer_numbers: Wpisz numer zewnętrzny...
+      unavailable_agents: 'Brak dostępnych konsultantów, aby przekazać połączenie'
+      no_transfers: Brak ostatnich przekierowań
+      agents_count_in_group: '%{count} konsultantów'
+      ticket_info: >-
+        Utwórz nowe zgłoszenie lub dodaj notatkę do istniejącego zgłoszenia za
+        pomocą opcji notatek i nagrywania.
+      add_note: Dodaj notatki
+      note_placeholder: Dodaj notatki dot. połączenia...
+      new_ticket: Zapisz jako nowe zgłoszenie
+      save_to_existing: Zapisz jako istniejące zgłoszenie
+      ignore_ticket: Nie konwertuj na zgłoszenie
+      ignore_ticket_info: Twoje nagrania będą dostępne w historii połączeń
+      back: Wróć
+      subject: Temat zgłoszenia
+      requester_name: Imię i nazwisko zgłaszającego
+      requester_email: E-mail zgłaszającego
+      save: Zapisz
+      notes: Notatki
+      new_requester: Nowy zgłaszający
+      low_credit: Niski stan konta telefonicznego. Skontaktuj się z administratorem konta.
+      forward_number_alert: >-
+        Zaktualizuj swój numer telefonu w Ustawieniach profilu, aby przekazywać
+        połączenia na twój telefon
+      desktop_notification: Włącz powiadomienia na pulpicie
+      network_error: Sprawdź połączenie z Internetem
+      transfer:
+        tranfer_via: przez
+        to: 'Do:'
+        transferring: Przekierowywanie...
+        transfer_canceled: Zignorowane
+        tranfer_no_answer: Niedostępne
+        tranfer_connected: Przekierowane
+        group_tranfer_no_answer: Brak dostępnych konsultantów
+        group_tranfer_connected: Połączony z klientem
+        close: Zamknij
+        resume: Wznów
+        cancel: Anuluj
+        cancelling: Anulowanie...
+        resuming: Wznawianie...
+        canceled: Anulowano
+      view_all: Wyświetl wszystkie
+      agent_conference:
+        canceled: Anulowano
+        cancelling: Anulowanie
+        cancel_add_agent: Anuluj
+      requester_phone: Numer telefonu
+      cancel: Anuluj
+      no_recent_tickets: Brak ostatnich zgłoszeń
+      add_note_text: Dodaj notatkę
+      edit_note_text: Edytuj notatkę
+      recent_tickets: Ostatnie zgłoszenia
+      saving: Zapisywanie...
+      answer: Odpowiedź
+    call_history:
+      title: Historia połączeń
+      sort_by: 'Sortowanie wg:'
+      singular_active_number: Aktywny numer
+      none_active_number: – brak –
+      active_number: Aktywny numer
+      singular_deleted_number: Usunięty numer
+      deleted_number: Usunięty numer
+      block_number: Blokuj
+      cancel: Anuluj
+      blacklist_confirmation: Czy na pewno zablokować?
+      show_deleted: Pokaż usunięte numery
+      filtered_by: 'Przefiltrowane wg:'
+      filter_by_number: Numer
+      filter_by_time: Okres
+      filter_by_agent: Konsultant
+      filter_by_group: Połączenia przychodzące do grupy
+      filter_by_call_status: Rodzaj połączenia
+      filter_by_caller: Zgłaszający
+      received_date: Data
+      duration: Czas trwania
+      cost: Koszt
+      asc: Rosnąco
+      desc: Malejąco
+      all_time: Cały czas
+      today: Dzisiaj
+      yesterday: Wczoraj
+      this_week: W tym tygodniu
+      this_month: W tym miesiącu
+      month: 'W ostatnich %{month} miesiącach'
+      custom: Zakres dat
+      no_calls: Nie znaleziono połączeń
+      view_transferred_calls: Wyświetl przekazane połączenia
+      save_ticket: Przekonwertuj na zgłoszenie
+      convert: Przekonwertuj
+      helpdesk: Centrum pomocy
+      external: Zewnętrzny
+      unblock_number: Odblokuj
+      block_number_title: Blokuj numer
+      filter_option_all_agents: Wszyscy konsultanci
+      filter_option_all_calls: Wszystkie połączenia
+      filter_option_received_calls: Przychodzące
+      filter_option_outgoing_calls: Wychodzące
+      filter_option_missed_calls: Nieodebrane
+      filter_option_voicemail: Poczta głosowa
+      filter_option_blocked_calls: Zablokowane
+      recording_delete:
+        done_by: Skasowane przez
+        tooltip: Skasuj nagranie
+        confirmation_btn: Skasuj
+        confirmation_heading: Potwierdź..
+        confirmation_warning: Spowoduje to nieodwracalne skasowanie nagranej wiadomości.
+        confirmation_notification: Czy na pewno chcesz skasować?
+        successful: Nagranie połączenia zostało skasowane!
+        unsuccessful: Nie można skasować nagrania połączenia. Spróbuj ponownie później.
+        error: >-
+          Błąd w czasie kasowania nagrania połączenia!!! Spróbuj ponownie
+          później
+      strange_numbers: null
+      restricted: ZASTRZEŻONY
+      blocked: ZABLOKOWANY
+      unknown: NIEZNANY
+      anonymous: ANONIMOWY
+      empty: PUSTY
+      total_duration: Czas trwania
+      minutes: Minut(y)
+      filter_by_business_hours: Godziny pracy
+      filter_option_within_business_hours: W godzinach pracy
+      filter_option_outside_business_hours: Poza godzinami pracy
+    ticket:
+      recording: Odtwórz wiadomość
+      ticket_desc_with_name: >-
+        Rozmowa klienta <b> %{customer_name} </b> (%{customer_number},
+        %{location}) z konsultantem <b>%{agent}</b> (%{agent_number})<br/ >
+      ticket_desc_with_out_name: >-
+        Rozmowa klienta %{customer_number} (%{location}) z konsultantem
+        <b>%{agent}</b> (%{agent_number})<br/ >
+      voicemail_ticket_desc_with_out_name: >-
+        Wiadomość głosowa od klienta  %{customer_number}  (%{location}) na numer
+        %{freshfone_number}
+      voicemail_ticket_desc_with_name: >-
+        Wiadomość głosowa od klienta <b>%{customer_name}</b>
+        (%{customer_number}, %{location}) na numer %{freshfone_number}
+      agent_detail: 'i <b>%{agent}</b> (%{agent_number})<br/ >'
+      dial_a_number_with_name: >-
+        Rozmowa z klientem <b>%{customer_name}</b> (%{customer_number},
+        %{location}) . Połączenie zrealizowane z IVR Direct dial
+      dial_a_number_with_out_name: >-
+        Rozmowa z klientem %{customer_number} (%{location}). Rozmowa połączona z
+        IVR na numer: %{direct_dial_number}
+      default_subject: 'Połączenie z %{customer} dnia %{call_date}'
+      voicemail_subject: 'Wiadomość głosowa od %{customer}'
+      human_name: zgłoszenie
+      view: Wyświetl
+    note:
+      human_name: notatkę
+      view: Wyświetl
+    create:
+      success:
+        with_link: '%{human_name} utworzył %{link}'
+    admin:
+      important: Ważne
+      general: Ogólne
+      settings: Ustawienia
+      greetings: Powitania
+      messages: Wiadomości
+      freshfone_numbers_title: Numer telefonu
+      suspended_alert: >-
+        <b>Ważne:</b> Wyłączenie kanału telefonicznego nie powoduje przerwania
+        naliczania comiesięcznej opłaty za dzierżawę numeru. Aby uniknąć opłat,
+        usuń dzierżawione numery.
+      purchase_credit_text: >-
+        Doładuj konto, aby umożliwić kupowanie numerów, wykonywanie i odbieranie
+        połączeń z wykorzystaniem kanału telefonicznego.
+      purchase_numbers_text: >-
+        Kup numer lokalny lub bezpłatny i udzielaj telefonicznej pomocy
+        technicznej swoim klientom na całym świecie.
+      search: Wyszukaj wg cyfr lub fraz
+      local: Lokalny
+      toll_free: Bezpłatny
+      number:
+        simultaneous: Łącz ze wszystkimi konsultantami
+        round_robin: Najpierw łącz z bezczynnymi konsultantami
+      number_settings:
+        title_text: Zarządzanie biurem obsługi telefonicznej
+        info_content: >-
+          <b>Przypisywanie połączeń telefonicznych do konsultantów i
+          grup</b></br>Możesz skonfigurować system interaktywnej obsługi
+          dzwoniącego (IVR) i kierować połączenia do różnych grup lub
+          konsultantów. Na przykład połączenia klientów, którzy nacisną 1, można
+          kierować do działu pomocy technicznej, a klientów, którzy nacisną 2,
+          do działu sprzedaży.<br/>Dodatkowo można również stworzyć własne
+          komunikaty odtwarzane klientom poprzez nagranie głosu, przesłanie
+          pliku lub z wykorzystaniem funkcji tekst na
+          mowę.<br><br><b>Dostosowanie numeru</b><br> Numery można również
+          konfigurować indywidualnie, tak aby każdy miał własne ustawienia.
+          Obejmuje to podstawowe opcje, takie jak maksymalna liczba osób
+          oczekujących oraz maksymalny czas oczekiwania. Po przekroczeniu
+          któregokolwiek z tych limitów automatycznie odtwarzany jest komunikat
+          o niedostępności usługi.<br/>Po włączeniu rejestracji połączeń każde
+          połączenie w ramach centrum pomocy jest rejestrowane, a nagranie
+          załączane do zgłoszeń, gdzie może zostać udostępnione publicznie lub
+          prywatnie. Dostępność swojego kanału telefonicznego można również
+          ograniczyć do godzin roboczych. Można na przykład utworzyć dwie linie
+          pomocy, jedną dostępną w normalnych godzinach roboczych i drugą o
+          podwyższonym priorytecie dostępną przez całą dobę siedem dni w
+          tygodniu.<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target=' blank'>Przeczytaj więcej o sposobach dostosowywania swojej
+          usługi telefonicznej</a>.
+        non_business_hours: Przyjmuj połączenia podczas...
+        business_calendar: Wybierz godziny pracy
+        transcript_voice: Transkrybuj głos
+        text_to_speech: Tekst na mowę
+        record_calls: Nagrywaj połączenia
+        voicemail: Poczta głosowa
+        voicemail_on: Wł.
+        voicemail_off: Wył.
+        record_all: Nagrywaj wszystkie połączenia
+        record_none: Nie nagrywaj połączeń
+        record_alert: >-
+          Przepisy regulujące nagrywanie połączeń w większości krajów nakazują,
+          aby powiadamiać klientów, że rozmowy są nagrywane. Przygotuj
+          odpowiedni komunikat powitania.
+        max_queue_calls: Maksymalna liczba połączeń w kolejce
+        call_wait_time: z maksymalnym czasem oczekiwania
+        call_wait_time_suffix: na rozmowę
+        queue_message: Umieść wiadomość w kolejce
+        non_availability_message: Komunikat o braku możliwości zrealizowania połączenia
+        voicemail_message: Komunikat poczty głosowej
+        non_business_hours_message: Komunikat poza godzinami pracy
+        welcome_message_alert: 'Wiadomość powitalna nie jest odtwarzana, jeśli włączona jest opcja IVR'
+        welcome_message: Wiadomość powitalna
+        record_voice: Nagraj się
+        upload_voice: Wgraj pliki audio
+        read_message: Tekst na mowę
+        start_recording: Rozpocznij nagrywanie
+        stop_recording: <span></span>Zatrzymaj nagrywanie
+        preparing_recording: Przygotowywanie komunikatu...
+        recorded_voice: Nagrany głos
+        audio_upload: Wybierz plik do wgrania
+        greeting_message: Wprowadź tutaj swoją wiadomość
+        attachment_help_info: Można stosować pliki audio (mp3) < 5 MB
+        attachment_help_text: Dopuszczalne pliki audio (mp3) < 5 MB
+        recording_help_info: Włącz mikrofon. Czas trwania &lt; 5 minut.
+        cancel: Anuluj
+        change: Zmień
+        group: Odtwórz komunikat i połącz z konsultantami w
+        call_hunting_group: Grupa
+        all_groups: Wszystkie grupy
+        business_hours: Godziny pracy
+        anytime: 24/7 dowolnego dnia
+        name: Nazwa
+        name_placeholder: Wpisz nazwę dla swojego numeru
+        hunt_type: Przekierowywanie połączeń
+        routing_message: Gdy wielu konsultantów dostępnych jest w trybie online...
+        recording_privacy: Wskazanie rejestracji rozmowy
+        recording_privacy_public: Widoczne dla klienta i konsultanta
+        recording_privacy_private: Widoczne tylko dla konsultantów
+        name_maxlength: Nazwa nie może być dłuższa niż 255 znaków
+        number_accessible: Dostępne dla
+        wait_music: Muzyka oczekiwania
+        hold_music: Muzyka wstrzymania
+        queue_position_preference: Odczytaj miejsce w kolejce
+        queue_wait_message: Wiadomość o oczekiwaniu w kolejce
+        queue_position_enable: Wł.
+        queue_position_message: Wiadomość o miejscu w kolejce
+        queue_position_disable: Wył.
+        queue_position_message_placeholder: 'Oczekujesz obecnie w kolejce. Twoje miejsce to: {{queue.position}}'
+        queue_position_message_alert: >-
+          Aby odczytać miejsce w kolejce, użyj symbolu zastępczego
+          {{queue.position}} <br/> Przykład: Oczekujesz obecnie w kolejce. Twoje
+          miejsce to: {{queue.position}}
+      numbers:
+        sidebar_title: Wbudowany kanał telefoniczny systemu Freshdesk
+        sidebar_content: >-
+          Kanał telefoniczny umożliwia wykonywanie i odbieranie połączeń
+          telefonicznych w przeglądarce, na telefonie komórkowym lub za pomocą
+          kanału telefonicznego w mobilnych aplikacjach Freshdesk. Jest on
+          ściśle zintegrowany z systemem obsługi zgłoszeń w systemie Freshdesk.
+          Tak więc możliwe jest śledzenie połączeń oraz ich nagrywanie i
+          konwertowanie na zgłoszenia w razie potrzeby. <br/><br/>
+          <b>Konfiguracja telefonu</b></br>Aby rozpocząć korzystanie z telefonu,
+          najpierw trzeba włączyć i zakupić numer pomocy technicznej. Dostępne
+          są lokalne numery z  <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>podanych tutaj krajów</a>, które umożliwiają
+          wykonywanie i odbieranie połączeń z dowolnego miejsca na świecie.
+          Jeżeli posiadasz klientów w USA, Wielkiej Brytanii lub Kanadzie,
+          możesz również kupić bezpłatne numery pomocy technicznej.
+          <br/><br/><b> Korzystanie z inteligentnych systemów IVR</b><br/>
+          Możliwe jest tworzenie inteligentnych systemów (IVR) umożliwiających
+          rozdział klientów dzwoniących na numery pomocy technicznej według
+          kategorii i kierowanie ich do odpowiedniego działu, zespołu lub
+          konsultanta. </b><br/><br/>  <a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>Dowiedz się, jakie możliwości daje usługa
+          telefoniczna</a>.
+        purchase_number: Nabądź numer
+        purchase_phone_number: 'Kup numer (%{number})'
+        buy: Kup numer
+        buy_button_text: Kup
+        purchase_loading_text: Trwa nabywanie...
+        buy_loading_text: Kupowanie...
+        purchase_alert_text: >-
+          Ten numer telefonu kosztuje <strong><span class='number-rate'></span>
+          miesięcznie</strong>.
+        not_available: Brak wyników. Spróbuj wyszukać inny termin
+        address_certification_text: >-
+          Aby kupić numer telefonu, musisz podać swój osobisty lub firmowy adres
+          w kraju <span class='certification-country'></span>.
+        purchase_confirm: Czy jesteś pewien?
+        delete_alert: >-
+          Nie można ponownie kupić raz usuniętego numeru. Czy na pewno chcesz
+          usunąć ten numer?
+        manage: Zarządzaj
+        failure_purchase: >-
+          Nie można kupić numeru telefonu. Sprawdź, czy adres ma odpowiedni
+          format dla kraju: <span class='certification-country'></span>.
+        low_credits: >-
+          Stan Twojego konta telefonicznego jest za niski, żeby kupić nowy
+          numer. Doładuj konto i spróbuj ponownie.
+        address:
+          name: Firma / Imię i nazwisko
+          address: Adres
+          city: Miasto
+          state: Stan / Prowincja / Region
+          postal_code: Kod pocztowy
+          country: Kraj
+          required_field: Wszystkie pola są obowiązkowe
+        setup:
+          title_text: Konfiguracja telefonicznego biura obsługi
+          info_text: >-
+            Aby rozpocząć użytkowanie kanału telefonicznego, trzeba najpierw
+            kupić numer połączeń przychodzących dostępny dla klientów. Dostępne
+            są numery lokalne dla <a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>krajów wymienionych na tej stronie</a>. Jeżeli
+            klienci będą dzwonić z terenu USA, Wielkiej Brytanii lub Kanady,
+            można również kupić numer bezpłatny.<br/><br/>Można kupić kilka
+            numerów telefonicznych z różnych krajów i skonfigurować bezpłatne
+            linie pomocy technicznej wewnątrz systemu Freshdesk bez stosowania
+            usług zewnętrznych. Konto zostanie obciążone standardowymi stawkami
+            za połączenia przychodzące, wychodzące i przekazywane z i do centrum
+            pomocy. Sprawdź  <a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>stawki za połączenia tutaj</a>.<br/><br/> Po
+            kupieniu numeru telefonu dla telefonicznej linii pomocy technicznej
+            wszystkie przychodzące połączenia będą rozdzielane do zalogowanych w
+            centrum konsultantów. Dodatkowo konsultanci mają możliwość
+            odbierania połączeń w przeglądarce lub ustawienia automatycznego
+            przekierowania na telefon stacjonarny.
+        caller_id:
+          wait: Czekaj...
+          delete: Usuń
+          manage_caller_id: 'Zarządzaj identyfikatorem dzwoniącego '
+          add_new: Dodaj nowy
+          no_number_added: Nie dodano identyfikatora dzwoniącego
+          call_id_mask: Zamaskuj ten numer
+        sidebar_content_v2: >-
+          Kanał telefoniczny umożliwia wykonywanie i odbieranie połączeń
+          telefonicznych w przeglądarce, na telefonie komórkowym lub za pomocą
+          kanału telefonicznego w aplikacjach mobilnych Freshdesk. Jest on
+          ściśle zintegrowany z systemem obsługi zgłoszeń w systemie Freshdesk.
+          Tak więc możliwe jest śledzenie połączeń oraz ich nagrywanie i
+          konwertowanie na zgłoszenia w razie potrzeby. <br/><br/>
+          <b>Konfiguracja telefonu</b></br>Aby rozpocząć korzystanie z telefonu,
+          najpierw trzeba włączyć i zakupić numer pomocy technicznej. Dostępne
+          są lokalne numery z <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>podanych tutaj krajów</a>, które umożliwiają
+          wykonywanie i odbieranie połączeń z dowolnego miejsca na świecie.
+          Jeżeli posiadasz klientów w USA, Wielkiej Brytanii lub Kanadzie,
+          możesz również kupić bezpłatne numery pomocy technicznej.
+          <br/><br/><b>Świadczenie pełnej obsługi telefonicznej</b><br/>Dzięki
+          naszym kanałom telefonicznym, możesz<br/><ul><li> Przekierowywać
+          połączenia do dowolnych konsultantów w każdym
+          miejscu</li><li>Monitorować połączenia, przekazywać je w razie
+          potrzeby, dodawać innych konsultantów do trwających rozmów i znacznie
+          więcej*</li></ul><br/><p>*Skontaktuj się z obsługą na <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a>, aby
+          włączyć zaawansowane funkcje na swoim koncie. Obejmuje to
+          monitorowanie połączeń, przekazywanie połączeń, rozmowy konferencyjne,
+          maskowanie połączeń i statystyki rozmów.</p><br/>
+        buy_phone_numbers: Kup numery telefonu
+        tour_link: Pomóż mi skonfigurować kanał telefoniczny
+        buy_phone_credits: Doładuj konto telefoniczne
+      invalid_attachment: >-
+        Załącznik ’%{name}’ nie zawiera prawidłowego pliku audio / jest większy
+        niż 5MB.
+      ivr:
+        simple_message_title: Prosta wiadomość
+        ivr_message_title: Interaktywna wiadomość głosowa (IVR)
+        welcome_message: Wiadomość powitalna
+        message_type: Rodzaj wiadomości
+        transcript_voice: Transkrybuj głos
+        text_to_speech: Tekst na mowę
+        turned_off: >-
+          Wiadomość powitalna jest WYŁ. Wszystkie połączenia przychodzące będą
+          bezpośrednio przekazywane do centrum pomocy.
+        turned_on: Wiadomość powitalna będzie odtwarzana każdemu dzwoniącemu.
+        turn_on: Wł.
+        turn_off: Wył.
+        add_new_menu: Dodaj nowe <b>menu</b>
+        add_new_menu_from_option: Dodaj nowe menu
+        add_new_option: Dodaj opcję <b>klawiatury</b>
+        keypress: Klawiatura
+        input_number: Wprowadź numer
+        action: Działanie
+        male: Głos męski
+        female: Głos żeński
+        rename: zmień nazwę
+        done: wykonano
+        save: Zapisz
+        saving: Zapisywanie...
+        preview: Podgląd
+        previewing: Wyświetlanie podglądu...
+        delete_menu: Usuń menu
+        jump_to: Przejdź do
+        call_agent: Zadzwoń do konsultanta
+        call_agent_group: Zadzwoń do grupy konsultantów
+        call_number: Zadzwoń na numer
+        back_to_menu: Powrót do menu głównego
+        invalid_performer_type: Nieprawidłowy rodzaj autora zdarzenia
+        invalid_number: 'Nieprawidłowy numer w menu %{menu}'
+        restricted_country: 'Numer z kraju zablokowanego w menu %{menu}'
+        invalid_jump_to: >-
+          Nie można wykonać czynności „Przejdź do” w przypadku niemacierzystego
+          menu%{menu}
+        seed_message: Witamy w centrum pomocy klienta
+        seed_menu_name: Witamy/Menu Start
+        invalid_number_format: >-
+          Wpisz prawidłowy numer telefonu z prefiksem „+” oraz poprzedzony kodem
+          kraju
+      welcome_page:
+        title_text: Numer telefonu
+      feature_request_content:
+        title_text: Numer telefonu
+        heading_text: >-
+          Zapewniaj pomoc techniczną swoim klientom z wykorzystaniem kanału
+          telefonicznego
+        number_info: Kup lokalne i bezpłatne numery z całego świata
+        ivr_info: >-
+          Przekierowuj połączenia do odpowiedniego konsultanta i grupy za pomocą
+          systemu IVR
+        recording_info: >-
+          Rejestruj i konwertuj rozmowy na zgłoszenia, podobnie jak wiadomości
+          e-mail
+        learn_more: Dowiedz się więcej
+        pricing: Zobacz wszystkie taryfy połączeń i dostępne kraje
+        request_subject: 'Wniosek o telefon - %{account_name}'
+        email_message: Potrzebna funkcja Freshfone
+        success: Skontaktujemy się z Tobą w ciągu dwóch dni roboczych.
+        error_message: >-
+          Przepraszamy, ale nie możemy zrealizować twojego żądania. Spróbuj
+          później.
+        additional_info: >-
+          Po aktywacji kanału telefonicznego na koncie będziesz mieć możliwość
+          kupowania numerów, wykonywania i odbierania połączeń
+        button_text: Wystąp o telefon
+        video_title: Obejrzyj film demonstrujący możliwości kanału telefonicznego
+        trial_or: LUB
+        compare_trial_and_full: Porównaj pełną wersję z bezpłatną wersją próbną
+        activation_disclaimer: Możesz używać wszystkich funkcji przez określony czas
+        trial_button_text: Włącz bezpłatną wersję próbną
+        trial_version_disclaimer: Możesz bezpłatnie używać ograniczonych funkcji przez 15 dni
+      trial:
+        numbers:
+          search:
+            buy_button: Tak
+            after_activation_request: >-
+              Wystąpiłeś o aktywację kanału telefonicznego <br> Skontaktujemy
+              się z Tobą ponownie w ciągu 2 dni roboczych.
+            buy_confirmation: Czy na pewno chcesz wybrać ten numer?
+            can_use_after_activation: >-
+              Możesz w dalszym ciągu korzystać z tego numeru po aktywowaniu
+              kanału telefonicznego.
+        request_activation_msg: >-
+          Możesz wybrać tylko jeden numer z ograniczonej listy krajów podczas
+          okresu próbnego.<br> Po aktywowaniu pełnej wersji możesz zakupić wiele
+          numerów z 41 krajów.
+        activate_btn_text: Wystąp o aktywację
+        requested_activation: >-
+          Otrzymaliśmy Twoją prośbę o aktywację<br>Jest ona w trakcie
+          przetwarzania
   livechat:
     feature_request:
       title: Witamy w czacie na żywo

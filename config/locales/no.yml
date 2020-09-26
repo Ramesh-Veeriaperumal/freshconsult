@@ -289,6 +289,9 @@
       index:
         select_agent: Velg agent
         select_group: Velg gruppe
+    freshfone:
+      options:
+        unassigned: Ikke tildelt
     select_customer: Velg kunde
     summary_report:
       back_to_reports: Tilbake til rapporter
@@ -1046,6 +1049,24 @@
         om denne saken blir sendt.
   title: Tittel
   free_plan_agents_v2: Ubegrensede representanter
+  freshfone:
+    admin:
+      feature_request_content:
+        learn_more: Lær mer
+      ivr:
+        simple_message_title: Enkel beskjed
+        save: Lagre
+        ivr_message_title: Interaktiv stemme respons (IVR)
+        message_type: Type beskjed
+      number_settings:
+        cancel: Angre
+        name: Navn
+        change: Endre
+    subscription:
+      setup_auto_recharge: Konfigurer automatisk påfylling
+      auto_recharge_amt: Automatisk påfyllingsbeløp
+      see_detailed_pricing: Vis detaljerte priser
+      purchase_text: Kjøp telefonkrediter
   special_beta_offer: Spesielt tilbud for Beta kontoer
   days: dager
   tickets_filter:

@@ -1,0 +1,30 @@
+<div class="phone-search-bar">
+	<div class="search-primary">
+		<div class="search-bar-country">
+			<%= select_tag "toll_free_supported_countries", options_for_select(toll_free_supported_countries, :selected => 'US'), 
+											:class => 'select2' %>
+		</div>
+		<div class="search-bar-prefix">
+			<div class="toll-free-prefixes">
+				<%= select_tag "toll_free_prefix_search", options_for_select( toll_free_prefixes["US"][:numbers], toll_free_prefixes["US"][:default] ), :class => 'select2 toll_free_prefix_US' %> 
+			</div>
+		</div>
+	</div>
+	<div class="search-input-sec">
+		<%= text_field_tag :search_input, "", :placeholder => t('freshfone.admin.search') %>
+		<span class="searchicon ficon-search fsize-18"></span>
+	</div>
+</div>
+
+<div class="toll-free-list">
+	<% toll_free_prefixes.map do |country, numbers| %>
+		<div class= "toll_free_<%= country %>">
+			<%= select_tag "toll_free_prefix_search", options_for_select( toll_free_prefixes[country][:numbers], toll_free_prefixes[country][:default] ), {:class => "toll_free_prefix_" + country}%>
+		</div>		
+	<% end %>
+</div>
+
+<!-- Search Results -->
+<div class="phone-search-results">
+	<div id="toll_free_search_results"></div>
+</div>

@@ -398,6 +398,12 @@ var fetchMoreAndRender = function(ev, cb) {
 		trigger_event("ticket_show_more",{})
 
 		try {
+			freshfonePlayerSettings();
+		} catch (e) { 
+			console.log("freshfonePlayerSettings not loaded");
+		}
+
+		try {
 			// retries remaining annotations after more notes are loaded
 			if(!!App && !!App.CollaborationModel && !!App.CollaborationModel.restoreAnnotations) {
 				App.CollaborationModel.restoreAnnotations();
@@ -419,6 +425,10 @@ var updatePagination = function() {
 	$('#show_more').on('click.ticket_details', fetchMoreAndRender);
 }
 
+$('body').on('click.ticket_details','#checkfreshfoneaudio',function(ev){
+		ev.preventDefault();
+		window.location.reload(true);
+});
 // ----- END FOR REVERSE PAGINATION ------ //
 
 changeStatusTo = function(status) {

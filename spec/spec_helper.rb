@@ -34,6 +34,7 @@ Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each
 #   add_group  'libs',         'lib/'
 #   add_group  'workers',      'app/workers'
 #   add_group  'integrations', 'integrations'
+#   add_group  'freshfone',    'freshfone'
 
 #   # add_group 'reports', 'reports'
 #   # add_group 'search', 'search'
@@ -126,6 +127,7 @@ Spork.prefork do
     config.include NoteHelper
     config.include RolesHelper
     config.include ApplicationsHelper
+    config.include FreshfoneSpecHelper
     config.include APIAuthHelper, :type => :controller
     config.include SlaPoliciesHelper
     config.include ProductsHelper

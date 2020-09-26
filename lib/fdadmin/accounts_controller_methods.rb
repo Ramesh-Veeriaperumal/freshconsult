@@ -123,8 +123,32 @@ module Fdadmin::AccountsControllerMethods
 							}
 	end
 
+	def get_account_details(account)
+	  ff_account = account.freshfone_account
+	  ff_credit = account.freshfone_credit
+	  return { available_credit: 0.00 } if only_freshfone_feature?(account)
+	  return active_account_details(ff_credit) if freshfone_active?(ff_account) ||
+	                                              ff_credit.present?
+
+	  { trial_started:  ff_account.present? && ff_account.trial_or_exhausted?,
+	   activation_requested: freshfone_activation_requested?(account) }
+	end
+
 	def active_account_details(ff_credit)
 		{ available_credit: ff_credit.present? ? ff_credit.available_credit : 0.00 }
+	end
+
+	def freshfone_activation_requested?(account)
+	  get_key(FRESHFONE_ACTIVATION_REQUEST % { account_id: account.id }).present?
+	end
+
+	def only_freshfone_feature?(account)
+	  account.features?(:freshfone) && account.freshfone_account.blank? &&
+	  	account.freshfone_credit.blank?
+	end
+
+	def freshfone_active?(ff_account)
+	  ff_account.present? && ff_account.active?
 	end
 	
 	def validate_new_currency

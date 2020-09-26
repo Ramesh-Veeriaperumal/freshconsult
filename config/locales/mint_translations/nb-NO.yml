@@ -756,6 +756,34 @@ nb-NO:
         filter_report: Rediger filter
         ticket_type: Sakstype
         select_billable: Velg fakturerbar/ikke-fakturerbar
+    freshfone:
+      time_period: Tidsperiode
+      num_of_transfered: Antall overføringer
+      no_agent: '- Ingen agenter -'
+      group: Gruppe
+      total_unanswered_calls: Ubesvarte anrop
+      call_type: Samtaletype
+      filter_option_all_calls: Alle samtaler
+      filter_close: Lukk
+      avg_handle_time: Gjennomsnittlig håndteringstid
+      all_numbers: Alle numre
+      filter_report: Rediger filter
+      number: Nummer
+      business_hours: Åpningstider
+      no_external: Overføringer til eksterne numre er ikke tatt med
+      summary_title: 'Sammendrag av agentsamtaler '
+      generate_summary: Generer
+      num_of_calls: Antall samtaler
+      unanswered_transfers: Ubesvarte overføringer
+      unanswered_count: Ubesvart
+      select_call_type: Velg samtaletype
+      options:
+        all_groups: Alle grupper
+        unassigned: Ikke tilordnet
+        incoming: Innkommende
+        outgoing: Utgående
+      filter_by_title: Filtrert etter
+      total_voice_mail: Talemeldinger
     select_customer: Velg kunde
     summary_report:
       avg_1st_response_time: Gjennomsnittlig første <br> svartid
@@ -3448,6 +3476,188 @@ nb-NO:
         other: liker dette
   title: Tittel
   free_plan_agents_v2: Ubegrensede agenter
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Kjøp et lokalt nummer eller gratisnummer og støtt kunder over hele verden over telefon
+      greetings: Hilsener
+      settings: Innstillinger
+      important: Viktig
+      toll_free: Gratis
+      purchase_credit_text: >-
+        Kjøp kreditt for å kjøpe telefonnumre, ringe, og motta samtaler via telefonkanalen.
+      suspended_alert: >-
+        <b>Viktig:</b> Deaktivering av telefonkanalen din vil ikke deaktivere den månedlige leiekostnaden for numrene dine. Slett de kjøpte numrene for å unngå å bli belastet for dem.
+      freshfone_numbers_title: Telefon
+      welcome_page:
+        title_text: Telefon
+      number:
+        simultaneous: Ring alle agenter
+        round_robin: Ring inaktiv agent først
+      numbers:
+        sidebar_content_v2: >-
+          Ved å bruke telefonkanalen kan du ringe og motta samtaler via nettleseren, mobiltelefonen eller gjennom telefonkanalen i Freshdesk sine mobilapper. Den er tett integrert med støttesakssystemet i Freshdesk. Du kan dermed holde styr på telefonsamtaler ved å ta opptak av disse og konvertere dem til saker når det er nødvendig. <br/><br/> <b>Konfigurasjon av telefonkanalen</b></br>For å starte å bruke denne funksjonen, må du først aktivere den og kjøpe et nummer for støtte. Du kan kjøpe lokalnumre fra <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>listen over land her</a> og ringe eller motta anrop fra hvor som helst i verden. Hvis dine kunder ringer deg fra USA, Storbritannia eller Canada, kan du også kjøpe et gratisnummer. <br/><br/><b>Gi en komplett telefonstøtte</b><br/>Med telefonkanalen vår kan du<br/><ul><li>Ringe og motta samtaler via nettleseren eller mobiltelefonen</li><li>Opprette talemeldinger, viderekoble samtaler eller overføre samtaler til agenter hvor som helst</li><li>Overvåke samtaler, gripe inn når det er behov, legge til andre agenter i pågående samtaler og mer*</li></ul><br/><p>*Kontakt <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for å aktivere avanserte funksjoner for kontoen din. Disse inkluderer samtaleovervåking, samtaleinngrep, telefonkonferanser, samtalemaskering og samtalemåledata.</p><br/>
+        sidebar_title: Telefonkanal
+        delete_alert: >-
+          Et nummer kan ikke kjøpes på nytt når det først er slettet. Er du sikker på at du vil slette nummeret?
+        buy_loading_text: Kjøper …
+        buy_phone_numbers: Kjøp telefonnumre
+        caller_id:
+          no_number_added: Ingen oppringer-ID er lagt til
+          call_id_mask: Masker dette nummeret
+          manage_caller_id: 'Administrer oppringer-ID '
+          add_new: Legg til ny
+        tour_link: Hjelp meg å konfigurere telefonkanalen
+        failure_purchase: >-
+          Kan ikke kjøpe telefonnummeret. Kontroller at adressen er en gyldig lokaladresse i <span class='certification-country'></span>.
+        buy: Kjøp nummer
+        buy_button_text: Kjøp
+        address:
+          address: Adresse
+          state: Delstat/provins/region
+          city: Poststed
+          postal_code: Postnummer
+          required_field: Alle feltene er obligatorisk
+          name: Bedrift/navn
+        setup:
+          info_text: >-
+            For å starte å bruke telefonkanalen må du først kjøpe et telefonnummer for innkommende samtaler fra kundene dine. Du kan kjøpe et lokalt nummer i hvilket som helst av <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>landene på denne listen</a>. Hvis kundene dine ringer fra USA, Storbritannia eller Canada, kan du også tilby dem et gratisnummer.<br/><br/>Du kan kjøpe flere telefonnumre fra ulike land og konfigurere gratis telefonlinjer i Freshservice uten å bruke en tredjepartstjeneste. Du blir belastet standard priser for innkommende og utgående anrop samt viderekobling av samtaler fra helpdesken din. Se <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>samtalesatser her</a>.<br/><br/> Når du har kjøpt et telefonnummer for helpdesken, vil alle innkommende anrop bli distribuert til påloggede agenter i helpdesken. I tillegg kan agentene dine velge om de vil besvare anrop i nettleseren eller få dem automatisk viderekoblet til telefonen.
+          title_text: Konfigurasjon av telefonsenter
+        sidebar_content: >-
+          Ved å bruke telefonkanalen kan du ringe og motta samtaler via nettleseren, mobiltelefonen eller gjennom telefonkanalen i Freshdesk sine mobilapper. Den er tett integrert med støttesakssystemet i Freshdesk. Du kan dermed holde styr på telefonsamtaler ved å ta opptak av disse og konvertere dem til saker når det er nødvendig. <br/><br/> <b>Konfigurasjon av telefonkanalen</b></br>For å starte å bruke denne funksjonen, må du først aktivere den og kjøpe et nummer for støtte. Du kan kjøpe lokalnumre fra <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>listen over land her</a> og ringe eller motta anrop fra hvor som helst i verden. Hvis dine kunder ringer deg fra USA, Storbritannia eller Canada, kan du også kjøpe et gratisnummer. <br/><br/><b>Gi en komplett telefonstøtte</b><br/>Med telefonkanalen vår kan du<br/><ul><li>Ringe og motta samtaler via nettleseren eller mobiltelefonen</li><li>Opprette talemeldinger, viderekoble samtaler eller overføre samtaler til agenter hvor som helst</li><li>Overvåke samtaler, gripe inn når det er behov, legge til andre agenter i pågående samtaler og mer*</li></ul><br/><p>*Kontakt <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for å aktivere avanserte funksjoner for kontoen din. Disse inkluderer samtaleovervåking, samtaleinngrep, telefonkonferanser, samtalemaskering og samtalemåledata.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Les mer om telefonkanalens kraftige egenskaper og funksjoner</a><p>
+        not_available: Ingen resultater funnet. Prøv igjen med et annet søkeord
+        manage: Administrer
+        address_certification_text: >-
+          Du må angi bedriftens adresse eller din personlige adresse i <span class='certification-country'></span> for å kunne kjøpe et telefonnummer.
+        purchase_alert_text: >-
+          Dette telefonnummeret blir belastet <strong><span class='number-rate'></span>månedlig</strong>.
+        buy_phone_credits: Kjøp telefonkreditt
+      feature_request_content:
+        success: Vi kontakter deg innen to virkedager.
+        recording_info: Spill inn og konverter alle samtalene dine til saker
+        button_text: Be om aktivering
+        compare_trial_and_full: Sammenlign den fullverdige versjonen og prøveversjonen
+        activation_disclaimer: Du kan bruke alle funksjonene i en begrenset periode
+        learn_more: Finn ut mer
+        ivr_info: >-
+          Ta i bruk samtaleovervåking, samtalekonferanser, rut samtaler med interaktivt telefonsvar (IVR) og mye mer
+        trial_or: ELLER
+        trial_button_text: Aktiver gratis prøveversjon
+        error_message: Beklager, vi kan ikke behandle forespørselen din akkurat nå. Prøv på nytt senere.
+        title_text: Telefon
+        trial_version_disclaimer: Du kan bruke begrensede funksjoner gratis i 15 dager
+        pricing: Se alle samtalepriser og hvilke land som støttes
+        number_info: Kjøp lokale numre og gratisnumre for over 40 land
+        video_title: Se videoen for å se hva du kan gjøre med telefonkanalen
+        heading_text: Støtt dine kunder med telefonkanalen
+      local: Lokalt
+      search: Søk etter sifre eller fraser
+      ivr:
+        turn_on: 'På'
+        simple_message_title: Enkel beskjed
+        save: Lagre
+        turn_off: 'Av'
+        rename: gi nytt navn
+        add_new_option: Legg til <b>tastevalg</b>
+        add_new_menu: Legg til ny <b>meny</b>
+        male: Mannlig stemme
+        input_number: Angi nummeret
+        invalid_number_format: >-
+          Angi et gyldig telefonnummer med prefikset '+' og landskoden foran nummeret
+        ivr_message_title: Interaktivt telefonsvar (IVR)
+        message_type: Meldingstype
+        action: Handling
+        female: Kvinnelig stemme
+        delete_menu: Slett meny
+        previewing: Forhåndsviser …
+        saving: Lagrer ...
+        add_new_menu_from_option: Legg til ny meny
+        preview: Forhåndsvis
+        done: ferdig
+        keypress: Tastetrykk
+        welcome_message: Velkomstmelding
+      number_settings:
+        read_message: Tekst til tale
+        queue_position_preference: Les plass i køen høyt
+        greeting_message: Skriv meldingen din her
+        queue_wait_message: Købeskjed
+        number_accessible: Tilgjengelig via
+        all_groups: Alle grupper
+        record_all: Spill inn alle samtaler
+        voicemail_on: 'På'
+        max_queue_calls: Maks. antall samtaler i kø
+        cancel: Avbryt
+        routing_message: Når flere agenter er tilgjengelig på nett …
+        non_business_hours: Aksepter samtaler under …
+        non_business_hours_message: Beskjed utenfor åpningstider
+        recorded_voice: Innspilt stemme
+        group: 'Spill av beskjed og ring agenter i '
+        queue_position_enable: 'PÅ'
+        recording_privacy_public: Synlig for kunder og agenter
+        call_wait_time: med maksimal ventetid på
+        wait_music: Ventemusikk
+        recording_help_info: Slå på mikrofonen. Varighet < 5 min.
+        record_alert: >-
+          Retningslinjene for samtaleopptak i de fleste land krever at kunder varsles når samtalen deres blir spilt inn. Sett opp velkomstmeldingen din med hensyn til dette.
+        record_none: Ikke ta opp samtaler
+        non_availability_message: Melding ved utilgjengelighet
+        voicemail_message: Talemelding
+        record_voice: Spill inn stemmen din
+        voicemail_off: 'Av'
+        transcript_voice: Transkripsjonsstemme
+        hunt_type: Samtaleruting
+        name: Navn
+        voicemail: Talemelding
+        record_calls: Ta opp samtaler
+        anytime: Når som helst 24/7
+        upload_voice: Last opp lydfiler
+        business_hours: Åpningstider
+        call_wait_time_suffix: ' per anrop'
+        hold_music: Ventemusikk
+        start_recording: Start opptak
+        title_text: Administrer telefonsenteret ditt
+        attachment_help_text: Godtar lydfiler (MP3) < 5 MB
+        queue_position_disable: 'AV'
+        queue_position_message_placeholder: 'Du står nå i kø. Din plass i køen er {{queue.position}}'
+        preparing_recording: Behandler meldingen din …
+        info_content: >-
+          <b>Tilordning av telefonsamtaler til agenter og grupper</b></br>Du kan bruke konfigurere interaktivt telefonsvar (IVR) og rute telefonsamtaler til forskjellige grupper eller agenter i teamet ditt. For eksempel kan du viderekoble kundene dine til kundestøtteteamet ditt når de trykker 1 og til noen andre i salgsavdelingen når de trykker 2.
+          <br/>I tillegg kan du tilpasse de interaktive meldingene, som blir avspilt til kundene dine, ved å gjøre et opptak av stemmen din, laste opp en fil, eller ved å bruke tekst-til-tale-funksjonen.<br><br><b>Tilpassing av telefonnummeret ditt</b><br>Du kan også konfigurere hvert enkelt Freshfone-nummer og la hvert nummer ha sin egen konfigurasjon. Dette inkluderer grunnleggende innstillinger, som for eksempel maksimalt antall personer i telefonkø og maksimal ventetid for kundene dine. Når én grense er nådd, vil en melding bli automatisk avspilt om at du ikke er tilgjengelig.
+          <br/>Når du aktiverer telefonopptak, vil hver telefonsamtale på tvers av helpdesken bli tatt opp og lagt til på sakene dine. Opptakene kan gjøres offentlig tilgjengelig for kunder eller holdes privat. Du kan også begrense telefonkanalen til ikke å ta imot anrop utenfor åpningstider. For eksempel kan du konfigurere to telefonlinjer, hvorav en kan ta imot anrop i åpningstiden, og en annen prioritert linje som vil være tilgjengelig 24x7.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Les mer om tilpassing av telefonnumrene dine</a>
+        recording_privacy: Opptakssynlighet
+        audio_upload: Last opp
+        recording_privacy_private: Bare synlig for agenter
+        business_calendar: Velg åpningstider
+        queue_position_message_alert: >-
+          Bruk plassholderen {{queue.position}} <br/> for å lese opp plass i køen, f.eks: Du står nå i kø. Din plass i køen er {{queue.position}}
+        name_placeholder: Angi et egendefinert navn for nummeret ditt
+        welcome_message: Velkomstmelding
+        change: Endre
+        stop_recording: <span></span>Stopp opptak
+      trial:
+        request_activation_msg: >-
+          Du kan velge å bruke bare ett nummer fra et begrenset antall land under prøveperioden.<br>Du kan imidlertid kjøpe flere numre fra 41 land når du aktiverer den fullverdige versjonen
+        activate_btn_text: Be om aktivering
+        numbers:
+          search:
+            after_activation_request: >-
+              Din forespørsel om å aktivere telefonkanalen er sendt <br> Vi kontakter deg innen 2 virkedager.
+            buy_confirmation: Er du sikker på at du vil velge dette nummeret?
+            can_use_after_activation: >-
+              Du kan fortsette å bruke dette nummeret når du aktiverer telefonkanalen.
+        requested_activation: Vi har mottatt din forespørsel om aktivering<br>Den er under behandling
+    subscription:
+      recharge_now_text: Fyll på saldoen din med en engangsbetaling
+      purchase_credits: Kjøp telefonkreditt
+      setup_auto_recharge: Konfigurer automatisk påfylling
+      auto_recharge_amt: Automatisk påfyllingsbeløp
+      see_detailed_pricing: Vis detaljerte priser
+      followup_text: i telefonkreditt
+      auto_recharge_text: Vi belaster kontoen din når saldoen er under $ 5
+      purchase_text: Kjøp telefonkreditt
+      current_balance: Din nåværende saldo
+      followup: i telefonkreditt
+      no_credit_card_text: Angi betalingsinformasjon for å kjøpe telefonkreditt
   special_beta_offer: Spesialtilbud for beta-kontoer
   days: Dager
   tickets_filter:

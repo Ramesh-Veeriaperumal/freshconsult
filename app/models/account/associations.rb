@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
   has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
-  delegate :supported_languages, :secret_keys, :max_template_limit, :max_skills_per_account, :feedback_widget_captcha_allowed?, to: :account_additional_settings_from_cache
+  delegate :supported_languages, :secret_keys, :max_template_limit, :max_skills_per_account, :feedback_widget_captcha_allowed?, :allow_iframe_embedding, to: :account_additional_settings_from_cache
   has_one  :whitelisted_ip
   has_one :contact_password_policy, :class_name => 'PasswordPolicy',
     :conditions => {:user_type => PasswordPolicy::USER_TYPE[:contact]}, :dependent => :destroy
@@ -336,10 +336,29 @@ class Account < ActiveRecord::Base
   has_many :portal_pages,  :class_name=> 'Portal::Page'
 
   delegate :active_groups_in_account, :to => :groups, :allow_nil => true
-  #Freshcaller
+  #Freshfone
+  has_one  :freshfone_account, :class_name => 'Freshfone::Account', :dependent => :destroy
   has_one  :freshcaller_account, :class_name => 'Freshcaller::Account', :dependent => :destroy
   has_many :freshcaller_agents, class_name: 'Freshcaller::Agent'
+  has_many :freshfone_numbers, :conditions =>{:deleted => false}, :class_name => "Freshfone::Number"
+  has_many :all_freshfone_numbers, :class_name => 'Freshfone::Number', :dependent => :delete_all
+  has_many :ivrs, :class_name => 'Freshfone::Ivr'
+  has_many :freshfone_calls, :class_name => 'Freshfone::Call'
   has_many :freshcaller_calls, :class_name => 'Freshcaller::Call'
+  has_many :supervisor_controls, :class_name => 'Freshfone::SupervisorControl'
+  delegate :find_by_call_sid, :to => :freshfone_calls
+  has_one  :freshfone_credit, :class_name => 'Freshfone::Credit'
+  has_many :freshfone_payments, :class_name => 'Freshfone::Payment'
+  delegate :freshfone_subaccount, :allow_nil => true, :to => :freshfone_account
+  has_many :freshfone_users, :class_name => "Freshfone::User"
+  has_many :freshfone_other_charges, :class_name => "Freshfone::OtherCharge"
+  has_many :freshfone_blacklist_numbers, :class_name => "Freshfone::BlacklistNumber"
+  has_one  :freshfone_subscription, :class_name => "Freshfone::Subscription"
+  has_many :freshfone_caller_id, :class_name => "Freshfone::CallerId"
+
+  has_many :freshfone_callers, :class_name => "Freshfone::Caller"
+
+  has_many :freshfone_whitelist_country, :class_name => "Freshfone::WhitelistCountry"
 
   has_one :chat
   has_one  :freshchat_account, :class_name => 'Freshchat::Account', :dependent => :destroy

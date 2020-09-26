@@ -8,8 +8,8 @@ module Spam::Core
     
     # :tag_uses => "taggable", :tags, :parent
     ASSOCIATIONS_TO_MODIFY = {
-      :helpdesk_tickets => [:attachments => "attachable", :cloud_files => "droppable", :activities  => "notable", :survey_handles => "surveyable", :survey_results => "surveyable", :support_scores => "scorable", :time_sheets => "workable", :tweet => "tweetable", :fb_post => "postable"],
-      :helpdesk_notes => [:tweet => "tweetable", :fb_post => "postable", :attachments => "attachable", :cloud_files => "droppable", :shared_attachments => "shared_attachable" ]
+      :helpdesk_tickets => [:attachments => "attachable", :cloud_files => "droppable", :activities  => "notable", :survey_handles => "surveyable", :survey_results => "surveyable", :support_scores => "scorable", :time_sheets => "workable", :tweet => "tweetable", :fb_post => "postable", :freshfone_call => "notable"],
+      :helpdesk_notes => [:tweet => "tweetable", :fb_post => "postable", :freshfone_call => "notable", :attachments => "attachable", :cloud_files => "droppable", :shared_attachments => "shared_attachable" ]
     }
 
     attr_accessor :model, :spam_model, :notes, :spam_note, :serialized_ticket_data, :serialized_note_data

@@ -1,0 +1,1240 @@
+@include keyframes(glow){
+	0% { 
+		opacity: 0.5;
+		box-shadow: inset 0 0 5px rgba(255,140,0,1); 
+	}
+	80% { 
+		opacity: 1;
+		box-shadow: inset 0 3px 10px 2px rgba(204,114,0,1); 
+	}
+
+	100% { 
+		opacity: 0.4;
+		box-shadow: inset 0 0 5px rgba(255,140,0,1); 
+	}
+}
+.quality_feedback_modal_body{
+	.modal-body {
+  		max-height: 510px;
+  		padding: 10px 20px 20px;
+  		border-radius: 7px;
+  		margin-bottom:0;
+  }
+}
+
+.freshfone_widget {
+	.add_agent_call,.warm_transfer_call {
+	  .hold,.transfer_call,.ongoingDialpad{
+	    visibility: hidden;
+	  }
+	  .mute {
+	    border-right: 1px solid #ccc;
+	  }
+	}
+	.ivr_preview_mode {
+	  .hold,.mute,.transfer_call{
+	    visibility: hidden;
+	  }
+	  .ongoingDialpad {
+	    border-left: 1px solid #ccc;
+	  }
+	}
+}
+
+.ongoing {
+	margin: 1px 1px;
+	height: 32px;
+	padding-left: 36px;
+	@include border-bottom-right-radius(6px);
+	background-color: $ongoing-background;
+	direction: ltr;
+	[class*="#{$font-class}"]{
+		color: #fff;
+	}
+	li {
+		a {
+			height: 32px;
+			background-color:$ongoing-tabs-background;
+	  }
+	}
+	.mute, .hold, .ongoingDialpad {
+		&:active {
+			background-color: $ongoing-active-tabs-background;
+		}
+		&:hover{
+			background-color: $ongoing-hover-tabs-background;
+		}
+	}
+
+	&.tools-disabled {
+		li{
+		  a{
+				pointer-events: none;
+				opacity: 0.2;
+				background-color: #BBB;
+			}
+		}
+		.mute,.hold,.transfer_call {
+			border-right: 1px solid white;
+		}
+		.call_details {
+			border-right: 1px solid #ccc;
+		}
+		li {
+			.ongoingDialpad {
+					a{	width: 56px; }
+			}
+		}
+		pointer-events: none;
+		.call_details {
+      height: 27px;
+      .end_call {
+        background-color: #BBB;
+       		a {
+       			background-color: #BBB;
+       			color: #fff;
+       			i{
+       				color: #fff;
+       			}
+       		}
+       }
+		}
+	}
+	.end_call {
+		background-color:$ongoing-end-call-background;
+		font-size: 25px;
+		color: $end-call-text;
+		position: absolute;
+		left: 0px;
+		width: 85px;
+		height: 32px;
+		padding-left: 12px;
+		@include border-bottom-left-radius(4px);
+		text-align: left;
+		i.#{$font-class}cross{
+			color: #fff;
+			line-height: 32px;
+		}
+		&:hover{
+			background-color:$ongoing-end-call-background;
+		}
+	}
+	.call_details {
+		width: 60px;
+		height: 32px;
+		a {
+			color: $call-details-text;
+			background-color: $call-details-background;
+			font-weight: 400;
+			line-height: 34px;
+			height: inherit;
+			bottom: 0px;
+			&:hover{
+				background-color:$ongoing-end-call-background;
+			}
+		}
+	}
+	.preview_pic{
+		width: 26px;
+	 	height: 26px;
+	 	line-height: 26px;
+	 	margin-top: 0px;
+	 	margin-left: 5px;
+	}
+	.preview_pic img {
+		width: 22px;
+		height: auto;
+		@include border-radius(0);
+		margin-top: 2px;
+		@include margin-left(7px);
+	}
+	.call_duration {
+		position: absolute;
+		left: 43px;
+		font-size: 13px;
+		width: 54px;
+		text-align: right;
+		padding-right: 13px;
+	}
+	.transfer_call, .mute, .hold, .ongoingDialpad {
+		width: 57px;
+	}
+	.transfer_call.non-conference, .mute.non-conference, .ongoingDialpad.non-conference{
+		width: 76px;
+	}
+	.transfer_call, .mute, .hold{
+		margin-right: 1px;
+	}
+	.transfer_call.active {
+	  &:hover {
+	    background-color: #333;
+	  }
+	}
+	.transfer_call {
+		&.transfer-disabled {
+			pointer-events: none;
+			opacity: 0.2;
+		}
+	  &:hover {
+	    background-color: $ongoing-hover-tabs-background;
+	  }
+	}
+	
+	.transfer_call.transferring_state, .mute.active, .hold.active{
+		background-color: #ff9105;
+		@include animation(glow 1s infinite);
+	}
+	.no_action a{ 
+		cursor: pointer;
+	}
+	a.username {
+		width: auto;
+		height: auto;
+		padding: 0;
+	}
+	.minimised-ongoing-dialpad {
+		position: absolute;
+		top: 0;
+		@include right(0);
+		@include left(108px);
+		height: 26px;
+		display: none;
+		line-height: 26px;
+		font-size: 14px;
+		background-color: #aaa;
+		@include border-top-right-radius(4px);
+		@include border-bottom-right-radius(4px);
+	}
+	.minimised-ongoing-dialpad:hover {
+		background-color: #888;
+	}
+	.minimised {
+		display: block;
+	}
+}
+.freshfone_widget .ongoing .minimised-ongoing-dialpad {
+	text-align: left;
+	padding: 0 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+
+.popupbox-content {
+	direction: ltr;
+	.header {
+		background-color: $popup-content-header;
+		height: 40px;
+	}
+	.header_text {
+		font-size: 15px;
+		font-weight: 600;
+		@include padding(8px 0 0 10px);
+		color: $popup-content-header-text;
+	}
+	.ffone-add-notes { height: 200px; width: 350px; }
+	.ffone-end-call {
+		min-height: 340px;
+		width: 460px;
+		background-color: $endcall-background;
+	}
+//	transfer call starts
+
+	.ffone_available_agents { 
+		max-height: 380px;
+		min-height: 75px;
+		width: $ongoing-popup-width;
+		left: $ongoing-popup-left;
+		position: fixed;
+		bottom: 38px;
+		@include border-radius(4px 4px 0px 0px);
+		border: $ongoing-context-border;
+		background-color: $transfer-call-background;
+		box-shadow: $ongoing-box-shadow;
+		z-index: $ongoing-popup-z-index;
+		.list-component{
+			height: 246px;
+			.adding_agent_state {
+				li {
+				  .add_agent {
+				    display: none;
+				  }
+				  .add-agent-border{
+				  	display: none;
+				  }
+				}
+			}
+		}
+		.search {
+			width: 100%;
+			@include box-sizing(border-box);
+			@include border-radius(0);
+			@include border-top-left-radius(3px);
+			@include border-top-right-radius(3px);
+			height: 46px;
+			border: none;
+			border-bottom: 1px solid $transfer-search-border;
+			@include padding-left(46px);
+		}
+	}
+	.available_agents_avatar {
+		display: inline-block;
+		@include float(left);
+		height: 100%;
+		border: 0;
+		@include margin-left(3px);
+		width: 32px;
+		img {
+			width: 25px;
+			height: 25px;
+			@include border-radius(20px);
+			opacity: 1;
+		}
+		.preview_pic {
+			margin:0;
+			width: 25px;
+			height: 25px;
+			@include border-radius(50%);
+			font-size: 14px;
+			line-height: 25px;
+			img{
+				width: 25px;
+				height: 25px;
+				@include border-radius(50%);
+			}
+		}
+	}
+	.available_agents_list, .available_numbers_list, .search-number-label {
+		overflow: auto;
+		li {
+			@include clear(both);
+			padding: 7px;
+			@include box-sizing(border-box);
+			background: rgba(255,255,255,0.2);
+			height: 40px;
+		}
+		li.transfer-active{
+			background-color: darken($transfer-call-background, 5%);
+			.agents_count{
+				display: block;
+			}
+		}
+		.avatar{
+			width:40px;
+			font-size: 20px;
+		}
+	}
+	ul.available_agents_list, ul.available_numbers_list{
+		height: 81%;
+	}
+
+	.available_numbers_list, .search-number-label,.available_agents_list{
+		li.transfer-external-selected, li.transfer-active{
+			.transfer,.add_agent,.warm_transfer{
+				@include border-radius(50%);
+				border: 1px solid #ddd;
+				text-align: center;
+				background-color: #fff;
+				@include padding(5px);
+				width: 16px;
+				height: 15px;
+				margin-top: -2px;
+			}
+			.add-agent-border {
+				height: 27px;
+				margin-top: -2px;
+				@include border-right(1px solid #ddd);
+				width: 242px;
+			}
+			.transfer,.add_agent{
+				&:hover{
+				 background: #046c11;
+				 color: #fff;
+				 border: 1px solid #046c11;
+				}
+			}
+			.warm_transfer{
+				@include margin-left(4px);
+				font-size: 11px;
+			 &:hover{
+			 	 background: #FFA500;
+				 color: #fff;
+				 border: 1px solid #FFA500;
+			 }
+			}
+		}
+		.call-actions{
+			display: none;
+			@include margin-right(2px);
+		}
+	}
+	.available_agents_list{
+		li.transfer-active{
+			.call-actions{
+				display: block;
+			}
+			.transfer{
+			 	font-size: 11px;
+			 	@include margin-left(1px);
+			 	@include padding(4px 4px 5px 5px);
+			 }
+			.add_agent{
+				font-size: 17px;
+				@include margin-right(7px);
+			}
+		}
+		li.group-transfer, li.adding_agent_state{
+			.add_agent, .warm_transfer{
+				display: none;
+			}
+			.available_agents_name {
+				width: 130px;
+			}
+			.add-agent-border{
+				display: none;
+			}
+		}
+		.agents_count {
+			float: right;
+			width: 65px;
+			margin-top: 4px;
+			color: #999;
+		}
+	}
+	.available_agents_searchicon {
+	 @include right(0);
+	 @include left(15px);
+		top: 15px;
+	}
+	.available_agents_name {
+		width: 160px;
+		height: 20px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.available_agents_name, .agent-group-name {
+		@include margin(3px 0 0 -5px);
+		font-weight: 500;
+		color: $available-agent-name;
+		font-size: 13px;
+	}
+
+	@include keyframes(glow-inner-circle) {
+	0% { 
+		border-color: rgba(255,145,5,1); 
+	}
+	80% { 
+		border-color: rgba(255,145,5,0.1); 
+	}
+	100% { 
+		border-color: rgba(255,145,5,1);
+	}
+}
+
+@include keyframes(glow-outer-circle) {
+	0% { 
+		border-color: rgba(255,145,5,0.1); 
+	}
+	40% { 
+		border-color: rgba(255,145,5,0.8); 
+	}
+	90% { 
+		border-color: rgba(255,145,5,0.1);
+	}
+
+}
+
+	.transferring_call {
+		@include box-sizing(border-box);
+		width: 100%;
+		height: 100%;
+		background-color: #fff;
+		color: $transfering-call-text;
+		font-weight: 500;
+		@include text-align(center);
+		border-radius: 3px;
+		z-index: 2;
+		opacity: 1;
+		.transfer-info-details {
+			background-color: $transfer-info-details-background;
+			border-radius: 3px;
+  		width: 100%;
+  		min-height: 80px;
+  		padding-top: 15px;
+  		.agent_img{
+  				position: relative;
+  				border-radius: 50%;
+  				display: inline-block;
+				  opacity: 1;
+				  width: 62px;
+				  height: 62px;
+				  line-height: 62px;
+				  border: 1px solid #fff;
+				  margin: 0 8px;
+				  float: left;
+				  @include animation(glow-outer-circle 1s infinite);
+					img {
+						width: 40px;
+						height: 40px;
+						@include border-radius(40px);
+						opacity: 1;
+					}
+					.preview_pic {
+						margin:0;
+						border-radius: 50%;
+					}
+					.ff-icon {
+						color: #fff;
+					}
+			}
+			.ringer{
+				border: 1px solid #fff;
+			  width: 50px;
+			  height: 50px;
+			  position: absolute;
+			  top: 50%;
+			  margin-top: -26px;
+			  left: 50%;
+			  margin-left: -26px;
+			  border-radius: 50%;
+			  @include animation(glow-inner-circle 1s infinite);
+			  .preview_pic,img {
+			  	float: none;
+				  display: block;
+				  position: absolute;
+				  top: 50%;
+				  left: 50%;
+				  margin-left: -20px;
+				  margin-top: -20px;
+			  }
+			  .external_no {
+					width: 40px;
+				  height: 40px;
+				  border-radius: 40px;
+				  opacity: 1;
+				  background-color: #F0F0F0;
+				  .ficon-ff-group{
+				  	color: #C5C5C5;
+				  	position: relative;
+  					bottom: 11px;
+				  }
+			  }
+			}
+			.transfer-info-details-right {
+			  float: right;
+  			text-align: left;
+  			width: 72%;
+  			margin-top: 12px;
+  			.target-name{
+				  padding-bottom: 5px;
+					font-size: 16px;
+					font-weight: 600;
+					float: left;
+					width: 100%;
+				}
+				.transfer-status {
+					float: left;
+					width: 100%;
+					.in_progress{ 
+						color: #aaa;
+					}
+					.no_answer, .ignored, .group_tranfer_no_answer {
+					 color: #b11;
+					}
+					.connected, .group_tranfer_connected { 
+						color: #046c11;
+					}
+				}
+  		}
+			a {
+				padding: 10px 0 10px 0;
+				float: left;
+  			width: 100%;
+  			margin-top: 10px;
+  			color: #000;
+  			background-color: #eee;
+  			border-top: 1px solid #ccc;
+			  font-size: 14px;
+			  cursor: pointer;
+			  .ff-icon {
+			  	padding: 5px;
+			  	color: inherit;	
+			  }
+  			&:hover {
+  				color: #fff;
+  				background-color: #555;
+  			}
+			}
+		}
+		.transfer-progress-bar {
+			display: inline-block;
+  		float: left;
+  		border: 2px solid #D5C28C;
+  		width: 0px;
+  		border-top-right-radius: 2px;
+  		border-top-left-radius: 2px;
+		}
+	}
+
+	.transfer_failed {
+		text-align: center;
+		line-height: 3em;
+  	padding: 10px;
+		.phone {
+			display: inline-block;
+		  border-radius: 20px;
+		  opacity: 1;
+		  width: 30px;
+		  height: 30px;
+		  background-color: #aaa;
+		  .ff-icon{
+				  font-size: 18px;
+				  @include padding(6px);
+				  line-height: 1em;
+				  color: #fff;
+		  }
+		}
+		.transfer_failed_msg {
+			display: block;
+		}
+		.call-reconnect {
+			font-weight: 600;
+		}
+		.transfer-progress-bar {
+			width: 0;
+			border-bottom: 1px solid #d5c28c;
+			border-top-right-radius: 3px;
+			border-bottom-right-radius: 3px;
+		}
+	}
+	.ffone_call_hold {
+		@include box-sizing(border-box);
+		position: relative;
+		width: 100%;
+		height: 100%;
+		padding: 4px;		
+		
+		background-color: $transfering-call-background;
+
+		color: $transfering-call-text;
+		font-weight: 500;
+		@include text-align(center);
+
+		z-index: 2;
+		opacity: 1;
+	}
+	.no_available_agents {
+		font-size: 14px;
+		@include padding(45px 0 10px);
+		font-weight: 400;
+		label{
+  		border-top: 1px solid;
+  		padding: 20px 10px 10px;
+  		text-align: center;
+		}
+	}
+	.no_available_numbers {
+		font-size: 14px;
+		@include padding(45px 0 10px);
+		font-weight: 400;
+  	padding: 20px 10px 10px;
+  	text-align: center;
+	}
+//	transfer call ends
+
+// Call notes starts
+	.call_notes {
+		width: 100%;
+		height: 160px;
+		margin: 0;
+		@include padding-left(10px);
+		padding-top: 10px;
+		font-size:14px;
+		background-color: $call-notes-background;
+		color: $call-notes-text;
+		@include border-radius(0);
+		@include box-sizing(border-box);
+	}
+// Call notes ends
+}
+// ticket search	
+.end_call_ticket_search {
+	direction: ltr;
+	border: 1px solid $ec-ticket-search-border;
+	height: 290px;
+	padding-top: 10px;
+	margin-top: 12px;
+	@include border-radius(4px);
+	.searchticket {
+		@include float(left);
+		@include margin-left(4px);
+	}
+	.search_input {
+		height: 18px;
+		width: 260px;
+	}
+	.search-type {
+		@include margin-left(10px);
+	}
+	.searchicon {
+		top: 75px;
+	 	@include right(50px);
+	}
+	.search_header {
+		border-bottom: 1px solid $ec-ticket-header-border;
+		height: 40px;
+	}
+	.sloading {
+		padding:0;
+		max-height: 230px;
+	}
+	.ticket_search_results {
+		background-color: $ec-search-results-background;
+		border-bottom-radius:4px;
+	}
+	.autocompletepane {
+		height: 249px;
+		overflow:auto;
+		.selected, li {
+			font-size: 13px;
+			@include padding(8px 8px 0 8px);
+			color: $ec-autocomplete-result-color;
+			background-color: transparent;
+			border: none;
+			border-bottom: 1px solid $ec-autocomplete-result-border;
+			&:hover {
+				background-color:$ec-result-hover-background;
+			}
+		}
+	}
+	.autocompletepane li:hover {
+		.save_to_ticket {
+			display:inline-block;
+			margin-top: 11px;
+		}
+	}
+	.save_to_ticket {
+		@include float(right);
+	}
+// ticket search ends
+}
+// Call notes and end call notes
+.end_call_notes_container {
+	direction: ltr;
+	.final_call_notes {
+		width: 99%;
+		height: 140px;
+		padding-bottom: 0px;
+		margin-bottom: 5px;
+		@include box-sizing(border-box);
+	}
+	.final_call_notes{
+		margin-top: 10px;
+	}
+	.main_content {
+		padding: 12px;
+	}
+	.notes_label {
+		font-weight: bold;
+		margin: 10px 0 0;
+	}
+	.ticket_search_pane {
+		padding: 10px;
+	}
+}
+.end_call_form_heading{
+	 font-size: 20px;
+	 font-weight: 300;
+	 color: #000;
+	 margin-top: -4px;
+}
+.quality_feedback_container{
+	 background-color: #f8f8f8;
+	 margin: 10px -20px -20px -20px;
+}
+.call_quality_button{
+	 border-radius: 18px;
+	 &.active{ 
+	 		background-color: #fff;
+	 	 	box-shadow: inset 0 2px 5px -1px rgba(0,0,0,0.4);
+	 }
+	 &.good_call{
+	 	color: #82af56;
+	 	&.active{
+	 		 border-color: #82af56;
+	 	}
+	 }
+	 &.bad_call{
+	 	color: #ee715e;
+	 	&.active{ 
+	 		 border-color: #ee715e;
+	 	}
+	 }
+}
+.call_quality_icon{
+	 font-size: 21px;
+	 margin-left: -4px;
+	 position: relative;
+	 top: 1px;
+}
+.quality_feedback_text{
+	 position: relative;
+	 top: -2px;
+	 color: #585858;
+}
+.call_quality_text{
+	 text-align: right;
+	 width: 16.5%;
+}
+
+.ffone-end-call {
+	direction: ltr;
+	.form-horizontal {
+		border: 0px;
+		padding: 2px;
+		margin-top: 10px;
+		@include border-radius(6px);
+		.subject{
+		  width: 430px;
+		}
+		.ticket_sub{
+		  padding-top: 10px;
+		}
+		.requesterNameLabel{
+		  margin-top: 10px;
+		}
+		.email_dom{
+		  margin-top: 16px;
+		}
+		.error_message{
+		  margin-top: 14px;
+		}
+		.requesterDetails{
+			margin-top: 14px;
+		}
+		.requesterLabel{
+		  font-weight: 400;
+		  margin-top: 0px;
+		}
+		.select2-container{
+			width: 100%;
+			margin-bottom: -9px;
+		}
+		.or_border{
+			border-left: 1px solid #ccc; 
+			margin-left: 9px;
+			height: 30px;
+		}
+		.or_background{
+			background: #fff;
+		}
+		.details_span{
+			width: 130px;
+		}
+		.name_container_span{
+			margin-top: 15px;
+			margin-left: 0;
+			padding-left: 2.12766%;
+		}
+		.or_text{
+			color: #888888;
+			font-size: 11px;
+			padding-top: 7px;
+			margin-left: -7px;
+		}
+	}
+	.controls {
+		@include margin-left(0);
+	}
+	.back {
+		font-weight: 300;
+		color: $ec-go-back;
+		cursor: pointer;
+		font-size: 20px;
+	}
+	.title{
+		font-weight: 300;
+	}
+	.slash{
+		font-size: 20px;
+	}
+	.save_ticket {
+		@include float(right);
+		margin-top: 10px;
+		margin-right: 3px;
+	}
+	.control-group {
+		margin-bottom:8px;
+	}
+}
+.end_call_form_btns {
+	direction: ltr;
+	.btn { 
+		margin-bottom: 4px;
+		@include box-sizing(border-box);
+		min-height: 35px;
+		font-size: 14px;
+		font-weight: 400;
+		@include text-align(left);
+		@include padding-left(10px);
+	}
+	.end_call_cancel, .end_call_save, .save_to_existing {
+		width: 99%;
+		height: 40px;
+	}
+	.end_call_cancel {
+		height: 55px;
+		@include padding-right(0px);
+	}
+	.end_call_cancel {
+		margin-top:10px;
+	}
+	.end_call_added_ticket{
+		margin-top: 10px;
+		.added_ticket_details{
+			width: calc(100% - 96px);
+			height: 19px;
+			border: $ongoing-context-border;
+			padding: 9px;
+			border-radius: 5px;
+			margin-right: 10px;
+			.added_ticket_subject{
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				width: 82%;
+				.ticket_id{
+					font-weight: bold;
+				}
+    	}
+    	.unattach_added_ticket{
+    		padding: 10px 17px 9px 14px;
+    		margin-top: -26px;
+    		cursor: pointer;
+    		border-left: 1px solid $ms-active-type-background;
+    		margin-right: -9px;
+    		&:hover{
+          background-color: $dashboard-cells-background;
+        }
+    	}
+		}
+		.set-ticket-btn{
+			margin-top: -38px;
+			padding: 7px 19px 0px 14px;
+		}
+	}
+	.btn-notes {
+		color: $ec-btn-text;
+		font-size: 12px;
+		font-style: italic;
+	}
+	.arrow-right {
+		color: $ec-btn-right-arrow;
+		@include float(right);
+		font-size: 9px;
+		@include border-radius(3px);
+		margin-top: 2px;
+	}
+	.add_ticket_margin{
+		position: relative;
+		top: 7px;
+	}
+	.ticket_id_color{
+		color: $ch-assigned-ticket;
+	}
+}
+.contact_hover{
+	.recent_tickets {
+		@include clear(both);
+		display: block;
+		@include margin-left(65px);
+	}
+}
+// Call notes and end call notes ends
+// Transfer call start
+.transfer_call_container{
+	.transfer-call-header{
+		z-index: 1001;
+		border-top:0;
+		@include border-left(0);
+	}
+	.transfer-menu-list{	
+		a{
+			padding: 60px 8px 13px;
+			@include border-bottom-right-radius(4px);
+		}
+		top: 0px;
+		padding-top: 40px;
+		min-width: 40px;
+		padding: 0px;
+		margin-top: 0px;
+		border-radius: 0px;
+		box-shadow: none;
+		border: 1px solid #000;
+		background: #f2f2f2;
+		border-width: 0 1px 1px 0;
+		@include border-bottom-right-radius(5px);
+		@include border-top-left-radius(3px);
+		@include box-shadow(none);
+	}
+	.transfer-dropdown-button{
+			background: #f2f2f2;
+			@include border-right(1px solid #ccc);
+			position: absolute;
+			height: 45px;
+			padding: 0px;
+			border: 0px;
+			min-width: 40px;
+			border-radius: 0;
+			@include border-top-left-radius(3px);
+			z-index: 1002;
+			div{
+				position: absolute;
+				top: 15px;
+				@include left(7px);
+			}
+		}
+	.transfer-caret{
+		position: absolute; 
+		top: 15px; 
+		border-width: 5px;
+ 		@include left(22px); 
+	}
+	.transfer-phone-icons{
+		background: #ccc;
+		border-radius:50%;
+		padding:  4px 2px 0px;
+		margin-top: -1px;
+		@include float(left);
+		width: 20px;
+		height: 20px;
+		text-align: center;
+		color:#fff;
+		border: 0;
+		@include margin(0px 7px 0px 3px);
+		display: inline-block;
+	}
+	.available_numbers_list li{
+		position: relative;
+	}
+	.search-number-label li{
+		position: relative;
+	}
+	.available_numbers_list, .search-number-label{
+		li.transfer-external-selected{
+			.call-actions{
+				display: block;
+				@include margin-right(11px);
+			}
+			.transfer{
+				font-size: 11px;
+				@include padding(6px 5px 6px 6px);
+			}
+		}
+	}
+}
+
+.freshfone-context-container {
+	.transfer-context{
+    height: 30px;
+    border-bottom: 1px solid #aaa;
+    @include padding(7px 2px 5px 0px);
+    @include border-radius(5px 5px 0px 0px);
+    background-color: #f8f8f8;
+    .transfer-progress-bar {
+      position: absolute;
+      border: 2px solid #D5C28C;
+      width: 0px;
+      @include border-radius(2px 2px 0px 0px);
+      top: 45px;
+      @include left(-1px);  
+    }
+    .progress-bar-placer {
+      position: relative;
+      top: -14px;
+    }
+    .progress-bar-active{
+      width: 300px;
+      transition-duration: 60000ms;
+    }
+    .progress-bar-busy {
+      width: 323px;
+      border: 2px solid #Ab301e;
+    }
+    .transfer-info { 
+      text-overflow: ellipsis;
+      .agent_name {
+        font-weight: 700;
+      }
+      /* TO-DO width and height same for circle */
+      .transfer-label{
+        @include padding(1px 0px 0px 0px);
+        width: 18px;
+        height: 17px;
+        text-align: center;
+        color: #888;
+        @include margin(3px 5px 0px 0px);
+        border-radius: 50%;
+        border: 1px solid;
+        font-size: 10px;
+      }
+      .transfer-placer{
+        @include padding-left(10px);
+      }
+      .transfer_img{
+        .preview_pic,img{
+          @include right(-10px);
+          top:3px;
+          width: 26px;
+          height: 26px;
+          line-height: 25px;
+          font-size: 14px;
+          font-weight: 400;
+          margin-top: -3px;
+          @include left(55px);
+          @include border-radius(50%);
+        }
+        img {
+          margin-top: 0px;
+        }
+        .external_number_pic{
+          background-color: #ccc;
+          text-align: center;
+          color: white;
+        }
+      }
+      .transfer-status{
+        @include margin-left(1px);
+        margin-top: 6px;
+        .busy,.no-answer {
+          color: #Ab301e;
+        }
+        .connected {
+          color: #046c11;
+        }
+        .in_progress {
+          @include animation(blinker 0.8s infinite);
+        }
+      }
+      .transfer-status > div {
+      	white-space: nowrap;
+      	text-overflow: ellipsis;
+      	overflow: hidden
+      }
+      .cancel_transfer{
+          text-align: center;
+          background-color: #fff;
+          font-size: 34px;
+          margin-top: -4px;
+          height: 26px;
+          width: 24px;
+          background-color: #f8f8f8;
+          i {
+           color: #555;
+          }
+        &:hover {
+          .#{$font-class}cross-filled {
+            display: block;
+          }
+          .#{$font-class}cross-round {
+           display: none;
+          }
+        }
+        .#{$font-class}cross-filled {
+          display: none;
+        }
+        .#{$font-class}cross-round {
+          display: block;
+        }
+      }
+      .resume_call {
+        border: 1px solid green;
+        border-radius: 100px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        @include padding-left(6px);
+        float: left;
+        width: 84px;
+        color: white;
+        background-color: green;
+        display: none;
+        @include margin-left(44px);
+        cursor: pointer;
+        text-align: center;
+      }
+      .cancel_transfer, .transfer-label{
+        display: none;
+      }
+    }
+    .resume_state {
+      .#{$font-class}freshfone {
+        @include margin(0px 4px 0px -7px);
+      }
+      .resume_call {
+        display: block;
+      }
+      .transfer-status {
+        width: 140px;
+        margin-top: 4px;
+      }
+      .transfer_img{
+        .preview_pic{
+          left: 5px;
+          margin-top: -4px;
+        }
+      }
+    }
+    .transferring_state{
+      .cancel_transfer, .transfer-label{
+        display: block;
+      }
+      .transfer-status {
+        margin-top: 4px;
+      }
+      .resume_call{
+        display: none;
+      }
+      .transfer_img{
+        .preview_pic {
+          @include margin(-4px 18px 0px 0px);
+          left: 10px;
+        }
+      }
+    }
+  }
+}
+
+
+// Transfer call end
+.hold{
+	.ff-hold-button {
+			display: block;
+		}
+		.ff-loader {
+			display: none;
+			}
+	&.loading {
+		.ff-hold-button {
+			display: none;
+		}
+		.ff-loader {
+			display: inline;
+			top: 13px;
+	  		position: relative;
+	  		left: 30px;
+		}
+	}
+}
+.failed_hold {
+  position: absolute;
+  color: #000;
+  right: 400px;
+  	.ffone_hold_message{
+  		padding: 10px;
+  		display: inline-block;
+  		background-color: #fff;
+  	}
+	}

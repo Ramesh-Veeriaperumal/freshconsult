@@ -984,6 +984,34 @@ nl:
         filter_report: Filter bewerken
         ticket_type: Tickettype
         select_billable: Factureerbaar/niet-factureerbaar selecteren
+    freshfone:
+      time_period: Tijdsperiode
+      num_of_transfered: Aantal overgedragen oproepen
+      no_agent: '- Geen agent -'
+      group: Groep
+      total_unanswered_calls: Onbeantwoorde oproepen
+      call_type: Oproeptype
+      filter_option_all_calls: Alle oproepen
+      filter_close: Sluiten
+      avg_handle_time: Gemiddelde afhandelingstijd
+      all_numbers: Alle nummers
+      filter_report: Filter bewerken
+      number: Nummer
+      business_hours: Kantooruren
+      no_external: Gesprekken die zijn overgedragen aan externe nummers worden niet opgenomen
+      summary_title: 'Oproepoverzicht agent '
+      generate_summary: Genereren
+      num_of_calls: Aantal oproepen
+      unanswered_transfers: Onbeantwoorde oproepen na overdragen
+      unanswered_count: Onbeantwoord
+      select_call_type: Oproeptype selecteren
+      options:
+        all_groups: Alle groepen
+        unassigned: Niet toegewezen
+        incoming: Inkomend
+        outgoing: Uitgaand
+      filter_by_title: Gefilterd op
+      total_voice_mail: Voicemails
     select_customer: Klant selecteren
     summary_report:
       avg_1st_response_time: Gem. eerste <br> reactie tijd
@@ -3730,6 +3758,186 @@ nl:
         other: vinden dit leuk
   title: Titel
   free_plan_agents_v2: Onbeperkt aantal agents
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Koop een lokaal of gratis nummer en bied uw klanten waar dan ook ter wereld telefonisch ondersteuning
+      greetings: Begroetingen
+      settings: Instellingen
+      important: Belangrijk
+      toll_free: Gratis
+      purchase_credit_text: >-
+        Schaf een tegoed aan, zodat u nummers kunt kopen en gesprekken kunt starten en aannemen via het telefoonkanaal.
+      suspended_alert: >-
+        <b>Belangrijk:</b> Als u uw telefoonkanaal uitschakelt, wordt het maandelijkse huurtarief voor uw nummers wel gewoon in rekening gebracht. Als u deze kosten wilt voorkomen, moet u de aangeschafte nummers verwijderen.
+      freshfone_numbers_title: Telefoon
+      welcome_page:
+        title_text: Telefoon
+      number:
+        simultaneous: Alle agents bellen
+        round_robin: Niet-actieve agent eerst bellen
+      numbers:
+        sidebar_content_v2: >-
+          Via het telefoonkanaal kunt u bellen en gebeld worden via uw browser, mobiele telefoon of via het telefoonkanaal in de mobiele apps van Freshdesk. Het is nauw geïntegreerd met het ticketingsysteem van Freshdesk, zodat u telefoongesprekken kunt volgen door ze op te nemen en om te zetten naar tickets wanneer dat nodig is. <br/><br/> <b> Telefoon Instellen</b></br> Als u de telefoon wilt gaan gebruiken, moet u deze eerst inschakelen en een ondersteuningsnummer kopen. U kunt lokale nummers kopen via de <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'> landen die hier worden vermeld </a> en overal ter wereld bellen of gebeld worden. Als uw klanten u in de Verenigde Staten, het Verenigd Koninkrijk of Canada bellen, kunt u ook gratis ondersteuningsnummers (of freephone in het Verenigd Koninkrijk) aanschaffen. <br/><br/><b> Biedt Volledige Telefonische Ondersteuning</b><br/>Met ons telefoonkanaal kunt u<br/><ul><li>Beginnen met bellen en oproepen aannemen met uw webbrowser of mobiele telefoon</li><li>Voicemails maken, gesprekken doorverbinden of gesprekken doorschakelen naar elke agent, overal</li><li>Gesprekken monitoren, onderbreken indien nodig, andere agents toevoegen aan lopende gesprekken en meer*</li></ul><br/><p>* Ga naar <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> om geavanceerde functies voor uw account in te schakelen. Dit zijn onder andere gespreksmonitoring, gesprekken onderbreken, conference calls, gesprekken afschermen en gespreksstatistieken.</p><br/>
+        sidebar_title: Telefoonkanaal
+        delete_alert: >-
+          Een verwijderd nummer kan niet opnieuw worden aangeschaft. Weet u zeker dat u het nummer wilt verwijderen?
+        buy_loading_text: Kopen...
+        buy_phone_numbers: Telefoonnummers Kopen
+        caller_id:
+          no_number_added: Geen caller-id toegevoegd
+          call_id_mask: Dit nummer maskeren
+          manage_caller_id: 'Caller ID beheren '
+          add_new: Nieuwe toevoegen
+        tour_link: Help me een telefoonkanaal op te zetten
+        failure_purchase: >-
+          Het telefoonnummer kan niet worden aangeschaft. Controleer of het adres een geldig lokaal adres is in <span class='certification-country'></span>.
+        buy: Nummer kopen
+        buy_button_text: Kopen
+        address:
+          address: Adres
+          state: Staat/provincie/regio
+          city: Plaats
+          postal_code: Postcode
+          required_field: Alle velden zijn vereist
+          name: Bedrijf/naam
+        setup:
+          info_text: >-
+            Als u aan de slag wilt met het telefoonkanaal, moet u eerst een inbelnummer voor uw klanten aanschaffen. U kunt een lokaal nummer aanschaffen voor de <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>landen die hier worden weergegeven</a>. Als uw klanten u bellen vanuit de Verenigde Staten, het Verenigd Koninkrijk of Canada, kunt u klanten ook een gratis inbelnummer aanbieden.<br/><br/>U kunt meerdere telefoonnummers voor verschillende landen aanschaffen en gratis helplijnen instellen zonder dat u hiervoor een externe service nodig hebt. De standaardtarieven voor inkomende gesprekken, uitgaande gesprekken en het doorsturen van gesprekken vanuit de helpdesk worden hiervoor in rekening gebracht. Kijk hier voor een <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>overzicht van gesprekstarieven</a>. <br/><br/> Zodra u een telefoonnummer voor uw ondersteuningshelplijn hebt aangeschaft, worden alle inkomende gesprekken gedistribueerd naar de agents die zijn aangemeld bij uw helpdesk. Daarnaast kunnen agents zelf bepalen of ze gesprekken aannemen via de browser of dat ze gesprekken automatisch laten doorsturen naar hun vaste telefoon.
+          title_text: Een callcenter instellen
+        sidebar_content: >-
+          Met behulp van het telefoonkanaal kunt u gesprekken starten en aannemen via uw browser, mobiele telefoon of via het telefoonkanaal in de mobiele apps van Freshdesk. Omdat het kanaal nauw is geïntegreerd met het ticketingsysteem van Freshdesk, kunt u telefoongesprekken volgen door ze op te nemen en om te zetten in tickets als dat nodig is. <br/><br/> <b>Telefoon instellen</b></br>Als u aan de slag wilt met het telefoonsysteem, moet u dit eerst inschakelen en een ondersteuningsnummer aanschaffen. U kunt lokale nummers aanschaffen voor de <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>landen die hier worden weergegeven</a> en gesprekken met de hele wereld voeren. Als uw klanten u in de Verenigde Staten, het Verenigd Koninkrijk of Canada bellen (of met freephone in het Verenigd Koninkrijk), kunt u ook gratis ondersteuningsnummers aanschaffen. <br/><br/><b>Complete telefonische ondersteuning bieden</b><br/>Met behulp van het telefoonkanaal kunt u<br/><ul><li>kunt u gesprekken starten en aannemen via uw browser of mobiele telefoons</li><li>Voicemails aanmaken, gesprekken doorschakelen of doorverbinden naar elke medewerker.</li><li>Gesprekken monitoren, binnenvallen indien nodig, andere medewerkers aan gesprekken toevoegen en nog meer*</li></ul><br/><p>*Neem contact op met <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> om opties in te schakelen. Tot de mogelijkheden vallen onder andere: monitoren van gesprekken, binnenvallen in een gesprek, callconferencing, gesprek maskeren en call lifetime metrics.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Meer informatie over de mogelijkheden en speciale functies in het telefoonkanaal</a><p>
+        not_available: Geen resultaten geretourneerd. Probeer een andere zoekterm
+        manage: Beheren
+        address_certification_text: >-
+          Als u een telefoonnummer wilt kopen, moet u uw bedrijfs- of persoonlijke adres in <span class='certification-country'></span> opgeven.
+        purchase_alert_text: >-
+          De kosten voor dit telefoonnummer worden <strong><span class='number-rate'></span>maandelijks</strong> in rekening gebracht.
+        buy_phone_credits: Telefoontegoed Kopen
+      feature_request_content:
+        success: Binnen twee werkdagen nemen we contact met u op.
+        recording_info: Gesprekken opnemen en omzetten in tickets
+        button_text: Aanvraag voor activering
+        compare_trial_and_full: Complete versie en proefversie vergelijken
+        activation_disclaimer: U kunt van alle opties voor onbepaalde tijd gebruik maken
+        learn_more: Meer informatie
+        ivr_info: >-
+          Gesprekken monitoren, callconferencing, doorschakelen van gesprekken door gebruik van IVR en nog veel meer
+        trial_or: OF
+        trial_button_text: Gratis proefversie activeren
+        error_message: We kunnen uw aanvraag momenteel niet maken. Probeer het later opnieuw.
+        title_text: Telefoon
+        trial_version_disclaimer: U kunt 15 dagen gratis gebruikt maken van de beperkte versie
+        pricing: Alle gesprekstarieven en ondersteunde landen bekijken
+        number_info: Aanschaf van lokale en gratis nummers voor meer dan 40 landen
+        video_title: Bekijk de video voor meer informatie over de mogelijkheden van het telefoonkanaal,
+        heading_text: Ondersteuning van uw klanten met het telefoonkanaal
+      local: Lokaal
+      search: Zoeken op cijfers of woordgroepen
+      ivr:
+        turn_on: 'Aan'
+        simple_message_title: Eenvoudig bericht
+        save: Opslaan
+        turn_off: 'Uit'
+        rename: naam wijzigen
+        add_new_option: Optie voor <b>toetsen</b> toevoegen
+        add_new_menu: Nieuw <b>menu</b> toevoegen
+        male: Mannenstem
+        input_number: Voer het nummer in
+        invalid_number_format: >-
+          Voer een geldig telefoonnummer in met het voorvoegsel '+' en de landcode vóór het nummer
+        ivr_message_title: IVR (Interactive Voice Response)
+        message_type: Berichttype
+        action: Actie
+        female: Vrouwenstem
+        delete_menu: Menu verwijderen
+        previewing: Voorbeeld...
+        saving: Opslaan...
+        add_new_menu_from_option: Nieuw menu toevoegen
+        preview: Voorbeeld
+        done: gereed
+        keypress: Toetsen
+        welcome_message: Welkomstbericht
+      number_settings:
+        read_message: Tekst naar spraak
+        queue_position_preference: Wachtrijpositie uitlezen
+        greeting_message: Voer hier uw bericht in
+        queue_wait_message: Wachtrijbericht
+        number_accessible: Toegankelijk via
+        all_groups: Alle groepen
+        record_all: Alle gesprekken opnemen
+        voicemail_on: 'Aan'
+        max_queue_calls: Maximum aantal gesprekken in wachtrij
+        cancel: Annuleren
+        routing_message: Wanneer meerdere agents online beschikbaar zijn...
+        non_business_hours: Gesprekken accepteren gedurende…
+        non_business_hours_message: Bericht bij buiten kantooruren
+        recorded_voice: Opgenomen stem
+        group: 'Bericht afspelen en agents bellen over '
+        queue_position_enable: 'AAN'
+        recording_privacy_public: Zichtbaar voor klanten en agents
+        call_wait_time: met maximumwachttijd van
+        wait_music: Wachtmuziek
+        recording_help_info: Schakel de microfoon in. Duur < 5 min.
+        record_alert: >-
+          In de richtlijnen voor gespreksopnamen wordt vermeld dat klanten moeten worden gewaarschuwd dat het gesprek wordt opgenomen. Configureer het begroetingsbericht overeenkomstig.
+        record_none: Geen gesprekken opnemen
+        non_availability_message: Bericht bij in gesprek
+        voicemail_message: Voicemailbericht
+        record_voice: Uw stem opnemen
+        voicemail_off: 'Uit'
+        transcript_voice: Transcriptstem
+        hunt_type: Oproepen doorsturen
+        name: Naam
+        voicemail: Voicemail
+        record_calls: Gesprekken opnemen
+        anytime: 24/7, altijd
+        upload_voice: Audiobestanden uploaden
+        business_hours: Kantooruren
+        call_wait_time_suffix: ' per gesprek'
+        hold_music: Muziek wachtstand
+        start_recording: Opname starten
+        title_text: Uw callcenter beheren
+        attachment_help_text: Audiobestanden (mp3) < 5 MB toestaan
+        queue_position_disable: 'UIT'
+        queue_position_message_placeholder: 'U bevindt zich momenteel is de wachtrij op positie {{queue.position}}'
+        preparing_recording: Uw bericht wordt voorbereid...
+        info_content: >-
+          <b>Telefoongesprekken toewijzen aan agents en groepen</b></br>U kunt een IVR-systeem (Interactive Voice Response) instellen en gesprekken naar verschillende groepen of agents in uw team doorsturen. Zo kunt u uw klantgesprekken doorsturen naar het ondersteuningsteam wanneer klanten op 1 drukken, of doorsturen naar de verkoopafdeling wanneer klanten op 2 drukken.<br/>Daarnaast kunt u de berichten aanpassen die voor klanten worden afgespeeld. U kunt dit doen door uw stem op te nemen, een bestand te uploaden of door de functie tekst-naar-spraak te gebruiken.<br><br><b>Uw nummer aanpassen</b><br>U kunt elk telefoonnummer afzonderlijk configureren en aan elk nummer een andere set voorkeuren toewijzen. Zo kunt u basisinstellingen toewijzen, zoals het maximum aantal personen in de wachtrij en de maximale wachttijd voor klanten. Zodra een van deze maximumwaarden wordt bereikt, verschijnt voor klanten automatisch een bericht dat geen van de medewerkers beschikbaar is.<br/>Wanneer u het opnemen van gesprekken inschakelt, wordt elk telefoongesprek in uw helpdesk opgenomen en aan tickets toegevoegd, en kan de opname openbaar beschikbaar worden gesteld aan klanten of privé worden gehouden. U kunt ook beperkingen instellen voor uw telefoonkanaal, bijvoorbeeld door aan te geven dat alleen gesprekken tijdens kantooruren worden aangenomen. U kunt bijvoorbeeld twee ondersteuningslijnen instellen. Een lijn is beschikbaar voor het aannemen van gesprekken tijdens werkuren, en een andere hulplijn voor gesprekken met hoge prioriteit die 24x7 beschikbaar is.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198'>Meer informatie over het aanpassen van uw nummer</a>
+        recording_privacy: Zichtbaarheid van opname
+        audio_upload: Uploaden
+        recording_privacy_private: Alleen zichtbaar voor agents
+        business_calendar: Kantooruren selecteren
+        queue_position_message_alert: >-
+          Als u de wachtrijpositie wilt uitlezen, gebruikt u tijdelijke aanduiding {{queue.position}} <br/> Bijvoorbeeld: U bevindt zich momenteel in de wachtrij op positie {{queue.position}}
+        name_placeholder: Voer een beschrijvende naam in voor uw nummer
+        welcome_message: Welkomstbericht
+        change: Wijzigen
+        stop_recording: <span></span>Opname beëindigen
+      trial:
+        request_activation_msg: >-
+          Gedurende de proefperiode kunt u slechts één nummer uit een beperkte lijst van landen kiezen. <br> Maar wanneer u de complete versie heeft geïnstalleerd kunt u meerdere nummers uit 41 landen aankopen.
+        activate_btn_text: Verzoek voor activering
+        numbers:
+          search:
+            after_activation_request: >-
+              U heeft een verzoek voor activering van het telefoonkanaal gedaan.<br> Binnen twee werkdagen nemen we contact met u op.
+            buy_confirmation: Weet u zeker dat u dit nummer wilt kiezen?
+            can_use_after_activation: >-
+              U kunt doorgaan met het gebruik van dit nummer wanneer u het telefoonkanaal activeert.
+        requested_activation: We hebben uw verzoek voor activering ontvangen. <br>Deze is in behandeling
+    subscription:
+      recharge_now_text: Vul uw saldo aan via een eenmalige betaling
+      purchase_credits: Tegoed Kopen
+      setup_auto_recharge: Automatisch opladen instellen
+      auto_recharge_amt: Bedrag voor automatisch opladen
+      see_detailed_pricing: Gedetailleerde prijscalculatie weergeven
+      followup_text: telefoontegoed
+      auto_recharge_text: Er worden alleen kosten in rekening gebracht voor uw account wanneer het saldo lager is dan $5
+      purchase_text: Beltegoed aanschaffen
+      current_balance: Uw huidige saldo
+      followup: telefoontegoed
+      no_credit_card_text: Als u beltegoed wilt aanschaffen, moet u de betalingsgegevens invoeren
   special_beta_offer: Speciale aanbieding voor bèta-accounts
   days: Dagen
   tickets_filter:
