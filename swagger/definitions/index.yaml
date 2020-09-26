@@ -243,6 +243,8 @@ tweet_post:
   $ref: ./resource/tweet_post.yaml
 survey_result:
   $ref: ./resource/survey_result.yaml
+freshfone_call:
+  $ref: ./resource/freshfone_call.yaml
 ticket_topic:
   $ref: ./resource/ticket_topic.yaml
 email_spam_data:
@@ -960,6 +962,10 @@ channel_availability_count:
   $ref: './response/agents/channel_availability_count.yaml'
 agent_with_availability_response:
   $ref: './response/agents/availability.yaml'
+
+# Admin Security
+admin_security_settings:
+  $ref: ./resource/security.yaml
 
 # Admin business hours
 business_hours_input:

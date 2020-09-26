@@ -756,6 +756,34 @@ et:
         filter_report: Redigeeri filtrit
         ticket_type: Taotluse tüüp
         select_billable: Vali tasuline/tasuta
+    freshfone:
+      time_period: Ajavahemik
+      num_of_transfered: Teisalduste arv
+      no_agent: '-Lahendajat pole määratud-'
+      group: Grupp
+      total_unanswered_calls: Vastamata kõned
+      call_type: Kõne tüüp
+      filter_option_all_calls: Kõik kõned
+      filter_close: Sulge
+      avg_handle_time: Keskmine käsitlusaeg
+      all_numbers: Kõik numbrid
+      filter_report: Redigeeri filtrit
+      number: Number
+      business_hours: Tööaeg
+      no_external: Välistele numbritele tehtud teisaldusi ei kaasata
+      summary_title: 'Lahendaja kõnede kokkuvõte '
+      generate_summary: Loo
+      num_of_calls: Kõnede arv
+      unanswered_transfers: Vastuseta teisaldused
+      unanswered_count: Vastamata
+      select_call_type: Vali kõne tüüp
+      options:
+        all_groups: Kõik grupid
+        unassigned: Määramata
+        incoming: Sissetulevad
+        outgoing: Väljaminevad
+      filter_by_title: 'Filtreerimisalus:'
+      total_voice_mail: Kõnepost
     select_customer: Vali klient
     summary_report:
       avg_1st_response_time: Keskmine esimese <br> vastuse aeg
@@ -3452,6 +3480,186 @@ et:
         other: meeldib see
   title: Pealkiri
   free_plan_agents_v2: Piiramatu arv agente
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Osta kohalik või tasuta number ja paku telefoni teel üle maailma klientidele tuge
+      greetings: Tervitused
+      settings: Sätted
+      important: Tähtis
+      toll_free: Tollivaba
+      purchase_credit_text: >-
+        Osta numbrite ostmiseks krediiti, helista ja võta kõnesid vastu telefonikanalit kasutades.
+      suspended_alert: >-
+        <b>Oluline:</b> telefonikanali välja lülitamine ei tähenda, et sa ei pea oma numbrite eest igakuist tasu maksma. Tasu vältimiseks kustuta ostetud numbrid.
+      freshfone_numbers_title: Telefon
+      welcome_page:
+        title_text: Telefon
+      number:
+        simultaneous: Kõikide lahendajate kõned
+        round_robin: Helista esimesena tegevusetule agendile
+      numbers:
+        sidebar_content_v2: >-
+          Telefonikanali kasutamisega saad oma veebilehitseja, mobiiltelefoni või Freshdeski mobiilirakenduse telefonikanali kaudu helistada ja kõnesid vastu võtta. See on tihedalt seotud Freshdeski tugiteenusepiletite süsteemiga. Nii saad telefonikõnedel silma peal hoida, lindistades need ja muutes need vajadusel tugiteenusepiletiteks. <br/><br/><b>Telefoni seadistamine</b></br>Telefoni kasutamisega alustamiseks pead selle kõigepealt lubama ja klienditoe numbri ostma. Saad osta kohalikke numbreid <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>siin loetletud riikide jaoks</a> ja teha või võtta vastu kõnesid üle kogu maailma. Kui kliendid helistavad sulle USAs, Ühendkuningriigis või Kanadas, saad ka osta tollimaksuta klienditoe numbreid. <br/><br/><b>Paku täielikku telefonituge</b><br/>Meie telefonikanaliga saad<br/><ul><li>hakata tegema ja vastu võtma kõnesid oma veebilehitsejat või mobiiltelefone kasutades</li><li>luua häälsõnumeid, kõnesid suunata või edastada kõnesid agendile ükskõik kus</li><li>jälgida kõnesid, vajadusel sekkuda, pooleliolevatele kõnedele rohkem agente lisada jpm*</li></ul><br/><p>*Kontol lisafunktsioonide aktiveerimiseks võta ühendust aadressil <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>. Nende funktsioonide seas on kõnede jälgimine, kõnesse sekkumine, konverentskõned, numbri peitmine ja kõne eluaja mõõdikud.</p><br/>
+        sidebar_title: Telefonikanal
+        delete_alert: >-
+          Kord juba kustutatud numbrit ei saa enam uuesti osta. Kas oled kindel, et soovid selle numbri kustutada?
+        buy_loading_text: Ostmine...
+        buy_phone_numbers: Osta telefoninumbreid
+        caller_id:
+          no_number_added: Ühtegi helistaja IDd pole lisatud
+          call_id_mask: Peida see number
+          manage_caller_id: 'Halda helistaja ID-d '
+          add_new: Lisa uus
+        tour_link: Aita mul telefonikanalit seadistada
+        failure_purchase: >-
+          Telefoninumbri ostmine nurjus. Veendu, et aadress on õige kohalik aadress riigis <span class='certification-country'></span>.
+        buy: Osta number
+        buy_button_text: Osta
+        address:
+          address: Aadress
+          state: Maakond/Vald
+          city: Linn
+          postal_code: Sihtnumber
+          required_field: Kõikide väljade täitmine on nõutud
+          name: Ettevõte/Nimi
+        setup:
+          info_text: >-
+            Selleks, et hakata telefonikanalit kasutama, pead kõigepealt ostma sissetulevate kõnede numbri, mille oma klientidele edastada. Saad osta numbri ükskõik millisest <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>riigist, mis on siin loetletud</a>. Kui kliendid helistavad sulle USAst, Ühendkuningriigist või Kanadast, saad neile pakkuda ka tasuta numbrit.<br/><br/>Saad osta erinevate riikide jaoks mitu numbrit ja seadistada Freshdeskis tasuta tugiliinid ilma kolmanda poole teenust kasutamata. Sult võetakse klienditoesse sissetulevate, sellest väljuvate ja edastatavate kõnede eest standardtasu. Vaata <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>kõnehindu siit</a>.<br/><br/>Kui oled oma klienditoele telefoninumbri ostnud, jaotatakse kõik sissetulevad kõned klienditoesse sisselogitud agentide vahel ära. Lisaks saavad agendid valida, kas vastavad kõnedele veebilehitsejast või lasevad need automaatselt oma lauatelefonile edastada.
+          title_text: Kõnekeskuse seadistamine
+        sidebar_content: >-
+          Telefonikanalit kasutades saad oma veebilehitseja, mobiiltelefoni või Freshdeski mobiilirakenduste telefonikanali kaudu kõnesid teha ja vastu võtta. See on tihedalt seotud Freshdeski tugiteenusepiletite loomise süsteemiga. Seega saad kõnedel lindistamise abil silma peal hoida ja kõned vajadusel tugiteenusepiletiks muuta. <br/><br/> <b>Telefoni seadistamine</b></br> Telefoni kasutama hakkamiseks pead selle kõigepealt sisse lülitama ja klienditoe numbri ostma. Saad osta kohalikke numbreid <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>siin loetletud riikidest</a> ja helistada või võtta kõnesid vastu kõikjalt maailmas. Kui kliendi helistavad sulle USAst, Ühendkuningriigist või Kanadast, saad ka osta tasuta klienditoe numbreid. <br/><br/><b>Paku täielikku telefonituge</b><br/>Meie telefonikanaliga saad<br/><ul><li>hakata veebilehitsejat või mobiiltelefoni kasutades kõnesid tegema või vastu võtma</li><li>luua häälsõnumeid, edastada kõnesid või suunata kõnesid ükskõik millisele agendile ükskõik kus</li><li>kõnesid jälgida, vajadusel vahele sekkuda, lisada pooleliolevatele kõnedele rohkem agente ja palju muud*</li></ul><br/><p>*Võta ühendust aadressil <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>, et oma kontol lisafunktsioonid sisse lülitada. Nende seas on kõnede jälgimine, kõnesse sekkumine, konverentsikõned, numbri peitmine ja kõne eluea mõõdikud.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Rohkem teavet telefoni võimaluste ja funktsioonide kohta</a><p>
+        not_available: Tulemusi ei ole. Palun proovi mõnda muud otsingusõna.
+        manage: Halda
+        address_certification_text: >-
+          Telefoninumbri ostmiseks pead esitama oma ettevõtte või isikliku aadressi riigis <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Selle telefoninumbri eest võetakse raha <strong><span class='number-rate'></span>kord kuus</strong>.
+        buy_phone_credits: Osta kõneaega
+      feature_request_content:
+        success: Võtame sinuga kahe tööpäeva jooksul ühendust.
+        recording_info: Lindista kõiki kõnesid ja muuda need tugiteenusepiletiteks
+        button_text: Taotle aktiveerimist
+        compare_trial_and_full: Võrdle täis- ja tasuta prooviversiooni
+        activation_disclaimer: Saad kõiki funktsioone piiramata aja jooksul kasutada
+        learn_more: Loe lähemalt
+        ivr_info: >-
+          Jälgi kõnesid, tee konverentsikõnesid, suuna kõnesid interaktiivset häältuvastust kasutades jpm
+        trial_or: VÕI
+        trial_button_text: Võta kasutusele tasuta prooviversioon
+        error_message: Vabandame, aga me ei saa praegu su soovi täita. Palun proovi hiljem uuesti.
+        title_text: Telefon
+        trial_version_disclaimer: Nüüd saad piiratud funktsioone 15 päeva jooksul tasuta kasutada
+        pricing: Vaata kõnehindu ja toetatavaid riike
+        number_info: Osta enam kui 40 riigi kohalikke ja tasuta telefoninumbreid
+        video_title: Vaata videot ja saa teada, mida telefonikanaliga on võimalik teha
+        heading_text: Toeta oma kliente telefonikanalit kasutades
+      local: Kohalik
+      search: Otsi numbrite või fraaside järgi
+      ivr:
+        turn_on: 'Sees'
+        simple_message_title: Lihtsõnum
+        save: Salvesta
+        turn_off: 'Väljas'
+        rename: nimeta ümber
+        add_new_option: Lisa <b>klahvivajutuse</b> võimalus
+        add_new_menu: Lisa uus <b>menüü</b>
+        male: Meeshääl
+        input_number: Sisesta number
+        invalid_number_format: >-
+          Sisesta kehtiv telefoninumber, mille ees on prefiks "+" ja riigi kood.
+        ivr_message_title: Interaktiivne häälvastus (IVR)
+        message_type: Sõnumi tüüp
+        action: Toiming
+        female: Naishääl
+        delete_menu: Kustuta menüü
+        previewing: Eelvaate kuvamine...
+        saving: Salvestamine...
+        add_new_menu_from_option: Lisa uus menüü
+        preview: Eelvaade
+        done: tehtud
+        keypress: Klahvivajutus
+        welcome_message: Tervitussõnum
+      number_settings:
+        read_message: Tekst kõneks
+        queue_position_preference: Loe järjekorranumber ette
+        greeting_message: Sisesta oma sõnum siin
+        queue_wait_message: Järjekorra ootesõnum
+        number_accessible: Ligipääsetav kasutajale
+        all_groups: Kõik grupid
+        record_all: Salvesta kõik kõned
+        voicemail_on: 'Sees'
+        max_queue_calls: Maksimaalne kõnede arv ootejärjekorras
+        cancel: Tühista
+        routing_message: Kui võrgus on saadaval mitu agenti...
+        non_business_hours: 'Võtab kõnesid vastu järgmisel ajal:'
+        non_business_hours_message: Tööajaväline sõnum
+        recorded_voice: Salvestatud hääl
+        group: 'Mängi sõnum ette ja helista lahendajatele '
+        queue_position_enable: 'SEES'
+        recording_privacy_public: Nähtav klientidele ja lahendajatele
+        call_wait_time: maksimaalse ooteajaga
+        wait_music: Ootemuusika
+        recording_help_info: Lülita mikrofon sisse. Kestus < 5 minutit.
+        record_alert: >-
+          Vastavalt kõne salvestamise juhendile pead sa klientidele teada andma, et kõne salvestatakse, ja selgitama kõne salvestamise eesmärki. Palun seadista tervitussõnum vastavalt sellele.
+        record_none: Ära salvesta kõnesid
+        non_availability_message: Sõnum hõivatuse kohta
+        voicemail_message: Häälsõnum
+        record_voice: Salvesta oma hääl
+        voicemail_off: 'Väljas'
+        transcript_voice: Transkribeeri hääl
+        hunt_type: Kõne suunamine
+        name: Nimi
+        voicemail: Häälsõnum
+        record_calls: Salvesta kõned
+        anytime: 24/7 igal ajal
+        upload_voice: Laadi helifailid üles
+        business_hours: Tööaeg
+        call_wait_time_suffix: ' kõne kohta'
+        hold_music: Ooteaja muusika
+        start_recording: Alusta salvestamist
+        title_text: Kõnekeskuse juhtimine
+        attachment_help_text: Võtab vastu kuni 5 MB suuruseid helifaile
+        queue_position_disable: 'VÄLJAS'
+        queue_position_message_placeholder: 'Oled hetkel järjekorras. Sinu järjekorranumber on {{queue.position}}'
+        preparing_recording: Sinu sõnumi ettevalmistamine...
+        info_content: >-
+          <b>Telefonikõnede määramine agentidele ja rühmadele</b></br>Saad seadistada interaktiivse häälvastuse süsteemi ja suunata kõnesid erinevatele oma meeskonna rühmadele või agentidele. Näiteks võid suunata oma klientide kõned oma klienditoe meeskonnale, kui nad vajutavad 1, või müügimeeskonna liikmetele, kui nad vajutavad 2.<br/>Lisaks saad kohandada klientidele esitatavat sõnumit, lindistades oma häält, laadides üles faili või kasutades kõnesünteesi funktsiooni.<br><br><b>Numbri kohandamine</b><br>Ühtlasi saad konfigureerida iga telefoninumbri eraldi ja määrata igaühele oma kohandused. Nende seas on põhiseaded nagu maksimaalne inimeste arv järjekorras ja maksimaalne klientide ooteaeg. Kummagi saavutades esitatakse automaatselt klientidele sõnum, et klienditugi pole saadaval.<br/>Kui lubad kõnede lindistamise, lindistatakse kõiki klienditoe kõnesid ja need manustatakse tugiteenusepiletite juurde ning lindistus on kas klientidele avalikult saadaval või seda hoitakse privaatsena. Lisaks saad piirata telefonikanali saadavust tööaja väliselt. Näiteks saad saad seadistada kaks tugiliini, millest ühel võetakse kõnesid vastu ainult töötundidel ja teine on suure prioriteetsusega abiliin, mis on saadaval igal ajal.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Loe lähemalt numbri kohandamise kohta</a>
+        recording_privacy: Nähtavuse talletamine
+        audio_upload: Vali fail üleslaadimiseks
+        recording_privacy_private: Nähtav ainult lahendajatele
+        business_calendar: Vali tööaeg
+        queue_position_message_alert: >-
+          Järjekorrapositsiooni ette lugemiseks kasuta kohatäitjat {{queue.position}}<br/> Nt: Oled hetkel järjekorras. Sinu järjekorranumber on {{queue.position}}
+        name_placeholder: Sisesta oma numbrile sõbralik nimi
+        welcome_message: Tervitussõnum
+        change: Muuda
+        stop_recording: <span></span>Lõpeta salvestamine
+      trial:
+        request_activation_msg: >-
+          Telefoni prooviperioodi ajal saad valida ainult ühe numbri piiratud riikide seast.<br> Täisversiooni aktiveerimisel saad aga osta mitmeid numbreid 41 riigist
+        activate_btn_text: Taotle aktiveerimist
+        numbers:
+          search:
+            after_activation_request: >-
+              Oled esitanud telefonikanali aktiveerimise taotluse <br> Võtame sinuga kahe tööpäeva jooksul ühendust.
+            buy_confirmation: Kas oled kindel, et soovid selle numbri valida?
+            can_use_after_activation: >-
+              Saad jätkata selle numbri kasutamist, kui telefonikanali aktiveerid.
+        requested_activation: Saime kätte sinu aktiveerimistaotluse<br>Seda töödeldakse
+    subscription:
+      recharge_now_text: Suurenda oma konto jääki ühekordse maksega
+      purchase_credits: Osta kõneaega
+      setup_auto_recharge: Seadista automaatne laadimine
+      auto_recharge_amt: Automaatselt laaditav summa
+      see_detailed_pricing: Vaata hinna üksikasju
+      followup_text: väärtuses Freshfone'i krediiti
+      auto_recharge_text: Me võtame su kontolt raha maha ainult siis, kui konto jääk langeb alla 5 $.
+      purchase_text: Osta kõneaega
+      current_balance: Sinu praegune saldo
+      followup: väärtuses Freshfone'i krediiti
+      no_credit_card_text: Sisesta makseandmed kõneaja ostmiseks
   special_beta_offer: Eripakkumine Beta kontodele
   days: päeva
   tickets_filter:

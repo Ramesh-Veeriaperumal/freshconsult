@@ -72,6 +72,7 @@ class Billing::ChargebeeWrapper
     ChargeBee::Card.delete_card_for_customer(account_id)
   end
 
+  #addons (daypass/freshfone)
 	def update_non_recurring_addon(data)
 		ChargeBee::Invoice.charge_addon(data)
 	end

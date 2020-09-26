@@ -269,6 +269,24 @@ module SupportHelper
     output.join("").html_safe
   end
 
+
+  #freshfone audio dom
+  # TODO-RAILS3 duplicate of tickets_helper
+ def freshfone_audio_dom(notable)
+      notable = notable
+      call = notable.freshfone_call
+      dom = []
+      if call.present? && call.recording_url
+        dom << %(<br> <span> <b> #{I18n.t('freshfone.ticket.recording') }</b> </span>)
+        if call.recording_audio
+          dom << %(<div class='freshfoneAudio'> <div class='ui360'> <a href=/helpdesk/attachments/#{call.recording_audio.id} type='audio/mp3' class='call_duration' data-time=#{call.call_duration} ></a>)
+        else
+          dom << %(<br> <div class='freshfoneAudio_text'>#{I18n.t('freshfone.recording_on_process')}</div>)
+        end
+      end
+    dom.join("").html_safe
+  end
+
   def filler_for_solutions portal
     %( <div class="no-results">#{ I18n.t('portal.no_articles_info_1') }</div>
        <div class="no-results">#{ I18n.t('portal.no_articles_info_2') }</div> )

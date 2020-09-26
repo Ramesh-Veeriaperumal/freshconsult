@@ -192,6 +192,38 @@ module CronWebhooks::Constants
       class_name: 'CronWebhooks::MetaDataCheck',
       semaphore_expiry: 1.hour
     },
+    freshfone_failed_costs: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_suspend: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_renew_numbers: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_suspension_reminder_3days: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_suspension_reminder_15days: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_freshfone_call_twilio_recording_delete: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_failed_call_status_update: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
+    freshfone_failed_close_accounts: {
+      class_name: 'CronWebhooks::Freshfone',
+      semaphore_expiry: 1.hour
+    },
     enable_omniroute_for_new_accounts: {
       class_name: 'CronWebhooks::EnableOmnirouteForNewAccounts',
       semaphore_expiry: 1.hour

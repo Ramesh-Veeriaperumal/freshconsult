@@ -8,6 +8,7 @@ require 'fileutils'
 folder = File.expand_path('.',__dir__)
 $:.unshift(folder) unless $:.include?(folder)
 require 'sidekiq_config.rb'
+require 'resque_config.rb'
 require 'shoryuken_config.rb'
 require 'opsworks_mock.rb'
 
@@ -476,6 +477,7 @@ HEREDOC
     @is_fc_api_public_layer = opsworks.fc_api_public_layer?()
     @is_fc_api_channel_layer = opsworks.fc_api_channel_layer?()
     @is_freshid_layer = opsworks.freshid_layer?()
+    @is_resque_layer = opsworks.resque_layer?()
     @is_sidekiq_layer = opsworks.sidekiq_layer?()
     @is_sidekiq_archive_layer = opsworks.sidekiq_archive_layer?()
     @is_maintenance_redis_enabled = opsworks.maintenance_redis_enabled?()
@@ -563,6 +565,10 @@ HEREDOC
       elsif filename.include?("sidekiq_client.yml.erb")
         if @is_sidekiq_layer then
           SidekiqConfig::setup(node, opsworks, @options, filename, File.join(@options[:indir], "sidekiq.monitrc.erb"))
+        end
+      elsif filename.include?("resque.conf.erb")
+        if @is_resque_layer then
+          ResqueConfig::setup(node, opsworks, @options, @options[:indir])
         end
       elsif filename.include?("sandbox.yml.erb")
         @public_key = File.join("/data/helpkit/shared/config/sandbox", node[:ymls][:sandbox][:public_key])
@@ -774,6 +780,7 @@ HEREDOC
       "fc-app-support" => "-support",
       "fc-app-support-theme" => "-support-theme",
       "fc-app-solution" => "-solution",
+      "fc-app-freshfone" => "-freshfone",
       "fc-app-api-contacts" => "-api-contacts",
       "fc-app-suggest" => "-suggest",
       "fc-app-http-request" => "-integrations",

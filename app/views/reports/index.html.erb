@@ -65,6 +65,14 @@
                            </a>
                         </li>
                     <% end %>
+                    <% if freshfone_reports? %>
+                      <li>
+                        <a href="<%= reports_freshfone_summary_reports_url %>">
+                              <div class="img-outer"><i class="fsize-36 ficon-phone_summary"></i></div>
+                              <div class="report-icon-text"><%= t('helpdesk_reports.phone_summary.title') %></div>
+                         </a>
+                      </li>
+                    <%end%>
                     <% if chat_activated? %>
                       <li>
                         <a href="<%= reports_freshchat_summary_reports_url %>">
@@ -236,6 +244,7 @@
     HelpdeskReports.locals.products = <%= @account_products.to_json.html_safe %>;
     HelpdeskReports.features = {
       'timesheet' : false,//<%= feature?(:timesheets) && privilege?(:view_time_entries) %>,
+      'freshfone' : false,
       'freshchat' : false,//<%= chat_activated? %>,
       'show_agent_metrics_feature': !<%= @hide_agent_metrics_feature %>
     }

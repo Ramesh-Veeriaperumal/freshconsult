@@ -176,10 +176,6 @@ module SAAS::DropFeatureData
     personal_folder = account.canned_response_folders.personal_folder.first
     personal_folder.canned_responses.each(&:destroy)
   end
-
-  def handle_public_url_toggle_drop_data
-    account.features.public_ticket_url.destroy
-  end
   
   def handle_agent_scope_drop_data
     account.agents.each do |agent|

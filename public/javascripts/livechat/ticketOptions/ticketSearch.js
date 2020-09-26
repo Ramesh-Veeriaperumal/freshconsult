@@ -148,7 +148,7 @@
 				.onSearchFieldKeyDown(42);
 		}
 	};
-	// freshTicketSearch renamed as liveChatTicketSearch
+	// freshTicketSearch renamed as liveChatTicketSearch to avoid name conflict with freshfone ticket search 
 	//for css conflict issue
 	$.fn.liveChatTicketSearch = function (options) {
 		return this.each(function () {

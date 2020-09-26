@@ -17,6 +17,7 @@ class Dashboards
      #key, widget name(partial name), h,w, group by, order by, limit, 
     [:activities,   "activity",                             2,6],
     [:todo,         "todo",                                 1,1],
+    [:freshfone,    "phone",                                1,1],
     [:chat,         "chat",                                 1,1],
     [:agent_status, "agent_status",                         1,1],
     [:gamification, "gamification",                         1,1],
@@ -36,6 +37,7 @@ class Dashboards
     [:gamification, "gamification",                         2,1],
     [:csat,         "csat",                                 2,1],
     [:moderation,   "forum_moderation",                     2,1],
+    [:freshfone,    "phone",                                2,1],
     [:chat,         "chat",                                 2,1]
   ]
 
@@ -46,6 +48,7 @@ class Dashboards
     [:agent_status,   "agent_status",                       2,1],
     [:tickets,        "unresolved_tickets_by_ticket_type",  2,1],
     [:tickets,        "agent_performance",                  2,1],
+    [:freshfone,      "phone",                              2,1],
     [:activities,     "activity",                           4,2],
     [:chat,           "chat",                               2,1],
     [:todo,           "todo",                               2,1],
@@ -63,6 +66,7 @@ class Dashboards
     [:agent_status, "agent_status",                         2,1],
     [:tickets,      "top_customers_by_open_tickets",        2,1],
     [:todo,         "todo",                                 2,1],
+    [:freshfone,    "phone",                                2,1],
     [:activities,   "activity",                             4,2],
     [:chat,         "chat",                                 2,1],
     [:moderation,   "forum_moderation",                     2,1]

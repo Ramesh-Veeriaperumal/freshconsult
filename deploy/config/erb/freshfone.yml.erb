@@ -1,0 +1,24 @@
+<%= node[:opsworks][:environment] %>:
+  node_url: <%= node[:ymls][:freshfone][:node_url] %> 
+  secret_key: <%= node[:ymls][:freshfone][:secret_key] %>
+  signing_key: <%= node[:ymls][:freshfone][:jwt_signing_key] %>
+  verification_keys: <%= node[:ymls][:freshfone][:jwt_verification_keys] %>
+  jwt_default_expiry: <%= node[:ymls][:freshfone][:jwt_token_expiry] %> 
+  twilio:
+    account_sid: <%= node[:ymls][:freshfone][:twilio_account_sid] %> 
+    auth_token: <%= node[:ymls][:freshfone][:auth_token] %> 
+  billing_error_email: <%= node[:ymls][:freshfone][:billing_error_email] %>
+  freshfone_request:
+    to: "support@freshdesk.com"
+  ops_alert:
+    call:
+      from: <%= node[:ymls][:freshfone][:ops_alert_from] %>
+      to: ['+919597517592', '+918500353698', '+917373157814']
+    mail:
+      from: "freshfone@freshworks.com"
+      <%if node[:opsworks][:environment] == 'production' %>
+      to: ['support@freshcallerassistant.freshdesk.com']
+      <%else %> 
+      to: ['freshcaller-staging@freshcallerassistant.freshdesk.com']
+      <%end%>
+        

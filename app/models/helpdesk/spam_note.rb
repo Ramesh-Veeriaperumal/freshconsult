@@ -10,6 +10,7 @@ class Helpdesk::SpamNote < Helpdesk::Mysql::DynamicTable
   belongs_to :spam_ticket, :class_name => 'Helpdesk::SpamTicket'
   has_one :tweet, :as => :tweetable, :class_name => 'Social::Tweet', :dependent => :destroy
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy
+  has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
 
   has_many :shared_attachments,
            :as => :shared_attachable,

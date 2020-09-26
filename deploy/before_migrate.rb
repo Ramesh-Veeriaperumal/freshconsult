@@ -16,6 +16,7 @@ run "ln -nfs #{shared_path}/config/newrelic.yml #{node[:rel_path]}/config/newrel
 run "ln -nfs #{shared_path}/config/redis_mobile.yml #{node[:rel_path]}/config/redis_mobile.yml"
 run "ln -nfs #{shared_path}/config/mailgun.yml #{node[:rel_path]}/config/mailgun.yml"
 run "ln -nfs #{shared_path}/config/mailbox.yml #{node[:rel_path]}/config/mailbox.yml"
+run "ln -nfs #{shared_path}/config/freshfone.yml #{node[:rel_path]}/config/freshfone.yml"
 run "ln -nfs #{shared_path}/config/freshcaller.yml #{node[:rel_path]}/config/freshcaller.yml"
 run "ln -nfs #{shared_path}/config/rate_limit.yml #{node[:rel_path]}/config/rate_limit.yml"
 run "ln -nfs #{shared_path}/config/re_route_mapping.yml #{node[:rel_path]}/config/re_route_mapping.yml"
@@ -117,6 +118,7 @@ run "ln -nfs #{shared_path}/config/silkroad_config.yml #{node[:rel_path]}/config
 run "ln -nfs #{shared_path}/config/omni_channel_dashboard.yml #{node[:rel_path]}/config/omni_channel_dashboard.yml"
 run "ln -nfs #{shared_path}/config/omni_channel_bundle.yml #{node[:rel_path]}/config/omni_channel_bundle.yml"
 run "ln -nfs #{shared_path}/config/tracing.yml #{node[:rel_path]}/config/tracing.yml"
+run "ln -nfs #{shared_path}/config/kbservice.yml #{node[:rel_path]}/config/kbservice.yml"
 
 # supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

@@ -756,6 +756,34 @@ fi:
         filter_report: Muokkaa suodatinta
         ticket_type: Tukipyyntötyyppi
         select_billable: Valitse laskutettavat / ei-laskutettavat
+    freshfone:
+      time_period: Ajanjakso
+      num_of_transfered: Siirtojen määrä
+      no_agent: '- Ei tukihenkilöä -'
+      group: Ryhmä
+      total_unanswered_calls: Vastaamattomat puhelut
+      call_type: Puhelutyyppi
+      filter_option_all_calls: Kaikki Puhelut
+      filter_close: Sulje
+      avg_handle_time: Keskimääräinen käsittelyaika
+      all_numbers: Kaikki Numerot
+      filter_report: Muokkaa suodatinta
+      number: Numero
+      business_hours: Aukioloajat
+      no_external: Siirrot ulkoisiin numeroihin eivät sisälly
+      summary_title: 'Yhteenveto tukihenkilön puheluista '
+      generate_summary: Luo
+      num_of_calls: Puheluiden määrä
+      unanswered_transfers: Vastaamattomat siirrot
+      unanswered_count: Vastaamattomat
+      select_call_type: Valitse puhelutyyppi
+      options:
+        all_groups: Kaikki ryhmät
+        unassigned: Määräämätön
+        incoming: Saapuva
+        outgoing: Lähtevä
+      filter_by_title: Suodatusperuste
+      total_voice_mail: Ääniviestit
     select_customer: Valitse asiakas
     summary_report:
       avg_1st_response_time: Keskimääräinen ensimmäisen<br> vastauksen aika
@@ -3451,6 +3479,186 @@ fi:
         other: tykkää tästä
   title: Nimike
   free_plan_agents_v2: Rajattomasti tukihenkilöitä
+  freshfone:
+    admin:
+      purchase_numbers_text: >-
+        Osta paikallinen tai maksuton numero ja tue asiakkaita mistä päin maailmaa tahansa puhelimen välityksellä
+      greetings: Tervehdykset
+      settings: Asetukset
+      important: Tärkeää
+      toll_free: Maksuton
+      purchase_credit_text: >-
+        Osta krediittejä ostaaksesi numeroita, soittaaksesi ja vastaanottaaksesi puheluita puhelinkanavalla.
+      suspended_alert: >-
+        <b>Tärkeää:</b> Puhelinkanavan poistaminen käytöstä ei estä numeroidesi kuukausittaista vuokrausta. Jotta vältät laskutuksen, poista ostetut numerot.
+      freshfone_numbers_title: Puhelin
+      welcome_page:
+        title_text: Puhelin
+      number:
+        simultaneous: Soita kaikille tukihenkilöille
+        round_robin: Soita ensin vapaille tukihenkilöille
+      numbers:
+        sidebar_content_v2: >-
+          Puhelinkanavilla voit soittaa ja vastata puheluihin selaimen, matkapuhelimen tai puhelinkanavan kautta Freshdeskin mobiilisovelluksilla. Se on integroitu tiivisti Freshdeskin tukipyyntöjärjestelmään. Voit seurata puheluitasi nauhoittamalla niitä ja muuntamalla ne tarpeen mukaan tukipyynnöiksi. <br/><br/> <b>Puhelimen käyttöönotto</b></br>Aloittaaksesi puhelimen käytön on sinun ensin otettava se käyttöön ja ostettava tukinumero. Voit ostaa paikallisia numeroita <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>täällä mainituista maista,</a> ja soittaa ja vastaanottaa puheluita mistä päin maailmaa tahansa. Jos asiakkaasi soittavat sinulle Yhdysvalloista, Isosta-Britanniasta tai Kanadasta, voit myös ostaa maksuttomia tukinumeroita (tai freephonen Isossa-Britanniassa). <br/><br/><b>Tarjoa täysi puhelintuki</b><br/>Puhelinkanavallamme voit<br/><ul><li>Aloittaa puheluiden soittamisen ja vastaanottamisen selaimella tai matkapuhelimilla</li><li>Luoda ääniviestejä, edelleenohjata puheluita tai siirtää puheluita kaikille tukihenkilöille mistä tahansa</li><li>Seurata puheluita, puuttua puheluun tarvittaessa, lisätä muita tukihenkilöitä puheluiden aikana ja enemmän*</li></ul><br/><p>*Ota yhteyttä osoitteeseen <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> ottaaksesi edistyneet toiminnot käyttöön tilillesi. Näihin kuuluvat puheluiden seuranta, puheluihin puuttuminen, neuvottelupuhelut, eri numeron näyttö ja puhelun mittarit.</p><br/>
+        sidebar_title: Puhelinkanava
+        delete_alert: >-
+          Kun numero on poistettu, sitä ei voida ostaa uudelleen. Haluatko varmasti poistaa numeron?
+        buy_loading_text: Ostetaan...
+        buy_phone_numbers: Osta puhelinnumeroita
+        caller_id:
+          no_number_added: Soittajan tunnusta ei lisätty
+          call_id_mask: Näytä toisena numerona
+          manage_caller_id: 'Hallinnoi soittajan tunnistetta '
+          add_new: Lisää uusi
+        tour_link: Auta ottamaan puhelinkanavan käyttöön
+        failure_purchase: >-
+          Ei voida ostaa puhelinnumeroa. Varmista, että osoite on voimassa oleva paikallinen osoite maassa <span class='certification-country'></span>.
+        buy: Osta Numero
+        buy_button_text: Osta
+        address:
+          address: Osoite
+          state: Osavaltio/provinssi/alue
+          city: Kaupunki
+          postal_code: Postinumero
+          required_field: Kaikki kentät ovat pakollisia
+          name: Yritys / nimi
+        setup:
+          info_text: >-
+            Aloittaaksesi puhelinkanavan käytön tarvitset ensin puhelinnumeron, johon asiakkaat voivat soittaa. Voit ostaa paikallisen numeron <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>täällä luetelluista maista</a>. Jos asiakkaasi soittavat sinulle Yhdysvalloista, Isosta-Britanniasta tai Kanadasta, voit tarjota heille myös maksuttomia numeroita.<br/><br/>Voit ostaa useita puhelinnumeroita lukuisista maista ja ottaa käyttöön maksuttomia tukilinjoja Freshdeskissä ilman kolmansien osapuolten palveluja. Sinulta veloitetaan normaalihinta tukipalvelusi vastatuista, soitetuista ja edelleenohjatuista puheluista. Tutustu <a href='http://freshdesk.com/multichannel-support/phone-support/call-rates' target='_blank'>hintoihin täällä</a>.<br/><br/> Kun olet ostanut puhelinnumeron tukilinjallesi, kaikki tulevat puhelut jaetaan tukipalveluusi kirjautuneille tukihenkilöille. Tukihenkilöt voivat myös halutessaan vastata puheluihin selaimesta tai ohjata ne automaattisesti pöytäpuhelimeensa.
+          title_text: Puhelinkeskuksen käyttöönotto
+        sidebar_content: >-
+          Puhelinkanavilla voit soittaa ja vastata puheluihin selaimen, matkapuhelimen tai puhelinkanavan kautta Freshdeskin mobiilisovelluksilla. Se on integroitu tiivisti Freshdeskin tukipyyntöjärjestelmän kanssa. Voit seurata puheluitasi nauhoittamalla niitä ja muuntamalla ne tarpeen mukaan tukipyynnöiksi. <br/><br/> <b>Puhelimen käyttöönotto</b></br>Puhelimen käyttämiseksi täytyy sinun ottaa ensin se käyttöön ja ostaa tukinumero. Voit ostaa paikallisia numeroita <a href='https://support.freshdesk.com/support/solutions/articles/169322' target='_blank'>täällä mainituista numeroista</a> ja soittaa ja vastaanottaa puheluita mistä päin maailmaa tahansa. Jos asiakkaasi soittavat sinulle Yhdysvalloista, Isosta-Britanniasta tai Kanadasta, voit myös ostaa maksuttomia tukinumeroita (tai freephonen Isossa-Britanniassa). <br/><br/><b>Tarjoa täysi puhelintuki</b><br/>Puhelinkanavallamme voit<br/><ul><li>Aloittaa puheluiden soittamisen ja vastaamisen puheluihin selaimella tai mobiilipuhelimilla</li><li>Luoda ääniviestejä, edelleenohjata puheluita tai siirtää puheluita kaikille tukihenkilöille mistä tahansa</li><li>Seurata puheluita, puuttua puheluun tarvittaessa, lisätä muita tukihenkilöitä puheluiden aikana ja enemmän*</li></ul><br/><p>*Ota yhteyttä osoitteeseen <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> ottaaksesi edistyneet toiminnot käyttöön tilillesi. Näihin kuuluvat puheluiden seuranta, puheluihin puuttuminen, neuvottelupuhelut, eri numeron näyttö ja puhelun mittarit.</p><br/><p><a href='http://freshdesk.com/multichannel-support/phone-support' target='_blank'>Lisätietoja puhelimen kyvyistä ja toiminnoista</a><p>
+        not_available: Ei hakutuloksia. Kokeile toista hakusanaa
+        manage: Hallitse
+        address_certification_text: >-
+          Puhelinnumeron ostaminen edellyttää, että annat henkilökohtaisen tai yrityksen osoitteen maassa <span class='certification-country'></span>.
+        purchase_alert_text: >-
+          Tästä puhelinnumero laskutetaan <strong><span class='number-rate'></span> kuukausittain</strong>.
+        buy_phone_credits: Osta puhelukrediittejä
+      feature_request_content:
+        success: Olemme sinuun yhteydessä kahden työpäivän kuluessa.
+        recording_info: Nauhoita ja muunna kaikki puhelusi tukipyynnöiksi
+        button_text: Aktivointipyyntö
+        compare_trial_and_full: Vertaile täyttä ja ilmaista kokeiluversiota toisiinsa
+        activation_disclaimer: Voit käyttää kaikkia toimintoja rajoittamattoman ajan
+        learn_more: Näytä lisää
+        ivr_info: >-
+          Seuraa puheluita, soita neuvottelupuheluita, siirrä puheluita IVR-toiminnolla ja paljon muuta
+        trial_or: tai
+        trial_button_text: Ota ilmainen kokeiluversio käyttöön
+        error_message: Valitettavasti emme voi toteuttaa pyyntöäsi juuri nyt. Yritä myöhemmin uudelleen.
+        title_text: Puhelin
+        trial_version_disclaimer: Voit käyttää rajoitettua määrää toimintoja 15 päivän ajan ilmaiseksi
+        pricing: Näytä kaikki puheluhinnat ja tuetut maat
+        number_info: Osta paikallisia tai maksuttomia numeroita yli 40 maassa
+        video_title: Katso video saadaksesi lisätietoja puhelinkanavan toiminnoista
+        heading_text: Tue asiakkaitasi puhelinkanavalla
+      local: Paikallinen
+      search: Hae numeroiden tai lauseiden mukaan
+      ivr:
+        turn_on: 'Päällä'
+        simple_message_title: Yksinkertainen viesti
+        save: Tallenna
+        turn_off: 'Pois päältä'
+        rename: nimeä uudelleen
+        add_new_option: Lisää <b>painallus</b>-asetus
+        add_new_menu: Lisää uusi <b>valikko</b>
+        male: Miesääni
+        input_number: Anna numero
+        invalid_number_format: >-
+          Anna kelvollinen puhelinnumero. Muista lisätä numeron eteen + ja maatunnus
+        ivr_message_title: Äänipalvelujärjestelmä (IVR)
+        message_type: Viestityyppi
+        action: Toiminto
+        female: Naisääni
+        delete_menu: Poista valikko
+        previewing: Esikatsellaan...
+        saving: Tallennetaan...
+        add_new_menu_from_option: Lisää uusi valikko
+        preview: Esikatselu
+        done: valmis
+        keypress: Painallus
+        welcome_message: Tervetuloviesti
+      number_settings:
+        read_message: Teksti puheeksi
+        queue_position_preference: Lue ääneen sijainti jonossa
+        greeting_message: Kirjoita viestisi tähän
+        queue_wait_message: Odotusviesti jonotettaessa
+        number_accessible: Saatavilla henkilöille
+        all_groups: Kaikki ryhmät
+        record_all: Tallenna kaikki puhelut
+        voicemail_on: 'Päällä'
+        max_queue_calls: Jonon puheluiden enimmäismäärä
+        cancel: Peruuta
+        routing_message: Kun usempi tukihenkilö on vapaana...
+        non_business_hours: Hyväksy puhelut…
+        non_business_hours_message: Viesti työaikojen ulkopuolella
+        recorded_voice: Tallennettu ääni
+        group: 'Soita viesti ja soita tukihenkilöillä '
+        queue_position_enable: 'KÄYTÖSSÄ'
+        recording_privacy_public: Näkyy asiakkaille ja tukihenkilöille
+        call_wait_time: odotusaika enimmillään
+        wait_music: Odotusmusiikki
+        recording_help_info: Laita mikrofoni päälle. Kesto < 5 min.
+        record_alert: >-
+          Useimpien maiden puheluiden nauhoitusohjeissa vaaditaan ilmoittamaan asiakkaille, että heidän puheluitaan nauhoitetaan. Määritä tervehdysviesti niin, että se noudattaa näitä ohjeita.
+        record_none: Älä tallenna puheluita
+        non_availability_message: Ei saatavilla -viesti
+        voicemail_message: Ääniviestin viesti
+        record_voice: Tallenna äänesi
+        voicemail_off: 'Pois päältä'
+        transcript_voice: Tallenteen ääni
+        hunt_type: Puheluiden reititys
+        name: Nimi
+        voicemail: Vastaaja
+        record_calls: Tallenna puhelut
+        anytime: Ympäri vuorokauden
+        upload_voice: Lataa äänitiedostot
+        business_hours: Aukioloajat
+        call_wait_time_suffix: ' per puhelu'
+        hold_music: Pidon musiikki
+        start_recording: Aloita tallennus
+        title_text: Puhelinkeskuksen hallinta
+        attachment_help_text: Hyväksyy äänitiedostot (mp3), joiden koko on < 5 mb
+        queue_position_disable: 'POIS KÄYTÖSTÄ'
+        queue_position_message_placeholder: 'Olet jonossa. Sijaintisi jonossa on {{queue.position}}'
+        preparing_recording: Valmistellaan viestiäsi...
+        info_content: >-
+          <b>Puheluiden määrääminen tukihenkilöille ja ryhmille</b></br>Voit ottaa käyttöön äänipalvelujärjestelmän (IVR) ja ohjata puheluita tiimisi eri ryhmille tai tukihenkilöille. Voit esimerkiksi ohjata asiakkaiden puhelut tukitiimillesi, kun he painavat 1, ja jollekulle myynnissä heidän painaessaan 2.<br/>Lisäksi voit myös mukauttaa asiakkaiden kuulemia viestejä nauhoittamalla äänesi, lataamalla tiedoston tai käyttämällä tekstin muuttaminen puheeksi -toimintoa.<br><br><b>Numerosi mukauttaminen</b><br>Voit myös määrittää jokaisen numeron erikseen ja määrittää sille omat mukautukset. Näihin sisältyvät perusasetukset, kuten henkilöiden enimmäismäärä jonossa ja pisin odotusaika asiakkaillesi. Kun toinen ehdoista täyttyy, kuulevat asiakkaasi automaattisesti viestin, että palvelu ei ole saatavilla.<br/>Kun otat käyttöön puhelujen tallennuksen, jokainen puhelu tukipalvelussasi nauhoitetaan ja liitetään tukipyyntöihisi. Nauhoitus voidaan jakaa asiakkaiden käyttöön tai pitää yksityisenä. Voit myös rajoittaa puhelinkanavaasi vastaanottamasta puheluita työaikojen ulkopuolella. Voit esimerkiksi ottaa käyttöön kaksi tukilinjaa, joista toinen on avoinna puheluiden vastaanottoon vain työaikana ja toinen korkean prioriteetin apulinja, joka on avoinna 24/7.<br/><br/><a href='http://support.freshdesk.com/support/solutions/articles/169198' target='_blank'>Lisätietoja numeroiden mukautuksesta</a>
+        recording_privacy: Nauhoituksen näkyvyys
+        audio_upload: Lataa
+        recording_privacy_private: Näkyy vain tukihenkilöille
+        business_calendar: Valitse aukioloajat
+        queue_position_message_alert: >-
+          Käytä paikkamerkkiä {{queue.position}} jonon sijainnin lukemiseksi ääneen <br/> Esim. Olet jonossa. Sijaintisi jonossa on {{queue.position}}
+        name_placeholder: Anna numerolle nimi
+        welcome_message: Tervetuloviesti
+        change: Vaihda
+        stop_recording: <span></span>Lopeta nauhoitus
+      trial:
+        request_activation_msg: >-
+          Voit valita valita vain yhden numeron rajoitetusta määrästä maita puhelimen kokeilujakson aikana.<br> Voit kuitenkin ostaa useita numeroita 41 maan joukosta, jos aktivoit täyden version
+        activate_btn_text: Aktivointipyyntö
+        numbers:
+          search:
+            after_activation_request: >-
+              Olet pyytänyt puhelinkanavan aktivointia <br> Olemme sinuun yhteydessä 2 työpäivän kuluessa.
+            buy_confirmation: Haluatko varmasti valita tämän numeron?
+            can_use_after_activation: >-
+              Voit jatkaa tämän numeron käyttöä, kun aktivoit puhelinkanavan.
+        requested_activation: Olemme vastaanottaneet aktivointipyyntösi<br>Sitä käsitellään
+    subscription:
+      recharge_now_text: Täydennä saldosi kertamaksulla
+      purchase_credits: Osta Krediittejä
+      setup_auto_recharge: Aseta automaattinen lataus
+      auto_recharge_amt: Lataa summa automaattisesti
+      see_detailed_pricing: Katso tarkka hinnasto
+      followup_text: verran krediittejä
+      auto_recharge_text: Veloitamme sinua vain, kun saldosi on alle 5 $
+      purchase_text: Osta puhelukrediittejä
+      current_balance: Saldosi
+      followup: verran krediittejä
+      no_credit_card_text: Anna maksutiedot ostaaksesi puhelukrediittejä
   special_beta_offer: Erityistarjous betatestaajille
   days: päivää
   tickets_filter:

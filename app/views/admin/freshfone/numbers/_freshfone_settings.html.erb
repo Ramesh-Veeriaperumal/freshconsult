@@ -1,0 +1,29 @@
+<script id="message-select-template" type="text/x-jquery-tmpl">
+	<%= render :partial => "/admin/freshfone/numbers/message_select" %>
+</script>
+
+<%= form_for @number,   :as => :admin_freshfone_number,
+			:url => admin_freshfone_number_path(@number),
+			:html => { :class => "form-horizontal number-settings",
+				:multipart => true,
+				:method => :put }  do |f| %>
+	<%= f.error_messages %>
+	<div class="general-settings">
+		<%= render :partial => "/admin/freshfone/numbers/freshfone_general_settings",
+							 :locals => {:f => f, :number => @number} %>
+	</div>
+	
+	<div class="button-container">
+		<%= (link_to t('back'), admin_freshfone_index_path,
+					:class => "btn pull-left") %>
+		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+		<input type="submit" class="btn btn-primary" value=<%=t('save')%> />
+	</div>
+<% end %>
+<% content_for :sidebar do %>
+	<div class="sidepanel">
+		<i class="common-icon-help"></i>
+		<h3 class="lead"><%=t('freshfone.admin.number_settings.title_text')%></h3>
+		<p><%= t('freshfone.admin.number_settings.info_content').html_safe %></p>
+	</div>
+<% end %>

@@ -5,7 +5,7 @@ module Archive
 
     def perform(args)
       @account = Account.current
-      return if !@account.active? || @account.launched?(:disable_archive)
+      return if !@account.active? || @account.disable_archive_enabled?
 
       args = HashWithIndifferentAccess.new(args)
       execute_on_db do

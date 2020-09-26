@@ -100,6 +100,9 @@ module Helpdesk
       :social_convert_to_ticket,
       :social_reply_and_compose_post,
       :manage_social_response,
+      :phone_attend_call,                     #FreshFone_privileges
+      :phone_make_call,
+      :phone_export_call_history,
       :livechat_admin_tasks,                  #LiveChat_privileges
       :livechat_manage_visitor,
       :livechat_view_transcripts,
@@ -224,6 +227,9 @@ module Helpdesk
       :social_convert_to_ticket,
       :social_reply_and_compose_post,
       :manage_social_response,
+      :phone_attend_call,                     #FreshFone_privileges
+      :phone_make_call,
+      :phone_export_call_history,
       :livechat_admin_tasks,                  #LiveChat_privileges
       :livechat_manage_visitor,
       :livechat_view_transcripts,
@@ -327,6 +333,9 @@ module Helpdesk
       :social_convert_to_ticket,
       :social_reply_and_compose_post,
       :manage_social_response,
+      :phone_attend_call,                     #FreshFone_privileges
+      :phone_make_call,
+      :phone_export_call_history,
       :livechat_manage_visitor,               #LiveChat_privileges
       :livechat_view_transcripts,
       :livechat_edit_transcripts,
@@ -397,6 +406,9 @@ module Helpdesk
       :untitled_forum_agent_2,
       :untitled_forum_agent_3,
       :view_social,                           #Social_privilege
+      :phone_attend_call,                     #FreshFone_privileges
+      :phone_make_call,
+      :phone_export_call_history,
       :livechat_manage_visitor,               #LiveChat_privileges
       :livechat_view_transcripts,
       :livechat_edit_transcripts,
@@ -438,6 +450,9 @@ module Helpdesk
       :create_solution_draft,
       :compose_email,
       :view_social,                           #Social_privilege
+      :phone_attend_call,                     #FreshFone_privileges
+      :phone_make_call,
+      :phone_export_call_history,
       :livechat_manage_visitor,               #LiveChat_privileges
       :livechat_view_transcripts,
       :livechat_edit_transcripts,

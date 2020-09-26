@@ -95,6 +95,10 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     update_non_recurring_addon(day_pass_data(account, quantity))
   end
 
+  def purchase_freshfone_credits(account, quantity)
+    update_non_recurring_addon(freshfone_addon(account, quantity))
+  end
+
   def cancel_subscription(account, data = {})
     cancelled_subscription?(account.id) ? true : super(account.id, data)
   end
@@ -244,6 +248,14 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       {
         :subscription_id => account.id,
         :addon_id => account.plan_name.to_s,
+        :addon_quantity => quantity
+      }
+    end
+
+    def freshfone_addon(account, quantity)
+      {
+        :subscription_id => account.id,
+        :addon_id => "freshfonecredits",
         :addon_quantity => quantity
       }
     end

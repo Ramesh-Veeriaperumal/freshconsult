@@ -1,0 +1,291 @@
+/* livechat and freshfone overwriting style */
+@import "settings/settings";
+
+.profiler-results {
+  display: none;
+}
+.chats-container {
+  position: fixed;
+  display: flex;
+  z-index: 99;
+  bottom: 0;
+  @include left(0);
+  @include padding(7px 0);
+  &.-fone-chat-enabled {
+    min-width: 150px;
+  }
+  &.-flip-active {
+    min-width: 175px;
+  }
+  &.-chat-active,
+  &.-fone-active {
+    @include right(0);
+    width: 100%;
+  }
+  .freshfone-context-container {
+    box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.1);
+  }
+  .freshfone_widget,
+  .fc-layout .fc_sneakpeak_wrap {
+    position: relative;
+    @include left(inherit);
+    bottom: inherit;
+    @include float(left);
+    display: inline-block;
+  }
+  .fc-layout-falcon {
+    display: none;
+  }
+  .freshfone_widget {
+    height: 26px;
+    @include padding-left(10px);
+  }
+  .outgoing li {
+    padding: 0;
+  }
+  .ongoing,
+  .supervisor {
+    height: 26px;
+    margin: -1px 1px 0;
+    @include padding-left(0);
+    @include border-bottom-left-radius(4px);
+    @include border-bottom-right-radius(4px);
+    border: 1px solid #bbb;
+  }
+  .supervisor {
+    height: 25px;
+    @include border-top-left-radius(0);
+    @include border-top-right-radius(0);
+  }
+  .ongoing.-minimised,
+  .supervisor.-minimised {
+    border-radius: 4px;
+    .end_call,
+    .end_supervisor_call {
+      @include border-top-left-radius(4px);
+    }
+    li a.ongoingDialpad,
+    #unmute {
+      @include border-top-right-radius(4px);
+    }
+    .minimised-ongoing-dialpad {
+      display: inline-block;
+      @include right(2px);
+    }
+  }
+  .ongoing .call_details {
+    width: 95px;
+  }
+  .ongoing .end_call,
+  .end_supervisor_call {
+    position: relative;
+    @include left(0);
+    padding: 0 2px;
+    height: 26px;
+    @include border-bottom-left-radius(4px);
+    background-color: #fff;
+  }
+  .end_supervisor_call {
+    height: 25px;
+  }
+  .end_supervisor_call a [class*="ficon-"],
+  .ongoing .end_call a [class*="ficon-"] {
+    color: #9E3624;
+  }
+  .end_supervisor_call a,
+  #supervisor_call_timings,
+  .ongoing .call_details a {
+    background-color: #fff;
+    color: #9E3624;
+  }
+  .popupbox-tabs [class*="ficon-"] {
+    line-height: 27px;
+  }
+  .popupbox-tabs li a {
+    height: 26px;
+  }
+  .popupbox-tabs li a.showDialpad {
+    border-radius: 4px;
+  }
+  .popupbox-tabs.supervisor li a {
+    height: 25px;
+    line-height: 25px;
+  }
+  #supervisor_call_timings {
+    border: 0;
+    padding-top: 0;
+    line-height: 26px;
+  }
+  .supervisor .divider {
+    width: 179px;
+  }
+  .ongoing li a.ongoingDialpad,
+  #unmute {
+    @include border-bottom-right-radius(4px);
+  }
+  .ongoing .call_details .end_call_icon,
+  .ongoing .call_details .call_duration {
+    position: absolute;
+    @include text-align(center);
+    line-height: 26px;
+  }
+  .ongoing .call_details .end_call_icon {
+    @include left(0);
+  }
+  .ongoing .call_details .call_duration {
+    @include right(0);
+    @include padding-right(0);
+  }
+  .freshfone-context-container,
+  .ffone_available_agents,
+  #ongoing_call_dialpad {
+    position: absolute;
+    @include left(11px);
+    @include border-bottom-left-radius(0);
+    @include border-bottom-right-radius(0);
+    border-bottom: 0;
+    min-width: 326px;
+    max-width: 326px;
+  }
+  .popupbox-content {
+    position: absolute;
+    @include left(8px);
+    bottom: 54px;
+  }
+  .freshfone-context-container,
+  .popupbox-content.supervisor_call_details {
+    bottom: 30px;
+  }
+  .popupbox-content.supervisor_call_details {
+    @include left(11px);
+  }
+  .ffone_available_agents,
+  #ongoing_call_dialpad {
+    bottom: -24px;
+    @include left(3px);
+  }
+  .ff_current_call_details {
+    width: 318px;
+  }
+  .freshfone_error_info,
+  .freshfone_connection_error,
+  .freshfone_connection_success {
+    position: relative;
+    @include left(0);
+    bottom: inherit;
+    @include float(left);
+    @include box-shadow(none);
+  }
+  .fc-layout #sidebar {
+    position: relative;
+  }
+  .fc-layout .fc_sneakpeak_wrap {
+    height: 26px;
+  }
+  #recent_container {
+    position: absolute;
+    @include left(30px);
+  }
+  .fc-layout .fc_notifier-container {
+    position: absolute;
+    @include left(68px);
+  }
+  .fc-layout .sneakpeak {
+    @include left(-4px);
+  }
+  .fc-layout .fc_sneakpeak_wrap .recent {
+    top: inherit;
+  }
+  .fc-layout .tab-group {
+    top: inherit;
+    @include left(inherit);
+    @include margin(5px 0 0 10px);
+  }
+  .fc-layout .lc-chat-disconnected {
+    position: absolute;
+    top: 0;
+    @include left(0);
+    bottom: inherit;
+    height: 26px;
+  }
+  .minimised-supervisor-dialpad {
+    position: absolute;
+    top: -1px;
+    @include right(2px);
+    @include left(117px);
+    height: 27px;
+    width: 231px;
+    background-color: #aaa;
+    @include border-radius(0 4px 4px 0);
+    cursor: pointer;
+    display: none;
+  }
+  .minimised-supervisor-dialpad .ff-call-element {
+    @include float(left);
+    line-height: 26px;
+    text-align: center;
+  }
+  .minimised-supervisor-dialpad {
+    .caller-name,
+    .agent-name {
+      width: 95px;
+    }
+    .call-direction {
+      width: 36px;
+    }
+    .call-direction [class*="ficon-"] {
+      font-size: 16px;
+    }
+    .agent-name .agent_name,
+    .caller_name {
+      width: 95%;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #fff;
+    }
+  }
+  .fc-layout .fc_notify_flip {
+    top: 0;
+    @include left(6px);
+  }
+  .fc-layout #openChat {
+    top: 0;
+    @include left(0);
+  }
+  .freshfone_notification .freshfone-notifier-container .notifier {
+    box-shadow: 0px 0px 20px rgba(0,0,0,.24);
+  }
+  .supervisor .hangup_btn:hover {
+    background-color: transparent;
+  }
+  .browser_alert {
+    @include float(left);
+    @include margin-left(10px);
+    margin-top: 0;
+    position: inherit;
+    .alert_popup [class*="ficon-"]{
+      color: #e92c2c;
+    }
+  }
+
+  /* freshchat css....*/
+  .freshchat-icon {
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(50, 50, 50, 0.4);
+    text-align: center;
+    color: #fff;
+    border-radius: 2px;
+    left: 10px;
+    line-height: 1.5;
+    margin-top: 34px;
+    position: relative;
+
+    &:hover, &.active {
+      background-color: #333;
+    }
+  }
+}

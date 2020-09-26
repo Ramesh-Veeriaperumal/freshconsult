@@ -325,6 +325,12 @@ $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
         .ul{ border-top: none;}
       }
     }
+    &.freshfone_dashboard .freshfone_alert {
+      margin: 0;
+      border-radius: 2px;
+      min-height: 142px;
+      padding: 40px 20px;
+    }
 
     /* ----- Chat refresh button ----- */
     .fc_widget_refresh_off {

@@ -2569,6 +2569,7 @@ ca:
         security: Seguretat
         email_commands_setting: Comandaments del correu
         billing: Plans i facturació
+        freshfone: Freshfone
         tags: Etiquetes
         mobihelp: Mobihelp
         customer-portal: Portal del client
@@ -2927,6 +2928,7 @@ ca:
         success: La integració ha finalitzat amb èxit!
         error: Error permetent la integració.
         cti_error: Multiple integrations of type CTI can not be enabled.
+        freshfone_enabled: CTI integration can not be enabled along with freshfone
       update:
         success: La integració s'ha actualitzat amb èxit!
         error: Error configurant la integració.
@@ -2972,6 +2974,20 @@ ca:
       page_unavailable: >-
         Ho sentim. Aquesta pàgina no es troba disponible. Si us plau, posa't en
         contacte amb l'administrador per obtenir més informació.
+    freshfone:
+      credits:
+        success: Has adquirit crèdits de Freshfone amb èxit
+        error: Error al comprar els crèdits Freshfone
+        invalid_recharge_amount: Introdueixi una quantitat de recàrrega vàlida
+      number:
+        success: Número afegit amb èxit al teu compte Freshfone
+        error: Error adquirint un número per al teu compte de Freshfone.
+        blank_message: '%{num_type} no pot estar en blanc'
+        invalid_message_length: '%{num_type} shouldn''t exceed 4096 characters'
+        add_blacklist_success: Número bloquejat amb èxit
+        add_blacklist_failure: No s'ha pogut bloquejar el número
+        remove_blacklist_success: Número desbloquejat amb èxit
+        remove_blacklist_failure: No s'ha pogut desbloquejar el número
     profile:
       api_key:
         reset_success: La Clau de l'API ha estat reiniciada correctament.
@@ -9386,6 +9402,46 @@ ca:
     customer_activity_title: Informe d'activitat
     helpdesk_activity_title: Informe d'activitat equip de suport
     satisfaction_title: Informe de satisfacció
+    freshfone:
+      options:
+        incoming: Entrant
+        outgoing: Sortint
+        all_groups: Tots els grups
+        unassigned: Sense assignar
+      range_exceed: Range cannot exceed 90 days
+      filter_by_title: Filtrat per
+      time_period: Període de temps
+      report_title: Freshfone Summary
+      summary_title: 'Resum de les trucades de l''agent '
+      agent: Agent
+      group: Grup
+      call_type: Tipus de trucada
+      filter_report: Editar el filtre
+      select_agent: Select Agent
+      select_group: Select Group
+      select_call_type: Seleccionar un tipus de trucada
+      select_number: Select a Number
+      all_numbers: Tots els números
+      all_call_types: All
+      number: Número
+      avg_handle_time: Temps de gestió mitjà
+      num_of_calls: Número de trucades
+      total_answered: Answered Calls
+      total_voice_mail: Correus de veu
+      total_duration: Total Duration
+      agent_calls_count: Calls
+      total_unanswered_calls: Trucades no contestades
+      num_of_transfered: Número de transferències
+      unanswered_transfers: Transferències sense contestar
+      answered_percentage: Answer %
+      generate_summary: Generar
+      filter_close: Tanca
+      unanswered_count: No respost
+      includes_transfer: Includes transferred calls
+      no_agent: '- Cap agent -'
+      business_hours: Hores laborables
+      filter_option_all_calls: Totes les trucades
+      no_external: No s'inclouen les transferències realitzades a números externs
     time_sheets:
       billable: Hores facturables
       non_billable: Hores no facturables
@@ -10346,6 +10402,588 @@ ca:
     recording_on_process: >-
       S'està processant la gravació. <a href='#' target='_parent'
       id='checkfreshfoneaudio'>Prova-ho</a> de nou en uns minuts
+    not_enough_credit: Crèdit insuficient!
+    recharge: Recàrrega
+    number: Número de Freshfone
+    subscription:
+      auto_recharge_text: Només carregarem el teu compte quan el balanç baixi de 5$
+      current_balance: El teu balanç actual
+      purchase: Compra crèdits de Freshfone
+      setup_auto_recharge: Configurar l'Autorecàrrega
+      no_credit_card: Introdueix la informació de pagament per comprar crèdits de Freshfone
+      recharge_now_text: Recarrega el teu saldo amb un pagament únic
+      auto_recharge_amt: Quantitat de la recàrrega automàtica
+      see_detailed_pricing: Veure preu detallat
+      followup_text: per valor de crèdits Freshfone
+      followup: per valor de crèdits Freshfone
+      purchase_credits: Comprar crèdit
+      purchase_text: Comprar crèdits de telèfon
+      no_credit_card_text: Introdueix la informació de pagament per adquirir crèdits de telèfon
+    dialpad:
+      not_valid_number: 'Si us plau, Introdueix un número vàlid'
+      could_be_invalid_number: Could be an invalid number.
+      invalid_number_continue_call: Press call button again
+      not_enough_credit: Crèdit insuficient
+      restricted_country: Restricted country
+      already_in_call: Restringides les trucades sortints simultànies
+    call_status:
+      default: ''
+      completed: Acabat
+      blocked: Bloquejat
+      busy: Ocupat
+      missedcall: Trucada perduda
+      noanswer: Sense resposta
+      canceled: Cancel·lat
+      failed: Fallit
+      in_progress: En curs
+      voicemail: Voicemail
+      restricted: Restricted
+      all_calls: All Calls
+    general:
+      suspended_account: >-
+        Your Freshfone account is currently suspended. Please enable Freshfone
+        to make and receive calls
+      suspended_on_low_balance: >-
+        El teu compte Freshfone actualment està suspès. Si us plau, fes una
+        recàrrega per activar-lo
+    dashboard:
+      in_conversation: Dins de la conversa
+      available_agents: Agents disponibles
+      freshfone_recharge_alert: >-
+        Freshfone actualment no està disponible. Per realitzar i rebre trucades,
+        si us plau contacta amb el teu administrador.
+      admin_freshfone_recharge_alert: >-
+        Freshfone no està actualment disponible pel baix saldo. <a
+        href='/subscription'> Recarrega el teu saldo </a> immediatament per fer
+        i rebre trucades.
+    widget:
+      ignore: Ignorar
+      accept: Acceptar
+      end_call: Fi de la trucada
+      mute: Mut
+      transfer_call: Transferència de trucada
+      dialpad: Teclat telefònic
+      call_notes: Notes de trucada
+      on_phone: Disponible al telèfon
+      on_browser: Disponible al navegador
+      invalid_phone_number: >-
+        Si us plau, actualitza el teu número de telèfon amb "+" el prefix i el
+        codi de país en la configuració del perfil
+      no_calls: No es troben trucades recents
+      available: Estàs disponible per rebre trucades
+      unavailable: No estàs disponible per rebre trucades
+      busy: Ongoing Call
+      recent_calls: Trucades recents
+      transferring: '<span>Transferint la trucada</span><br />Espera, si us plau...'
+      transfer_agents: Cerca agents disponibles ...
+      unavailable_agents: Els agents no estan disponibles per a la transferència de trucades
+      agents_count_in_group: '%{count} agents available'
+      ticket_info: >-
+        Crea un nou tiquet o afegeix una nota a un tiquet existent amb les notes
+        i desat. 
+      add_note: Afegir notes
+      note_placeholder: Afegir notes a la trucada...
+      new_ticket: Guardar com a nou tiquet
+      save_to_existing: Guardar en tiquet existent
+      ignore_ticket: No convertir en tiquet
+      ignore_ticket_info: Els seus enregistraments estaran disponibles a la llista de trucades
+      back: Retrocedir
+      subject: Assumpte del Tiquet
+      requester_name: Nom del sol·licitant
+      requester_email: Sol·licitant correu electrònic
+      save: Guardar
+      notes: Notes
+      new_requester: Nou sol·licitant
+      inactive: Freshfone amb saldo baix. Contacta amb l'administrador del compte.
+      forward_number_alert: >-
+        Si us plau, actualitza el número de telèfon del teu perfil per enviar
+        trucades al teu telèfon.
+      desktop_notification: Activa la notificació d'escriptori
+    call_history:
+      title: Historial de trucades
+      sort_by: 'Ordenat per:'
+      singular_active_number: Número actiu
+      none_active_number: '- cap -'
+      active_number: Active Number
+      singular_deleted_number: Número esborrat
+      deleted_number: Deleted Number
+      block_number: Bloqueja
+      cancel: Cancel·la
+      blacklist_confirmation: Segur que vols bloquejar
+      show_deleted: Mostra números esborrats
+      filtered_by: 'Filtrat per:'
+      filter_by_number: Number
+      filter_by_time: Time Period
+      filter_by_agent: Agent
+      filter_by_group: Incoming Calls to Group
+      filter_by_call_status: Call Type
+      filter_by_caller: Requester
+      received_date: Data
+      duration: Durada
+      cost: Cost
+      asc: Ascendent
+      desc: Descendent
+      all_time: Sempre
+      today: Avui
+      yesterday: Ahir
+      this_week: Last 7 Days
+      this_month: Last 30 Days
+      month: 'Darrers %{month} mesos'
+      custom: Date Range
+      no_calls: No s'han trobat trucades
+      view_transferred_calls: Veure trucades transferides
+      save_ticket: Convertir en tiquet
+      convert: Converteix
+      helpdesk: Servei de suport
+      unblock_number: Desbloqueja
+      block_number_title: Bloqueja número
+      filter_option_all_agents: All Agents
+      filter_option_all_calls: All Calls
+      filter_option_received_calls: Incoming
+      filter_option_outgoing_calls: Outgoing
+      filter_option_missed_calls: Missed
+      filter_option_voicemail: Voicemail
+      filter_option_blocked_calls: Blocked
+    ticket:
+      recording: Play message
+      ticket_desc_with_name: >-
+        Conversation with <b> %{customer_name} </b> (%{customer_number},
+        %{location}) and <b>%{agent}</b> (%{agent_number})<br/ >
+      ticket_desc_with_out_name: >-
+        Conversation with %{customer_number} (%{location}) and <b>%{agent}</b>
+        (%{agent_number})<br/ >
+      voicemail_ticket_desc_with_out_name: 'Voicemail from  %{customer_number}  (%{location}) to %{freshfone_number}'
+      voicemail_ticket_desc_with_name: >-
+        Voicemail from with <b>%{customer_name}</b> (%{customer_number},
+        %{location}) to %{freshfone_number}
+      agent_detail: 'i <b>%{agent}</b> (%{agent_number})<br/ >'
+      dial_a_number_with_name: >-
+        Conversation with <b>%{customer_name}</b> (%{customer_number},
+        %{location}) . Call connected from IVR Direct dial
+      dial_a_number_with_out_name: >-
+        Conversation with %{customer_number} (%{location}). Call connected from
+        IVR to number: %{direct_dial_number}
+      default_subject: 'Truca amb %{customer} on %{call_date}'
+      voicemail_subject: 'Missatge de veu de %{customer}'
+      human_name: tiquet
+      view: Vista
+    note:
+      human_name: nota
+      view: Vista
+    create:
+      success:
+        with_link: 'El %{human_name} ha estat creat  %{link}'
+    admin:
+      important: Important
+      general: General
+      settings: Configuració
+      greetings: Salutacions
+      messages: Missatges
+      freshfone_numbers: Números de Freshfone
+      disable_alert: >-
+        <b> Important:</b> En desactivar el seu compte freshfone no impedirà el
+        lloguer mensual dels seus números freshfone. Per evitar ser acusats, si
+        us plau, elimini els números comprats.
+      purchase_credit: >-
+        Obté Freshfone crèdits per comprar números locals o gratuïts i començar
+        a utilitzar Freshfone
+      purchase_numbers: >-
+        Comprar números locals o gratuïts per començar a utilitzar Freshfone i
+        donar suport als teus usuaris a través del telèfon
+      search: Cerca per xifres o frases
+      local: Local
+      toll_free: Gratuït
+      number:
+        simultaneous: Trucar a tots els agents
+        round_robin: Trucar primer als agents inactius
+      number_settings:
+        title: La gestió del seu centre de trucades amb Freshfone
+        info: >-
+          <b>Assigning phone calls to agents and groups</b><br/>You can use
+          Freshfone to setup a interactive voice response system (IVR) and route
+          calls to different groups or agents in your team. For example, you
+          could have your customers calls forwarded to your Support team when
+          they press 1, and to somebody from Sales when they press
+          2.<br/>Additionally, you can also customize the interactive messages
+          that will be played back to your customers by recording your voice,
+          uploading a file or using the text-to-speech
+          feature.<br><br><b>Customizing your Freshfone number</b><br>You could
+          also configure each and every Freshfone number separately and let it
+          have it’s own set of customizations. This includes basic settings such
+          as the maximum number of people on the queue and maximum waiting time
+          for your customers. Once either of them are reached, a
+          non-availability message will be played to your customers
+          automatically.<br/>When you enable call recording, every phone call
+          across your helpdesk is recorded and gets attached to your tickets.
+          You can also restrict Freshfone from taking calls during non-business
+          hours. For example, you could set up two support lines, one of which
+          will be available to take calls only during working hours, and another
+          high-priority helpline that will be available 24x7.<br/><br/>
+        non_business_hours: Acceptar trucades durant…
+        business_calendar: Selecciona l'horari d'atenció
+        transcript_voice: Transcripció de veu
+        text_to_speech: Text de veu
+        record_calls: Gravar trucades
+        voicemail: Correu de veu
+        voicemail_on: Encès
+        voicemail_off: Apagat
+        record_all: Gravar totes les trucades
+        record_none: No gravar les trucades
+        record_alert: >-
+          Les pautes d'enregistrament de trucades requereixen que els clients
+          siguin notificats que s'està gravant la trucada i la finalitat de la
+          gravació. Si us plau, en conseqüència, configura el missatge de
+          salutació.
+        max_queue_calls: Número màxim de trucades a la cua
+        call_wait_time: amb un temps màxim d'espera de
+        call_wait_time_suffix: ' per trucada'
+        wait_message: Missatge d'espera
+        non_availability_message: Missatge no disponible
+        voicemail_message: Missatge de correu de veu
+        non_business_hours_message: Missatge per a horari no comercial
+        welcome_message_alert: Missatge de benvinguda deshabilitat quan la IVR està activada
+        welcome_message: Missatge de benvinguda
+        record_voice: Enregistra la teva veu
+        upload_voice: Puja arxius d'àudio
+        read_message: Text de veu
+        start_recording: Inicia la gravació
+        stop_recording: <span></span>Atura la gravació
+        preparing_recording: Preparació del teu missatge ...
+        recorded_voice: Veu gravada
+        audio_upload: Selecciona fitxer a pujar
+        greeting_message: Escriu el teu missatge aquí
+        attachment_help_info: Accepta arxius d'àudio < 5mb
+        recording_help_info: Activa el micròfon. Durada <5 min.
+        cancel: Cancel·lar
+        change: Modificar
+        group: Activeu missatge per contactar amb els agents
+        call_hunting_group: Grup
+        all_groups: Tots els grups
+        business_hours: Horari comercial
+        anytime: 24x7 Sempre
+        name: Nom
+        name_placeholder: Introdueix un nom descriptiu per al teu número
+        hunt_type: Encaminament de trucades
+        routing_message: Quan diversos agents estiguin disponibles en línia...
+        recording_privacy: Visibilitat dels enregistraments
+        recording_privacy_public: Visible per a clients i agents
+        recording_privacy_private: Visibles només per als agents
+        name_maxlength: Name cannot have more than 255 Characters
+        number_accessible: Accessible per
+        attachment_help_text: Accepta arxius d'àudio < 5mb
+        queue_position_preference: Lectura en veu alta de la posició a la cua
+        queue_wait_message: Missatge d'espera a la cua
+        queue_position_enable: Activat
+        wait_music: Música d'espera
+        hold_music: Música d'espera
+        title_text: Administrar el teu Call center
+        queue_position_disable: Desactivat
+        queue_position_message_placeholder: >-
+          Actualment, estàs a la cua. La teva posició a la cua és
+          {{queue.position}}
+        info_content: >-
+          <b>Assignació de trucades telefòniques als agents i grups</b></br>
+          Pots configurar un sistema de resposta de veu interactiva (IVR) i
+          encaminar les trucades als diferents grups o agents del teu equip. Per
+          exemple, pots fer que les trucades dels teus clients es reenviïn al
+          equipo de Suport si premen 1, i a algú de Vendes si premen 2.<br/>A
+          més, pots personalitzar els missatges interactius que es reproduiran
+          als teus clients enregistrant la teva veu, carregant un arxiu o
+          utilitzant la funció de text a veu.<br><br><b>Personalitzar el teu
+          número</b><br>També pots configurar cada un dels números de telèfon
+          per separat i assignar-los conjunts propis de personalitzacions. Això
+          inclou configuracions bàsiques como ara la quantitat màxima de
+          persones a la cua i el temps màxim d'espera per als teus clients. Un
+          cop que es compleixi qualsevol d'aquestes condicions, es reproduirà un
+          missatge automàtic de no disponibilitat.<br/> Quan s'activi
+          l'enregistrament de trucades, cada trucada telefònica rebuda a través
+          del teu Help desk s'enregistrarà i s'adjuntarà als teus tickets, i
+          l'enregistrament de la trucada podrà estar disponible públicament per
+          als clients o conservar-se en privat. També pots restringir el teu
+          canal telefònic, de manera que només es puguin rebre trucades durant
+          l'horari laboral. Per exemple, pots configurar dos línies de suport,
+          una de les quals estaria disponible per rebre trucades només durant
+          l'horari laboral i una altra d'alta prioritat, disponible les 24
+          hores, 7 dies a la setmana.<br/><br/><a
+          href='http://support.freshdesk.com/support/solutions/articles/169198'
+          target='_blank'>Més informació sobre com personalitzar el teu
+          número</a>
+        queue_position_message_alert: >-
+          Per llegir la posició a la cua, utilitza l'espai reservat
+          {{queue.position}} <br/> Per exemple: Actualment estàs a la cua. La
+          teva posició a la cua és {{queue.position}}
+      numbers:
+        title: Suport dels clients amb Freshfone
+        info: >-
+          Freshfone is Freshdesk’s integrated telephony system. You can set up
+          Freshfone to receive support calls through your browser or phone, and
+          make outbound calls to customers. Freshfone also allows you to keep a
+          record of all calls, and convert interesting phone conversations into
+          tickets. You could also avoid calls from certain numbers by blocking
+          them in the call history. <br/><br/> <b>Setting up
+          Freshfone</b><br/>To start using Freshfone, you will first need to
+          enable it, and purchase an incoming support number. Freshdesk
+          currently lets you purchase phone numbers in 28 countries. If your
+          customers will be calling you in the US, UK or Canada you can also
+          purchase toll-free support numbers (or freephone in the UK).
+          <br/><br/><b>Using Smart IVRs</b><br/>You can create smart Integrated
+          Voice Response (IVR) systems in Freshfone to better categorize
+          customers when they call your support number, and channelize them to
+          the right department, team or agent. Freshfone lets you create upto 2
+          levels of Smart IVRs.
+        purchase_number: Compra número
+        purchase_phone_number: 'Buy Number (%{number})'
+        buy: Compra número
+        buy_button_text: Compra
+        purchase_loading_text: Comprant...
+        buy_loading_text: Comprant...
+        purchase_alert_text: >-
+          Aquest número de telèfon es facturarà <strong><span
+          class='number-rate'></span> mensualment</strong>.
+        not_available: >-
+          No hi ha resultats retornats. Si us plau, intenta un terme de cerca
+          diferent
+        address_certification_text: >-
+          Per comprar un número de telèfon, has de proporcionar la teva adreça
+          personal o la de la teva empresa a <span
+          class='certification-country'></span>.
+        purchase_confirm: Estàs segur?
+        delete_alert: >-
+          Una vegada eliminat un número no es pot comprar de nou. Està segur que
+          desitja eliminar el número?
+        manage: Gestionar
+        cannot_purchase: Impossible comprar el número del seu compte Freshfone
+        insuffcient_credits: >-
+          El teu saldo de Freshfone és massa baix per contractar un nou número.
+          Si us plau, recarrega el teu saldo i torna-ho a provar.
+        address:
+          name: Empresa / Nom
+          address: Adreça
+          city: Ciutat
+          state: Estat/província/regió
+          postal_code: Codi postal
+          country: Country
+          required_field: Tots els camps són obligatoris
+        setup:
+          title: Configuració de Freshfone
+          info: >-
+            Per tal de començar a treballar amb Freshfone, primer hauràs de
+            comprar un nombre de trucades en directe per oferir als teus
+            usuaris. Pots  comprar un nombre local en qualsevol dels 28 * països
+            que Freshfone suporta actualment. Si els teus usuaris viuen a EUA,
+            Regne Unit o el Canadà, també se'ls pot oferir una línia de telèfon
+            d’assistència gratuït.<br/><br/>Pots comprar diferents números
+            Freshfone de diversos països i de configuració de les línies d'ajut
+            telefòniques gratuïtes dins Freshdesk, sense utilitzar cap servei de
+            tercers. Es cobraran les tarifes estàndard per a les trucades
+            entrants, sortints i expedició del teu servei
+            d'assistència<br/><br/> Una cop que has comprat un número Freshfone
+            per la teva línia d'ajuda de suport, totes les trucades entrants
+            seran distribuïdes als agents que estan connectats a l'equip de
+            suport. A més, els agents poden optar per recollir les trucades de
+            telèfon des de l'interior del navegador o fer que s'enviïn al teu
+            telèfon d'escriptori de forma automàtica.
+          info_text: >-
+            Per començar a utilitzar el canal de telèfon, primer has de comprar
+            un número per a les trucades entrants dels teus clients. Pots
+            comprar un número local de qualsevol <a
+            href='https://support.freshdesk.com/support/solutions/articles/169322'
+            target='_blank'>dels països enumerats aquí</a>. Si els teus clients
+            et truquen des dels Estats Units, Regne Unit o Canadà, també pots
+            oferir-los un número gratuït on trucar.<br/><br/>Pots comprar
+            diversos números de telèfon de diversos països i configurar una
+            línia d'ajuda gratuïta dins de Freshdesk sense utilitzar cap servei
+            extern. Se't cobraran les tarifes estàndards per trucades entrants,
+            sortints i de reenviament des del teu Help desk. Consulta les
+            nostres <a
+            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
+            target='_blank'>tarifes de trucades aquí</a>.<br/><br/> Un cop hagis
+            comprat un número de telèfon per la teva línia de suport, totes les
+            trucades entrants es distribuiran als agents que hagin iniciat la
+            sessió al teu Help desk. A més, els teus agents poden optar per
+            rebre les trucades al navegador o fer que aquestes es reenviïn al
+            seu telèfon de forma automàtica.
+          title_text: Configurar un Call center
+        caller_id:
+          manage_caller_id: 'Gestiona l''ID de trucada '
+          add_new: Afegeix nova
+          no_number_added: No s'han afegit cap identificador de trucada
+          call_id_mask: Emmascarar aquest número
+        sidebar_content_v2: >-
+          Mitjançant el canal de telèfon, pots fer i rebre trucades a través del
+          teu navegador, telèfon mòbil o mitjançant el canal de telèfon a les
+          aplicacions mòbils de Freshdesk. Està estretament integrat amb el
+          sistema de generació de tickets de Freshdesk. Així, podràs fer
+          seguiment de les trucades de telèfon mitjançant la gravació i
+          convertir-les en tickets sempre que calgui.<br/><br/><b> Configuració
+          del telèfon</b></br> Per començar a utilitzar el telèfon, primer
+          hauràs d'activar-lo i comprar un número de suport. Pots comprar
+          números locals als països <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'> que figuren aquí </a> i fer o rebre trucades des de
+          qualsevol lloc del món. Si els teus clients truquen als EUA, Regne
+          Unit o Canadà, també pots comprar números de suport
+          gratuït.<br/><br/><b>Proporcionar un suport telefònic
+          complet</b><br/>Amb el nostre canal de telèfon,
+          podràs<br/><ul><li>Començar a fer i rebre trucades mitjançant el
+          navegador web o telèfons mòbils</li><li>Crear missatges de veu,
+          reenviar trucades o transferir trucades a qualsevol agent, des de
+          qualsevol lloc</li><li>Supervisar les trucades, entrar a la trucada
+          quan calgui, afegir altres agents a les trucades en curs i molt
+          més*</li></ul><br/><p>*Posa't en contacte amb <a
+          href='mailto:support@freshdesk.com'> support@freshdesk.com </a> per
+          activar les funcions avançades del teu compte. S'inclouen el
+          monitoratge de trucades, entrada a les trucades, trucades en
+          conferència, emmascarament de trucades i les mètriques de la vida útil
+          de les trucades.</p><br/>
+        sidebar_title: Canal de telèfon
+        buy_phone_numbers: Comprar números de telèfon
+        tour_link: Ajuda'm a configurar el canal de telèfon
+        failure_purchase: >-
+          No es pot comprar el número de telèfon. Assegura't que l'adreça sigui
+          una adreça local vàlida a <span class='certification-country'></span>.
+        sidebar_content: >-
+          Mitjançant el canal de telèfon, pots fer i rebre trucades a través del
+          teu navegador, telèfon mòbil o mitjançant el canal de telèfon de les
+          aplicacions mòbils de Freshdesk. Està estretament integrat amb el
+          sistema de generació de tickets de Freshdesk. Així, pots fer seguiment
+          de les trucades de telèfon mitjançant la gravació i convertir-les en
+          tickets sempre que calgui. <br/><br/><b>Configuració del
+          telèfon</b></br>Per començar a utilitzar el telèfon, primer hauràs
+          d'habilitar-lo i comprar un número de suport. Pots comprar números
+          locals dels <a
+          href='https://support.freshdesk.com/support/solutions/articles/169322'
+          target='_blank'>països que figuren aquí</a> i rebre o fer trucades des
+          de qualsevol lloc en el món. Si els teus clients truquen als EUA,
+          Regne Unit o Canadà, també pots comprar números de suport
+          gratuïts.<br/><br/><b>Proporcionar suport telefònic
+          complet</b><br/>Amb el nostre canal de telèfon,
+          pots<br/><ul><li>Començar a fer i rebre trucades mitjançant el teu
+          navegador web o els telèfons mòbils</li><li>Crear missatges de veu,
+          reenviar o transferir trucades a qualsevol agent, des de qualsevol
+          lloc</li><li>Supervisar les trucades, entrar-hi quan calgui, afegir
+          altres agents a les trucades en procés i molt
+          més*</li></ul><br/><p>*Posa't en contacte amb <a
+          href='mailto:support@freshdesk.com'>support@freshdesk.com</a> per
+          habilitar les funcions avançades del teu compte. Inclouen el
+          monitoratge de trucades, entrada a trucades, conferència de trucades,
+          emmascarament de trucades i les mètriques de la vida útil de les
+          trucades.</p><br/><p><a
+          href='http://freshdesk.com/multichannel-support/phone-support'
+          target='_blank'>Més informació sobre les potents funcions i capacitats
+          del telèfon</a><p>
+        buy_phone_credits: Comprar crèdit telefònic
+      invalid_attachment: >-
+        L'adjunt '%{name}' no és un arxiu d'àudio vàlid / la seva grandària és
+        més gran de 5 MB
+      ivr:
+        simple_message_title: Missatge simple
+        ivr_message_title: Resposta de veu interactiva de la IVR
+        welcome_message: Missatge de benvinguda
+        message_type: Missatge tipus
+        transcript_voice: Transcripció de veu
+        text_to_speech: Text de veu
+        turned_off: >-
+          El missatge de està benvinguda desactivat. Totes les trucades entrants
+          arribaran directament al seu servei d'assistència.
+        turned_on: El missatge de benvinguda se sentirà a totes les trucades entrants.
+        turn_on: Encès
+        turn_off: Apagat
+        add_new_menu: Afegir nou <b>Menú</b>
+        add_new_menu_from_option: Afegir nou menú
+        add_new_option: Afegir <b>Keypress</b> Opció
+        keypress: Pulsació de tecla
+        input_number: Introduïu el número
+        action: Acció
+        male: Veu masculina
+        female: Veu femenina
+        rename: rebatejar
+        done: fet
+        save: Guardar
+        saving: Guardant...
+        preview: Vista prèvia
+        previewing: Vista prèvia...
+        delete_menu: Esborrar menú
+        jump_to: Saltar a
+        call_agent: Agent de trucada
+        call_agent_group: Grup d'agents de trucada
+        call_number: Número de trucada
+        back_to_menu: Tornar al menú principal
+        invalid_performer_type: Tipus de model no vàlid
+        invalid_number: 'Número no vàlid al menú %{menu}'
+        restricted_country: 'Restricted country''s number in menu %{menu}'
+        invalid_jump_to: >-
+          No es pot navegar perquè no existeix una arrel de menú definida
+          %{menu}
+        seed_message: Benvinguts a atenció al client
+        seed_menu_name: Benvinguda/Menú d'inici
+        invalid_number_format: >-
+          Introdueix el número de telèfon vàlid amb el prefix "+"  i el codi de
+          país davant del número
+      welcome_page:
+        title: Welcome to Freshfone
+        title_text: Telèfon
+      feature_request_content:
+        title: Freshfone
+        heading: Support your customers with Freshfone
+        about_numbers: Purchase support numbers from across the globe
+        about_ivr: Create IVR's and route calls to the right agents
+        about_recording: Record customer conversations and access it anywhere
+        read_more: Read more
+        pricing: Mostra totes les tarifes de trucades i els països admesos
+        email_subject: 'Freshfone Request - %{account_name}'
+        email_message: Need Freshfone Feature
+        success_message_flash: >-
+          Thanks for your interest in Freshfone. We will get back to you
+          shortly.
+        error_message: >-
+          Ho sentim, no podem atendre la teva sol·licitud ara mateix. Torna-ho a
+          provar més tard.
+        additional_note: Freshfone request will take two business days
+        button_label: Request for Freshfone
+        learn_more: Més informació
+        trial_or: O
+        title_text: Telèfon
+        success: Et respondrem en un termini de dos dies hàbils.
+        recording_info: Grava i converteix totes les trucades en tickets
+        button_text: Sol·licitud d'activació
+        compare_trial_and_full: Comparar la versió completa i la de prova gratuïta
+        activation_disclaimer: Pots utilitzar totes les funcions durant un període il·limitat
+        ivr_info: >-
+          Utilitza el seguiment de trucades, conferències de trucades, encamina
+          les trucades mitjançant l'IVR i molt més
+        trial_button_text: Activar la versió de prova gratuïta
+        trial_version_disclaimer: Pots utilitzar funcions limitades durant 15 dies de forma gratuïta
+        number_info: Compra números locals i gratuïts per a més de 40 països
+        video_title: Mira el vídeo per esbrinar què pots fer amb el canal del telèfon
+        heading_text: Ofereix suport als teus clients mitjançant el canal de telèfon
+      freshfone_numbers_title: Telèfon
+      purchase_numbers_text: >-
+        Compra un número local o gratuït i ofereix suport als clients de
+        qualsevol part del món per telèfon
+      purchase_credit_text: >-
+        Compra crèdits per comprar números, fer i rebre trucades mitjançant el
+        canal de telèfon.
+      suspended_alert: >-
+        <b>Important:</b> Desactivar el teu canal de telèfon no evitarà el
+        pagament del lloguer mensual dels teus números de telèfon. Per evitar el
+        pagament, elimina els números comprats.
+      trial:
+        request_activation_msg: >-
+          Pots utilitzar només un número d'un conjunt limitat de països durant
+          el període de prova telefònica.<br> Tanmateix, podràs comprar diversos
+          números de 41 països quan activis la versió completa
+        activate_btn_text: Sol·licitar l'activació
+        numbers:
+          search:
+            after_activation_request: >-
+              Has sol·licitat l'activació del canal telefònic <br> Et respondrem
+              en un termini de 2 dies hàbils.
+            buy_confirmation: Confirmes que vols triar aquest número?
+            can_use_after_activation: >-
+              Pots continuar fent servir aquest número quan activis el canal del
+              telèfon.
+        requested_activation: Hem rebut la teva sol·licitud d'activació<br>Està en curs
   livechat:
     feature_request:
       title: Welcome to Live Chat

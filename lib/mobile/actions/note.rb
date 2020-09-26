@@ -1,6 +1,8 @@
 # encoding: utf-8
 module Mobile::Actions::Note
-
+  
+  include Mobile::Actions::Push_Notifier
+  
   def body_mobile
     body_html.index(">\n<div class=\"freshdesk_quote\">").nil? ? 
     body_html : body_html.slice(0..body_html.index(">\n<div class=\"freshdesk_quote\">"))
@@ -11,6 +13,11 @@ module Mobile::Actions::Note
     format = format.gsub(/.\b[%Yy]/, "") if (created_at.year == Time.now.year)
     created_at.strftime(format)
   end
+
+  def call_details
+    call = self.freshfone_call
+    {:call_url => recording_audio_url, :call_duration => call.call_duration, :twilio_url => call.recording_url} if call.present?
+  end  
 
   def to_mob_json
     json_include = {
@@ -27,9 +34,14 @@ module Mobile::Actions::Note
     }
     options = {
       :include => json_include,
-      :methods => [ :formatted_created_at, :all_attachments, :third_party_response, :reply_to_forward]
+      :methods => [ :formatted_created_at, :call_details , :all_attachments, :third_party_response, :reply_to_forward]
     }
     as_json(options)
+  end
+
+  def recording_audio_url
+    return if self.freshfone_call.recording_audio.nil?
+    AwsWrapper::S3.presigned_url(self.freshfone_call.recording_audio.content.bucket_name, self.freshfone_call.recording_audio.content.path('original'), expires_in: 1.hour.to_i, secure: true, response_content_type: self.freshfone_call.recording_audio.content_content_type)
   end
 
   def reply_to_forward

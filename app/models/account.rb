@@ -179,6 +179,10 @@ class Account < ActiveRecord::Base
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
 
+  def freshfone_active?
+    false
+  end
+
   def es_multilang_soln?
     features_included?(:es_multilang_solutions) || launched?(:es_multilang_solutions)
   end
@@ -1103,7 +1107,11 @@ class Account < ActiveRecord::Base
     def update_features(features)
       if features.present?
         features.each do |name, value|
-          AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+          if AccountSettings::SettingsConfig[name]
+            AccountsHelper.value_to_boolean(value) ? set_setting(name.to_sym) : reset_setting(name.to_sym)
+          else
+            AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
+          end
         end
       end
     end
