@@ -15,6 +15,24 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json(all_features_params)
   end
 
+  def test_update_disable_agent_forward_and_compose_email_setting
+    Account.any_instance.stubs(:compose_email_enabled?).returns(false)
+    Account.any_instance.stubs(:disable_agent_forward_enabled?).returns(true)
+    params = { allow_agent_to_initiate_conversation: true, original_sender_as_requester_for_forward: true }
+    put :update, construct_params({}, params)
+    refute Account.current.has_feature?(:disable_agent_forward)
+    assert Account.current.has_feature?(:compose_email)
+    Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+    Account.any_instance.stubs(:disable_agent_forward_enabled?).returns(false)
+    params = { allow_agent_to_initiate_conversation: false, original_sender_as_requester_for_forward: false }
+    put :update, construct_params({}, params)
+    assert Account.current.has_feature?(:disable_agent_forward)
+    refute Account.current.has_feature?(:compose_email)
+  ensure
+    Account.any_instance.unstub(:compose_email_enabled?)
+    Account.any_instance.unstub(:disable_agent_forward_enabled?)
+  end
+
   def test_successful_updation_of_selected_settings
     params = all_features_params.except(:allow_agent_to_initiate_conversation, :original_sender_as_requester_for_forward)
     put :update, construct_params({}, params)
@@ -74,7 +92,6 @@ class Email::SettingsControllerTest < ActionController::TestCase
   def test_update_redis_key_for_compose_email_setting
     Redis.any_instance.stubs(:perform_redis_op).returns([])
     params = { allow_agent_to_initiate_conversation: false }
-    params[:allow_agent_to_initiate_conversation] = false
     Account.any_instance.stubs(:compose_email_enabled?).returns(true)
     put :update, construct_params({}, params)
     assert_response 200
