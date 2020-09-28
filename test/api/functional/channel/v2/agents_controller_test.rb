@@ -10,6 +10,10 @@ module Channel::V2
 
     SOURCE = 'analytics'.freeze
 
+    def wrap_cname(params)
+      params
+    end
+
     def setup
       super
       Account.stubs(:current).returns(Account.first)
