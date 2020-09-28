@@ -19,15 +19,15 @@ class Archive::TicketWorkerTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.first)
     @account = Account.current
     current_shard = ShardMapping.find_by_account_id(@account.id).shard_name
-    @disable_archive_enabled = Account.current.launched?(:disable_archive)
-    Account.current.rollback(:disable_archive) if @disable_archive_enabled
+    @disable_archive_enabled = Account.current.disable_archive_enabled?
+    Account.current.disable_setting(:disable_archive) if @disable_archive_enabled
     ArchiveNoteConfig[current_shard] = 0
     @account.enable_ticket_archiving(ARCHIVE_DAYS)
   end
 
   def teardown
     Account.unstub(:current)
-    Account.current.launch(:disable_archive) if @disable_archive_enabled
+    Account.current.enable_setting(:disable_archive) if @disable_archive_enabled
   end
 
   def test_archive_ticket_without_ticket_state

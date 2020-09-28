@@ -10,8 +10,7 @@ class TicketDecorator < ApiDecorator
            :internal_agent_id, :association_type, :associates, :associated_ticket?,
            :can_be_associated?, :description_html, :tag_names, :attachments,
            :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id,
-           :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, :tweet_type,
-           :fb_msg_type, :channel_id, :channel_profile_unique_id, :channel_message_id, to: :record
+           :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, :tweet_type, :fb_msg_type, :channel_id, :channel_profile_unique_id, :channel_message_id, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
