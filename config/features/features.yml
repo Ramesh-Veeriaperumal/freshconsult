@@ -415,6 +415,7 @@
       :whatsapp_channel: 411
       :feedback_widget_captcha: 412
       :disable_archive: 413
+      :gamification_perf: 414
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -507,3 +508,4 @@
   :disable_freshchat: false
   :feedback_widget_captcha: false
   :disable_archive: false
+  :gamification_perf: false
