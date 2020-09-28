@@ -60,13 +60,6 @@ module Channel::V2
       request.unstub(:uuid)
     end
 
-    def test_agents_resync_with_auth_failure
-      remove_others_redis_key(resync_rate_limiter_key(SOURCE))
-      args = { meta: { meta_id: 'abc' } }
-      post :sync, construct_params({ version: 'channel' }, args)
-      assert_response 401
-    end
-
     private
 
       def error_response(error)
