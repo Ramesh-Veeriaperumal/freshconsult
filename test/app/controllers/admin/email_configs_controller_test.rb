@@ -20,11 +20,11 @@ class Admin::EmailConfigsControllerTest < ActionController::TestCase
 
   def test_toggle_compose_email_setting
     Account.any_instance.stubs(:compose_email_enabled?).returns(false)
-    post :toggle_compose_email_setting, controller_params()
+    post :toggle_compose_email_setting
     assert_response 200
     assert Account.current.has_feature?(:compose_email)
     Account.any_instance.stubs(:compose_email_enabled?).returns(true)
-    post :toggle_compose_email_setting, controller_params()
+    post :toggle_compose_email_setting
     refute Account.current.has_feature?(:compose_email)
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
@@ -32,11 +32,11 @@ class Admin::EmailConfigsControllerTest < ActionController::TestCase
 
   def test_toggle_agent_forward_setting
     Account.any_instance.stubs(:disable_agent_forward_enabled?).returns(false)
-    post :toggle_agent_forward_setting, controller_params()
+    post :toggle_agent_forward_setting
     assert_response 200
     assert Account.current.has_feature?(:disable_agent_forward)
     Account.any_instance.stubs(:disable_agent_forward_enabled?).returns(true)
-    post :toggle_agent_forward_setting, controller_params()
+    post :toggle_agent_forward_setting
     assert_response 200
     refute Account.current.has_feature?(:disable_agent_forward)
   ensure
