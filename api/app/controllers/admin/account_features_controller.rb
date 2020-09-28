@@ -6,33 +6,24 @@ class Admin::AccountFeaturesController < ApiApplicationController
   before_filter :validate_query_params, only: ALLOWED_METHOD_FOR_PRIVATE_API
   skip_before_filter :build_object, :load_object, only: ALLOWED_METHOD_FOR_PRIVATE_API
   before_filter :get_feature_type, only: ALLOWED_METHOD_FOR_PRIVATE_API
+  before_filter :validate_setting_dependency, only: ALLOWED_METHOD_FOR_PRIVATE_API
 
   def create
-    if AccountSettings::SettingsConfig[@feature_name].present?
-      if @account.admin_setting_for_account?(@feature_name)
-        @account.enable_setting(@feature_name)
-        head 204
-      else
-        dependent_feature_error
-      end
+    if @is_setting
+      @account.enable_setting(@feature_name)
     else
       modify_feature :enable
-      head 204
     end
+    head 204
   end
 
   def destroy
-    if AccountSettings::SettingsConfig[@feature_name].present?
-      if @account.admin_setting_for_account?(@feature_name)
-        @account.disable_setting(@feature_name)
-        head 204
-      else
-        dependent_feature_error
-      end
+    if @is_setting
+      @account.disable_setting(@feature_name)
     else
       modify_feature :disable
-      head 204
     end
+    head 204
   end
 
   private
@@ -53,9 +44,11 @@ class Admin::AccountFeaturesController < ApiApplicationController
       @account = current_account
       @feature_name = params[:name].to_sym
       @feature_type = feature_types(@feature_name)
+      @is_setting = AccountSettings::SettingsConfig[@feature_name].present?
     end
 
-    def dependent_feature_error
-      render_request_error(:require_feature, 403, feature: @feature_name.to_s)
+    def validate_setting_dependency
+      return unless @is_setting
+      render_request_error(:require_feature, 403, feature: @feature_name.to_s) unless @account.has_dependent_feature?(@feature_name)
     end
 end

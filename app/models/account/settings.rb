@@ -19,6 +19,11 @@ class Account < ActiveRecord::Base
     settings_hash && settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end
 
+  def has_dependent_feature?(setting)
+    settings_hash = AccountSettings::SettingsConfig[setting]
+    settings_hash && has_feature?(settings_hash[:feature_dependency])
+  end
+
   # Move feature dependency check inside the valid_setting once, all Settings migrate to bitmap from LP
   def enable_setting(setting)
     if valid_setting(setting)
