@@ -135,6 +135,8 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       @subscription_data.merge!(plan_info(plan)) if @subscription_data[:subscription_plan].blank?
       @subscription_data.delete(:state) if @subscription_data[:state].blank?
       @account.subscription.update_attributes(@subscription_data)
+      # Reloading @account to make sure changes made on subscription account instance are available in current account
+      @account.reload
       update_features if update_features?
       @account.account_additional_settings.set_payment_preference(@billing_data.subscription.cf_reseller)
     end

@@ -6940,5 +6940,17 @@ module Ember
       group.destroy if group.present?
       agent.destroy if agent.present?
     end
+
+    def test_channel_ticket_show
+      Account.stubs(:current).returns(Account.first)
+      whatsapp_as_source = Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2]
+      ticket = create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
+                             channel_message_id: 'sdl892dk', source: whatsapp_as_source)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+    ensure
+      Account.unstub(:current)
+    end
   end
 end

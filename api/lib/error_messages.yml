@@ -594,10 +594,11 @@ api_error_messages:
   time_slot_count_for_channel_error: "Too many time slots for '%{value}' channel in '%{name}'"
   duplicate_holiday_date: "Duplicate holiday date is present"
   duplicate_business_day: "Duplicate business day is present"
-  invalid_year: "Year should be greater than 1970"
+
   #Group v2
   duplicate_group_name: "A group already exists with name - '%{name}'"
   missing_channel_settings: "At least 1 channel settings required."
   invalid_range: "Capping limit range should be inclusive of 1..100"
+
   require_filter_params: "Anyone of the following filter attributes is mandatory: %{attributes}."
   invalid_date_time_period: "Datetime range can only be a maximum of 2 days"
