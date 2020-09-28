@@ -69,7 +69,7 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    assert @account.solutions_agent_metrics_feature_enabled?(:solutions_agent_metrics_feature)
+    assert @account.solutions_agent_metrics_feature_enabled?
     assert @account.solutions_agent_metrics_enabled?
   ensure
     Account.unstub(:current)
@@ -86,7 +86,7 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     s.subscription_plan_id = SubscriptionPlan.find_by_name('Garden Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    assert_equal @account.solutions_agent_metrics_feature_enabled?(:solutions_agent_metrics_feature), false
+    assert_equal @account.solutions_agent_metrics_feature_enabled?, false
     assert_equal @account.solutions_agent_metrics_enabled?, false
   ensure
     Account.unstub(:current)

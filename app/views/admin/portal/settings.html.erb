@@ -101,7 +101,8 @@
 						:public_ticket_url => "#{t('.public_ticket_urls_option')}<a href=\"#puburl-popover-content\" rel=\"hover-popover\" id=\"puburl-popover\" data-content=\"<div class='input-xlarge'>#{t('.public_ticket_urls_help')}</div>\"><span class=\"ficon-help fsize-22 ml10\"></span></a>".html_safe,
 						}) %>
 			</div>
-      <% if current_account.launched?(:portal_new_settings) && current_account.admin_setting_for_account?   (:helpdesk_tickets_by_product) %>
+      <% if current_account.launched?(:portal_new_settings) &&
+      current_account.admin_setting_for_account?(:helpdesk_tickets_by_product) %>
         <div class="controls mt-20">
           <div class="checkbox">
             <%= f.feature_check_box :helpdesk_tickets_by_product, {:id => "helpdesk_tickets_by_product"} %>
