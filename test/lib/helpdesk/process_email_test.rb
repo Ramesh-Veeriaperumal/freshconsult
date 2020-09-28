@@ -22,7 +22,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
     @parse_email = Faker::Internet.email
     @agent_email = @account.technicians.first.email
     @parsed_to_email = { name: Faker::Name.name, email: @custom_config.to_email, domain: @account.full_domain }
-    @account.remove_feature :disable_agent_forward
+    @account.disable_setting(:disable_agent_forward)
     Account.any_instance.stubs(:parse_replied_email_enabled?).returns(true)
     raise "Account is nil" if @account.blank?
   end

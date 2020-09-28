@@ -81,6 +81,7 @@ class Dashboards
   }
 
   DEFAULT_ORDER_LIMIT = 50
+  CACHE_EXPIRY = 60
 
   def ticket_scope
     User.current.privilege?(:view_reports) ? TICKET_SCOPE_KEYS_BY_TOKEN[:permissible] : TICKET_SCOPE_KEYS_BY_TOKEN[:assigned]
