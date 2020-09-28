@@ -158,7 +158,7 @@ module Freshchat
 
       def agent_put_request_body
         request_body = {}
-        request_body[:role_id] = freshchat_role(@user.role_ids.min) if roles_changed?
+        request_body[:role_id] = freshchat_role(@user.role_ids.min) if roles_changed? || @agent.freshchat_enabled
         request_body[:is_deactivated] = !@agent.freshchat_enabled unless @agent.freshchat_enabled.nil?
         request_body[:avatar] = user_avatar if @agent.user_changes && @agent.user_avatar_changes
         request_body
