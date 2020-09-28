@@ -8,10 +8,12 @@ module Channel::V2
     include Conversations::Twitter
 
     skip_before_filter :can_send_user?
-    skip_before_filter :check_privilege, if: -> { skip_privilege_check? && action_name == 'sync' }
-    before_filter :channel_client_authentication, :validate_sync_params, only: [:sync]
+    skip_before_filter :check_privilege, if: :channel_jwt_auth?
+    before_filter :channel_client_authentication, :load_ticket, if: :channel_jwt_auth?
+    before_filter :validate_sync_params, only: [:sync]
 
     CHANNEL_V2_CONVERSATIONS_CONSTANTS_CLASS = 'Channel::V2::ConversationConstants'.freeze
+    PERMITTED_JWT_SOURCES = [:multiplexer, :analytics, :search, :freshdesk].freeze
 
     def create
       conversation_delegator = invoke_delegator
@@ -35,6 +37,14 @@ module Channel::V2
     end
 
     private
+
+      def load_ticket
+        false if ticket_required? && !load_parent_ticket
+      end
+
+      def channel_jwt_auth?
+        permitted_jwt_source?(PERMITTED_JWT_SOURCES)
+      end
 
       def invoke_delegator
         delegator_class.new(@item, delegator_params)
@@ -141,10 +151,6 @@ module Channel::V2
 
       def check_agent_note
         # Channel api should allow updating notes made by customers too
-      end
-
-      def skip_privilege_check?
-        RESYNC_ALLOWED_SOURCE.any? { |source| channel_source?(source.to_sym) }
       end
 
       def query_conditions

@@ -8,7 +8,7 @@ namespace :archive_tickets do
       account_ids = account_ids_in_shard(current_archive_shard)
       account_ids.each do |account_id|
         account = Account.find(account_id).make_current
-        next if account.launched?(:disable_archive)
+        next if account.disable_archive_enabled?
 
         Archive::AccountTicketsWorker.perform_async(account_id: account_id, ticket_status: :closed)
       end

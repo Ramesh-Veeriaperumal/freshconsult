@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
-    :allow_wildcard_ticket_create, :requester_privilege,
+    :allow_wildcard_ticket_create, :requester_privilege, :disable_archive,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
@@ -71,10 +71,10 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha, :new_es_api, :filter_factory,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
-    :ticket_properties_suggester, :ticket_properties_suggester_eligible,
+    :ticket_properties_suggester, :ticket_properties_suggester_eligible, :disable_archive,
     :hide_first_response_due, :agent_articles_suggest, :agent_articles_suggest_eligible, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
@@ -88,9 +88,10 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :new_es_api, :filter_factory,
     :solutions_agent_metrics,
     :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create,
-    :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha
+    :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -232,6 +233,14 @@ class Account < ActiveRecord::Base
 
   def default_survey_enabled?
     features?(:default_survey) && !custom_survey_enabled?
+  end
+
+  def new_es_api_enabled?
+    launched?(:new_es_api)
+  end
+
+  def filter_factory_enabled?
+    launched?(:filter_factory)
   end
 
   def count_public_api_filter_factory_enabled?
@@ -464,6 +473,10 @@ class Account < ActiveRecord::Base
     launched?(:disable_freshchat)
   end
 
+  def disable_archive_enabled?
+    launched?(:disable_archive)
+  end
+  
   def feedback_widget_captcha_enabled?
     launched?(:feedback_widget_captcha)
   end

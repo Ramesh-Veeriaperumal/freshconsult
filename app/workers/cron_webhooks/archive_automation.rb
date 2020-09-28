@@ -45,7 +45,7 @@ module CronWebhooks
 
       def perform_archive(account_id)
         account = Account.find(account_id).make_current
-        return if account.launched?(:disable_archive)
+        return if account.disable_archive_enabled?
 
         Archive::AccountTicketsWorker.perform_async(account_id: account_id, ticket_status: :closed)
       rescue StandardError => e

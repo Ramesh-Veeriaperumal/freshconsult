@@ -1466,7 +1466,7 @@
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:6Fu6Zj0OOZWGT8+4bG5G1xBhXx8KlIEsgdsYMabyFAI=:9Taebxr/i7na/z6FWhecWdBu8CuHegoX:wq2nhC4klg0vlIoRYu7jrsmMHRcivEOedMFequ209THhc3GUxMupXm/njPF8NkZAWbr6slR6wCea+mA=]"]
         },
-        "twilight": {
+        "multiplexer": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:4/OTEogEVg86HHvIKkxapT6nQgEtDOK5xfTe/vaNSlw=:AtZDcT8SUv/gwxjOvcjIlokNzv16bcH5:cHs1FaUiRxyaZZCIWRze9ojOpY84Wo1mFeUZjT6K8ShVyXGNWVf8TrBjVF7qZkQK]"
         },

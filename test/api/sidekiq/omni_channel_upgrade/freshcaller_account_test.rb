@@ -2,21 +2,25 @@ require_relative '../../unit_test_helper'
 ['account_test_helper.rb', 'users_test_helper.rb'].each { |file| require Rails.root.join('test', 'core', 'helpers', file) }
 require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'omni_channels_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'billing_test_helper.rb')
 require 'sidekiq/testing'
 require 'webmock/minitest'
 
 Sidekiq::Testing.fake!
 
 class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
+  include OmniChannel::Constants
   include AccountTestHelper
   include SubscriptionTestHelper
   include OmniChannelsTestHelper
   include CoreUsersTestHelper
+  include BillingTestHelper
 
   def setup
     super
     create_test_account
     OmniChannelUpgrade::SyncAgents.jobs.clear
+    OmniChannelUpgrade::LinkAccount.jobs.clear
     Freshid::V2::AccountDetailsUpdate.jobs.clear
     Billing::FreshcallerSubscriptionUpdate.jobs.clear
     org_domain = Faker::Internet.domain_name
@@ -46,7 +50,7 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
   def test_freshcaller_account_worker_fails_if_bundle_id_not_set
     Account.any_instance.stubs(:omni_bundle_id).returns(nil)
     error = assert_raises RuntimeError do
-      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) })
+      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) }, type: PRODUCT_OMNI_UPGRADE)
     end
     assert_equal error.message, 'Bundle id not present'
   ensure
@@ -56,7 +60,7 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
   def test_freshcaller_account_worker_fails_if_account_not_present_in_org
     Freshid::V2::Models::Account.stubs(:find_by_domain).returns(nil)
     error = assert_raises RuntimeError do
-      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) })
+      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) }, type: PRODUCT_OMNI_UPGRADE)
     end
     assert_equal error.message, 'Account not found in Freshid'
   ensure
@@ -66,7 +70,7 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
   def test_freshcaller_account_worker_fails_if_org_admin_not_present_in_org
     Freshid::V2::Models::User.stubs(:account_users).returns(nil)
     error = assert_raises RuntimeError do
-      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) })
+      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) }, type: PRODUCT_OMNI_UPGRADE)
     end
     assert_equal error.message, 'Organisation admin not found in Freshid'
   ensure
@@ -76,7 +80,7 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
   def test_freshcaller_account_worker_fails_if_org_admin_user_not_present_in_db
     Freshid::V2::Models::User.stubs(:account_users).returns(org_admin_users_response)
     error = assert_raises RuntimeError do
-      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) })
+      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) }, type: PRODUCT_OMNI_UPGRADE)
     end
     assert_equal error.message, 'Current user not found'
   ensure
@@ -86,7 +90,7 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
   def test_freshcaller_account_worker_fails_if_freshcaller_signup_fails
     stub_request(:post, OmniChannelBundleConfig['freshcaller_signup_url']).to_return(status: 500, body: {}.to_json, headers: {})
     error = assert_raises RuntimeError do
-      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) })
+      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) }, type: PRODUCT_OMNI_UPGRADE)
     end
     assert_equal error.message, 'Unsuccessful response on Freshcaller account signup'
   end
@@ -107,7 +111,7 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
     agent_link_response.stubs(:headers).returns({})
     HTTParty::Request.any_instance.stubs(:perform).returns(agent_link_response)
     assert_nothing_raised RuntimeError do
-      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) })
+      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: { response: stub_update_params(@account.id) }, type: PRODUCT_OMNI_UPGRADE)
     end
     assert_equal OmniChannelUpgrade::SyncAgents.jobs.size, 1
     assert_equal Freshid::V2::AccountDetailsUpdate.jobs.size, 1
@@ -117,6 +121,39 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
     Freshcaller::Account.unstub(:create)
     Agent.any_instance.unstub(:create_freshcaller_agent)
     HTTParty.unstub(:post)
+    HTTParty::Request.any_instance.unstub(:perform)
+  end
+
+  def test_chargebee_omni_upgrade_freshcaller_account_worker_succeeds_without_errors
+    user = @account.technicians.first
+    Account.any_instance.stubs(:freshfone_enabled?).returns(false)
+    Freshcaller::Account.stubs(:create).returns(true)
+    freshcaller_account = Freshcaller::Account.new(account_id: @account.id, domain: 'testbundlefreshcaller.freshfonehello.com')
+    Agent.any_instance.stubs(:create_freshcaller_agent).returns(true)
+    Account.any_instance.stubs(:freshcaller_account).returns(freshcaller_account)
+    client_access_token = OpenStruct.new(refresh_client_access_token)
+    Freshid::V2::Auth.stubs(:refresh_client_access_token).returns(client_access_token)
+    stub_request(:post, 'https://testbundlefreshcaller.freshfonehello.com/bundles/migrations/initiate').to_return(status: 200, body: { 'success' => true }.to_json, headers: {})
+    stub_request(:put, 'https://testbundlefreshcaller.freshfonehello.com/link_account').to_return(status: 200, body: {}.to_json, headers: {})
+    agent_link_response = { sucess: true }
+    agent_link_response.stubs(:body).returns({})
+    agent_link_response.stubs(:code).returns(200)
+    agent_link_response.stubs(:message).returns('Success')
+    agent_link_response.stubs(:headers).returns({})
+    HTTParty::Request.any_instance.stubs(:perform).returns(agent_link_response)
+    assert_nothing_raised RuntimeError do
+      OmniChannelUpgrade::FreshcallerAccount.new.perform(chargebee_response: omni_upgrade_chargebee_response, type: CHARGEBEE_OMNI_UPGRADE)
+    end
+    assert_equal OmniChannelUpgrade::SyncAgents.jobs.size, 0
+    assert_equal OmniChannelUpgrade::LinkAccount.jobs.size, 1
+    assert_equal Freshid::V2::AccountDetailsUpdate.jobs.size, 1
+    assert_equal Billing::FreshcallerSubscriptionUpdate.jobs.size, 1
+  ensure
+    Account.any_instance.unstub(:freshfone_enabled?)
+    Freshcaller::Account.unstub(:create)
+    Agent.any_instance.unstub(:create_freshcaller_agent)
+    Account.any_instance.unstub(:freshcaller_account)
+    Freshid::V2::Auth.unstub(:refresh_client_access_token)
     HTTParty::Request.any_instance.unstub(:perform)
   end
 
@@ -138,6 +175,14 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
           },
           'redirect_url' => 'https://testbundlefreshcaller.freshfonehello.com/signup_complete/testdummy'
         }
+      }
+    end
+
+    def refresh_client_access_token
+      {
+        credentials: OpenStruct.new(
+          access_token: 'dummy_access_token'
+        )
       }
     end
 end

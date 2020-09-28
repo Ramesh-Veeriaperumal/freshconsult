@@ -1372,7 +1372,7 @@
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:fLvErlgsFsv6jk8AshQApQ8/VT0ozRN/VQBbaS+Umj8=:ySfcuBq67TcjDdvEZjO/bzsmP5UqMX4A:BAK4p8CsgiCUDV4ZZ5599kZZwrH94Ir+meycHe5owviVhKMvBARc/vnuk8z1l21njuIoM77FLDJSHZw=]"]
         },
-        "twilight": {
+        "multiplexer": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:cTgCk7tv85V4pmup+9t/xgqPdRDX1X/RxZ9FJL4nA30=:A22/hZ7DLYySNUzAw8nkgM2si42CNZPE:DVqPYEbAZq886gnJTYMvvxzWXZrevQKthhMc9I4fAEelNPJ2shRqKlompNfxGryc]"
         },
