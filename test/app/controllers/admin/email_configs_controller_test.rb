@@ -51,7 +51,7 @@ class Admin::EmailConfigsControllerTest < ActionController::TestCase
     refute Account.current.personalized_email_replies_enabled?
   end
 
-  def test_personalized_email_enable_and_disable
+  def test_reply_to_email_disable_enable_and_disable
     Account.current.enable_setting(:reply_to_based_tickets) unless Account.current.reply_to_based_tickets_enabled?
     post :reply_to_email_disable
     refute Account.current.reply_to_based_tickets_enabled?
