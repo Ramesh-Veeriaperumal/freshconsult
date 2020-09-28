@@ -3,6 +3,7 @@ require_relative '../../../test_helper'
 module Channel::V2
   class AgentsControllerTest < ActionController::TestCase
     include UsersTestHelper
+    include AgentsTestHelper
     include JwtTestHelper
     include CentralLib::CentralResyncHelper
     include CentralLib::CentralResyncConstants
