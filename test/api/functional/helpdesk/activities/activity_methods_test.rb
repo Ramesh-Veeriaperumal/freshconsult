@@ -189,7 +189,7 @@ class ActivityMethodsTest < ActionView::TestCase
     end
 
     def disable_emails_enabled?
-     true
+      true
     end
   end
 
