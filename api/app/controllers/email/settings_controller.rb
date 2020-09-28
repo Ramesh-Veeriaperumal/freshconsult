@@ -18,8 +18,8 @@ module Email
         elsif check_setting_toggled setting_name, enable
           toggle_setting setting_name, enable
         end
-        generate_view_hash
       end
+      generate_view_hash
     end
 
     def show
