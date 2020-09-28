@@ -475,7 +475,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_without_from_email_and_personalized_replies
-    @account.features.personalized_email_replies.create
+    @account.enable_setting(:personalized_email_replies)
     @account.reload
     Account.current.reload
     params_hash = reply_note_params_hash
@@ -490,7 +490,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_without_from_email
-    @account.features.personalized_email_replies.destroy
+    @account.disable_setting(:personalized_email_replies)
     @account.reload
     Account.current.reload
     params_hash = reply_note_params_hash
@@ -504,7 +504,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_from_address_personalized_replies
-    @account.features.personalized_email_replies.create
+    @account.enable_setting(:personalized_email_replies)
     @account.reload
     email_config = create_email_config
     params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)
@@ -517,7 +517,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_from_address_without_personalized_replies
-    @account.features.personalized_email_replies.destroy
+    @account.disable_setting(:personalized_email_replies)
     @account.reload
     email_config = create_email_config
     params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)

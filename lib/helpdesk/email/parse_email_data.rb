@@ -63,7 +63,7 @@ module Helpdesk::Email::ParseEmailData
 	end
 
 	def reply_to_feature
-		@acc_reply_to_feature ||= account.features?(:reply_to_based_tickets)
+		@acc_reply_to_feature ||= account.reply_to_based_tickets_enabled?
 	end
 
 	def parse_reply_to_email

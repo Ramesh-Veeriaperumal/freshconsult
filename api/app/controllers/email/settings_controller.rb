@@ -5,20 +5,21 @@ module Email
     include HelperConcern
     include Redis::RedisKeys
     include Redis::OthersRedis
+    include EmailSettingsConstants
 
     def update
-      features = params[cname]
-      features.each do |feature, enable|
-        feature_name = EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_MAPPING[feature.to_sym] || feature.to_sym
-        if feature_name.eql? EmailSettingsConstants::COMPOSE_EMAIL_FEATURE
-          toggle_compose_email_feature(feature_name, enable)
-        elsif feature_name.eql? EmailSettingsConstants::DISABLE_AGENT_FORWARD
-          toggle_disable_email_feature(feature_name, enable)
-        elsif check_feature_toggled feature_name, enable
-          AccountSettings::SettingsConfig[feature_name] ? toggle_settings(feature_name, enable) : toggle_feature(feature_name, enable)
+      settings = params[cname]
+      settings.each do |setting, enable|
+        setting_name = EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym
+        if setting_name.eql? COMPOSE_EMAIL
+          toggle_compose_email_setting(setting_name, enable)
+        elsif setting_name.eql? DISABLE_AGENT_FORWARD
+          toggle_disable_email_setting(setting_name, enable)
+        elsif check_setting_toggled setting_name, enable
+          toggle_setting setting_name, enable
         end
+        generate_view_hash
       end
-      generate_view_hash
     end
 
     def show
@@ -27,39 +28,31 @@ module Email
 
     private
 
-      def check_feature_toggled(feature, enable)
-        enable != current_account.has_feature?(feature)
+      def check_setting_toggled(setting, enable)
+        enable != current_account.safe_send("#{setting}_enabled?")
       end
 
-      def toggle_feature(feature, enable)
-        if enable
-          current_account.add_feature(feature)
-        else
-          current_account.revoke_feature(feature)
-        end
-      end
-
-      def toggle_settings(setting, enable)
+      def toggle_setting(setting, enable)
         enable ? current_account.enable_setting(setting) : current_account.disable_setting(setting)
       end
 
-      def toggle_compose_email_feature(feature, enable)
-        if enable != check_compose_email_enabled?
+      def toggle_compose_email_setting(feature, enable)
+        if enable != current_account.compose_email_enabled?
           if enable
-            current_account.revoke_feature(feature)
+            current_account.disable_setting(feature)
           else
-            current_account.add_feature(feature)
+            current_account.enable_setting(feature)
             $redis_others.perform_redis_op('srem', COMPOSE_EMAIL_ENABLED, current_account.id)
           end
         end
       end
 
-      def toggle_disable_email_feature(feature, enable)
-        if enable == current_account.has_feature?(EmailSettingsConstants::DISABLE_AGENT_FORWARD)
+      def toggle_disable_email_setting(feature, enable)
+        if enable == current_account.disable_agent_forward_enabled?
           if enable
-            current_account.revoke_feature(feature)
+            current_account.disable_setting(feature)
           else
-            current_account.add_feature(feature)
+            current_account.enable_setting(feature)
           end
         end
       end
@@ -84,23 +77,19 @@ module Email
 
       def validate_settings
         params[cname].each_key do |setting|
-          setting_hash = AccountSettings::SettingsConfig[EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym]
-          next if !setting_hash || current_account.has_feature?(setting_hash[:feature_dependency])
+          setting_name = EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym
+          next if current_account.has_feature?(AccountSettings::SettingsConfig[setting_name][:feature_dependency])
 
           return render_request_error(:require_feature, 403, feature: setting)
         end
       end
 
-      def check_compose_email_enabled?
-        !current_account.has_features?(EmailSettingsConstants::COMPOSE_EMAIL_FEATURE) || ismember?(COMPOSE_EMAIL_ENABLED, current_account.id)
-      end
-
       def generate_view_hash
         @item = {
-          personalized_email_replies: current_account.has_feature?(:personalized_email_replies),
-          create_requester_using_reply_to: current_account.has_feature?(:reply_to_based_tickets),
-          allow_agent_to_initiate_conversation: check_compose_email_enabled?,
-          original_sender_as_requester_for_forward: !current_account.has_feature?(:disable_agent_forward)
+            personalized_email_replies: current_account.personalized_email_replies_enabled?,
+            create_requester_using_reply_to: current_account.reply_to_based_tickets_enabled?,
+            allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
+            original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
         }
         if current_account.email_new_settings_enabled?
           @item[:allow_wildcard_ticket_create] = current_account.allow_wildcard_ticket_create_enabled?
