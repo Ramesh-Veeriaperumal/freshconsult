@@ -11,7 +11,7 @@ module ChannelAuthentication
     freshchat: 'freshchat'.freeze,
     facebook: 'facebook'.freeze,
     freshbots: 'freshbots'.freeze,
-    twilight: 'twilight'.freeze,
+    multiplexer: 'multiplexer'.freeze,
     freddy: 'freddy'.freeze,
     field_service: 'field_service'.freeze,
     silkroad: 'silkroad'.freeze,
@@ -32,6 +32,16 @@ module ChannelAuthentication
     else
       invalid_credentials_error unless params[:controller] == 'channel/tickets'
     end
+  end
+
+  def permitted_jwt_source?(sources = [])
+    channel_auth = request.headers['X-Channel-Auth']
+    return false if channel_auth.blank?
+
+    channel_source = source(channel_auth)
+    return sources.any?{ |source| channel_source == CHANNELS[source] }
+  rescue StandardError
+    invalid_credentials_error
   end
 
   def verify_channel_client_token(token)

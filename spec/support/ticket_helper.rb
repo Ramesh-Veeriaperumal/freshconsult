@@ -30,7 +30,10 @@ module TicketHelper
                                          :company_id => params[:company_id],
                                          :import_id => params[:import_id],
                                          :ticket_type => params[:type] || "Question",
-                                         :email_config_id => params[:email_config_id])
+                                         :email_config_id => params[:email_config_id],
+                                         channel_id: params[:channel_id],
+                                         channel_profile_unique_id: params[:profile_unique_id],
+                                         channel_message_id: params[:channel_message_id])
     test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
     if params[:attachments]
       attachment_params = params[:attachments].is_a?(Array) ? params[:attachments] : [params[:attachments]]
