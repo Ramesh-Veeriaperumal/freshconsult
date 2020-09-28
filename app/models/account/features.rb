@@ -71,7 +71,7 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha, :new_es_api, :filter_factory,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible, :disable_archive,
@@ -88,6 +88,7 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :new_es_api, :filter_factory,
     :solutions_agent_metrics,
     :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create,
     :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive
@@ -232,6 +233,14 @@ class Account < ActiveRecord::Base
 
   def default_survey_enabled?
     features?(:default_survey) && !custom_survey_enabled?
+  end
+
+  def new_es_api_enabled?
+    launched?(:new_es_api)
+  end
+
+  def filter_factory_enabled?
+    launched?(:filter_factory)
   end
 
   def count_public_api_filter_factory_enabled?

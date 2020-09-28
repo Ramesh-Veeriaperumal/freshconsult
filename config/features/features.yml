@@ -312,8 +312,8 @@
       :reports_86: 308
       :reports_87: 309
       :reports_88: 310
-      :reports_89: 311
-      :reports_90: 312
+      :filter_factory: 311
+      :new_es_api: 312
       :untitled_feature_3_dependency_toggle: 313
       :basic_settings_feature: 314
       :untitled_feature_1_dependency_toggle: 315
@@ -490,6 +490,8 @@
   :fluffy_higher_plan3: false
   :fluffy_higher_plan4: false
   :assets: false
+  :filter_factory: false
+  :new_es_api: false
   :assets_toggle: false
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
