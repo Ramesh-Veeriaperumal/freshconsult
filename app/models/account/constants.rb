@@ -137,12 +137,12 @@ class Account < ActiveRecord::Base
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false, :personalized_email_replies => false,
-    :id_less_tickets => false, :reply_to_based_tickets => true, :freshfone => false,
+    :gamification_enable => false,
+    :id_less_tickets => false, :freshfone => false,
     :client_debugging => false, :collision_socket => false,
-    :disable_agent_forward => false, :call_quality_metrics => false,
+    :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false, :freshfone_conference => false,
-    :marketplace => false, :archive_tickets => false, :compose_email => false,
+    :marketplace => false, :archive_tickets => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
     :freshfone_call_metrics => false, :cobrowsing => false,
     :threading_without_user_check => false, :freshfone_call_monitoring => false, :freshfone_caller_id_masking => false,
@@ -186,8 +186,7 @@ class Account < ActiveRecord::Base
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
     force_index_tickets: false, freshfone_caller_id_masking: false,
     freshfone_onboarding: false, gamification_perf: false,
-    gamification_quest_perf: false, lambda_exchange: false, automation_revamp: false,
-    meta_read: false, most_viewed_articles: false,
+    gamification_quest_perf: false, lambda_exchange: false, meta_read: false, most_viewed_articles: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,

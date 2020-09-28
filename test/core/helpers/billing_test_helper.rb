@@ -5,6 +5,15 @@ module BillingTestHelper
   include FreshchatAccountTestHelper
   include FreshcallerAccountTestHelper
 
+  SUBSCRIPTION_CHANGED = 'subscription_changed'.freeze
+
+  def omni_upgrade_chargebee_response
+    {
+      event_type: SUBSCRIPTION_CHANGED,
+      content: omni_upgrade_event_content
+    }
+  end
+
   def omni_upgrade_event_content
     {
       customer: {

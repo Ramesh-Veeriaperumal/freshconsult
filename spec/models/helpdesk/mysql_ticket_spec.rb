@@ -16,8 +16,8 @@ describe Helpdesk::Ticket do
           :subject => "test ticket one"
         )
         ticket.save_ticket
-        ticket.ticket_body.description.should eql "Not given."
-        ticket.ticket_body.description_html.should eql "<div>Not given.</div>"
+        ticket.ticket_body.description.should eql "-----"
+        ticket.ticket_body.description_html.should eql "<div>-----</div>"
       end
 
       it "with ticket_body_attributes" do

@@ -8,6 +8,8 @@ module Channel
     skip_before_filter :check_privilege, if: :skip_privilege_check?
     before_filter :channel_client_authentication
 
+    PERMITTED_JWT_SOURCES = [:twitter, :proactive, :facebook, :multiplexer].freeze
+
     def create
       assign_protected
       delegator_params = {
@@ -95,7 +97,7 @@ module Channel
       end
 
       def skip_privilege_check?
-        channel_source?(:twitter) || channel_source?(:proactive) || channel_source?(:facebook) || channel_source?(:twilight)
+        permitted_jwt_source? PERMITTED_JWT_SOURCES
       end
 
       def twitter_requester_fields_hash

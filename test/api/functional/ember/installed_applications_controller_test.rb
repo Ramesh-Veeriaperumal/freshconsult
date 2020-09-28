@@ -296,6 +296,23 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
   end
 
+  def test_freshsales_fetch_form_fields_when_email_is_not_in_basic_info_group
+    app_id = get_installed_app('freshsales').id
+    response = fetch_email_in_other_group_response
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_form_fields')
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = form_fields_result_with_other_group
+    match_json data
+  ensure
+    IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
+  end
+
   def test_fetch_for_404_on_invalid_installed_application_id
     invalid_id = Integrations::InstalledApplication.maximum(:id) + 1000
     param = construct_params(get_request_payload(invalid_id, 

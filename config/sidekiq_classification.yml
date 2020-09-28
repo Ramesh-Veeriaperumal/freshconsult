@@ -58,6 +58,7 @@
     - update_article_platform_mapping_worker
     - marketplace_app_billing
     - retry_observer
+    - link_omni_account
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
