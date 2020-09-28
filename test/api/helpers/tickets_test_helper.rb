@@ -950,7 +950,16 @@ module ApiTicketsTestHelper
     pattern[:requester] = Hash if requester
     pattern[:collaboration] = collaboration_pattern if @account.collaboration_enabled?
     pattern[:sender_email] = ticket.sender_email
+    pattern[:channel_info] = channel_info(ticket) if ticket.channel_id.present?
     pattern
+  end
+
+  def channel_info(ticket)
+    {
+      id: ticket.channel_id,
+      profile_unique_id: ticket.channel_profile_unique_id,
+      message_id: ticket.channel_message_id
+    }
   end
 
   def ticket_requester_pattern(requester)

@@ -2,6 +2,7 @@ module Channel::V2
   class TicketsController < ::TicketsController
 
     CHANNEL_V2_TICKETS_CONSTANTS_CLASS = 'Channel::V2::TicketConstants'.freeze
+    PERMITTED_JWT_SOURCES = [:freddy, :multiplexer, :analytics, :search, :freshdesk].freeze
 
     include ChannelAuthentication
     include Channel::V2::TicketConstants
@@ -231,11 +232,7 @@ module Channel::V2
     end
 
     def jwt_eligible?
-      request.headers['X-Channel-Auth'].present? && allowable_source?
-    end
-
-    def allowable_source?
-      RESYNC_ALLOWED_SOURCE.any? { |source| channel_source?(source.to_sym) } || channel_source?(:freddy)
+      permitted_jwt_source?(PERMITTED_JWT_SOURCES)
     end
 
     def query_conditions
