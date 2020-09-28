@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     settings_hash && settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end
 
-  def dependent_feature?(setting)
+  def dependent_feature_enabled?(setting)
     settings_hash = AccountSettings::SettingsConfig[setting]
     settings_hash && has_feature?(settings_hash[:feature_dependency])
   end
