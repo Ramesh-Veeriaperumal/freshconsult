@@ -27,7 +27,6 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   @@before_all_run = false
 
   def before_all
-    toggle_automation_revamp_feature(true)
     return if @@before_all_run
 
     Account.current.add_feature(:shared_ownership)
@@ -55,10 +54,6 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     super
   end
 
-  def toggle_automation_revamp_feature(enable)
-    enable ? Account.current.launch(:automation_revamp) : Account.current.rollback(:automation_revamp)
-  end
-
   def enable_service_task_automation_lp_and_privileges
     User.any_instance.stubs(:privilege?).with(:manage_service_task_automation_rules).returns(true)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
@@ -77,29 +72,6 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     match_json('code' => 'rule_type_not_allowed',
                'message' => 'Rule type not allowed: 123')
   end
-
-  def test_automation_revamp_feature_not_enabled_create
-    toggle_automation_revamp_feature(false)
-    Account.current.account_va_rules.destroy_all
-    va_rule_request = valid_request_observer(:ticket_type)
-    post :create, construct_params({ rule_type: VAConfig::RULES[:observer] }.merge(va_rule_request), va_rule_request)
-    assert_response 403
-    match_json('code' => 'require_feature',
-               'message' => 'The Automation Revamp feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
-  ensure
-    toggle_automation_revamp_feature(true)
-  end
-
-  def test_automation_revamp_feature_not_enabled
-    toggle_automation_revamp_feature(false)
-    get :index, controller_params(rule_type: VAConfig::RULES[:dispatcher])
-    assert_response 403
-    match_json('code' => 'require_feature',
-               'message' => 'The Automation Revamp feature(s) is/are not supported in your plan. Please upgrade your account to use it.')
-  ensure
-    toggle_automation_revamp_feature(true)
-  end
-  # End Invalid rule & Feature not enabled test cases
 
   # START Dispatcher test cases
   def test_get_dispatcher_rules
