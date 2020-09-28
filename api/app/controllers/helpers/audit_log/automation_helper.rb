@@ -49,7 +49,7 @@ module AuditLog::AutomationHelper
   private
 
   def filter_data
-    automation_revamp_enabled? && !supervisor_rule? ? %i[condition_data] : %i[match_type filter_data]
+    !supervisor_rule? ? %i[condition_data] : %i[match_type filter_data]
   end
 
   def condition_data_changes(value)

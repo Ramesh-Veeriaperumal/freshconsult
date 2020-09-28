@@ -13,8 +13,11 @@ module Dashboard::Custom::CustomDashboardConstants
   TICKET_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :ticket_type, :metric, :date_range, :threshold_max, :threshold_min].freeze
   TIME_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :ticket_type, :metric, :date_range, :threshold_max, :threshold_min].freeze
   SLA_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :ticket_type, :metric, :date_range, :threshold_max, :threshold_min].freeze
-  MS_AVAILABILITY_ATTRIBUTES = [:queue_id, :threshold_min, :threshold_max].freeze
-  MS_TIME_TREND_ATTRIBUTES = [:metric, :queue_id, :time_type, :threshold_min, :threshold_max].freeze
+  MS_SCORECARD_ATTRIBUTES = [:view, :threshold_min, :threshold_max].freeze
+  MS_BAR_CHART_ATTRIBUTES = [:group_ids, :representation].freeze
+  MS_AVAILABILITY_ATTRIBUTES = [:queue_id, :group_ids, :threshold_min, :threshold_max].freeze
+  MS_CSAT_ATTRIBUTES = [:group_ids, :date_type].freeze
+  MS_TIME_TREND_ATTRIBUTES = [:metric, :queue_id, :time_type, :computation, :date_range, :group_ids, :threshold_min, :threshold_max].freeze
   MS_SLA_TREND_ATTRIBUTES = [:queue_id, :time_type, :threshold_min, :threshold_max].freeze
   MS_CALL_TREND_ATTRIBUTES = [:view, :queue_id, :time_type, :threshold_min, :threshold_max].freeze
   OMNI_CONFIG_ATTRIBUTES = [:source, :url].freeze
@@ -32,13 +35,19 @@ module Dashboard::Custom::CustomDashboardConstants
       MS_AVAILABILITY_ATTRIBUTES |
       MS_TIME_TREND_ATTRIBUTES |
       MS_SLA_TREND_ATTRIBUTES |
-      MS_CALL_TREND_ATTRIBUTES].freeze
+      MS_CALL_TREND_ATTRIBUTES |
+      MS_SCORECARD_ATTRIBUTES |
+      MS_BAR_CHART_ATTRIBUTES |
+      MS_CSAT_ATTRIBUTES].freeze
 
   OMNI_VALID_QUERY_PARAMS = ([:source] |
     MS_AVAILABILITY_ATTRIBUTES |
     MS_TIME_TREND_ATTRIBUTES |
     MS_SLA_TREND_ATTRIBUTES |
-    MS_CALL_TREND_ATTRIBUTES).freeze
+    MS_CALL_TREND_ATTRIBUTES |
+    MS_SCORECARD_ATTRIBUTES |
+    MS_BAR_CHART_ATTRIBUTES |
+    MS_CSAT_ATTRIBUTES).freeze
 
   CREATE_FIELDS = %w(name) | ACCESSIBLE_ATTRIBUTES_FIELDS | WIDGETS_ATTRIBUTES_FIELDS
   UPDATE_FIELDS = %w(name accessible_attributes widgets_attributes)
@@ -81,7 +90,10 @@ module Dashboard::Custom::CustomDashboardConstants
     ['ticket_trend_card', 5, 'Dashboard::Custom::TicketTrendCard'],
     ['time_trend_card', 6, 'Dashboard::Custom::TimeTrendCard'],
     ['sla_trend_card', 7, 'Dashboard::Custom::SlaTrendCard'],
+    ['ms_scorecard', 11, 'Dashboard::Custom::MSScorecard', 'scorecard'],
+    ['ms_bar_chart', 12, 'Dashboard::Custom::MSBarChart', 'bar_chart'],
     ['ms_availability', 13, 'Dashboard::Custom::MSAvailability', 'availability'],
+    ['ms_csat', 14, 'Dashboard::Custom::MSCsat', 'csat'],
     ['ms_time_trend', 16, 'Dashboard::Custom::MSTimeTrend', 'time_trend'],
     ['ms_sla_trend', 17, 'Dashboard::Custom::MSSlaTrend', 'sla_trend'],
     ['ms_call_trend', 18, 'Dashboard::Custom::MSCallTrend', 'call_trend']
@@ -90,12 +102,14 @@ module Dashboard::Custom::CustomDashboardConstants
   GROUP_WIDGETS = ['csat', 'leaderboard', 'ticket_trend_card', 'time_trend_card', 'sla_trend_card'].freeze
   PRODUCT_WIDGETS = ['ticket_trend_card', 'time_trend_card', 'sla_trend_card'].freeze
   TICKET_FILTER_WIDGETS = ['scorecard', 'bar_chart'].freeze
-  SOURCES = { :freshcaller => 'freshcaller', :freshdesk => 'freshdesk', nil => 'freshdesk' }.freeze
+  SOURCES = { :freshcaller => 'freshcaller', :freshdesk => 'freshdesk', nil => 'freshdesk', :freshchat => 'freshchat' }.freeze
   CUSTOM_DASHBOARD_SOURCES = SOURCES.values.freeze
-  OMNI_DASHBOARD_SOURCES = ['freshcaller'].freeze
-  FRESHCALLER_WIDGETS = ['ms_call_trend', 'ms_availability', 'ms_time_trend', 'ms_sla_trend'].freeze
-  OMNI_WIDGET_INITIAL_LIMIT = { 'freshcaller_call_trend' => 0, 'freshcaller_availability' => 0, 'freshcaller_time_trend' => 0, 'freshcaller_sla_trend' => 0 }.freeze
+  OMNI_DASHBOARD_SOURCES = ['freshcaller', 'freshchat'].freeze
+  OMNI_WIDGETS = ['ms_scorecard', 'ms_bar_chart', 'ms_call_trend', 'ms_availability', 'ms_csat', 'ms_time_trend', 'ms_sla_trend'].freeze
+  OMNI_WIDGET_INITIAL_LIMIT = { 'freshcaller_call_trend' => 0, 'freshcaller_availability' => 0, 'freshcaller_time_trend' => 0, 'freshcaller_sla_trend' => 0, 'freshchat_scorecard' => 0, 'freshchat_bar_chart' => 0, 'freshchat_availability' => 0, 'freshchat_csat' => 0, 'freshchat_time_trend' => 0 }.freeze
+  FRESHDESK = 'freshdesk'.freeze
   FRESHCALLER = 'freshcaller'.freeze
+  FRESHCHAT = 'freshchat'.freeze
 
   WIDGET_MODULES_BY_TOKEN = Hash[*WIDGET_MODULES.map { |i| [i[1], i[2]] }.flatten]
   WIDGET_MODULES_BY_NAME = Hash[*WIDGET_MODULES.map { |i| [i[1], i[0]] }.flatten]
@@ -104,7 +118,7 @@ module Dashboard::Custom::CustomDashboardConstants
   WIDGET_MODULE_TOKEN_BY_NAME = Hash[*WIDGET_MODULES.map { |i| [i[0], i[1]] }.flatten]
   WIDGET_MODULES_BY_SHORT_NAME = Hash[*WIDGET_MODULES.map { |i| [i[1], i[3]] }.flatten]
 
-  OMNI_WIDGET_TYPES = [WIDGET_MODULE_TOKEN_BY_NAME['ms_availability'], WIDGET_MODULE_TOKEN_BY_NAME['ms_time_trend'], WIDGET_MODULE_TOKEN_BY_NAME['ms_sla_trend'], WIDGET_MODULE_TOKEN_BY_NAME['ms_call_trend']].freeze
+  OMNI_WIDGET_TYPES = [WIDGET_MODULE_TOKEN_BY_NAME['ms_scorecard'], WIDGET_MODULE_TOKEN_BY_NAME['ms_bar_chart'], WIDGET_MODULE_TOKEN_BY_NAME['ms_availability'], WIDGET_MODULE_TOKEN_BY_NAME['ms_csat'], WIDGET_MODULE_TOKEN_BY_NAME['ms_time_trend'], WIDGET_MODULE_TOKEN_BY_NAME['ms_sla_trend'], WIDGET_MODULE_TOKEN_BY_NAME['ms_call_trend']].freeze
   OMNI_WIDGET_DATA_URL = '/api/data/widget-data?'.freeze
 
   # User access type doesn't apply to custom dashboards    users: 1, 

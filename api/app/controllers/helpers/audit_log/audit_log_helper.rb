@@ -107,7 +107,7 @@ module AuditLog::AuditLogHelper
       id = object[:id]
       type = type.join('_').camelize(:lower)
       export_url_type = AuditLogConstants::EXPORT_TYPE_CONST
-      export_url_type = export_url_type.merge(AuditLogConstants::AUTOMATION_EXPORT_TYPE) if automation_revamp_enabled?
+      export_url_type = export_url_type.merge(AuditLogConstants::AUTOMATION_EXPORT_TYPE)
       type = export_url_type[type.to_sym] || type if from_export
       name ||= type
       {

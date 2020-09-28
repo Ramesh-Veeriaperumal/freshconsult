@@ -2,10 +2,14 @@
 
 class Account < ActiveRecord::Base
 
-  AccountSettings::SettingsConfig.each do |setting, config|
+  AccountSettings::SettingsConfig.each_key do |setting|
     define_method "#{setting}_enabled?" do
-      has_feature?(config[:feature_dependency]) && has_feature?(setting.to_sym)
+      has_feature?(AccountSettings::SettingsConfig[setting.to_sym][:feature_dependency]) && has_feature?(setting.to_sym)
     end
+  end
+
+  def compose_email_enabled?
+    !(basic_settings_feature_enabled? && has_feature?(:compose_email)) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   # Need to modify methods when we move all LPs to Bitmaps and validate settings throw error for invalid settings
@@ -22,6 +26,18 @@ class Account < ActiveRecord::Base
   def dependent_feature_enabled?(setting)
     settings_hash = AccountSettings::SettingsConfig[setting]
     settings_hash && has_feature?(settings_hash[:feature_dependency])
+  end
+  
+  def enabled_admin_settings
+    features_list.select { |feature| admin_setting_for_account?(feature) }
+  end
+
+  def enabled_internal_settings
+    features_list.select { |feature| internal_setting_for_account?(feature) }
+  end
+
+  def enabled_features
+    features_list.select { |feature| !AccountSettings::SettingsConfig.keys.include?(feature.to_s) }
   end
 
   # Move feature dependency check inside the valid_setting once, all Settings migrate to bitmap from LP
