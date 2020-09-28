@@ -132,6 +132,7 @@
       - :contact_custom_activity_api
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_17
     :exclude: [:analytics_knowledge_base_report]
@@ -347,6 +348,7 @@
       - :solutions_templates
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_19
     :exclude: [:analytics_knowledge_base_report]
@@ -558,6 +560,7 @@
       - :solutions_templates
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_20
     :exclude: [:analytics_knowledge_base_report]

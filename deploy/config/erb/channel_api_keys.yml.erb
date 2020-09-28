@@ -43,9 +43,9 @@
   freshbots:
     auth_type: <%= node[:ymls][:channel_api_keys][:freshbots][:auth_type]%>
     jwt_secret: <%= node[:ymls][:channel_api_keys][:freshbots][:jwt_secret]%>
-  twilight:
-    auth_type: <%= node[:ymls][:channel_api_keys][:twilight][:auth_type]%>
-    jwt_secret: <%= node[:ymls][:channel_api_keys][:twilight][:jwt_secret]%>
+  multiplexer:
+    auth_type: <%= node[:ymls][:channel_api_keys][:multiplexer][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:multiplexer][:jwt_secret]%>
   field_service:
     auth_type: <%= node[:ymls][:channel_api_keys][:field_service][:auth_type]%>
     jwt_secret: <%= node[:ymls][:channel_api_keys][:field_service][:jwt_secret]%>

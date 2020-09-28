@@ -16,7 +16,7 @@ class Helpdesk::Source < Helpdesk::Choice
   ].freeze
 
   NOTE_SOURCES = ['email', 'form', 'note', 'status', 'meta', 'twitter', 'feedback', 'facebook', 'forward_email',
-                  'phone', 'mobihelp', 'mobihelp_app_review', 'ecommerce', 'summary', 'canned_form', 'automation_rule', 'automation_rule_forward'].freeze
+                  'phone', 'mobihelp', 'mobihelp_app_review', 'ecommerce', 'summary', 'canned_form', 'automation_rule', 'automation_rule_forward', 'whatsapp'].freeze
 
   NOTE_EXCLUDE_SOURCES = ['meta', 'summary'].freeze
   MAXIMUM_NUMBER_OF_SOURCES = 1000

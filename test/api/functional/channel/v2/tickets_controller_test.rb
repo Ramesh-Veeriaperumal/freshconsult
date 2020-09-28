@@ -1613,6 +1613,31 @@ module Channel::V2
       match_json(pattern)
     end
 
+    def test_unauthorized_status_code_on_invalid_channel_source
+      params = {
+        requester_id: requester.id, status: 2, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      set_jwt_auth_header('silkroad')
+      @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+      post :create, construct_params({ version: 'channel' }, params)
+      assert_response 401
+    ensure
+      @controller.unstub(:api_current_user)
+    end
+
+    def test_unauthorized_status_code_on_invalid_token_payload
+      params = {
+        requester_id: requester.id, status: 2, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      token = generate_custom_jwt_token('multiplexer').split('.')
+      token[1] = "#{token[1]}#{Faker::Lorem.word}"
+      request.env['X-Channel-Auth'] = token.join('.')
+      post :create, construct_params({ version: 'channel' }, params)
+      assert_response 401
+    end
+
     private
 
       def date_time_range(start_date, end_date)
