@@ -90,6 +90,7 @@ module Agents
     end
 
     def falcon_ui=(falcon_ui)
+      Rails.logger.info "FALCON HELPER METHOD :: falcon_ui preference :: #{caller[0..2]}"
       update_preferences(falcon_ui: falcon_ui)
     end
 
