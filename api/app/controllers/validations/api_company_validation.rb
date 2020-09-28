@@ -13,7 +13,6 @@ class ApiCompanyValidation < ApiValidation
     renewal_date: { date_time: { only_date: true } }
   }.freeze
   CHECK_PARAMS_SET_FIELDS = %w(custom_fields health_score account_tier industry renewal_date).freeze
-  VALID_YEAR = 1970
 
   attr_accessor :name, :description, :domains, :note, :custom_fields, :custom_field_types,
                 :avatar, :avatar_id, :health_score, :account_tier, :industry, :renewal_date, :enforce_mandatory
@@ -81,7 +80,7 @@ class ApiCompanyValidation < ApiValidation
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { Account.current.company_form.custom_non_dropdown_fields }
   } }, if: -> { validation_context == :channel_company_create }
-  validate :non_zero_year, if: -> { renewal_date && errors[:renewal_date].blank? }
+
 
   def initialize(request_params, item, enforce_mandatory = 'true')
     super(request_params, item)
@@ -120,10 +119,6 @@ class ApiCompanyValidation < ApiValidation
 
   def valid_custom_fields
     requester_update? ? company_form.custom_non_dropdown_widget_fields : company_form.custom_non_dropdown_fields
-  end
-
-  def non_zero_year
-    errors[:renewal_date] << :invalid_year unless Date.parse(renewal_date).year > VALID_YEAR
   end
 
   private

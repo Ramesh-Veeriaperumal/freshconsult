@@ -408,6 +408,7 @@ defaults: &defaults
     - [archive_ticket_central_publish]
     - [retry_observer]
     - [freddy_consumed_session_queue]
+    - [link_omni_account]
 
 development:
   <<: *defaults

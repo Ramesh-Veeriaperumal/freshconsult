@@ -22,9 +22,10 @@ module Channel::V2
     end
 
     def enable_es_api_load(_params)
-      Account.current.launch(:new_es_api)
+      Account.any_instance.stubs(:new_es_api_enabled?).returns(true)
       yield if block_given?
-      Account.current.rollback(:new_es_api)
+    ensure
+      Account.any_instance.unstub(:new_es_api_enabled?)
     end
 
     def test_index_with_default_filter_id
