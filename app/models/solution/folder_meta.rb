@@ -239,7 +239,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def update_search_index
 	  SearchSidekiq::IndexUpdate::FolderArticles.perform_async({ :folder_id => id }) if Account.current.esv1_enabled?
 
-	  SearchV2::IndexOperations::UpdateArticleFolder.perform_async({ :folder_id => id }) if Account.current.features_included?(:es_v2_writes)
+	  SearchV2::IndexOperations::UpdateArticleFolder.perform_async({ :folder_id => id })
 	end
 
 	def clear_customer_folders

@@ -44,7 +44,6 @@ module Ember
       @private_api = true
       Sidekiq::Worker.clear_all
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-      Account.current.features.es_v2_writes.destroy
       Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
       Account.current.reload
       @account.sections.map(&:destroy)

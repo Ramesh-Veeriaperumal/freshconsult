@@ -7,7 +7,6 @@ module Searchv2
       # Searchv2::TestCluster.start
       Sidekiq::Testing.inline!
 
-      @account.features.es_v2_writes.create
       @account.send(:enable_searchv2)
     end
 
