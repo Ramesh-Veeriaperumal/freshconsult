@@ -224,8 +224,9 @@ class SupportScore < ActiveRecord::Base
 protected
 
   def update_agents_score
-  	return if Thread.current[:gamification_reset]
-    if Account.current.launched?(:gamification_perf)
+    return if Thread.current[:gamification_reset]
+
+    if Account.current.gamification_perf_enabled?
       # If the record is destroyed the score is to be subtracted from the agent's total
       # Else add the score to the total
       update_score = self.destroyed? ? -self.score : self.score
