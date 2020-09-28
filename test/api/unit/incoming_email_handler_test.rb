@@ -1100,6 +1100,7 @@ module Helpdesk
         Account.any_instance.unstub(:email_configs)
         EmailConfig.any_instance.unstub(:find_by_to_email)
         Helpdesk::Email::IncomingEmailHandler.any_instance.unstub(:add_to_or_create_ticket)
+        Account.current.disable_setting(:allow_wildcard_ticket_create)
       end
 
       def test_success_email_to_the_wild_cards_using_allow_check
