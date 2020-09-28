@@ -38,7 +38,7 @@ class PrecreatedSignup < ActivePresenter::Base
 
   def update_current_account_info
     @email = Mail::Address.new(user.email.to_str)
-    account.name = account_name || name_from_email
+    account.name = account_name
   end
 
   def locale=(language)
