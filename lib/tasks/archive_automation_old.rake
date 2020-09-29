@@ -12,7 +12,7 @@ namespace :archive_automation_old do
         account_ids.each do |account_id|
           begin
             account = Account.find(account_id).make_current
-            next if account.launched?(:disable_archive)
+            next if account.disable_archive_enabled?
 
             Archive::AccountTicketsWorker.perform_async(account_id: account_id, ticket_status: :closed)
           rescue Exception => e

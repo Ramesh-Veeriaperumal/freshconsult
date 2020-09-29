@@ -13,7 +13,7 @@ module CronWebhooks
 
         lock_and_run(get_semaphore_key(@args), expiry) do
           Rails.logger.info "cron job enqueued successfully :: #{@args.inspect}" if dry_run_mode?(@args[:mode])
-          return if !validate_args || dry_run_mode?(@args[:mode])
+          return if !validate_args || (dry_run_mode?(@args[:mode]) && !dry_run_supported?)
 
           yield
         end
@@ -32,6 +32,10 @@ module CronWebhooks
 
       def expiry
         TASK_MAPPING[@args[:task_name].to_sym][:semaphore_expiry] || nil
+      end
+
+      def dry_run_supported?
+        DRYRUN_SUPPORTED_TASKS.include?(@args[:task_name])
       end
   end
 end

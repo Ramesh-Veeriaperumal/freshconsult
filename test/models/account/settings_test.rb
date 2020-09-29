@@ -270,6 +270,32 @@ class Account::SettingsTest < ActiveSupport::TestCase
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
   end
 
+  def test_fetch_all_features_enabled
+    all_features = @account.features_list
+    features_enabled = @account.enabled_features
+    enabled_admin_settings = @account.enabled_admin_settings
+    enabled_internal_settings = @account.enabled_internal_settings
+    assert_equal features_enabled.count, (all_features - enabled_admin_settings - enabled_internal_settings).count
+  end
+
+  def test_fetch_admin_settings_enabled
+    enabled_admin_settings = @account.enabled_admin_settings
+    @account.enable_setting(:untitled_setting_1)
+    enabled_admin_settings_after_enable = @account.enabled_admin_settings
+    assert_equal enabled_admin_settings_after_enable.count, enabled_admin_settings.count + 1
+  ensure
+    @account.disable_setting(:untitled_setting_1)
+  end
+
+  def test_fetch_internal_settings_enabled
+    enabled_internal_settings = @account.enabled_internal_settings
+    @account.enable_setting(:untitled_setting_2)
+    enabled_internal_settings_after_enable = @account.enabled_internal_settings
+    assert_equal enabled_internal_settings_after_enable.count, enabled_internal_settings.count + 1
+  ensure
+    @account.disable_setting(:untitled_setting_2)
+  end
+
   # Modify these test when we refactor settings methods
   def test_disable_setting_with_invalid_value_doesnt_raise_error
     @account.disable_setting(:abcd)

@@ -8,8 +8,8 @@ module Utils
         elsif item.safe_send(:read_attribute , "#{body}_html").blank? && !item.safe_send(:read_attribute,body).blank?
           item.safe_send(:write_attribute , "#{body}_html",  body_html_with_formatting(CGI.escapeHTML(item.safe_send(:read_attribute,body))))
         elsif item.safe_send(:read_attribute,body).blank? && item.safe_send(:read_attribute , "#{body}_html").blank?
-          item.safe_send(:write_attribute , "#{body}_html", I18n.t('not_given'))
-          item.safe_send(:write_attribute , body,I18n.t('not_given'))
+          item.safe_send(:write_attribute, "#{body}_html", '-----')
+          item.safe_send(:write_attribute, body, '-----')
         end
         text = Nokogiri::HTML(item.safe_send(:read_attribute,"#{body}_html"))
         unless text.at_css("body").blank?

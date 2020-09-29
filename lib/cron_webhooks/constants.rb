@@ -349,6 +349,8 @@ module CronWebhooks::Constants
     except: %w[supervisor_worker gamification_ticket_quests gamification_ticket_score gamification_user_score livechat_queue]
   }.freeze
 
+  DRYRUN_SUPPORTED_TASKS = %w[suspended_account_deletion].freeze
+
   PAGER_DUTY_FREQUENCY_SECS = Rails.env.production? ? 18_000 : 900 # 5 hours : # 15 mins
   PAGERDUTY_QUEUES = %w[observer_worker update_ticket_states_queue].freeze
 end

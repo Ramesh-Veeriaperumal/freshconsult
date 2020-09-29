@@ -55,7 +55,7 @@ module Notification
     private
 
       def iris_jwt_secret
-        IrisNotificationsConfig['shared_secret']
+        IrisNotificationsConfig['jwt_secret']
       end
   end
 end
