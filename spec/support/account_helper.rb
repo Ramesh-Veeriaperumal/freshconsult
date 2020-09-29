@@ -103,9 +103,9 @@ module AccountHelper
     $redis_others.srem(USER_EMAIL_MIGRATED, account.id.to_s) if $redis_others.sismember(USER_EMAIL_MIGRATED, account.id.to_s)
   end
 
-  def restore_default_setting(setting)
+  def restore_default_feature feature
     @account.reload
-    @account.enable_setting(setting.to_sym) unless @account.safe_send("#{setting}_enabled?")
+    @account.features.send(feature).create unless @account.features_included?(feature.to_sym)
   end
 
   def portal_url

@@ -217,7 +217,7 @@ module Helpdesk
 			def parse_from_email account
 				f_email = parse_email(params[:from])
 				reply_to_email = parse_email(params[:reply_to])
-				reply_to_feature = account.reply_to_based_tickets_enabled?
+				reply_to_feature = account.features?(:reply_to_based_tickets)
 				if reply_to_feature or invalid_from_email?(f_email, reply_to_email, reply_to_feature)
 					return (reply_to_email[:email].nil? ? f_email : reply_to_email)
 				else
@@ -545,7 +545,7 @@ module Helpdesk
 			def create_ticket(account, from_email, to_email, user, email_config)
 				e_email = {}
 				if (user.agent? && !user.deleted?)
-					e_email = (account.disable_agent_forward_enabled? ? {} : orig_email_from_text) unless composed_email?
+					e_email = (account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text) unless composed_email?
 					if e_email[:cc_emails].present?
 						params[:cc] = (params[:cc].present?) ? (params[:cc] << ", " << e_email[:cc_emails].join(", ")) : e_email[:cc_emails]
 					end

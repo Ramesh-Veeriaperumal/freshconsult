@@ -44,8 +44,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_enable_setting_with_dependent_feature
     # setup
-    # except :compose_email as the method is overridden
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.revoke_feature(setting)
@@ -84,8 +83,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_disable_setting_with_dependent_feature
     # setup
-    # except :compose_email as the method is overridden
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.add_feature(setting)
@@ -124,8 +122,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_set_setting_with_dependent_feature
     # setup
-    # except :compose_email as the method is overridden
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.revoke_feature(setting)
@@ -167,7 +164,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_reset_setting_with_dependent_feature
     # setup
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.add_feature(setting)
@@ -209,7 +206,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_setting_enabled_method
     # setup
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     is_required_feature_enabled = @account.has_feature?(required_feature)
@@ -226,8 +223,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_setting_enabled_method_without_dependent_feature
     # setup
-    # except :compose_email as the method is overridden
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     is_required_feature_enabled = @account.has_feature?(required_feature)

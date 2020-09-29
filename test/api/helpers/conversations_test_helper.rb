@@ -65,7 +65,7 @@ module ConversationsTestHelper
   def private_note_pattern(expected_output, note)
     if expected_output[:from_email]
       email_config = @account.email_configs.where(reply_email: expected_output[:from_email]).first
-      expected_output[:from_email] = @account.personalized_email_replies_enabled? ? email_config.friendly_email_personalize(note.user.name) : email_config.friendly_email if email_config
+      expected_output[:from_email] = @account.features?(:personalized_email_replies) ? email_config.friendly_email_personalize(note.user.name) : email_config.friendly_email if email_config
     end
 
     response_pattern = note_pattern(expected_output, note).merge(deleted: (expected_output[:deleted] || note.deleted).to_s.to_bool,
