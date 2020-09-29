@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
     settings_hash = AccountSettings::SettingsConfig[setting]
     settings_hash && has_feature?(settings_hash[:feature_dependency])
   end
-  
+
   def enabled_admin_settings
     features_list.select { |feature| admin_setting_for_account?(feature) }
   end
