@@ -148,7 +148,8 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:compose_email_enabled?)
   end
 
-  def test_update_setting_when_dependent_feature_disabled
+  def test_update_setting_when_dependent_feature_disabled_with_email_new_settings_lp_enabled
+    Account.current.launch(:email_new_settings)
     params = { EmailSettingsConstants::UPDATE_FIELDS.sample => true }
     setting_name = EmailSettingsConstants::EMAIL_SETTINGS_PARAMS_MAPPING[params.keys.first.to_sym] || params.keys.first.to_sym
     dependent_feature = AccountSettings::SettingsConfig[setting_name][:feature_dependency]
@@ -158,6 +159,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:require_feature, feature: params.keys.first))
   ensure
     Account.any_instance.unstub(:has_feature?)
+    Account.current.rollback(:email_new_settings)
   end
 
   def teardown

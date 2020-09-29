@@ -500,10 +500,8 @@
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :fetch_ticket_from_ref_first: false
-  :skip_ticket_threading: false
   :whatsapp_channel: false
   :skip_invoice_due_warning: false
-  :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
   :disable_freshchat: false
