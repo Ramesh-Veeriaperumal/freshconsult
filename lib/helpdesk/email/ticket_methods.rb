@@ -7,7 +7,7 @@ module Helpdesk::Email::TicketMethods
   include Helpdesk::ProcessAgentForwardedEmail
 
   def get_original_user
-    email_from_text = account.disable_agent_forward_enabled? ? {} : orig_email_from_text
+    email_from_text = account.features_included?(:disable_agent_forward) ? {} : orig_email_from_text
     unless email_from_text.blank?
       self.original_sender = email_from_text[:email]
       email_from_text[:cc_emails].reject!{ |cc_email| kbase_email?(cc_email) or requester_email?(cc_email) }
