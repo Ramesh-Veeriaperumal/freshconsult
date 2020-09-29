@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../../api/test_helper'
 require Rails.root.join('spec', 'support', 'user_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
