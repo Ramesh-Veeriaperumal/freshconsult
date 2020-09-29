@@ -415,6 +415,9 @@
       :whatsapp_channel: 411
       :feedback_widget_captcha: 412
       :disable_archive: 413
+      :gamification_perf: 414
+      :skip_portal_cname_chk: 415
+      :stop_contacts_count_query: 416
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -501,8 +504,6 @@
   :solutions_agent_metrics: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
-  :fetch_ticket_from_ref_first: false
-  :skip_ticket_threading: false
   :whatsapp_channel: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
@@ -510,4 +511,7 @@
   :bypass_signup_captcha: false
   :disable_freshchat: false
   :feedback_widget_captcha: false
+  :skip_portal_cname_chk: false
   :disable_archive: false
+  :gamification_perf: false
+  :stop_contacts_count_query: false

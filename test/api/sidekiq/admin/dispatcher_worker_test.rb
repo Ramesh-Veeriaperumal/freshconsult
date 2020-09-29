@@ -39,7 +39,6 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
       options[:operators].each do |operator|
         define_method "test_dispatcher_condition_#{field_name}_#{operator}" do
           Rails.logger.debug "start test_dispatcher_condition_#{field_name}_#{operator}"
-          Account.current.launch :automation_revamp
           Account.current.add_feature :shared_ownership
           initialize_internal_agent_with_default_internal_group
           if CUSTOM_FIELD_TYPES.include?(operator_type)
@@ -101,7 +100,6 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
 
   def test_dispatcher_condition_responder_id_is_any
     Rails.logger.debug "start test_dispatcher_condition_responder_id_is_any"
-    Account.current.launch :automation_revamp
     Account.current.add_feature :shared_ownership
     initialize_internal_agent_with_default_internal_group
     rule = Account.current.va_rules.first
@@ -128,7 +126,6 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
   end
   
   def test_dispatcher_condition_subject_or_description_is_any_of_case_sensitive_false
-    Account.current.launch :automation_revamp
     rule = Account.current.va_rules.first
     rule.condition_data = { any: [
       { evaluate_on: "ticket", 
@@ -146,12 +143,9 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     rule.action_data.each do |action|
       verify_action_data(action, ticket, false)
     end
-  ensure
-    Account.current.rollback :automation_revamp
   end
   
   def test_dispatcher_condition_subject_or_description_is_any_of_case_sensitive_true
-    Account.current.launch :automation_revamp
     rule = Account.current.va_rules.first
     rule.condition_data = { any: [
       { evaluate_on: "ticket", 
@@ -172,13 +166,10 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     rule.action_data.each do |action|
       verify_action_data(action, ticket, false)
     end
-  ensure
-    Account.current.rollback :automation_revamp
   end
 
   def test_dispatcher_condition_responder_is_unavailable
     Rails.logger.debug "start test_dispatcher_condition_responder_id_is_any"
-    Account.current.launch :automation_revamp
     Account.current.add_feature :shared_ownership
     initialize_internal_agent_with_default_internal_group
     rule = Account.current.va_rules.first
@@ -217,7 +208,6 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
 
   def test_dispatcher_condition_any_responder_greater_than_ooo
     Rails.logger.debug 'start test_dispatcher_condition_any_responder_greater_than_ooo'
-    Account.current.launch :automation_revamp
     Account.current.launch :out_of_office
     initialize_internal_agent_with_default_internal_group
     rule = Account.current.va_rules.first
@@ -241,13 +231,11 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     Rails.logger.debug 'start test_dispatcher_condition_any_responder_greater_than_ooo'
   ensure
     Account.current.rollback :out_of_office
-    Account.current.rollback :automation_revamp
     Account.unstub(:current)
   end
 
   def test_dispatcher_condition_any_responder_less_than_ooo
     Rails.logger.debug 'start test_dispatcher_condition_any_responder_less_than_ooo'
-    Account.current.launch :automation_revamp
     Account.current.launch :out_of_office
     initialize_internal_agent_with_default_internal_group
     rule = Account.current.va_rules.first
@@ -271,13 +259,11 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     Rails.logger.debug 'end test_dispatcher_condition_any_responder_less_than_ooo'
   ensure
     Account.current.rollback :out_of_office
-    Account.current.rollback :automation_revamp
     Account.unstub(:current)
   end
 
   def test_dispatcher_condition_any_responder_equals_ooo
     Rails.logger.debug 'start test_dispatcher_condition_any_responder_equals_ooo'
-    Account.current.launch :automation_revamp
     Account.current.launch :out_of_office
     initialize_internal_agent_with_default_internal_group
     rule = Account.current.va_rules.first
@@ -301,13 +287,11 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     Rails.logger.debug 'end test_dispatcher_condition_any_responder_equals_ooo'
   ensure
     Account.current.rollback :out_of_office
-    Account.current.rollback :automation_revamp
     Account.unstub(:current)
   end
 
   def test_dispatcher_failed_condition_any_responder_is_ooo
     Rails.logger.debug 'start test_dispatcher_failed_condition_any_responder_is_ooo'
-    Account.current.launch :automation_revamp
     rule = Account.current.va_rules.first
     rule.condition_data = ooo_condition_data('greater_than', 10)
     rule.action_data = [{ name: 'priority', value: 1 }]
@@ -321,7 +305,6 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
     end
     Rails.logger.debug 'end test_dispatcher_failed_condition_any_responder_is_ooo'
   ensure
-    Account.current.rollback :automation_revamp
     Account.unstub(:current)
   end
 

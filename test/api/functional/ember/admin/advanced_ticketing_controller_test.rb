@@ -128,7 +128,6 @@ module Ember
           begin
             Account.current.all_service_task_dispatcher_rules.destroy_all
             Account.current.all_service_task_observer_rules.destroy_all
-            Account.any_instance.stubs(:automation_revamp_enabled?).returns(true)
             Sidekiq::Testing.inline! do
               post :create, construct_params({ version: 'private' }, name: 'field_service_management')
               assert_response 204
@@ -150,8 +149,6 @@ module Ember
               assert_equal true, Account.current.all_service_task_dispatcher_rules.none?(&:active)
               assert_equal true, Account.current.all_service_task_observer_rules.none?(&:active)
             end
-          ensure
-            Account.any_instance.unstub(:automation_revamp_enabled?)
           end
         end
       end
@@ -167,6 +164,7 @@ module Ember
             delete :destroy, controller_params(version: 'private', id: 'field_service_management')
             assert_equal false, Account.current.field_service_management_enabled?
 
+            Account.stubs(:current).returns(Account.first)
             post :create, construct_params({ version: 'private' }, name: 'field_service_management')
             assert_response 204
             Account.reset_current_account
