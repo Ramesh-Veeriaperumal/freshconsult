@@ -193,7 +193,7 @@ class Helpdesk::Tag < ActiveRecord::Base
     end
     
     def update_taggables
-      SearchV2::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id })
+      SearchV2::IndexOperations::UpdateTaggables.perform_async(tag_id: self.id)
       CountES::IndexOperations::UpdateTaggables.perform_async(tag_id: self.id)
       CentralPublish::UpdateTaggables.perform_async({ :tag_id => self.id, :changes => @model_changes })
     end
