@@ -296,6 +296,14 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     IntegrationServices::Services::Freshsales::FreshsalesCommonResource.any_instance.unstub(:http_get)
   end
 
+  def test_fetch_for_404_on_invalid_installed_application_id
+    invalid_id = Integrations::InstalledApplication.maximum(:id) + 1000
+    param = construct_params(get_request_payload(invalid_id, 
+      'fetch_user_selected_fields','contact','tom@localhost.freshdesk-dev.com'))
+    post :fetch, param
+    assert_response 404
+  end
+
   def test_freshsales_invalid_event
     app_id = get_installed_app('freshsales').id
     param = construct_params(version: 'private', id: app_id, event: 'test_event',
@@ -573,14 +581,6 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     assert_equal response_hash['deals'].size, 5
   ensure
     IntegrationServices::Services::Freshworkscrm::FreshworkscrmDealResource.any_instance.unstub(:http_get)
-  end
-
-  def test_fetch_for_404_on_invalid_installed_application_id
-    invalid_id = Integrations::InstalledApplication.maximum(:id) + 1000
-    param = construct_params(get_request_payload(invalid_id, 
-      'fetch_user_selected_fields','contact','tom@localhost.freshdesk-dev.com'))
-    post :fetch, param
-    assert_response 404
   end
 
   def test_fetch_for_403_on_unsupported_apps
