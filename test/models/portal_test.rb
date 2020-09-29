@@ -6,7 +6,7 @@ class PortalTest < ActiveSupport::TestCase
   def setup
     super
     create_test_account if @account.nil?
-    @account.launch(:skip_portal_cname_chk)
+    @account.enable_setting(:skip_portal_cname_chk)
   end
 
   def test_domain_mapping_trigger

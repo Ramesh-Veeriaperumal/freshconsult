@@ -23,7 +23,6 @@ module Admin
         @account = Account.first
         user = add_test_agent(Account.current, user_role: @account.roles.find_by_name('Account Administrator'))
         user.make_current
-        Account.any_instance.stubs(:automation_revamp_enabled?).returns(true)
         Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
         Account.current.all_service_task_observer_rules.destroy_all
         Helpdesk::Ticket.any_instance.stubs(:set_parent_child_assn).returns(true)
@@ -34,7 +33,6 @@ module Admin
       def teardown
         Account.current.all_service_task_observer_rules.destroy_all
         Account.unstub(:current)
-        Account.any_instance.unstub(:automation_revamp_enabled?)
         Account.any_instance.unstub(:field_service_management_enabled?)
         Helpdesk::Ticket.any_instance.unstub(:set_parent_child_assn)
         super
