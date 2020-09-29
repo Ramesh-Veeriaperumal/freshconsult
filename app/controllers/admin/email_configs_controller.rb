@@ -120,20 +120,20 @@ class Admin::EmailConfigsController < Admin::AdminController
     redirect_to :back
   end
 
-  def toggle_agent_forward_setting
-    if current_account.disable_agent_forward_enabled?
-      current_account.disable_setting(:disable_agent_forward)
+  def toggle_agent_forward_feature
+    if current_account.features_included?(:disable_agent_forward)
+      current_account.features.disable_agent_forward.destroy
     else
-      current_account.enable_setting(:disable_agent_forward)
+      current_account.features.disable_agent_forward.create
     end
     post_process
   end
 
-  def toggle_compose_email_setting
-    if current_account.compose_email_enabled?
-      current_account.disable_setting(:compose_email)
+   def toggle_compose_email_feature
+    if current_account.features_included?(:compose_email)
+      current_account.features.compose_email.destroy
     else
-      current_account.enable_setting(:compose_email)
+      current_account.features.compose_email.create
       #Handle delta case. Will remove this code once we remove redis feature check.
       $redis_others.perform_redis_op("srem", COMPOSE_EMAIL_ENABLED,current_account.id)
     end
@@ -141,22 +141,22 @@ class Admin::EmailConfigsController < Admin::AdminController
   end
 
   def personalized_email_enable
-    current_account.enable_setting(:personalized_email_replies)
+    current_account.features.personalized_email_replies.create
     post_process
   end
 
   def personalized_email_disable
-    current_account.disable_setting(:personalized_email_replies)
+    current_account.features.personalized_email_replies.destroy
     post_process
   end
 
   def reply_to_email_enable
-    current_account.enable_setting(:reply_to_based_tickets)
+    current_account.features.reply_to_based_tickets.create
     post_process
   end
 
   def reply_to_email_disable
-    current_account.disable_setting(:reply_to_based_tickets)
+    current_account.features.reply_to_based_tickets.destroy
     post_process
   end
 
