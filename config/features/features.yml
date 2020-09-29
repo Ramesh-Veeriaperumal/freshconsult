@@ -417,6 +417,7 @@
       :disable_archive: 413
       :gamification_perf: 414
       :skip_portal_cname_chk: 415
+      :stop_contacts_count_query: 416
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -511,3 +512,4 @@
   :skip_portal_cname_chk: false
   :disable_archive: false
   :gamification_perf: false
+  :stop_contacts_count_query: false
