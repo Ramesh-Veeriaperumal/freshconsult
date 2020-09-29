@@ -135,11 +135,11 @@
     });
 
     jQuery("#disable_agent_forward_tickets").on('change.email_config_feature', function(){
-        update_status("<%= toggle_agent_forward_setting_admin_email_configs_path %>");
+        update_status("<%= toggle_agent_forward_feature_admin_email_configs_path %>");
     });
 
     jQuery("#enable_compose_email").on('change.email_config_feature', function(){
-        update_status("<%= toggle_compose_email_setting_admin_email_configs_path %>");
+        update_status("<%= toggle_compose_email_feature_admin_email_configs_path %>");
     });
 
 <%end%>
