@@ -82,7 +82,7 @@ class Account < ActiveRecord::Base
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
     :fetch_ticket_from_ref_first, :skip_ticket_threading, :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel, :feedback_widget_captcha,
-    :basic_settings_feature, :gamification_perf, :disable_emails
+    :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :disable_emails
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -90,7 +90,8 @@ class Account < ActiveRecord::Base
     :new_es_api, :filter_factory,
     :solutions_agent_metrics,
     :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create,
-    :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive, :gamification_perf, :disable_emails
+    :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query,
+    :disable_emails
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -468,6 +469,10 @@ class Account < ActiveRecord::Base
     launched?(:disable_freshchat)
   end
 
+  def stop_contacts_count_query_enabled?
+    launched?(:stop_contacts_count_query)
+  end
+
   def gamification_perf_enabled?
     launched?(:gamification_perf)
   end
@@ -478,6 +483,10 @@ class Account < ActiveRecord::Base
 
   def feedback_widget_captcha_enabled?
     launched?(:feedback_widget_captcha)
+  end
+
+  def skip_portal_cname_chk_enabled?
+    launched?(:skip_portal_cname_chk)
   end
 
   def disable_emails_enabled?

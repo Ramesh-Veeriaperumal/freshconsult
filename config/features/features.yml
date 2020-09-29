@@ -416,7 +416,9 @@
       :feedback_widget_captcha: 412
       :disable_archive: 413
       :gamification_perf: 414
-      :disable_emails: 415
+      :skip_portal_cname_chk: 415
+      :stop_contacts_count_query: 416
+      :disable_emails: 417
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -508,6 +510,8 @@
   :bypass_signup_captcha: false
   :disable_freshchat: false
   :feedback_widget_captcha: false
+  :skip_portal_cname_chk: false
   :disable_archive: false
   :gamification_perf: false
+  :stop_contacts_count_query: false
   :disable_emails : false
