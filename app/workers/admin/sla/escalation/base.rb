@@ -70,10 +70,8 @@ module Admin::Sla::Escalation
             execute_on_db("run_on_master") do
               sla_policy.safe_send("escalate_#{overdue_type}_overdue", ticket)
             end
-            if account.automation_revamp_enabled?
-              event = { "#{overdue_type}_due".to_sym => true }
-              ticket.trigger_observer(event, false, true)
-            end
+            event = { "#{overdue_type}_due".to_sym => true }
+            ticket.trigger_observer(event, false, true)
           end
           overdue_tickets_count
         end

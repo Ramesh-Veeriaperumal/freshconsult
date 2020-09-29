@@ -32,7 +32,7 @@
         </a>
         <%= company_list %>
       </span>
-      <% if @tickets.present?  && @client_manager_companies.include?(company_details[:id]) %>
+      <% if @tickets.first.present?  && @client_manager_companies.include?(company_details[:id]) %>
         <span class="help-text">
           <%= I18n.t("tickets_filter.raised_by") %>  : 
           <div class="company-users-filter">

@@ -72,7 +72,7 @@ class WebhookV1Worker < ::BaseWorker
       {
         :name => executing_rule.name,
         :path => executing_rule.rule_path,
-        :type => Account.current.automation_revamp_enabled? ? 'Automation' : executing_rule.rule_type_desc.to_s
+        :type => 'Automation'
       }
     end
 

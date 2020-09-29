@@ -1,5 +1,5 @@
 <%= node[:opsworks][:environment] %>:
-  shared_secret: <%= node[:ymls][:iris][:shared_secret] %>
+  jwt_secret: <%= node[:ymls][:iris][:jwt_secret] %>
   service_name: <%= node[:ymls][:iris][:service_name] %>
   socketioUrl: <%= node[:ymls][:iris][:socketiourl] %>
   rtsUrl: <%= node[:ymls][:iris][:rts_url] %>
