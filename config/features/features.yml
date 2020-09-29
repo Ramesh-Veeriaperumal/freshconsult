@@ -418,6 +418,7 @@
       :gamification_perf: 414
       :skip_portal_cname_chk: 415
       :stop_contacts_count_query: 416
+      :kbase_spam_whitelist: 417
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -497,6 +498,7 @@
   :field_service_geolocation: false
   :location_tagging: false
   :kb_allow_base64_images: false
+  :kbase_spam_whitelist: false
   :solutions_agent_metrics: false
   :forums_agent_portal: false
   :solutions_agent_portal: false

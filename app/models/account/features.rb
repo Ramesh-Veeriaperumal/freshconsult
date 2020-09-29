@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
 
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
-    :falcon_portal_theme, :freshid, :allow_huge_ccs,
+    :falcon_portal_theme, :freshid, :allow_huge_ccs, :kbase_spam_whitelist,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
@@ -49,7 +49,7 @@ class Account < ActiveRecord::Base
 
   BITMAP_FEATURES = [
     :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
-    :custom_ticket_views, :supervisor, :archive_tickets, :sitemap,
+    :custom_ticket_views, :supervisor, :archive_tickets, :sitemap, :kbase_spam_whitelist,
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
     :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
     :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
@@ -88,7 +88,7 @@ class Account < ActiveRecord::Base
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :new_es_api, :filter_factory,
-    :solutions_agent_metrics,
+    :solutions_agent_metrics, :kbase_spam_whitelist,
     :skip_ticket_threading, :fetch_ticket_from_ref_first, :skip_invoice_due_warning, :allow_wildcard_ticket_create,
     :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query
   ].freeze
@@ -486,6 +486,10 @@ class Account < ActiveRecord::Base
 
   def skip_portal_cname_chk_enabled?
     launched?(:skip_portal_cname_chk)
+  end
+
+  def kbase_spam_whitelist_enabled?
+    launched?(:kbase_spam_whitelist)
   end
 
   def features
