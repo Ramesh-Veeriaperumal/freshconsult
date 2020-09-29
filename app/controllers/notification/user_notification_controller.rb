@@ -24,6 +24,6 @@ class Notification::UserNotificationController < ApplicationController
   end
 
   def iris_jwt_secret
-    IrisNotificationsConfig["shared_secret"]
+    IrisNotificationsConfig['jwt_secret']
   end
 end

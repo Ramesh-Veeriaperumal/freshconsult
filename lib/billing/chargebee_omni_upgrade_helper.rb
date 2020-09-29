@@ -16,6 +16,7 @@ module Billing::ChargebeeOmniUpgradeHelper
     def handle_omni_upgrade_via_chargebee
       eligible_for_upgrade = eligible_for_omni_upgrade?
       revert_to_previous_subscription unless eligible_for_upgrade
+      @account.subscription.chargebee_omni_upgrade_response = params if eligible_for_upgrade
       eligible_for_upgrade
     end
 
@@ -51,17 +52,6 @@ module Billing::ChargebeeOmniUpgradeHelper
     end
 
     def integrated_accounts_present_in_org?
-      existing_current_user = User.current
-      get_freshid_org_admin_user(Account.current).make_current
-      check_if_freshchat_and_freshcaller_present_in_same_org
-    rescue StandardError => e
-      Rails.logger.error "Exception in finding organisation accounts :: Account ID: #{Account.current.id} :: Error message: #{e.message} :: #{e.backtrace[0..20]}"
-      false
-    ensure
-      existing_current_user.make_current if existing_current_user.present?
-    end
-
-    def check_if_freshchat_and_freshcaller_present_in_same_org
       org_domain = Account.current.organisation.domain
       fch_domain = Account.current.freshchat_account.domain
       fcl_domain = Account.current.freshcaller_account.domain
@@ -86,6 +76,9 @@ module Billing::ChargebeeOmniUpgradeHelper
         page_counter += 1
       end
       fch_fcl_present
+    rescue StandardError => e
+      Rails.logger.error "Exception in finding organisation accounts :: Account ID: #{Account.current.id} :: Error message: #{e.message} :: #{e.backtrace[0..20]}"
+      false
     end
 
     def freshchat_freshcaller_present_or_no_more_org_accounts(fch_fcl_present, org_accounts)

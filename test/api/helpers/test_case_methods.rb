@@ -56,14 +56,23 @@ module TestCaseMethods
   end
 
   def enable_public_api_filter_factory(features = [], &block)
-    features.is_a?(Array) ? features.each { |f| Account.current.launch(f) } : Account.current.launch(features)
+    features.is_a?(Array) ? features.each { |f| enable_feature(f) } : enable_feature(features)
     yield if block_given?
   ensure
     disable_public_api_filter_factory(features)
   end
 
   def disable_public_api_filter_factory(features = [])
-    features.is_a?(Array) ? features.each { |f| Account.current.rollback(f) } : Account.current.rollback(features)
+    features.is_a?(Array) ? features.each { |f| disable_feature(f) } : disable_feature(features)
+  end
+
+  # Temporary, till moved as settings
+  def enable_feature(feature)
+    Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(feature) ? Account.current.enable_setting(feature) : Account.current.launch(feature)
+  end
+
+  def disable_feature(feature)
+    Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(feature) ? Account.current.disable_setting(feature) : Account.current.rollback(feature)
   end
 
   def stub_current_account

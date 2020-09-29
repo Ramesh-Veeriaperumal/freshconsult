@@ -63,7 +63,7 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def ticket_note_source_mapping
-      {
+      ret_hash = {
         ticket_source_keys_by_token[:email] => note_source_keys_by_token['email'],
         ticket_source_keys_by_token[:portal] => note_source_keys_by_token['email'],
         ticket_source_keys_by_token[:phone] => note_source_keys_by_token['email'],
@@ -78,6 +78,8 @@ class Helpdesk::Source < Helpdesk::Choice
         ticket_source_keys_by_token[:ecommerce] => note_source_keys_by_token['ecommerce'],
         ticket_source_keys_by_token[:canned_form] => note_source_keys_by_token['canned_form']
       }
+      ret_hash[ticket_source_keys_by_token[:whatsapp]] = note_source_keys_by_token['whatsapp'] if ticket_source_keys_by_token[:whatsapp].present?
+      ret_hash
     end
 
     def ticket_bot_source

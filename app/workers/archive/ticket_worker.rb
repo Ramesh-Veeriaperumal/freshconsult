@@ -36,7 +36,7 @@ module Archive
     private
 
       def valid_archive_request?(ticket_id)
-        return if @account.launched?(:disable_archive)
+        return if @account.disable_archive_enabled?
 
         @ticket = @account.tickets.find(ticket_id)
         @archive_days = @args['archive_days'] || @account.account_additional_settings.archive_days

@@ -44,7 +44,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_enable_setting_with_dependent_feature
     # setup
-    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    # except :compose_email as the method is overridden
+    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.revoke_feature(setting)
@@ -83,7 +84,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_disable_setting_with_dependent_feature
     # setup
-    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    # except :compose_email as the method is overridden
+    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.add_feature(setting)
@@ -122,7 +124,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_set_setting_with_dependent_feature
     # setup
-    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    # except :compose_email as the method is overridden
+    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.revoke_feature(setting)
@@ -164,7 +167,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_reset_setting_with_dependent_feature
     # setup
-    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.add_feature(setting)
@@ -206,7 +209,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_setting_enabled_method
     # setup
-    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     is_required_feature_enabled = @account.has_feature?(required_feature)
@@ -223,7 +226,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_setting_enabled_method_without_dependent_feature
     # setup
-    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    # except :compose_email as the method is overridden
+    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     is_required_feature_enabled = @account.has_feature?(required_feature)
@@ -268,6 +272,32 @@ class Account::SettingsTest < ActiveSupport::TestCase
   ensure
     is_launched ? @account.launch(feature) : @account.rollback(feature)
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
+  end
+
+  def test_fetch_all_features_enabled
+    all_features = @account.features_list
+    features_enabled = @account.enabled_features
+    enabled_admin_settings = @account.enabled_admin_settings
+    enabled_internal_settings = @account.enabled_internal_settings
+    assert_equal features_enabled.count, (all_features - enabled_admin_settings - enabled_internal_settings).count
+  end
+
+  def test_fetch_admin_settings_enabled
+    enabled_admin_settings = @account.enabled_admin_settings
+    @account.enable_setting(:untitled_setting_1)
+    enabled_admin_settings_after_enable = @account.enabled_admin_settings
+    assert_equal enabled_admin_settings_after_enable.count, enabled_admin_settings.count + 1
+  ensure
+    @account.disable_setting(:untitled_setting_1)
+  end
+
+  def test_fetch_internal_settings_enabled
+    enabled_internal_settings = @account.enabled_internal_settings
+    @account.enable_setting(:untitled_setting_2)
+    enabled_internal_settings_after_enable = @account.enabled_internal_settings
+    assert_equal enabled_internal_settings_after_enable.count, enabled_internal_settings.count + 1
+  ensure
+    @account.disable_setting(:untitled_setting_2)
   end
 
   # Modify these test when we refactor settings methods

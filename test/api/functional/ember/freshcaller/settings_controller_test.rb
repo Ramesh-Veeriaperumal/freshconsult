@@ -27,9 +27,12 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
   def test_fetch_settings_with_freshcaller_account
     Account.current.add_feature(:freshcaller)
     # @controller.stubs(:requires_feature).with(:freshcaller).returns(true)
+    # As all the accounts are moved to falcon, freshcaller & freshcaller widget is enabled to accounts during signup.
+    # account/callbacks.rb:499
+    # Modifying the testcase to have the extra keys.
     create_freshcaller_account
     get :index, controller_params(version: 'private')
-    match_json({:freshcaller_account_enabled => true, :freshcaller_agent_enabled => false})
+    match_json(freshcaller_account_enabled: true, freshcaller_agent_enabled: false, freshcaller_widget_url: /\/widget\//, freshid_enabled: false, token: String, fresh_id_version: nil)
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:ok]
   ensure
     delete_freshcaller_account

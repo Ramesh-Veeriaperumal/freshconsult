@@ -1,5 +1,5 @@
 <div id="ticket-list">
-  <% unless @tickets.blank? %>
+  <% if @tickets.first %>
     <div class="c-list">
       <% @tickets.each do |ticket| %>
         <div class="c-row c-ticket-row">
@@ -44,6 +44,6 @@
   var exportLink = '<a href="<%= configure_export_support_archive_tickets_path %>" data-target="#archive-export-modal" id="ticket-export-button" rel="freshdialog" data-submit-label="<%= t("portal.tickets.submit_export") %>" title="<%= t("portal.tickets.export_ticket_data") %>"><%= t("portal.tickets.export_ticket_data") %></a>'
   jQuery(".ticket-toolbar").append(exportLink);
   
-  jQuery("#ticket-export-button").toggle(<%= @tickets.present? %>)
+  jQuery("#ticket-export-button").toggle(<%= @tickets.first.present? %>)
 </script>
   

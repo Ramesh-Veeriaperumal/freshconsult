@@ -267,7 +267,7 @@ module Admin::RolesHelper
       html = eval "#{element[:dom_type]}_tag('#{name}', '#{privilege}',
       #{@role.abilities.include?(privilege.to_sym)}, { :class => '#{parent} #{element[:class]}',
       :id => '#{element[:id]}', :disabled => #{disabled}})"
-      content_desc = if current_account.automation_revamp_enabled? && AUTOMATION_ROLES.include?(element[:id].to_sym)
+      content_desc = if AUTOMATION_ROLES.include?(element[:id].to_sym)
                        AUTOMATION_MANAGE_ROLE_MAP[element[:id].to_sym]
                      else
                        element[:id]

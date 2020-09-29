@@ -158,8 +158,6 @@ module Redis::Keys::Others
   FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED = "FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED".freeze
   CANNED_FORMS                            = "CANNED_FORMS:%<account_id>s".freeze
   SANDBOX_DIFF_RATE_LIMIT                 = "SANDBOX_DIFF_RATE_LIMIT".freeze
-  # Languages available for falcon signup
-  FALCON_ENABLED_LANGUAGES                = "FALCON_ENABLED_LANGUAGES".freeze
   # Search Service Keys
   SEARCH_SERVICE_SIGNUP                   = "SEARCH_SERVICE_SIGNUP".freeze
   #Dashboard v2 caching keys
@@ -236,8 +234,6 @@ module Redis::Keys::Others
   BULK_OPERATIONS_RATE_LIMIT_NEXT_RUN_AT = 'BULK_OPERATIONS_RATE_LIMIT_NEXT_RUN_AT:%{class_name}'.freeze
   INDIVIDUAL_BATCH_SIZE_KEY = 'INDIVIDUAL_BATCH_SIZE:%{class_name}'.freeze
 
-  # Automation revamp - temporary
-  ENABLE_AUTOMATION_REVAMP = 'ENABLE_AUTOMATION_REVAMP'.freeze
   ENABLE_NEXT_RESPONSE_SLA = 'ENABLE_NEXT_RESPONSE_SLA'.freeze
   ENABLE_THANK_YOU_DETECTOR = 'ENABLE_THANK_YOU_DETECTOR'.freeze
   FSM_GA_LAUNCHED = 'FSM_GA_LAUNCHED'.freeze

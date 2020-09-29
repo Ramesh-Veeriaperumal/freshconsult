@@ -531,6 +531,7 @@ module Ember
 
         draft_attachment = article.draft.attachments.build(file_props)
         draft_attachment.save
+        Account.any_instance.stubs(:kb_increased_file_limit_enabled?).returns(false)
 
         session = Faker::Name.name
         stub_version_session(session) do
@@ -545,6 +546,7 @@ module Ember
       ensure
         article.attachments.delete(attachment)
         article.draft.attachments.delete(draft_attachment)
+        Account.any_instance.unstub(:kb_increased_file_limit_enabled?)
       end
 
       private

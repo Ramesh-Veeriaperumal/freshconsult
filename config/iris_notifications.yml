@@ -1,5 +1,5 @@
 defaults: &defaults
-  shared_secret: "iris&arke"
+  jwt_secret: "iris&arke"
   service_name: "freshdesk-dev"
   socketioUrl: https://dzvv3qu02a8s8.cloudfront.net/socket.io-1.0.js
   rtsUrl: https://dzvv3qu02a8s8.cloudfront.net/rts-1.0.js
