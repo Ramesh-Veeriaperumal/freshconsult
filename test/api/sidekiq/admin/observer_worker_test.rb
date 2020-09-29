@@ -35,12 +35,10 @@ module Admin
         create_test_account if Account.first.nil?
         Account.stubs(:current).returns(Account.first)
         @account = Account.first
-        @account.launch :automation_revamp
       end
 
       def teardown
         Account.unstub(:current)
-        @account.rollback :automation_revamp
         super
       end
 
@@ -57,7 +55,6 @@ module Admin
             options[:operators].each do |operator|
               define_method "test_observer_condition_#{field_name}_#{operator}" do
                 Rails.logger.debug "start test_observer_condition_#{field_name}_#{operator}"
-                Account.current.launch :automation_revamp
                 Account.current.add_feature :shared_ownership
                 initialize_internal_agent_with_default_internal_group
                 if CUSTOM_FIELD_TYPES.include?(operator_type)

@@ -5,16 +5,12 @@ module FalconHelperMethods
     "parent.location.href='#{root_path}'"
   end
 
-  def available_mint_locales
-    @mint_langs ||= fetch_lcached_set(FALCON_ENABLED_LANGUAGES, 5.minutes)
-  end
-
   def mint_locale_names
-    @mint_langs_name ||= I18n.available_locales_with_name.select {|loc| available_mint_locales.include?(loc[1].to_s)}
+    @mint_langs_name ||= I18n.available_locales_with_name
   end
 
   def account_and_user_in_mint_supported_langs?
-    mint_langs = available_mint_locales
+    mint_langs = I18n.available_locales_with_name.collect{|loc| loc[1].to_s}
     mint_langs.include?(current_account.language) && current_user && mint_langs.include?(current_user.language)
   end
 

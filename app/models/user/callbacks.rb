@@ -33,7 +33,6 @@ class User < ActiveRecord::Base
   before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
   before_save :restrict_domain, if: :email_id_changed?
   before_save :backup_customer_id
-  before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
   before_save :persist_updated_at
 
 
@@ -120,15 +119,6 @@ class User < ActiveRecord::Base
     if((!company_client_manager? && !privilege?(:contractor)) || (abilities.length == 1))
       destroy_user_roles
     end
-  end
-
-  def falcon_ui_applicable?
-    helpdesk_agent_changed? && agent?
-  end
-
-  def set_falcon_ui_preference
-    new_pref = {:falcon_ui => get_all_members_in_a_redis_set(FALCON_ENABLED_LANGUAGES).include?(language)}
-    self.merge_preferences = { :agent_preferences => new_pref }
   end
 
   def update_agent_default_preferences

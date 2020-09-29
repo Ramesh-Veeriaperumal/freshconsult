@@ -23,6 +23,18 @@ class Account < ActiveRecord::Base
     settings_hash && settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end
 
+  def enabled_admin_settings
+    features_list.select { |feature| admin_setting_for_account?(feature) }
+  end
+
+  def enabled_internal_settings
+    features_list.select { |feature| internal_setting_for_account?(feature) }
+  end
+
+  def enabled_features
+    features_list.select { |feature| !AccountSettings::SettingsConfig.keys.include?(feature.to_s) }
+  end
+
   # Move feature dependency check inside the valid_setting once, all Settings migrate to bitmap from LP
   def enable_setting(setting)
     if valid_setting(setting)

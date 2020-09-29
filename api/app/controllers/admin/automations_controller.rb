@@ -128,10 +128,6 @@ class Admin::AutomationsController < ApiApplicationController
       Admin::AutomationConstants.to_s.freeze
     end
 
-    def launch_party_name
-      FeatureConstants::AUTOMATION_REVAMP
-    end
-
     def check_privilege
       success = super
       return unless success
