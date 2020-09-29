@@ -5,7 +5,7 @@ module ModelsSolutionsTestHelper
   include SolutionBuilderHelper
 
   def create_portal(params = {})
-    @account.launch(:skip_portal_cname_chk)
+    @account.enable_setting(:skip_portal_cname_chk)
     test_portal = FactoryGirl.build(:portal,
       name: params[:portal_name] || Faker::Name.name,
       portal_url: params[:portal_url] || '',
