@@ -4,6 +4,11 @@ require_relative '../../../api/test_helper'
 class Admin::EmailConfigsControllerTest < ActionController::TestCase
   include EmailConfigsTestHelper
 
+  def test_index
+    get :index
+    assert_response 200
+  end
+
   def test_redirect_for_google_signin
     email_config = create_email_config
     get :google_signin, controller_params(id: email_config.id, support_email: email_config.to_email, type: 'edit', access_type: 'outgoing')

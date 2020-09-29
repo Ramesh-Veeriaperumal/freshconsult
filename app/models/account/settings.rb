@@ -2,9 +2,9 @@
 
 class Account < ActiveRecord::Base
 
-  AccountSettings::SettingsConfig.each_key do |setting|
+  AccountSettings::SettingsConfig.each do |setting, config|
     define_method "#{setting}_enabled?" do
-      has_feature?(AccountSettings::SettingsConfig[setting.to_sym][:feature_dependency]) && has_feature?(setting.to_sym)
+      has_feature?(config[:feature_dependency]) && has_feature?(setting.to_sym)
     end
   end
 
