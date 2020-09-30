@@ -83,6 +83,7 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
   def test_archive_ticket_conversations_with_freshcaller_call
     Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
     archive_ticket = create_archive_ticket({ freshcaller_call: true })
+    Account.current.add_feature(:archive_tickets)
     get :ticket_conversations, controller_params(id: archive_ticket.display_id)
     archive_ticket.archive_notes.reload
     assert_response 200
