@@ -164,6 +164,7 @@ module Ember
             delete :destroy, controller_params(version: 'private', id: 'field_service_management')
             assert_equal false, Account.current.field_service_management_enabled?
 
+            Account.stubs(:current).returns(Account.first)
             post :create, construct_params({ version: 'private' }, name: 'field_service_management')
             assert_response 204
             Account.reset_current_account
