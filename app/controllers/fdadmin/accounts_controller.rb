@@ -57,7 +57,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
     account_summary[:spam_details] = ehawk_spam_details
-    account_summary[:disable_emails] = account.launched?(:disable_emails)
+    account_summary[:disable_emails] = account.disable_emails_enabled?
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
     account_summary[:account_cancellation_requested] = account.account_cancellation_requested?
     account_summary[:clone_status] = account.account_additional_settings.clone_status

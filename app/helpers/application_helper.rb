@@ -1768,7 +1768,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   #Checks if Email was disabled by Freshpipe for running migrations
   def check_email_disabled_by_pipe
-    if current_account.launched?(:disable_emails)
+    if current_account.disable_emails_enabled?
       return content_tag('div', "#{t('freshpipe_email_disabled')}".html_safe, :class =>
         "alert-message block-message warning full-width")
     end

@@ -420,6 +420,7 @@
       :stop_contacts_count_query: 416
       :force_index_tickets: 417
       :es_v2_splqueries: 418
+      :disable_emails: 419
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -508,3 +509,4 @@
   :stop_contacts_count_query: false
   :force_index_tickets: false
   :es_v2_splqueries: false
+  :disable_emails: false
