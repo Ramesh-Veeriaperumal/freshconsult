@@ -536,7 +536,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
   def test_supress_logs_for_account_action_with_log_enabled_for_account
     Rails.env.stubs(:production?).returns(true)
-    Account.current.launch(:disable_supress_logs)
+    Account.any_instance.stubs(:disable_supress_logs_enabled?).returns(true)
     current_log_level = ActiveRecord::Base.logger.level
     get :account, controller_params(version: 'private')
     assert_response 200
@@ -544,7 +544,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_equal ActiveRecord::Base.logger.level, current_log_level
   ensure
     Rails.env.unstub(:production?)
-    Account.current.rollback(:disable_supress_logs)
+    Account.any_instance.unstub(:disable_supress_logs_enabled?)
   end
 
   def test_account_with_manual_dkim_configuration_banner
@@ -1055,7 +1055,9 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
     parsed_response = parse_response response.body
-    assert_equal false, parsed_response['config']['email']['mailbox_reauth_required']
+    error_type = Account.current.all_email_configs.where(id: email_config.id).first.smtp_mailbox.error_type
+    assert_equal OAUTH_MIGRATION_ERROR, error_type
+    assert_equal true, parsed_response['config']['email']['mailbox_reauth_required']
     assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
   ensure
     Account.any_instance.unstub(:features_included?)
@@ -1086,7 +1088,9 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
     parsed_response = parse_response response.body
-    assert_equal false, parsed_response['config']['email']['mailbox_reauth_required']
+    error_type = Account.current.all_email_configs.where(id: email_config.id).first.smtp_mailbox.error_type
+    assert_equal OAUTH_MIGRATION_ERROR, error_type
+    assert_equal true, parsed_response['config']['email']['mailbox_reauth_required']
     assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
   ensure
     Account.any_instance.unstub(:features_included?)
@@ -1107,6 +1111,8 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
     parsed_response = parse_response response.body
+    error_type = Account.current.all_email_configs.where(id: email_config.id).first.smtp_mailbox.error_type
+    assert_equal OAUTH_MIGRATION_ERROR, error_type
     assert_equal true, parsed_response['config']['email']['mailbox_reauth_required']
     assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
   ensure
@@ -1129,6 +1135,8 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
     parsed_response = parse_response response.body
+    error_type = Account.current.all_email_configs.where(id: email_config.id).first.imap_mailbox.error_type
+    assert_equal OAUTH_MIGRATION_ERROR, error_type
     assert_equal true, parsed_response['config']['email']['mailbox_reauth_required']
     assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
   ensure
@@ -1150,6 +1158,8 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
     parsed_response = parse_response response.body
+    error_type = Account.current.all_email_configs.where(id: email_config.id).first.imap_mailbox.error_type
+    assert_equal OAUTH_MIGRATION_ERROR, error_type
     assert_equal true, parsed_response['config']['email']['mailbox_reauth_required']
     assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
   ensure
@@ -1170,6 +1180,8 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
     parsed_response = parse_response response.body
+    error_type = Account.current.all_email_configs.where(id: email_config.id).first.smtp_mailbox.error_type
+    assert_equal OAUTH_MIGRATION_ERROR, error_type
     assert_equal true, parsed_response['config']['email']['mailbox_reauth_required']
     assert_equal false, parsed_response['config']['email']['custom_mailbox_error']
   ensure

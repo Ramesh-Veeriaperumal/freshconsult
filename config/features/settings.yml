@@ -15,19 +15,11 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
-  :personalized_email_replies:
+  :fetch_ticket_from_ref_first:
     default: false
-    internal: false
+    internal: true
     feature_dependency: :basic_settings_feature
-  :compose_email:
-    default: false
-    internal: false
-    feature_dependency: :basic_settings_feature
-  :reply_to_based_tickets:
-    default: true
-    internal: false
-    feature_dependency: :basic_settings_feature
-  :disable_agent_forward:
+  :skip_ticket_threading:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature

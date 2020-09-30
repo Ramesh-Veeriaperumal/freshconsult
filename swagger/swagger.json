@@ -31782,6 +31782,13 @@
               "type": "integer",
               "format": "int64",
               "description": "Optional reference to agent_status."
+            },
+            "updated_at": {
+              "description": "Represents the timestamp of last successful status update in UTC.",
+              "type": "string",
+              "format": "date-time",
+              "readOnly": true,
+              "example": "2020-01-01T04:30:00Z"
             }
           }
         },
