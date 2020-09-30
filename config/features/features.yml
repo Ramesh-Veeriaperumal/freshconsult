@@ -316,7 +316,7 @@
       :new_es_api: 312
       :untitled_feature_3_dependency_toggle: 313
       :basic_settings_feature: 314
-      :untitled_feature_1_dependency_toggle: 315
+      :branding_feature: 315
       :untitled_feature_2_dependency_toggle: 316
       :untitled_setting_1: 317
       :untitled_setting_2: 318
@@ -423,7 +423,6 @@
       :disable_emails: 419
 :selectable_features:
   :redis_display_id: true
-  :branding: true
   :es_v2_writes: true
   :gamification_enable: false
   :parent_child_infra: false

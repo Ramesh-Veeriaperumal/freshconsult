@@ -55,7 +55,7 @@ class Account < ActiveRecord::Base
     :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
     :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas,
     :layout_customization, :advanced_reporting, :timesheets, :multiple_emails,
-    :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding,
+    :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
     :ticket_activity_export, :caching, :private_inline, :collaboration, :hipaa,
     :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
