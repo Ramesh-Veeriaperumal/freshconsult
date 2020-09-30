@@ -32,7 +32,8 @@ class SubscriptionAnnouncement < ActiveRecord::Base
  	scope	:latest_product_notifications, -> { product_notifications.limit(NOTIFICATION_LIMIT) }
 
   def self.current_announcements(hide_time)
-  	return unless Account.current.launched?(:custom_product_notification)
+    return unless Account.current.custom_product_notification_enabled?
+
     where([ "starts_at <= UTC_TIMESTAMP() AND ends_at >= UTC_TIMESTAMP() 
  			and notification_type = ? ", NOTIFICATION_TYPE_BY_TOKEN[:maintenance] ]).scoping do
       hide_time.nil? ? last : where(["updated_at > ? OR starts_at > ?", hide_time, hide_time]).last

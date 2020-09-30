@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
     :sso_login_expiry_limitation, :old_link_back_url_validation, :stop_contacts_count_query,
     :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
-    :skip_portal_cname_chk, :ticket_source_revamp,
+    :skip_portal_cname_chk, :ticket_source_revamp, :custom_product_notification,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
@@ -58,7 +58,7 @@ class Account < ActiveRecord::Base
     :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
     :ticket_activity_export, :caching, :private_inline, :collaboration, :hipaa,
-    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
+    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :custom_product_notification,
     :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
     :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary,
@@ -87,6 +87,7 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :custom_product_notification,
     :allow_huge_ccs,
     :new_es_api,
     :filter_factory,
@@ -484,6 +485,10 @@ class Account < ActiveRecord::Base
 
   def stop_contacts_count_query_enabled?
     launched?(:stop_contacts_count_query)
+  end
+
+  def custom_product_notification_enabled?
+    launched?(:custom_product_notification)
   end
 
   def gamification_perf_enabled?
