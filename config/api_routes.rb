@@ -1029,6 +1029,7 @@ Helpkit::Application.routes.draw do
       collection do
         put :update_multiple
         get :verify_agent_privilege
+        post :sync
       end
     end
     match '/notes/sync', to: 'channel/v2/conversations#sync', via: [:post]
