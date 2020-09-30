@@ -20,6 +20,7 @@ module Admin::EmailConfig::Imap
       565 => 'bye_response',
       566 => 'tcp_socket',
       569 => 'io_error',
+      601 => 'oauth_migration_required'
   }
   UNKNOWN_ERROR_MAP = {
       1 => 'mailbox_suspended',
