@@ -8,8 +8,9 @@ class Account < ActiveRecord::Base
     end
   end
 
+  # Redis feature check can be removed once Redis key cleanup is done
   def compose_email_enabled?
-    !(basic_settings_feature_enabled? && has_feature?(:compose_email)) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+    !has_feature?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   # Need to modify methods when we move all LPs to Bitmaps and validate settings throw error for invalid settings

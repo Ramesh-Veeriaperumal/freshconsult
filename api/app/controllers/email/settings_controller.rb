@@ -38,22 +38,15 @@ module Email
 
       def toggle_compose_email_setting(feature, enable)
         if enable != current_account.compose_email_enabled?
-          if enable
-            current_account.disable_setting(feature)
-          else
-            current_account.enable_setting(feature)
-            $redis_others.perform_redis_op('srem', COMPOSE_EMAIL_ENABLED, current_account.id)
-          end
+          enable ? current_account.disable_setting(feature) : current_account.enable_setting(feature)
+          # remove the below once the migration is done and redis key is removed
+          $redis_others.perform_redis_op('srem', COMPOSE_EMAIL_ENABLED, current_account.id) unless enable
         end
       end
 
       def toggle_disable_email_setting(feature, enable)
         if enable == current_account.disable_agent_forward_enabled?
-          if enable
-            current_account.disable_setting(feature)
-          else
-            current_account.enable_setting(feature)
-          end
+          enable ? current_account.disable_setting(feature) : current_account.enable_setting(feature)
         end
       end
 
@@ -76,10 +69,10 @@ module Email
 
       def generate_view_hash
         @item = {
-            personalized_email_replies: current_account.personalized_email_replies_enabled?,
-            create_requester_using_reply_to: current_account.reply_to_based_tickets_enabled?,
-            allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
-            original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
+          personalized_email_replies: current_account.personalized_email_replies_enabled?,
+          create_requester_using_reply_to: current_account.reply_to_based_tickets_enabled?,
+          allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
+          original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
         }
       end
   end
