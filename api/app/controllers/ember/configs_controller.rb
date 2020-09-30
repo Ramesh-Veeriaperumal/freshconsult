@@ -42,7 +42,7 @@ module Ember
           firstName: current_user.name,
           email: current_user.email,
           timezone: TimeZone.fetch_tzinfoname,
-          language: current_user.language || current_account.language,
+          language: standard_lang_code(current_user.language || current_account.language),
           page: LOAD_TYPE,
           tenantId: current_account.id,
           portalUrl: "#{current_account.url_protocol}://#{current_account.full_domain}",
@@ -78,6 +78,10 @@ module Ember
 
       def feature
         ConfigsConstants::CONFIG_FEATURES[params[:id].to_sym]
+      end
+
+      def standard_lang_code(language)
+        Languages::Constants::ANALYTICS_LANG_CODES[language.to_sym] || language
       end
   end
 end
