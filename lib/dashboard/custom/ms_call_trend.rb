@@ -2,7 +2,6 @@
 
 class Dashboard::Custom::MSCallTrend < Dashboards
   CONFIG_FIELDS = [:view, :queue_id, :time_type].freeze
-  CACHE_EXPIRY = 60
   FRESHCALLER_VIEWS = {
     1 => 'Total calls',
     2 => 'Total incoming calls',

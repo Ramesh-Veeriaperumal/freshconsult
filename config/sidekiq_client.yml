@@ -413,6 +413,7 @@ defaults: &defaults
     - [retry_observer]
     - [freddy_consumed_session_queue]
     - [channel_reply_messages]
+    - [link_omni_account]
 
 development:
   <<: *defaults

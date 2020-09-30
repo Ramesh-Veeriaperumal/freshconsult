@@ -2076,5 +2076,290 @@ module Ember
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
     end
+
+    def test_dashboard_crud_flow_with_freshchat_scorecard_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(11, view: 1, source: 'freshchat')
+      dashboard_object.add_widget(11, view: 1, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 201
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, view: -2 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, view: 2 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshchat_scorecard_widget_with_invalid_view
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(11, view: -1, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_dashboard_crud_flow_with_freshchat_bar_chart_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(12, group_ids: [0], representation: 0, source: 'freshchat')
+      dashboard_object.add_widget(12, group_ids: [0], representation: 0, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 201
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, representation: -1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, representation: 1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshchat_bar_chart_widget_with_invalid_group_ids
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(12, representation: 0, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshchat_bar_chart_widget_with_invalid_representation
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(12, group_ids: [0], representation: 3, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_dashboard_crud_flow_with_freshchat_availability_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(13, group_ids: [0], source: 'freshchat')
+      dashboard_object.add_widget(13, group_ids: [0], source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      assert_response 201
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, group_ids: [] }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, group_ids: [0] }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshchat_availability_widget_with_invalid_group_ids
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(13, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_dashboard_crud_flow_with_freshchat_csat_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(14, group_ids: [0], date_type: 1, source: 'freshchat')
+      dashboard_object.add_widget(14, group_ids: [0], date_type: 1, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      assert_response 201
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, date_type: -1 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, group_ids: [0] }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshchat_csat_widget_with_invalid_group_ids
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(14, date_type: 1, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshchat_csat_widget_with_invalid_date_type
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(14, group_ids: [1], date_type: -1, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_dashboard_crud_flow_with_freshchat_time_trend_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
+      dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      assert_response 201
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { widgets: [{ id: widget_id, computation: -3 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, computation: 2 }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+      delete :destroy, controller_params({ version: 'private', id: dashboard_id }, false)
+      assert_response 204
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
+
+    def test_create_dashboard_with_freshchat_time_trend_widget_with_invalid_group_ids
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 2, computation: 3, date_range: 30, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshchat_time_trend_widget_with_invalid_metric
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: -2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshchat_time_trend_widget_with_invalid_computation
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 2, computation: -3, group_ids: [1], date_range: 30, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_create_dashboard_with_freshchat_time_trend_widget_with_invalid_date_range
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: -30, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
   end
 end

@@ -42,6 +42,7 @@ class SidekiqConfigStandard
     # falcon common sidekiq
     realtime                 = ['realtime']
     central_realtime         = ['central_realtime']
+
     # new classification
     occasional               = ['occasional']
     frequent                 = ['frequent']

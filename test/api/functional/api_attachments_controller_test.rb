@@ -3,6 +3,8 @@ class ApiAttachmentsControllerTest < ActionController::TestCase
   include AttachmentsTestHelper
   include TicketHelper
   include GroupHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   def wrap_cname(params)
     { attachment: params }
@@ -94,8 +96,12 @@ class ApiAttachmentsControllerTest < ActionController::TestCase
 
   def test_destroy_user_draft_attachment
     attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
+    user_draft_redis_key = format(MULTI_FILE_ATTACHMENT, date: Time.now.utc.strftime('%Y-%m-%d'))
+    member_value = "#{@account.id}:#{attachment.id}"
+    add_member_to_redis_set(user_draft_redis_key, member_value)
     delete :destroy, controller_params(id: attachment.id)
     assert_response 204
+    assert_equal false, get_all_members_in_a_redis_set(user_draft_redis_key).include?(member_value)
   end
 
   def test_destroy_ticket_attachment
