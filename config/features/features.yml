@@ -438,7 +438,11 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
+  :personalized_email_replies: false
+  :reply_to_based_tickets: true
   :freshfone: false
+  :disable_agent_forward: false
+  :compose_email: false
   :enable_multilingual: false
   :freshfone_onboarding: false
   :archive_tickets: false
@@ -502,8 +506,6 @@
   :solutions_agent_metrics: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
-  :fetch_ticket_from_ref_first: false
-  :skip_ticket_threading: false
   :whatsapp_channel: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
