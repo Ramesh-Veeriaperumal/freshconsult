@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     :id_for_choices_write, :fluffy, :fluffy_email, :fluffy_email_signup, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
-    :freshid_org_v2, :hide_agent_login,
+    :freshid_org_v2, :hide_agent_login, :disable_supress_logs,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
@@ -43,7 +43,7 @@ class Account < ActiveRecord::Base
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
     :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :disable_freshchat, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
-    :feedback_widget_captcha, :gamification_perf
+    :feedback_widget_captcha, :gamification_perf, :force_index_tickets
   ].freeze
 
   BITMAP_FEATURES = [
@@ -65,7 +65,7 @@ class Account < ActiveRecord::Base
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
-    :canned_forms, :customize_table_view, :solutions_templates,
+    :canned_forms, :customize_table_view, :solutions_templates, :disable_supress_logs,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
@@ -81,16 +81,17 @@ class Account < ActiveRecord::Base
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
     :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel, :feedback_widget_captcha,
-    :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :disable_emails
+    :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :disable_emails
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :disable_supress_logs,
     :new_es_api, :filter_factory,
     :solutions_agent_metrics,
     :skip_invoice_due_warning, :allow_wildcard_ticket_create,
     :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query,
-    :disable_emails
+    :force_index_tickets, :disable_emails
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -464,6 +465,10 @@ class Account < ActiveRecord::Base
     launched?(:supervisor_contact_field)
   end
 
+  def force_index_tickets_enabled?
+    launched?(:force_index_tickets)
+  end
+
   def disable_freshchat_enabled?
     launched?(:disable_freshchat)
   end
@@ -482,6 +487,10 @@ class Account < ActiveRecord::Base
 
   def feedback_widget_captcha_enabled?
     launched?(:feedback_widget_captcha)
+  end
+
+  def disable_supress_logs_enabled?
+    launched?(:disable_supress_logs)
   end
 
   def skip_portal_cname_chk_enabled?
