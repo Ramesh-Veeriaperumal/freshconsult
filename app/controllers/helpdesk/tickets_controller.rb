@@ -1557,11 +1557,11 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_email_params
     @email_config = current_account.primary_email_config
-    @reply_emails = current_account.personalized_email_replies_enabled? ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
     @ticket.escape_liquid_attributes = true
     @signature = current_user.agent.parsed_signature('ticket' => @ticket, 'helpdesk_name' => @ticket.account.helpdesk_name)
-    @selected_reply_email = current_account.personalized_email_replies_enabled? ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+    @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
 
   def load_conversation_params

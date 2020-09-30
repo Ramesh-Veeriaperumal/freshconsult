@@ -417,6 +417,7 @@
       :disable_archive: 413
       :gamification_perf: 414
       :skip_portal_cname_chk: 415
+      :stop_contacts_count_query: 416
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -436,6 +437,10 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
+  :personalized_email_replies: false
+  :reply_to_based_tickets: true
+  :disable_agent_forward: false
+  :compose_email: false
   :enable_multilingual: false
   :archive_tickets: false
   :call_quality_metrics: false
@@ -486,8 +491,6 @@
   :solutions_agent_metrics: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
-  :fetch_ticket_from_ref_first: false
-  :skip_ticket_threading: false
   :whatsapp_channel: false
   :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
@@ -498,3 +501,4 @@
   :skip_portal_cname_chk: false
   :disable_archive: false
   :gamification_perf: false
+  :stop_contacts_count_query: false

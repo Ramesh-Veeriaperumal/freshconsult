@@ -172,7 +172,7 @@ class ApiConversationsControllerTest < ActionController::TestCase
 
   def test_forward_without_from_email
     # Without personalized_email_replies
-    @account.disable_setting(:personalized_email_replies)
+    @account.features.personalized_email_replies.destroy
     @account.reload
     Account.current.reload
 
@@ -188,7 +188,7 @@ class ApiConversationsControllerTest < ActionController::TestCase
 
   def test_forward_without_from_email_and_personalized_email_replies
     # WITH personalized_email_replies
-    @account.enable_setting(:personalized_email_replies)
+    @account.features.personalized_email_replies.create
     @account.reload
     Account.current.reload
 

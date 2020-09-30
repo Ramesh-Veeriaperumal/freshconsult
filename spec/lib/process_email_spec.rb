@@ -26,7 +26,7 @@ RSpec.describe Helpdesk::ProcessEmail do
 	end
 
 	after(:all) do
-		restore_default_setting("reply_to_based_tickets")
+		restore_default_feature("reply_to_based_tickets")
 	end
 
 	#All exception handling has been left out except attachment
@@ -175,7 +175,7 @@ RSpec.describe Helpdesk::ProcessEmail do
   	end
 
   	it "with multiple reply_to emails without the feature" do
-  		@account.disable_setting(:reply_to_based_tickets)
+  		@account.features.reply_to_based_tickets.destroy
 			a = []
 			5.times do
 				a << Faker::Internet.email
@@ -186,17 +186,17 @@ RSpec.describe Helpdesk::ProcessEmail do
 			ticket_incremented?(@ticket_size)
 			@account.tickets.last.requester.email.downcase.should eql email[:from]
 			ticket.cc_email_hash[:cc_emails].should_not include(*a[1..-1])
-  		@account.enable_setting(:reply_to_based_tickets)
+  		@account.features.reply_to_based_tickets.create
   	end
 
   	it "non Reply_to based" do
   		email = new_email({:email_config => @account.primary_email_config.to_email})
-  		@account.disable_setting(:reply_to_based_tickets)
+  		@account.features.reply_to_based_tickets.destroy
 			Helpdesk::ProcessEmail.new(email).perform
 			ticket = @account.tickets.last
 			ticket_incremented?(@ticket_size)
   		@account.tickets.last.requester.email.downcase.should eql email[:from].downcase
-			@account.enable_setting(:reply_to_based_tickets)
+			@account.features.reply_to_based_tickets.create
 			@account.reload
 		end
 
@@ -362,7 +362,7 @@ RSpec.describe Helpdesk::ProcessEmail do
 		end
     
 	    after(:all) do
-	      restore_default_setting("reply_to_based_tickets")
+	      restore_default_feature("reply_to_based_tickets")
 	    end
 	end
 
@@ -397,7 +397,7 @@ RSpec.describe Helpdesk::ProcessEmail do
 		end
     
     after(:all) do
-      restore_default_setting("reply_to_based_tickets")
+      restore_default_feature("reply_to_based_tickets")
     end
 	end
 
@@ -676,7 +676,7 @@ RSpec.describe Helpdesk::ProcessEmail do
     @agent = add_agent_to_account(@account, {:name => "Harry Potter", :email => Faker::Internet.email, :active => true})
 		clear_email_config
 		@comp = create_company
-		restore_default_setting("reply_to_based_tickets")
+		restore_default_feature("reply_to_based_tickets")
   end
 
 end

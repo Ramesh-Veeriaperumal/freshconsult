@@ -137,12 +137,12 @@ class Account < ActiveRecord::Base
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false,
-    :id_less_tickets => false,
+    :gamification_enable => false, :personalized_email_replies => false,
+    :id_less_tickets => false, :reply_to_based_tickets => true,
     :collision_socket => false,
-    :call_quality_metrics => false,
+    :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false,
-    :marketplace => false, :archive_tickets => false,
+    :marketplace => false, :archive_tickets => false, :compose_email => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
     :cobrowsing => false,
     :threading_without_user_check => false,
@@ -193,7 +193,6 @@ class Account < ActiveRecord::Base
     es_v2_splqueries: false, suggest_tickets: false,
     feedback_widget_captcha: false, es_multilang_solutions: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
-    skip_ticket_threading: false,
     kbase_spam_whitelist: false,
     whitelist_supervisor_sla_limitation: false,
     service_writes: false, service_reads: false,
@@ -204,7 +203,7 @@ class Account < ActiveRecord::Base
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
     freshid: false,
-    incoming_attachment_limit_25: false, fetch_ticket_from_ref_first: false, outgoing_attachment_limit_25: false,
+    incoming_attachment_limit_25: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
     auto_complete_off: false, freshworks_omnibar: false,
     new_ticket_recieved_metric: false, es_msearch: true,
