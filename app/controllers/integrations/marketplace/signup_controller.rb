@@ -103,8 +103,7 @@ class Integrations::Marketplace::SignupController < ApplicationController
   end
 
   def build_signup_param
-    params[:signup] = {}
-    params[:signup][:direct_signup] = true
+    params[:signup] = { direct_signup: true }
     [:user, :account].each do |param|
       params[param].each do |key, value|
         params[:signup]["#{param}_#{key}"] = value
