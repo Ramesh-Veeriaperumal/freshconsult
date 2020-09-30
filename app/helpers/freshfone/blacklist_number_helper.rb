@@ -1,2 +1,0 @@
-module Freshfone::BlacklistNumberHelper
-end

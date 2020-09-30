@@ -39,7 +39,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"mobile/ticket"
     resource :"mobile/automation"
     resource :"mobile/notification"
-    resource :"mobile/freshfone"
     resource :"mobile/setting"
     resource :"mobile_app_download"
     # Social - Twitter
@@ -73,29 +72,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used by API V2 Search
     resource :"api_search/ticket", :only => [:index]
-
-    #Freshfone
-    resource :"freshfone", :only => [:dashboard_stats, :dial_check, :create_ticket, :create_note]
-    resource :"freshfone/user"
-    resource :"freshfone/call", :only => [:caller_data, :inspect_call, :verify, :caller_recent_tickets, :trial_warnings, :agent_leg ]
-    resource :"freshfone/conference", :only => [:initiate, :notify ]
-    resource :"freshfone/agent_leg", :only => [:agent_response, :disconnect_browser_agent, :remove_notification_recovery]
-    resource :"freshfone/conference_transfer", :only => [:initiate_transfer, :complete_transfer, :transfer_success, :cancel_transfer, :resume_transfer, :disconnect_agent]
-    resource :"freshfone/agent_conference", :only => [:add_agent, :success, :cancel]
-    resource :"freshfone/warm_transfer", :only => [:initiate, :unhold, :cancel, :resume]
-    resource :"freshfone/conference_call", :only => [:load_notable, :save_notable, :save_call_quality_metrics, :wrap_call]
-    resource :"freshfone/hold", :only => [ :add, :remove ]
-    resource :"freshfone/call_history"
-    resource :"freshfone/autocomplete"
-    resource :"search/v2/freshfone/autocomplete"
-    resource :"freshfone/call_transfer", :only => [:initiate, :available_agents, :available_external_numbers]
-    resource :"freshfone/device", :only => [:recorded_greeting]
-    resource :"freshfone/queue", :only => [:bridge]
-    resource :"freshfone/addres"
-    resource :"freshfone/caller"
-    resource :"freshfone/caller_id"
-    resource :"freshfone/dashboard", :only => [:dashboard_stats, :calls_limit_notificaiton, :mute]
-
+    
     resource :"helpdesk/conversation", :only => [:note, :full_text, :broadcast]
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
@@ -161,7 +138,6 @@ Authority::Authorization::PrivilegeList.build do
     # Agent who has access to ticket create will obviously know the custom field names.
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index]
-    resource :"api_freshfone/call_history", :only => [:export, :export_status]
     resource :"announcement", :only => [:index, :account_login_url]
     resource :"email_preview"
     resource :"doorkeeper/authorize"
@@ -494,7 +470,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"reports/helpdesk_report"
     resource :"reports/survey_report"
     resource :"reports/custom_survey_report"
-    resource :"reports/freshfone/summary_report"
     resource :"reports/freshchat/summary_report"
     resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter, :time_entries_list]
     resource :"reports/report_filter"
@@ -521,7 +496,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"reports/v2/tickets/report", :only => [:configure_export, :export_tickets, :export_report, :email_reports,  :download_file]
     resource :"reports/timesheet_report", :only => [:export_csv, :generate_pdf, :export_pdf]
     resource :"reports/freshchat/summary_report", :only => [:export_pdf]
-    resource :"reports/freshfone/summary_report", :only => [:export_pdf, :export_csv]
   end
 
   # ************** ADMIN **************************
@@ -621,9 +595,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]
     resource :"integrations/fullcontact", :only => [:new, :edit, :update]
-    resource :"admin/freshfone"
-    resource :"admin/freshfone/number"
-    resource :"freshfone/ivr"
     resource :"admin/freshcaller"
     resource :"admin/freshcaller/signup"
     resource :"admin/gamification"
@@ -660,7 +631,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"doorkeeper/authorization"
     resource :"admin/ecommerce/account",:only => [:index]
     resource :"admin/ecommerce/ebay_account"
-    resource :"freshfone/dashboard", :only => [:index]
     resource :"integrations/marketplace_app"
     resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
     resource :"integrations/microsoft_team", :only => [:oauth, :install]
@@ -696,7 +666,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/zen_import"
     # new item day passes && getting started
     resource :"admin/day_pass"
-    resource :"admin/freshfone/credit"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
     resource :"rake_task", only: [:run_rake_task]

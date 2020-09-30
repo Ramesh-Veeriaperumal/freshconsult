@@ -89,10 +89,6 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      match '/freshfone_admin' => 'freshfone_subscriptions#index', :as => :freshfone
-
-      match '/freshfone_admin/stats' => 'freshfone_stats#index', :as => :freshfone_stats
-
       resources :spam_watch, :only => :index
       match ':shard_name/spam_watch/:user_id/:type' => 'spam_watch#spam_details'
 
@@ -184,11 +180,6 @@ Helpkit::Application.routes.draw do
     match '/support/search/topics/suggest',    to: 'support/search_v2/spotlight#suggest_topic',     via: :get
 
     match 'support/search/articles/:article_id/related_articles', to: 'support/search_v2/solutions#related_articles', via: :get
-
-    # Freshfone paths
-    match '/freshfone/autocomplete/requester_search', to: 'search/v2/freshfone/autocomplete#contact_by_numbers',  via: :get
-    match '/freshfone/autocomplete/customer_phone_number', to: 'search/v2/freshfone/autocomplete#customer_by_phone',  via: :get
-    match '/freshfone/autocomplete/customer_contact', to: 'search/v2/freshfone/autocomplete#contact_by_numberfields',  via: :get
   end
 
   root :to => 'home#index'
@@ -430,282 +421,6 @@ Helpkit::Application.routes.draw do
   match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
   match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
   match '/download_file/:source/:token' => 'admin/data_export#download', :as => :download_file
-  namespace :freshfone do
-    resources :ivrs do
-      member do
-        post :activate
-        post :deactivate
-      end
-    end
-
-    resources :call do
-      collection do
-        post :status
-        post :in_call
-        post :direct_dial_success
-        get :inspect_call
-        get :caller_data
-        get :trial_warnings
-        post :external_transfer_success
-        post :call_transfer_success
-        get :caller_recent_tickets
-      end
-    end
-
-    resources :conference do
-      collection do
-        get  :initiate
-        post :wait
-        post :agent_wait
-        post :incoming_agent_wait
-        post :outgoing_accepted
-        post :pinged_agent_response
-        post :connect_incoming_caller
-        post :complete_customer_wait_conference
-        post :client_accept
-        post :connect_agent
-      end
-    end
-
-    resources :agent_leg do
-      collection do
-        post :disconnect_browser_agent
-        put :agent_response
-        post :remove_notification_recovery
-      end
-    end
-
-    resources :conference_transfer do
-      collection do
-        get  :initiate_transfer
-        post :transfer_agent_wait
-        get  :complete_transfer
-        post :transfer_success
-        post :transfer_source_redirect
-        post :cancel_transfer
-        post :resume_transfer
-        get :disconnect_agent
-      end
-    end
-
-    resources :warm_transfer do
-      collection do
-        post :initiate
-        post :success
-        post :status
-        post :redirect_source_agent
-        post :redirect_customer
-        post :join_agent
-        post :transfer_agent_wait
-        post :unhold
-        post :wait
-        post :quit
-        post :cancel
-        post :resume
-        post :initiate_custom_forward
-        post :process_custom_forward
-      end
-    end
-
-    resources :agent_conference do
-      collection do
-        post :add_agent
-        post :success
-        post :status
-        post :cancel
-        post :initiate_custom_forward
-        post :process_custom_forward
-      end
-    end
-
-    resources :hold do
-      collection do
-        get  :add
-        get  :remove
-        post :initiate
-        post :wait
-        post :unhold
-        post :transfer_unhold
-        post :transfer_fallback_unhold
-        post :quit
-      end
-    end
-
-    resources :forward do
-      collection do
-        post :initiate
-        post :initiate_custom
-        post :initiate_custom_transfer
-        post :process_custom
-        post :process_custom_transfer
-        post :complete
-        post :transfer_initiate
-        post :transfer_complete
-        post :transfer_wait
-        post :direct_dial_wait
-        post :direct_dial_accept
-        post :direct_dial_connect
-        post :direct_dial_success
-        post :direct_dial_complete
-      end
-    end
-
-    resources :conference_call do
-      collection do
-        post :status
-        post :in_call
-        post :update_recording
-        post :save_notable
-        put :wrap_call
-        get :load_notable
-        post :save_call_quality_metrics
-      end
-    end
-
-    resources :queue do
-      collection do
-        post :enqueue
-        post :dequeue
-        post :quit_queue_on_voicemail
-        post :trigger_voicemail
-        post :trigger_non_availability
-        post :hangup
-        post :redirect_to_queue
-      end
-    end
-
-    resources :voicemail do
-      collection do
-        post :quit_voicemail
-        post :initiate
-        post :transcribe
-      end
-    end
-
-    resources :call_transfer do
-      collection do
-        get :initiate
-        post :transfer_incoming_call
-        post :transfer_outgoing_call
-        post :transfer_incoming_to_group
-        post :transfer_outgoing_to_group
-        post :transfer_incoming_to_external
-        post :transfer_outgoing_to_external
-        get :available_agents
-        get :available_external_numbers
-      end
-    end
-    match '/call_transfer/initiate/' => 'call_transfer#initiate', :via => :post
-
-    resources :device do
-      collection do
-        post :record
-        get :recorded_greeting
-      end
-    end
-
-    resources :caller do
-      collection do
-        post :block
-        post :unblock
-      end
-    end
-
-    resources :users do
-      collection do
-        post :presence
-        post :node_presence
-        post :availability_on_phone
-        post :refresh_token
-        post :in_call
-        post :reset_presence_on_reconnect
-        post :manage_presence
-      end
-    end
-
-    resources :autocomplete do
-      collection do
-        get :requester_search
-        get :customer_phone_number
-        get :customer_contact
-      end
-    end
-    resources :usage_triggers do
-      collection do
-        post :notify
-      end
-    end
-
-    resources :ops_notification do
-      collection do
-        post :voice_notification
-        post :status
-      end
-    end
-
-    resources :address do
-      member do
-        post :create
-      end
-      collection do
-        get :inspect
-      end
-    end
-  end
-
-  resources :freshfone do
-    collection do
-      post :voice
-      post :build_ticket
-      get :dashboard_stats
-      get :get_available_agents
-      post :ivr_flow
-      post :voice_fallback
-      post :create_note
-      post :create_ticket
-      get :dial_check
-    end
-  end
-
-  match '/freshfone/preview_ivr/:id' => 'freshfone#preview_ivr', :via => :post
-
-  namespace :freshfone, :path => "phone" do
-    resources :call_history do
-      member do
-        delete :destroy_recording
-      end
-      collection do
-        get :custom_search
-        get :children
-        get :recent_calls
-        get :export
-      end
-    end
-  end
-
-  match '/freshfone/call_history/custom_search' => 'freshfone/call_history#custom_search'
-  match '/freshfone/call_history/children' => 'freshfone/call_history#children'
-
-  namespace :freshfone, :path => "phone" do
-    resources :dashboard do
-      collection do
-        get :dashboard_stats
-        get :calls_limit_notificaiton
-        post :mute
-      end
-    end
-  end
-
-  namespace :freshfone, :path => "phone" do
-    resources :caller_id do
-      collection do
-        post :validation
-        post :verify
-        post :add
-        post :delete
-      end
-    end
-  end
 
   resources :users do
     collection do
@@ -1416,36 +1131,10 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :freshfone, :only => [:index], :path => 'phone' do
-      collection do
-        get :search
-        put :toggle_freshfone
-        get :available_numbers
-        post :request_freshfone_feature
-      end
-    end
     namespace :freshcaller, :path => 'freshcaller' do
       resources :signup do
         collection do
           post :link
-        end
-      end
-    end
-
-    namespace :freshfone, :path => 'phone' do
-      resources :numbers do
-        collection do
-          post :purchase
-          get :edit
-        end
-      end
-
-      resources :credits do
-        collection do
-          put :disable_auto_recharge
-          put :enable_auto_recharge
-          post :purchase
-          put  :purchase
         end
       end
     end
@@ -1619,16 +1308,6 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      namespace :freshfone do
-        resources :autocomplete, only: [:contact_by_numbers, :customer_by_phone, :contact_by_numberfields] do
-          collection do
-            get :contact_by_numbers
-            get :customer_by_phone
-            get :contact_by_numberfields
-          end
-        end
-      end
-
       resources :ticket_associations, :only => [:index, :recent_trackers]
     end
 
@@ -1770,19 +1449,6 @@ Helpkit::Application.routes.draw do
     end
 
     get :download_file, path: '(:ver)/download_file/:report_export/:type/:date/:file_name', constraints: {ver: /v2/}, controller: 'v2/tickets/reports'
-
-    namespace :freshfone, :path => "phone" do
-      resources :summary_reports, only: ['index'], :controller => 'summary_reports' do
-        collection do
-          post :generate
-          post :export_csv
-          post :save_reports_filter
-          post :update_reports_filter
-          post :delete_reports_filter
-          post :export_pdf
-        end
-      end
-    end
 
     namespace :freshchat do
       resources :summary_reports, only: ['index'], :controller => 'summary_reports' do
@@ -1955,7 +1621,6 @@ Helpkit::Application.routes.draw do
   match '/email/account_details' => 'email#account_details', :as => :account_details
   match '/email_service/spam_threshold_reached' => 'email_service#spam_threshold_reached', :as => :spam_threshold_reached
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
-  match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
   namespace :helpdesk do
     match '/tickets/archived/filter/customer/:customer_id' => 'tickets#index', :as => :customer_filter, via: :get
@@ -2874,13 +2539,6 @@ Helpkit::Application.routes.draw do
         get :mobile_configurations
       end
     end
-    resources :freshfone do
-      collection do
-        get :numbers
-        get :can_accept_incoming_calls
-        get :is_ringing
-      end
-    end
   end
 
   namespace :notification do
@@ -3064,102 +2722,6 @@ Helpkit::Application.routes.draw do
         end
       end
 
-      resources :freshfone_actions do
-        collection do
-          put :add_credits
-          put :refund_credits
-          put :twilio_port_in
-          put :suspend_freshfone
-          put :account_closure
-          put :get_country_list
-          put :country_restriction
-          put :trigger_whitelist
-          get :get_country_list
-          get :fetch_usage_triggers
-          put :update_usage_triggers
-          put :restore_freshfone_account
-          post :country_restriction
-          post :new_freshfone_account
-          put :undo_security_whitelist
-          get :fetch_conference_state
-          put :enable_conference
-          put :disable_conference
-          put :update_timeouts_and_queue
-          get :fetch_numbers
-          put :twilio_port_away
-          put :activate_trial
-          put :launch_feature
-          get :launched_feature_details
-          put :activate_onboarding
-        end
-      end
-
-      namespace :freshfone_stats do
-        resources :usage do
-          collection do
-            get :global_conference_usage_csv
-            get :global_conference_usage_csv_by_account
-          end
-        end
-
-        resources :renewal do
-          collection do
-            get :renewal_backlog_csv
-            get :failed_renewal_csv
-            get :failed_renewal_csv_by_account
-            get :renewal_backlog_csv_by_account
-          end
-        end
-
-        resources :phone_number do
-          collection do
-            get :phone_statistics
-            get :deleted_freshfone_csv_by_account
-            get :deleted_freshfone_csv
-            get :all_freshfone_number_csv
-            get :purchased_numbers_csv
-            get :purchased_numbers_csv_by_account
-          end
-        end
-
-        resources :credits do
-          collection do
-            get :request_csv
-            get :request_csv_by_account
-          end
-        end
-
-        resources :payments do
-          collection do
-            get :statistics
-            get :request_csv
-            get :request_csv_by_account
-            get :active_accounts_csv
-          end
-        end
-
-        resources :call_quality_metrics do
-          collection do
-            get :export_csv
-          end
-        end
-
-        resources :subscriptions do
-          collection do
-            get :stats_by_account
-            get :stats_csv
-            get :recent_stats
-          end
-        end
-
-      end
-
-      resources :freshfone_subscriptions do
-        collection do
-          get :index
-        end
-      end
-
       resources :spam_watch, :only => :none do
         collection do
           get :spam_details
@@ -3232,9 +2794,6 @@ Helpkit::Application.routes.draw do
   #       resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
   #       resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete, :requeue_all => :put }
   #     end
-
-  #     admin.freshfone '/freshfone_admin', :controller => :freshfone_subscriptions, :action => :index
-  #     admin.freshfone_stats '/freshfone_admin/stats', :controller => :freshfone_stats, :action => :index
 
   #     # admin.resources :analytics
   #     admin.resources :spam_watch, :only => :index

@@ -446,21 +446,6 @@
         "_socket_host_new": "nodev2.freshdesk.com",
         "_socket_autorefresh_host_new": "autorefreshv2-poduseast1.freshdesk.com"
       },
-      "freshfone": {
-        "secret_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:foOHH79DytrucvWRQ6AlJpiUcg7FDkb3:4Dz8PYMbgkKL7BCresNn+vVee/V8NxkZTDzYwSg8CxuRDgfJWTrF5y1KXkGLPDOxZNCsuV4wzMfe+2z+wLKJtEiM1iv+U3Uqa0kirmslH0E=]",
-        "twilio_account_sid": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:VwzPaxA3cnyiuzG+Lw6PmLzgPdEbPBrc:Nm56Dbi1kWk+BegiuMHDjjE0eE4aNrNIigaGBlynylXGut4oti2V3ern/g/9qC56shc=]",
-        "auth_token": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:8uTvSBTAbffMvkfHw7/OFouTBlcamSCO:SrafOZNdir0KjNIEnxoiV66qVAUrkt0BDSSwAeDoo/Rsxatp930rV10J4aikhKTj]",
-        "jwt_signing_key": "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:BSGnZrk3+OuvlRIr013vibe3+i7Fn52l:ahSfZerlNqx4mzaF8ui0SbWvSrDtc28TaBgEG+XiSG7+9T+8RNGAb5EyppFpJCKecVFnewI3kLyfGaQ=]",
-        "jwt_verification_keys": [
-          "EJ[1:zRgUC2R8b4inYIob0GojLZ7mEwyiUp1R2hspWc6UxR0=:ID9eBhghFICLaSEOLSNprMuRBHwIE5SO:8SEv7erAznK7R8g6jyKNvIVA7fJrlSoVpKu+L4bC2YOvs39iHsBggsZeGFh/TImQFzRl+HHnf/g8kR0=]"
-        ],
-        "jwt_token_expiry": 10,
-        "_node_url": "https://fone.freshdesk.com",
-        "_ops_alert_from": "+12345646409",
-        "_billing_error_email": [
-          "freshfone-ops@freshdesk.com"
-        ]
-      },
       "custom_dalli": {
         "_hosts": [
           "custom-dalli-11.internal.poduseast1.freshdesk.com",
@@ -1015,8 +1000,6 @@
         "_helpdesk_reports_export_queue": "helpdesk_reports_export_production",
         "_reports_etl_msg_queue": "reports_etl_msgs_production",
         "_reports_service_export_queue": "reports_service_export_production",
-        "_freshfone_call_tracker": "freshfone_call_tracker_production",
-        "_freshfone_call_notifier_queue": "freshfone_call_notifier_production",
         "_activity_queue": "fd_activities_production",
         "_sidekiq_fallback_queue": "",
         "_social_fb_messenger": "",
@@ -3537,8 +3520,6 @@
         "_enable": true
       }
     },
-    "hk-app-freshfone": {
-    },
     "fc-app-buffer": {
     },
     "hk-app-search": {
@@ -3624,22 +3605,6 @@
     },
     "hk-app-dashboard": {
     },
-    "hk-app-freshfone-twilio": {
-      "opsworks": {
-        "_ruby_version": "2.1"
-      },
-      "ruby": {
-        "_patch_version": "9"
-      },
-      "rails3": {
-        "_revision": "FD.PHONE.18.04.12"
-      },
-      "deploy": {
-        "helpkit": {
-          "_shallow_clone": false
-        }
-      }
-    },
     "fc-app-reports": {
     },
     "fc-app-archive": {
@@ -3687,8 +3652,6 @@
     "hk-bg-shoryuken-bot-feedback": {
     },
     "hk-bg-shoryuken-ticket-export": {
-    },
-    "fc-bg-resque-freshfone": {
     },
     "fc-bg-shoryuken-analytics": {
     },

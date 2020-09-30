@@ -115,7 +115,6 @@ end
           <%= render :partial => '/helpdesk/archive_tickets/show/survey_note' , :locals => {:note => note , 
               :notedetails => notedetails} %>
       <% end %>
-      <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
       <%= freshcaller_audio_dom(note) if current_account.has_feature?(:freshcaller) %>
 
       <div id="note_attachments_container_<%= note.id%>">

@@ -279,10 +279,6 @@ class Account < ActiveRecord::Base
     launched?(:customer_sentiment)
   end
 
-  def freshfone_enabled?
-    features?(:freshfone) and freshfone_account.present?
-  end
-
   def freshcaller_enabled?
     has_feature?(:freshcaller) and freshcaller_account.present?
   end

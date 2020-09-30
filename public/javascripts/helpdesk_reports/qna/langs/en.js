@@ -106,12 +106,6 @@ QLANG['en'] = {
                 { "label" : "hours were tracked"    , "value" : "hours_trakced" , "breadcrumb" : "group_by", "search_breadcrumb_in" : "2" , "feature_check" : "timesheet" },
                 { "label" : "billable hours were tracked"    , "value" : "billable_hours_trakced" , "breadcrumb" : "group_by", "search_breadcrumb_in" : "2" , "feature_check" : "timesheet" },
                 { "label" : "non-billable hours were tracked"    , "value" : "non_billable_hours_trakced" , "breadcrumb" : "group_by", "search_breadcrumb_in" : "2" , "feature_check" : "timesheet" },
-                //Phone
-                { "label" : "calls were answered"    , "value" : "calls_answered" , "breadcrumb" : "time", "search_breadcrumb_in" : "3" , "feature_check" : "freshfone" },
-                { "label" : "calls were unanswered"    , "value" : "calls_unanswered" , "breadcrumb" : "time", "search_breadcrumb_in" : "3" , "feature_check" : "freshfone" },
-                { "label" : "calls were received"    , "value" : "calls_received" , "breadcrumb" : "time", "search_breadcrumb_in" : "3" , "feature_check" : "freshfone" },
-                { "label" : "voice mails were received"    , "value" : "voice_mails_received" , "breadcrumb" : "time", "search_breadcrumb_in" : "3" , "feature_check" : "freshfone" },
-                { "label" : "calls were transferred"    , "value" : "calls+transferred" , "breadcrumb" : "time", "search_breadcrumb_in" : "3" , "feature_check" : "freshfone" },
                 //Chat
                 { "label" : "chats were received"    , "value" : "chats_received" , "breadcrumb" : "time", "search_breadcrumb_in" : "3" , "feature_check" : "freshchat" },
                 { "label" : "calls were answered"    , "value" : "chats_answered" , "breadcrumb" : "time", "search_breadcrumb_in" : "3" , "feature_check" : "freshchat" },
