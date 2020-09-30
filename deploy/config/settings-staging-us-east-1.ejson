@@ -1651,7 +1651,10 @@
         "_api_endpoint": "http://sr.pre-freshmarketer.io/ab/api/v1"
       },
       "kbservice": {
-        "secret_key": "EJ[1:6hWB6JbN3NA4AuMyESnSuDXNBsSUFkLS6Ic8JSmHuio=:sm/+jKfOaSXga1biYhgSRGzdlXBK1WCz:quhLOPZEIiTCA4uHYvfq1fdKnutIm0J9RnJL]"
+        "secret_key": "EJ[1:6hWB6JbN3NA4AuMyESnSuDXNBsSUFkLS6Ic8JSmHuio=:sm/+jKfOaSXga1biYhgSRGzdlXBK1WCz:quhLOPZEIiTCA4uHYvfq1fdKnutIm0J9RnJL]",
+        "_clear_cache_path": "/solutions/api/v2/accounts/clear-cache",
+        "_api_endpoint": "https://%{domain}",
+        "_domain": "%{domain}"
       },
       "iam": {
         "_expiry": 300,

@@ -1442,7 +1442,10 @@
         "_api_endpoint": "http://app.freshmarketer.com/ab/api/v1"
       },
       "kbservice": {
-        "secret_key": "EJ[1:52FxyhjAmhMzBDlUZl07k8+z04YsUZ6bsgKRZrrmvh8=:WZvUqDCUP72jOrMPf1KDi9ofn05qmj8C:QKeZGKAnhb6wui7RPTp4ISzcDFnnpiyKHBgU7oDrrf4Ihs4DIJWOJpPpYZqTpnly]"
+        "secret_key": "EJ[1:52FxyhjAmhMzBDlUZl07k8+z04YsUZ6bsgKRZrrmvh8=:WZvUqDCUP72jOrMPf1KDi9ofn05qmj8C:QKeZGKAnhb6wui7RPTp4ISzcDFnnpiyKHBgU7oDrrf4Ihs4DIJWOJpPpYZqTpnly]",
+        "_clear_cache_path": "/solutions/api/v2/accounts/clear-cache",
+        "_api_endpoint": "https://%{domain}",
+        "_domain": "%{domain}"
       },
       "iam": {
         "_expiry": 300,
