@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     :id_for_choices_write, :fluffy, :fluffy_email, :fluffy_email_signup, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data, :bypass_signup_captcha,
     :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
-    :freshid_org_v2, :hide_agent_login,
+    :freshid_org_v2, :hide_agent_login, :disable_supress_logs,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
@@ -65,7 +65,7 @@ class Account < ActiveRecord::Base
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
-    :canned_forms, :customize_table_view, :solutions_templates,
+    :canned_forms, :customize_table_view, :solutions_templates, :disable_supress_logs,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
@@ -86,6 +86,7 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :disable_supress_logs,
     :new_es_api, :filter_factory,
     :solutions_agent_metrics,
     :skip_invoice_due_warning, :allow_wildcard_ticket_create,
@@ -481,6 +482,10 @@ class Account < ActiveRecord::Base
 
   def feedback_widget_captcha_enabled?
     launched?(:feedback_widget_captcha)
+  end
+
+  def disable_supress_logs_enabled?
+    launched?(:disable_supress_logs)
   end
 
   def skip_portal_cname_chk_enabled?

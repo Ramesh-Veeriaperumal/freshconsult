@@ -358,7 +358,7 @@
       :solutions_27: 354
       :solutions_28: 355
       :solutions_29: 356
-      :solutions_30: 357
+      :disable_supress_logs: 357
       :detect_thank_you_note_eligible: 358
       :detect_thank_you_note: 359
       :autofaq: 360
@@ -502,6 +502,7 @@
   :location_tagging: false
   :kb_allow_base64_images: false
   :solutions_agent_metrics: false
+  :disable_supress_logs: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
