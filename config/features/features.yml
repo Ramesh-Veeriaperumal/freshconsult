@@ -269,7 +269,7 @@
       :analytics_articles: 265
       :analytics_knowledge_base: 266
       :analytics_knowledge_base_report: 267
-      :reports_46: 268
+      :allow_huge_ccs: 268
       :reports_47: 269
       :reports_48: 270
       :reports_49: 271
@@ -455,6 +455,7 @@
   :twitter_signin: true
   :facebook_signin: true
   :captcha: true
+  :allow_huge_ccs: false
   :hide_portal_forums: false
   :id_less_tickets: false
   :client_debugging: false
