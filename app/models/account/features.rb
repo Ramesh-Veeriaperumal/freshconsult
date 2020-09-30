@@ -47,6 +47,7 @@ class Account < ActiveRecord::Base
   ].freeze
 
   BITMAP_FEATURES = [
+    :allow_huge_ccs,
     :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
     :custom_ticket_views, :supervisor, :archive_tickets, :sitemap,
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
@@ -86,12 +87,23 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :allow_huge_ccs,
+    :new_es_api,
+    :filter_factory,
     :disable_supress_logs,
-    :new_es_api, :filter_factory,
     :solutions_agent_metrics,
-    :skip_invoice_due_warning, :allow_wildcard_ticket_create,
-    :bypass_signup_captcha, :supervisor_contact_field, :disable_freshchat, :feedback_widget_captcha, :disable_archive, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query,
-    :force_index_tickets, :disable_emails
+    :skip_invoice_due_warning,
+    :allow_wildcard_ticket_create,
+    :bypass_signup_captcha,
+    :supervisor_contact_field,
+    :disable_freshchat,
+    :feedback_widget_captcha,
+    :disable_archive,
+    :gamification_perf,
+    :skip_portal_cname_chk,
+    :stop_contacts_count_query,
+    :force_index_tickets,
+    :disable_emails
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -221,6 +233,10 @@ class Account < ActiveRecord::Base
 
   def link_tkts_or_parent_child_enabled?
     link_tickets_enabled? || parent_child_infra_enabled?
+  end
+
+  def allow_huge_ccs_enabled?
+    launched?(:allow_huge_ccs)
   end
 
   def survey_enabled?
