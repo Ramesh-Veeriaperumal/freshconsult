@@ -126,7 +126,7 @@
 					    <div class="control-group account-branding-toggle">
 			              <%= f.label :account_branding, t('account.branding_toggle.title'), :class => "control-label" %>
 			              <div class="controls">
-			                <% unless current_account.subscription.trial_or_sprout_plan? %>
+			                <% if current_account.admin_setting_for_account?(:branding) && !current_account.subscription.trial_or_sprout_plan? %>
 			                    <%= f.fields_for :bitmap_features do |bm| %>
 			                        <%= bm.check_box :branding, {:id => 'account_branding_enabled', :checked => Account.current.branding_enabled?} %>
 			                        <div class="help-block"><%= t('account.branding_toggle.helpnote') %></div>

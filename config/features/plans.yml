@@ -72,7 +72,7 @@
       - :sla_reminder_automation
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
+      - :branding_feature
       - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:
@@ -234,7 +234,7 @@
       - :advanced_article_toolbar_options
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
+      - :branding_feature
       - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:
@@ -454,7 +454,7 @@
       - :field_service_management_toggle
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
+      - :branding_feature
       - :untitled_feature_3_dependency_toggle
       - :undo_send
     :inherits:

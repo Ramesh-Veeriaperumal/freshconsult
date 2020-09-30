@@ -90,7 +90,7 @@ class ConversationDecorator < ApiDecorator
   end
 
   def to_hash
-    [to_json, freshfone_call, freshcaller_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
+    [to_json, freshcaller_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
   end
 
   def restrict_twitter_content?
@@ -139,22 +139,6 @@ class ConversationDecorator < ApiDecorator
     {
       fb_post: FacebookPostDecorator.new(record.fb_post).to_hash
     }
-  end
-
-  def freshfone_call
-    if freshfone_enabled?
-      call = record.freshfone_call
-      return {} unless call.present? && call.recording_url.present? && call.recording_audio
-      {
-        freshfone_call: {
-          id: call.id,
-          duration: call.call_duration,
-          recording: AttachmentDecorator.new(call.recording_audio).to_hash
-        }
-      }
-    else
-      {}
-    end
   end
   
   def freshcaller_call
@@ -233,10 +217,6 @@ class ConversationDecorator < ApiDecorator
   end
 
   private
-
-    def freshfone_enabled?
-      Account.current.freshfone_enabled?
-    end
 
     def freshcaller_enabled?
       Account.current.freshcaller_enabled?

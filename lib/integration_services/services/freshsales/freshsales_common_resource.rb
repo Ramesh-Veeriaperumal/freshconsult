@@ -54,8 +54,7 @@ module IntegrationServices::Services
         basic_information = resource['fields'].select { |x| x['name'] == 'basic_information' }.first
         basic_fields = basic_information['fields']
         basic_fields.reject! { |x| x['name'] == 'system_information' }
-        remove_email_field basic_fields
-        handle_nested_emails basic_fields
+        handle_emails resource
         sales_account_field = basic_fields.find { |field| field['name'] == 'sales_accounts' }
         if sales_account_field
           sales_account_field['field_options']['creatable'] = false
@@ -64,9 +63,17 @@ module IntegrationServices::Services
         resource
       end
 
+      def handle_emails(resource)
+        resource['fields'].each do |info|
+          fields = info['fields']
+          change_email_field_type fields
+          handle_nested_emails fields
+        end
+      end
+
       private
 
-        def remove_email_field(fields)
+        def change_email_field_type(fields)
           fields.reject! { |x| x['name'] == 'email' }
           email_field = fields.find { |field| field['name'] == 'emails' }
           email_field['type'] = 'email' if email_field
@@ -76,7 +83,7 @@ module IntegrationServices::Services
           section_fields = basic_fields.select { |x| x['type'] == 'section' }
           section_fields.each do |sf|
             fields = sf['fields']
-            remove_email_field(fields)
+            change_email_field_type(fields)
           end
         end
     end

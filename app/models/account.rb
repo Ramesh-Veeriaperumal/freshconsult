@@ -179,10 +179,6 @@ class Account < ActiveRecord::Base
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
 
-  def freshfone_active?
-    false
-  end
-
   def active_groups
     active_groups_in_account(id)
   end
@@ -953,6 +949,12 @@ class Account < ActiveRecord::Base
     super(params)
   end
 
+  def update_bitmap_features(bitmap_features)
+    bitmap_features.each do |feature, enable|
+      check_and_update_feature(feature, enable)
+    end
+  end
+
   def delete_sitemap
     key = format(SITEMAP_OUTDATED, account_id: id)
     remove_portal_redis_key(key)
@@ -1103,12 +1105,16 @@ class Account < ActiveRecord::Base
     def update_features(features)
       if features.present?
         features.each do |name, value|
-          if AccountSettings::SettingsConfig[name]
-            AccountsHelper.value_to_boolean(value) ? set_setting(name.to_sym) : reset_setting(name.to_sym)
-          else
-            AccountsHelper.value_to_boolean(value) ? set_feature(name.to_sym) : reset_feature(name.to_sym)
-          end
+          check_and_update_feature(name, value)
         end
+      end
+    end
+
+    def check_and_update_feature(feature, enable)
+      if AccountSettings::SettingsConfig[feature]
+        AccountsHelper.value_to_boolean(enable) ? set_setting(feature.to_sym) : reset_setting(feature.to_sym)
+      else
+        AccountsHelper.value_to_boolean(enable) ? set_feature(feature.to_sym) : reset_feature(feature.to_sym)
       end
     end
 

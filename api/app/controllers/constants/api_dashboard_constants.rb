@@ -47,7 +47,6 @@ module ApiDashboardConstants
     [:gamification,   		'gamification',                       2, 2],
     [:csat,           		'csat',                               2, 2],
     [:agent_status, 'agent-status', 2, 2],
-    [:freshfone,      		'phone',                              2, 2],
     [:chat,           		'chat',                               2, 2],
     [:moderation,     		'forum-moderation',                   2, 2],
     [:todo,               'todo',                               2, 2]
@@ -60,7 +59,6 @@ module ApiDashboardConstants
     [:gamification,       'gamification',                       2, 2],
     [:csat,               'csat',                               2, 2],
     [:agent_status,       'agent-status',                       2, 2],
-    [:freshfone,          'phone',                              2, 2],
     [:chat,               'chat',                               2, 2],
     [:moderation,         'forum-moderation',                   2, 2],
     [:todo,               'todo',                               2, 2]

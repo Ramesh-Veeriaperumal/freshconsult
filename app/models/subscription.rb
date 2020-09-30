@@ -3,6 +3,7 @@ class Subscription < ActiveRecord::Base
   include Redis::OthersRedis
   include Cache::Memcache::SubscriptionPlan
   include Onboarding::OnboardingRedisMethods
+  include OmniChannel::Constants
   include SubscriptionsHelper
 
   self.primary_key = :id
@@ -77,7 +78,7 @@ class Subscription < ActiveRecord::Base
 
   before_update :cache_old_model, :cache_old_addons
   before_update :clear_loyalty_upgrade_banner, if: :plan_changed?
-  before_update :create_omni_bundle, if: :omni_plan_conversion?
+  before_update :create_omni_bundle, if: :omni_upgrade?
   before_update :mark_switch_annual_notification, if: :switch_annual_notification_eligible?
 
   after_update :add_to_crm, unless: [:anonymous_account?, :disable_freshsales_api_integration?]
@@ -85,7 +86,7 @@ class Subscription < ActiveRecord::Base
   after_update :set_redis_for_first_time_account_activation, if: :freshdesk_freshsales_bundle_enabled?
 
   after_commit :update_crm, on: :update, unless: :anonymous_account?
-  after_commit :update_fb_subscription, :add_free_freshfone_credit, :dkim_category_change, :update_ticket_activity_export, on: :update
+  after_commit :update_fb_subscription, :dkim_category_change, :update_ticket_activity_export, on: :update
   after_commit :clear_account_susbcription_cache
   after_commit :schedule_account_block, :update_status_in_freshid, on: :update, :if => [:moved_to_suspended?]
   after_commit :suspend_tenant,  on: :update, :if => :trial_to_suspended?
@@ -95,8 +96,9 @@ class Subscription < ActiveRecord::Base
   after_commit :launch_downgrade_policy, unless: :policy_applied_account?
   after_commit :trigger_switch_to_annual_notification_scheduler, on: :update, if: :trigger_switch_annual_notification?
   after_commit :enqueue_omni_account_creation_workers, if: [:omni_plan_conversion?, :enqueue_omni_account_creation?]
+  after_commit :enqueue_omni_account_updation_workers, if: :chargebee_omni_upgrade?
 
-  attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start, :lock_old_addons
+  attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start, :lock_old_addons, :chargebee_omni_upgrade_response
   attr_reader :response
   serialize :additional_info, Hash
 
@@ -357,16 +359,6 @@ class Subscription < ActiveRecord::Base
 
   def applicable_addons(addons, plan)
     addons.to_a.collect{ |addon| addon if addon.allowed_in_plan?(plan) }.compact
-  end
-
-  def add_free_freshfone_credit
-    # if(@old_subscription.trial? and self.paying_account?)
-    #   if account.freshfone_credit.blank?
-    #     account.create_freshfone_credit(:available_credit => 5)
-    #     account.freshfone_payments.create(:status_message => "promotional",
-    #                                       :purchased_credit => 5, :status => true)
-    #   end
-    # end
   end
 
   def billing
@@ -733,10 +725,8 @@ class Subscription < ActiveRecord::Base
 
   def update_subscription_on_signup(plan_name)
     self.plan = SubscriptionPlan.current.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[plan_name])
-    self.state = TRIAL
     convert_to_free if new_sprout?
     save!
-    update_features
   end
 
   protected
@@ -978,7 +968,6 @@ class Subscription < ActiveRecord::Base
     def addon_mapping
       {
         :day_pass => subscription_plan.canon_name,
-        :freshfone => :freshfonecredits,
         :field_service_management => (subscription_plan.classic ? :field_service_management : :field_service_management_20)
       }
     end
@@ -1044,8 +1033,16 @@ class Subscription < ActiveRecord::Base
       account.anonymous_account?
     end
 
+    def omni_upgrade?
+      omni_plan_conversion? || chargebee_omni_upgrade?
+    end
+
     def omni_plan_conversion?
       account.launched?(:explore_omnichannel_feature) && @chargebee_update_response.present? && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan? && !account.not_eligible_for_omni_conversion?
+    end
+
+    def chargebee_omni_upgrade?
+      account.explore_omnichannel_feature_enabled? && account.chargebee_omni_upgrade_enabled? && chargebee_omni_upgrade_response.present? && !@old_subscription.subscription_plan.omni_plan? && subscription_plan.omni_bundle_plan?
     end
 
     def enqueue_omni_account_creation?
@@ -1062,9 +1059,18 @@ class Subscription < ActiveRecord::Base
     end
 
     def enqueue_omni_account_creation_workers
+      enqueue_omni_account_workers(PRODUCT_OMNI_UPGRADE, @chargebee_update_response)
+    end
+
+    def enqueue_omni_account_updation_workers
+      enqueue_omni_account_workers(CHARGEBEE_OMNI_UPGRADE, chargebee_omni_upgrade_response)
+    end
+
+    def enqueue_omni_account_workers(type, chargebee_response)
       if account.omni_bundle_id.present?
         worker_args = {
-          chargebee_response: @chargebee_update_response
+          chargebee_response: chargebee_response,
+          type: type
         }
         OmniChannelUpgrade::FreshcallerAccount.perform_async(worker_args)
         OmniChannelUpgrade::FreshchatAccount.perform_async(worker_args)

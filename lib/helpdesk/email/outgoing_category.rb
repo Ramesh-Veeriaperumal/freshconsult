@@ -47,7 +47,7 @@ module Helpdesk::Email::OutgoingCategory
   def get_category_id(use_mailgun = false)
     key = get_subscription
     if !account_whitelisted?
-      if ((key == "trial") && (Account.current.launched?(:spam_blacklist_feature) ||
+      if ((key == "trial") && (Account.current.spam_blacklist_feature_enabled? ||
                  Freemail.free_or_disposable?(Account.current.admin_email)))
         key = "spam"
       elsif( account_created_recently?)

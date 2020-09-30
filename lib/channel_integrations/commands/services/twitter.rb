@@ -14,7 +14,10 @@ module ChannelIntegrations::Commands::Services
       context = payload[:context]
       data = payload[:data]
 
-      set_current_user(data[:requester_id])
+      set_current_user(data[:requester_id], context[:twitter_screen_name])
+
+      data[:requester_id] = User.current.id
+
       update_contact_twitter_fields(data, context)
       check_twitter_handle?(context[:twitter_handle_id])
 
@@ -37,7 +40,16 @@ module ChannelIntegrations::Commands::Services
       context = payload[:context]
       data = payload[:data]
       ticket_id = payload[:data][:ticket_id]
-      set_current_user(data[:user_id])
+      set_current_user(data[:user_id], context[:twitter_screen_name])
+      # Happens when twitter contact is edited or deleted with the given screen name, new contact will created and note is created as ticket
+      if User.current.id != data[:user_id] && context[:tweet_type].to_sym == :dm
+        Rails.logger.info 'Twitter::CreateNote Command is changed to create_ticket due to missing contact with screen name'
+        construct_create_ticket_payload?(payload)
+        return receive_create_ticket(payload)
+      else
+        payload[:data].delete(:ticket_properties)
+      end
+
       update_contact_twitter_fields(data, context)
       check_twitter_handle?(context[:twitter_handle_id])
 
@@ -189,11 +201,37 @@ module ChannelIntegrations::Commands::Services
         error
       end
 
-      def set_current_user(requester_id)
+      def set_current_user(requester_id, screen_name)
         user = requester_id ? User.find(requester_id) : nil
+        user = create_new_user(user, screen_name) if screen_name.present? && user.present? && user.twitter_id != screen_name
         raise 'User not found' if user.blank?
 
         user.make_current
+      end
+
+      def create_new_user(user, screen_name)
+        user_data = {
+          twitter_id: screen_name,
+          name: user.present? ? user.name : screen_name,
+          active: true,
+          helpdesk_agent: false
+        }
+        if user.present?
+          user_data[:avatar] = user.avatar
+          user_data[:twitter_requester_handle_id] = user.twitter_requester_handle_id
+          user_data[:twitter_profile_status] = user.twitter_profile_status
+          user_data[:twitter_followers_count] = user.twitter_followers_count
+          remove_user_twitter_data(user)
+        end
+        account = Account.current
+        new_user = account.contacts.new
+        new_user.signup!(user: user_data)
+        account.all_contacts.find_by_twitter_id(screen_name)
+      end
+
+      def remove_user_twitter_data(user)
+        user.update_attributes(twitter_requester_handle_id: nil, twitter_profile_status: nil,
+                               twitter_followers_count: nil, avatar: nil)
       end
 
       def check_twitter_handle?(handle_id)
@@ -221,6 +259,25 @@ module ChannelIntegrations::Commands::Services
         current_user.save!
       rescue StandardError => e
         Rails.logger.info "Twitter::CreateNote exception while updating user account_id: #{current_account.id} data: #{data.inspect} context: #{context.inspect} #{e.message} #{e.backtrace[0..10]}"
+      end
+
+      def construct_create_ticket_payload?(payload)
+        payload[:data][:requester_id] = payload[:data][:user_id]
+        payload[:data][:description] = payload[:data][:body]
+        payload[:data][:subject] = payload[:data][:ticket_properties][:ticket_subject]
+        payload[:data][:group_id] = payload[:data][:ticket_properties][:ticket_group_id]
+        payload[:data][:product_id] = payload[:data][:ticket_properties][:ticket_product_id]
+        payload[:data][:priority] = payload[:data][:ticket_properties][:ticket_priority]
+        payload[:data][:status] = payload[:data][:ticket_properties][:ticket_status]
+
+        payload[:data].delete(:ticket_properties)
+        payload[:data].delete(:user_id)
+        payload[:data].delete(:body)
+        payload[:data].delete(:ticket_id)
+        payload[:data].delete(:incoming)
+        payload[:data].delete(:private)
+
+        payload[:command_name] = 'create_ticket'
       end
   end
 end

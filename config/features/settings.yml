@@ -3,16 +3,24 @@ settings:
     default: false
     internal: false
     feature_dependency: :untitled_feature_3_dependency_toggle # from blossom plan.Rename to actual feature
-  :untitled_setting_2:
+  :branding:
     default: true
-    internal: true
-    feature_dependency: :untitled_feature_1_dependency_toggle
+    internal: false
+    feature_dependency: :branding_feature
   :untitled_setting_3:
     default: true
     internal: false
     feature_dependency: :untitled_feature_2_dependency_toggle # from estate plan.Rename to actual feature
   :untitled_setting_4:
     default: true
+    internal: false
+    feature_dependency: :basic_settings_feature
+  :fetch_ticket_from_ref_first:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :skip_ticket_threading:
+    default: false
     internal: false
     feature_dependency: :basic_settings_feature
   :signup_link:

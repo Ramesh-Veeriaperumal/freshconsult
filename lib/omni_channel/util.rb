@@ -1,7 +1,5 @@
 module OmniChannel::Util
-  SUPPORT_360_BUNDLE = 'support360'.freeze
-  SUBSCRIPTION_CHANGED = 'subscription_changed'.freeze
-  SUBSCRIPTION_ACTIVATED = 'subscription_activated'.freeze
+  include OmniChannel::Constants
 
   def get_freshid_org_admin_user(account)
     org_domain = account.organisation_domain
@@ -45,8 +43,12 @@ module OmniChannel::Util
     }
   end
 
+  def json_request_headers
+    { 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
+  end
+
   def signup_omni_account(signup_url, signup_params, product_name)
-    response = HTTParty.post(signup_url, body: signup_params.to_json, headers: { 'Content-Type' => 'application/json', 'Accept' => 'application/json' })
+    response = HTTParty.post(signup_url, body: signup_params.to_json, headers: json_request_headers)
     Rails.logger.info("Response from omni account signup for account: #{Account.current.id} product #{product_name} is code: #{response.code}")
     response
   end
@@ -80,5 +82,40 @@ module OmniChannel::Util
 
   def get_subscription_event(is_trial)
     is_trial ? SUBSCRIPTION_CHANGED : SUBSCRIPTION_ACTIVATED
+  end
+
+  def move_to_bundle_request_params(bundle_id)
+    {
+      bundle_id: bundle_id,
+      bundle_name: SUPPORT_360_BUNDLE
+    }
+  end
+
+  def move_freshcaller_to_bundle(bundle_id, freshcaller_account)
+    request_params = move_to_bundle_request_params(bundle_id)
+    move_to_bundle_url = "https://#{freshcaller_account.domain}/bundles/migrations/initiate"
+    credentials = Freshid::V2::Auth.refresh_client_access_token.try(:credentials)
+    response = send_request(:post, move_to_bundle_url, "Bearer #{credentials.access_token}", request_params)
+    response
+  end
+
+  def send_request(req_type, url, auth, body, headers = nil, suppress_failure = false)
+    request = Freshid::HttpServiceMethods.new(req_type, url, auth, body, headers, suppress_failure, timeout: 10)
+    request.send_request
+    request.response
+  end
+
+  def move_freshchat_to_bundle(bundle_id, freshchat_account, freshchat_jwt_token)
+    request_params = move_to_bundle_request_params(bundle_id)
+    response = HTTParty.post("https://#{freshchat_account.api_domain}/v2/omnichannel-integration/#{freshchat_account.app_id}/bundle",
+                             body: request_params.to_json,
+                             headers: json_request_headers.merge!(
+                               'x-fc-client-id' => Freshchat::Account::CONFIG[:freshchatClient],
+                               'Authorization' => "Bearer #{freshchat_jwt_token}"
+                             ))
+    response
+  rescue StandardError => e
+    Rails.logger.info "Error in move_freshchat_to_bundle #{e.inspect}"
+    raise e
   end
 end

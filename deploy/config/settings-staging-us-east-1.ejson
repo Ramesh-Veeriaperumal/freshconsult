@@ -194,7 +194,7 @@
           "_auth_type": "jwt",
           "jwt_secret": ["EJ[1:Fg5ivNbrTCtLDrVKmKQ8pQH8liofINdfPP6ZN+Zda2E=:tVGT+V2D5IO3KLPkosYT5nzQuasVpq5E:gtWMLEdhWDV/3d5qVLhu4LKLD2WNMsd4a3Q86niN6vmhPmkRqsS6hYszmlajEgkO]"]
         },
-        "twilight": {
+        "multiplexer": {
           "_auth_type": "jwt",
           "jwt_secret": "EJ[1:yHngE5On+uaOB1J8F9vNIgKScfhpKJzjGb36sNJp2XY=:cT7vON+sWOcRebU/87g7N/sWeqrdeOg/:uGteG73OeDWUl3wg4r3J0yJXZ+Iw+rQnoukRYo2oGGg2540I0N6dg9SwUBEPYoNo]"
         },
@@ -947,20 +947,6 @@
           "token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:WByp0lQ1VXYMnm5ef5BoHuRoZZ4CTXRE:FVjDWCa6WTix5ad5lry/M7Il+XnTT3YkYGLP0ptViu2KK+V/5Zyyjcc/FQlS09T5]"
         }
       },
-      "freshfone": {
-        "auth_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:/rKbHfAljsQS4irPWcbQ2B2C01hIbk8i:UqSt9DglkR+fbq4syPCScD+8/FEkaoKPKW/xOwYEme0LxT7YXxuEZrNVcHhCP0D1]",
-        "jwt_signing_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:aLW/fDaYDU+3gO/DZuqZtYeK+QqhCQox:tsAto+QZSxoq3+Ny/dLtgjvGzb1uU2lVwOHnU6/x2KcRUfbXgSmHlCGVIpdeWxz+2Z1uPaA78PSqr3Q=]",
-        "jwt_token_expiry": 10,
-        "jwt_verification_keys": [
-          "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:OyV1jMIcRYGEz0kQHsMeMQfn26XYgvsG:81afPjIWpjfKec4h4PAk3xfEKqfS1YIXoa7R7MrdRU5wJX2UxY7uRWKhLapVP0L613soEvVcx+dMK3o=]"
-        ],
-        "secret_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:tkOONvNOqKUYsUq311wON/XWwqeRSRPO:fBaveXTMGa7AiRVD/6sOZNX5nxMtCyRx0MXwC9CR61J9WExQe54yX33mh0PEHWIcMoTKEXZ+rCyxVpE9djVtOYhRm7vKx87gQ187hMtKwaU=]",
-        "twilio_account_sid": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:c6La0hT47q7UqYvuFWiqcIGq27wa8eIO:TiX6/H+ZwdF1oVWCLumzIoJ3JeIq9VS6vTvUG5XnfGnRxA3N+Zv/ejW3cwpgfRWomxA=]",
-        "_billing_error_email": [
-          "freshcaller-staging@freshcallerassistant.freshdesk.com"
-        ],
-        "_node_url": "https://fone.freshpo.com"
-      },
       "freshid": {
         "callback_api_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:VzxIAihH+A2GDouW0ejlyMmpgWKQycWL:KB9tf6cZElEcsshAFU0T9LPZ3c7sLH6i2rymCZdT8SnhqAYySm/WkTaUCwGoTy3HYmokn99LOiMyECBkUrAt6KQPTlt5Ttuc8ija1fm/J6A=]",
         "client_id": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:knGlEMMJG8tc+ssov/PuhrJGmgqfvKRT:0JyAxK3Kcs1VcGzy5XL+LRmVx39puybLfQ973xCgcuFYyFyuZk2MTBs7tan/LZSpoHgLtQ==]",
@@ -1061,7 +1047,7 @@
       },
       "iris": {
         "service_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:gM3kQzIDp/vwrqfVt5gWWVGz8VX2vrFP:5Td0jvUKeMgkXxccLCgURzwowiX3IB1aI/3uehGeHHETyUZo]",
-        "shared_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:I3b8WR4IWXBOz3/prwHHlwAPKzRXX9C0:nRxDwYDpnT3qbq7bTKylDbVg8k0/36kVsA==]",
+        "jwt_secret": "EJ[1:wiKIVz3UuZoBQ+7D/+mlLwW71UoDBfy+L0OU72msxX0=:r78EEX71Jht8WzR98YR8DAQctX8vhEVm:idztezBYDt/px4BpxKvD9mNd7DRlJMSEeTNGzNhTfvp+zxa7DhhOPdOqumKn8UxFkqzSEgeSqXruv/ofvocUy4ZnZ8rSToYdunXj/Dxtdhc=]",
         "_collector_host": "https://iris-staging.freshworksapi.com",
         "_iris_url": "https://dzvv3qu02a8s8.cloudfront.net/iris-staging-1.0.js",
         "_rtsURL": "https://rts-staging.freshworksapi.com",
@@ -1584,8 +1570,6 @@
         "_fd_scheduler_reminder_todo_queue": "main_staging_reminder_todo_queue",
         "_forums_moderation_queue": "forum_moderation_staging_reg",
         "_free_customer_email_queue": "main_staging_free_email",
-        "_freshfone_call_notifier_queue": "freshfone_call_notifier_staging",
-        "_freshfone_call_tracker": "freshfone_call_tracker_staging",
         "_helpdesk_reports_export_queue": "main_staging_helpdesk_reports_export",
         "_iris_etl_msg_queue": "iris_etl_msgs_staging",
         "_marketplace_app_queue": "marketplace_app_staging",
@@ -1651,7 +1635,10 @@
         "_api_endpoint": "http://sr.pre-freshmarketer.io/ab/api/v1"
       },
       "kbservice": {
-        "secret_key": "EJ[1:6hWB6JbN3NA4AuMyESnSuDXNBsSUFkLS6Ic8JSmHuio=:sm/+jKfOaSXga1biYhgSRGzdlXBK1WCz:quhLOPZEIiTCA4uHYvfq1fdKnutIm0J9RnJL]"
+        "secret_key": "EJ[1:6hWB6JbN3NA4AuMyESnSuDXNBsSUFkLS6Ic8JSmHuio=:sm/+jKfOaSXga1biYhgSRGzdlXBK1WCz:quhLOPZEIiTCA4uHYvfq1fdKnutIm0J9RnJL]",
+        "_clear_cache_path": "/solutions/api/v2/accounts/clear-cache",
+        "_api_endpoint": "https://%{domain}",
+        "_domain": "%{domain}"
       },
       "iam": {
         "_expiry": 300,
@@ -2036,8 +2023,6 @@
     },
     "hk-app-suggest": {
     },
-    "hk-app-freshfone-twilio": {
-    },
     "fc-bg-shoryuken": {
     },
     "hk-app": {
@@ -2145,13 +2130,9 @@
     },
     "hk-app-email": {
     },
-    "hk-app-freshfone": {
-    },
     "fc-app-buffer": {
     },
     "fc-app-api-channel": {
-    },
-    "fc-bg-resque-freshfone": {
     },
     "fc-app-merge": {
     },

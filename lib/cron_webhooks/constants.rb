@@ -192,38 +192,6 @@ module CronWebhooks::Constants
       class_name: 'CronWebhooks::MetaDataCheck',
       semaphore_expiry: 1.hour
     },
-    freshfone_failed_costs: {
-      class_name: 'CronWebhooks::Freshfone',
-      semaphore_expiry: 1.hour
-    },
-    freshfone_suspend: {
-      class_name: 'CronWebhooks::Freshfone',
-      semaphore_expiry: 1.hour
-    },
-    freshfone_renew_numbers: {
-      class_name: 'CronWebhooks::Freshfone',
-      semaphore_expiry: 1.hour
-    },
-    freshfone_suspension_reminder_3days: {
-      class_name: 'CronWebhooks::Freshfone',
-      semaphore_expiry: 1.hour
-    },
-    freshfone_suspension_reminder_15days: {
-      class_name: 'CronWebhooks::Freshfone',
-      semaphore_expiry: 1.hour
-    },
-    freshfone_freshfone_call_twilio_recording_delete: {
-      class_name: 'CronWebhooks::Freshfone',
-      semaphore_expiry: 1.hour
-    },
-    freshfone_failed_call_status_update: {
-      class_name: 'CronWebhooks::Freshfone',
-      semaphore_expiry: 1.hour
-    },
-    freshfone_failed_close_accounts: {
-      class_name: 'CronWebhooks::Freshfone',
-      semaphore_expiry: 1.hour
-    },
     enable_omniroute_for_new_accounts: {
       class_name: 'CronWebhooks::EnableOmnirouteForNewAccounts',
       semaphore_expiry: 1.hour
@@ -348,6 +316,8 @@ module CronWebhooks::Constants
     },
     except: %w[supervisor_worker gamification_ticket_quests gamification_ticket_score gamification_user_score livechat_queue]
   }.freeze
+
+  DRYRUN_SUPPORTED_TASKS = %w[suspended_account_deletion].freeze
 
   PAGER_DUTY_FREQUENCY_SECS = Rails.env.production? ? 18_000 : 900 # 5 hours : # 15 mins
   PAGERDUTY_QUEUES = %w[observer_worker update_ticket_states_queue].freeze

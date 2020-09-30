@@ -426,7 +426,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     mark_for_cleanup(self.id)
   end
 
-  def unmark_draft_for_cleanup
+  def unmark_draft_attachment_for_cleanup
     unmark_for_cleanup(self.id)
   end
 end

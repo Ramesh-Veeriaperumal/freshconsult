@@ -995,6 +995,27 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     cf.delete
   end
 
+  def test_create_company_with_invalid_year_for_renewal_date
+    enable_tam_fields
+    new_company = post :create, construct_params({}, name: Faker::Lorem.characters(10),
+                                                     description: Faker::Lorem.paragraph,
+                                                     domains: domain_array,
+                                                     note: Faker::Lorem.characters(10),
+                                                     health_score: 'Happy',
+                                                     account_tier: 'Premium',
+                                                     industry: 'Media',
+                                                     renewal_date: '0000-10-26')
+    result = JSON.parse(new_company.body)
+    assert_response 400, result
+    match_json(
+      [{
+        field: 'renewal_date',
+        code: :invalid_value,
+        message: 'Year should be greater than 1970'
+      }]
+    )
+  end
+
   def clear_contact_field_cache
     key = MemcacheKeys::COMPANY_FORM_FIELDS % { account_id: @account.id, company_form_id: @account.company_form.id }
     MemcacheKeys.delete_from_cache key

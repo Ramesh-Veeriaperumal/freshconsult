@@ -1,9 +1,6 @@
 load "#{Rails.root}/app/models/user.rb"
 
 unless Account.current
-  unless $redis_others.perform_redis_op("exists", "FALCON_ENABLED_LANGUAGES")
-    $redis_others.perform_redis_op("sadd", "FALCON_ENABLED_LANGUAGES", I18n.default_locale.to_s)
-  end
   if Account.count == 0
     signup = Signup.new(
       :account_name => 'Test Account',

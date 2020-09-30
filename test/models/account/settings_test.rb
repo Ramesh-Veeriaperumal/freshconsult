@@ -7,8 +7,9 @@ class Account::SettingsTest < ActiveSupport::TestCase
   include AccountHelper
 
   def setup
-    @account = Account.first || create_test_account
-    @account.make_current
+    @account = Account.first
+    create_test_account if @account.nil?
+    Account.stubs(:current).returns(@account)
   end
 
   def test_type_of_setting_with_dependent_feature
@@ -268,6 +269,32 @@ class Account::SettingsTest < ActiveSupport::TestCase
   ensure
     is_launched ? @account.launch(feature) : @account.rollback(feature)
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
+  end
+
+  def test_fetch_all_features_enabled
+    all_features = @account.features_list
+    features_enabled = @account.enabled_features
+    enabled_admin_settings = @account.enabled_admin_settings
+    enabled_internal_settings = @account.enabled_internal_settings
+    assert_equal features_enabled.count, (all_features - enabled_admin_settings - enabled_internal_settings).count
+  end
+
+  def test_fetch_admin_settings_enabled
+    enabled_admin_settings = @account.enabled_admin_settings
+    @account.enable_setting(:untitled_setting_1)
+    enabled_admin_settings_after_enable = @account.enabled_admin_settings
+    assert_equal enabled_admin_settings_after_enable.count, enabled_admin_settings.count + 1
+  ensure
+    @account.disable_setting(:untitled_setting_1)
+  end
+
+  def test_fetch_internal_settings_enabled
+    enabled_internal_settings = @account.enabled_internal_settings
+    @account.enable_setting(:fetch_ticket_from_ref_first)
+    enabled_internal_settings_after_enable = @account.enabled_internal_settings
+    assert_equal enabled_internal_settings_after_enable.count, enabled_internal_settings.count + 1
+  ensure
+    @account.disable_setting(:fetch_ticket_from_ref_first)
   end
 
   # Modify these test when we refactor settings methods

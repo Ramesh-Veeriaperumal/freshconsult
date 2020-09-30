@@ -234,11 +234,12 @@ module Ember
     end
 
     def enable_es_api_load(params, sql_query = nil, &block)
-      Account.current.launch(:filter_factory)
-      Account.current.launch(:new_es_api)
+      Account.any_instance.stubs(:filter_factory_enabled?).returns(true)
+      Account.any_instance.stubs(:new_es_api_enabled?).returns(true)
       yield if block_given?
-      Account.current.rollback(:filter_factory)
-      Account.current.rollback(:new_es_api)
+    ensure
+      Account.any_instance.unstub(:filter_factory_enabled?)
+      Account.any_instance.unstub(:new_es_api_enabled?)
     end
 
     def enable_next_response_sla(&block)
@@ -1293,7 +1294,7 @@ module Ember
       match_query_response_count_with_es_enabled(query_hash_params)
     ensure
       login_as(current_user)
-      Account.any_instance.unstub(:shared_ownership)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_tickets_internal_agent_group_with_read_scope

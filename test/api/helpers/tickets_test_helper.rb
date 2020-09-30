@@ -1,5 +1,5 @@
 ['ticket_fields_test_helper.rb', 'conversations_test_helper.rb', 'attachments_test_helper.rb', 'users_test_helper'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
-['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshfone_spec_helper.rb', 'freshcaller_spec_helper.rb', 'forum_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshcaller_spec_helper.rb', 'forum_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require "#{Rails.root}/spec/helpers/social_tickets_helper.rb"
 module ApiTicketsTestHelper
   include GroupHelper
@@ -12,7 +12,6 @@ module ApiTicketsTestHelper
   include TicketHelper
   include NoteHelper
   include SocialTicketsHelper
-  include FreshfoneSpecHelper
   include FreshcallerSpecHelper
   include ForumHelper
   include AdvancedTicketScopes
@@ -61,7 +60,6 @@ module ApiTicketsTestHelper
 
   def tickets_controller_before_all before_all_run
     return if before_all_run
-    @account.features.freshfone.create
     @account.features.forums.create
     @account.ticket_fields.custom_fields.each(&:destroy)
     @account.tickets.destroy_all
@@ -936,7 +934,6 @@ module ApiTicketsTestHelper
     param_object = OpenStruct.new(stats: true)
     pattern = ticket_pattern_with_association(ticket, param_object).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
-    pattern[:freshfone_call] = freshfone_call_pattern(ticket) if freshfone_call_pattern(ticket).present?
     pattern[:freshcaller_call] = freshcaller_call_pattern(ticket) if freshcaller_call_pattern(ticket).present?
     if (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && ticket.facebook?
       fb_pattern = ticket.fb_post.post? ? fb_post_pattern({}, ticket.fb_post) : fb_dm_pattern({}, ticket.fb_post)
@@ -950,7 +947,16 @@ module ApiTicketsTestHelper
     pattern[:requester] = Hash if requester
     pattern[:collaboration] = collaboration_pattern if @account.collaboration_enabled?
     pattern[:sender_email] = ticket.sender_email
+    pattern[:channel_info] = channel_info(ticket) if ticket.channel_id.present?
     pattern
+  end
+
+  def channel_info(ticket)
+    {
+      id: ticket.channel_id,
+      profile_unique_id: ticket.channel_profile_unique_id,
+      message_id: ticket.channel_message_id
+    }
   end
 
   def ticket_requester_pattern(requester)
@@ -1052,16 +1058,6 @@ module ApiTicketsTestHelper
     responses
   end
 
-  def freshfone_call_pattern(ticket)
-    call = ticket.freshfone_call
-    return unless call.present? && call.recording_url.present? && call.recording_audio
-    {
-      id: call.id,
-      duration: call.call_duration,
-      recording: attachment_pattern(call.recording_audio)
-    }
-  end
-
   def freshcaller_call_pattern(ticket)
     call = ticket.freshcaller_call
     return unless call.present?
@@ -1101,17 +1097,6 @@ module ApiTicketsTestHelper
     meta_info
   end
 
-  def new_fone_call
-    if @account.freshfone_account.present?
-      @credit = @account.freshfone_credit
-      @number ||= @account.freshfone_numbers.first
-    else
-      create_test_freshfone_account
-    end
-    @call = create_freshfone_call
-    create_audio_attachment
-  end
-
   def new_freshcaller_call
     create_test_freshcaller_account if @account.freshcaller_account.blank?
     @call = create_freshcaller_call
@@ -1127,17 +1112,6 @@ module ApiTicketsTestHelper
     @call.call_duration = 25
 
     @call.build_recording_audio(content: @data).save
-  end
-
-  def new_ticket_from_call(ticket = nil)
-    new_fone_call
-    @ticket = ticket || create_ticket
-    associate_call_to_item(@ticket)
-
-    new_fone_call
-    note = create_normal_reply_for(@ticket)
-    associate_call_to_item(note)
-    @ticket
   end
 
   def new_ticket_from_freshcaller_call(ticket = nil)
@@ -1191,7 +1165,6 @@ module ApiTicketsTestHelper
     }
     single_note = private_note_pattern({}, note)
     single_note.merge!(index_note)
-    single_note[:freshfone_call] = freshfone_call_pattern(note) if freshfone_call_pattern(note)
     single_note
   end
 

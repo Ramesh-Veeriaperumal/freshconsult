@@ -15,7 +15,6 @@ class Helpdesk::SpamTicket < Helpdesk::Mysql::DynamicTable
   has_many :time_sheets, :class_name => 'Helpdesk::TimeSheet',:as => 'workable',:dependent => :destroy, :order => "executed_at"
   has_one :tweet, :as => :tweetable, :class_name => 'Social::Tweet', :dependent => :destroy
   has_one :fb_post, :as => :postable, :class_name => 'Social::FbPost',  :dependent => :destroy
-  has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
 
   serialize :associations_data
   attr_protected :account_id

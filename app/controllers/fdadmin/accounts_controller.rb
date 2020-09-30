@@ -18,16 +18,16 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                                             :check_contact_import,
                                             :latest_solution_articles]
   around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,
-                :migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name,
-                :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account,
-                :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action, :clone_account, :enable_fluffy,
-                :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy , :disable_min_level_fluffy, :min_level_fluffy_info,
-                :reset_ticket_display_id, :skip_mandatory_checks, :make_account_admin]
+                :migrate_to_freshconnect, :add_feature, :add_launch_party, :add_setting, :change_url, :single_sign_on, :remove_feature,
+                :remove_launch_party, :remove_setting, :change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy,
+                :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language,
+                :trigger_action, :clone_account, :enable_fluffy, :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy ,
+                :disable_min_level_fluffy, :min_level_fluffy_info, :reset_ticket_display_id, :skip_mandatory_checks, :make_account_admin]
   before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit, :change_fluffy_min_level_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
     :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
-  before_filter :symbolize_feature_name, :only => [:add_feature, :remove_feature]
+  before_filter :symbolize_feature_name, :only => [:add_feature, :add_launch_party, :add_setting, :remove_feature, :remove_launch_party, :remove_setting]
   before_filter :check_freshconnect_migrate, :only => [:migrate_to_freshconnect]
   before_filter :validate_extend_higher_plan_trial, only: [:extend_higher_plan_trial]
   before_filter :validate_change_trial_plan, only: [:change_trial_plan]
@@ -54,12 +54,10 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:api_limit] = account.api_limit
     account_summary[:api_v2_limit] = get_api_redis_key(params[:account_id], account_summary[:subscription][:subscription_plan_id])
     account_summary[:fluffy_api_v2_limit] = fluffy_api_v2_limit(account)
-    account_summary[:freshfone_account_details] = get_freshfone_details(account)
     account_summary[:shard] = shard_info.shard_name
     account_summary[:pod] = shard_info.pod_info
-    account_summary[:freshfone_feature] = account.features?(:freshfone) || account.features?(:freshfone_onboarding)
     account_summary[:spam_details] = ehawk_spam_details
-    account_summary[:disable_emails] = account.launched?(:disable_emails)
+    account_summary[:disable_emails] = account.disable_emails_enabled?
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
     account_summary[:account_cancellation_requested] = account.account_cancellation_requested?
     account_summary[:clone_status] = account.account_additional_settings.clone_status
@@ -101,12 +99,12 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:social] = fetch_social_info(account)
     feature_info[:chat] = {:enabled => account.features?(:chat), :active => (account.chat_setting.active && account.chat_setting.site_id?)}
     feature_info[:mailbox] = account.features?(:mailbox)
-    feature_info[:freshfone] = account.features?(:freshfone)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
     feature_info[:launch_party] = account.all_launched_features
-    feature_info[:bitmap_list] = account.features_list
-    feature_info[:db_feature_list] = account.features.map(&:to_sym)
+    feature_info[:bitmap_list] = account.enabled_features
+    feature_info[:engineering_settings] = account.enabled_internal_settings
+    feature_info[:admin_settings] = account.enabled_admin_settings
 
     respond_to do |format|
       format.json do
@@ -337,6 +335,88 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     respond_to do |format|
       format.json do
         render :json => result
+      end
+    end
+  end
+
+  def add_launch_party
+    @account = Account.find(params[:account_id])
+    @account.make_current
+    result = { account_id: @account.id, account_name: @account.name }
+    begin
+      if enableable?(@feature_name)
+        enable_feature(@feature_name)
+        result[:status] = 'success'
+      else
+        result[:status] = 'notice'
+      end
+    rescue RuntimeError
+      result[:status] = 'error'
+    end
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
+  def remove_launch_party
+    @account = Account.find(params[:account_id]).make_current
+    result = { account_id: @account.id, account_name: @account.name }
+    begin
+      if disableable?(@feature_name)
+        disable_feature(@feature_name)
+        result[:status] = 'success'
+      else
+        result[:status] = 'notice'
+      end
+    rescue RuntimeError
+      result[:status] = 'error'
+    end
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
+  def add_setting
+    @account = Account.find(params[:account_id])
+    @account.make_current
+    result = { account_id: @account.id, account_name: @account.name }
+    begin
+      if enableable?(@feature_name)
+        enable_feature(@feature_name)
+        result[:status] = 'success'
+      else
+        result[:status] = 'notice'
+      end
+    rescue RuntimeError
+      result[:status] = 'error'
+    end
+    respond_to do |format|
+      format.json do
+        render json: result
+      end
+    end
+  end
+
+  def remove_setting
+    @account = Account.find(params[:account_id]).make_current
+    result = { account_id: @account.id, account_name: @account.name }
+    begin
+      if disableable?(@feature_name)
+        disable_feature(@feature_name)
+        result[:status] = 'success'
+      else
+        result[:status] = 'notice'
+      end
+    rescue RuntimeError
+      result[:status] = 'error'
+    end
+    respond_to do |format|
+      format.json do
+        render json: result
       end
     end
   end
@@ -1232,19 +1312,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       end
     end
 
-    def get_freshfone_details(account)
-      return get_account_details(account
-      ) if freshfone_details_preconditions?(account)
-      {disabled: true}
-    end
-
-    def freshfone_details_preconditions?(account)
-      account.freshfone_account.present? || account.features?(:freshfone) ||
-          freshfone_activation_requested?(account)
-    end
-
     def spam_blacklisted? account
-      account.launched?(:spam_blacklist_feature)
+      account.spam_blacklist_feature_enabled?
     end
 
     def outgoing_blocked?(account_id)
@@ -1252,7 +1321,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
 
     def remove_spam_blacklist account
-      account.rollback(:spam_blacklist_feature)
+      account.disable_setting(:spam_blacklist_feature)
     end
 
     def remove_outgoing_email_block account_id
