@@ -649,6 +649,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/marketplace/shopify", :only => [:landing]
     resource :"integrations/salesforce"
     resource :"integrations/freshsale"
+    resource :"integrations/freshworkscrm"
     resource :"integrations/slack_v2", :only => [:oauth, :new, :install, :edit, :update]
     resource :"integrations/outlook_contact", :only => [:install, :settings, :edit, :destroy, :update, :render_fields, :new]
     resource :"integrations/cti_admin"

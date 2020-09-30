@@ -159,7 +159,6 @@ module Redis::Keys::Others
   CANNED_FORMS                            = "CANNED_FORMS:%<account_id>s".freeze
   SANDBOX_DIFF_RATE_LIMIT                 = "SANDBOX_DIFF_RATE_LIMIT".freeze
   # Search Service Keys
-  SEARCH_SERVICE_SIGNUP                   = "SEARCH_SERVICE_SIGNUP".freeze
   #Dashboard v2 caching keys
   ADMIN_WIDGET_CACHE_SET                  = "ADMIN_WIDGET_CACHE_SET:%{account_id}".freeze
   GROUP_WIDGET_CACHE_SET                  = "GROUP_WIDGET_CACHE_SET:%{account_id}".freeze

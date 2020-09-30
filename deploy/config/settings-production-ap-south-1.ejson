@@ -155,7 +155,7 @@
         "incoming_email_api_key1": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:lhoqINTtM+OKdzkgsD9EbzjqXWK4YMRD:vEs0X8by2b49rhbidy1Zz57xR1gaL1Ema5L+qe4UjyrbAvdgRxUeF/hxWvrh9A==]",
         "incoming_email_api_key2": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:YVdemXXPGyF6JrvcD0bzMWec3Pjs44NJ:wkLzXxJiLx8K5wnhcLUeTnh8mRvNZLNL5g370cotzR5Tuv+fn+HXaqXAJqwxEg==]",
         "_host": "https://ind-emailservice.freshdesk.com",
-        "_lang_host": "https://ind-emailservice.freshdesk.com",
+        "_lang_host": "https://mailservicemum.freshdesk.com",
         "_timeout": "60",
         "_url": "api/v1/email/send",
         "_account_validate_url": "api/v1/account/validate/",

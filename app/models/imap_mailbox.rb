@@ -16,8 +16,8 @@ class ImapMailbox < ActiveRecord::Base
 
   self.primary_key = :id
 
-  scope :errors, -> { where('error_type > ? and error_type <> ?', 0, IMAP_AUTH_ERROR) }
-  scope :reauth_errors, -> { where('error_type = ?', IMAP_AUTH_ERROR) }
+  scope :errors, -> { where('error_type > ? and error_type NOT IN (?)', 0, IMAP_REAUTH_ERRORS) }
+  scope :reauth_errors, -> { where('error_type IN (?)', IMAP_REAUTH_ERRORS) }
 
   attr_encrypted :access_token, random_iv: true, compress: true
   attr_encrypted :refresh_token, random_iv: true, compress: true
