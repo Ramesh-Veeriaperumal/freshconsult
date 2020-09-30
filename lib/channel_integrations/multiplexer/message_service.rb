@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 module ChannelIntegrations::Multiplexer
   module MessageService
     include Iam::AuthToken
-    MULTIPLEXER_MESSAGE_API_PATH = "/api/v2/channels/%{channel_id}/messages".freeze
+    MULTIPLEXER_MESSAGE_API_PATH = '/api/v2/channels/%{channel_id}/messages'.freeze
     TIMEOUT_IN_SEC = 3
 
-    def post_message(account, user, params)
+    def post_message(user, params)
       response = multiplexer.post do |req|
-        req.url MULTIPLEXER_MESSAGE_API_PATH % { channel_id: params[:channel_id] }
+        req.url format(MULTIPLEXER_MESSAGE_API_PATH, channel_id: params[:channel_id])
         req.headers['Content-Type'] = 'application/json'
         req.headers['Authorization'] = construct_jwt_with_bearer(user)
         req.body = payload(params)

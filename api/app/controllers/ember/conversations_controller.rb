@@ -155,7 +155,7 @@ module Ember
     def channel_reply
       @validation_klass = 'ChannelReplyValidation'
       return unless validate_body_params(@ticket)
-      
+
       sanitize_channel_reply_params
       build_object
       assign_note_attributes
@@ -163,8 +163,8 @@ module Ember
       return unless validate_delegator(@item)
 
       if @item.save_note
-        Channel::MessageWorker.perform_async(body: params[:body],
-          channel_id: params[:channel_id], profile_unique_id: params[:profile_unique_id])
+        Channel::MessageWorker.perform_async(body: params[:body], channel_id: params[:channel_id],
+                                             profile_unique_id: params[:profile_unique_id])
         render_response(true)
       else
         render_response(false)
