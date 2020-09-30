@@ -198,6 +198,8 @@ class AccountsController < ApplicationController
     NewRelic::Agent.notice_error(e, custom_params: { description: "Error occoured while mapping precreated account for Account #{Account.current.id}" })
     Account.reset_current_account
     User.reset_current_user
+  ensure
+    AccountCreation::PrecreateAccounts.perform_async(precreate_account_count: 1, shard_name: ActiveRecord::Base.current_shard_selection.shard.to_s)
   end
 
   def new_signup_free
