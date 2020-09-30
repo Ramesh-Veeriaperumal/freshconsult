@@ -536,7 +536,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
   def test_supress_logs_for_account_action_with_log_enabled_for_account
     Rails.env.stubs(:production?).returns(true)
-    Account.current.launch(:disable_supress_logs)
+    Account.any_instance.stubs(:disable_supress_logs_enabled?).returns(true)
     current_log_level = ActiveRecord::Base.logger.level
     get :account, controller_params(version: 'private')
     assert_response 200
@@ -544,7 +544,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_equal ActiveRecord::Base.logger.level, current_log_level
   ensure
     Rails.env.unstub(:production?)
-    Account.current.rollback(:disable_supress_logs)
+    Account.any_instance.unstub(:disable_supress_logs_enabled?)
   end
 
   def test_account_with_manual_dkim_configuration_banner

@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class Dashboard::Custom::MSAvailability < Dashboards
-  CONFIG_FIELDS = [:queue_id].freeze
-  CACHE_EXPIRY = 60
+  CONFIG_FIELDS = [:queue_id, :group_ids].freeze
 
   class << self
     include Dashboard::Custom::OmniWidgetConfigValidationMethods

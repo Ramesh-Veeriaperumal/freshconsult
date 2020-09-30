@@ -15,6 +15,14 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
+  :fetch_ticket_from_ref_first:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :skip_ticket_threading:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
   :signup_link:
     default: true
     internal: false

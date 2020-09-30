@@ -1066,6 +1066,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'sprout_trial_onboarding'
     assert_equal account.subscription.state, 'free'
     assert_equal account.subscription.plan_name, 'Sprout Jan 20'
+    assert_not_includes account.features_list, :sla_management_v2
   ensure
     unstub_signup_calls
     Billing::Subscription.any_instance.unstub(:create_subscription)
@@ -1122,6 +1123,7 @@ class AccountsControllerTest < ActionController::TestCase
                      user_name: user_name, user_password: 'test1234', user_password_confirmation: 'test1234',
                      user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }
     user_info = { name: user_name, email: user_email, time_zone: 'Chennai', language: 'en' }
+    CentralPublishWorker::AccountWorker.jobs.clear
     get :new_signup_free, callback: '', user: user_info, account: account_info, session_json: session, format: 'json'
     resp = JSON.parse(response.body)
     assert_response 200, resp
@@ -1130,6 +1132,11 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.account_additional_settings.additional_settings[:onboarding_version], 'sprout_trial_onboarding'
     assert_equal account.subscription.state, 'free'
     assert_equal account.subscription.plan_name, 'Sprout Jan 20'
+    assert_not_includes account.features_list, :sla_management_v2
+    job = CentralPublishWorker::AccountWorker.jobs.last
+    assert_equal 'account_update', job['args'][0]
+    assert_equal job['args'][1]['model_changes']['account_configuration'][0]['anonymous_account'], true
+    assert_equal job['args'][1]['model_changes']['account_configuration'][1]['anonymous_account'], false
   ensure
     unstub_signup_calls
     @controller.unstub(:redis_key_exists?)
