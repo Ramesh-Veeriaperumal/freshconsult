@@ -626,9 +626,6 @@ class Account < ActiveRecord::Base
     
     def enable_searchv2
       if self.features?(:es_v2_writes)
-        if redis_key_exists?(SEARCH_SERVICE_SIGNUP)
-          self.launch(:service_writes)
-        end
         SearchV2::Manager::EnableSearch.perform_async
         self.launch(:es_v2_reads)
       end
