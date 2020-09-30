@@ -9,7 +9,7 @@ module ChannelIntegrations::CommonActions
       ticket.save_ticket!
       # TODO: return the response in the :show /api/v2/ticket/ format as it is in future.
       reply = default_success_format
-      reply[:data] = { id: ticket.display_id }
+      reply[:data] = { id: ticket.display_id, requester_id: ticket.requester_id }
       reply
     end
 
