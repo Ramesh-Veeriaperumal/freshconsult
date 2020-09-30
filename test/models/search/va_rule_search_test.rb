@@ -23,7 +23,6 @@ class Search::VaRuleSearchTest < ActiveSupport::TestCase
   end
 
   def before_all
-    current_account.launch(:automation_revamp)
     current_account.add_feature :shared_ownership
     Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
     return if @@before_all_run
@@ -40,7 +39,6 @@ class Search::VaRuleSearchTest < ActiveSupport::TestCase
   end
 
   def teardown
-    current_account.rollback(:automation_revamp)
     current_account.remove_feature :shared_ownership
   end
 
@@ -174,7 +172,6 @@ class Search::VaRuleSearchTest < ActiveSupport::TestCase
 
   def test_dispatcher_search_action_group_id_array
     field_name = :group_id
-    current_account.launch(:automation_revamp)
     field_type = FIELD_TO_TYPE_MAPPING[field_name]
     conditions = generate_condition(field_type, field_name, true)
 
@@ -191,7 +188,6 @@ class Search::VaRuleSearchTest < ActiveSupport::TestCase
   private
 
     def create_dispatcher_and_assert_conditions(field_name)
-      current_account.launch(:automation_revamp)
       field_type = FIELD_TO_TYPE_MAPPING[field_name]
       conditions = generate_condition(field_type, field_name)
 
@@ -207,8 +203,6 @@ class Search::VaRuleSearchTest < ActiveSupport::TestCase
     end
 
     def create_dispatcher_and_assert_actions(field_name)
-      current_account.launch(:automation_revamp)
-
       conditions = generate_condition(FIELD_TO_TYPE_MAPPING[:subject], :subject)
       field_type = FIELD_TO_TYPE_MAPPING[field_name]
       actions = generate_actions(field_type, field_name)
@@ -225,8 +219,6 @@ class Search::VaRuleSearchTest < ActiveSupport::TestCase
     end
 
     def create_observer_and_assert_events(field_name)
-      current_account.launch(:automation_revamp)
-
       conditions = generate_condition(FIELD_TO_TYPE_MAPPING[:subject], :subject)
       actions = generate_actions(FIELD_TO_TYPE_MAPPING[:priority], :priority)
 

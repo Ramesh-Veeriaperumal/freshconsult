@@ -26,6 +26,7 @@ module CronWebhooks
     private
 
       def init
+        @dryrun = dry_run_mode?(@args[:mode])
         @start_time = Time.current
         @deleted_accounts = []
         @shards = ActiveRecord::Base.shard_names
@@ -78,7 +79,7 @@ module CronWebhooks
           @processing_accounts[shard_name] = { account_id: account.id + 1, attempt_count: 0 }
           account = nil
         elsif @processing_accounts[shard_name][:account_id] == account.id
-          if @processing_accounts[shard_name][:attempt_count] > ACCOUNT_MAX_DELETION_ATTEMPT_COUNT
+          if @processing_accounts[shard_name][:attempt_count] > max_retry_count
             Rails.logger.info "Already processing account exceeds max retry count - #{account.id}"
             @processing_accounts[shard_name] = { account_id: account.id + 1, attempt_count: 0 }
             account = nil
@@ -97,10 +98,10 @@ module CronWebhooks
 
       def delete_account_on_shard(account, shard_name)
         if shard_mapping_exist?(account.id, shard_name)
-          job_id = AccountCleanup::DeleteAccount.perform_async(account_id: account.id)
+          job_id = AccountCleanup::DeleteAccount.perform_async(account_id: account.id) unless @dryrun
           @deleted_accounts << { account: account.id, shard: shard_name, rebalanced: false }
         else
-          job_id = AccountCleanup::RebalancedAccountDeleteWorker.perform_async(account_id: account.id, shard_name: shard_name)
+          job_id = AccountCleanup::RebalancedAccountDeleteWorker.perform_async(account_id: account.id, shard_name: shard_name) unless @dryrun
           @deleted_accounts << { account: account.id, shard: shard_name, rebalanced: true }
         end
         subscription = account.subscription
@@ -125,6 +126,10 @@ module CronWebhooks
 
       def batch_size
         (get_others_redis_key(BATCH_SIZE_TO_DELETE_KEY) || DEFAULT_BATCH_SIZE_TO_DELETE).to_i
+      end
+
+      def max_retry_count
+        @dryrun ? 0 : ACCOUNT_MAX_DELETION_ATTEMPT_COUNT
       end
   end
 end

@@ -1061,7 +1061,7 @@
       },
       "iris": {
         "service_token": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:gM3kQzIDp/vwrqfVt5gWWVGz8VX2vrFP:5Td0jvUKeMgkXxccLCgURzwowiX3IB1aI/3uehGeHHETyUZo]",
-        "shared_secret": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:I3b8WR4IWXBOz3/prwHHlwAPKzRXX9C0:nRxDwYDpnT3qbq7bTKylDbVg8k0/36kVsA==]",
+        "jwt_secret": "EJ[1:wiKIVz3UuZoBQ+7D/+mlLwW71UoDBfy+L0OU72msxX0=:r78EEX71Jht8WzR98YR8DAQctX8vhEVm:idztezBYDt/px4BpxKvD9mNd7DRlJMSEeTNGzNhTfvp+zxa7DhhOPdOqumKn8UxFkqzSEgeSqXruv/ofvocUy4ZnZ8rSToYdunXj/Dxtdhc=]",
         "_collector_host": "https://iris-staging.freshworksapi.com",
         "_iris_url": "https://dzvv3qu02a8s8.cloudfront.net/iris-staging-1.0.js",
         "_rtsURL": "https://rts-staging.freshworksapi.com",

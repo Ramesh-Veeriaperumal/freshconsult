@@ -27,7 +27,7 @@ class CustomDashboardDelegator < BaseDelegator
   def count_existing_widgets(widgets)
     widgets.each do |widget|
       case widget.source
-      when SOURCES[:freshcaller]
+      when SOURCES[:freshcaller], SOURCES[:freshchat]
         @widget_count[widget.source + '_' + WIDGET_MODULES_BY_SHORT_NAME[widget.widget_type]] += 1
       else
         @widget_count[WIDGET_MODULES_BY_NAME[widget.widget_type]] += 1
@@ -36,7 +36,7 @@ class CustomDashboardDelegator < BaseDelegator
   end
 
   def initialise_widget_counts_to_zero
-    @widget_count = (WIDGET_MODULE_TOKEN_BY_NAME.keys - FRESHCALLER_WIDGETS).inject({}) { |h, k| h.merge(k => 0) }.merge(OMNI_WIDGET_INITIAL_LIMIT)
+    @widget_count = (WIDGET_MODULE_TOKEN_BY_NAME.keys - OMNI_WIDGETS).inject({}) { |h, k| h.merge(k => 0) }.merge(OMNI_WIDGET_INITIAL_LIMIT)
   end
 
   def dashboard_creation_limit
@@ -77,11 +77,11 @@ class CustomDashboardDelegator < BaseDelegator
     widget_type = WIDGET_MODULES_BY_NAME[widget[:widget_type] || @widget_by_id[widget[:id]].widget_type]
     source = widget[:source] || (widget[:id] && @widget_by_id[widget[:id]].source)
     case source
-    when SOURCES[:freshcaller]
+    when SOURCES[:freshcaller], SOURCES[:freshchat]
       omni_widget_type = source + '_' + WIDGET_MODULES_BY_SHORT_NAME[widget[:widget_type] || @widget_by_id[widget[:id]].widget_type]
       @widget_count[omni_widget_type] += widget[:_destroy].present? ? -1 : 1
     else
-      @widget_count[widget_type] += widget[:_destroy].present? ? -1 : 1 unless FRESHCALLER_WIDGETS.include?(widget_type)
+      @widget_count[widget_type] += widget[:_destroy].present? ? -1 : 1 unless OMNI_WIDGETS.include?(widget_type)
     end
   end
 
