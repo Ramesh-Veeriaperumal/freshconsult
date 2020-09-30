@@ -484,10 +484,6 @@ class Account < ActiveRecord::Base
     launched?(:force_index_tickets)
   end
 
-  def disable_freshchat_enabled?
-    launched?(:disable_freshchat)
-  end
-
   def stop_contacts_count_query_enabled?
     launched?(:stop_contacts_count_query)
   end
