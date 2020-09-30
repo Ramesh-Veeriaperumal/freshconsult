@@ -18,8 +18,6 @@ module ApplicationHelper
   include CommunityHelper
   include TabHelper
   include ReportsHelper
-  include Freshfone::CallerLookup
-  include Freshfone::SubscriptionsHelper
   include DateHelper
   include StoreHelper
   include Redis::IntegrationsRedis
@@ -52,7 +50,7 @@ module ApplicationHelper
   #Add the features you want to send to inline manual(for segmenting) to the below array in string format
   #NOTE: The limit for the features is 17 items with up to 24 characters each. 
   # i.e, we can only send first 24 characters of first 17 enabled features for an account. 
-  INLINE_MANUAL_FEATURES = [:freshfone, :mint_portal_applicable]
+  INLINE_MANUAL_FEATURES = [:mint_portal_applicable]
 
   INLINE_MANUAL_FEATURE_THRESHOLDS = { char_length: 24, max_count: 17}
 
@@ -1770,7 +1768,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   #Checks if Email was disabled by Freshpipe for running migrations
   def check_email_disabled_by_pipe
-    if current_account.launched?(:disable_emails)
+    if current_account.disable_emails_enabled?
       return content_tag('div', "#{t('freshpipe_email_disabled')}".html_safe, :class =>
         "alert-message block-message warning full-width")
     end
@@ -1833,103 +1831,6 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
     super *[collection_or_options, options].compact
   end
-
-  def can_view_freshfone_admin?
-    feature?(:freshfone) or current_account.freshfone_numbers.any?
-  end
-
-  def freshfone_below_threshold?
-    current_account.freshfone_credit.below_calling_threshold?
-  end
-
-  def recent_countries
-    recent_calls = current_user.freshfone_calls.roots.find(
-         :all, :conditions =>  { :call_type => Freshfone::Call::CALL_TYPE_HASH[:outgoing] }
-         ).last(2).reverse
-    favorites = (recent_calls || []).map{|call| call.caller_country.downcase if !call.caller_country.nil? }.compact.uniq
-    favorites.to_json
-  end
-# helpers for fresfone callable links -- starts
-	def can_make_phone_calls(contact, freshfone_number_id=nil)
-		can_make_calls(contact.phone, contact, 'phone-icons', freshfone_number_id, true)
-	end
-
-	def can_make_mobile_calls(contact, freshfone_number_id=nil)
-		can_make_calls(contact.mobile, contact, 'mobile-icons', freshfone_number_id, true)
-	end
-
-	def can_make_calls(number, contact, class_name=nil, freshfone_number_id=nil, can_show_number = false)
-		#link_to h(number), "tel:#{number}", { :'data-phone-number' => "#{number}",
-		#																	 :'data-freshfone-number-id' => freshfone_number_id,
-    #																	 :class => "can-make-calls #{class_name}" }
-    content_tag(:span , can_show_number ? h(number) : nil, { :'data-phone-number' => "#{h(number)}",
-                                  :'data-freshfone-number-id' => freshfone_number_id,
-                                  :'data-contact-id' => contact.present? ? contact.id : nil,
-                                  :'data-deleted' => contact.present? && contact.deleted,
-                                  :class => "can-make-calls #{class_name}" })
-
-	end
-
-  def account_numbers
-    @account_numbers ||= current_account.freshfone_numbers
-  end
-
-	def current_account_freshfone_numbers
-		@current_account_freshfone_numbers ||= account_numbers.accessible_freshfone_numbers(current_user)
-	end
-
-  def current_account_freshfone_number_hash
-     @current_account_freshfone_number_hash ||= current_account_freshfone_numbers.map{|n| [n.number, n.id]}
-  end
-
-  def current_account_freshfone_names
-      @current_account_freshfone_names ||= current_account_freshfone_numbers.map{ |n| [n.id, name = n.name.nil? ? "" : CGI.escapeHTML(n.name)] }
-  end
-
- def current_account_freshfone_details
-    @current_account_freshfone_details ||= current_account_freshfone_numbers.map{|n| [n.name.blank? ? "#{n.number}" : "#{CGI.escapeHTML(n.name)} #{n.number}", n.id] }
- end
-
- def warm_transfer_enabled?
-  current_account.features?(:freshfone_warm_transfer)
- end
-
- def transfer_tooltip
-   return t('freshfone.widget.blind_transfer') if warm_transfer_enabled?
-   t('freshfone.widget.transfer_call')
- end
-
- def freshfone_presence_status_class
-  return "ficon-phone-disable" if current_user.freshfone_user_offline? ||
-    !freshfone_active_or_trial?
-  presence_class = (current_user.freshfone_user && current_user.freshfone_user.available_on_phone?) ?
-                       "ficon-ff-via-phone" : "ficon-ff-via-browser"
-  presence_class + " ff-busy" unless current_user.freshfone_user_online?
-  return presence_class
- end
-
- def phone_disabled?
-  'disabled' unless freshfone_active_or_trial?
- end
-
-  def freshfone_non_conference_class
-    current_account.features?(:freshfone_conference) ? "" : "non-conference"
-  end
-
- def call_direction_class(call)
-		if call.blocked?
-			"ficon-blocked-call"
-		elsif call.incoming?
-			(call.completed? || call.inprogress?) ? "ficon-incoming-call" : abandon_or_missed_call_icon(call)
-		elsif call.outgoing?
-			(call.completed? || call.inprogress?) ? "ficon-outgoing-call" : "ficon-no-arrow-left"
-		end
-	end
-
-  def abandon_or_missed_call_icon(call)
-    call.abandoned_call? ? "ficon-abandoned-call" : "ficon-no-arrow-right"
-  end
-# helpers for fresfone callable links -- ends
 
   def ilos_widget( entity_id, location)
     ilos_id = (location == "portal_ticket" || location == "portal_forum") ? "ilos-btn-portal" : "ilos-btn-agent"
@@ -2086,10 +1987,6 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def show_onboarding?
     user_trigger = !is_assumed_user? && current_user.login_count <= 2  && current_user.agent.onboarding_completed?
     (current_user.privilege?(:admin_tasks))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
-  end
-
-  def outgoing_callers
-    current_account.freshfone_caller_id
   end
 
   def inline_manual_people_tracing

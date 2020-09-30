@@ -21,7 +21,7 @@
     });
     window.addEventListener('freshcaller-widget-ready', function(){
       $('#widget-loader').addClass('hide');
-      $('.freshfone_widget .ficon-ff-phone').removeClass('hide');
+      $('.freshcaller_widget .ficon-ff-phone').removeClass('hide');
     });
     $("body").on("click", "#fcall-widget-button", function(){
       if($(this).children('#widget-loader').hasClass('hide')){

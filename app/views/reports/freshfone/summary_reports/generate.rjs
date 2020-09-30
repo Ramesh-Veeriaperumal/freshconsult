@@ -1,2 +1,0 @@
-page.replace_html 'filter_container', :partial => 'filter_header'
-page.replace_html 'freshfone-report-content', :partial => 'call_list'
