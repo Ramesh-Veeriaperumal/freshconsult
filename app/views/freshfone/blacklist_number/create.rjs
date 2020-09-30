@@ -1,3 +1,0 @@
-show_ajax_flash page
-page << "jQuery('#blacklist-confirmation').modal('hide');"
-page << "App.Freshfonecallhistory.CallBlock.blockNumber('#{@blacklist_number.number}');"

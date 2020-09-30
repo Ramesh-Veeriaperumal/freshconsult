@@ -9,11 +9,11 @@ module Settings::Pipe
 
     def toggle_email
       if params[:disabled] == true
-        Account.current.launch(:disable_emails)
+        Account.current.enable_setting(:disable_emails)
       else
-        Account.current.rollback(:disable_emails)
+        Account.current.disable_setting(:disable_emails)
       end
-      @item = { disabled: Account.current.launched?(:disable_emails) }
+      @item = { disabled: Account.current.disable_emails_enabled? }
     end
 
     def change_api_v2_limit

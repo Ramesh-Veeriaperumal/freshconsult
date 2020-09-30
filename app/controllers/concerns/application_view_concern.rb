@@ -62,10 +62,6 @@ module Concerns::ApplicationViewConcern
     get_others_redis_hash_value(REAUTH_MAILBOX_STATUS_CHECK, Account.current.id)
   end
 
-  def freshfone_deprecation?
-    Account.current.freshfone_enabled? && !Account.current.freshcaller_enabled?
-  end
-
   def livechat_deprecation?
     Account.current.livechat_enabled? && !(Account.current.freshchat_enabled? && Account.current.freshchat_account.try(:enabled))
   end

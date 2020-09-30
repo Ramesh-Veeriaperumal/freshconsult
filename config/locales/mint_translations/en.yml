@@ -1242,34 +1242,6 @@ en:
         filter_report: Edit Filter
         ticket_type: Ticket Type
         select_billable: Select Billable/Non-Billable
-    freshfone:
-      time_period: Time Period
-      num_of_transfered: No of Transfers
-      no_agent: '- No Agent -'
-      group: Group
-      total_unanswered_calls: Unanswered Calls
-      call_type: Call Type
-      filter_option_all_calls: All Calls
-      filter_close: Close
-      avg_handle_time: Avg Handle Time
-      all_numbers: All Numbers
-      filter_report: Edit Filter
-      number: Number
-      business_hours: Business Hours
-      no_external: Transfers made to external numbers are not included
-      summary_title: 'Agent Call Summary '
-      generate_summary: Generate
-      num_of_calls: No of Calls
-      unanswered_transfers: Unanswered Transfers
-      unanswered_count: Unanswered
-      select_call_type: Select Call Type
-      options:
-        all_groups: All Groups
-        unassigned: Unassigned
-        incoming: Incoming
-        outgoing: Outgoing
-      filter_by_title: Filtered by
-      total_voice_mail: Voice Mails
     select_customer: Select Customer
     summary_report:
       avg_1st_response_time: Average First <br> Response Time
@@ -4870,288 +4842,6 @@ en:
         other: like this
   title: Title
   free_plan_agents_v2: Unlimited agents
-  freshfone:
-    admin:
-      purchase_numbers_text: >-
-        Buy a local or toll free number and support customers anywhere across
-        the world over phone
-      greetings: Greetings
-      settings: Settings
-      important: Important
-      toll_free: Toll-Free
-      purchase_credit_text: >-
-        Purchase credits to buy numbers, make and receive calls using the phone
-        channel.
-      suspended_alert: >-
-        <b>Important:</b> Disabling your phone channel will not prevent the
-        monthly rental on your numbers. To avoid getting charged, please delete
-        the purchased numbers.
-      freshfone_numbers_title: Phone
-      welcome_page:
-        title_text: Phone
-      number:
-        simultaneous: Call all agents
-        round_robin: Call idle agent first
-      numbers:
-        sidebar_content_v2: >-
-          Using the phone channel, you can make and receive calls through your
-          browser, mobile phone or using the phone channel in Freshdesk’s mobile
-          apps. It is tightly integrated with Freshdesk’s ticketing system. So
-          you can keep track of phone calls by recording them and converting
-          them into tickets whenever necessary. <br/><br/> <b>Setting up
-          Phone</b></br>To start using phone, you will first need to enable it
-          and purchase a support number. You can purchase local numbers from the
-          <a
-          href='https://support.freshdesk.com/support/solutions/articles/169322'
-          target='_blank'>countries listed here</a> and make or take calls from
-          anywhere in the world. If your customers will be calling you in the
-          US, UK or Canada you can also purchase toll-free support numbers (or
-          freephone in the UK). <br/><br/><b>Provide Complete Phone
-          Support</b><br/>With our phone channel, you can<br/><ul><li>Start
-          making and taking calls using your web browser or mobile
-          phones</li><li>Create voicemails, forward calls, or transfer calls to
-          any agent, anywhere</li><li>Monitor calls, barge when needed, add
-          other agents into on-going calls, and more*</li></ul><br/><p>*Please
-          reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>
-          to enable advanced features for your account. These include call
-          monitoring, call barging, call conferencing, call masking, and call
-          lifetime metrics.</p><br/>
-        sidebar_title: Phone channel
-        delete_alert: >-
-          A number once deleted cannot be purchased again. Are you sure you want
-          to delete the number?
-        buy_loading_text: Buying...
-        buy_phone_numbers: Buy phone Numbers
-        caller_id:
-          no_number_added: No caller id added
-          call_id_mask: Mask this number
-          manage_caller_id: 'Manage Caller ID '
-          add_new: Add New
-        tour_link: Help me setup phone channel
-        failure_purchase: >-
-          Unable to purchase the phone number. Kindly make sure the address is a
-          valid local address in <span class='certification-country'></span>.
-        buy: Buy Number
-        buy_button_text: Buy
-        address:
-          address: Address
-          state: State/Province/Region
-          city: City
-          postal_code: Postal Code
-          required_field: All fields are required
-          name: Company / Name
-        setup:
-          info_text: >-
-            In order to start using the phone channel, you will first need to
-            purchase a call-in number to offer your customers. You can purchase
-            a local number in any <a
-            href='https://support.freshdesk.com/support/solutions/articles/169322'
-            target='_blank'>countries listed here</a>. If your customers will be
-            calling you from the US, UK or Canada, you can also offer them a
-            Toll-free dial in number.<br/><br/>You can purchase multiple phone
-            numbers from various countries and setup toll-free helplines inside
-            Freshdesk without using any third party service. You will be charged
-            standard rates for incoming, outgoing and forwarding calls from your
-            helpdesk. Check out the <a
-            href='http://freshdesk.com/multichannel-support/phone-support/call-rates'
-            target='_blank'>call rates here</a>.<br/><br/> Once you have
-            purchased a phone number for your support helpline, all incoming
-            calls will be distributed to agents who are logged in to your
-            helpdesk. In addition, your agents can choose to pick up phone calls
-            from inside the browser or have them forwarded to their desk phone
-            automatically.
-          title_text: Setting up a call center
-        sidebar_content: >-
-          Using the phone channel, you can make and receive calls through your
-          browser, mobile phone or using the phone channel in Freshdesk’s mobile
-          apps. It is tightly integrated with Freshdesk’s ticketing system. So
-          you can keep track of phone calls by recording them and converting
-          them into tickets whenever necessary. <br/><br/> <b>Setting up
-          Phone</b></br>To start using phone, you will first need to enable it
-          and purchase a support number. You can purchase local numbers from the
-          <a
-          href='https://support.freshdesk.com/support/solutions/articles/169322'
-          target='_blank'>countries listed here</a> and make or take calls from
-          anywhere in the world. If your customers will be calling you in the
-          US, UK or Canada you can also purchase toll-free support numbers (or
-          freephone in the UK). <br/><br/><b>Provide Complete Phone
-          Support</b><br/>With our phone channel, you can<br/><ul><li>Start
-          making and taking calls using your web browser or mobile
-          phones</li><li>Create voicemails, forward calls, or transfer calls to
-          any agent, anywhere</li><li>Monitor calls, barge when needed, add
-          other agents into on-going calls, and more*</li></ul><br/><p>*Please
-          reach <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>
-          to enable advanced features for your account. These include call
-          monitoring, call barging, call conferencing, call masking, and call
-          lifetime metrics.</p><br/><p><a
-          href='http://freshdesk.com/multichannel-support/phone-support'
-          target='_blank'>Learn more about phone’s powerful capabilities and
-          features</a><p>
-        not_available: No results returned. Please try a different search term
-        manage: Manage
-        address_certification_text: >-
-          To buy a phone number, You are required to provide your company or
-          personal address within <span class='certification-country'></span>.
-        purchase_alert_text: >-
-          This phone number will be charged <strong><span
-          class='number-rate'></span> monthly</strong>.
-        buy_phone_credits: Buy phone Credits
-      feature_request_content:
-        success: We will get back to you within two business days.
-        recording_info: Record and convert all your calls into tickets
-        button_text: Request for Activation
-        compare_trial_and_full: Compare full and free trial version
-        activation_disclaimer: You can use all the features for unlimited period
-        learn_more: Learn more
-        ivr_info: >-
-          Perform call monitoring, call conferencing, route calls using IVR, and
-          many more
-        trial_or: OR
-        trial_button_text: Enable free trial version
-        error_message: Sorry we can not make your request right now. Try again later.
-        title_text: Phone
-        trial_version_disclaimer: You can use limited features for 15 days for free
-        pricing: See all call rates and supported countries
-        number_info: Purchase local and toll-free numbers for over 40 countries
-        video_title: Watch the video to find out what you can do with the phone channel
-        heading_text: Support your customers using the phone channel
-      local: Local
-      search: Search by digits or phrases
-      ivr:
-        turn_on: 'On'
-        simple_message_title: Simple Message
-        save: Save
-        turn_off: 'Off'
-        rename: rename
-        add_new_option: Add <b>Keypress</b> Option
-        add_new_menu: Add New <b>Menu</b>
-        male: Male Voice
-        input_number: Enter the number
-        invalid_number_format: >-
-          Enter valid phone number with '+' prefix and country code in front of
-          the number
-        ivr_message_title: Interactive voice response (IVR)
-        message_type: Message Type
-        action: Action
-        female: Female Voice
-        delete_menu: Delete menu
-        previewing: Previewing...
-        saving: Saving...
-        add_new_menu_from_option: Add new menu
-        preview: Preview
-        done: done
-        keypress: Keypress
-        welcome_message: Welcome Message
-      number_settings:
-        read_message: Text to speech
-        queue_position_preference: Read out queue position
-        greeting_message: Enter your message here
-        queue_wait_message: Queue wait message
-        number_accessible: Accessible by
-        all_groups: All Groups
-        record_all: Record all calls
-        voicemail_on: 'On'
-        max_queue_calls: Maximum Calls in Queue
-        cancel: Cancel
-        routing_message: When multiple agents are available online...
-        non_business_hours: Accept Calls during…
-        non_business_hours_message: Non-Business hours message
-        recorded_voice: Recorded Voice
-        group: 'Play message and call agents in '
-        queue_position_enable: 'ON'
-        recording_privacy_public: Visible to customers and agents
-        call_wait_time: with maximum wait time of
-        wait_music: Wait Music
-        recording_help_info: Turn on the microphone. Duration < 5 mins.
-        record_alert: >-
-          Call recording guidelines in most countries require notifying
-          customers that their calls are being recorded. Please configure the
-          greetings message accordingly.
-        record_none: Do not record calls
-        non_availability_message: Non-Availability Message
-        voicemail_message: Voicemail Message
-        record_voice: Record your voice
-        voicemail_off: 'Off'
-        transcript_voice: Transcript Voice
-        hunt_type: Call Routing
-        name: Name
-        voicemail: Voicemail
-        record_calls: Record Calls
-        anytime: 24/7 Anytime
-        upload_voice: Upload audio files
-        business_hours: Business Hours
-        call_wait_time_suffix: ' per call'
-        hold_music: Hold Music
-        start_recording: Start recording
-        title_text: Managing your call center
-        attachment_help_text: Accepts audio file (mp3) < 5mb
-        queue_position_disable: 'OFF'
-        queue_position_message_placeholder: 'You are currently in queue. Your queue position is {{queue.position}}'
-        preparing_recording: Preparing your message...
-        info_content: >-
-          <b>Assigning phone calls to agents and groups</b></br>You can set up
-          an interactive voice response system (IVR) and route calls to
-          different groups or agents in your team. For example, you could have
-          your customers calls forwarded to your Support team when they press 1,
-          and to somebody from Sales when they press 2.<br/>Additionally, you
-          can also customize the messages that will be played back to your
-          customers by recording your voice, uploading a file or using the
-          text-to-speech feature.<br><br><b>Customizing your number</b><br>You
-          could also configure each and every phone number separately and let it
-          have it’s own set of customizations. This includes basic settings such
-          as the maximum number of people on the queue and maximum waiting time
-          for your customers. Once either of them are reached, a
-          non-availability message will be played to your customers
-          automatically.<br/>When you enable call recording, every phone call
-          across your helpdesk is recorded and attached to your tickets, and the
-          recording can be publicly available to customers or kept private. You
-          can also restrict your phone channel from taking calls during
-          non-business hours. For example, you could set up two support lines,
-          one of which will be available to take calls only during working
-          hours, and another high-priority helpline that will be available
-          24x7.<br/><br/><a
-          href='http://support.freshdesk.com/support/solutions/articles/169198'
-          target='_blank'>Read more about customizing your number</a>
-        recording_privacy: Recording Visibility
-        audio_upload: Upload
-        recording_privacy_private: Visible only to agents
-        business_calendar: Select Business Hour
-        queue_position_message_alert: >-
-          To read out queue position, use placeholder {{queue.position}} <br/>
-          Eg: You are currently in queue. Your queue position is
-          {{queue.position}}
-        name_placeholder: Enter a friendly name for your number
-        welcome_message: Welcome Message
-        change: Change
-        stop_recording: <span></span>Stop Recording
-      trial:
-        request_activation_msg: >-
-          You can choose to use only one number from a limited set of countries
-          during phone trial period.<br> However, you can purchase multiple
-          numbers from 41 countries when you activate the full version
-        activate_btn_text: Request for activation
-        numbers:
-          search:
-            after_activation_request: >-
-              You have requested for phone channel activation <br> We will get
-              back to you within 2 business days.
-            buy_confirmation: Are you sure you want to pick this number?
-            can_use_after_activation: >-
-              You can continue using this number when you activate the phone
-              channel.
-        requested_activation: We have received your request for activation<br>It's under progress
-    subscription:
-      recharge_now_text: Refill your balance with a one-time payment
-      purchase_credits: Purchase Credits
-      setup_auto_recharge: Setup auto recharge
-      auto_recharge_amt: Auto recharge amount
-      see_detailed_pricing: View detailed pricing
-      followup_text: worth phone credits
-      auto_recharge_text: We'll only charge your account when the balance falls below $5
-      purchase_text: Purchase phone credits
-      current_balance: Your current balance
-      followup: worth phone credits
-      no_credit_card_text: Enter payment information to purchase phone credits
   special_beta_offer: Special offer for Beta accounts
   days: Days
   tickets_filter:
@@ -7497,6 +7187,27 @@ en:
         in the settings page and the search function is based on the email
         address mapping.
       desc: You can view contact information from Freshsales in Freshdesk.
+    freshworkscrm:
+      form:
+        auth_token: Authentication Token
+        deal: Deal Fields
+        error: Please verify your settings and try again
+        deal_settings: Agents can create/link or unlink deals from the ticket
+        freshworkscrm_settings: Freshworks CRM Settings
+        auth_token_info: Enter your authentication token
+        select: Select an option
+        domain: Account Domain
+        account: Account Fields
+        contact: Contact Fields
+        domain_info: 'Enter your Freshworks CRM domain without https. Ex: example.freshworks.com or example.myfreshworks.com'
+      helptext: >-
+        <h4>Freshworks CRM Integration Help</h4><p><br/> Once you enable this
+        integration, your agents can access Freshworks CRM contact information right
+        inside the Freshdesk ticket & contact pages. <br /><br /> Please note
+        that your agents can only view those fields that are configured by you
+        in the settings page and the search function is based on the email
+        address mapping.
+      desc: You can view contact information from Freshworks CRM in Freshdesk.
     slack_v2:
       helptext: >-
         <h4>Slack Integration</h4><br><p>Select the list of Public Channels and
