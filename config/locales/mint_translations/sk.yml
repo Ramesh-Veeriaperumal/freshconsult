@@ -370,22 +370,6 @@ sk:
         select_agent: Zvoliť Agenta
         filter_report: Upraviť filter
         ticket_type: Typ Tiketu
-    freshfone:
-      time_period: Časové obdobie
-      group: Skupina
-      call_type: Typ hovoru
-      filter_option_all_calls: Všetky hovory
-      filter_close: Zavrieť
-      all_numbers: Všetky čísla
-      filter_report: Upraviť filter
-      number: Číslo
-      business_hours: Pracovné hodiny
-      unanswered_count: Bez odovede
-      options:
-        unassigned: Neprioradené
-        incoming: Prichádzajúci
-        outgoing: Odchádzajúci
-      filter_by_title: Filtrované podľa
     time_sheets:
       time_period: Časové obdobie
       filter_by_title: Filtrované podľa
@@ -1718,63 +1702,6 @@ sk:
       many: stemmer
       other: stemmer
   title: Titul
-  freshfone:
-    admin:
-      settings: Nastavenia
-      important: Dôležitý
-      freshfone_numbers_title: Telefón
-      welcome_page:
-        title_text: Telefón
-      numbers:
-        caller_id:
-          manage_caller_id: 'Spravovať ID volajúceho '
-          add_new: Pridať novú
-        buy: Kúpiť číslo
-        buy_button_text: Kúpiť
-        address:
-          address: Adresa
-          state: Štát/Provincia/Oblasť
-          city: Mesto
-          postal_code: PSČ
-        manage: Spravovať
-      feature_request_content:
-        learn_more: Čítaj viac
-        trial_or: ALEBO
-        title_text: Telefón
-        pricing: Zobraziť všetky sadzby hovorov a podporované krajiny
-      local: Miestne
-      ivr:
-        turn_on: 'Zapnutý'
-        save: Uložiť
-        turn_off: 'Vypnutý'
-        rename: premenovať
-        action: Akcia
-        delete_menu: Vymaž menu
-        previewing: Náhľad
-        saving: Uloženie...
-        preview: Náhľad
-        done: zmazať
-        welcome_message: Uvítacia správa
-      number_settings:
-        greeting_message: Sem zadajte správu
-        number_accessible: Dostupné prostredníctvom
-        record_all: Nahrávať všetky hovory
-        voicemail_on: 'Zapnutý'
-        cancel: Zrušiť
-        record_none: Nezaznamenávať hovory
-        voicemail_off: 'Vypnutý'
-        name: Meno
-        voicemail: Hlasová schránka
-        business_hours: Pracovné hodiny
-        start_recording: Spustiť nahrávanie
-        preparing_recording: Pripravujeme vašu správu...
-        audio_upload: Nahrať
-        business_calendar: Vyberte pracovnú dobu
-        name_placeholder: Zadajte názov pre vaše číslo
-        welcome_message: Uvítacia správa
-        change: Zmeniť
-    subscription:
-      purchase_credits: Zakúpiť kredity
   special_beta_offer: Špeciálna ponuka pre účty Beta
   days: dni
   tickets_filter:

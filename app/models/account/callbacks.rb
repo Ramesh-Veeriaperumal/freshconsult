@@ -22,7 +22,6 @@ class Account < ActiveRecord::Base
                :update_google_domain, :update_route_info, :update_users_time_zone
 
   after_update :clear_domain_cache, :if => :account_domain_changed?
-  after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
@@ -572,12 +571,6 @@ class Account < ActiveRecord::Base
       remove_member_from_redis_set(MASTER_QUERIES,self.id)
     end
 
-    def update_freshfone_voice_url
-      if full_domain_changed? or ssl_enabled_changed?
-        freshfone_account.update_voice_url
-      end
-    end
-
     def update_currency_for_anonymous_account
       subscription.set_billing_params('USD')
     end
@@ -626,9 +619,6 @@ class Account < ActiveRecord::Base
     
     def enable_searchv2
       if self.features?(:es_v2_writes)
-        if redis_key_exists?(SEARCH_SERVICE_SIGNUP)
-          self.launch(:service_writes)
-        end
         SearchV2::Manager::EnableSearch.perform_async
         self.launch(:es_v2_reads)
       end

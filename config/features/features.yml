@@ -63,7 +63,7 @@
       :whitelisted_ips: 58
       :branding: 59
       :unused_60: 60
-      :freshfone_vm_transcription: 61
+      :unused_61: 61
       :basic_dkim: 62
       :advanced_dkim: 63
       :shared_ownership_toggle: 64
@@ -119,14 +119,14 @@
       :unused_115: 115
       :personalized_email_replies: 116
       :anonymous_tickets: 117
-      :client_debugging: 118
+      :unused_118: 118
       :collision_socket: 119
       :single_session_per_user: 120
       :fluffy_higher_plan2: 121
       :suicide_squad_10: 122
       :sandbox: 123
       :call_quality_metrics: 124
-      :freshfone_conference: 125
+      :unused_125: 125
       :unused_126: 126
       :id_less_tickets: 127
       :unused_128: 128
@@ -137,7 +137,7 @@
       :custom_dashboard: 133
       :open_forums: 134
       :reply_to_based_tickets: 135
-      :freshfone: 136
+      :reports_44: 136
       :disable_agent_forward: 137
       :unused_138: 138
       :domain_restricted_access: 139
@@ -156,9 +156,9 @@
       :wild_cards_10: 152
       :contact_company_notes: 153
       :undo_send: 154
-      :freshfone_onboarding: 155
+      :unused_155: 155
       :archive_tickets: 156
-      :freshfone_custom_forwarding: 157
+      :unused_157: 157
       :unused_158: 158
       :report_field_regenerate: 159
       :saml_old_issuer: 160
@@ -173,24 +173,24 @@
       :es_v2_writes: 169
       :fluffy_higher_plan3: 170
       :fluffy_higher_plan4: 171
-      :freshfone_call_metrics: 172
+      :unused_172: 172
       :custom_translations: 173
       :cobrowsing: 174
       :threading_without_user_check: 175
-      :freshfone_call_monitoring: 176
-      :freshfone_caller_id_masking: 177
-      :agent_conference: 178
-      :freshfone_warm_transfer: 179
+      :unused_176: 176
+      :unused_177: 177
+      :unused_178: 178
+      :unused_179: 179
       :canned_forms: 180
       :shadow_fax9: 181
       :shadow_fax10: 182
       :audit_logs_central_publish: 183
       :audit_log_ui: 184
       :restricted_helpdesk: 185
-      :freshfone_acw: 186
+      :unused_186: 186
       :cti: 187
       :all_notify_by_custom_server: 188
-      :freshfone_gv_forward: 189
+      :unused_189: 189
       :advanced_automations: 190
       :freddy_self_service: 191
       :freddy_ultimate: 192
@@ -215,7 +215,7 @@
       :unused_211: 211
       :unused_212: 212
       :XX_unused_213: 213
-      :updated_twilio_client: 214
+      :unused_214: 214
       :unused_215: 215
       :unused_216: 216
       :seafarers_1: 217
@@ -419,6 +419,8 @@
       :skip_portal_cname_chk: 415
       :stop_contacts_count_query: 416
       :force_index_tickets: 417
+      :es_v2_splqueries: 418
+      :disable_emails: 419
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -438,13 +440,9 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
-  :freshfone: false
   :enable_multilingual: false
-  :freshfone_onboarding: false
   :archive_tickets: false
   :call_quality_metrics: false
-  :freshfone_conference: false
-  :freshfone_custom_forwarding: false
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :google_signin: true
@@ -454,22 +452,14 @@
   :allow_huge_ccs: false
   :hide_portal_forums: false
   :id_less_tickets: false
-  :client_debugging: false
   :collision_socket: false
   :domain_restricted_access: false
   :ecommerce: false
-  :freshfone_call_metrics: false
   :cobrowsing: false
   :threading_without_user_check: false
-  :freshfone_call_monitoring: false
-  :freshfone_caller_id_masking: false
-  :agent_conference: false
-  :freshfone_warm_transfer: false
   :restricted_helpdesk: false
-  :freshfone_acw: false
   :cti: false
   :all_notify_by_custom_server: false
-  :freshfone_gv_forward: false
   :chat: false
   :freshreports_analytics: false
   :disable_old_reports: false
@@ -482,7 +472,6 @@
   :single_session_per_user: false
   :proactive_spam_detection: true
   :bi_reports: false
-  :updated_twilio_client: false
   :disable_rr_toggle: false
   :activity_revamp: true
   :hide_first_response_due: false
@@ -515,3 +504,5 @@
   :gamification_perf: false
   :stop_contacts_count_query: false
   :force_index_tickets: false
+  :es_v2_splqueries: false
+  :disable_emails: false

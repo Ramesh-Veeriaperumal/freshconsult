@@ -149,11 +149,6 @@ gem 'clamav-client', '3.1.0', require: 'clamav/client'
 gem 'braintree','2.10.0'
 gem 'chargebee', '~> 1.5.1'
 
-# freshfone
-gem 'carmen', git: 'git://github.com/jim/carmen.git', tag: 'ruby-18'
-# gem 'postoffice', git: 'git://github.com/chrisbutcher/postoffice.git', branch: 'master' # PRE-RAILS: added a file to repo for rdoc removed in gemspec
-gem 'rubytree'
-gem 'telephone_number', '1.1.1'
 gem 'resque','~> 1.24.0'
 gem 'resque-scheduler', '2.2.0', require: 'resque_scheduler'
 # gem 'resque-status', '0.4.1'
