@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES = [
-
+    :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
     :falcon_portal_theme, :freshid, :allow_huge_ccs,
@@ -70,7 +70,7 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha, :new_es_api, :filter_factory,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha, :new_es_api, :filter_factory, :spam_blacklist_feature,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible, :disable_archive,
@@ -92,6 +92,7 @@ class Account < ActiveRecord::Base
     :new_es_api,
     :filter_factory,
     :disable_supress_logs,
+    :spam_blacklist_feature,
     :solutions_agent_metrics,
     :skip_invoice_due_warning,
     :allow_wildcard_ticket_create,
@@ -259,6 +260,10 @@ class Account < ActiveRecord::Base
 
   def filter_factory_enabled?
     launched?(:filter_factory)
+  end
+
+  def spam_blacklist_feature_enabled?
+    launched?(:spam_blacklist_feature)
   end
 
   def count_public_api_filter_factory_enabled?
