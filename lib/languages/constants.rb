@@ -10,4 +10,13 @@ module Languages::Constants
     :sv => 'sv-SE',
     :'zh-TW' => 'zh-CN'
   }.with_indifferent_access.freeze
+
+  ANALYTICS_LANG_CODES = {
+    'ja-JP': 'ja',
+    'lv-LV': 'lv',
+    'nb-NO': 'no',
+    'ru-RU': 'ru',
+    'es-LA': 'es-419',
+    'sv-SE': 'sv'
+  }.freeze
 end

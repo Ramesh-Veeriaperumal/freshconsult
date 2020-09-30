@@ -269,7 +269,7 @@
       :analytics_articles: 265
       :analytics_knowledge_base: 266
       :analytics_knowledge_base_report: 267
-      :reports_46: 268
+      :allow_huge_ccs: 268
       :reports_47: 269
       :reports_48: 270
       :reports_49: 271
@@ -358,7 +358,7 @@
       :solutions_27: 354
       :solutions_28: 355
       :solutions_29: 356
-      :solutions_30: 357
+      :disable_supress_logs: 357
       :detect_thank_you_note_eligible: 358
       :detect_thank_you_note: 359
       :autofaq: 360
@@ -418,6 +418,7 @@
       :gamification_perf: 414
       :skip_portal_cname_chk: 415
       :stop_contacts_count_query: 416
+      :force_index_tickets: 417
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -450,6 +451,7 @@
   :twitter_signin: true
   :facebook_signin: true
   :captcha: true
+  :allow_huge_ccs: false
   :hide_portal_forums: false
   :id_less_tickets: false
   :client_debugging: false
@@ -498,6 +500,7 @@
   :location_tagging: false
   :kb_allow_base64_images: false
   :solutions_agent_metrics: false
+  :disable_supress_logs: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
@@ -511,3 +514,4 @@
   :disable_archive: false
   :gamification_perf: false
   :stop_contacts_count_query: false
+  :force_index_tickets: false

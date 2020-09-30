@@ -102,7 +102,7 @@ class Dashboards
 
   def default_scoper
     account = Account.current
-    default_filters = if account.launched?(:force_index_tickets)
+    default_filters = if account.force_index_tickets_enabled?
                         account.tickets.visible.use_index("index_helpdesk_tickets_status_and_account_id").permissible(User.current).unresolved
                       else
                         account.tickets.visible.permissible(User.current).unresolved

@@ -152,7 +152,7 @@
         "incoming_email_api_key1": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:bwkGzLobZAfeVaEt4P+HwUDo80DGC5Pg:k04Rzpqakp+tVtwkdNWP1EGaLcI5Mj/iBXE8mVLLXeXoMvn08LgvGkRhfBFD2g==]",
         "incoming_email_api_key2": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:8nKOdu/6VZ5+0+kZQ1OjDYcP1aUBfLvk:k1ZqDN2nrwMP+U12wv9p/TKjLkvNETvzsq0pYI27cJVTl6joMWUXLtjukUWyFg==]",
         "_host": "https://mailservice.freshdesk.com",
-        "_lang_host": "https://mailservice.freshdesk.com",
+        "_lang_host": "https://mailserviceeuc.freshdesk.com",
         "_timeout": "30",
         "_url": "api/v1/email/send",
         "_account_validate_url": "api/v1/account/validate/",

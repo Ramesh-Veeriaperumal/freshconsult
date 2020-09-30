@@ -153,7 +153,7 @@
         "incoming_email_api_key1": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:pMM8crVRs8EPRuzgymcLG7zu2uKZH9V2:al9fEblmRIMELTlwhJ4FyQrbJc2u62a99EUHGMc4yE14IF4wfBHDPoQk15o1xw==]",
         "incoming_email_api_key2": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:skyBOALVoXN+5l+mVhd+vzVG/f0/ucpr:ou9F/uGVrYmDFAXm77tpc/Eo38sTRT1h6AU0THCGsPCbiAP1riyGJW1fm85+1w==]",
         "_host": "https://mailservice.freshdesk.com",
-        "_lang_host": "https://mailservice.freshdesk.com",
+        "_lang_host": "https://mailservicesyd.freshdesk.com",
         "_timeout": "60",
         "_url": "api/v1/email/send",
         "_account_validate_url": "api/v1/account/validate/",
