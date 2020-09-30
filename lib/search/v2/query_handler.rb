@@ -75,7 +75,7 @@ module Search
       private
 
         def handle_spl_queries
-          if(Account.current.launched?(:es_v2_splqueries))
+          if Account.current.es_v2_splqueries_enabled?
             template_key = Search::Utils.template_context(@search_context, @exact_match, @locale)
             @es_params[:search_term].to_s.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*\/:~])/,'\\\\\1') if Search::Utils::SPECIAL_TEMPLATES.has_key?(template_key)
           end
