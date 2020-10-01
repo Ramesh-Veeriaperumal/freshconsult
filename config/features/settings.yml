@@ -2,11 +2,11 @@ settings:
   :untitled_setting_1:
     default: false
     internal: false
-    feature_dependency: :untitled_feature_3_dependency_toggle # from blossom plan.Rename to actual feature
-  :untitled_setting_2:
+    feature_dependency: :basic_settings_feature
+  :branding:
     default: true
-    internal: true
-    feature_dependency: :untitled_feature_1_dependency_toggle
+    internal: false
+    feature_dependency: :branding_feature
   :untitled_setting_3:
     default: true
     internal: false
@@ -38,6 +38,10 @@ settings:
   :skip_ticket_threading:
     default: false
     internal: false
+    feature_dependency: :basic_settings_feature
+  :fetch_ticket_from_ref_first:
+    default: false
+    internal: true
     feature_dependency: :basic_settings_feature
   :signup_link:
     default: true
@@ -79,3 +83,15 @@ settings:
     default: false
     internal: false
     feature_dependency: :multi_product
+  :ticket_summary:
+    default: false
+    internal: false
+    feature_dependency: :ticket_summary_feature
+  :disable_freshchat:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
+  :cascade_dispatcher:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature

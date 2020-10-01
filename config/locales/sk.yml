@@ -3461,22 +3461,6 @@ sk:
         select_agent: Zvoliť Agenta
         filter_report: Upraviť filter
         ticket_type: Typ Tiketu
-    freshfone:
-      options:
-        unassigned: Neprioradené
-        incoming: Prichádzajúci
-        outgoing: Odchádzajúci
-      time_period: Časové obdobie
-      group: Skupina
-      call_type: Typ hovoru
-      filter_option_all_calls: Všetky hovory
-      filter_close: Zavrieť
-      all_numbers: Všetky čísla
-      filter_report: Upraviť filter
-      number: Číslo
-      business_hours: Pracovné hodiny
-      unanswered_count: Bez odovede
-      filter_by_title: Filtrované podľa
     scoreboard_title_nav: Rebríčky
     summary:
       fcr: Vyriešené pri prvom zavolaní
@@ -3737,63 +3721,6 @@ sk:
       subheader_background_color: Farba pozadia
     please_wait: 'Čakajte, prosím…'
   title: Titul
-  freshfone:
-    admin:
-      feature_request_content:
-        learn_more: Čítaj viac
-        trial_or: ALEBO
-        title_text: Telefón
-        pricing: Zobraziť všetky sadzby hovorov a podporované krajiny
-      ivr:
-        save: Uložiť
-        rename: premenovať
-        delete_menu: Vymaž menu
-        previewing: Náhľad
-        done: zmazať
-        turn_on: Zapnutý
-        turn_off: Vypnutý
-        action: Akcia
-        saving: Uloženie...
-        preview: Náhľad
-        welcome_message: Uvítacia správa
-      number_settings:
-        greeting_message: Sem zadajte správu
-        cancel: Zrušiť
-        name: Meno
-        change: Zmeniť
-        number_accessible: Dostupné prostredníctvom
-        record_all: Nahrávať všetky hovory
-        voicemail_on: Zapnutý
-        record_none: Nezaznamenávať hovory
-        voicemail_off: Vypnutý
-        voicemail: Hlasová schránka
-        business_hours: Pracovné hodiny
-        start_recording: Spustiť nahrávanie
-        preparing_recording: Pripravujeme vašu správu...
-        audio_upload: Nahrať
-        business_calendar: Vyberte pracovnú dobu
-        name_placeholder: Zadajte názov pre vaše číslo
-        welcome_message: Uvítacia správa
-      settings: Nastavenia
-      important: Dôležitý
-      freshfone_numbers_title: Telefón
-      welcome_page:
-        title_text: Telefón
-      numbers:
-        caller_id:
-          manage_caller_id: 'Spravovať ID volajúceho '
-          add_new: Pridať novú
-        buy: Kúpiť číslo
-        buy_button_text: Kúpiť
-        address:
-          address: Adresa
-          state: Štát/Provincia/Oblasť
-          city: Mesto
-          postal_code: PSČ
-        manage: Spravovať
-      local: Miestne
-    subscription:
-      purchase_credits: Zakúpiť kredity
   tickets_filter:
     sort_fields:
       priority: Priorita

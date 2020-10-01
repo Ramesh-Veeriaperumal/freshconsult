@@ -33,12 +33,6 @@ module Freshcaller
       return if account.blank?
       Rails.logger.info "AccountDeleteWorker :
       #{params[:account_id]} : #{account.id}"
-      FreshfoneNotifier.freshfone_ops_notifier(account,
-        subject: 'Freshcaller AccountDeleteWorker failure',
-        message: "Account :: #{params[:account_id]} <br>
-        Params :: #{params.inspect}<br><br>
-        Exception Message : #{exception.message}<br><br>
-        Stacktrace :: #{exception.backtrace.join("\n\t")}<br>")
     end
 
   end

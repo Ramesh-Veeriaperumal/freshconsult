@@ -263,9 +263,6 @@
       "index":
         "select_agent": "Velg agent"
         "select_group": "Velg gruppe"
-    "freshfone":
-      "options":
-        "unassigned": "Ikke tildelt"
     "select_customer": "Velg kunde"
     "summary_report":
       "tickets_resolved": "Saker <br> løst"
@@ -939,24 +936,6 @@
     "said": "sagt"
   "title": "Tittel"
   "free_plan_agents_v2": "Ubegrensede representanter"
-  "freshfone":
-    "admin":
-      "number_settings":
-        "cancel": "Angre"
-        "name": "Navn"
-        "change": "Endre"
-      "ivr":
-        "message_type": "Type beskjed"
-        "save": "Lagre"
-        "ivr_message_title": "Interaktiv stemme respons (IVR)"
-        "simple_message_title": "Enkel beskjed"
-      "feature_request_content":
-        "learn_more": "Lær mer"
-    "subscription":
-      "setup_auto_recharge": "Konfigurer automatisk påfylling"
-      "auto_recharge_amt": "Automatisk påfyllingsbeløp"
-      "see_detailed_pricing": "Vis detaljerte priser"
-      "purchase_text": "Kjøp telefonkrediter"
   "special_beta_offer": "Spesielt tilbud for Beta kontoer"
   "days": "dager"
   "tickets_filter":

@@ -83,15 +83,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    namespace :api_freshfone, path: 'phone' do
-      resources :call_history, only: [:index] do
-        collection do
-          post :export
-          get '(export/:id)', to: :export_status, as: :export_status
-        end
-      end
-    end
-
     namespace :api_discussions, path: 'discussions' do
       resources :categories, except: [:new, :edit] do
         member do
@@ -1029,6 +1020,7 @@ Helpkit::Application.routes.draw do
       collection do
         put :update_multiple
         get :verify_agent_privilege
+        post :sync
       end
     end
     match '/notes/sync', to: 'channel/v2/conversations#sync', via: [:post]

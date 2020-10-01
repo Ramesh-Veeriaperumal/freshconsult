@@ -431,4 +431,11 @@ module AgentsTestHelper
       }
     }.to_json
   end
+
+  def validation_error_pattern(value)
+    {
+      description: 'Validation failed',
+      errors: [value]
+    }
+  end
 end
