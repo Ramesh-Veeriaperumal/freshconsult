@@ -173,9 +173,9 @@ module TicketPresenter::PresenterHelper
             type: field.flexifield_coltype,
             value: map_field_value(field, field_value),
             column: field.column_name
-          }
-          handle_dropdown_flexifield_coltype(field_value, pv_transformer, field.column_name, custom_field) if field.flexifield_coltype == 'dropdown'
-          custom_field[:value] = DONT_CARE_VALUE if field.field_type == TicketFieldsConstants::SECURE_TEXT && custom_field[:value].present?
+          }.tap do |hash_body|
+            hash_body[:choice_id] = pv_transformer.transform(field_value, field.column_name) if field.flexifield_coltype == 'dropdown'
+          end
           arr.push(custom_field)
         rescue StandardError => e
           Rails.logger.error("Error while fetching ticket custom field #{field.name} - account #{account.id} - #{e.message} :: #{e.backtrace[0..10].inspect}")
@@ -185,19 +185,13 @@ module TicketPresenter::PresenterHelper
       arr
     end
 
-    def handle_dropdown_flexifield_coltype(field_value, pv_transformer, column_name, custom_field)
-      if field_value
-        picklist_id = pv_transformer.transform(field_value, column_name) # fetch picklist_id of the field
-        custom_field[:value] = nil if picklist_id.blank?
-      end
-      custom_field[:choice_id] = picklist_id
-    end
-
     def map_field_value(ticket_field, value)
       if ticket_field.field_type == 'custom_date'
         utc_format(parse_to_date_time(value))
       elsif ticket_field.field_type == 'custom_file' && value.present?
         value.to_i
+      elsif ticket_field.field_type == TicketFieldsConstants::SECURE_TEXT && value.present?
+        DONT_CARE_VALUE
       else
         value
       end
