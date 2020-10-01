@@ -2,7 +2,7 @@ settings:
   :untitled_setting_1:
     default: false
     internal: false
-    feature_dependency: :untitled_feature_3_dependency_toggle # from blossom plan.Rename to actual feature
+    feature_dependency: :basic_settings_feature
   :branding:
     default: true
     internal: false
@@ -63,6 +63,14 @@ settings:
     default: false
     internal: false
     feature_dependency: :multi_product
+  :ticket_summary:
+    default: false
+    internal: false
+    feature_dependency: :ticket_summary_feature
+  :disable_freshchat:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
   :cascade_dispatcher:
     default: false
     internal: false

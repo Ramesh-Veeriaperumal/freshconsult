@@ -715,8 +715,9 @@ class AccountsController < ApplicationController
 
     def validate_feature_params
       allowed_features = @account.subscription.non_sprout_plan? ? ["forums"] : []
+      allowed_settings = ['ticket_summary', 'disable_freshchat']
       if params[:account] && params[:account][:features]
-        params[:account][:features] = params[:account][:features].slice(*allowed_features)
+        params[:account][:features] = params[:account][:features].slice(*allowed_features, *allowed_settings)
       end
     end
 
