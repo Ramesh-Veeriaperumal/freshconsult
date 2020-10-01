@@ -440,10 +440,6 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
-  :personalized_email_replies: false
-  :reply_to_based_tickets: true
-  :disable_agent_forward: false
-  :compose_email: false
   :enable_multilingual: false
   :archive_tickets: false
   :call_quality_metrics: false
