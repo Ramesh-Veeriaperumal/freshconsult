@@ -1313,7 +1313,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
 
     def spam_blacklisted? account
-      account.launched?(:spam_blacklist_feature)
+      account.spam_blacklist_feature_enabled?
     end
 
     def outgoing_blocked?(account_id)
@@ -1321,7 +1321,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
 
     def remove_spam_blacklist account
-      account.rollback(:spam_blacklist_feature)
+      account.disable_setting(:spam_blacklist_feature)
     end
 
     def remove_outgoing_email_block account_id
