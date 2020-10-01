@@ -42,7 +42,7 @@ class HelpWidget < ActiveRecord::Base
   end
 
   def widget_settings
-    settings[:appearance][:remove_freshworks_branding] = !Account.current.has_feature?(:branding)
+    settings[:appearance][:remove_freshworks_branding] = !Account.current.branding_enabled?
     settings
   end
 

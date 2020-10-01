@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES = [
-
+    :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
     :falcon_portal_theme, :freshid, :allow_huge_ccs,
@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
     :sso_login_expiry_limitation, :old_link_back_url_validation, :stop_contacts_count_query,
     :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
-    :skip_portal_cname_chk, :ticket_source_revamp,
+    :skip_portal_cname_chk, :ticket_source_revamp, :custom_product_notification,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
     :skip_invoice_due_warning, :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
@@ -55,10 +55,10 @@ class Account < ActiveRecord::Base
     :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
     :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas,
     :layout_customization, :advanced_reporting, :timesheets, :multiple_emails,
-    :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding,
+    :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
     :ticket_activity_export, :caching, :private_inline, :collaboration, :hipaa,
-    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
+    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :custom_product_notification,
     :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
     :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary,
@@ -69,8 +69,8 @@ class Account < ActiveRecord::Base
     :canned_forms, :customize_table_view, :solutions_templates, :disable_supress_logs,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
-    :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha, :new_es_api, :filter_factory,
+    :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha, :new_es_api, :filter_factory, :spam_blacklist_feature,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible, :disable_archive,
@@ -87,10 +87,12 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :custom_product_notification,
     :allow_huge_ccs,
     :new_es_api,
     :filter_factory,
     :disable_supress_logs,
+    :spam_blacklist_feature,
     :skip_invoice_due_warning,
     :allow_wildcard_ticket_create,
     :bypass_signup_captcha,
@@ -257,6 +259,10 @@ class Account < ActiveRecord::Base
 
   def filter_factory_enabled?
     launched?(:filter_factory)
+  end
+
+  def spam_blacklist_feature_enabled?
+    launched?(:spam_blacklist_feature)
   end
 
   def count_public_api_filter_factory_enabled?
@@ -485,16 +491,16 @@ class Account < ActiveRecord::Base
     launched?(:stop_contacts_count_query)
   end
 
+  def custom_product_notification_enabled?
+    launched?(:custom_product_notification)
+  end
+
   def gamification_perf_enabled?
     launched?(:gamification_perf)
   end
 
   def disable_archive_enabled?
     launched?(:disable_archive)
-  end
-
-  def feedback_widget_captcha_enabled?
-    launched?(:feedback_widget_captcha)
   end
 
   def disable_supress_logs_enabled?
