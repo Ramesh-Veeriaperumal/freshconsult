@@ -494,6 +494,7 @@
   :solutions_agent_portal: false
   :whatsapp_channel: false
   :skip_invoice_due_warning: false
+  :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
   :custom_product_notification: false
