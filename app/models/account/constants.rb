@@ -171,8 +171,7 @@ class Account < ActiveRecord::Base
 
   FEATURE_NAME_CHANGES = {
     twitter: :advanced_twitter,
-    facebook: :advanced_facebook,
-    cascade_dispatchr: :cascade_dispatcher
+    facebook: :advanced_facebook
   }.freeze
 
   DB_TO_LP_FEATURES = Set[:salesforce_sync, :salesforce_v2, :marketplace_app]
