@@ -43,7 +43,7 @@ def learn_spam(params)
         $spam_limit = Hash.new
         $spam_limit[state.to_sym] = limit ? limit.to_i : SPAM_REPORTS_LIMIT[state.to_sym]
       end
-      blacklist_account(account) if (!account.launched?(:spam_blacklist_feature) && count >= $spam_limit[state.to_sym])
+      blacklist_account(account) if (!account.spam_blacklist_feature_enabled? && count >= $spam_limit[state.to_sym])
     else
       set_others_redis_key(key, 1, nil)
     end
@@ -74,7 +74,7 @@ def construct_email(account, params)
 end
 
 def blacklist_account(account)
-  account.launch(:spam_blacklist_feature)
+  account.enable_setting(:spam_blacklist_feature)
   Rails.logger.info "Blacklisted suspicious spam account: #{account.id}"
   FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
       :subject => "Blacklisted suspicious spam account :#{account.id} ", 

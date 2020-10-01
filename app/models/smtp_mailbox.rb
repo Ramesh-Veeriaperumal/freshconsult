@@ -10,8 +10,8 @@ class SmtpMailbox < ActiveRecord::Base
 
   attr_protected :account_id
 
-  scope :errors, -> { where('error_type > ? and error_type NOT IN (?)', 0, SMTP_AUTH_ERRORS) }
-  scope :reauth_errors, -> { where('error_type IN (?)', SMTP_AUTH_ERRORS) }
+  scope :errors, -> { where('error_type > ? and error_type NOT IN (?)', 0, SMTP_REAUTH_ERRORS) }
+  scope :reauth_errors, -> { where('error_type IN (?)', SMTP_REAUTH_ERRORS) }
 
   attr_encrypted :access_token, random_iv: true, compress: true
   attr_encrypted :refresh_token, random_iv: true, compress: true

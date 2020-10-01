@@ -760,7 +760,8 @@ class AccountsControllerTest < ActionController::TestCase
     Subscription.any_instance.stubs(:trial_or_sprout_plan?).returns(false)
     put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { forums: 1 }, bitmap_features: { forums: '', branding: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
     assert_response 302
-    refute Account.current.has_feature?(:branding)
+    assert Account.current.branding_feature_enabled?
+    refute Account.current.branding_enabled?
   ensure
     Subscription.any_instance.unstub(:trial_or_sprout_plan?)
   end
@@ -770,14 +771,78 @@ class AccountsControllerTest < ActionController::TestCase
     help_widget = create_widget
     HelpWidget::UploadConfig.jobs.clear
     Account.any_instance.stubs(:help_widget_enabled?).returns(true)
+    Account.current.enable_setting(:branding)
     put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { forums: 1 }, bitmap_features: { forums: '', branding: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
     widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
     assert_include widget_json_upload_ids, help_widget.id
-    refute Account.current.has_feature?(:branding)
+    assert Account.current.branding_feature_enabled?
+    refute Account.current.branding_enabled?
     assert help_widget.as_api_response(:s3_format)[:settings][:appearance][:remove_freshworks_branding]
   ensure
     Subscription.unstub(:trial_or_sprout_plan?)
     Account.any_instance.unstub(:help_widget_enabled?)
+    Account.current.disable_setting(:branding)
+  end
+
+  def test_enable_ticket_summary_setting
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { ticket_summary: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert Account.current.has_feature?(:ticket_summary)
+  ensure
+    Account.current.disable_setting(:ticket_summary)
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+  end
+
+  def test_enable_ticket_summary_setting_with_dependency_disabled
+    Account.current.revoke_feature(:ticket_summary_feature)
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    assert_raise RuntimeError do
+      put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { ticket_summary: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+      assert Account.current.has_feature?(:ticket_summary), false
+    end
+  ensure
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+    Account.current.add_feature(:ticket_summary_feature)
+  end
+
+  def test_disable_ticket_summary_setting
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    Account.current.enable_setting(:ticket_summary)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { ticket_summary: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert_equal Account.current.has_feature?(:ticket_summary), false
+  ensure
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+  end
+
+  def test_disable_ticket_summary_setting_with_dependency_disabled
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    Account.current.enable_setting(:ticket_summary)
+    Account.current.revoke_feature(:ticket_summary_feature)
+    assert_raise RuntimeError do
+      put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { ticket_summary: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+      assert Account.current.has_feature?(:ticket_summary), false
+    end
+  ensure
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+    Account.current.add_feature(:ticket_summary_feature)
+  end
+
+  def test_enable_freshchat_setting
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { disable_freshchat: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert Account.current.has_feature?(:disable_freshchat)
+  ensure
+    Account.current.disable_setting(:disable_freshchat)
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+  end
+
+  def test_disable_freshchat_setting
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    Account.current.enable_setting(:disable_freshchat)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { disable_freshchat: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert_equal Account.current.has_feature?(:disable_freshchat), false
+  ensure
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
   end
 
   def test_branding_on_update_help_widget
@@ -788,12 +853,13 @@ class AccountsControllerTest < ActionController::TestCase
     put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { forums: 1 }, bitmap_features: { forums: '', branding: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
     widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
     assert_include widget_json_upload_ids, help_widget.id
-    assert Account.current.has_feature?(:branding)
+    assert Account.current.branding_enabled?
+    assert Account.current.branding_feature_enabled?
     refute help_widget.as_api_response(:s3_format)[:settings][:appearance][:remove_freshworks_branding]
   ensure
     Subscription.any_instance.unstub(:trial_or_sprout_plan?)
     Account.any_instance.unstub(:help_widget_enabled?)
-    Account.current.revoke_feature(:branding)
+    Account.current.disable_setting(:branding)
   end
 
   def test_branding_without_help_widget_feature
@@ -802,13 +868,37 @@ class AccountsControllerTest < ActionController::TestCase
     HelpWidget::UploadConfig.jobs.clear
     Account.any_instance.stubs(:help_widget_enabled?).returns(false)
     put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { forums: 1 }, bitmap_features: { forums: '', branding: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
-    assert Account.current.has_feature?(:branding)
+    assert Account.current.branding_enabled?
+    assert Account.current.branding_feature_enabled?
     widget_json_upload_ids = HelpWidget::UploadConfig.jobs.map { |a| a['args'].first['widget_id'] }
     assert_empty HelpWidget::UploadConfig.jobs
   ensure
     Subscription.any_instance.unstub(:trial_or_sprout_plan?)
     Account.any_instance.unstub(:help_widget_enabled?)
-    Account.current.revoke_feature(:branding)
+    Account.current.disable_setting(:branding)
+  end
+
+  def test_update_branding_with_branding_feature_dependency_disabled
+    params = { forums: '', branding: 1 }
+
+    dependent_feature = :branding_feature
+    is_dependent_feature_enabled = @account.has_feature?(dependent_feature)
+
+    setting = :branding
+    @account.add_feature(dependent_feature)
+    @account.disable_setting(setting)
+
+    @account.revoke_feature(dependent_feature)
+
+    refute @account.has_feature?(setting), 'setting should be false'
+    refute @account.has_feature?(dependent_feature), 'dependent_feature should be false'
+
+    assert_raise RuntimeError do
+      @account.update_bitmap_features(params)
+      refute @account.has_feature?(setting), 'setting should be false'
+    end
+  ensure
+    is_dependent_feature_enabled ? @account.add_feature(dependent_feature) : @account.revoke_feature(dependent_feature)
   end
 
   def test_portal_logo_deletion

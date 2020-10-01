@@ -1,0 +1,46 @@
+<% content_for :helpcard do -%>
+  <div class="helpcard">
+      <%=t("integrations.freshworkscrm.helptext").html_safe%>
+  </div>
+<%- end %>
+
+  <h3 class="lead"><%=t("integrations.freshworkscrm.form.freshworkscrm_settings")%></h3>
+<%
+  domain = nil
+  auth_token = nil
+  if defined?(configs["domain"])
+    domain = configs["domain"]
+  end
+  if defined?(configs["auth_token"])
+    auth_token = configs["auth_token"]
+  end
+%>
+  <%= form_tag( url_for(:controller => 'integrations/freshworkscrm', :action => 'settings_update'), :method=> "post" )  do %>
+    <ul class="ui-form">
+
+      <li class="inline-field">
+        <label class="caption">
+          <div class="logo application-logo-freshworkscrm"></div>
+          <div class="logo info-data">
+            <%=t('integrations.freshworkscrm.desc')%>
+          </div>
+        </label>
+
+        <div class="fields">
+          <%= construct_ui_element :configs, "domain", {:type => :text, :required => true, :label => "integrations.freshworkscrm.form.domain", :rel => "ghostwriter", :validator_type => "domain_name_validator"}, domain.to_s %>
+          <div class="info-data"> <%=t('integrations.freshworkscrm.form.domain_info')%> </div>
+            <span class="seperator"></span>
+        </div>
+
+        <div class="fields">
+          <%= construct_ui_element :configs, "auth_token", {:type => :text, :required => true, :label => "integrations.freshworkscrm.form.auth_token"},auth_token.to_s %>
+          <div class="info-data"> <%=t('integrations.freshworkscrm.form.auth_token_info')%> </div>
+        </div>
+      </li>
+    </ul>
+    <div class="button-container">
+      <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn pull-left" %>
+      <%= submit_tag t('update'), :class => "btn btn-primary" %>
+    </div>
+  <%end%>
+<script src="/javascripts/ghost-mod.js" type="text/javascript"></script>

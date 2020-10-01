@@ -421,7 +421,7 @@ class Helpdesk::ConversationsController < ApplicationController
           notify_account_blocks(current_account, subject, additional_info)
         elsif ticket_ids.count == 5
           add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, current_account.id)
-          current_account.launch(:spam_blacklist_feature)
+          current_account.enable_setting(:spam_blacklist_feature)
           subject = "Reached Maximum email threshold limit for a day for Account :#{current_account.id} "
           additional_info = "Blocking outgoing emails and marked #{current_account.id} as spam. Ticket ids #{ticket_ids.join(",")}"
           notify_account_blocks(current_account, subject, additional_info)

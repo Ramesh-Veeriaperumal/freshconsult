@@ -245,8 +245,6 @@ tweet_post:
   $ref: ./resource/tweet_post.yaml
 survey_result:
   $ref: ./resource/survey_result.yaml
-freshfone_call:
-  $ref: ./resource/freshfone_call.yaml
 ticket_topic:
   $ref: ./resource/ticket_topic.yaml
 email_spam_data:

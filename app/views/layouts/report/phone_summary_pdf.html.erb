@@ -1,9 +1,0 @@
-<!DOCTYPE html>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<%= wicked_pdf_stylesheet_link_tag :'cdn/reports' %>
-<%= wicked_pdf_stylesheet_link_tag :'cdn/pattern'  %>
-<%= wicked_pdf_stylesheet_link_tag :'cdn/common_pdf' %>
-<%= wicked_pdf_javascript_include_tag :'cdn/reports'  %>
-
-<%= render :partial => "reports/freshfone/summary_reports/phone_reports_pdf.html.erb", :formats => [:html], 
-															:locals => {:params => params, :calls => calls, :old_calls => old_calls} %>

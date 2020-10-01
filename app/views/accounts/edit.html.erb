@@ -27,6 +27,14 @@
 		    jQuery('#accounts_bitmap_forums').val(+this.checked);
 		});
 
+		jQuery("#account_ticket_summary_enabled").change(function() {
+		    jQuery('#accounts_bitmap_ticket_summary').val(+this.checked);
+		});
+
+		jQuery("#account_disable_freshchat_enabled").change(function() {
+		    jQuery('#accounts_bitmap_disable_freshchat').val(+this.checked);
+		});
+
 		jQuery("#account_submit").bind('click', function(ev){
 				var language_flag = jQuery.inArray(jQuery("#account_main_portal_attributes_language").val() , jQuery("#account_account_additional_settings_attributes_supported_languages").val() );
 				if(language_flag != -1 ){
@@ -121,12 +129,22 @@
 		            </div>
 	            </div>
             <% end %>
+            <% if current_account.launched?(:helpdesk_new_settings) && current_account.admin_setting_for_account?(:ticket_summary) %>
+					    <div class="control-group ticket-summary-toggle">
+                            <%= f.label :account_ticket_summary, t('account.ticket_summary.title'), :class => "control-label" %>
+                            <div class="controls">
+				                <%= f.feature_check_box :ticket_summary, {:id => 'account_ticket_summary_enabled', :checked => Account.current.ticket_summary_enabled?}, 1, 0 %>
+				                 <div class="help-block"><%= t('account.ticket_summary.helpnote').html_safe %></div>
+				                 <input type="hidden" name="account[settings][ticket_summary]" id="accounts_bitmap_ticket_summary" class="text disabled" />
+				          </div>
+				        </div>
+			<% end %>
 
 						<!-- freshdesk branding -->
 					    <div class="control-group account-branding-toggle">
 			              <%= f.label :account_branding, t('account.branding_toggle.title'), :class => "control-label" %>
 			              <div class="controls">
-			                <% unless current_account.subscription.trial_or_sprout_plan? %>
+			                <% if current_account.admin_setting_for_account?(:branding) && !current_account.subscription.trial_or_sprout_plan? %>
 			                    <%= f.fields_for :bitmap_features do |bm| %>
 			                        <%= bm.check_box :branding, {:id => 'account_branding_enabled', :checked => Account.current.branding_enabled?} %>
 			                        <div class="help-block"><%= t('account.branding_toggle.helpnote') %></div>
@@ -165,8 +183,18 @@
 							</div>
 						</div>
 
-					</div>
+						<% if current_account.launched?(:helpdesk_new_settings) && current_account.admin_setting_for_account?(:disable_freshchat) %>
+						    <div class="control-group freshchat-toggle">
+	                            <%= f.label :account_disable_freshchat, t('account.freshchat_toggle.title'), :class => "control-label" %>
+	                            <div class="controls">
+					                <%= f.feature_check_box :disable_freshchat, {:id => 'account_disable_freshchat_enabled', :checked => !Account.current.disable_freshchat_enabled?}, 0, 1 %>
+					                 <div class="help-block"><%= t('account.freshchat_toggle.helpnote') %></div>
+					                 <input type="hidden" name="account[settings][disable_freshchat]" id="accounts_bitmap_disable_freshchat" class="text disabled" />
+					          </div>
+					        </div>
+					    <% end %>
 
+					</div>
 			</div>
 		<% end %>
 	</div>
@@ -302,7 +330,15 @@
   <% end %>
   <% unless current_account.subscription.trial_or_sprout_plan?  %>
     jQuery("#account_branding_enabled").itoggle();
-   <% end %>
+  <% end %>
+
+  <% if current_account.launched?(:helpdesk_new_settings) && current_account.admin_setting_for_account?(:ticket_summary) %>
+    jQuery("#account_ticket_summary_enabled").itoggle();
+  <% end %>
+
+  <% if current_account.launched?(:helpdesk_new_settings) && current_account.admin_setting_for_account?(:disable_freshchat) %>
+    jQuery("#account_disable_freshchat_enabled").itoggle();
+  <% end %>
 
 	<% if @restricted_helpdesk_launched %>
 

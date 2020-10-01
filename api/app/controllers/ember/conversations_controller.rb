@@ -306,7 +306,6 @@ module Ember
         elsif @ticket.twitter?
           preload_options << :tweet
         end
-        preload_options << :freshfone_call if current_account.freshfone_enabled?
         preload_options << :freshcaller_call if current_account.freshcaller_enabled?
         preload_options << [{ user: [:avatar, :user_companies, :user_emails, :tags] }] if sideload_options.include?('requester')
         preload_options
