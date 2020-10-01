@@ -95,6 +95,7 @@ class Account < ActiveRecord::Base
     :spam_blacklist_feature,
     :solutions_agent_metrics,
     :skip_invoice_due_warning,
+    :allow_wildcard_ticket_create,
     :bypass_signup_captcha,
     :supervisor_contact_field,
     :disable_freshchat,
@@ -469,6 +470,10 @@ class Account < ActiveRecord::Base
 
   def omni_channel_team_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
+  end
+
+  def allow_wildcard_ticket_create_enabled?
+    launched?(:allow_wildcard_ticket_create)
   end
 
   def supervisor_contact_field_enabled?
