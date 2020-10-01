@@ -567,7 +567,7 @@ module Helpdesk::TicketsHelper
   end
 
   def compose_options(email_configs)
-    if current_account.features_included?(:personalized_email_replies)
+    if current_account.personalized_email_replies_enabled?
       email_configs.collect{|x| [x.friendly_email_personalize(current_user.name), x.id]}
     else
       email_configs.collect{|x| [x.friendly_email, x.id]}
