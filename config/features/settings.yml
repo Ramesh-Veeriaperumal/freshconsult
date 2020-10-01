@@ -63,3 +63,7 @@ settings:
     default: false
     internal: false
     feature_dependency: :multi_product
+  :cascade_dispatcher:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature

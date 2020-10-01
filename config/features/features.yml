@@ -447,7 +447,6 @@
   :enable_multilingual: false
   :archive_tickets: false
   :call_quality_metrics: false
-  :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :google_signin: true
   :spam_blacklist_feature: false
