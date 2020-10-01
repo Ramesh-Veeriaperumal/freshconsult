@@ -4,7 +4,7 @@
 	<h5 id="note_attachments_title_<%= note.id %>"><strong><%= pluralize(note.all_attachments.size + note.cloud_files.size, t('attachment'), t('attachments'))%></strong></h5>
 	<ul class="attachment_list">
 		<% ticket = @ticket|| @parent %>
-		<% add_to_reply = !(ticket.facebook? || ticket.twitter? || ticket.freshfone_call.present?) %>
+		<% add_to_reply = !(ticket.facebook? || ticket.twitter?) %>
 	    <% note.all_attachments.each_with_index do |attached,i| %> 
 	    	<%= attachment_list(attached, privilege?(:edit_note, note), "ticket", note.id, nil, add_to_reply, i) %>
 	    <%end%>

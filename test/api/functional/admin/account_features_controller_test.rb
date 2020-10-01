@@ -7,13 +7,39 @@ class Admin::AccountFeaturesControllerTest < ActionController::TestCase
   # include ApiAccountHelper
 
   def test_feature_enable_for_valid_input
-    post :create, controller_params(name: 'cascade_dispatcher')
+    post :create, controller_params(name: 'freshreports_analytics')
     assert_response 204
   end
 
   def test_feature_enable_for_invalid_input
     post :create, controller_params(name: 'invalid_feature')
     assert_response 400
+  end
+
+  def test_enable_setting_with_feature_dependency
+    @account.add_feature(:basic_settings_feature)
+    delete :create, controller_params(name: 'cascade_dispatcher')
+    assert_response 204
+  end
+
+  def test_enable_setting_without_feature_dependency
+    @account.revoke_feature(:basic_settings_feature)
+    delete :create, controller_params(name: 'cascade_dispatcher')
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: 'cascade_dispatcher'))
+  end
+
+  def test_disable_setting_with_feature_dependency
+    @account.add_feature(:basic_settings_feature)
+    delete :destroy, controller_params(name: 'cascade_dispatcher')
+    assert_response 204
+  end
+
+  def test_disable_setting_without_feature_dependency
+    @account.revoke_feature(:basic_settings_feature)
+    delete :destroy, controller_params(name: 'cascade_dispatcher')
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: 'cascade_dispatcher'))
   end
 
   def test_disable_feature_for_valid_input

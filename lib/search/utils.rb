@@ -119,8 +119,6 @@ class Search::Utils
     mobile_suggest_solutions:         'mobileSuggestSolutions',
     mobile_suggest_topics:            'mobileSuggestTopics',
     mobile_suggest_global:            'mobileSuggestGlobal',
-    ff_contact_by_phone:              'freshfoneContactByNumbers',
-    ff_contact_by_caller:             'freshfoneContactByCaller',
     ff_contact_by_numfields:          'freshfoneContactByNumberfields',
     company_v2_search:                'companyApiSearch',
     hstickets_dispid:                 'hsTicketsByDisplayId',
@@ -245,7 +243,7 @@ class Search::Utils
 
   def self.get_template_id(context, exact_match, locale=nil)
     template_key = template_context(context, exact_match, locale)
-    if(Account.current.launched?(:es_v2_splqueries) && Search::Utils::SPECIAL_TEMPLATES.has_key?(template_key))
+    if Account.current.es_v2_splqueries_enabled? && Search::Utils::SPECIAL_TEMPLATES.key?(template_key)
       Search::Utils::SPECIAL_TEMPLATES[template_key]
     elsif Account.current.launched?(:fuzzy_search) && Search::Utils::FUZZY_TEMPLATE_BY_CONTEXT.key?(template_key)
       Search::Utils::FUZZY_TEMPLATE_BY_CONTEXT[template_key]
@@ -255,7 +253,7 @@ class Search::Utils
   end
 
   def self.context_mapping(context)
-    if (Account.current.launched?(:es_v2_splqueries) && Search::Utils::SPECIAL_TEMPLATES.has_value?(context))
+    if Account.current.es_v2_splqueries_enabled? && Search::Utils::SPECIAL_TEMPLATES.value?(context)
       context.sub('Exact','').sub('Special','')
     elsif Account.current.launched?(:fuzzy_search)
       context.gsub(Search::Utils::FUZZY_TEXT, '')

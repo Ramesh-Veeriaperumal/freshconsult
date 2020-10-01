@@ -1,15 +1,5 @@
 class SpecFilter < SimpleCov::Filter
 
-  FRESHFONE_FILTERS = [
-    'app/controllers/freshfone/autocomplete_controller.rb',
-    'app/models/freshfone_notifier.rb',
-    'app/helpers/freshfone/call_history_helper.rb',
-    'app/helpers/admin/freshfone/numbers_helper.rb',
-    'app/helpers/admin/freshfone_helper.rb',
-    'lib/freshfone/ops_notifier.rb',
-    'lib/freshfone/callback_urls.rb'
-  ]
-
   DEAD_CODE = [
     'app/controllers/anonymous/requests_controller.rb',
     'app/controllers/moderators_controller.rb',
@@ -41,8 +31,7 @@ class SpecFilter < SimpleCov::Filter
     'app/models/data_export_mailer.rb', 
     'app/models/email_config_notifier.rb', 
     'app/models/freshdesk_errors_mailer.rb', 
-    'app/models/freshfone_notifier.rb', 
-    'app/models/helpdesk/ticket_notifier.rb', 
+    'app/models/helpdesk/ticket_notifier.rb',
     'app/models/helpdesk/watcher_notifier.rb', 
     'app/models/post_mailer.rb', 
     'app/models/reports/pdf_sender.rb', 
@@ -66,7 +55,7 @@ class SpecFilter < SimpleCov::Filter
   ]
 
 
-  SPEC_FILTERS = [ FRESHFONE_FILTERS, DEAD_CODE, IGNORE_LIST, MAILER_MODELS, BILLING_MODELS, 
+  SPEC_FILTERS = [ DEAD_CODE, IGNORE_LIST, MAILER_MODELS, BILLING_MODELS,
                     TICKET_WEEKLY_TABLE_MODELS ].flatten
 
   def matches?(src)

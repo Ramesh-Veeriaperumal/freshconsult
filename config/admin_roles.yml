@@ -13,7 +13,6 @@ super_admin:
   - plans 
   - payments 
   - metrics
-  - freshfone
   - currency
 
 marketer:
@@ -30,10 +29,4 @@ marketer:
   - payments
 
 support:
- - accounts 
-
-freshfone:
  - accounts
- - freshfone
-
-

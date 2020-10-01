@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
   include InstalledApplicationsTestHelper
-  APP_NAMES = ['zohocrm', 'harvest', 'dropbox', 'salesforce', 'salesforce_v2', 'freshsales', 'shopify']
+  APP_NAMES = ['zohocrm', 'harvest', 'dropbox', 'salesforce', 'salesforce_v2', 'freshsales', 'shopify', 'freshworkscrm']
 
   def setup
     super
@@ -319,6 +319,285 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
       'fetch_user_selected_fields','contact','tom@localhost.freshdesk-dev.com'))
     post :fetch, param
     assert_response 404
+  end
+
+  def test_freshsales_invalid_event
+    app_id = get_installed_app('freshsales').id
+    param = construct_params(version: 'private', id: app_id, event: 'test_event',
+                             payload: { entity: { first_name: 'Sample', last_name: 'Contact' } })
+    post :fetch, param
+    assert_response 400
+  end
+
+  def test_install_freshworkscrm_app
+    freshworkscrm_application_id = Integrations::Application.where(name: 'freshworkscrm').first.id
+    Account.current.installed_applications.where(application_id: freshworkscrm_application_id).first.delete
+    post :create, construct_params(version: 'private', name: 'freshworkscrm', configs: { domain: 'test', auth_token: 'v_GNcz8s2BmhzOVsp4Oe_w', ghostvalue: '.myfreshworks.com' })
+    assert_equal freshworkscrm_application_id, JSON.parse(response.body)['application_id']
+    assert_response 200
+  end
+
+  def test_freshworkscrm_autocomplete_results
+    app_id = get_installed_app('freshworkscrm').id
+    response = "[{\"id\":\"2009495244\", \"type\": \"contact\", \"name\": \"testtest\", \"email\": \"test@test.com\", \"_id\":\"2009495244\"}]"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource
+      .any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_autocomplete_results',
+                             payload: { url: '/search?per_page=5&include=contact,sales_account,deal&q=test' })
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = JSON.parse(response)
+    match_json ({ 'results' => data })
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_invalid_event
+    app_id = get_installed_app('freshworkscrm').id
+    param = construct_params(version: 'private', id: app_id, event: 'create_lead',
+                             payload: { entity: { first_name: 'Sample', last_name: 'Contact' } })
+    post :fetch, param
+    assert_response 400
+  end
+
+  def test_freshworkscrm_dropdown_choices
+    app_id = get_installed_app('freshworkscrm').id
+    response = "{\"users\": [{\"id\":2000067945,\"display_name\":\"Test user\",\"email\":\"test.user@freshworks.com\",\"is_active\":true,\"work_number\":null,\"mobile_number\":null}]}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource
+      .any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_dropdown_choices', payload: { url: '/selector/owners' })
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = JSON.parse(response).values.first
+    match_json ({ 'results' => data })
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_create_contact
+    app_id = get_installed_app('freshworkscrm').id
+    response = "{\"contact\":{\"id\": 2009497816, \"first_name\": \"Sample\",\"last_name\": \"Contact\", \"display_name\": \"Sample Contact\"}}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource
+      .any_instance.stubs(:http_post).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'create_contact',
+                             payload: { entity: { first_name: 'Sample', last_name: 'Contact' } })
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = JSON.parse(response)
+    match_json data
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_create_contact_returns_exception
+    app_id = get_installed_app('freshworkscrm').id
+    response = "{\"contact\":{\"id\": 2009497816, \"first_name\": \"Sample\",\"last_name\": \"Contact\", \"display_name\": \"Sample Contact\"}}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 400
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource
+      .any_instance.stubs(:http_post).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'create_contact',
+                             payload: { entity: { first_name: 'Sample', last_name: 'Contact' } })
+    post :fetch, param
+    assert_response 502
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_fetch_form_fields
+    app_id = get_installed_app('freshworkscrm').id
+    response = "{\"forms\":[{\"id\":2000022765,\"name\":\"DefaultContactForm\",\"field_class\":\"Contact\",
+                \"fields\":[{\"id\":\"ead353bc-031b-4012-86b1-cd055f807c99\",\"name\":\"basic_information\",
+                \"label\":\"Basicinformation\",\"fields\":[{\"id\":\"7e0b636d\",
+                \"name\":\"first_name\",\"label\":\"Firstname\",\"fields\":[],\"form_id\":2000022765,
+                \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                {\"id\":\"7e0b636de\",\"name\":\"sales_accounts\",\"label\":\"Accounts\",\"fields\":[],
+                \"form_id\":2000022765,\"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                {\"id\":\"7e0basd636d\", \"name\":\"emails\",\"type\":\"email\",\"label\":\"Emails\",\"fields\":[],
+                \"form_id\":2000022765,\"field_class\":\"Contact\",\"visible\":\"true\",
+                \"field_options\":{\"show_in_import\":true}},{\"id\":\"c94aae94-7424-498f-863c-02bb7350724e\",
+                \"name\":\"system_information\",\"label\":\"Systeminformation\",\"fields\":[{\"id\":\"7aee054f\",
+                \"name\":\"last_contacted\",\"label\":\"Lastcontactedtime\",\"fields\":[],
+                \"form_id\":2000022765,\"field_class\":\"Contact\"}],\"form_id\":2000022765,
+                \"field_class\":\"Contact\"}],\"form_id\":2000022765,\"field_class\":\"Contact\"}]}]}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource
+      .any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_form_fields')
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = form_fields_result_for_freshworkscrm
+    match_json data
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_fetch_form_fields_with_nested_emails
+    app_id = get_installed_app('freshworkscrm').id
+    response = fetch_nested_emails_response_for_freshworkscrm
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource
+      .any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_form_fields')
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    data = nested_emails_form_fields_result_for_freshworkscrm
+    match_json data
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmCommonResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_fetch_contacts
+    app_id = get_installed_app('freshworkscrm').id
+    contact_response = "{\"contact_status\":[{\"id\":9000047558,\"name\":\"Qualified Lead\",\"position\":1}], \"contact\":{\"id\":15001322339,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"job_title\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"time_zone\":null,\"work_number\":null,\"mobile_number\":\"1000\",\"address\":null,\"last_seen\":null,\"lead_score\":90,\"last_contacted\":null,\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"links\":{\"conversations\":\"/contacts/15001322339/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuser\u0026per_page=3\",\"timeline_feeds\":\"/contacts/15001322339/timeline_feeds\",\"document_associations\":\"/contacts/15001322339/document_associations\",\"notes\":\"/contacts/15001322339/notes?include=creater\",\"tasks\":\"/contacts/15001322339/tasks?include=creater,owner,updater,targetable,users,task_type\",\"reminders\":\"/contacts/15001322339/reminders?include=creater,owner,updater,targetable\",\"appointments\":\"/contacts/15001322339/appointments?include=creater,owner,updater,targetable,appointment_attendees\",\"duplicates\":\"/contacts/15001322339/duplicates\",\"connections\":\"/contacts/15001322339/connections\"},\"last_contacted_sales_activity_mode\":null,\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"keyword\":null,\"medium\":null,\"last_contacted_mode\":null,\"recent_note\":null,\"won_deals_count\":0,\"last_contacted_via_sales_activity\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"web_form_ids\":null,\"open_deals_count\":1,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"tags\":[],\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"is_deleted\":false,\"team_user_ids\":null,\"subscription_status\":0,\"customer_fit\":0,\"has_duplicates\":true,\"duplicates_searched_today\":true,\"has_connections\":true,\"connections_searched_today\":true,\"phone_numbers\":[], \"contact_status_id\":9000047558, \"custom_field\":{\"time_zone\":\"CST\"}} }"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, contact_response
+    response_mock.expect :status, 200
+    filter_response = "{\"contacts\":[{\"partial\":true,\"id\":15001322339,\"job_title\":null,\"lead_score\":90,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"work_number\":null,\"mobile_number\":\"1000\",\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"last_contacted_mode\":null,\"last_contacted\":null,\"last_contacted_via_sales_activity\":null,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"city\":null,\"country\":null,\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"recent_note\":null,\"last_contacted_sales_activity_mode\":null,\"web_form_ids\":null,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"external_id\":null,\"facebook\":null,\"twitter\":null,\"linkedin\":null}],\"meta\":{\"total\":1}}"
+    filter_response_mock = Minitest::Mock.new
+    filter_response_mock.expect :body, filter_response
+    filter_response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.stubs(:http_get).returns(response_mock)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.stubs(:http_post).returns(filter_response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'contact', value: { email: 'matt.rogers@freshdesk.com' } })
+    post :fetch, param
+    assert_response 200
+    response_hash = JSON.parse response.body
+    assert_equal response_hash['contacts'][0]['email'], 'matt.rogers@freshdesk.com'
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_post)
+  end
+
+  def test_freshworkscrm_fetch_contacts_with_no_filter_results
+    app_id = get_installed_app('freshworkscrm').id
+    filter_response = '{}'
+    filter_response_mock = Minitest::Mock.new
+    filter_response_mock.expect :body, filter_response
+    filter_response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.stubs(:http_post).returns(filter_response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'contact', value: { email: 'matt.rogers@freshdesk.com' } })
+    post :fetch, param
+    assert_response 200
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_fetch_contacts_with_exception
+    app_id = get_installed_app('freshworkscrm').id
+    contact_response = "{\"contact\":{\"id\":15001322339,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"job_title\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"time_zone\":null,\"work_number\":null,\"mobile_number\":\"1000\",\"address\":null,\"last_seen\":null,\"lead_score\":90,\"last_contacted\":null,\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"links\":{\"conversations\":\"/contacts/15001322339/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuser\u0026per_page=3\",\"timeline_feeds\":\"/contacts/15001322339/timeline_feeds\",\"document_associations\":\"/contacts/15001322339/document_associations\",\"notes\":\"/contacts/15001322339/notes?include=creater\",\"tasks\":\"/contacts/15001322339/tasks?include=creater,owner,updater,targetable,users,task_type\",\"reminders\":\"/contacts/15001322339/reminders?include=creater,owner,updater,targetable\",\"appointments\":\"/contacts/15001322339/appointments?include=creater,owner,updater,targetable,appointment_attendees\",\"duplicates\":\"/contacts/15001322339/duplicates\",\"connections\":\"/contacts/15001322339/connections\"},\"last_contacted_sales_activity_mode\":null,\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"keyword\":null,\"medium\":null,\"last_contacted_mode\":null,\"recent_note\":null,\"won_deals_count\":0,\"last_contacted_via_sales_activity\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"web_form_ids\":null,\"open_deals_count\":1,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"tags\":[],\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"is_deleted\":false,\"team_user_ids\":null,\"subscription_status\":0,\"customer_fit\":0,\"has_duplicates\":true,\"duplicates_searched_today\":true,\"has_connections\":true,\"connections_searched_today\":true,\"phone_numbers\":[]} }"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, contact_response
+    response_mock.expect :status, 400
+    filter_response = "{\"contacts\":[{\"partial\":true,\"id\":15001322339,\"job_title\":null,\"lead_score\":90,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"work_number\":null,\"mobile_number\":\"1000\",\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"last_contacted_mode\":null,\"last_contacted\":null,\"last_contacted_via_sales_activity\":null,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"city\":null,\"country\":null,\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"recent_note\":null,\"last_contacted_sales_activity_mode\":null,\"web_form_ids\":null,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"external_id\":null,\"facebook\":null,\"twitter\":null,\"linkedin\":null}],\"meta\":{\"total\":1}}"
+    filter_response_mock = Minitest::Mock.new
+    filter_response_mock.expect :body, filter_response
+    filter_response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.stubs(:http_get).returns(response_mock)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.stubs(:http_post).returns(filter_response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'contact', value: { email: 'matt.rogers@freshdesk.com' } })
+    post :fetch, param
+    assert_response 502
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmContactResource.any_instance.unstub(:http_post)
+  end
+
+  def test_freshworkscrm_fetch_accounts_from_email
+    app_id = get_installed_app('freshworkscrm').id
+    account_response = "{\"sales_account\":{\"id\":15000767664,\"name\":\"Flipkart\",\"address\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"number_of_employees\":null,\"annual_revenue\":null,\"website\":null,\"owner_id\":15000014169,\"phone\":null,\"open_deals_amount\":\"100.0\",\"open_deals_count\":1,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null,\"last_contacted_mode\":null,\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"links\":{\"conversations\":\"/sales_accounts/15000767664/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuser\u0026per_page=3\",\"document_associations\":\"/sales_accounts/15000767664/document_associations\",\"notes\":\"/sales_accounts/15000767664/notes?include=creater\",\"tasks\":\"/sales_accounts/15000767664/tasks?include=creater,owner,updater,targetable,users,task_type\",\"appointments\":\"/sales_accounts/15000767664/appointments?include=creater,owner,updater,targetable,appointment_attendees\"},\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:04+05:30\",\"updated_at\":\"2020-09-03T19:33:04+05:30\",\"avatar\":null,\"parent_sales_account_id\":null,\"recent_note\":null,\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"last_assigned_at\":\"2020-09-03T19:33:05+05:30\",\"tags\":[],\"is_deleted\":false,\"team_user_ids\":null,\"has_connections\":true}}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, account_response
+    response_mock.expect :status, 200
+    filter_response = "{\"sales_accounts\":[{\"partial\":true,\"id\":15000767664,\"name\":\"Flipkart\",\"avatar\":null,\"website\":null,\"open_deals_amount\":\"100.0\",\"open_deals_count\":1,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null}],\"contacts\":[{\"partial\":true,\"id\":15001322339,\"job_title\":null,\"lead_score\":90,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"work_number\":null,\"mobile_number\":\"1000\",\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"last_contacted_mode\":null,\"last_contacted\":null,\"last_contacted_via_sales_activity\":null,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"city\":null,\"country\":null,\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"recent_note\":null,\"last_contacted_sales_activity_mode\":null,\"web_form_ids\":null,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"external_id\":null,\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"sales_account_id\":15000767664}],\"meta\":{\"total\":1}}"
+    filter_response_mock = Minitest::Mock.new
+    filter_response_mock.expect :body, filter_response
+    filter_response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.stubs(:http_get).returns(response_mock)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.stubs(:http_post).returns(filter_response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'account', value: { email: 'matt.rogers@freshdesk.com' } })
+    post :fetch, param
+    assert_response 200
+    response_hash = JSON.parse response.body
+    assert_equal response_hash['sales_accounts'][0]['id'], 15_000_767_664
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.unstub(:http_post)
+  end
+
+  def test_freshworkscrm_fetch_accounts_from_company
+    app_id = get_installed_app('freshworkscrm').id
+    account_response = "{\"sales_account\":{\"id\":15000767664,\"name\":\"Flipkart\",\"address\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"number_of_employees\":null,\"annual_revenue\":null,\"website\":null,\"owner_id\":15000014169,\"phone\":null,\"open_deals_amount\":\"100.0\",\"open_deals_count\":1,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null,\"last_contacted_mode\":null,\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"links\":{\"conversations\":\"/sales_accounts/15000767664/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuser\u0026per_page=3\",\"document_associations\":\"/sales_accounts/15000767664/document_associations\",\"notes\":\"/sales_accounts/15000767664/notes?include=creater\",\"tasks\":\"/sales_accounts/15000767664/tasks?include=creater,owner,updater,targetable,users,task_type\",\"appointments\":\"/sales_accounts/15000767664/appointments?include=creater,owner,updater,targetable,appointment_attendees\"},\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:04+05:30\",\"updated_at\":\"2020-09-03T19:33:04+05:30\",\"avatar\":null,\"parent_sales_account_id\":null,\"recent_note\":null,\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"last_assigned_at\":\"2020-09-03T19:33:05+05:30\",\"tags\":[],\"is_deleted\":false,\"team_user_ids\":null,\"has_connections\":true}}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, account_response
+    response_mock.expect :status, 200
+    filter_response = "{\"sales_accounts\":[{\"partial\":true,\"id\":15000767664,\"name\":\"Flipkart\",\"avatar\":null,\"website\":null,\"open_deals_amount\":\"100.0\",\"open_deals_count\":1,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null}],\"contacts\":[{\"partial\":true,\"id\":15001322339,\"job_title\":null,\"lead_score\":90,\"email\":\"matt.rogers@freshdesk.com\",\"emails\":[{\"id\":15001148901,\"value\":\"matt.rogers@freshdesk.com\",\"is_primary\":true,\"label\":null,\"_destroy\":false}],\"work_number\":null,\"mobile_number\":\"1000\",\"open_deals_amount\":\"100.0\",\"won_deals_amount\":\"0.0\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"last_contacted_mode\":null,\"last_contacted\":null,\"last_contacted_via_sales_activity\":null,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"city\":null,\"country\":null,\"created_at\":\"2020-09-03T19:33:30+05:30\",\"updated_at\":\"2020-09-03T19:33:30+05:30\",\"recent_note\":null,\"last_contacted_sales_activity_mode\":null,\"web_form_ids\":null,\"last_assigned_at\":\"2020-09-03T19:33:31+05:30\",\"external_id\":null,\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"sales_account_id\":15000767664}],\"meta\":{\"total\":1}}"
+    filter_response_mock = Minitest::Mock.new
+    filter_response_mock.expect :body, filter_response
+    filter_response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.stubs(:http_get).returns(response_mock)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.stubs(:http_post).returns(filter_response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'account', value: { company: 'Flipkart' } })
+    post :fetch, param
+    assert_response 200
+    response_hash = JSON.parse response.body
+    assert_equal response_hash['sales_accounts'][0]['name'], 'Flipkart'
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.unstub(:http_get)
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmAccountResource.any_instance.unstub(:http_post)
+  end
+
+  def test_freshworkscrm_fetch_deals
+    app_id = get_installed_app('freshworkscrm').id
+    deal_response = "{\"deals\":[{\"id\":15000087766,\"name\":\"Electronics Section\",\"amount\":\"100.0\",\"expected_close\":null,\"closed_date\":null,\"stage_updated_time\":\"2020-09-05T23:53:06+05:30\",\"custom_field\":{},\"probability\":100,\"updated_at\":\"2020-09-05T23:53:06+05:30\",\"created_at\":\"2020-09-05T23:53:06+05:30\",\"age\":0,\"collaboration\":{\"id\":\"15000087766\",\"title\":\"Electronics Section\",\"convo_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJDb252b0lkIjoiMTUwMDAwODc3NjYiLCJVc2VyVVVJRCI6IjIyMTYzMDM1ODE5NDMwODI2NyIsImV4cCI6MTU5OTMzNzQxN30.itkvIVG-hwD9aFpSxiNbKMPUUpj33fptwUaaSpBcgbE\"},\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"base_currency_amount\":\"100.0\",\"expected_deal_value\":\"100.0\",\"rotten_days\":null,\"owner_id\":15000014169,\"creater_id\":15000014169,\"updater_id\":15000014169,\"lead_source_id\":null,\"contact_ids\":[15001322339],\"sales_account_id\":15000767664,\"deal_pipeline_id\":15000011054,\"deal_stage_id\":15000077707,\"deal_type_id\":null,\"deal_reason_id\":null,\"campaign_id\":null,\"deal_payment_status_id\":null,\"deal_product_id\":null,\"territory_id\":null,\"currency_id\":15000010621, \"custom_field\":{\"deal_payment_status_id\":7823728}},{\"id\":15000085358,\"name\":\"Groceries Section\",\"amount\":\"100.0\",\"expected_close\":null,\"closed_date\":null,\"stage_updated_time\":\"2020-09-03T19:34:27+05:30\",\"custom_field\":{\"deal_payment_status_id\":7823728},\"probability\":100,\"updated_at\":\"2020-09-03T19:34:27+05:30\",\"created_at\":\"2020-09-03T19:34:27+05:30\",\"age\":2,\"collaboration\":{\"id\":\"15000085358\",\"title\":\"Groceries Section\",\"convo_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJDb252b0lkIjoiMTUwMDAwODUzNTgiLCJVc2VyVVVJRCI6IjIyMTYzMDM1ODE5NDMwODI2NyIsImV4cCI6MTU5OTMzNzQxN30.e3ex7vvvPcb-zU8S4NwLEC9bkqoXXyssxniUcqSr-XE\"},\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"base_currency_amount\":\"100.0\",\"expected_deal_value\":\"100.0\",\"rotten_days\":null,\"owner_id\":15000014169,\"creater_id\":15000014169,\"updater_id\":15000014169,\"lead_source_id\":null,\"contact_ids\":[15001322339],\"sales_account_id\":15000767664,\"deal_pipeline_id\":15000011054,\"deal_stage_id\":15000077707,\"deal_type_id\":null,\"deal_reason_id\":null,\"campaign_id\":null,\"deal_payment_status_id\":null,\"deal_product_id\":null,\"territory_id\":null,\"currency_id\":15000010621}],\"users\":[{\"id\":15000014169,\"display_name\":\"Arjun Naduvakkat\",\"email\":\"arjunpn90@gmail.com\",\"is_active\":true,\"work_number\":\"237482482\",\"mobile_number\":null}],\"lead_sources\":[],\"contacts\":[{\"partial\":true,\"id\":15001322339,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"email\":\"matt.rogers@freshdesk.com\",\"lead_score\":92,\"last_contacted_sales_activity_mode\":null,\"job_title\":null,\"last_contacted\":null,\"last_contacted_mode\":null,\"last_contacted_via_sales_activity\":null,\"work_number\":null,\"mobile_number\":\"1000\",\"sales_account_id\":15000767664,\"sales_accounts\":[{\"partial\":true,\"id\":15000767664,\"name\":\"Flipkart\",\"avatar\":null,\"website\":null,\"open_deals_amount\":\"200.0\",\"open_deals_count\":2,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null,\"is_primary\":true}],\"owner_id\":15000014169}],\"sales_accounts\":[{\"partial\":true,\"id\":15000767664,\"name\":\"Flipkart\",\"avatar\":null,\"website\":null,\"open_deals_amount\":\"200.0\",\"open_deals_count\":2,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null}],\"deal_pipelines\":[{\"partial\":true,\"id\":15000011054,\"name\":\"Default Pipeline\",\"position\":1,\"is_default\":true,\"rotting_days\":30}],\"deal_stages\":[{\"partial\":true,\"id\":15000077707,\"name\":\"New\",\"position\":1,\"forecast_type\":\"Open\",\"updated_at\":\"2020-09-03T19:29:57+05:30\",\"deal_pipeline_id\":15000011054,\"choice_type\":5,\"probability\":100}],\"deal_types\":[],\"deal_reasons\":[],\"campaigns\":[],\"deal_payment_statuses\":[],\"deal_products\":[],\"territories\":[],\"currencies\":[{\"partial\":false,\"id\":15000010621,\"is_active\":true,\"currency_code\":\"USD\",\"exchange_rate\":\"1.0\",\"currency_type\":1,\"schedule_info\":null,\"rate_change_ids\":[]}],\"rate_changes\":[],\"sales_account\":{\"id\":15000767664,\"name\":\"Flipkart\",\"address\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"number_of_employees\":null,\"annual_revenue\":null,\"website\":null,\"owner_id\":15000014169,\"phone\":null,\"open_deals_amount\":\"200.0\",\"open_deals_count\":2,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null,\"last_contacted_mode\":null,\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"links\":{\"conversations\":\"/sales_accounts/15000767664/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuser\u0026per_page=3\",\"document_associations\":\"/sales_accounts/15000767664/document_associations\",\"notes\":\"/sales_accounts/15000767664/notes?include=creater\",\"tasks\":\"/sales_accounts/15000767664/tasks?include=creater,owner,updater,targetable,users,task_type\",\"appointments\":\"/sales_accounts/15000767664/appointments?include=creater,owner,updater,targetable,appointment_attendees\"},\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:04+05:30\",\"updated_at\":\"2020-09-03T19:33:04+05:30\",\"avatar\":null,\"parent_sales_account_id\":null,\"recent_note\":null,\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"last_assigned_at\":\"2020-09-03T19:33:05+05:30\",\"tags\":[],\"is_deleted\":false,\"team_user_ids\":null,\"has_connections\":true,\"deal_ids\":[15000087766,15000085358]}}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, deal_response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmDealResource.any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'deal', value: { account_id: '15000767664', ticket_id: '3' } })
+    post :fetch, param
+    assert_response 200
+    response_hash = JSON.parse response.body
+    assert_equal response_hash['deals'].size, 2
+    assert_equal response_hash['deals'][0]['id'], 15_000_085_358
+    assert_equal response_hash['deals'][1]['id'], 15_000_087_766
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmDealResource.any_instance.unstub(:http_get)
+  end
+
+  def test_freshworkscrm_fetch_deals_more_than_five
+    app_id = get_installed_app('freshworkscrm').id
+    deal_response = "{\"deals\":[{\"id\":15000087766,\"name\":\"Electronics Section\",\"amount\":\"100.0\",\"expected_close\":null,\"closed_date\":null,\"stage_updated_time\":\"2020-09-05T23:53:06+05:30\",\"custom_field\":{\"deal_payment_status_id\":7823728},\"probability\":100,\"updated_at\":\"2020-09-05T23:53:06+05:30\",\"created_at\":\"2020-09-05T23:53:06+05:30\",\"age\":0,\"collaboration\":{\"id\":\"15000087766\",\"title\":\"Electronics Section\",\"convo_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJDb252b0lkIjoiMTUwMDAwODc3NjYiLCJVc2VyVVVJRCI6IjIyMTYzMDM1ODE5NDMwODI2NyIsImV4cCI6MTU5OTMzNzQxN30.itkvIVG-hwD9aFpSxiNbKMPUUpj33fptwUaaSpBcgbE\"},\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"base_currency_amount\":\"100.0\",\"expected_deal_value\":\"100.0\",\"rotten_days\":null,\"owner_id\":15000014169,\"creater_id\":15000014169,\"updater_id\":15000014169,\"lead_source_id\":null,\"contact_ids\":[15001322339],\"sales_account_id\":15000767664,\"deal_pipeline_id\":15000011054,\"deal_stage_id\":15000077707,\"deal_type_id\":null,\"deal_reason_id\":null,\"campaign_id\":null,\"deal_payment_status_id\":null,\"deal_product_id\":null,\"territory_id\":null,\"currency_id\":15000010621},{\"id\":15000085358,\"name\":\"Groceries Section\",\"amount\":\"100.0\",\"expected_close\":null,\"closed_date\":null,\"stage_updated_time\":\"2020-09-03T19:34:27+05:30\",\"custom_field\":{\"deal_payment_status_id\":7823728},\"probability\":100,\"updated_at\":\"2020-09-03T19:34:27+05:30\",\"created_at\":\"2020-09-03T19:34:27+05:30\",\"age\":2,\"collaboration\":{\"id\":\"15000085358\",\"title\":\"Groceries Section\",\"convo_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJDb252b0lkIjoiMTUwMDAwODUzNTgiLCJVc2VyVVVJRCI6IjIyMTYzMDM1ODE5NDMwODI2NyIsImV4cCI6MTU5OTMzNzQxN30.e3ex7vvvPcb-zU8S4NwLEC9bkqoXXyssxniUcqSr-XE\"},\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"base_currency_amount\":\"100.0\",\"expected_deal_value\":\"100.0\",\"rotten_days\":null,\"owner_id\":15000014169,\"creater_id\":15000014169,\"updater_id\":15000014169,\"lead_source_id\":null,\"contact_ids\":[15001322339],\"sales_account_id\":15000767664,\"deal_pipeline_id\":15000011054,\"deal_stage_id\":15000077707,\"deal_type_id\":null,\"deal_reason_id\":null,\"campaign_id\":null,\"deal_payment_status_id\":null,\"deal_product_id\":null,\"territory_id\":null,\"currency_id\":15000010621},{\"id\":15000087703,\"name\":\"Electronics Section\",\"amount\":\"100.0\",\"expected_close\":null,\"closed_date\":null,\"stage_updated_time\":\"2020-09-05T23:53:06+05:30\",\"custom_field\":{\"deal_payment_status_id\":7823728},\"probability\":100,\"updated_at\":\"2020-09-05T23:53:06+05:30\",\"created_at\":\"2020-09-05T23:53:06+05:30\",\"age\":0,\"collaboration\":{\"id\":\"15000087703\",\"title\":\"Electronics Section\",\"convo_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJDb252b0lkIjoiMTUwMDAwODc3NjYiLCJVc2VyVVVJRCI6IjIyMTYzMDM1ODE5NDMwODI2NyIsImV4cCI6MTU5OTMzNzQxN30.itkvIVG-hwD9aFpSxiNbKMPUUpj33fptwUaaSpBcgbE\"},\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"base_currency_amount\":\"100.0\",\"expected_deal_value\":\"100.0\",\"rotten_days\":null,\"owner_id\":15000014169,\"creater_id\":15000014169,\"updater_id\":15000014169,\"lead_source_id\":null,\"contact_ids\":[15001322339],\"sales_account_id\":15000767664,\"deal_pipeline_id\":15000011054,\"deal_stage_id\":15000077707,\"deal_type_id\":null,\"deal_reason_id\":null,\"campaign_id\":null,\"deal_payment_status_id\":null,\"deal_product_id\":null,\"territory_id\":null,\"currency_id\":15000010621},{\"id\":15000087702,\"name\":\"Electronics Section\",\"amount\":\"100.0\",\"expected_close\":null,\"closed_date\":null,\"stage_updated_time\":\"2020-09-05T23:53:06+05:30\",\"custom_field\":{\"deal_payment_status_id\":7823728},\"probability\":100,\"updated_at\":\"2020-09-05T23:53:06+05:30\",\"created_at\":\"2020-09-05T23:53:06+05:30\",\"age\":0,\"collaboration\":{\"id\":\"15000087702\",\"title\":\"Electronics Section\",\"convo_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJDb252b0lkIjoiMTUwMDAwODc3NjYiLCJVc2VyVVVJRCI6IjIyMTYzMDM1ODE5NDMwODI2NyIsImV4cCI6MTU5OTMzNzQxN30.itkvIVG-hwD9aFpSxiNbKMPUUpj33fptwUaaSpBcgbE\"},\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"base_currency_amount\":\"100.0\",\"expected_deal_value\":\"100.0\",\"rotten_days\":null,\"owner_id\":15000014169,\"creater_id\":15000014169,\"updater_id\":15000014169,\"lead_source_id\":null,\"contact_ids\":[15001322339],\"sales_account_id\":15000767664,\"deal_pipeline_id\":15000011054,\"deal_stage_id\":15000077707,\"deal_type_id\":null,\"deal_reason_id\":null,\"campaign_id\":null,\"deal_payment_status_id\":null,\"deal_product_id\":null,\"territory_id\":null,\"currency_id\":15000010621},{\"id\":15000087701,\"name\":\"Electronics Section\",\"amount\":\"100.0\",\"expected_close\":null,\"closed_date\":null,\"stage_updated_time\":\"2020-09-05T23:53:06+05:30\",\"custom_field\":{\"deal_payment_status_id\":7823728},\"probability\":100,\"updated_at\":\"2020-09-05T23:53:06+05:30\",\"created_at\":\"2020-09-05T23:53:06+05:30\",\"age\":0,\"collaboration\":{\"id\":\"15000087701\",\"title\":\"Electronics Section\",\"convo_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJDb252b0lkIjoiMTUwMDAwODc3NjYiLCJVc2VyVVVJRCI6IjIyMTYzMDM1ODE5NDMwODI2NyIsImV4cCI6MTU5OTMzNzQxN30.itkvIVG-hwD9aFpSxiNbKMPUUpj33fptwUaaSpBcgbE\"},\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"base_currency_amount\":\"100.0\",\"expected_deal_value\":\"100.0\",\"rotten_days\":null,\"owner_id\":15000014169,\"creater_id\":15000014169,\"updater_id\":15000014169,\"lead_source_id\":null,\"contact_ids\":[15001322339],\"sales_account_id\":15000767664,\"deal_pipeline_id\":15000011054,\"deal_stage_id\":15000077707,\"deal_type_id\":null,\"deal_reason_id\":null,\"campaign_id\":null,\"deal_payment_status_id\":null,\"deal_product_id\":null,\"territory_id\":null,\"currency_id\":15000010621},{\"id\":15000087700,\"name\":\"Electronics Section\",\"amount\":\"100.0\",\"expected_close\":null,\"closed_date\":null,\"stage_updated_time\":\"2020-09-05T23:53:06+05:30\",\"custom_field\":{\"deal_payment_status_id\":7823728},\"probability\":100,\"updated_at\":\"2020-09-05T23:53:06+05:30\",\"created_at\":\"2020-09-05T23:53:06+05:30\",\"age\":0,\"collaboration\":{\"id\":\"15000087700\",\"title\":\"Electronics Section\",\"convo_token\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJDb252b0lkIjoiMTUwMDAwODc3NjYiLCJVc2VyVVVJRCI6IjIyMTYzMDM1ODE5NDMwODI2NyIsImV4cCI6MTU5OTMzNzQxN30.itkvIVG-hwD9aFpSxiNbKMPUUpj33fptwUaaSpBcgbE\"},\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"base_currency_amount\":\"100.0\",\"expected_deal_value\":\"100.0\",\"rotten_days\":null,\"owner_id\":15000014169,\"creater_id\":15000014169,\"updater_id\":15000014169,\"lead_source_id\":null,\"contact_ids\":[15001322339],\"sales_account_id\":15000767664,\"deal_pipeline_id\":15000011054,\"deal_stage_id\":15000077707,\"deal_type_id\":null,\"deal_reason_id\":null,\"campaign_id\":null,\"deal_payment_status_id\":null,\"deal_product_id\":null,\"territory_id\":null,\"currency_id\":15000010621}],\"users\":[{\"id\":15000014169,\"display_name\":\"Arjun Naduvakkat\",\"email\":\"arjunpn90@gmail.com\",\"is_active\":true,\"work_number\":\"237482482\",\"mobile_number\":null}],\"lead_sources\":[],\"contacts\":[{\"partial\":true,\"id\":15001322339,\"first_name\":\"Matt\",\"last_name\":\"Rogers\",\"display_name\":\"Matt Rogers\",\"avatar\":null,\"email\":\"matt.rogers@freshdesk.com\",\"lead_score\":92,\"last_contacted_sales_activity_mode\":null,\"job_title\":null,\"last_contacted\":null,\"last_contacted_mode\":null,\"last_contacted_via_sales_activity\":null,\"work_number\":null,\"mobile_number\":\"1000\",\"sales_account_id\":15000767664,\"sales_accounts\":[{\"partial\":true,\"id\":15000767664,\"name\":\"Flipkart\",\"avatar\":null,\"website\":null,\"open_deals_amount\":\"200.0\",\"open_deals_count\":2,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null,\"is_primary\":true}],\"owner_id\":15000014169}],\"sales_accounts\":[{\"partial\":true,\"id\":15000767664,\"name\":\"Flipkart\",\"avatar\":null,\"website\":null,\"open_deals_amount\":\"200.0\",\"open_deals_count\":2,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null}],\"deal_pipelines\":[{\"partial\":true,\"id\":15000011054,\"name\":\"Default Pipeline\",\"position\":1,\"is_default\":true,\"rotting_days\":30}],\"deal_stages\":[{\"partial\":true,\"id\":15000077707,\"name\":\"New\",\"position\":1,\"forecast_type\":\"Open\",\"updated_at\":\"2020-09-03T19:29:57+05:30\",\"deal_pipeline_id\":15000011054,\"choice_type\":5,\"probability\":100}],\"deal_types\":[],\"deal_reasons\":[],\"campaigns\":[],\"deal_payment_statuses\":[],\"deal_products\":[],\"territories\":[],\"currencies\":[{\"partial\":false,\"id\":15000010621,\"is_active\":true,\"currency_code\":\"USD\",\"exchange_rate\":\"1.0\",\"currency_type\":1,\"schedule_info\":null,\"rate_change_ids\":[]}],\"rate_changes\":[],\"sales_account\":{\"id\":15000767664,\"name\":\"Flipkart\",\"address\":null,\"city\":null,\"state\":null,\"zipcode\":null,\"country\":null,\"number_of_employees\":null,\"annual_revenue\":null,\"website\":null,\"owner_id\":15000014169,\"phone\":null,\"open_deals_amount\":\"200.0\",\"open_deals_count\":2,\"won_deals_amount\":\"0.0\",\"won_deals_count\":0,\"last_contacted\":null,\"last_contacted_mode\":null,\"facebook\":null,\"twitter\":null,\"linkedin\":null,\"links\":{\"conversations\":\"/sales_accounts/15000767664/conversations/all?include=email_conversation_recipients%2Ctargetable%2Cphone_number%2Cphone_caller%2Cnote%2Cuseru0026per_page=3\",\"document_associations\":\"/sales_accounts/15000767664/document_associations\",\"notes\":\"/sales_accounts/15000767664/notes?include=creater\",\"tasks\":\"/sales_accounts/15000767664/tasks?include=creater,owner,updater,targetable,users,task_type\",\"appointments\":\"/sales_accounts/15000767664/appointments?include=creater,owner,updater,targetable,appointment_attendees\"},\"custom_field\":{},\"created_at\":\"2020-09-03T19:33:04+05:30\",\"updated_at\":\"2020-09-03T19:33:04+05:30\",\"avatar\":null,\"parent_sales_account_id\":null,\"recent_note\":null,\"last_contacted_via_sales_activity\":null,\"last_contacted_sales_activity_mode\":null,\"completed_sales_sequences\":null,\"active_sales_sequences\":null,\"last_assigned_at\":\"2020-09-03T19:33:05+05:30\",\"tags\":[],\"is_deleted\":false,\"team_user_ids\":null,\"has_connections\":true,\"deal_ids\":[15000087766,15000085358,15000087700,15000087701,15000087702,15000087703]}}"
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, deal_response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmDealResource.any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(version: 'private', id: app_id, event: 'fetch_user_selected_fields', payload: { type: 'deal', value: { account_id: '15000767664', ticket_id: '3' } })
+    post :fetch, param
+    assert_response 200
+    response_hash = JSON.parse response.body
+    assert_equal response_hash['deals'].size, 5
+  ensure
+    IntegrationServices::Services::Freshworkscrm::FreshworkscrmDealResource.any_instance.unstub(:http_get)
   end
 
   def test_fetch_for_403_on_unsupported_apps

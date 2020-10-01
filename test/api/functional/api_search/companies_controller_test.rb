@@ -14,8 +14,7 @@ module ApiSearch
 
     def initial_setup
       return if @@initial_setup_run
-      @account.launch(:service_reads)
-      @account.launch(:service_writes)
+
       create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'sample_text', editable_in_signup: 'true'))
       create_company_field(company_params(type: 'number', field_type: 'custom_number', label: 'sample_number', editable_in_signup: 'true'))
       create_company_field(company_params(type: 'checkbox', field_type: 'custom_checkbox', label: 'sample_checkbox', editable_in_signup: 'true'))
