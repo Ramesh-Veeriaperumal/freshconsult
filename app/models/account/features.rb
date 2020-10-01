@@ -504,10 +504,6 @@ class Account < ActiveRecord::Base
     launched?(:disable_archive)
   end
 
-  def feedback_widget_captcha_enabled?
-    launched?(:feedback_widget_captcha)
-  end
-
   def disable_supress_logs_enabled?
     launched?(:disable_supress_logs)
   end
