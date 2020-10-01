@@ -37,7 +37,7 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    assert @account.solutions_agent_metrics_enabled?, false
+    assert_equal @account.solutions_agent_metrics_enabled?, false
   ensure
     Account.current.rollback(:feature_based_settings)
     Account.unstub(:current)
