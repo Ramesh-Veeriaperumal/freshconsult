@@ -95,7 +95,6 @@ class Account < ActiveRecord::Base
     :spam_blacklist_feature,
     :solutions_agent_metrics,
     :skip_invoice_due_warning,
-    :allow_wildcard_ticket_create,
     :bypass_signup_captcha,
     :supervisor_contact_field,
     :disable_freshchat,
