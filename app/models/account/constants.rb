@@ -143,7 +143,7 @@ class Account < ActiveRecord::Base
     :disable_agent_forward => false, :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false,
     :marketplace => false, :archive_tickets => false, :compose_email => false,
-    :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
+    :ecommerce => false, :shared_ownership => false,
     :cobrowsing => false,
     :threading_without_user_check => false,
     :restricted_helpdesk => false, :enable_multilingual => false,
