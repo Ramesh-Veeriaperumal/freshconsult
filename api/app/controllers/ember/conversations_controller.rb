@@ -282,7 +282,6 @@ module Ember
         elsif @ticket.twitter?
           preload_options << :tweet
         end
-        preload_options << :freshfone_call if current_account.freshfone_enabled?
         preload_options << :freshcaller_call if current_account.freshcaller_enabled?
         preload_options << [{ user: [:avatar, :user_companies, :user_emails, :tags] }] if sideload_options.include?('requester')
         preload_options
@@ -416,9 +415,9 @@ module Ember
         return unless reply?
         if @delegator.email_config
           @item.email_config_id = @delegator.email_config.id
-          @item.from_email = current_account.personalized_email_replies_enabled? ? @delegator.email_config.friendly_email_personalize(current_user.name) : @delegator.email_config.friendly_email
+          @item.from_email = current_account.features?(:personalized_email_replies) ? @delegator.email_config.friendly_email_personalize(current_user.name) : @delegator.email_config.friendly_email
         else
-          @item.from_email = current_account.personalized_email_replies_enabled? ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+          @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
         end
       end
 

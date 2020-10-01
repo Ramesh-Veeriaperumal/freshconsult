@@ -16,7 +16,7 @@ module Freshquery
     def query_results
       begin
         # Temp hack for handling pubsub/souq cases.
-        if Account.current.launched?(:es_v2_splqueries)
+        if Account.current.es_v2_splqueries_enabled?
           template_key = Search::Utils.template_context(@search_context, @exact_match, @locale)
           @es_params[:search_term].to_s.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*\/:~])/, '\\\\\1') if Search::Utils::SPECIAL_TEMPLATES.key?(template_key)
         end

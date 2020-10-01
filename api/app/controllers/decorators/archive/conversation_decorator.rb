@@ -17,13 +17,6 @@ module Archive
       construct_note_body_hash.merge(response_hash)
     end
 
-    def freshfone_call_proxy
-      freshfone_call
-    rescue StandardError => e
-      Rails.logger.error("ArchiveConversation :: Freshfone :: Error :: #{e.message} :: #{e.backtrace}")
-      {}
-    end
-
     def freshcaller_call_proxy
       freshcaller_call
     rescue StandardError => e
@@ -32,7 +25,7 @@ module Archive
     end
 
     def to_hash
-      [construct_json, freshfone_call_proxy, freshcaller_call_proxy, archive_old_data].inject(&:merge)
+      [construct_json, freshcaller_call_proxy, archive_old_data].inject(&:merge)
     end
 
     private

@@ -40,6 +40,7 @@ class Aloha::SignupController < ApplicationController
       freshchat_misc_params = params['misc'].is_a?(Hash) ? params['misc'] : JSON.parse(params['misc'])
       @current_account.create_freshchat_account(app_id: freshchat_misc_params['userInfoList'][0]['appId'], portal_widget_enabled: false, token: freshchat_misc_params['userInfoList'][0]['webchatId'], enabled: true, domain: freshchat_account_params['domain'])
       enable_freshchat_agent
+      Account.current.launched?(:launch_kbase_omni_bundle) && enable_kbase_omni_bundle_in_freshchat && Account.current.launch(:kbase_omni_bundle)
       send_access_token_to_chat
     end
 
@@ -86,6 +87,22 @@ class Aloha::SignupController < ApplicationController
       response = update_access_token(@current_account.domain, admin_access_token, fc_acc, freshchat_jwt_token)
       aloha_linking_error_logs UPDATE_FRESHCHAT_ACCESS_TOKEN_CODE if response.code != 200
       response
+    end
+
+    def enable_kbase_omni_bundle_in_freshchat
+      fc_acc = Account.current.freshchat_account
+      return false if fc_acc.nil?
+
+      begin
+        feature_name = :kbase_omni_bundle
+        response = update_features([feature_name], [], fc_acc, freshchat_jwt_token)
+        return true if response.code == 200 && JSON.parse(response.body)['enabled_features'].include?(feature_name.to_s)
+      rescue StandardError => e
+        Rails.logger.info "Exception while enabling kbase_omni_bundle feature in freshchat message: #{e.message}, exception: #{e.backtrace}"
+      end
+
+      aloha_linking_error_logs ENABLE_KBASE_OMNI_BUNDLE_FRESHCHAT
+      false
     end
 
     def enable_freshchat_agent

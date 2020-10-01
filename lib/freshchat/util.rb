@@ -71,6 +71,20 @@ module Freshchat::Util
     response
   end
 
+  def update_features(enable_features, disable_features, freshchat_account, bearer_token)
+    request_body = {}
+    request_body[:enable_features] = enable_features if enable_features.present?
+    request_body[:disable_features] = disable_features if disable_features.present?
+    return if request_body.blank?
+
+    response = HTTParty.put("https://#{freshchat_account.api_domain}/v2/features",
+                            body: request_body.to_json,
+                            headers: request_headers(bearer_token))
+
+    Rails.logger.info "Error in updating features in freshchat Response :: #{response.code} :: #{response.body}" if response.code != 200
+    response
+  end
+
   def freshchat_request(url)
     con = Faraday.new(url: url) do |faraday|
       faraday.request :json

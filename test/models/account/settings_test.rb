@@ -7,8 +7,9 @@ class Account::SettingsTest < ActiveSupport::TestCase
   include AccountHelper
 
   def setup
-    @account = Account.first || create_test_account
-    @account.make_current
+    @account = Account.first
+    create_test_account if @account.nil?
+    Account.stubs(:current).returns(@account)
   end
 
   def test_type_of_setting_with_dependent_feature
@@ -44,8 +45,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_enable_setting_with_dependent_feature
     # setup
-    # except :compose_email as the method is overridden
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.revoke_feature(setting)
@@ -84,8 +84,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_disable_setting_with_dependent_feature
     # setup
-    # except :compose_email as the method is overridden
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.add_feature(setting)
@@ -124,8 +123,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_set_setting_with_dependent_feature
     # setup
-    # except :compose_email as the method is overridden
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.revoke_feature(setting)
@@ -167,7 +165,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_reset_setting_with_dependent_feature
     # setup
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     @account.add_feature(setting)
@@ -209,7 +207,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_setting_enabled_method
     # setup
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     is_required_feature_enabled = @account.has_feature?(required_feature)
@@ -226,8 +224,7 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_setting_enabled_method_without_dependent_feature
     # setup
-    # except :compose_email as the method is overridden
-    setting = AccountSettings::SettingsConfig.except('compose_email').keys.sample.to_sym
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
     required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
     is_setting_enabled = @account.has_feature?(setting)
     is_required_feature_enabled = @account.has_feature?(required_feature)
@@ -293,11 +290,11 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_fetch_internal_settings_enabled
     enabled_internal_settings = @account.enabled_internal_settings
-    @account.enable_setting(:untitled_setting_2)
+    @account.enable_setting(:fetch_ticket_from_ref_first)
     enabled_internal_settings_after_enable = @account.enabled_internal_settings
     assert_equal enabled_internal_settings_after_enable.count, enabled_internal_settings.count + 1
   ensure
-    @account.disable_setting(:untitled_setting_2)
+    @account.disable_setting(:fetch_ticket_from_ref_first)
   end
 
   # Modify these test when we refactor settings methods

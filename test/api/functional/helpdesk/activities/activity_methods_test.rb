@@ -187,6 +187,10 @@ class ActivityMethodsTest < ActionView::TestCase
     def premium_email?
       false
     end
+
+    def disable_emails_enabled?
+      true
+    end
   end
 
   class StubTicket

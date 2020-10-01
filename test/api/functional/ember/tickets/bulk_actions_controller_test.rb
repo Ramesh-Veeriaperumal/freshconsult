@@ -35,7 +35,6 @@ module Ember
       def before_all
         @account.sections.map(&:destroy)
         return if @@before_all_run
-        @account.features.freshfone.create
         @account.features.forums.create
         @account.ticket_fields.custom_fields.each(&:destroy)
         Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)

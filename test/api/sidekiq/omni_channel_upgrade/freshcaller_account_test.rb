@@ -97,7 +97,6 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
 
   def test_freshcaller_account_worker_succeeds_without_errors
     user = @account.technicians.first
-    Account.any_instance.stubs(:freshfone_enabled?).returns(false)
     Freshcaller::Account.stubs(:create).returns(true)
     Agent.any_instance.stubs(:create_freshcaller_agent).returns(true)
     signup_response = freshcaller_bundle_signup_response(user.email)
@@ -117,7 +116,6 @@ class OmniChannelUpgrade::FreshcallerAccountTest < ActionView::TestCase
     assert_equal Freshid::V2::AccountDetailsUpdate.jobs.size, 1
     assert_equal Billing::FreshcallerSubscriptionUpdate.jobs.size, 1
   ensure
-    Account.any_instance.unstub(:freshfone_enabled?)
     Freshcaller::Account.unstub(:create)
     Agent.any_instance.unstub(:create_freshcaller_agent)
     HTTParty.unstub(:post)

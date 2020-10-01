@@ -1,8 +1,0 @@
-<label class="bold span keypad-label"><%= t('freshfone.admin.ivr.keypress') %></label>
-<div class="options-keypad-container">
-	<select class="span1 custom-keypad-select2" data-minimum-results-for-search=13 name=<%= name %> >
-		<% (('1'..'9').to_a + ['#','0','*']).each do |k| %>
-			<option value="<%= k %>"><%= k %></option>
-		<% end %>
-	</select>
-</div>

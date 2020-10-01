@@ -664,7 +664,7 @@ module Ember
 
     def test_reply_without_from_email
       # Without personalized_email_replies
-      @account.disable_setting(:personalized_email_replies)
+      @account.features.personalized_email_replies.destroy
       @account.reload
       Account.current.reload
 
@@ -680,7 +680,7 @@ module Ember
 
     def test_reply_without_from_email_and_personalized_replies
       # WITH personalized_email_replies
-      @account.enable_setting(:personalized_email_replies)
+      @account.features.personalized_email_replies.create
       @account.reload
 
       Account.current.reload
@@ -934,21 +934,6 @@ module Ember
       match_json(request_error_pattern('invalid_user', id: other_user.id, name: other_user.name))
     ensure
       @controller.unstub(:is_allowed_to_assume?)
-    end
-
-    def test_ticket_conversations_with_fone_call
-      # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
-      Account.any_instance.stubs(:freshfone_enabled?).returns(true)
-      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-      ticket = new_ticket_from_call
-      remove_wrap_params
-      assert ticket.notes.all.map { |n| n.freshfone_call.present? || nil }.compact.present?
-      get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
-      assert_response 200
-      match_json(conversations_pattern(ticket))
-    ensure
-      MixpanelWrapper.unstub(:send_to_mixpanel)
-      Account.any_instance.unstub(:freshfone_enabled?)
     end
 
     def test_ticket_conversations_with_freshcaller_call

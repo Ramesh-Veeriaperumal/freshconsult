@@ -149,18 +149,6 @@ class TicketDecorator < ApiDecorator
     @sideload_options.include?('custom_fields')
   end
 
-  def freshfone_call
-    if freshfone_enabled?
-      call = record.freshfone_call
-      return unless call.present? && call.recording_url.present? && call.recording_audio
-      {
-        id: call.id,
-        duration: call.call_duration,
-        recording: AttachmentDecorator.new(call.recording_audio).to_hash
-      }
-    end
-  end
-
   def ticket_states_association
     @ticket_states_association ||= ticket_states
   end
@@ -423,7 +411,7 @@ class TicketDecorator < ApiDecorator
     response_hash[:description] = ticket_body.description_html
     response_hash[:description_text] = ticket_body.description
 
-    [:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic, :ebay, :email_spam_data, :meta].each do |attribute|
+    [:requester, :stats, :conversations, :deleted, :fb_post, :tweet, :ticket_topic, :ebay, :email_spam_data, :meta].each do |attribute|
       value = safe_send(attribute)
       response_hash[attribute] = value if value
     end
@@ -610,10 +598,6 @@ class TicketDecorator < ApiDecorator
 
   def include_collab?
     Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (app_current? || User.current.freshid_authorization))
-  end
-
-  def freshfone_enabled?
-    Account.current.features?(:freshfone)
   end
 
   def forums_enabled?

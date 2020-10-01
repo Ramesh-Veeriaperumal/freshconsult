@@ -181,7 +181,7 @@ class Mobile::TicketsController < ApplicationController
     else
       Sharding.run_on_slave do
         tickets = filter_tickets(agent_filter,selector)
-        if current_account.launched?(:force_index_tickets)
+        if current_account.force_index_tickets_enabled?
           tickets.use_index("index_helpdesk_tickets_status_and_account_id").unresolved.count
         else
           tickets.unresolved.count
