@@ -1,2 +1,5 @@
 <%= node[:opsworks][:environment]%>:
   secret_key: <%= node[:ymls][:kbservice][:secret_key] %>
+  clear_cache_path: <%= node[:ymls][:kbservice][:clear_cache_path] %>
+  api_endpoint: <%= node[:ymls][:kbservice][:api_endpoint] %>
+  domain: <%= node[:ymls][:kbservice][:domain] %>

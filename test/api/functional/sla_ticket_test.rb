@@ -539,4 +539,77 @@ class TicketsControllerTest < ActionController::TestCase
       assert_nil note.nr_violated
     end
   end
+
+  def test_due_by_for_breached_ticket_on_resolved_or_closed_status
+    sla_policy
+    freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    freeze_time_now(get_datetime('11:00', '5 Nov 2019')) do
+      put :update, construct_params({ id: ticket.display_id }, status: 3)
+      ticket.update_dueby
+      ticket.update_on_state_time
+    end
+    freeze_time_now(get_datetime('12:30', '5 Nov 2019')) do
+      put :update, construct_params({ id: ticket.display_id }, status: 2)
+      ticket.update_dueby
+      ticket.update_on_state_time
+    end
+    freeze_time_now(get_datetime('10:00', '6 Nov 2019')) do
+      put :update, construct_params({ id: ticket.display_id }, status: 3)
+      due_by = ticket.due_by
+      fr_due_by = ticket.frDueBy
+      put :update, construct_params({ id: ticket.display_id }, status: 4)
+      assert_equal due_by, ticket.due_by
+      assert_equal fr_due_by, ticket.frDueBy
+    end
+  end
+
+  def test_fr_dueby_for_unresolved_ticket_on_fr_dueby_breached
+    sla_policy
+    freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    ticket_fr_dueby = ticket.frDueBy
+    freeze_time_now(get_datetime('14:10', '5 Nov 2019')) do
+      put :update, construct_params({ id: ticket.display_id }, status: 3)
+      ticket.update_dueby
+      ticket.update_on_state_time
+    end
+    freeze_time_now(get_datetime('14:20', '5 Nov 2019')) do
+      put :update, construct_params({ id: ticket.display_id }, status: 2)
+      ticket.update_dueby
+      ticket.update_on_state_time
+      ticket.reload
+      assert_equal ticket_fr_dueby, ticket.frDueBy
+    end
+  end
+
+  def test_dueby_and_frdueby_on_breached_ticket_sla_timer_off_status
+    sla_policy
+    freeze_time_now(get_datetime('10:00', '5 Nov 2019')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    ticket_fr_dueby = ticket.frDueBy
+    ticket_dueby = ticket.due_by
+    freeze_time_now(get_datetime('16:10', '5 Nov 2019')) do
+      put :update, construct_params({ id: ticket.display_id }, status: 3)
+      ticket.update_dueby
+      ticket.update_on_state_time
+    end
+    freeze_time_now(get_datetime('16:20', '5 Nov 2019')) do
+      put :update, construct_params({ id: ticket.display_id }, status: 2)
+      ticket.update_dueby
+      ticket.update_on_state_time
+      ticket.reload
+      assert_equal ticket_fr_dueby, ticket.frDueBy
+      assert_equal ticket_dueby, ticket.due_by
+    end
+  end
 end

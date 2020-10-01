@@ -199,7 +199,6 @@ end
                   :notedetails => notedetails, :show_quoted_text_btn => show_quoted_text_btn } %>
         <%end%>
 
-      <%= freshfone_audio_dom(note) if current_account.features?(:freshfone) %>
       <%= freshcaller_audio_dom(note) if current_account.has_feature?(:freshcaller) %>
 
       <div id="note_attachments_container_<%= note.id%>">
