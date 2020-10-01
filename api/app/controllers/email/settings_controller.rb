@@ -71,7 +71,8 @@ module Email
       def validate_settings
         params[cname].each_key do |setting|
           setting_name = EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym
-          next if current_account.has_feature?(AccountSettings::SettingsConfig[setting_name][:feature_dependency])
+          # LP_To_Bitmap check can be removed once all new email settings is converted to setting
+          next if current_account.has_feature?(AccountSettings::SettingsConfig[setting_name][:feature_dependency]) || current_account.LP_TO_BITMAP_MIGRATION_FEATURES.include?(setting_name)
 
           return render_request_error(:require_feature, 403, feature: setting)
         end
