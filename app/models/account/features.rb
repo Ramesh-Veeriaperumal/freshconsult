@@ -492,10 +492,6 @@ class Account < ActiveRecord::Base
     launched?(:custom_product_notification)
   end
 
-  def gamification_perf_enabled?
-    launched?(:gamification_perf)
-  end
-
   def disable_archive_enabled?
     launched?(:disable_archive)
   end
