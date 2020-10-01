@@ -15,6 +15,10 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
+  :skip_invoice_due_warning:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :personalized_email_replies:
     default: false
     internal: false
