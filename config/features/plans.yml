@@ -73,7 +73,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :branding_feature
-      - :untitled_feature_3_dependency_toggle
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_17
@@ -235,7 +235,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :branding_feature
-      - :untitled_feature_3_dependency_toggle
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_19
@@ -455,7 +455,7 @@
       - :advanced_freshcaller
       - :custom_ssl
       - :branding_feature
-      - :untitled_feature_3_dependency_toggle
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_20
