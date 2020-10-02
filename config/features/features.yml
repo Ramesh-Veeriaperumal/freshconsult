@@ -486,7 +486,6 @@
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
   :location_tagging: false
-  :kb_allow_base64_images: false
   :solutions_agent_metrics: false
   :disable_supress_logs: false
   :forums_agent_portal: false

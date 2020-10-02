@@ -75,6 +75,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :forums
+  :kb_allow_base64_images:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :moderate_posts_with_links:
     default: true
     internal: false
