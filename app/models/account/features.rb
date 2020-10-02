@@ -253,14 +253,6 @@ class Account < ActiveRecord::Base
     features?(:default_survey) && !custom_survey_enabled?
   end
 
-  def new_es_api_enabled?
-    launched?(:new_es_api)
-  end
-
-  def filter_factory_enabled?
-    launched?(:filter_factory)
-  end
-
   def spam_blacklist_feature_enabled?
     launched?(:spam_blacklist_feature)
   end
