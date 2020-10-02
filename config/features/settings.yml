@@ -63,6 +63,10 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
+  :sort_by_customer_response:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :open_forums:
     default: false
     internal: false

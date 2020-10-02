@@ -129,7 +129,7 @@ class Account < ActiveRecord::Base
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true, :es_multilang_solutions => false,
-    :sort_by_customer_response => false, :survey_links => true,
+    :survey_links => true,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :marketplace_app => false,
     :collaboration => false
