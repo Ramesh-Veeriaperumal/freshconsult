@@ -129,7 +129,7 @@ class Account < ActiveRecord::Base
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true,
-    :sort_by_customer_response => false, :survey_links => true,
+    :survey_links => true,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :marketplace_app => false,
     :collaboration => false
@@ -137,12 +137,12 @@ class Account < ActiveRecord::Base
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false, :personalized_email_replies => false,
-    :id_less_tickets => false, :reply_to_based_tickets => true,
+    :gamification_enable => false,
+    :id_less_tickets => false,
     :collision_socket => false,
-    :disable_agent_forward => false, :call_quality_metrics => false,
+    :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false,
-    :marketplace => false, :archive_tickets => false, :compose_email => false,
+    :marketplace => false, :archive_tickets => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
     :cobrowsing => false,
     :threading_without_user_check => false,
@@ -210,7 +210,7 @@ class Account < ActiveRecord::Base
     bot_email_channel: false, archive_ticket_fields: true,
     sso_login_expiry_limitation: false, csat_email_scan_compatibility: false, email_deprecated_style_parsing: false,
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
-    skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
+    custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     archive_tickets_api: false, bot_agent_response: false, fluffy: false, nested_field_revamp: true,
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     article_es_search_by_filter: false,
@@ -220,7 +220,7 @@ class Account < ActiveRecord::Base
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
-    hide_mailbox_error_from_agents: false,
+    hide_mailbox_error_from_agents: false, helpdesk_new_settings: false,
     jira_onpremise_reporter: false, sidekiq_logs_to_central: false,
     encode_emoji_in_solutions: false,
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,

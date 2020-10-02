@@ -102,7 +102,7 @@ class AccountDecorator < ApiDecorator
     def settings_hash
       acct_additional_settings = record.account_additional_settings
       settings_hash = {
-        personalized_email_replies: record.features.personalized_email_replies?,
+        personalized_email_replies: record.personalized_email_replies_enabled?,
         compose_email_enabled: record.compose_email_enabled?,
         restricted_compose_email_enabled: record.restricted_compose_enabled?,
         include_survey_manually: include_survey_manually?,

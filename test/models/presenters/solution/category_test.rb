@@ -27,4 +27,17 @@ class CategoryTest < ActiveSupport::TestCase
     assert_equal({}, job['args'][1]['model_changes'])
     job['args'][1]['model_properties'].must_match_json_expression(central_publish_category_destroy_pattern(category))
   end
+
+  def test_central_publish_for_category_update
+    category = add_new_category
+    CentralPublisher::Worker.jobs.clear
+    new_description = Faker::Lorem.sentence(3)
+    category.description = new_description
+    model_changes = category.changes['description']
+    category.save(validate: false)
+    job = CentralPublisher::Worker.jobs.last
+    assert_equal CentralPublisher::Worker.jobs.size, 1
+    assert_equal 'category_update', job['args'][0]
+    assert_equal job['args'][1]['model_changes']['description'], model_changes
+  end
 end

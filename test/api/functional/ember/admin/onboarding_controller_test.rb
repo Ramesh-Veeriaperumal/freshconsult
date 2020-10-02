@@ -279,6 +279,7 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   end
 
   def test_email_forwarding
+    Account.any_instance.stubs(:reply_to_based_tickets_enabled?).returns(true)
     post :test_email_forwarding, construct_params(version: 'private', attempt: 1, send_to: Faker::Internet.email)
     assert_response 204
     create_forwarding_test_ticket
@@ -287,14 +288,19 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     forward_test_ticket_requester = @account.users.find_by_email(Helpdesk::EMAIL[:default_requester_email])
     forward_test_ticket = @account.tickets.requester_latest_tickets(forward_test_ticket_requester, OnboardingConstants::TICKET_CREATE_DURATION.ago).first
     assert_equal forward_test_ticket.subject, OnboardingConstants::TEST_FORWARDING_SUBJECT
+  ensure
+    Account.any_instance.unstub(:reply_to_based_tickets_enabled?)
   end
 
   def test_email_forwarding_with_valid_attempt
+    Account.any_instance.stubs(:reply_to_based_tickets_enabled?).returns(true)
     create_forwarding_test_ticket
     post :test_email_forwarding, construct_params(version: 'private', attempt: 3, send_to: Faker::Internet.email)
     assert_response 200
     post :test_email_forwarding, construct_params(version: 'private', attempt: 4, send_to: Faker::Internet.email)
     assert_response 200
+  ensure
+    Account.any_instance.unstub(:reply_to_based_tickets_enabled?)
   end
 
   def test_email_forwarding_with_invalid_or_no_attempt
