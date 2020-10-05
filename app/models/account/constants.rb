@@ -199,7 +199,7 @@ class Account < ActiveRecord::Base
     sha256_enabled: false, auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
-    falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
+    falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false,
     freshid: false,
     incoming_attachment_limit_25: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,

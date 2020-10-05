@@ -495,7 +495,6 @@
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
   :custom_product_notification: false
-  :disable_freshchat: false
   :feedback_widget_captcha: false
   :skip_portal_cname_chk: false
   :disable_archive: false
