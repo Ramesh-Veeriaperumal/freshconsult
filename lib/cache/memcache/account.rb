@@ -218,6 +218,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def field_agent_groups_from_cache
+    @field_agent_groups_from_cache ||= begin
+      key = field_agent_groups_memcache_key
+      MemcacheKeys.fetch(key) { groups.field_agent_groups }
+    end
+  end
+
   def group_types_from_cache
     key = group_types_memcache_key
     fetch_from_cache(key) { group_types.all }
@@ -870,6 +877,10 @@ module Cache::Memcache::Account
 
     def support_agent_groups_memcache_key
       ACCOUNT_SUPPORT_AGENT_GROUPS % { :account_id => self.id }
+    end
+
+    def field_agent_groups_memcache_key
+      format(ACCOUNT_FIELD_AGENT_GROUPS, account_id: id)
     end
 
     def agent_groups_memcache_key
