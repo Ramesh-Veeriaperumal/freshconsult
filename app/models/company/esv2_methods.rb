@@ -129,12 +129,12 @@ class Company < ActiveRecord::Base
                                  offset:       per_page * (page.to_i - 1),
                                  types:        ['company'],
                                  es_params: {
-                                     search_term: letter ? letter.downcase : nil,
-                                     account_id: account_id,
-                                     request_id: uuid,
-                                     size: per_page,
-                                     offset: per_page * (page.to_i - 1),
-                                     from: per_page * (page.to_i - 1) # offset should be removed once all the accounts migrated to Service
+                                              search_term: letter ? letter.downcase : nil,
+                                              account_id: account_id,
+                                              request_id: uuid,
+                                              size: per_page,
+                                              offset: per_page * (page.to_i - 1),
+                                              from: per_page * (page.to_i - 1) # offset should be removed once all the accounts migrated to Service
                                  }).query_results
   end
 
