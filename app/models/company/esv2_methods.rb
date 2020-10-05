@@ -121,23 +121,21 @@ class Company < ActiveRecord::Base
   # _Note_: Will be deprecated and remove in near future
   #
   def self.es_filter(account_id, letter,page, field_name, sort_order, per_page, uuid)
-    Search::V2::QueryHandler.new(
-      account_id:   account_id,
-      context:      :company_v2_search,
-      exact_match:  false,
-      es_models:    { 'company' => { model: 'Company', associations: [:flexifield, :company_domains] } },
-      current_page: page,
-      offset:       per_page * (page.to_i - 1),
-      types:        ['company'],
-      es_params: {
-        search_term: letter ? letter.downcase : nil,
-        account_id: account_id,
-        request_id: uuid,
-        size: per_page,
-        offset: per_page * (page.to_i - 1),
-        from: per_page * (page.to_i - 1) # offset should be removed once all the accounts migrated to Service
-      }
-    ).query_results
+    Search::V2::QueryHandler.new(account_id: account_id,
+                                 context: :company_v2_search,
+                                 exact_match:  false,
+                                 es_models:    { 'company' => { model: 'Company', associations: [:flexifield, :company_domains] } },
+                                 current_page: page,
+                                 offset:       per_page * (page.to_i - 1),
+                                 types:        ['company'],
+                                 es_params: {
+                                     search_term: letter ? letter.downcase : nil,
+                                     account_id: account_id,
+                                     request_id: uuid,
+                                     size: per_page,
+                                     offset: per_page * (page.to_i - 1),
+                                     from: per_page * (page.to_i - 1) # offset should be removed once all the accounts migrated to Service
+                                 }).query_results
   end
 
   alias_attribute :company_description, :description
