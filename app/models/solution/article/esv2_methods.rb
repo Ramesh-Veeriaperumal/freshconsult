@@ -96,34 +96,7 @@ class Solution::Article < ActiveRecord::Base
     search_key = "#{tags.map(&:name).join(' ')} #{title}"
     return [] if search_key.blank? || (search_key = search_key.gsub(/[\^\$]/, '')).blank?
     begin
-      if Account.current.launched?(:es_v2_reads)
-        related_from_esv2(current_portal, search_key, size)
-      else
-        @search_lang = ({ :language => current_portal.language }) if current_portal and Account.current.es_multilang_soln?
-        Search::EsIndexDefinition.es_cluster(account_id)
-        options = { :load => true, :page => 1, :size => size, :preference => :_primary_first }
-        item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], account_id, @search_lang), options do |search|
-          search.query do |query|
-            query.filtered do |f|
-              f.query { |q| q.string SearchUtil.es_filter_key(search_key), :fields => ['title', 'desc_un_html', 'tags.name'], :analyzer => SearchUtil.analyzer(@search_lang) }
-              f.filter :term, { :account_id => account_id }
-              f.filter :not, { :ids => { :values => [self.id] } }
-              f.filter :term, {:language_id => Language.current.id}
-              f.filter :or, { :not => { :exists => { :field => :status } } },
-                            { :not => { :term => { :status => Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] } } }
-              f.filter :or, { :not => { :exists => { :field => 'folder.visibility' } } },
-                            { :terms => { 'folder.visibility' => user_visibility } }
-              f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
-                            { :term => { 'folder.customer_folders.customer_id' => User.current.customer_id } } if User.current && User.current.has_company?
-              f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
-                           { :terms => { 'folder.category_id' => current_portal.portal_solution_categories.map(&:solution_category_meta_id) } }
-            end
-          end
-          search.from options[:size].to_i * (options[:page].to_i-1)
-        end
-
-        return item.results.results.compact
-      end
+      related_from_esv2(current_portal, search_key, size)
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       []

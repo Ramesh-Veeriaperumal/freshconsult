@@ -1,4 +1,4 @@
-<% if (JSON.parse(get_store_data)["agents_count"] > Agent::AGENTS_THRESHOLD_FOR_AUTOCOMPLETE_ES) and current_account.launched?(:es_v2_reads) %>
+<% if (JSON.parse(get_store_data)["agents_count"] > Agent::AGENTS_THRESHOLD_FOR_AUTOCOMPLETE_ES) %>
   <input type="text" id="selectAgentsOptions" name="helpdesk_note[to_emails]" data-container-css-class="ticketSelect2ContainerNote" data-dropdown-css-class="ticketSelect2", data-placeholder = "<%= t('email_notifications_agent_selection_msg') %>" />
 <% else %>
   <%= select_tag "helpdesk_note[to_emails]", options_for_select(current_account.agents.includes(:user).map { |agent| "#{agent.user.name} <#{agent.user.email}>" }, [ load_agent_text(@ticket.responder) ]), :multiple => true, :class => 'select2 add-note-select', "data-placeholder" => t('email_notifications_agent_selection_msg'), "data-container-css-class" => "ticketSelect2ContainerNote", "data-dropdown-css-class" =>"ticketSelect2" %>
