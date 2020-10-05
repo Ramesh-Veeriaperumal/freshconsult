@@ -470,10 +470,6 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def allow_wildcard_ticket_create_enabled?
-    launched?(:allow_wildcard_ticket_create)
-  end
-
   def supervisor_contact_field_enabled?
     launched?(:supervisor_contact_field)
   end
