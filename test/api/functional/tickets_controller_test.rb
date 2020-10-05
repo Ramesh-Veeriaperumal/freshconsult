@@ -7368,6 +7368,32 @@ class TicketsControllerTest < ActionController::TestCase
     Account.current.rollback(:whatsapp_ticket_source)
   end
 
+  def test_ticket_create_with_whatsapp_source_and_revamp_feature_enabled
+    Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
+    Account.current.launch(:whatsapp_ticket_source)
+    custom_source = create_custom_source
+    type_field_names = @account.ticket_fields.where(field_type: 'default_ticket_type').all.first.picklist_values.map(&:value).join(',')
+    params = ticket_params_hash.merge(requester_id: requester.id, priority: 2, status: 3, source: 13)
+    post :create, construct_params({}, params)
+    match_json([bad_request_error_pattern('source', :not_included, list: api_ticket_sources.join(','))])
+    assert_response 400
+  ensure
+    Account.current.unstub(:ticket_source_revamp_enabled?)
+    Account.current.rollback(:whatsapp_ticket_source)
+  end
+
+  def test_update_source_of_whatsapp_ticket_with_feature_enabled
+    Account.current.launch(:whatsapp_ticket_source)
+    params = ticket_params_hash.merge(source: 13)
+    t = create_ticket(params)
+    params_hash = update_ticket_params_hash.except(:email).merge(source: 11)
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Helpdesk::Source.api_unpermitted_sources_for_update.join(','))])
+  ensure
+    Account.current.rollback(:whatsapp_ticket_source)
+  end
+
   def create_ticket_params
     {
       subject: Faker::Lorem.characters(10),
