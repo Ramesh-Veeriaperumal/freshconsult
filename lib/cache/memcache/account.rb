@@ -76,7 +76,7 @@ module Cache::Memcache::Account
   end
 
   def ticket_source_from_cache
-    fetch_from_cache(ticket_source_memcache_key) { helpdesk_sources }
+    fetch_from_cache(ticket_source_memcache_key) { Account.current.helpdesk_sources.all }
   end
 
   def clear_ticket_source_from_cache

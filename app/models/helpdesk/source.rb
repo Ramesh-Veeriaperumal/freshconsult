@@ -182,7 +182,7 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def visible_custom_sources
-      Account.current.ticket_source_from_cache.where(default: 0, deleted: 0)
+      Account.current.ticket_source_from_cache.select { |choice| !choice.default && !choice.deleted }
     end
 
     private
