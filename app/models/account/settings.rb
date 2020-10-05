@@ -8,6 +8,11 @@ class Account < ActiveRecord::Base
     end
   end
 
+  # Redis feature check can be removed once Redis key cleanup is done
+  def compose_email_enabled?
+    !has_feature?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
+  end
+
   # Need to modify methods when we move all LPs to Bitmaps and validate settings throw error for invalid settings
   def admin_setting_for_account?(setting)
     settings_hash = AccountSettings::SettingsConfig[setting]
@@ -17,6 +22,23 @@ class Account < ActiveRecord::Base
   def internal_setting_for_account?(setting)
     settings_hash = AccountSettings::SettingsConfig[setting]
     settings_hash && settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
+  end
+
+  def dependent_feature_enabled?(setting)
+    settings_hash = AccountSettings::SettingsConfig[setting]
+    settings_hash && has_feature?(settings_hash[:feature_dependency])
+  end
+
+  def enabled_admin_settings
+    features_list.select { |feature| admin_setting_for_account?(feature) }
+  end
+
+  def enabled_internal_settings
+    features_list.select { |feature| internal_setting_for_account?(feature) }
+  end
+
+  def enabled_features
+    features_list.select { |feature| !AccountSettings::SettingsConfig.keys.include?(feature.to_s) }
   end
 
   # Move feature dependency check inside the valid_setting once, all Settings migrate to bitmap from LP

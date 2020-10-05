@@ -10,7 +10,6 @@
       - :social_tab
       - :omni_channel
       - :customize_table_view
-      - :public_url_toggle
       - :add_to_response
       - :agent_scope
       - :performance_report
@@ -73,8 +72,8 @@
       - :sla_reminder_automation
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
-      - :untitled_feature_3_dependency_toggle
+      - :branding_feature
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_17
@@ -133,6 +132,7 @@
       - :contact_custom_activity_api
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_17
     :exclude: [:analytics_knowledge_base_report]
@@ -178,7 +178,6 @@
       - :sla_management_v2
       - :api_v2
       - :add_to_response
-      - :public_url_toggle
       - :social_tab
       - :scenario_automation
       - :customize_table_view
@@ -235,8 +234,8 @@
       - :advanced_article_toolbar_options
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
-      - :untitled_feature_3_dependency_toggle
+      - :branding_feature
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_19
@@ -349,6 +348,7 @@
       - :solutions_templates
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_19
     :exclude: [:analytics_knowledge_base_report]
@@ -399,7 +399,6 @@
       - :sla_management_v2
       - :api_v2
       - :add_to_response
-      - :public_url_toggle
       - :social_tab
       - :scenario_automation
       - :customize_table_view
@@ -455,8 +454,8 @@
       - :field_service_management_toggle
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
-      - :untitled_feature_3_dependency_toggle
+      - :branding_feature
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_20
@@ -561,6 +560,7 @@
       - :solutions_templates
       - :analytics_knowledge_base
       - :untitled_feature_2_dependency_toggle
+      - :kb_increased_file_limit
     :inherits:
       - :garden_jan_20
     :exclude: [:analytics_knowledge_base_report]

@@ -234,11 +234,12 @@ module Ember
     end
 
     def enable_es_api_load(params, sql_query = nil, &block)
-      Account.current.launch(:filter_factory)
-      Account.current.launch(:new_es_api)
+      Account.any_instance.stubs(:filter_factory_enabled?).returns(true)
+      Account.any_instance.stubs(:new_es_api_enabled?).returns(true)
       yield if block_given?
-      Account.current.rollback(:filter_factory)
-      Account.current.rollback(:new_es_api)
+    ensure
+      Account.any_instance.unstub(:filter_factory_enabled?)
+      Account.any_instance.unstub(:new_es_api_enabled?)
     end
 
     def enable_next_response_sla(&block)
@@ -906,30 +907,28 @@ module Ember
     def test_index_with_customer_response_order_clauses
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', [0]) }
-      @account.features.sort_by_customer_response.create
-      @account.features.reload
+      Account.any_instance.stubs(:sort_by_customer_response_enabled?).returns(true)
       get :index, controller_params({ version: 'private', query_hash: query_hash_params, order_by: 'requester_responded_at' }, false)
       assert_response 200
       match_json(private_api_ticket_index_query_hash_pattern(query_hash_params, wf_order = 'requester_responded_at'))
 
       match_custom_query_response_with_es_enabled(query_hash_params, 'requester_responded_at')
     ensure
-      @account.features.sort_by_customer_response.destroy
+      Account.any_instance.unstub(:sort_by_customer_response_enabled?)
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
     def test_index_with_agent_response_order_clauses
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', [0]) }
-      @account.features.sort_by_customer_response.create
-      @account.features.reload
+      Account.any_instance.stubs(:sort_by_customer_response_enabled?).returns(true)
       get :index, controller_params({ version: 'private', query_hash: query_hash_params, order_by: 'agent_responded_at' }, false)
       assert_response 200
       match_json(private_api_ticket_index_query_hash_pattern(query_hash_params, 'agent_responded_at'))
 
       match_custom_query_response_with_es_enabled(query_hash_params, 'agent_responded_at')
     ensure
-      @account.features.sort_by_customer_response.destroy
+      Account.any_instance.unstub(:sort_by_customer_response_enabled?)
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
@@ -1293,7 +1292,7 @@ module Ember
       match_query_response_count_with_es_enabled(query_hash_params)
     ensure
       login_as(current_user)
-      Account.any_instance.unstub(:shared_ownership)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_tickets_internal_agent_group_with_read_scope

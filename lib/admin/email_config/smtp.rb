@@ -1,7 +1,8 @@
 module Admin::EmailConfig::Smtp
   ERROR_MAP = {
     535 => 'authentication_error',
-    401 => 'invalid_grant'
+    401 => 'invalid_grant',
+    601 => 'oauth_migration_required'
   }.freeze
 
   class ErrorMapper

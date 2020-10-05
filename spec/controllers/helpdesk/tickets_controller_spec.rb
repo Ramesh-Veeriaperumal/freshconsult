@@ -53,13 +53,13 @@ RSpec.describe Helpdesk::TicketsController do
 
 
   it "should create a outbound ticket" do
-    @account.features.compose_email.create
+    @account.features.enable_setting(:compose_email)
 
     ticket = create_ticket({:status => 2, :source => 10, :email_config_id => @email_config.id})
     get :show, :id => ticket.display_id
     ticket.source..should = Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
     Delayed::Job.last.handler.should_not include("biz_rules_check")
-    @account.features.compose_email.destroy
+    @account.features.disable_setting(:compose_email)
   end
 
   it "should create a meta for created by for phone tickets" do
@@ -291,7 +291,7 @@ RSpec.describe Helpdesk::TicketsController do
 
   it "should create a new outbound email ticket" do
     now = (Time.now.to_f*1000).to_i    
-    @account.features.compose_email.destroy
+    @account.features.disable_setting(:compose_email)
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Oubound Ticket #{now}",
@@ -315,7 +315,7 @@ RSpec.describe Helpdesk::TicketsController do
 
   it "should create a new outbound email ticket for non feature account but outbound email check should return false" do
     now = (Time.now.to_f*1000).to_i
-    @account.features.compose_email.create
+    @account.features.enable_setting(:compose_email)
     post :create, :helpdesk_ticket => {:email => Faker::Internet.email,
                                        :requester_id => "",
                                        :subject => "New Oubound Ticket #{now}",

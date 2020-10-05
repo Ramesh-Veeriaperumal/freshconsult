@@ -22,7 +22,6 @@ class Account < ActiveRecord::Base
                :update_google_domain, :update_route_info, :update_users_time_zone
 
   after_update :clear_domain_cache, :if => :account_domain_changed?
-  after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
@@ -157,15 +156,12 @@ class Account < ActiveRecord::Base
 
     # Temp for falcon signup
     # Enable customer portal by default
-    if falcon_ui_applicable?
-      self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
-    end
+    self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
+
     if freshid_integration_signup_allowed?
       freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
     end
-    if redis_key_exists?(ENABLE_AUTOMATION_REVAMP)
-      launch(:automation_revamp)
-    end
+
     if redis_key_exists?(EMBERIZE_AGENT_FORM)
       [:emberize_agent_form, :emberize_agent_list].each do |feature|
         self.launch(feature)
@@ -338,10 +334,6 @@ class Account < ActiveRecord::Base
       AccountActivation::RemoveRestrictionsWorker.perform_async
     end
 
-    def falcon_ui_applicable?
-      ismember?(FALCON_ENABLED_LANGUAGES, self.language)
-    end
-
     def enabled_custom_encrypted_fields?
       custom_encrypted_fields_feature_changed? && hipaa_and_encrypted_fields_enabled?
     end
@@ -495,10 +487,8 @@ class Account < ActiveRecord::Base
         end 
         # Temp for falcon signup
         # Enable falcon UI for helpdesk by default
-        if falcon_ui_applicable?
-          [:falcon, :freshcaller, :freshcaller_widget].each do |feature_key|
-            bitmap_value = self.set_feature(feature_key)
-          end
+        [:falcon, :freshcaller, :freshcaller_widget].each do |feature_key|
+          bitmap_value = self.set_feature(feature_key)
         end
         self.plan_features = bitmap_value
       rescue Exception => e
@@ -581,12 +571,6 @@ class Account < ActiveRecord::Base
       remove_member_from_redis_set(MASTER_QUERIES,self.id)
     end
 
-    def update_freshfone_voice_url
-      if full_domain_changed? or ssl_enabled_changed?
-        freshfone_account.update_voice_url
-      end
-    end
-
     def update_currency_for_anonymous_account
       subscription.set_billing_params('USD')
     end
@@ -635,10 +619,6 @@ class Account < ActiveRecord::Base
     
     def enable_searchv2
       if self.features?(:es_v2_writes)
-        if redis_key_exists?(SEARCH_SERVICE_SIGNUP)
-          self.launch(:service_reads)
-          self.launch(:service_writes)
-        end
         SearchV2::Manager::EnableSearch.perform_async
         self.launch(:es_v2_reads)
       end
@@ -657,10 +637,8 @@ class Account < ActiveRecord::Base
     end
 
     def set_falcon_preferences
-      if falcon_ui_applicable?
-        self.main_portal.template.preferences = self.main_portal.template.default_preferences.merge({:personalized_articles=>true})
-        self.main_portal.template.save!
-      end
+      self.main_portal.template.preferences = self.main_portal.template.default_preferences.merge({:personalized_articles=>true})
+      self.main_portal.template.save!
     end
 
     def update_crm_and_map

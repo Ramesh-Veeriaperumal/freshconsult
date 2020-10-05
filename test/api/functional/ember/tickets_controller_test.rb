@@ -607,18 +607,6 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
-    def test_ticket_show_with_fone_call
-      # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
-      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-      ticket = new_ticket_from_call
-      remove_wrap_params
-      assert ticket.reload.freshfone_call.present?
-      get :show, construct_params({ version: 'private', id: ticket.display_id }, false)
-      assert_response 200
-      match_json(ticket_show_pattern(ticket))
-      MixpanelWrapper.unstub(:send_to_mixpanel)
-    end
-
     def test_ticket_show_with_ticket_topic
       ticket = new_ticket_from_forum_topic
       remove_wrap_params
@@ -6939,6 +6927,18 @@ module Ember
     ensure
       group.destroy if group.present?
       agent.destroy if agent.present?
+    end
+
+    def test_channel_ticket_show
+      Account.stubs(:current).returns(Account.first)
+      whatsapp_as_source = Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2]
+      ticket = create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
+                             channel_message_id: 'sdl892dk', source: whatsapp_as_source)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket))
+    ensure
+      Account.unstub(:current)
     end
   end
 end

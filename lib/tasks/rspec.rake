@@ -73,16 +73,6 @@ if Rails.env.test?
     "spec/controllers/integrations/infusionsoft_controller_spec.rb"
   ]
 
-  FreshfoneTests = [
-    "spec/controllers/freshfone/*_spec.rb",
-    "spec/lib/freshfone/*_spec.rb",
-    "spec/models/freshfone/*_spec.rb"
-  ]
-
-  FreshfoneReportsTests = [
-    "spec/controllers/reports/freshfone/summary_reports_controller_spec.rb"
-  ]
-
   APITests = [
     "spec/controllers/api/json/**/*_spec.rb",
     "spec/controllers/api/xml/**/*_spec.rb"
@@ -203,8 +193,6 @@ if Rails.env.test?
 
   MobileAppTests = [
     "spec/controllers/mobile/*_spec.rb",
-    "spec/controllers/mobile/freshfone/*_spec.rb",
-    "spec/controllers/mobile/freshsocial/*_spec.rb"
   ]
 
   ChatTests = [
@@ -220,7 +208,7 @@ if Rails.env.test?
 
   UnitTests = [ APITests, BillingTests, EmailTests,  ForumTests, FunctionalTests,
                 GnipTests, HelpdeskTests, MiddlewareSpecs, MobileAppTests, ModelTests,
-                XssTests, ChatTests, IntegrationTests, TwitterTests, FreshfoneTests, FreshfoneReportsTests].flatten.uniq
+                XssTests, ChatTests, IntegrationTests, TwitterTests].flatten.uniq
   # SolutionTests, VaRulesTests
 
   AllTests  = [UnitTests, ModelTests, EmailTests, IntegrationTests, ForumDynamoTests].flatten.uniq
@@ -386,27 +374,11 @@ if Rails.env.test?
         end
       end
 
-      namespace :freshfone do
-        desc "Running all Freshfone Testss"
-        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
-          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.pattern = FileList.new(FreshfoneTests)
-        end
-      end
-
       namespace :freshchat do
         desc "Running all FreshChat Tests"
         RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
           t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
           t.pattern = FileList.new(ChatTests)
-        end
-      end
-
-      namespace :freshfone_reports do
-        desc "Running all freshfone summary reports tests"
-        RSpec::Core::RakeTask.new(:all => "db:test_setup") do |t|
-          t.rspec_opts = ['--options', "\"#{Rails.root}/spec/spec.opts\""]
-          t.pattern = FileList.new(FreshfoneReportsTests)
         end
       end
 

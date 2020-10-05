@@ -203,7 +203,7 @@ def init_partial_reindex(es_account_ids)
 end
 
 def import_classes(id, klasses)
-  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note', 'Helpdesk::Tag', 'Freshfone::Caller','Admin::CannedResponses::Response','ScenarioAutomation', 'Helpdesk::TicketTemplate'] : klasses.split(',')
+  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note', 'Helpdesk::Tag', 'Admin::CannedResponses::Response','ScenarioAutomation', 'Helpdesk::TicketTemplate'] : klasses.split(',')
   import_classes.collect!{ |item| "#{item}#{import_condition(id, item)}" }.join(';')
 end
 
@@ -217,8 +217,6 @@ def import_condition(id, item)
     when "Helpdesk::Note" then
       condition = ".where(['account_id=? and updated_at<? and notable_type=? and deleted=? and source<>?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false, Account.current.helpdesk_sources.note_source_keys_by_token['meta']])"
     when "Helpdesk::Tag" then
-      condition = ".where(['account_id=?', #{id}])"
-    when "Freshfone::Caller" then
       condition = ".where(['account_id=?', #{id}])"
     when "ScenarioAutomation" then
       condition = ".where(['account_id=? and rule_type=?', #{id},#{VAConfig::SCENARIO_AUTOMATION}])"

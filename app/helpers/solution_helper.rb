@@ -547,7 +547,7 @@ module SolutionHelper
     end
 
     def cumulative_attachment_limit
-      Account.current.kb_increased_file_limit_enabled? && Account.current.account_additional_settings.additional_settings.key?(:kb_cumulative_attachment_limit) ? Account.current.account_additional_settings.additional_settings[:kb_cumulative_attachment_limit] : Account.current.attachment_limit
+      Account.current.kb_increased_file_limit_enabled? ? fetch_kb_cumulative_attachment_limit : Account.current.attachment_limit
     end
 
     def valid_attachments(article, draft, type = :attachments)
@@ -573,6 +573,10 @@ module SolutionHelper
     end
 
     private
+
+      def fetch_kb_cumulative_attachment_limit
+        Account.current.account_additional_settings.additional_settings[:kb_cumulative_attachment_limit].presence || SolutionConstants::KB_CUMULATIVE_ATTACHMENT_LIMIT
+      end
 
       def modify_articles_suggested_hash(articles_suggested)
         articles_hash = {}

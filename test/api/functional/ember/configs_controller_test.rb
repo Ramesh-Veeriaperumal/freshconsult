@@ -20,7 +20,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
 
   def test_config_response
     User.any_instance.stubs(:time_zone).returns('Casablanca')
-    User.any_instance.stubs(:language).returns('en')
+    User.any_instance.stubs(:language).returns('ja-JP')
     get :show, controller_params(version: 'private', id: 'freshvisuals')
     assert_response 200
     end_point = JSON.parse(response.body)['url']
@@ -30,7 +30,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     assert_equal payload[:email], @user.email
     assert_equal payload[:userId], @user.id
     assert_equal payload[:timezone], 'Africa/Casablanca'
-    assert_equal payload[:language], 'en'
+    assert_equal payload[:language], 'ja'
     assert_equal payload[:portalUrl], "#{@account.url_protocol}://#{@account.full_domain}"
     assert_equal payload[:page], 'home'
     assert_equal payload[:exp], payload[:iat] + FreshVisualsConfig['early_expiration'].to_i

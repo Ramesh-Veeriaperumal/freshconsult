@@ -123,7 +123,7 @@ class ApiCompanyValidation < ApiValidation
   end
 
   def non_zero_year
-    errors[:renewal_date] << :invalid_year unless Date.parse(renewal_date).year > VALID_YEAR
+    errors[:renewal_date] << :invalid_year unless Date.parse(renewal_date.to_s).year > VALID_YEAR
   end
 
   private

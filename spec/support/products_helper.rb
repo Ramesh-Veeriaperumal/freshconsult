@@ -1,7 +1,7 @@
 module ProductsHelper
 
 	def create_product(option={})
-		@account.launch(:skip_portal_cname_chk)
+		@account.enable_setting(:skip_portal_cname_chk)
 		defaults = {
 			:email => "#{Faker::Internet.domain_word}#{rand(0..9999)}@#{@account.full_domain}",
 			:portal_name => Faker::Company.name

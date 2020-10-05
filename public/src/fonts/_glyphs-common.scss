@@ -10,9 +10,6 @@ a [class*="#{$font-class}"], a[class*="#{$font-class}"]{
   color:#333;
 }
 
-.#{$font-class}freshfone,.#{$font-class}phone-enable,.#{$font-class}phone-channel{
-	@extend .#{$font-class}ff-phone;	
-}
 // -----------------------------------------------------------------------------------------------
 //									 Fix!!! - Remove content controls
 // 												Ticket Details
@@ -366,72 +363,7 @@ span.fb_add
 		visibility:hidden;
 	}
 }
-// -----------------------------------------------------------------------------------------------
-// 												Freshfone & customer details page
-// -----------------------------------------------------------------------------------------------
 
-.phone-icons,.user_phone{@extend .#{$font-class}ff-phone; font-size:14px;}
-.mobile-icons { @extend .#{$font-class}mobile; }
-.phone-icons, .mobile-icons { &:before{@include padding-right(10px); color:$default_txt_color;}}
-.recent_calls_call_user .can-call, .fresfone-call-history .call_user .can-make-calls{
-		@extend .#{$font-class}phone;
-}
-
-.recent_calls_call_user, .call_user {
-	.restrict-call{
-		@extend .#{$font-class}phone-disable-thin;
-		
-		color:#eee;
-		&:hover{
-			color:#eee;
-		}
-	}
-}
-
-.recent_call_entry:hover .recent_calls_call_user .can-call,
-.fresfone-call-history .call_user .can-make-calls:hover {
-		@extend .#{$font-class}ff-phone;
-		&:before{
-			color:#196019;
-		} 
-}
-
-.fresfone-call-history .blacklist-toggle.blacklist{
-	@extend .#{$font-class}block;
-	color: #999;
-	background: white;
-}
-
-.fresfone-call-history .blacklist-toggle.blacklisted{
-	@extend .#{$font-class}block;
-	color: #B44632;
-	background: white;
-}
-
-
-.recording_deleted{
-	&:before{
-		@extend .#{$font-class-name}deleted;
-	}
-}
-
-.fone_icon_connection{
-	@extend .#{$font-class-name}ff-phone;
-	font-size:17px;
-}
-
-.freshfone_connection_error,.freshfone_error_info{
-	.fone_error_wrap{
-		@extend .#{$font-class-name}no-network;
-		font-size:22px;
-	}
-}
-.freshfone_connection_success{
-	.fone_error_wrap{
-		@extend .#{$font-class-name}checkmark-thick;
-		font-size:16px;
-	}
-}
 // -----------------------------------------------------------------------------------------------
 // 										Ticket Details Page
 // -----------------------------------------------------------------------------------------------
@@ -488,8 +420,6 @@ span.fb_add
 
 // Fonticons used in Custom Form
 
-.#{$font-class}phone_number{ @extend .#{$font-class}freshfone; }
-
 .#{$font-class}url{ @extend .#{$font-class}link; }
 
 /* ====== Admin Font Settings ======== */
@@ -505,9 +435,6 @@ span.fb_add
 }
 /* ==== Custom Contact Field Icons === */
 
-.#{$font-class-name}phone_number {
-	@extend .#{$font-class-name}freshfone;
-}
 .#{$font-class-name}url {
 	@extend .#{$font-class-name}link;
 }

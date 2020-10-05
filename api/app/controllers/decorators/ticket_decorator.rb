@@ -10,7 +10,7 @@ class TicketDecorator < ApiDecorator
            :internal_agent_id, :association_type, :associates, :associated_ticket?,
            :can_be_associated?, :description_html, :tag_names, :attachments,
            :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id,
-           :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, :tweet_type, :fb_msg_type, to: :record
+           :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, :tweet_type, :fb_msg_type, :channel_id, :channel_profile_unique_id, :channel_message_id, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -147,18 +147,6 @@ class TicketDecorator < ApiDecorator
 
   def custom_fields_allowed?
     @sideload_options.include?('custom_fields')
-  end
-
-  def freshfone_call
-    if freshfone_enabled?
-      call = record.freshfone_call
-      return unless call.present? && call.recording_url.present? && call.recording_audio
-      {
-        id: call.id,
-        duration: call.call_duration,
-        recording: AttachmentDecorator.new(call.recording_audio).to_hash
-      }
-    end
   end
 
   def ticket_states_association
@@ -423,7 +411,7 @@ class TicketDecorator < ApiDecorator
     response_hash[:description] = ticket_body.description_html
     response_hash[:description_text] = ticket_body.description
 
-    [:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic, :ebay, :email_spam_data, :meta].each do |attribute|
+    [:requester, :stats, :conversations, :deleted, :fb_post, :tweet, :ticket_topic, :ebay, :email_spam_data, :meta].each do |attribute|
       value = safe_send(attribute)
       response_hash[attribute] = value if value
     end
@@ -440,7 +428,16 @@ class TicketDecorator < ApiDecorator
     response_hash[:meta][:secret_id] = generate_secret_id if Account.current.agent_collision_revamp_enabled?
     response_hash[:social_additional_info] = { tweet_type: record.tweet_type } if source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && response_hash[:tweet].blank?
     response_hash[:social_additional_info] = { fb_msg_type: record.fb_msg_type } if source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] && response_hash[:fb_post].blank?
+    response_hash[:channel_info] = channel_info_hash if channel_id.present?
     response_hash
+  end
+
+  def channel_info_hash
+    {
+      id: channel_id,
+      profile_unique_id: channel_profile_unique_id,
+      message_id: channel_message_id
+    }
   end
 
   def to_search_hash
@@ -601,10 +598,6 @@ class TicketDecorator < ApiDecorator
 
   def include_collab?
     Account.current.collaboration_enabled? || (Account.current.freshconnect_enabled? && Account.current.freshid_integration_enabled? && (app_current? || User.current.freshid_authorization))
-  end
-
-  def freshfone_enabled?
-    Account.current.features?(:freshfone)
   end
 
   def forums_enabled?

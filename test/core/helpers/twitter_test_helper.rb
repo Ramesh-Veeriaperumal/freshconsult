@@ -133,7 +133,8 @@ module TwitterTestHelper
       "tweet_id": options[:tweet_id] || '1005',
       "tweet_type": options[:tweet_type] || 'dm',
       "twitter_handle_id": handle.twitter_user_id,
-      "contact_twitter_user_id": options[:contact_twitter_user_id] || Faker::Number.between(1, 999_999_999).to_s
+      "contact_twitter_user_id": options[:contact_twitter_user_id] || Faker::Number.between(1, 999_999_999).to_s,
+      "twitter_screen_name": options[:twitter_screen_name]
     }
   end
 

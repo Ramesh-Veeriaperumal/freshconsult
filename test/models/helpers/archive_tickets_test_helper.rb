@@ -12,7 +12,7 @@ module ArchiveTicketsTestHelper
       status: { id: ticket.status, name: ticket.status_name },
       priority: { id: ticket.priority, name: TicketConstants::PRIORITY_NAMES_BY_KEY[ticket.priority] },
       ticket_type: ticket.ticket_type,
-      source: { id: ticket.source, name: Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] },
+      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] },
       requester_id: ticket.requester_id,
       due_by: ticket.parse_to_date_time(ticket.due_by).try(:utc).try(:iso8601),
       closed_at: ticket.parse_to_date_time(ticket.closed_at).try(:utc).try(:iso8601),

@@ -191,8 +191,7 @@ class AccountsController < ApplicationController
     @signup = PrecreatedSignup.new(input_params)
     @signup.account.fs_cookie_signup_param = params[:fs_cookie]
     @signup.save!
-    @signup.user.publish_agent_update_central_payload
-    @signup.update_subscription
+    @signup.execute_post_signup_steps
     true
   rescue StandardError => e
     Rails.logger.error "Error in mapping precreated account - error - #{e.message} backtrace - #{e.backtrace}"
@@ -282,9 +281,7 @@ class AccountsController < ApplicationController
     @account.main_portal_attributes  = params[:account][:main_portal_attributes]
     @account.permissible_domains = params[:account][:permissible_domains]
     # Update bit map features
-    params[:account][:bitmap_features].each  do |key, value|
-      value == '0' ? @account.reset_feature(key.to_sym) : @account.set_feature(key.to_sym)
-    end
+    @account.update_bitmap_features(params[:account][:bitmap_features])
 
     if @account.save
       enable_restricted_helpdesk(params[:enable_restricted_helpdesk])
@@ -718,8 +715,9 @@ class AccountsController < ApplicationController
 
     def validate_feature_params
       allowed_features = @account.subscription.non_sprout_plan? ? ["forums"] : []
+      allowed_settings = ['ticket_summary', 'disable_freshchat']
       if params[:account] && params[:account][:features]
-        params[:account][:features] = params[:account][:features].slice(*allowed_features)
+        params[:account][:features] = params[:account][:features].slice(*allowed_features, *allowed_settings)
       end
     end
 

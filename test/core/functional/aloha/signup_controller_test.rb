@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+require 'webmock/minitest'
 
 class Aloha::SignupControllerTest < ActionController::TestCase
   include AlohaSignupTestHelper
@@ -25,6 +26,57 @@ class Aloha::SignupControllerTest < ActionController::TestCase
     post :callback, params
     assert_response 200
     assert JSON.parse(response.body)['message'] == "#{params[:product_name]} record created successfully"
+  end
+
+  def test_kbase_omni_bundle_enabled_success_after_fchat_record_created
+    params = aloha_callback_params
+    params[:product_name] = 'freshchat'
+    params[:account][:domain] = 'test.freshchat.com'
+
+    stub_response = { enabled_features: ['kbase_omni_bundle'] }
+    app_id = params[:misc][:userInfoList][0][:appId]
+    freshchat_url = Freshchat::Account::CONFIG[:apiHostUrl]
+    fc_feature_api = stub_request(:put, "#{freshchat_url}/v2/features").to_return(headers: { 'Content-Type' => 'application/json' }, status: 200, body: stub_response.to_json)
+    fc_token_update_api = stub_request(:put, "#{freshchat_url}/v2/omnichannel-integration/#{app_id}").to_return(headers: { 'Content-Type' => 'application/json' }, status: 200)
+
+    Account.stubs(:current).returns(@account)
+    Account.current.launch(:launch_kbase_omni_bundle)
+
+    @account.freshchat_account.try(:destroy)
+    post :callback, params
+    assert_response 200
+    assert JSON.parse(response.body)['message'] == "#{params[:product_name]} record created successfully"
+    assert Account.current.launched?(:kbase_omni_bundle)
+  ensure
+    Account.current.rollback(:launch_kbase_omni_bundle)
+    remove_request_stub(fc_feature_api)
+    remove_request_stub(fc_token_update_api)
+  end
+
+  def test_kbase_omni_bundle_enabled_failure_after_fchat_record_created
+    params = aloha_callback_params
+    params[:product_name] = 'freshchat'
+    params[:account][:domain] = 'test.freshchat.com'
+
+    stub_response = { enabled_features: [] }
+    app_id = params[:misc][:userInfoList][0][:appId]
+    freshchat_url = Freshchat::Account::CONFIG[:apiHostUrl]
+    fc_feature_api = stub_request(:put, "#{freshchat_url}/v2/features").to_return(headers: { 'Content-Type' => 'application/json' }, status: 200, body: stub_response.to_json)
+    fc_token_update_api = stub_request(:put, "#{freshchat_url}/v2/omnichannel-integration/#{app_id}").to_return(headers: { 'Content-Type' => 'application/json' }, status: 200)
+
+    Account.stubs(:current).returns(@account)
+    Account.current.launch(:launch_kbase_omni_bundle)
+    Account.current.rollback(:kbase_omni_bundle)
+
+    @account.freshchat_account.try(:destroy)
+    post :callback, params
+    assert_response 200
+    assert JSON.parse(response.body)['message'] == "#{params[:product_name]} record created successfully"
+    assert_not Account.current.launched?(:kbase_omni_bundle)
+  ensure
+    Account.current.rollback(:launch_kbase_omni_bundle)
+    remove_request_stub(fc_feature_api)
+    remove_request_stub(fc_token_update_api)
   end
 
   def test_freshcaller_account_record_create

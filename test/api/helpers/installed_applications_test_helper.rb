@@ -163,6 +163,127 @@ module InstalledApplicationsTestHelper
     }
   end
 
+  def freshworkscrm_config
+    { inputs:
+      {
+        'contact_fields' => 'display_name,mobile_number,contact_status_id,has_authority,do_not_disturb,time_zone,address,city,state,zipcode',
+        'account_fields' => 'name,parent_sales_account_id,owner_id,number_of_employees,annual_revenue,website,phone,industry_type_id,business_type_id,territory_id',
+        'contact_labels' => 'Full name,Mobile,Status,Has authority,Do not disturb,Time zone,Address,City,State,Zipcode',
+        'account_labels' => 'Name,Parent account,Owner,Number of employees,Annual revenue,Website,Phone,Industry type,Business type,Territory',
+        'deal_view' => '1',
+        'domain' => 'https://sample.freshworks.com/crm/sales',
+        'auth_token' => 'dTetw4iu9JbVBsBfxeJ6xQ',
+        'deal_fields' => 'name,amount,deal_stage_id,owner_id,deal_pipeline_id,deal_reason_id,sales_account_id,contacts,deal_product_id,deal_payment_status_id',
+        'deal_labels' => 'Name,Deal value,Deal stage,Owner,Deal pipeline,Lost reason,Account name,Related contacts,Product,Payment status',
+        'agent_settings' => '0'
+      } }
+  end
+
+  def fetch_nested_emails_response_for_freshworkscrm
+    "{\"forms\":[{\"id\":2000022746,\"name\":\"DefaultContactForm\",
+                \"field_class\":\"Contact\",\"fields\":[{\"id\":\"3d16cb19\",
+                \"name\":\"basic_information\",\"label\":\"Basicinformation\",
+                \"fields\":[{\"id\":\"aae7d8ed\",\"name\":\"telephone_numbers\",
+                \"label\":\"TelephoneNumbers\",\"fields\":[{\"id\":\"aeda1254\",\"name\":\"emails\",\"type\":\"email\",
+                \"label\":\"Emails\",\"fields\":[],\"form_id\":2000022746,\"visible\":\"true\",
+                \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                {\"id\":\"a65154ae\",\"name\":\"work_number\",\"type\":\"phone_number\",
+                \"label\":\"Work\",\"fields\":[],\"form_id\":2000022746,\"visible\":\"true\",
+                \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}}],\"form_id\":2000022746,
+                \"field_class\":\"Contact\",\"type\":\"section\"}],
+                \"form_id\":2000022746,\"field_class\":\"Contact\"}]}]}"
+  end
+
+  def form_fields_result_for_freshworkscrm
+    {
+      'Contact' => {
+        'id' => 2_000_022_765,
+        'name' => 'DefaultContactForm',
+        'field_class' => 'Contact',
+        'fields' => [{
+          'id' => 'ead353bc-031b-4012-86b1-cd055f807c99',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => '7e0b636d',
+            'name' => 'first_name',
+            'label' => 'Firstname',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'field_options' => { 'show_in_import' => true }
+          }, {
+            'id' => '7e0b636de',
+            'name' => 'sales_accounts',
+            'label' => 'Accounts',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'field_options' => { 'show_in_import' => true, 'creatable' => false, 'remove_item_label' => 'Remove' }
+          }, {
+            'id' => '7e0basd636d',
+            'name' => 'emails',
+            'label' => 'Emails',
+            'type' => 'email',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'visible' => 'true',
+            'field_options' => { 'show_in_import' => true }
+          }],
+          'form_id' => 2_000_022_765,
+          'field_class' => 'Contact'
+        }]
+      }
+    }
+  end
+
+  def nested_emails_form_fields_result_for_freshworkscrm
+    {
+      'Contact' => {
+        'id' => 2_000_022_746,
+        'name' => 'DefaultContactForm',
+        'field_class' => 'Contact',
+        'fields' => [{
+          'id' => '3d16cb19',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => 'aae7d8ed',
+            'name' => 'telephone_numbers',
+            'label' => 'TelephoneNumbers',
+            'fields' => [{
+              'id' => 'aeda1254',
+              'name' => 'emails',
+              'type' => 'email',
+              'label' => 'Emails',
+              'fields' => [],
+              'form_id' => 2_000_022_746,
+              'field_class' => 'Contact',
+              'visible' => 'true',
+              'field_options' => { 'show_in_import' => true }
+            }, {
+              'id' => 'a65154ae',
+              'name' => 'work_number',
+              'type' => 'phone_number',
+              'label' => 'Work',
+              'fields' => [],
+              'form_id' => 2_000_022_746,
+              'field_class' => 'Contact',
+              'visible' => 'true',
+              'field_options' => { 'show_in_import' => true }
+            }],
+            'form_id' => 2_000_022_746,
+            'field_class' => 'Contact',
+            'type' => 'section'
+          }],
+          'form_id' => 2_000_022_746,
+          'field_class' => 'Contact'
+        }]
+      }
+    }
+  end
+
   def create_integ_user_credentials(options = {})
     app = Integrations::Application.find_by_name(options[:app_name])
     installed_app = @account.installed_applications.find_by_application_id(app.id)
@@ -371,6 +492,121 @@ module InstalledApplicationsTestHelper
     }
   end
 
+  def form_fields_result_with_other_group
+    {
+      'Lead' => {
+        'id' => 2_000_022_766,
+        'name' => 'DefaultLeadForm',
+        'field_class' => 'Lead',
+        'fields' => [{
+          'id' => '56f639ac',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => 'eda895ec',
+            'name' => 'first_name',
+            'label' => 'Firstname',
+            'fields' => [],
+            'form_id' => 2_000_022_766,
+            'field_class' => 'Lead'
+          }, {
+            'id' => '7e0basd636d',
+            'name' => 'emails',
+            'type' => 'email',
+            'label' => 'Emails',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Lead',
+            'visible' => 'true',
+            'field_options' => { 'show_in_import' => true }
+          }],
+          'form_id' => 2_000_022_766,
+          'field_class' => 'Lead'
+        }, {
+          'id' => '56f638ac',
+          'name' => 'other_information',
+          'label' => 'Otherinformation',
+          'fields' => [{
+            'id' => 'eda895ec',
+            'name' => 'first_name',
+            'label' => 'Firstname',
+            'fields' => [],
+            'form_id' => 2_000_022_766,
+            'field_class' => 'Lead'
+          }, {
+            'id' => '7e0basd636d',
+            'name' => 'emails',
+            'type' => 'email',
+            'label' => 'Emails',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Lead',
+            'visible' => 'true',
+            'field_options' => { 'show_in_import' => true }
+          }],
+          'form_id' => 2_000_022_766,
+          'field_class' => 'Lead'
+        }]
+      },
+      'Contact' => {
+        'id' => 2_000_022_765,
+        'name' => 'DefaultContactForm',
+        'field_class' => 'Contact',
+        'fields' => [{
+          'id' => 'ead353bc-031b-4012-86b1-cd055f807c99',
+          'name' => 'basic_information',
+          'label' => 'Basicinformation',
+          'fields' => [{
+            'id' => '7e0b636d',
+            'name' => 'first_name',
+            'label' => 'Firstname',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'field_options' => { 'show_in_import' => true }
+          }, {
+            'id' => '7e0basd636d',
+            'name' => 'emails',
+            'label' => 'Emails',
+            'type' => 'email',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'visible' => 'true',
+            'field_options' => { 'show_in_import' => true }
+          }],
+          'form_id' => 2_000_022_765,
+          'field_class' => 'Contact'
+        }, {
+          'id' => 'ead353bc-031b-4012-86b1-cd055f807c99',
+          'name' => 'other_information',
+          'label' => 'Otherinformation',
+          'fields' => [{
+            'id' => '7e0b636d',
+            'name' => 'first_name',
+            'label' => 'Firstname',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'field_options' => { 'show_in_import' => true }
+          }, {
+            'id' => '7e0basd636d',
+            'name' => 'emails',
+            'type' => 'email',
+            'label' => 'Emails',
+            'fields' => [],
+            'form_id' => 2_000_022_765,
+            'field_class' => 'Contact',
+            'visible' => 'true',
+            'field_options' => { 'show_in_import' => true }
+          }],
+          'form_id' => 2_000_022_765,
+          'field_class' => 'Contact'
+          }]
+      }
+    }
+  end
+
   private
 
     def fetch_nested_emails_response
@@ -398,5 +634,46 @@ module InstalledApplicationsTestHelper
                   \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}}],\"form_id\":2000022746,
                   \"field_class\":\"Contact\",\"type\":\"section\"}],
                   \"form_id\":2000022746,\"field_class\":\"Contact\"}]}]}"
+    end
+
+    def fetch_email_in_other_group_response
+      "{\"forms\":[{\"id\":2000022766,\"name\":\"DefaultLeadForm\",
+                  \"field_class\":\"Lead\",\"fields\":[{\"id\":\"56f639ac\",
+                  \"name\":\"basic_information\",\"label\":\"Basicinformation\",
+                  \"fields\":[{\"id\":\"eda895ec\",\"name\":\"first_name\",
+                  \"label\":\"Firstname\",\"fields\":[],\"form_id\":2000022766,
+                  \"field_class\":\"Lead\"},{\"id\":\"7e0basd636d\",\"name\":\"emails\",\"type\":\"email\",
+                  \"label\":\"Emails\",\"fields\":[],\"form_id\":2000022765,\"visible\":\"true\",
+                  \"field_class\":\"Lead\",\"field_options\":{\"show_in_import\":true}}]
+                  ,\"form_id\":2000022766,\"field_class\":\"Lead\"},
+                  {\"id\":\"56f638ac\",
+                  \"name\":\"other_information\",\"label\":\"Otherinformation\",
+                  \"fields\":[{\"id\":\"eda895ec\",\"name\":\"first_name\",
+                  \"label\":\"Firstname\",\"fields\":[],\"form_id\":2000022766,
+                  \"field_class\":\"Lead\"},{\"id\":\"7e0basd636d\",\"name\":\"emails\",\"type\":\"group_field\",
+                  \"label\":\"Emails\",\"fields\":[],\"form_id\":2000022765,\"visible\":\"true\",
+                  \"field_class\":\"Lead\",\"field_options\":{\"show_in_import\":true}}]
+                  ,\"form_id\":2000022766,\"field_class\":\"Lead\"}]},
+
+                  {\"id\":2000022765,\"name\":\"DefaultContactForm\",\"field_class\":\"Contact\",
+                  \"fields\":[{\"id\":\"ead353bc-031b-4012-86b1-cd055f807c99\",\"name\":\"basic_information\",
+                  \"label\":\"Basicinformation\",\"fields\":[{\"id\":\"7e0b636d\",
+                  \"name\":\"first_name\",\"label\":\"Firstname\",\"fields\":[],\"form_id\":2000022765,
+                  \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                  {\"id\":\"7e0basd636d\", \"name\":\"emails\",\"type\":\"email\",\"label\":\"Emails\",\"fields\":[],
+                  \"form_id\":2000022765,\"field_class\":\"Contact\",\"visible\":\"true\",
+                  \"field_options\":{\"show_in_import\":true}},{\"id\":\"c94aae94-7424-498f-863c-02bb7350724e\",
+                  \"name\":\"system_information\",\"label\":\"Systeminformation\",\"fields\":[{\"id\":\"7aee054f\",
+                  \"name\":\"last_contacted\",\"label\":\"Lastcontactedtime\",\"fields\":[],
+                  \"form_id\":2000022765,\"field_class\":\"Contact\"}],\"form_id\":2000022765,
+                  \"field_class\":\"Contact\"}],\"form_id\":2000022765,\"field_class\":\"Contact\"},
+
+                  {\"id\":\"ead353bc-031b-4012-86b1-cd055f807c99\",\"name\":\"other_information\",
+                  \"label\":\"Otherinformation\",\"fields\":[{\"id\":\"7e0b636d\",
+                  \"name\":\"first_name\",\"label\":\"Firstname\",\"fields\":[],\"form_id\":2000022765,
+                  \"field_class\":\"Contact\",\"field_options\":{\"show_in_import\":true}},
+                  {\"id\":\"7e0basd636d\", \"name\":\"emails\",\"type\":\"group_field\",\"label\":\"Emails\",\"fields\":[],
+                  \"form_id\":2000022765,\"field_class\":\"Contact\",\"visible\":\"true\",
+                  \"field_options\":{\"show_in_import\":true}}],\"form_id\":2000022765,\"field_class\":\"Contact\"}]}]}"
     end
 end

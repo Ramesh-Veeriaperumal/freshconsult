@@ -181,7 +181,7 @@
   @include border-radius(5px 5px 0px 0px);
   border: 1px solid $fa-phone-search-border;
   @include padding(10px 20px 10px 9px);
-	min-height: 30px;
+  min-height: 30px;
   #search_input{
     height: 20px;
   }
@@ -207,9 +207,9 @@
   .search-bar-country, .search-bar-state, .search-bar-prefix{
     display: inline-block;
     @include margin-right(5px);
-		.select2-container {
-			width: 130px;
-		}
+    .select2-container {
+      width: 130px;
+    }
   }
   .select2-choice{
     -webkit-border-radius:3px;
@@ -286,25 +286,25 @@
 
 }
 #purchase-confirmation{
-    .number-message{
-      display: inline-block;
-      .address-required-alert{
-        margin-top: 9px;
-        .seperator {
-          margin-top: 15px;
-          margin-bottom: 12px;
-          border-bottom: 1px solid #e0e0e0;
-        }
+  .number-message{
+    display: inline-block;
+    .address-required-alert{
+      margin-top: 9px;
+      .seperator {
+        margin-top: 15px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #e0e0e0;
       }
-      .label-important{
-        @include margin-right(8px);
-      }
+    }
+    .label-important{
+      @include margin-right(8px);
+    }
 
-    }
-    .purchase-actions{
-      margin-top: 30px;
-      @include text-align(right);
-    }
+  }
+  .purchase-actions{
+    margin-top: 30px;
+    @include text-align(right);
+  }
 }
 #purchase-confirmation-content {
   padding: 10px 20px 7px;
@@ -481,13 +481,13 @@
   @include border-radius(4px);
 }
 .error_flash {
- color: #a90329;
+  color: #a90329;
 }
 .form-controls {
   margin-top: 10px;
 }
 .row-fluid .control-group {
-    margin-bottom: 8px
+  margin-bottom: 8px
 }
 .purchase-footer .address-required-alert {
   color: #888;

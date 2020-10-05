@@ -35,7 +35,6 @@ module Ember
       def before_all
         @account.sections.map(&:destroy)
         return if @@before_all_run
-        @account.features.freshfone.create
         @account.features.forums.create
         @account.features.es_v2_writes.destroy
         @account.ticket_fields.custom_fields.each(&:destroy)

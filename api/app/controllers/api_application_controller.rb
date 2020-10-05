@@ -108,6 +108,7 @@ class ApiApplicationController < MetalApiController
   RESPONSE_CACHE_TIMEOUT = 30.days.to_i
 
   CHANNEL_V2_PATHS = %w[update_multiple /api/channel/v2/agents /api/channel/v2/canned_responses /api/channel/v2/conversations].freeze
+  CHANNEL_V2_EXCLUSION_ENDPOINTS = %w[agents/sync].freeze
 
   def response_cache
     if response_cache_data.present?
@@ -604,7 +605,7 @@ class ApiApplicationController < MetalApiController
       if CustomRequestStore.read(:private_api_request) || (get_request? && !request.authorization)
         session_auth
       elsif CustomRequestStore.read(:channel_api_request)
-        CHANNEL_V2_PATHS.any? { |path| request.path.include?(path) } ? channel_v2_jwt_auth : api_key_auth
+        CHANNEL_V2_PATHS.any? { |path| request.path.include?(path) } && CHANNEL_V2_EXCLUSION_ENDPOINTS.none? { |path| request.path.include?(path) } ? channel_v2_jwt_auth : api_key_auth
       else
         if current_account.launched?(:api_jwt_auth) && request.env['HTTP_AUTHORIZATION'] && request.env['HTTP_AUTHORIZATION'][/^Token (.*)/]
           ApiAuthLogger.log "FRESHID API version=V2, auth_type=JWT_TOKEN, a=#{current_account.id}"
@@ -1038,7 +1039,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def supress_logs(temporary_level = Logger::ERROR)
-      if current_account.launched?(:disable_supress_logs)
+      if current_account.disable_supress_logs_enabled?
         yield
       else
         begin

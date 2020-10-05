@@ -16,7 +16,11 @@ class ArticleTicketTest < ActiveSupport::TestCase
   def test_central_publish_payload
     article = create_article(article_params).primary_article
     ticket = create_ticket
+    CentralPublisher::Worker.jobs.clear
     article_ticket = add_article_ticket(article, ticket)
+    job = CentralPublisher::Worker.jobs.last
+    assert_equal 'article_ticket_create', job['args'][0]
+    assert_equal 1, CentralPublisher::Worker.jobs.size
     payload = article_ticket.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_article_ticket_pattern(article_ticket))
     event_info = article_ticket.event_info(:create)
@@ -31,8 +35,25 @@ class ArticleTicketTest < ActiveSupport::TestCase
     ticket.updated_at = 150.days.ago
     ticket.status = 5
     ticket.save!
+    CentralPublisher::Worker.jobs.clear
     convert_ticket_to_archive(ticket)
     article_ticket.reload
+    job = CentralPublisher::Worker.jobs.last
+    assert_equal 1, CentralPublisher::Worker.jobs.size
+    assert_equal 'article_ticket_update', job['args'][0]
+    payload = article_ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_article_ticket_pattern(article_ticket))
+  end
+
+  def test_central_publish_payload_for_article_ticket_destroy
+    article = create_article(article_params).primary_article
+    ticket = create_ticket
+    article_ticket = add_article_ticket(article, ticket)
+    CentralPublisher::Worker.jobs.clear
+    ticket.destroy
+    job = CentralPublisher::Worker.jobs.last
+    assert_equal 1, CentralPublisher::Worker.jobs.size
+    assert_equal 'article_ticket_destroy', job['args'][0]
     payload = article_ticket.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_article_ticket_pattern(article_ticket))
   end
