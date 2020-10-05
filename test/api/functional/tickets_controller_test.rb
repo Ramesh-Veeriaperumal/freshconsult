@@ -5,7 +5,7 @@ require 'webmock/minitest'
 require Rails.root.join('test', 'api', 'helpers', 'privileges_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'advanced_scope_test_helper.rb')
-['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['social_tickets_creation_helper.rb', 'twitter_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 Sidekiq::Testing.fake!
@@ -20,6 +20,7 @@ class TicketsControllerTest < ActionController::TestCase
   include SlaPoliciesTestHelper
   include ::SocialTestHelper
   include ::SocialTicketsCreationHelper
+  include TwitterHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
   include PrivilegesHelper
@@ -63,6 +64,12 @@ class TicketsControllerTest < ActionController::TestCase
     Sidekiq::Worker.clear_all
     before_all
     destroy_all_fsm_fields_and_service_task_type
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(Faker::Number.between(1, 999_999_999).to_s))
+  end
+
+  def teardowm
+    super
+    Twitter::REST::Client.any_instance.unstub(:user)
   end
 
   @@before_all_run = false
