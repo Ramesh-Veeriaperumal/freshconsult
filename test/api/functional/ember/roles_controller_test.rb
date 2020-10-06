@@ -23,6 +23,7 @@ class RolesControllerTest < ActionController::TestCase
     role = Role.first
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
     get :show, construct_params(id: role.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -52,6 +53,7 @@ class RolesControllerTest < ActionController::TestCase
     User.stubs(:current).returns(agent)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
     get :show, construct_params(id: role.id)
     assert_response 403
   ensure
@@ -63,6 +65,7 @@ class RolesControllerTest < ActionController::TestCase
     role = Role.first
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
     get :index, controller_params
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -115,6 +118,7 @@ class RolesControllerTest < ActionController::TestCase
     User.stubs(:current).returns(agent)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
     get :index, controller_params
     assert_response 403
   ensure
