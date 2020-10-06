@@ -40,9 +40,10 @@
         "signing_key": "EJ[1:s5YWUiLUAYaTArjb802kvE4IK72Wuo9H7O3i3Qc0BAw=:tX0A8PHfqCrfH8iHuzEnQMfY9tQseClW:ZIGgK1NkwP6qGjN+oScLBRY6VgtWX5/V5XumVroj/IzLJHjMZDzzpU1C7YU0wKZf]"
       },
       "cron_webhook": {
-        "_domain": "helpkitworkflowauto170.freshpo.com",
-        "_sub_domain": "helpkitworkflowauto170",
-        "auth_key": "EJ[1:2F8j5OOk11MscvvYKhjxoe1utknKRcNg0mTtDAD/SEg=:qGu/U539cpMriAl8kz3mij4NwudtV4sJ:mJwNMpTdDmRnJZ/7SbCCHPPFLRM+2muHpikPSPs8fp7Wjy8c]"
+        "_domain": "n1stacktest.freshpo.com",
+        "_sub_domain": "n1stacktest",
+        "auth_key": "EJ[1:2F8j5OOk11MscvvYKhjxoe1utknKRcNg0mTtDAD/SEg=:qGu/U539cpMriAl8kz3mij4NwudtV4sJ:mJwNMpTdDmRnJZ/7SbCCHPPFLRM+2muHpikPSPs8fp7Wjy8c]",
+        "account_based_auth_key": "EJ[1:1w3MsjnK4266FqYQjnAJkx0dP+6eZCTMHoDdZjZDhGA=:3D0WP1s1ogfFcC6m5IjmmstQCbYkAFpp:VeTAuvNM/dcKZfsjnlnbBloJAyk+lQIs3yHnj4BsnA4n5TRY4Hp5fxOxfuPNT4Tg]"
       },
       "akismet": {
         "key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:7ZIA2JnbTQP+1t/2poLFy5QzPFFESx2V:0FbZqiLtOpipCWOVbz+hG98r/vyQAcIWa5UFGQ==]"
@@ -305,7 +306,8 @@
         "_natero_url": "https://api.natero.com/api/v2/accounts",
         "_reseller_portal_portal_url": "partners.freshpo.com/freshdesk_webhooks",
         "_reseller_portal_user_name": "freshdesk",
-        "_sub_bcc_email": "demo.freshpo.com"
+        "_sub_bcc_email": "demo.freshpo.com",
+        "_haproxy_internal_domain": "http://127.0.0.1:8191"
       },
       "custom_dalli": {
         "_hosts": [

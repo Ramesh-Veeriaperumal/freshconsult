@@ -22,7 +22,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
     @parse_email = Faker::Internet.email
     @agent_email = @account.technicians.first.email
     @parsed_to_email = { name: Faker::Name.name, email: @custom_config.to_email, domain: @account.full_domain }
-    @account.remove_feature :disable_agent_forward
+    @account.disable_setting(:disable_agent_forward)
     Account.any_instance.stubs(:parse_replied_email_enabled?).returns(true)
     raise "Account is nil" if @account.blank?
   end
@@ -133,7 +133,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
   end
 
   def test_success_email_to_the_wild_cards
-    Account.current.enable_setting(:allow_wildcard_ticket_create)
+    Account.any_instance.stubs(:allow_wildcard_ticket_create_enabled?).returns(true)
     ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
     Helpdesk::ProcessEmail.any_instance.stubs(:add_to_or_create_ticket).returns(true)
     params = default_params(Faker::Lorem.characters(50), 'Test Subject')
@@ -149,7 +149,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
   end
 
   def test_success_email_to_the_wild_cards_using_allow_check
-    Account.current.enable_setting(:allow_wildcard_ticket_create)
+    Account.any_instance.stubs(:allow_wildcard_ticket_create_enabled?).returns(true)
     ShardMapping.stubs(:fetch_by_domain).returns(ShardMapping.first)
     Helpdesk::ProcessEmail.any_instance.stubs(:add_to_or_create_ticket).returns(true)
     params = default_params(Faker::Lorem.characters(50), 'Test Subject')
@@ -162,7 +162,7 @@ class ProcessEmailTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:email_configs)
     EmailConfig.any_instance.unstub(:find_by_to_email)
     Helpdesk::ProcessEmail.any_instance.unstub(:add_to_or_create_ticket)
-    Account.current.disable_setting(:allow_wildcard_ticket_create)
+    Account.any_instance.unstub(:allow_wildcard_ticket_create_enabled?)
   end
 
   def test_success_email_to_the_default_support_mailbox

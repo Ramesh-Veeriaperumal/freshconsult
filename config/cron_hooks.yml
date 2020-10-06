@@ -2,6 +2,7 @@ defaults: &defaults
   webhook_domain: localhost:3000
   webhook_subdomain: localhost:3000
   auth_key: dummy
+  account_based_auth_key: dummy
 
 development:
   <<: *defaults

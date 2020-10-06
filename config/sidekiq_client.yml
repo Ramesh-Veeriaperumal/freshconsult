@@ -19,6 +19,7 @@ defaults: &defaults
     - [supervisor]
     - [trial_supervisor]
     - [free_supervisor]
+    - [cron_api_triggers]
     - [facebook]
     - [premium_facebook]
     - [fb_split_tickets]

@@ -172,7 +172,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def event_info(event)
-    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
+    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION, app_update: !@manual_central_publish }
   end
 
   def parsed_to_emails

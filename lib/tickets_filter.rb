@@ -148,7 +148,7 @@ module TicketsFilter
 
   def self.sort_fields
     sort_fields = SORT_FIELDS.clone
-    if Account.current && Account.current.features_included?(:sort_by_customer_response)
+    if Account.current && Account.current.sort_by_customer_response_enabled?
       sort_fields << [ :requester_responded_at, "tickets_filter.sort_fields.requester_responded_at"]
       sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
     end
