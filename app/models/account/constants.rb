@@ -161,7 +161,8 @@ class Account < ActiveRecord::Base
   ADMIN_CUSTOMER_PORTAL_SETTINGS = [
     :signup_link, :anonymous_tickets, :auto_suggest_solutions,
     :public_ticket_url, :open_solutions, :open_forums,
-    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts
+    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts,
+    :helpdesk_tickets_by_product, :solutions_agent_metrics
   ].freeze
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
@@ -216,7 +217,7 @@ class Account < ActiveRecord::Base
     article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, allow_wildcard_ticket_create: false,
-    attachment_redirect_expiry: false, solutions_agent_metrics: false,
+    attachment_redirect_expiry: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
@@ -237,7 +238,7 @@ class Account < ActiveRecord::Base
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
-    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false
+    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

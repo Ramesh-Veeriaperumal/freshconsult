@@ -131,7 +131,7 @@
       - :solutions_templates
       - :contact_custom_activity_api
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
+      - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
     :inherits:
       - :garden_jan_17
@@ -347,7 +347,7 @@
       - :twitter_field_automation
       - :solutions_templates
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
+      - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
     :inherits:
       - :garden_jan_19
@@ -559,7 +559,7 @@
       - :fb_ad_posts
       - :solutions_templates
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
+      - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
     :inherits:
       - :garden_jan_20
