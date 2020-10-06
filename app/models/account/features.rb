@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp, :custom_product_notification,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
-    :skip_invoice_due_warning, :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
+    :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
     :id_for_choices_write, :fluffy, :fluffy_email, :fluffy_email_signup, :session_logs, :nested_field_revamp,
@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
-    :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup,
+    :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup, :helpdesk_new_settings,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
     :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
     :agent_shifts, :mailbox_google_oauth, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
@@ -42,7 +42,7 @@ class Account < ActiveRecord::Base
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
-    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :disable_freshchat, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
+    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
     :feedback_widget_captcha, :gamification_perf, :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle
   ].freeze
 
@@ -61,7 +61,7 @@ class Account < ActiveRecord::Base
     :dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :custom_product_notification,
     :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
-    :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary,
+    :tam_default_fields, :todos_reminder_scheduler, :smart_filter,
     :opt_out_analytics, :freshchat, :disable_old_ui, :contact_company_notes,
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
@@ -80,8 +80,8 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :kb_allow_base64_images, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
-    :skip_invoice_due_warning, :allow_wildcard_ticket_create, :supervisor_contact_field, :disable_freshchat, :whatsapp_channel, :feedback_widget_captcha,
+    :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
+    :allow_wildcard_ticket_create, :supervisor_contact_field, :whatsapp_channel, :feedback_widget_captcha,
     :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
@@ -94,12 +94,10 @@ class Account < ActiveRecord::Base
     :disable_supress_logs,
     :spam_blacklist_feature,
     :solutions_agent_metrics,
-    :skip_invoice_due_warning,
     :kbase_spam_whitelist,
     :allow_wildcard_ticket_create,
     :bypass_signup_captcha,
     :supervisor_contact_field,
-    :disable_freshchat,
     :feedback_widget_captcha,
     :disable_archive,
     :gamification_perf,
@@ -255,14 +253,6 @@ class Account < ActiveRecord::Base
     features?(:default_survey) && !custom_survey_enabled?
   end
 
-  def new_es_api_enabled?
-    launched?(:new_es_api)
-  end
-
-  def filter_factory_enabled?
-    launched?(:filter_factory)
-  end
-
   def spam_blacklist_feature_enabled?
     launched?(:spam_blacklist_feature)
   end
@@ -309,10 +299,6 @@ class Account < ActiveRecord::Base
 
   def supervisor_feature_launched?
     features?(:freshfone_call_monitoring) || features?(:agent_conference)
-  end
-
-  def compose_email_enabled?
-    !features?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)
   end
 
   def helpdesk_restriction_enabled?
@@ -477,10 +463,6 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def allow_wildcard_ticket_create_enabled?
-    launched?(:allow_wildcard_ticket_create)
-  end
-
   def supervisor_contact_field_enabled?
     launched?(:supervisor_contact_field)
   end
@@ -495,10 +477,6 @@ class Account < ActiveRecord::Base
 
   def custom_product_notification_enabled?
     launched?(:custom_product_notification)
-  end
-
-  def gamification_perf_enabled?
-    launched?(:gamification_perf)
   end
 
   def disable_archive_enabled?

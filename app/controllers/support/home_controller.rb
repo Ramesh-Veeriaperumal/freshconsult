@@ -1,6 +1,5 @@
 class Support::HomeController < SupportController
-
-  before_filter :redirect_to_support_home, :if => :should_redirect_to_support_home?
+  before_filter :redirect_to_support_home, if: :facebook?
   before_filter :load_page_meta, :unless => :facebook?
   
   def index
@@ -28,9 +27,5 @@ class Support::HomeController < SupportController
       @page_canonical = portal_drop.has_solutions ? 
                           support_solutions_url(:host => current_portal.host, :protocol => current_account.url_protocol) : 
                           support_discussions_url(:host => current_portal.host, :protocol => current_account.url_protocol)
-    end
-
-    def should_redirect_to_support_home?
-      facebook? && !current_account.basic_facebook_enabled?
     end
 end

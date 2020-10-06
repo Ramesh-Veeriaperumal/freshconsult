@@ -1,10 +1,13 @@
 require_relative '../../test_helper'
 ['surveys_test_helper.rb'].each { |file| require Rails.root.join('test', 'api', 'helpers', file) }
+['social_tickets_creation_helper.rb', 'twitter_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require 'webmock/minitest'
 WebMock.allow_net_connect!
 
 module Ember
   class ContactsControllerTest < ActionController::TestCase
+    include SocialTicketsCreationHelper
+    include TwitterHelper
     include UsersTestHelper
     include AttachmentsTestHelper
     include ContactFieldsHelper
@@ -20,6 +23,7 @@ module Ember
     def setup
       super
       initial_setup
+      Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(Faker::Number.between(1, 999_999_999).to_s))
     end
 
     @@initial_setup_run = false
@@ -38,6 +42,7 @@ module Ember
     def teardown
       super
       WebMock.allow_net_connect!
+      Twitter::REST::Client.any_instance.unstub(:user)
     end
 
     def wrap_cname(params)
@@ -1360,7 +1365,7 @@ module Ember
       get :show, controller_params(version: 'private', id: sample_user.id)
       assert_response 200
       res = JSON.parse(response.body)
-      assert_equal Helpdesk::Source.ticket_source_token_by_key[2].to_s, res['preferred_source']
+      assert_equal Helpdesk::Source.default_ticket_source_token_by_key[2].to_s, res['preferred_source']
     end
 
     def test_show_a_contact_without_preferred_source
@@ -2065,6 +2070,42 @@ module Ember
       )
     ensure
       Account.any_instance.unstub(:unique_contact_identifier_enabled?)
+    end
+
+    def test_populate_twitter_requester_handle_id_while_create_contact_with_twitter_id
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+      Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+      create_twitter_handle
+      user_email = Faker::Internet.email
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: user_email,
+                                                             twitter_id: Faker::Lorem.word)
+      assert_response 201
+      created_user = User.find_by_email(user_email)
+      assert_equal twitter_requester_handle_id, created_user.twitter_requester_handle_id
+      match_json(private_api_contact_pattern(created_user))
+    ensure
+      Twitter::REST::Client.any_instance.unstub(:user)
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    end
+
+    def test_populate_twitter_requester_handle_id_while_contact_update_with_twitter_id_value_set
+      Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+      twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+      Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+      create_twitter_handle
+      sample_user = add_new_user(@account)
+      assert_nil sample_user.twitter_requester_handle_id
+
+      params_hash = { twitter_id: Faker::Lorem.word }
+      put :update, construct_params({ version: 'private', id: sample_user.id }, params_hash)
+      assert_response 200
+      assert_equal twitter_requester_handle_id, sample_user.reload.twitter_requester_handle_id
+      match_json(private_api_contact_pattern(sample_user))
+    ensure
+      Twitter::REST::Client.any_instance.unstub(:user)
+      Account.any_instance.unstub(:twitter_api_compliance_enabled?)
     end
   end
 end

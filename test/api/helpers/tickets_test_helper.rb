@@ -367,7 +367,7 @@ module ApiTicketsTestHelper
   end
 
   def restrict_twitter_ticket_content?(ticket)
-    Account.current.twitter_api_compliance_enabled? && twitter_ticket?(ticket) && !@private_api && !@channel_v2_api
+    Account.current.twitter_api_compliance_enabled? && twitter_ticket?(ticket) && CustomRequestStore.read(:api_v2_request)
   end
 
   def restricted_twitter_ticket_content(ticket)
@@ -1401,7 +1401,7 @@ module ApiTicketsTestHelper
       type: ticket.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !@channel_v2_api ? twitter_requester.twitter_requester_handle_id : twitter_requester.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) ? twitter_requester.twitter_requester_handle_id : twitter_requester.twitter_id
     }
     if @channel_v2_api
       tweet_hash.merge!(stream_id: ticket.tweet.stream_id)

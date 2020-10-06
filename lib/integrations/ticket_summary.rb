@@ -5,12 +5,12 @@ class Integrations::TicketSummary
 
   def enable_ticket_summary(inst_app)
     Rails.logger.info "Enable feature :: ticket_summary"
-    current_account.add_feature(:ticket_summary)
+    current_account.enable_setting(:ticket_summary)
   end
 
   def disable_ticket_summary(inst_app)
-    Rails.logger.info "Disable feautre :: ticket_summary"
-    current_account.revoke_feature(:ticket_summary)
+    Rails.logger.info 'Disable feature :: ticket_summary'
+    current_account.disable_setting(:ticket_summary)
   end
 end
 

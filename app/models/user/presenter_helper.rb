@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
                     :description, :deleted, :active, :blocked, :helpdesk_agent, :whitelisted, :fb_profile_id, :user_role].freeze
 
   def valid_app_event?(action)
-    self.is_a?(User) && (action.eql?(:create) || self.tags_updated || self.user_emails_updated || valid_app_changes?)
+    self.is_a?(User) && !@manual_central_publish && (action.eql?(:create) || self.tags_updated || self.user_emails_updated || valid_app_changes?)
   end
 
   private

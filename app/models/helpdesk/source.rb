@@ -14,22 +14,6 @@ class Helpdesk::Source < Helpdesk::Choice
   private_constant :SOURCE_FORMATTER
 
   class << self
-    def ticket_sources
-      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
-        TICKET_SOURCES
-      else
-        TICKET_SOURCES.reject { |i| i[0] == :whatsapp }
-      end
-    end
-
-    def ticket_source_options
-      ticket_sources.map { |i| [i[1], i[2]] }
-    end
-
-    def ticket_source_names_by_key
-      Hash[*ticket_sources.map { |i| [i[2], i[1]] }.flatten]
-    end
-
     def ticket_source_keys_by_token
       if Account.current && Account.current.launched?(:whatsapp_ticket_source)
         SOURCE_KEYS_BY_TOKEN
@@ -38,11 +22,7 @@ class Helpdesk::Source < Helpdesk::Choice
       end
     end
 
-    def ticket_source_keys_by_name
-      Hash[*ticket_sources.map { |i| [i[1], i[2]] }.flatten]
-    end
-
-    def ticket_source_token_by_key
+    def default_ticket_source_token_by_key
       if Account.current && Account.current.launched?(:whatsapp_ticket_source)
         SOURCE_TOKENS_BY_KEY
       else
@@ -106,7 +86,11 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def api_unpermitted_sources_for_update
-      API_UPDATE_EXCLUDED_VALUES
+      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
+        API_UPDATE_EXCLUDED_VALUES
+      else
+        API_UPDATE_EXCLUDED_VALUES - [13]
+      end
     end
 
     def note_exclude_sources
@@ -152,11 +136,19 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def default_ticket_sources
-      ticket_sources
+      if Account.current&.launched?(:whatsapp_ticket_source)
+        TICKET_SOURCES
+      else
+        TICKET_SOURCES.reject { |i| i[0] == :whatsapp }
+      end
     end
 
     def default_ticket_source_names_by_key
-      Hash[*ticket_sources.map { |i| [i[2], i[1]] }.flatten]
+      if Account.current&.launched?(:whatsapp_ticket_source)
+        SOURCE_NAMES_BY_KEY
+      else
+        SOURCE_NAMES_BY_KEY.except(13)
+      end
     end
 
     def visible_sources
@@ -178,7 +170,7 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def visible_custom_sources
-      Account.current.ticket_source_from_cache.where(default: 0, deleted: 0)
+      Account.current.ticket_source_from_cache.select { |choice| !choice.default && !choice.deleted }
     end
 
     private
@@ -200,7 +192,7 @@ class Helpdesk::Source < Helpdesk::Choice
       end
 
       def default_records
-        Helpdesk::Source.ticket_sources.map do |ch|
+        default_ticket_sources.map do |ch|
           OpenStruct.new(name: ch[0],
                          account_choice_id: ch[2],
                          position: ch[2],

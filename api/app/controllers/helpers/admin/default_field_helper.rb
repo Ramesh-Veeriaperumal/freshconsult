@@ -49,7 +49,8 @@ module Admin::DefaultFieldHelper
     end
 
     def validate_source_choice_limit(record, choices)
-      custom_choices_map = current_account.ticket_source_from_cache.visible.custom.map { |i| [i.account_choice_id, i.deleted].flatten }.to_h
+      all_custom_choices = current_account.ticket_source_from_cache.select { |choice| !choice.default && !choice.deleted }
+      custom_choices_map = all_custom_choices.map { |i| [i.account_choice_id, i.deleted].flatten }.to_h
       new_non_deleted_choice_count = choices.count { |x| x[:id].blank? && x[:deleted].blank? }
       choices.each do |each_choice|
         next unless each_choice[:id]

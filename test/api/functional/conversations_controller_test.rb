@@ -24,11 +24,13 @@ class ConversationsControllerTest < ActionController::TestCase
     Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
     @twitter_handle = get_twitter_handle
     @default_stream = @twitter_handle.default_stream
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(Faker::Number.between(1, 999_999_999).to_s))
   end
 
   def teardown
     super
     Social::CustomTwitterWorker.unstub(:perform_async)
+    Twitter::REST::Client.any_instance.unstub(:user)
   end
 
   def wrap_cname(params)
@@ -475,7 +477,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_without_from_email_and_personalized_replies
-    @account.features.personalized_email_replies.create
+    @account.enable_setting(:personalized_email_replies)
     @account.reload
     Account.current.reload
     params_hash = reply_note_params_hash
@@ -490,7 +492,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_without_from_email
-    @account.features.personalized_email_replies.destroy
+    @account.disable_setting(:personalized_email_replies)
     @account.reload
     Account.current.reload
     params_hash = reply_note_params_hash
@@ -504,7 +506,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_from_address_personalized_replies
-    @account.features.personalized_email_replies.create
+    @account.enable_setting(:personalized_email_replies)
     @account.reload
     email_config = create_email_config
     params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)
@@ -517,7 +519,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_reply_with_from_address_without_personalized_replies
-    @account.features.personalized_email_replies.destroy
+    @account.disable_setting(:personalized_email_replies)
     @account.reload
     email_config = create_email_config
     params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)
@@ -1174,6 +1176,7 @@ class ConversationsControllerTest < ActionController::TestCase
 
   def test_twitter_reply_to_tweet_ticket_with_restricted_requester_screen_name
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
     ticket = create_twitter_ticket
     @account.launch(:twitter_public_api)
     params_hash = {
@@ -1194,6 +1197,7 @@ class ConversationsControllerTest < ActionController::TestCase
   ensure
     ticket.destroy
     @account.rollback(:twitter_public_api)
+    CustomRequestStore.store[:api_v2_request] = false
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
   end
 

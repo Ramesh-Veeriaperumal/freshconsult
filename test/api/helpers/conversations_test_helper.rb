@@ -65,7 +65,7 @@ module ConversationsTestHelper
   def private_note_pattern(expected_output, note)
     if expected_output[:from_email]
       email_config = @account.email_configs.where(reply_email: expected_output[:from_email]).first
-      expected_output[:from_email] = @account.features?(:personalized_email_replies) ? email_config.friendly_email_personalize(note.user.name) : email_config.friendly_email if email_config
+      expected_output[:from_email] = @account.personalized_email_replies_enabled? ? email_config.friendly_email_personalize(note.user.name) : email_config.friendly_email if email_config
     end
 
     response_pattern = note_pattern(expected_output, note).merge(deleted: (expected_output[:deleted] || note.deleted).to_s.to_bool,
@@ -289,7 +289,7 @@ module ConversationsTestHelper
       type: note.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !CustomRequestStore.store[:channel_api_request] ? twitter_requester_handle_id : twitter_user.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) ? twitter_requester_handle_id : twitter_user.twitter_id
     }
     tweet_hash[:stream_id] = note.tweet.stream_id if @channel_v2_api
     tweet_hash
@@ -325,7 +325,7 @@ module ConversationsTestHelper
   end
 
   def restrict_twitter_content?(note)
-    Account.current.twitter_api_compliance_enabled? && !CustomRequestStore.store[:private_api_request] && !CustomRequestStore.store[:channel_api_request] && note.incoming && note.tweet.present?
+    Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) && note.incoming && note.tweet.present?
   end
 
   def twitter_public_api_body_hash(body)
