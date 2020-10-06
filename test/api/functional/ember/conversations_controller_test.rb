@@ -664,7 +664,7 @@ module Ember
 
     def test_reply_without_from_email
       # Without personalized_email_replies
-      @account.features.personalized_email_replies.destroy
+      @account.disable_setting(:personalized_email_replies)
       @account.reload
       Account.current.reload
 
@@ -680,7 +680,7 @@ module Ember
 
     def test_reply_without_from_email_and_personalized_replies
       # WITH personalized_email_replies
-      @account.features.personalized_email_replies.create
+      @account.enable_setting(:personalized_email_replies)
       @account.reload
 
       Account.current.reload

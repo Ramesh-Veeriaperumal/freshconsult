@@ -4295,6 +4295,14 @@ en:
       oldest_top: You'll now see the oldest conversation on top.
       option1: Show newest on top
       option2: Show oldest on top
+
+    ticket_summary:
+        title: Ticket summary
+        helpnote: Adds a section on top of your tickets where agents can summarize conversations. <a href='https://support.freshdesk.com/en/support/solutions/articles/232562-give-your-team-more-context-with-the-summary-app-' target="_blank">Learn more</a>
+
+    freshchat_toggle:
+        title: Chat Support
+        helpnote: Allow agents to reach Freshdesk support via a chat widget in-product
     us: MONTH-DAY-YEAR
     gdpr_terms: 'By clicking on Accept , you agree to our'
     gdpr_terms_link: Terms
