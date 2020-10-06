@@ -3106,7 +3106,7 @@ module Ember
                   bad_request_error_pattern('channel_id', 'It should be a/an Positive Integer', code: :missing_field)])
     end
 
-    def test_reply_with_traffic_cop_invalid
+    def test_channel_reply_with_traffic_cop_invalid
       Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
       ticket = whatsapp_source_ticket
       reply = create_reply_note(ticket)
