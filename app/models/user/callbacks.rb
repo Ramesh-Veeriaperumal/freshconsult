@@ -34,6 +34,7 @@ class User < ActiveRecord::Base
   before_save :restrict_domain, if: :email_id_changed?
   before_save :backup_customer_id
   before_save :persist_updated_at
+  before_save :populate_or_update_twitter_requester_handle_id, on: %i[create update], if: :twitter_id_updated?
 
 
   publishable on: [:create, :update, :destroy], if: -> { !helpdesk_agent? || helpdesk_agent_changed? }
@@ -78,6 +79,34 @@ class User < ActiveRecord::Base
   def publish_agent_update_central_payload
     changes = model_changes.slice(:name, :email, :phone)
     agent.publish_update_central_payload(changes)
+  end
+
+  def populate_or_update_twitter_requester_handle_id
+    return if ignore_populate_or_update?
+
+    twitter_user_handle_id = fetch_twitter_user_handle_id
+    self.twitter_requester_handle_id = twitter_user_handle_id || nil
+  rescue StandardError => e
+    Rails.logger.error "Error while populate or update twitter_requester_handle_id account_id: #{Account.current.id} user_id: #{id} error: #{e.message} #{e.backtrace[0..10]}"
+  end
+
+  def ignore_populate_or_update?
+    transaction_include_action?(:create) && twitter_id && twitter_requester_handle_id
+  end
+
+  def twitter_id_updated?
+    Account.current.twitter_api_compliance_enabled? && changes.include?('twitter_id')
+  end
+
+  def fetch_twitter_user_handle_id
+    twitter_handle = Account.current.twitter_handles.active.last
+    return nil unless twitter_handle && twitter_id
+
+    twitter = TwitterWrapper.new(twitter_handle).get_twitter
+    twitter.user(twitter_id).id.to_s
+  rescue Twitter::Error => e
+    Rails.logger.error "Twitter REST API Exception: #{Account.current.id} user_id: #{id} twitter_id: #{twitter_id} Twitter::Error: #{e.message}}"
+    nil
   end
 
   def tag_update_model_changes

@@ -48,7 +48,13 @@ module Ember
         group_ids_hash = current_account.agent_groups_from_cache.each_with_object ({}) do |ar,hash|
             hash[ar.group_id]=true if ar.user_id==api_current_user.id 
         end   
-        current_account.groups_from_cache.select { |ar| group_ids_hash[ar.id] }   
+        if params[:group_type].present? && params[:group_type] == GroupConstants::SUPPORT_GROUP_NAME
+          current_account.support_agent_groups_from_cache.select { |ar| group_ids_hash[ar.id] }
+        elsif params[:group_type].present? && params[:group_type] == GroupConstants::FIELD_GROUP_NAME
+          current_account.field_agent_groups_from_cache.select { |ar| group_ids_hash[ar.id] }
+        else
+          current_account.groups_from_cache.select { |ar| group_ids_hash[ar.id] }
+        end
       end
 
       def decorator_options

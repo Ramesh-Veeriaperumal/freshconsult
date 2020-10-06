@@ -60,8 +60,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     total_time_worked = ticket_states.on_state_time.to_i
     business_calendar = Group.default_business_calendar(group)
     set_sla_calculation_time_at_with_zone if update_sla
-    self.due_by = sla_detail.calculate_due_by(created_time, sla_calculation_time, total_time_worked, business_calendar) if calculate_dueby_after_breached?
-    self.frDueBy = sla_detail.calculate_frDue_by(created_time, sla_calculation_time, total_time_worked, business_calendar) if calculate_fr_dueby? && calculate_fr_dueby_after_breached?
+    self.due_by = sla_detail.calculate_due_by(created_time, sla_calculation_time, total_time_worked, business_calendar)
+    self.frDueBy = sla_detail.calculate_frDue_by(created_time, sla_calculation_time, total_time_worked, business_calendar) if calculate_fr_dueby?
   end
 
   def set_nr_dueBy(sla_detail = nil)
@@ -74,14 +74,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     set_sla_calculation_time_at_with_zone if update_sla
     self.nr_due_by = sla_detail.calculate_nr_dueBy(created_time, sla_calculation_time, total_time_worked, business_calendar)
     Rails.logger.debug "Finished nr_due_by calculation :: Nr_due_by ::#{self.nr_due_by}"
-  end
-
-  def calculate_dueby_after_breached?
-    common_updation_condition || (sla_timer_stopped_at.present? && sla_timer_stopped_at < due_by)
-  end
-
-  def calculate_fr_dueby_after_breached?
-    common_updation_condition || (sla_timer_stopped_at.present? && sla_timer_stopped_at < frDueBy)
   end
 
   def calculate_fr_dueby?

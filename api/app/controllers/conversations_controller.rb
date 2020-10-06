@@ -308,7 +308,7 @@ class ConversationsController < ApiApplicationController
     end
 
     def fetch_delegation_hash
-      respond_to?("#{Account.current.helpdesk_sources.ticket_source_names_by_key[@ticket[:source]]}_delegation_hash".to_sym, true) ? safe_send("#{Account.current.helpdesk_sources.ticket_source_names_by_key[@ticket[:source]]}_delegation_hash") : { notable: @ticket }
+      fb_public_api? ? facebook_source_delegation_hash : twitter_source_delegation_hash
     end
 
     def facebook_source_delegation_hash
@@ -347,7 +347,7 @@ class ConversationsController < ApiApplicationController
     end
 
     def fetch_validation_hash
-      respond_to?("#{Account.current.helpdesk_sources.ticket_source_names_by_key[@ticket[:source]]}_validation_hash".to_sym, true) ? safe_send("#{Account.current.helpdesk_sources.ticket_source_names_by_key[@ticket[:source]]}_validation_hash") : params[cname]
+      fb_public_api? ? facebook_source_validation_hash : twitter_source_validation_hash
     end
 
     def build_fb_association

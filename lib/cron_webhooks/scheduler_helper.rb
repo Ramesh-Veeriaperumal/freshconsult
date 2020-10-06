@@ -16,6 +16,34 @@ module CronWebhooks::SchedulerHelper
     end
   end
 
+  def call_cron_api(account, name, task_name)
+    cron_api_worker = 'CronWebhooks::CronApiWebhookWorker'.constantize
+    args = { 'actual_domain' => account.full_domain, 'name' => name, 'account_type' => task_name }
+    Rails.logger.info "Cron API worker initiated for #{account.id} -> #{name} : args: #{args}"
+    jid = cron_api_worker.perform_async(args)
+    Rails.logger.info "Cron API worker Enqueued jobid: #{jid}"
+  end
+
+  def handle_supervisor(account, name, task_name, class_constant)
+    if account.supervisor_enabled? && account.supervisor_rules.count.positive?
+      if account.launched?(:cron_api_trigger)
+        call_cron_api(account, name, task_name)
+      else
+        class_constant.perform_async
+      end
+    end
+  end
+
+  def handle_sla(account, name, task_name, class_constant)
+    if account.sla_management_enabled?
+      if Account.current.launched?(:cron_api_trigger)
+        call_cron_api(account, name, task_name)
+      else
+        class_constant.perform_async
+      end
+    end
+  end
+
   def enqueue_automation(name, task_name, premium_constant = 'non_premium_accounts')
     automation = case name
                  when 'supervisor'
@@ -31,36 +59,31 @@ module CronWebhooks::SchedulerHelper
     queue_name = class_constant.get_sidekiq_options['queue']
     Rails.logger.info "::::queue_name:::#{queue_name}"
     premium_constant = 'premium_accounts' if task_name.eql?('premium')
-
     if empty_queue?(queue_name)
       Rails.logger.info "rake=#{task_name} #{name}"
       accounts_queued = 0
       Sharding.run_on_all_slaves do
-        Account.safe_send(automation[task_name][:account_method]).current_pod.safe_send(premium_constant).each do |account|
-          begin
-            account.make_current
-            if scheduler_semaphore_exists?(account.id, class_constant)
-              Rails.logger.info "[#{Time.now.utc}]It should be skipped since #{name} job for this account_id = #{account.id} has been already enqueued. Semaphore Lock Exists"
-            else
-              set_scheduler_semaphore(account.id, class_constant)
-            end
-            if name.eql?('supervisor')
+        Account.safe_send(automation[task_name][:account_method]).current_pod.safe_send(premium_constant).find_in_batches do |accounts|
+          accounts.each do |account|
+            begin
+              account.make_current
               account_shard_name = ShardMapping.find_by_account_id(account.id).shard_name
               current_shard_name = ActiveRecord::Base.current_shard_selection.shard.to_s
               if account_shard_name != current_shard_name
-                puts "Skipping supervisor for account #{account.id} #{account.full_domain} #{account_shard_name} #{current_shard_name}"
+                Rails.logger.info "Skipping #{name} automation for account #{account.id} #{account.full_domain} #{account_shard_name} #{current_shard_name}"
                 next
               end
-              class_constant.perform_async if account.supervisor_enabled? &&
-                                              account.supervisor_rules.count > 0
-            else
-              class_constant.perform_async if account.sla_management_enabled?
+              if name.eql?('supervisor')
+                handle_supervisor(account, name, task_name, class_constant)
+              else
+                handle_sla(account, name, task_name, class_constant)
+              end
+              accounts_queued += 1
+            rescue StandardError => e
+              NewRelic::Agent.notice_error(e)
+            ensure
+              Account.reset_current_account
             end
-            accounts_queued += 1
-          rescue StandardError => e
-            NewRelic::Agent.notice_error(e)
-          ensure
-            Account.reset_current_account
           end
         end
       end

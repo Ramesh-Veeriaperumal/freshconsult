@@ -19,7 +19,7 @@
 
                 </div>
                 <div class="agent-details pull-left">
-                    <a target="_blank" href="/users/<%= data.user[i] %>"> <%= DataStore.get('agent').findById(parseInt(data.user[i])).name %> </a>
+                    <a target="_blank" href="/a/admin/agents/<%= data.user[i] %>"> <%= DataStore.get('agent').findById(parseInt(data.user[i])).name %> </a>
                 </div>
             </div>
     <% } %>
