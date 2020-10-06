@@ -24,7 +24,7 @@ module Admin::SkillConstants
 
   LEVELS = %i[level2 level3].freeze
 
-  SOURCE_IDS = Helpdesk::Source.ticket_source_token_by_key.keys.freeze
+  SOURCE_IDS = Helpdesk::Source.default_ticket_source_token_by_key.keys.freeze
 
   ANY_NONE = ['', '--'].freeze
 
