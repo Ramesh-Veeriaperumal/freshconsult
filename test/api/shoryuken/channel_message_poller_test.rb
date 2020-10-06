@@ -20,6 +20,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
   def teardown
     cleanup_twitter_handles(@account)
     Faraday::Connection.any_instance.unstub(:post)
+    User.any_instance.unstub(:fetch_twitter_user_handle_id)
   end
 
   def setup
@@ -31,6 +32,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
     @fb_ticket = create_ticket_from_fb_post
     @fb_page = @fb_ticket.fb_post.facebook_page
     Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 202))
+    User.any_instance.stubs(:fetch_twitter_user_handle_id).returns(nil)
   end
 
   def test_twitter_dm_convert_as_ticket

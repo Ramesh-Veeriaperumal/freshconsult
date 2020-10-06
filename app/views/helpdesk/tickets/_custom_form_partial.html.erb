@@ -13,7 +13,7 @@
 	<%when "Source" then%>
 		<li class="dropdown">
   			<%= f.label :source, t('ticket.source') %>
- 			<%= f.select :source, Account.current.helpdesk_sources.ticket_source_options, :class => field_class %>
+ 			<%= f.select :source, Account.current.helpdesk_sources.default_ticket_sources.map { |i| [i[1], i[2]] }, :class => field_class %>
         </li>
 		
 	<%when "Type" then%>

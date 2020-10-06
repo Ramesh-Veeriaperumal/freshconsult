@@ -242,7 +242,7 @@ module Helpdesk::TicketsHelper
 
     o << select_tag(
       'search-source',
-      options_for_select(current_account.helpdesk_sources.ticket_source_options, params[:v].to_i),
+      options_for_select(current_account.helpdesk_sources.default_ticket_sources.map { |i| [i[1], i[2]] }, params[:v].to_i),
       html)
 
     o << select_tag(

@@ -20,6 +20,30 @@ class CronWebhook::WebHooksController < ApiApplicationController
     Rails.logger.info "Enqueing done: #{class_name}" if dry_run_mode?(params[:mode])
   end
 
+  def trigger_cron_api
+    return render_request_error :missing_params, 400 if params['account_type'].blank? || params['name'].blank?
+    emptytask = {}
+    name = params['name']
+    automation = case name
+                 when 'supervisor'
+                   SUPERVISOR_TASKS
+                 when 'sla_reminder'
+                   SLA_REMINDER_TASKS
+                 when 'sla_escalation'
+                   SLA_TASKS
+                 else
+                   emptytask
+                 end
+    account_type = params['account_type']
+
+    class_name = automation[account_type][:class_name] unless automation[account_type].nil?
+    class_constant = class_name.constantize unless class_name.nil?
+    return render_request_error :missing_params, 400 if class_constant.nil?
+
+    @jobid = class_constant.perform_async unless class_constant.nil?
+    Rails.logger.info "Jobid generated trigger_cron_api action: #{@jobid}"
+  end
+
   private
 
     def constants_class

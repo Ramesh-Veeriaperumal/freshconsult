@@ -365,3 +365,4 @@
     - quality_management_system
     - update_agent_status_availability
     - central_publish_resync
+    - cron_api_triggers
