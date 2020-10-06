@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :fuzzy_search, :delete_trash_daily,
-    :allow_wildcard_ticket_create, :requester_privilege, :disable_archive,
+    :requester_privilege, :disable_archive,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
@@ -81,7 +81,7 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
-    :allow_wildcard_ticket_create, :supervisor_contact_field, :whatsapp_channel, :feedback_widget_captcha,
+    :supervisor_contact_field, :whatsapp_channel, :feedback_widget_captcha,
     :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
@@ -93,7 +93,6 @@ class Account < ActiveRecord::Base
     :filter_factory,
     :disable_supress_logs,
     :spam_blacklist_feature,
-    :allow_wildcard_ticket_create,
     :bypass_signup_captcha,
     :supervisor_contact_field,
     :feedback_widget_captcha,
