@@ -68,13 +68,13 @@ module Ember::Search
     end
 
     def test_result_with_special_enabled
-      Account.current.launch(:es_v2_splqueries)
+      Account.current.enable_setting(:es_v2_splqueries)
       templates = MQUERY_TEMPLATES
       post :search_results, construct_params(version: PRIVATE_VERSION, context: SPOTLIGHT, term: Faker::Lorem.word, limit: 3, templates: templates)
       response = parse_response @response.body
       assert(templates.all? { |d| response.key?(d) })
     ensure
-      Account.current.rollback(:es_v2_splqueries)
+      Account.current.disable_setting(:es_v2_splqueries)
     end
 
     # Commented for Hack for forums, to be used when forums feature has been migrated to bitmap
@@ -156,13 +156,13 @@ module Ember::Search
     end
 
     def test_result_get_with_special_enabled
-      Account.current.launch(:es_v2_splqueries)
+      Account.current.enable_setting(:es_v2_splqueries)
       templates = MQUERY_TEMPLATES
       get :search_results, controller_params(version: PRIVATE_VERSION, context: SPOTLIGHT, term: Faker::Lorem.word, limit: 3, templates: templates)
       response = parse_response @response.body
       assert(templates.all? { |d| response.key?(d) })
     ensure
-      Account.current.rollback(:es_v2_splqueries)
+      Account.current.disable_setting(:es_v2_splqueries)
     end
 
     def test_result_get_without_solutions_privilege

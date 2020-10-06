@@ -60,6 +60,10 @@ class SendGridDomainUpdatesTest < ActionView::TestCase
       1
     end
 
+    def enable_setting(_params = nil)
+      true
+    end
+
     def subscription(_params = nil)
       Attr.new
     end

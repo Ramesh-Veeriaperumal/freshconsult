@@ -61,7 +61,6 @@ module HelpdeskReports
         performance_distribution: VIEW_HELPER_NEW_REPORTS,
         customer_report: VIEW_HELPER_NEW_REPORTS,
         chat_summary: ['ChatHelper'],
-        phone_summary: ['Reports::Freshfone::SummaryReportsHelper'],
         timesheet_reports: ['ApplicationHelper', 'Reports::TimesheetReport', 'Reports::TimesheetReportsHelper']
       }
 

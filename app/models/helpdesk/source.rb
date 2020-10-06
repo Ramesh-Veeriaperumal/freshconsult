@@ -106,7 +106,11 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def api_unpermitted_sources_for_update
-      API_UPDATE_EXCLUDED_VALUES
+      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
+        API_UPDATE_EXCLUDED_VALUES
+      else
+        API_UPDATE_EXCLUDED_VALUES - [13]
+      end
     end
 
     def note_exclude_sources

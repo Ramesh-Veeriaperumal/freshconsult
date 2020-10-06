@@ -224,7 +224,7 @@ module Helpdesk::TicketFilterMethods
       filter = TicketsFilter.filter(filter(selector), User.current, Account.current.tickets.permissible(User.current))
       Sharding.run_on_slave do
         if unresolved
-          if Account.current.launched?(:force_index_tickets)
+          if Account.current.force_index_tickets_enabled?
             filter.use_index("index_helpdesk_tickets_status_and_account_id").unresolved.count
           else
             filter.unresolved.count

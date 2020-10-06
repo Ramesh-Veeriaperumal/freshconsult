@@ -624,6 +624,69 @@ class ChannelMessagePollerTest < ActionView::TestCase
     end
   end
 
+  def test_twitter_dm_convert_as_ticket_when_requester_twitter_id_mismatch
+    user = create_twitter_user
+    payload = {
+      "subject": SecureRandom.uuid,
+      "description": Faker::Lorem.characters(100),
+      "requester_id": user.id,
+      "tweet_type": 'dm',
+      "tweet_id": Faker::Number.between(1, 999_999_999).to_s,
+      "contact_twitter_user_id": Faker::Number.between(1, 999_999_999).to_s
+    }
+    options = {
+      twitter_screen_name: Faker::Lorem.characters(10)
+    }
+    command_payload = sample_twitter_create_ticket_command(@account, @handle, @stream, payload.merge!(options))
+    push_to_channel(command_payload)
+
+    ticket = @account.tickets.where(subject: payload[:subject]).first
+    tweet = ticket.tweet
+    new_user = @account.all_contacts.find_by_twitter_id(options[:twitter_screen_name])
+
+    assert_not_nil tweet
+    assert_equal tweet[:tweetable_id], ticket.id
+    assert_equal ticket.description, payload[:description]
+    assert_equal tweet.tweet_type, 'dm'
+    assert_not_equal ticket.requester_id, user.id
+    assert_equal new_user.id, ticket.requester_id
+  end
+
+  def test_twitter_dm_convert_as_ticket_for_create_note_request_when_requester_twitter_id_mismatch
+    user = create_twitter_user
+    subject = SecureRandom.uuid
+    payload = {
+      "body": Faker::Lorem.characters(100),
+      "user_id": user.id,
+      "ticket_id": 1,
+      "tweet_type": 'dm',
+      "tweet_id": SecureRandom.hex,
+      "contact_twitter_user_id": Faker::Number.between(1, 999_999_999).to_s
+    }
+    options = {
+      twitter_screen_name: Faker::Lorem.characters(10)
+    }
+    command_payload = sample_twitter_create_note_command(@account, @handle, @stream, payload.merge!(options))
+
+    command_payload[:payload][:data][:ticket_properties] = {
+      ticket_subject: subject,
+      ticket_priority: 1,
+      ticket_status: 2
+    }
+    push_to_channel(command_payload)
+
+    ticket = @account.tickets.where(subject: subject).first
+    tweet = ticket.tweet
+    new_user = @account.all_contacts.find_by_twitter_id(options[:twitter_screen_name])
+
+    assert_not_nil tweet
+    assert_equal tweet[:tweetable_id], ticket.id
+    assert_equal ticket.description, payload[:body]
+    assert_equal tweet.tweet_type, 'dm'
+    assert_not_equal ticket.requester_id, user.id
+    assert_equal new_user.id, ticket.requester_id
+  end
+
   private
 
     def twitter_create_ticket_command(tweet_type)
