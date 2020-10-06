@@ -14,7 +14,7 @@ class Channel::MessageWorker < BaseWorker
   def perform(args, _msg_id = nil)
     args.symbolize_keys!
     post_message(User.current, args)
-  rescue => e
+  rescue StandardError => e
     Rails.logger.error "Exception in sending messages to Multiplexer \
       service: acc_id: #{Account.current.id}, user_id: #{User.current.id}, \
       Exception: #{e.message}, #{e.backtrace}"

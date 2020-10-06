@@ -3,7 +3,7 @@
 module ChannelIntegrations::Multiplexer
   module MessageService
     include Iam::AuthToken
-    MULTIPLEXER_MESSAGE_API_PATH = '/api/v2/channels/%{channel_id}/messages'.freeze
+    MULTIPLEXER_MESSAGE_API_PATH = '/api/v2/channels/%{channel_id}/messages'
     TIMEOUT_IN_SEC = 3
 
     def post_message(user, params)

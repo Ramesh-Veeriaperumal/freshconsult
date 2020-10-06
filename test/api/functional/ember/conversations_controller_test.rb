@@ -36,6 +36,7 @@ module Ember
       Account.current.features.es_v2_writes.destroy
       Account.find(Account.current.id).make_current
       Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+      Account.current.launch :whatsapp_ticket_source
       Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
@@ -3087,6 +3088,22 @@ module Ember
       match_json([bad_request_error_pattern('reply_ticket_id', :invalid_ticket_reply)])
     end
 
+    def test_channel_reply_with_valid_params
+      params_hash = { body: Faker::Lorem.paragraph, channel_id: 889712, profile_unique_id: "+348989888" }
+      post :channel_reply, construct_params({ version: 'private', id: whatsapp_source_ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_channel_reply_to_throw_validaiton_error
+      params_hash = { body: Faker::Lorem.paragraph }
+      post :channel_reply, construct_params({ version: 'private', id: whatsapp_source_ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('profile_unique_id', 'It should be a/an String', code: :missing_field),
+                  bad_request_error_pattern('channel_id', 'It should be a/an Positive Integer', code: :missing_field)])
+    end
+
     private
 
       def archive_note_payload(note, payload)
@@ -3098,6 +3115,12 @@ module Ember
           cloud_files: []
         })
         payload
+      end
+
+      def whatsapp_source_ticket
+        @whatsapp_source_ticket ||= create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
+                                                channel_message_id: 'sdl892dk',
+                                                source: Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2])
       end
   end
 end
