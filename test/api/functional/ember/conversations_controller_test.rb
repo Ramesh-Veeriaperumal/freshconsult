@@ -3106,6 +3106,19 @@ module Ember
                   bad_request_error_pattern('channel_id', 'It should be a/an Positive Integer', code: :missing_field)])
     end
 
+    def test_reply_with_traffic_cop_invalid
+      Account.any_instance.stubs(:traffic_cop_enabled?).returns(true)
+      ticket = whatsapp_source_ticket
+      reply = create_reply_note(ticket)
+      last_note_id = reply.id
+      params_hash = { body: Faker::Lorem.paragraph, channel_id: 889712, profile_unique_id: "+348989888", last_note_id: last_note_id-1 }
+      post :channel_reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
+    ensure
+      Account.any_instance.unstub(:traffic_cop_enabled?)
+    end
+
     private
 
       def archive_note_payload(note, payload)
