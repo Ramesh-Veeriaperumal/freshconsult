@@ -68,7 +68,7 @@ class PrecreatedSignup < ActivePresenter::Base
     freshid_organisation = JSON.parse(organisation.to_json, object_class: OpenStruct)
     freshid_organisation.alternate_domain = nil
     account.organisation = Organisation.find_or_create_from_freshid_org(freshid_organisation)
-    fid_user = Freshid::V2::Models::User.find_by_email(freshid_user["email"], account.organisation.domain)
+    fid_user = Freshid::V2::Models::User.find_by_email(freshid_user['email'], account.organisation.domain)
     user.sync_profile_from_freshid(fid_user) if fid_user.present?
   end
 
