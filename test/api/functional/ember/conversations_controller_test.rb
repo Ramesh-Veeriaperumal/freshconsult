@@ -3091,7 +3091,7 @@ module Ember
     end
 
     def test_channel_reply_with_valid_params
-      params_hash = { body: Faker::Lorem.paragraph, channel_id: 889712, profile_unique_id: "+348989888" }
+      params_hash = { body: Faker::Lorem.paragraph, channel_id: 889712, profile_unique_id: '+348989888' }
       post :channel_reply, construct_params({ version: 'private', id: whatsapp_source_ticket.display_id }, params_hash)
       assert_response 201
       latest_note = Account.current.notes.last
@@ -3111,8 +3111,8 @@ module Ember
       ticket = whatsapp_source_ticket
       reply = create_reply_note(ticket)
       last_note_id = reply.id
-      params_hash = { body: Faker::Lorem.paragraph, channel_id: 889712, profile_unique_id: "+348989888", last_note_id: last_note_id-1 }
-      post :channel_reply, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      params_hash = { body: Faker::Lorem.paragraph, channel_id: 88, profile_unique_id: '+348989888', last_note_id: last_note_id - 1 }
+      post :channel_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
     ensure
@@ -3134,8 +3134,8 @@ module Ember
 
       def whatsapp_source_ticket
         @whatsapp_source_ticket ||= create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
-                                                channel_message_id: 'sdl892dk',
-                                                source: Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2])
+                                                  channel_message_id: 'sdl892dk',
+                                                  source: Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2])
       end
   end
 end
