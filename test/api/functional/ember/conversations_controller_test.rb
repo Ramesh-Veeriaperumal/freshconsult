@@ -43,6 +43,7 @@ module Ember
       Account.current.ticket_fields.custom_fields.each do |tf|
         tf.destroy if (tf.name =~ /^[0-9]/).try(:zero?)
       end
+      Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(Faker::Number.between(1, 999_999_999).to_s))
     end
 
     def teardown
@@ -50,6 +51,7 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
       Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
+      Twitter::REST::Client.any_instance.unstub(:user)
     end
 
     def wrap_cname(params)
@@ -665,7 +667,7 @@ module Ember
 
     def test_reply_without_from_email
       # Without personalized_email_replies
-      @account.features.personalized_email_replies.destroy
+      @account.disable_setting(:personalized_email_replies)
       @account.reload
       Account.current.reload
 
@@ -681,7 +683,7 @@ module Ember
 
     def test_reply_without_from_email_and_personalized_replies
       # WITH personalized_email_replies
-      @account.features.personalized_email_replies.create
+      @account.enable_setting(:personalized_email_replies)
       @account.reload
 
       Account.current.reload

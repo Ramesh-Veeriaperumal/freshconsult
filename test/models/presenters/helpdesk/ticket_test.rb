@@ -17,6 +17,7 @@ class TicketTest < ActiveSupport::TestCase
   include PrivilegesHelper
   include UsersTestHelper
   include TestCaseMethods
+  include ModelsUsersTestHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
@@ -59,6 +60,9 @@ class TicketTest < ActiveSupport::TestCase
     CentralPublishWorker::ActiveTicketWorker.jobs.clear
     t = create_ticket(ticket_params_hash)
     assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.first['args'][0]
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
   end
 
   def test_central_publish_payload
@@ -401,13 +405,19 @@ class TicketTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_payload_with_source_additional_info_twitter
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
     t = create_twitter_ticket
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.last['args'][0]
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
   end
 
   def test_central_publish_payload_with_source_additional_info_facebook
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
     t = create_fb_ticket
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.last['args'][0]
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
   end
@@ -456,6 +466,16 @@ class TicketTest < ActiveSupport::TestCase
     job = CentralPublishWorker::ActiveTicketWorker.jobs.first
     assert_equal 'ticket_update', job['args'][0]
     assert_equal({ 'agent_reply_count' => [nil, 1] }, job['args'][1]['model_changes'])
+  end
+
+  def test_central_publish_ticket_manual_publish
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    ticket.manual_publish_to_central(nil, :update, {})
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.first
+    assert_equal false, job['args'][1]['event_info']['app_update']
   end
 
   def test_ticket_state_worker_with_response_time_null_fix_disabled
@@ -939,5 +959,77 @@ class TicketTest < ActiveSupport::TestCase
         cleanup_fsm
       end
     end
+  end
+
+  def test_central_publish_ticket_create_with_email_as_source
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    CentralPublishWorker::UserWorker.jobs.clear
+    ticket = create_ticket(source: 1)
+    ticket_payload = ticket.central_publish_payload.to_json
+    contact = ticket.requester
+    contact_payload = contact.central_publish_payload.to_json
+
+    assert_equal 1, ticket.source
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.first['args'][0]
+    assert_equal 2, CentralPublishWorker::UserWorker.jobs.size
+    assert_equal 'contact_create', CentralPublishWorker::UserWorker.jobs.first['args'][0]
+    assert_equal 'contact_update', CentralPublishWorker::UserWorker.jobs.last['args'][0]
+    ticket_payload.must_match_json_expression(cp_ticket_pattern(ticket))
+    contact_payload.must_match_json_expression(central_publish_user_pattern(contact))
+  end
+
+  def test_central_publish_ticket_create_with_forum_as_source
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    ticket = create_ticket(source: 4)
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.first['args'][0]
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+  end
+
+  def test_central_publish_ticket_create_with_feedback_wideget_as_source
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    ticket = create_ticket(source: 8)
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.first['args'][0]
+    payload = ticket.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+  end
+
+  def test_central_publish_ticket_create_with_non_rr_group
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash, group)
+    payload = ticket.central_publish_payload.to_json
+
+    assert_equal group, ticket.group
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.last['args'][0]
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+  end
+
+  def test_central_publish_ticket_create_with_rr_group
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    group = create_group_with_agents(@account, agent_list: [@agent.id], ticket_assign_type: 1)
+    ticket = create_ticket(ticket_params_hash, group)
+    payload = ticket.central_publish_payload.to_json
+
+    assert_equal group, ticket.group
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.last['args'][0]
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
+  end
+
+  def test_central_publish_ticket_create_with_lbrr_group
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    group = create_group_with_agents(@account, agent_list: [@agent.id], ticket_assign_type: 12)
+    ticket = create_ticket(ticket_params_hash, group)
+    payload = ticket.central_publish_payload.to_json
+
+    assert_equal group, ticket.group
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.last['args'][0]
+    payload.must_match_json_expression(cp_ticket_pattern(ticket))
   end
 end

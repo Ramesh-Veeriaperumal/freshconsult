@@ -76,7 +76,7 @@ module Cache::Memcache::Account
   end
 
   def ticket_source_from_cache
-    fetch_from_cache(ticket_source_memcache_key) { helpdesk_sources }
+    fetch_from_cache(ticket_source_memcache_key) { Account.current.helpdesk_sources.all }
   end
 
   def clear_ticket_source_from_cache
@@ -215,6 +215,13 @@ module Cache::Memcache::Account
     @support_agent_groups_from_cache ||= begin
       key = support_agent_groups_memcache_key
       MemcacheKeys.fetch(key) { self.groups.support_agent_groups }
+    end
+  end
+
+  def field_agent_groups_from_cache
+    @field_agent_groups_from_cache ||= begin
+      key = field_agent_groups_memcache_key
+      MemcacheKeys.fetch(key) { groups.field_agent_groups }
     end
   end
 
@@ -870,6 +877,10 @@ module Cache::Memcache::Account
 
     def support_agent_groups_memcache_key
       ACCOUNT_SUPPORT_AGENT_GROUPS % { :account_id => self.id }
+    end
+
+    def field_agent_groups_memcache_key
+      format(ACCOUNT_FIELD_AGENT_GROUPS, account_id: id)
     end
 
     def agent_groups_memcache_key

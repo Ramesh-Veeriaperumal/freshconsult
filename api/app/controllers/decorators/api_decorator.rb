@@ -34,6 +34,10 @@ class ApiDecorator
     CustomRequestStore.read(:channel_api_request)
   end
 
+  def public_v2_api?
+    CustomRequestStore.read(:api_v2_request)
+  end
+
   def format_date(value, utc_format = false)
     return utc_format ? value.utc : value.strftime('%F') if value.respond_to?(:utc)
     value

@@ -2,17 +2,37 @@ settings:
   :untitled_setting_1:
     default: false
     internal: false
-    feature_dependency: :untitled_feature_3_dependency_toggle # from blossom plan.Rename to actual feature
-  :untitled_setting_2:
+    feature_dependency: :basic_settings_feature
+  :branding:
     default: true
-    internal: true
-    feature_dependency: :untitled_feature_1_dependency_toggle
+    internal: false
+    feature_dependency: :branding_feature
   :untitled_setting_3:
     default: true
     internal: false
     feature_dependency: :untitled_feature_2_dependency_toggle # from estate plan.Rename to actual feature
   :untitled_setting_4:
     default: true
+    internal: false
+    feature_dependency: :basic_settings_feature
+  :skip_invoice_due_warning:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :personalized_email_replies:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
+  :compose_email:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
+  :reply_to_based_tickets:
+    default: true
+    internal: false
+    feature_dependency: :basic_settings_feature
+  :disable_agent_forward:
+    default: false
     internal: false
     feature_dependency: :basic_settings_feature
   :fetch_ticket_from_ref_first:
@@ -43,6 +63,10 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
+  :sort_by_customer_response:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :open_forums:
     default: false
     internal: false
@@ -51,6 +75,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :forums
+  :kb_allow_base64_images:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :moderate_posts_with_links:
     default: true
     internal: false
@@ -63,3 +91,15 @@ settings:
     default: false
     internal: false
     feature_dependency: :multi_product
+  :ticket_summary:
+    default: false
+    internal: false
+    feature_dependency: :ticket_summary_feature
+  :disable_freshchat:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
+  :cascade_dispatcher:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature

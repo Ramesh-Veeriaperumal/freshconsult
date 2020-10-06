@@ -311,12 +311,12 @@
       :reports_85: 307
       :reports_86: 308
       :reports_87: 309
-      :reports_88: 310
+      :spam_blacklist_feature: 310
       :filter_factory: 311
       :new_es_api: 312
-      :untitled_feature_3_dependency_toggle: 313
+      :ticket_summary_feature: 313
       :basic_settings_feature: 314
-      :untitled_feature_1_dependency_toggle: 315
+      :branding_feature: 315
       :untitled_feature_2_dependency_toggle: 316
       :untitled_setting_1: 317
       :untitled_setting_2: 318
@@ -421,9 +421,9 @@
       :force_index_tickets: 417
       :es_v2_splqueries: 418
       :disable_emails: 419
+      :custom_product_notification: 420
 :selectable_features:
   :redis_display_id: true
-  :branding: true
   :es_v2_writes: true
   :gamification_enable: false
   :parent_child_infra: false
@@ -440,16 +440,12 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
-  :personalized_email_replies: false
-  :reply_to_based_tickets: true
-  :disable_agent_forward: false
-  :compose_email: false
   :enable_multilingual: false
   :archive_tickets: false
   :call_quality_metrics: false
-  :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :google_signin: true
+  :spam_blacklist_feature: false
   :twitter_signin: true
   :facebook_signin: true
   :captcha: true
@@ -470,7 +466,6 @@
   :report_field_regenerate: false
   :saml_old_issuer: false
   :es_multilang_solutions: false
-  :sort_by_customer_response: false
   :saml_unspecified_nameid: false
   :euc_hide_agent_metrics: false
   :single_session_per_user: false
@@ -491,17 +486,15 @@
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
   :location_tagging: false
-  :kb_allow_base64_images: false
   :solutions_agent_metrics: false
   :disable_supress_logs: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
-  :skip_invoice_due_warning: false
   :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
-  :disable_freshchat: false
+  :custom_product_notification: false
   :feedback_widget_captcha: false
   :skip_portal_cname_chk: false
   :disable_archive: false

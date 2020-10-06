@@ -72,8 +72,8 @@
       - :sla_reminder_automation
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
-      - :untitled_feature_3_dependency_toggle
+      - :branding_feature
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_17
@@ -234,8 +234,8 @@
       - :advanced_article_toolbar_options
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
-      - :untitled_feature_3_dependency_toggle
+      - :branding_feature
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_19
@@ -454,8 +454,8 @@
       - :field_service_management_toggle
       - :advanced_freshcaller
       - :custom_ssl
-      - :untitled_feature_1_dependency_toggle
-      - :untitled_feature_3_dependency_toggle
+      - :branding_feature
+      - :ticket_summary_feature
       - :undo_send
     :inherits:
       - :sprout_jan_20
