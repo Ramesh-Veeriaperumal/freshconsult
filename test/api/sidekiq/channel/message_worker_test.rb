@@ -19,7 +19,7 @@ class MessageWorkerTest < ActionView::TestCase
   end
 
   def test_message_worker_to_post_message_successfully
-    Faraday::Connection.any_instance.stubs(:post).returns(Faraday::Response.new(status: 200))
+    Faraday::Request::Retry.any_instance.stubs(:call).returns(Faraday::Response.new(status: 200))
     Channel::MessageWorker.jobs.clear
     Sidekiq::Testing.inline! do
       args = { body: Faker::Lorem.paragraph, channel_id: 12, profile_unique_id: '+2389238' }
@@ -27,7 +27,7 @@ class MessageWorkerTest < ActionView::TestCase
     end
     assert_equal 0, Channel::MessageWorker.jobs.size
   ensure
-    Faraday::Connection.any_instance.unstub(:post)
+    Faraday::Request::Retry.any_instance.unstub(:call)
   end
 
   def test_message_worker_to_throw_error
