@@ -111,6 +111,10 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
       []
     end
 
+    def sort_by_customer_response_enabled?
+      false
+    end
+
     def sla_management_enabled?
       false
     end

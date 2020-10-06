@@ -156,6 +156,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/flow"
     resource :'ember/omni_channel', only: [:index]
     resource :'admin/group', only: [:show, :index, :update]
+    resource :api_role, only: [:index, :show]
+    resource :api_business_hour, :only => [:index, :show]
+    resource :"admin/groups/agent", only: [:index]
   end
 
   delete_ticket do

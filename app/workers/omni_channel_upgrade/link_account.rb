@@ -16,8 +16,6 @@ class OmniChannelUpgrade::LinkAccount < BaseWorker
     link_params = args[:params]
     performer_id = args[:performer_id]
     link_accounts(account, product_name, link_params)
-    # Since the freshcaller agent sync requires account to be moved to bundle, syncing freshcaller agents here
-    schedule_agent_sync_callback(performer_id, FRESHCALLER) if product_name == FRESHCALLER
   rescue StandardError => e
     Rails.logger.error "Error while updating access token for product #{product_name} Account ID: #{account.id} Exception: #{e.message} :: #{e.backtrace[0..20].inspect}"
     NewRelic::Agent.notice_error(e, account_id: Account.current.id, args: args)

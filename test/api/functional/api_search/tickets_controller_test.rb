@@ -1,9 +1,10 @@
 require_relative '../../test_helper'
-['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['social_tickets_creation_helper.rb', 'twitter_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module ApiSearch
   class TicketsControllerTest < ActionController::TestCase
     include SearchTestHelper
     include SocialTicketsCreationHelper
+    include TwitterHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph date).freeze
     CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
@@ -12,6 +13,12 @@ module ApiSearch
     def setup
       super
       initial_setup
+      Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(Faker::Number.between(1, 999_999_999).to_s))
+    end
+
+    def teardown
+      super
+      Twitter::REST::Client.any_instance.unstub(:user)
     end
 
     @@initial_setup_run = false

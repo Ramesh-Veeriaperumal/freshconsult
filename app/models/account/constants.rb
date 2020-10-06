@@ -129,7 +129,7 @@ class Account < ActiveRecord::Base
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true, :es_multilang_solutions => false,
-    :sort_by_customer_response => false, :survey_links => true,
+    :survey_links => true,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :marketplace_app => false,
     :collaboration => false
@@ -137,12 +137,12 @@ class Account < ActiveRecord::Base
 
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
-    :gamification_enable => false, :personalized_email_replies => false,
-    :id_less_tickets => false, :reply_to_based_tickets => true,
+    :gamification_enable => false,
+    :id_less_tickets => false,
     :collision_socket => false,
-    :disable_agent_forward => false, :call_quality_metrics => false,
+    :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false,
-    :marketplace => false, :archive_tickets => false, :compose_email => false,
+    :marketplace => false, :archive_tickets => false,
     :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
     :cobrowsing => false,
     :threading_without_user_check => false,
@@ -161,7 +161,8 @@ class Account < ActiveRecord::Base
   ADMIN_CUSTOMER_PORTAL_SETTINGS = [
     :signup_link, :anonymous_tickets, :auto_suggest_solutions,
     :public_ticket_url, :open_solutions, :open_forums,
-    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts
+    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts,
+    :helpdesk_tickets_by_product, :solutions_agent_metrics
   ].freeze
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
@@ -199,7 +200,7 @@ class Account < ActiveRecord::Base
     sha256_enabled: false, auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
-    falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
+    falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false,
     freshid: false,
     incoming_attachment_limit_25: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
@@ -210,13 +211,13 @@ class Account < ActiveRecord::Base
     bot_email_channel: false, archive_ticket_fields: true,
     sso_login_expiry_limitation: false, csat_email_scan_compatibility: false, email_deprecated_style_parsing: false,
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
-    skip_invoice_due_warning: false, custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
+    custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     archive_tickets_api: false, bot_agent_response: false, fluffy: false, nested_field_revamp: true,
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false, allow_wildcard_ticket_create: false,
-    attachment_redirect_expiry: false, solutions_agent_metrics: false,
+    attachment_redirect_expiry: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
@@ -237,7 +238,7 @@ class Account < ActiveRecord::Base
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
-    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false
+    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

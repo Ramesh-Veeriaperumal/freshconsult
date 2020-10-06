@@ -126,7 +126,7 @@ module TicketPresenter::PresenterHelper
     def source_hash
       {
         id: source,
-        name: Account.current.ticket_source_revamp_enabled? ? source_name : Account.current.helpdesk_sources.ticket_source_names_by_key[source]
+        name: Account.current.ticket_source_revamp_enabled? ? source_name : Account.current.helpdesk_sources.default_ticket_source_names_by_key[source]
       }
     end
 

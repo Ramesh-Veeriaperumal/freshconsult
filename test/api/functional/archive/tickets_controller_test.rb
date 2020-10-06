@@ -1,5 +1,5 @@
 require_relative '../../test_helper'
-['social_tickets_creation_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['social_tickets_creation_helper', 'twitter_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require 'sidekiq/testing'
 Sidekiq::Testing.fake!
 
@@ -9,6 +9,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
   include TicketHelper
   include ContactFieldsHelper
   include SocialTicketsCreationHelper
+  include TwitterHelper
   include Crypto::TokenHashing
 
   ARCHIVE_DAYS = 120
@@ -23,10 +24,12 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     Sidekiq::Worker.clear_all
     Account.any_instance.stubs(:agent_collision_revamp_enabled?).returns(true)
     create_archive_ticket
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(Faker::Number.between(1, 999_999_999).to_s))
   end
 
   def teardown
     cleanup_archive_ticket(@archive_ticket, {conversations: true})
+    Twitter::REST::Client.any_instance.unstub(:user)
   end
 
   def wrap_cname(params)

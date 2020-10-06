@@ -8,11 +8,11 @@ class SupportController < ApplicationController
   before_filter :check_sitemap_feature, only: [:sitemap]
   before_filter :set_language
   before_filter :redirect_to_locale, :except => [:sitemap, :robots]
-  around_filter :run_on_slave , :only => [:index,:show],
-    :if => proc {|controller| 
-      path = controller.controller_path
-      path.include?("/solutions") || path.include?("/home") || path.include?("/topics") || path.include?("/discussions")
-    }
+  around_filter :run_on_slave, only: [:index, :show, :filter],
+                               if: proc { |controller|
+                                     path = controller.controller_path
+                                     %w[/solutions /home /topics /discussions /tickets].any? { |cp| path.include? cp }
+                                   }
 
   include Redis::RedisKeys
   include Redis::PortalRedis

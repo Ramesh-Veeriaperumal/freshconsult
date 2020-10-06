@@ -42,7 +42,7 @@ module Facebook
 
     FETCH_FIELDS = {
       post: ['id', 'type', 'from', 'message', 'description', 'created_time', 'link', 'picture', 'name', 'object_id', 'story', 'likes'],
-      comments: ['id', 'from', 'can_comment', 'created_time', 'message', 'parent', 'attachment', 'object', 'message_tags'],
+      comments: ['id', 'from', 'can_comment', 'created_time', 'message', 'parent', 'attachment', 'object'],
 
       message: ['id', 'from', 'to', 'message', 'created_time', 'attachments.fields(id,image_data,mime_type,name,size,video_data,file_url.fields(mime_type,name,id,size))', 'shares.fields(description,id,link,name)'],
       profile_name: ['first_name', 'last_name']
