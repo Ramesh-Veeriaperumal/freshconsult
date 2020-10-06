@@ -37,7 +37,7 @@ class SubscriptionEventActionsTest < ActionView::TestCase
     s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    assert @account.has_feature?(:untitled_setting_3)
+    assert_equal @account.solutions_agent_metrics_enabled?, false
   ensure
     Account.current.rollback(:feature_based_settings)
     Account.unstub(:current)
@@ -46,14 +46,14 @@ class SubscriptionEventActionsTest < ActionView::TestCase
 
   def test_plan_upgrade_from_garden_to_estate_with_feature_settings_lp_is_disabled
     Account.stubs(:current).returns(@account)
-    @account.revoke_feature(:untitled_setting_3)
+    @account.disable_setting(:solutions_agent_metrics)
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.find_by_name('Garden Jan 19').id, state: 'active', account_id: @account.id))
     old_subscription = @account.subscription.dup
     s = @account.subscription
     s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    assert_equal @account.has_feature?(:untitled_setting_3), false
+    assert_equal @account.solutions_agent_metrics_enabled?, false
   ensure
     Account.unstub(:current)
     @account.unstub(:subscription)
@@ -61,16 +61,16 @@ class SubscriptionEventActionsTest < ActionView::TestCase
 
   def test_estate_feature_settings_when_plan_downgrade_from_forest_to_estate
     Account.stubs(:current).returns(@account)
-    Account.current.add_feature(:untitled_feature_2_dependency_toggle)
-    Account.current.add_feature(:untitled_setting_3)
+    Account.current.add_feature(:solutions_agent_metrics_feature)
+    Account.current.enable_setting(:solutions_agent_metrics)
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.find_by_name('Forest Jan 19').id, state: 'active', account_id: @account.id))
     old_subscription = @account.subscription.dup
     s = @account.subscription
     s.subscription_plan_id = SubscriptionPlan.find_by_name('Estate Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    assert @account.has_feature?(:untitled_feature_2_dependency_toggle)
-    assert @account.has_feature?(:untitled_setting_3)
+    assert @account.solutions_agent_metrics_feature_enabled?
+    assert @account.solutions_agent_metrics_enabled?
   ensure
     Account.unstub(:current)
     @account.unstub(:subscription)
@@ -78,16 +78,16 @@ class SubscriptionEventActionsTest < ActionView::TestCase
 
   def test_estate_feature_settings_when_plan_downgrade_from_estate_to_garden
     Account.stubs(:current).returns(@account)
-    Account.current.add_feature(:untitled_feature_2_dependency_toggle)
-    Account.current.add_feature(:untitled_setting_3)
+    Account.current.add_feature(:solutions_agent_metrics_feature)
+    Account.current.enable_setting(:solutions_agent_metrics)
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.find_by_name('Estate Jan 19').id, state: 'active', account_id: @account.id))
     old_subscription = @account.subscription.dup
     s = @account.subscription
     s.subscription_plan_id = SubscriptionPlan.find_by_name('Garden Jan 20').id
     s.save
     SAAS::SubscriptionEventActions.new(@account, old_subscription).change_plan
-    assert_equal @account.has_feature?(:untitled_feature_2_dependency_toggle), false
-    assert_equal @account.has_feature?(:untitled_setting_3), false
+    assert_equal @account.solutions_agent_metrics_feature_enabled?, false
+    assert_equal @account.solutions_agent_metrics_enabled?, false
   ensure
     Account.unstub(:current)
     @account.unstub(:subscription)

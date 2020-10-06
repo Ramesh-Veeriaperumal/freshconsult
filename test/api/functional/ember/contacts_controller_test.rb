@@ -1365,7 +1365,7 @@ module Ember
       get :show, controller_params(version: 'private', id: sample_user.id)
       assert_response 200
       res = JSON.parse(response.body)
-      assert_equal Helpdesk::Source.ticket_source_token_by_key[2].to_s, res['preferred_source']
+      assert_equal Helpdesk::Source.default_ticket_source_token_by_key[2].to_s, res['preferred_source']
     end
 
     def test_show_a_contact_without_preferred_source
