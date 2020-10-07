@@ -501,10 +501,6 @@ class Account < ActiveRecord::Base
     launched?(:es_v2_splqueries)
   end
 
-  def disable_emails_enabled?
-    launched?(:disable_emails)
-  end
-
   def features
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
   end
