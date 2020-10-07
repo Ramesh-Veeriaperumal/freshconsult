@@ -4,7 +4,7 @@ module AdvancedTicketScopes
 
   TICKET_ACTIONS = %i[update_properties spam unspam restore watch unwatch].freeze
 
-  NOTE_ACTIONS = %i[reply forward reply_to_forward facebook_reply reply_template tweet ecommerce_reply forward_template latest_note_forward_template execute_scenario].freeze
+  NOTE_ACTIONS = %i[reply forward reply_to_forward facebook_reply reply_template tweet ecommerce_reply forward_template latest_note_forward_template execute_scenario channel_reply].freeze
 
   ALLOWED_CONTROLLER_ACTIONS = %i[create update destroy broadcast].freeze
 

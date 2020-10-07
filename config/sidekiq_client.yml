@@ -409,6 +409,7 @@ defaults: &defaults
     - [archive_ticket_central_publish]
     - [retry_observer]
     - [freddy_consumed_session_queue]
+    - [channel_reply_messages]
     - [link_omni_account]
 
 development:
