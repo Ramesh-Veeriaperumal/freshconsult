@@ -311,6 +311,16 @@ class ApplicationController < ActionController::Base
       end
     end
 
+    def redirect_old_ui_routes
+      action = request.params[:action]
+      if Account.current.launched?(:redirect_old_ui_paths) && !Account.current.launched?("redirect_#{nscname}_#{action}".to_sym) && request.format.try(:html?)
+        redirect_to FalconRedirection.falcon_redirection_path(request.path_info)
+      end
+    rescue Exception => e
+      Rails.logger.error "Exception while redirecting Old UI Route :: #{e.message}"
+      NewRelic::Agent.notice_error(e, description: "Exception while redirecting Old UI Route :: Accept Header #{request.headers['Accept']} ")
+    end
+
     def set_ui_preference
       @falcon_redirection_check = true
       cookies[:falcon_enabled] = true
