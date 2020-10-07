@@ -71,14 +71,14 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
   def test_account_freshid_migration_not_in_process
     get :show, controller_params(version: 'private')
     assert_response 200
-    assert_equal false, response.api_meta[:freshid_migration_in_progress]
+    refute response.api_meta[:freshid_migration_in_progress]
   end
 
   def test_account_freshid_migration_in_process
     Account.current.stubs(:freshid_migration_in_progress?).returns(true)
     get :show, controller_params(version: 'private')
     assert_response 200
-    assert_equal true, response.api_meta[:freshid_migration_in_progress]
+    assert response.api_meta[:freshid_migration_in_progress]
   ensure
     Account.current.unstub(:freshid_migration_in_progress)
   end
@@ -226,6 +226,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     assert_equal [email], @account.account_configuration.contact_info[:notification_emails]
   ensure
     AccountConfiguration.any_instance.unstub(:update_billing)
+    agent.destroy
   end
 
   def test_update_duplicate_notification_emails
@@ -242,6 +243,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:notification_emails, :duplicate_not_allowed, name: 'notification_emails', list: email_list.uniq.join(', '))])
   ensure
     AccountConfiguration.any_instance.unstub(:update_billing)
+    agent.destroy
   end
 
   def test_update_notification_emails_with_non_manager_email
@@ -706,6 +708,400 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     put :update, construct_params(api_security: request_params)
     assert_response 400
     match_json([bad_request_error_pattern(:input, :invalid_field, attribute: 'input')])
+  end
+
+  def test_update_sso
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(false)
+    Account.any_instance.stubs(:sso_enabled?).returns(false)
+    request_params = {
+      sso: {
+        enabled: true,
+        type: 'simple',
+        simple: {
+          login_url: 'abc'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert Account.current.sso_enabled
+    assert_equal request_params[:sso][:type], Account.current.current_sso_type
+    assert_equal request_params[:sso][:simple][:login_url], Account.current.sso_options[:login_url]
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
+    Account.any_instance.unstub(:sso_enabled?)
+  end
+
+  def test_update_sso_disable
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(false)
+    @account.sso_enabled = true
+    @account.save
+    request_params = {
+      sso: {
+        enabled: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    refute Account.current.sso_enabled
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
+  end
+
+  def test_update_sso_disable_with_freshid_sso_sync_enabled
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(true)
+    @account.sso_enabled = true
+    sso_options = {
+      sso_type: 'simple',
+      login_url: 'login_url'
+    }
+    @account.sso_options = HashWithIndifferentAccess.new(sso_options)
+    @account.save
+    request_params = {
+      sso: {
+        enabled: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    refute Account.current.sso_enabled
+  ensure
+    Account.any_instance.unstub(:freshid_org_v2_enabled?)
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
+  end
+
+  def test_update_sso_logout_url
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    sso_options_backup = Account.current.sso_options
+    sso_options = {
+      sso_type: 'simple',
+      login_url: 'login_url'
+    }
+    @account.sso_options = HashWithIndifferentAccess.new(sso_options)
+    @account.save
+    request_params = {
+      sso: {
+        enabled: true,
+        simple: {
+          logout_url: 'logout_url'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert Account.current.sso_enabled
+    assert_equal sso_options[:login_url], Account.current.sso_options[:login_url]
+    assert_equal request_params[:sso][:simple][:logout_url], Account.current.sso_options[:logout_url]
+  ensure
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    @account.sso_options = sso_options_backup
+    @account.save
+  end
+
+  def test_update_sso_disable_with_freshid_and_freshid_sso_sync
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(true)
+    Account.any_instance.stubs(:freshid_sso_enabled?).returns(true)
+    sso_options_backup = Account.current.sso_options
+    sso_options = {
+      sso_type: 'simple',
+      login_url: 'login_url',
+      logout_url: 'logout_url'
+    }
+    @account.sso_options = HashWithIndifferentAccess.new(sso_options)
+    @account.save
+    request_params = {
+      sso: {
+        enabled: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    refute Account.current.sso_enabled
+    refute Account.current.sso_options.key?(:sso_type)
+    refute Account.current.sso_options.key?(:login_url)
+    refute Account.current.sso_options.key?(:logout_url)
+  ensure
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
+    Account.any_instance.unstub(:freshid_sso_enabled?)
+    @account.sso_options = sso_options_backup
+    @account.save
+  end
+
+  def test_update_simple_sso_with_oauth2_as_current_type
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    sso_options_backup = Account.current.sso_options
+    sso_options = {
+      sso_type: 'oauth2',
+      agent_oauth2: true,
+      customer_oauth2: true,
+      agent_oauth2_config: {},
+      customer_oauth2_config: {}
+    }
+    @account.sso_options = HashWithIndifferentAccess.new(sso_options)
+    @account.save
+    request_params = {
+      sso: {
+        enabled: true,
+        type: 'simple',
+        simple: {
+          login_url: 'simple.login'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert Account.current.is_simple_sso?
+    refute Account.current.oauth2_sso_enabled?
+    refute Account.current.sso_options.key?(:agent_oauth2_config)
+    refute Account.current.sso_options.key?(:customer_oauth2_config)
+  ensure
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    @account.sso_options = sso_options_backup
+    @account.save
+  end
+
+  def test_update_simple_sso_with_freshid_saml_as_current_type
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    sso_options_backup = Account.current.sso_options
+    sso_options = {
+      sso_type: 'freshid_saml',
+      agent_freshid_saml: true,
+      agent_freshid_saml_config: {},
+      customer_freshid_saml: true,
+      customer_freshid_saml_config: {}
+    }
+    @account.sso_options = HashWithIndifferentAccess.new(sso_options)
+    @account.save
+    request_params = {
+      sso: {
+        enabled: true,
+        type: 'simple',
+        simple: {
+          login_url: 'simple.login'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert Account.current.is_simple_sso?
+    refute Account.current.freshid_saml_sso_enabled?
+    refute Account.current.sso_options.key?(:agent_freshid_saml_config)
+    refute Account.current.sso_options.key?(:customer_freshid_saml_config)
+  ensure
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    @account.sso_options = sso_options_backup
+    @account.save
+  end
+
+  def test_update_disable_sso_when_freshid_integration_enabled_and_freshdesk_sso_enabled
+    Account.any_instance.stubs(:coexist_account?).returns(true)
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    request_params = {
+      sso: {
+        enabled: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    refute Account.current.sso_enabled
+  ensure
+    Account.any_instance.unstub(:coexist_account?)
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+  end
+
+  def test_update_sso_disabled_freshid_account_v2_migration
+    Freshid::AgentsMigration.jobs.clear
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    Account.any_instance.stubs(:freshid_integration_signup_allowed?).returns(true)
+    Account.any_instance.stubs(:freshid_migration_not_in_progress?).returns(true)
+    Account.any_instance.stubs(:freshid_v2_signup_allowed?).returns(true)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    @account.sso_enabled = true
+    @account.save
+    request_params = {
+      sso: {
+        enabled: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    refute Account.current.sso_enabled?
+    assert_equal 1, Freshid::V2::AgentsMigration.jobs.size
+  ensure
+    Account.any_instance.unstub(:freshid_integration_signup_allowed?)
+    Account.any_instance.unstub(:freshid_migration_not_in_progress?)
+    Account.any_instance.unstub(:freshid_v2_signup_allowed?)
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    @account.sso_enabled = false
+    @account.save
+  end
+
+  def test_update_sso_disabled_freshid_account_v1_migration
+    Freshid::AgentsMigration.jobs.clear
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    Account.any_instance.stubs(:freshid_integration_signup_allowed?).returns(true)
+    Account.any_instance.stubs(:freshid_migration_not_in_progress?).returns(true)
+    Account.any_instance.stubs(:freshid_v2_signup_allowed?).returns(false)
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    @account.sso_enabled = true
+    @account.save
+    request_params = {
+      sso: {
+        enabled: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    refute Account.current.sso_enabled
+    assert_equal 1, Freshid::AgentsMigration.jobs.size
+  ensure
+    Account.any_instance.unstub(:freshid_integration_signup_allowed?)
+    Account.any_instance.unstub(:freshid_migration_not_in_progress?)
+    Account.any_instance.unstub(:freshid_v2_signup_allowed?)
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    @account.sso_enabled = false
+    @account.save
+  end
+
+  def test_update_sso_disabled_freshid_account_migration_not_allowed
+    Freshid::AgentsMigration.jobs.clear
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    Account.any_instance.stubs(:freshid_integration_signup_allowed?).returns(false)
+    Account.any_instance.stubs(:freshid_migration_not_in_progress?).returns(true)
+    Account.any_instance.stubs(:freshid_v2_signup_allowed?).returns(false) # signup not allowed
+    Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
+    @account.sso_enabled = true
+    @account.save
+    request_params = {
+      sso: {
+        enabled: false
+    }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    refute Account.current.sso_enabled
+    assert_equal 0, Freshid::AgentsMigration.jobs.size
+  ensure
+    Account.any_instance.unstub(:freshid_integration_signup_allowed?)
+    Account.any_instance.unstub(:freshid_migration_not_in_progress?)
+    Account.any_instance.unstub(:freshid_v2_signup_allowed?)
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+    Account.any_instance.unstub(:freshid_integration_enabled?)
+    @account.sso_enabled = false
+    @account.save
+  end
+
+  def test_update_sso_without_login_url
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    request_params = {
+      sso: {
+        enabled: true,
+        type: 'simple',
+        simple: {
+          logout_url: 'logout_url'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern('sso_options', 'Please provide a valid login URL')])
+  ensure
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+  end
+
+  def test_update_sso_saml_without_login_url
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    request_params = {
+      sso: {
+        enabled: true,
+        type: 'saml',
+        saml: {
+          logout_url: 'logout_url',
+          saml_cert_fingerprint: 'cert'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern('sso_options', 'Please provide a valid SAML login URL')])
+  ensure
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+  end
+
+  def test_update_sso_saml_without_saml_cert_fingerprint
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
+    request_params = {
+      sso: {
+        enabled: true,
+        type: 'saml',
+        saml: {
+          logout_url: 'logout_url',
+          login_url: 'login_url'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern('sso_options', 'Please provide a valid SAML Certificate Fingerprint')])
+  ensure
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+  end
+
+  def test_update_sso_with_freshid_v2
+    Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(false)
+    request_params = {
+      sso: {
+        enabled: true,
+        type: 'simple',
+        simple: {
+          login_url: 'abc'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:sso, :action_restricted, action: 'sso configuration', reason: 'account is in freshid v2')])
+  ensure
+    Account.any_instance.unstub(:freshdesk_sso_configurable?)
+  end
+
+  def test_update_simple_sso_with_freshid_integration_enabled_and_freshdesk_sso_enabled
+    Account.any_instance.stubs(:coexist_account?).returns(true)
+    request_params = {
+      sso: {
+        enabled: true,
+        type: 'simple',
+        simple: {
+          login_url: 'abc'
+        }
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:sso, :action_restricted, action: 'sso configuration', reason: 'freshid is integrated and freshdesk sso is configured')])
+  ensure
+    Account.any_instance.unstub(:coexist_account?)
+  end
+
+  def test_update_sso_with_freshid_migration_inprogress
+    Account.any_instance.stubs(:freshid_migration_in_progress?).returns(true)
+    request_params = {
+      sso: {
+        enabled: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:sso, :action_restricted, action: 'sso configuration', reason: 'freshid migration is inprogress')])
+  ensure
+    Account.any_instance.unstub(:freshid_migration_in_progress?)
   end
 
   def test_update_allow_iframe
