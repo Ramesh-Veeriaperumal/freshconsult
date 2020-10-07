@@ -724,26 +724,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
-  def sha256_enabled_feature
-    enabled = false
-    account = Account.find(params[:account_id]).make_current
-    if params[:operation] == "launch"
-      enabled = account.launch(:sha256_enabled).include?(:sha256_enabled) unless account.launched?(:sha1_enabled)
-    elsif params[:operation] == "rollback"
-      enabled = account.rollback(:sha256_enabled).include?(:sha256_enabled)
-    elsif params[:operation] == "check"
-      enabled = account.launched?(:sha256_enabled)
-    end
-    Account.reset_current_account
-    render :json => {:status => enabled}
-  end
-
   def sha1_enabled_feature
     enabled = false
     account = Account.find(params[:account_id]).make_current
     if params[:operation] == "launch"
       enabled = account.launch(:sha1_enabled).include?(:sha1_enabled)
-      account.rollback :sha256_enabled if account.launched? :sha256_enabled
     elsif params[:operation] == "rollback"
       enabled = account.rollback(:sha1_enabled).include?(:sha1_enabled)
     elsif params[:operation] == "check"
