@@ -9,6 +9,10 @@ module Admin
       { whitelisted_ip: { enabled: true, applies_only_to_agents: true, ip_ranges: [{ start_ip: '11.11.11.00', end_ip: '11.11.11.11' }] } },
       { contact_password_policy: { minimum_characters: 9 } },
       { agent_password_policy: { minimum_characters: 10, cannot_be_same_as_past_passwords: 4, atleast_an_alphabet_and_number: nil } },
+      { sso: { enabled: true, simple: { login_url: 'end' } } },
+      { sso: { enabled: true, saml: { login_url: 'end', saml_cert_fingerprint: 'ssss' } } },
+      { sso: { type: 'simple', simple: { login_url: 'hai', logout_url: 'bye' } } },
+      { sso: { type: 'simple', simple: { logout_url: 'bye' } } },
       { allow_iframe_embedding: true }
     ].freeze
     INVALID_SECURITY_SETTINGS = [
@@ -40,6 +44,16 @@ module Admin
           password_expiry: true
         }
       }, # 18
+      { sso: { type: 'oauth' } },
+      { sso: { type: 'freshid_saml' } },
+      { sso: { type: 'simple', simple: { login_url: nil } } }, # 21
+      { sso: { type: 'saml', simple: { saml_cert_fingerprint: nil } } },
+      { sso: { type: 'saml', simple: { login_url: 'hai' }, saml: { login_url: 'url', saml_cert_fingerprint: 'print' } } },
+      { sso: { type: 'simple' } }, # 24
+      { sso: { simple: { login_url: 's' }, saml: { login_url: 's'} } },
+      { sso: { simple: { login_url: nil } } },
+      { sso: { saml: { login_url: nil } } }, # 27
+      { sso: { saml: { saml_cert_fingerprint: nil } } },
       { allow_iframe_embedding: 1 },
       { allow_iframe_embedding: nil }
     ].freeze
@@ -129,7 +143,7 @@ module Admin
 
     def public_sso
       {}.tap do |sso|
-        sso[:enabled] = Account.current.sso_enabled
+        sso[:enabled] = Account.current.sso_enabled || false
         if Account.current.sso_enabled
           type = sso[:type] = Account.current.current_sso_type
           sso[type.to_sym] = safe_send("#{type}_sso") if type.present? && Account.current.freshdesk_sso_enabled?
@@ -139,7 +153,7 @@ module Admin
 
     def private_sso
       {}.tap do |sso|
-        sso[:enabled] = Account.current.sso_enabled
+        sso[:enabled] = Account.current.sso_enabled || false
         type = sso[:type] = Account.current.current_sso_type
         sso[type.to_sym] = safe_send("#{type}_sso") if type.present? && Account.current.freshdesk_sso_enabled?
         sso[:simple] ||= { shared_secret: Account.current.shared_secret }

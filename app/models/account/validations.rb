@@ -36,10 +36,10 @@ class Account < ActiveRecord::Base
       if self.sso_enabled?
         self.sso_options[:sso_type] = SsoUtil::SSO_TYPES[:simple_sso] if self.sso_options[:sso_type].blank? && !self.freshid_sso_sync_enabled?
         if self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:simple_sso] && self.sso_options[:login_url].blank?
-          self.errors.add(:sso_options, ", #{I18n.t('admin.security.errors.simple_sso.invalid_login_url')}")
+          self.errors.add(:sso_options, "#{I18n.t('admin.security.errors.simple_sso.invalid_login_url')}")
         elsif self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:saml]
-          self.errors.add(:sso_options, ", #{I18n.t('admin.security.errors.saml_sso.invalid_login_url')}") if self.sso_options[:saml_login_url].blank?
-          self.errors.add(:sso_options, ", #{I18n.t('admin.security.errors.saml_sso.invalid_fingerprint')}") if self.sso_options[:saml_cert_fingerprint].blank?
+          self.errors.add(:sso_options, "#{I18n.t('admin.security.errors.saml_sso.invalid_login_url')}") if self.sso_options[:saml_login_url].blank?
+          self.errors.add(:sso_options, "#{I18n.t('admin.security.errors.saml_sso.invalid_fingerprint')}") if self.sso_options[:saml_cert_fingerprint].blank?
         end
       end
     end

@@ -1152,6 +1152,7 @@ Helpkit::Application.routes.draw do
 
   cron_routes = proc do
     post 'trigger/:task_name', to: 'cron_webhook/web_hooks#trigger'
+    post 'trigger_cron_api', to: 'cron_webhook/web_hooks#trigger_cron_api'
   end
 
   # Temporary routes. Will be removed once ocr to mars is fully launched.

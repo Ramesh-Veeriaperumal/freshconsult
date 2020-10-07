@@ -8,7 +8,7 @@ module Channel::Freshconnect
     SLAVE_ACTIONS = %w[index].freeze
 
     def index
-      load_objects
+      @items = scoper
     end
 
     def self.decorator_name

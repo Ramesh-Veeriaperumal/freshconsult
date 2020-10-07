@@ -47,6 +47,27 @@ module SecurityConcern
     configs.each_pair { |k, v| configs[k] = v.to_s if v.present? }
   end
 
+  # **------------- SSO ----------------** #
+
+  def assign_sso_settings(sso_settings = cname_params[:sso])
+    @item.sso_enabled = sso_settings[:enabled] if sso_settings.key?(:enabled)
+    @item.configure_sso_options(HashWithIndifferentAccess.new(sso_options))
+  end
+
+  def sso_options(sso_settings = cname_params[:sso])
+    {}.tap do |sso_options|
+      sso_options[:sso_type] = sso_settings[:type] if sso_settings.key?(:type)
+      if sso_settings[current_sso_type].present?
+        SSO_TYPE_NAMING_MAPPINGS[current_sso_type].each_pair do |db_key, param_key|
+          sso_options[db_key] = sso_settings[current_sso_type][param_key] if sso_settings[current_sso_type].key?(param_key)
+        end
+      end
+    end
+  end
+
+  def current_sso_type
+    (cname_params[:sso][:type].presence || @item.sso_options[:sso_type]).try(:to_sym)
+  end
   # **-------------- Deny iframe --------------** #
 
   def assign_allow_iframe_embedding_settings(allow_iframe = cname_params[:allow_iframe_embedding])

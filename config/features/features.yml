@@ -317,7 +317,7 @@
       :ticket_summary_feature: 313
       :basic_settings_feature: 314
       :branding_feature: 315
-      :untitled_feature_2_dependency_toggle: 316
+      :solutions_agent_metrics_feature: 316
       :untitled_setting_1: 317
       :untitled_setting_2: 318
       :untitled_setting_3: 319
@@ -422,6 +422,7 @@
       :es_v2_splqueries: 418
       :disable_emails: 419
       :custom_product_notification: 420
+      :fb_msg_realtime: 422
 :selectable_features:
   :redis_display_id: true
   :es_v2_writes: true
@@ -484,7 +485,6 @@
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
   :location_tagging: false
-  :solutions_agent_metrics: false
   :disable_supress_logs: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
@@ -496,6 +496,7 @@
   :feedback_widget_captcha: false
   :skip_portal_cname_chk: false
   :disable_archive: false
+  :fb_msg_realtime: false
   :gamification_perf: false
   :stop_contacts_count_query: false
   :force_index_tickets: false

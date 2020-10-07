@@ -1,6 +1,10 @@
 require 'email_helper'
 
 class SpamWatcherRedisMethods
+  CMRR_CUTOFF = 5000.freeze
+  SPAM_NOTICED = 'noticed spamming,'.freeze
+  SPAM_BLOCKED = 'blocked spamming,'.freeze
+
   extend EmailHelper
   class << self
     def block_spam_user(user)
@@ -9,7 +13,7 @@ class SpamWatcherRedisMethods
 
       subject = "User #{user.id} blocked - for Account-id: #{user.account.id}"
       additional_info = "User blocked due to spam activity"
-      notify_account_blocks(user.account, subject, additional_info)
+      # notify_account_blocks(user.account, subject, additional_info)
       update_freshops_activity(user.account, "User blocked due to spam activity", "block_user")
 
       user.save(:validate => false)
@@ -33,7 +37,10 @@ class SpamWatcherRedisMethods
 
     def spam_alert(account,user,table_name,operation,subject,deleted_flag)
       hit_count = current_hit_count account, user, table_name
-      subject = subject.blank? ? "New Spam Watcher Abnormal load #{table_name} : Spam Count #{hit_count}" : "#{subject} Abnormal load #{table_name} : Spam Count #{hit_count}"
+      subscription = account.subscription
+      subject = subject.blank? ? "New Spam Watcher Abnormal load in #{table_name} : Spam Count #{hit_count}" : "#{subject} Abnormal load #{table_name} : Spam Count #{hit_count}"
+      subject << ": Account #{account.id} : State #{subscription.state} : MRR #{subscription.amount}"
+      subject << " : Agent #{user.helpdesk_agent}" if user.present?
       FreshdeskErrorsMailer.deliver_spam_watcher(
         {
           subject: subject,
@@ -69,10 +76,6 @@ class SpamWatcherRedisMethods
       update_freshops_activity(account, "Account blocked due to heavy creation of solution articles", "block_account")
     end
 
-    def has_cmrr(account)
-      account.subscription.cmrr > 5000
-    end
-
     def has_whitelisted_and_keyset?(account_id, user_id)
       WhitelistUser.find_by_account_id_and_user_id(account_id, user_id) || $spam_watcher.exists("spam_tickets_#{account_id}_#{user_id}") 
     end
@@ -84,32 +87,19 @@ class SpamWatcherRedisMethods
       return account, user
     end
 
-    def send_notification(account, user, table_name)
-      operation = "noticed spamming,"
-      subject = "Spam Watcher - Detected Suspicious activity in #{account.id}"
-      spam_alert(account,user,table_name,operation,subject,0)
-      deleted_users = [user]
-      #SubscriptionNotifier.deliver_admin_spam_watcher(account, deleted_users, 1)
-    end
-
     def check_spam(account, user, table_name)
-      if has_cmrr(account) 
-        if !user.agent?
-          operation = "deleted"
-          # delete_user(user)
-          spam_alert(account,user,table_name,operation,nil,0)
-        else
-          return
-        end
+      subscription = account.subscription
+      if subscription.cmrr > CMRR_CUTOFF
+        return if user.agent?
+
+        spam_alert(account, user, table_name, SPAM_NOTICED, nil, 0)
+      elsif (subscription.free? || subscription.active?) && user.agent?
+        subject = 'Spam Watcher - Detected Suspicious'
+        spam_alert(account, user, table_name, SPAM_NOTICED, subject, 0)
       else
-        if paid_account?(account) && user.agent?
-          operation = "noticed spamming,"
-          spam_alert(account,user,table_name,operation,nil,1)
-        else
-          #delete_user(user)
-          #block_spam_user(user)
-          send_notification(account,user,table_name)
-        end
+        block_spam_user(user) if account.block_spam_user_enabled?
+        subject = 'Spam Watcher - Blocked Suspicious'
+        spam_alert(account, user, table_name, SPAM_BLOCKED, subject, account.block_spam_user_enabled? ? 1 : 0)
       end
     end
 
