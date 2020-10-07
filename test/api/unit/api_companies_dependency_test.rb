@@ -10,7 +10,7 @@ class ApiCompaniesDependencyTest < ActionView::TestCase
                         :set_affiliate_cookie, :verify_authenticity_token, :load_multiple_items, :unset_thread_variables,
                         :set_selected_tab, :load_item, :build_item, :set_required_fields, :set_validatable_custom_fields,
                         :set_native_mobile, :ensure_proper_sts_header, :set_validatable_default_fields, :record_query_comment, :check_archive_feature, :export_limit_reached?, :log_csrf, :remove_session_data,
-                        :check_session_timeout]
+                        :check_session_timeout, :redirect_old_ui_routes]
 
     actual_filters = CompaniesController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
