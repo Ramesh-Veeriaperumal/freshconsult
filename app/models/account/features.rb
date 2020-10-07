@@ -476,10 +476,6 @@ class Account < ActiveRecord::Base
     launched?(:force_index_tickets)
   end
 
-  def stop_contacts_count_query_enabled?
-    launched?(:stop_contacts_count_query)
-  end
-
   def custom_product_notification_enabled?
     launched?(:custom_product_notification)
   end
@@ -490,10 +486,6 @@ class Account < ActiveRecord::Base
 
   def disable_supress_logs_enabled?
     launched?(:disable_supress_logs)
-  end
-
-  def skip_portal_cname_chk_enabled?
-    launched?(:skip_portal_cname_chk)
   end
 
   def es_v2_splqueries_enabled?
