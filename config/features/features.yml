@@ -422,6 +422,7 @@
       :es_v2_splqueries: 418
       :disable_emails: 419
       :custom_product_notification: 420
+      :sidekiq_logs_to_central: 421
       :fb_msg_realtime: 422
 :selectable_features:
   :redis_display_id: true
@@ -497,6 +498,7 @@
   :custom_product_notification: false
   :feedback_widget_captcha: false
   :skip_portal_cname_chk: false
+  :sidekiq_logs_to_central: false
   :disable_archive: false
   :fb_msg_realtime: false
   :gamification_perf: false

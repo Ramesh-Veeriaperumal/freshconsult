@@ -83,7 +83,7 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
-    :allow_wildcard_ticket_create, :supervisor_contact_field, :whatsapp_channel, :feedback_widget_captcha,
+    :allow_wildcard_ticket_create, :supervisor_contact_field, :whatsapp_channel, :feedback_widget_captcha, :sidekiq_logs_to_central,
     :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
@@ -103,6 +103,7 @@ class Account < ActiveRecord::Base
     :disable_archive,
     :gamification_perf,
     :skip_portal_cname_chk,
+    :sidekiq_logs_to_central,
     :stop_contacts_count_query,
     :force_index_tickets,
     :es_v2_splqueries,
@@ -486,6 +487,10 @@ class Account < ActiveRecord::Base
 
   def disable_archive_enabled?
     launched?(:disable_archive)
+  end
+
+  def sidekiq_logs_to_central_enabled?
+    launched?(:sidekiq_logs_to_central)
   end
 
   def disable_supress_logs_enabled?
