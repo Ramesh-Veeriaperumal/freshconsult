@@ -75,6 +75,14 @@ settings:
     default: false
     internal: false
     feature_dependency: :forums
+  :filter_factory:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :new_es_api:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :forum_captcha_disable:
     default: false
     internal: false
