@@ -14,7 +14,7 @@ module Search
         launchParty = LaunchParty.new
         account_id = ShardMapping.lookup_with_domain(request.host).try(:account_id).to_i
         if ((V1_WEB_PATHS.find { |path| request.path.starts_with?(path) }.present?))
-            PodConfig['CURRENT_POD'].eql?('podeuwest1') || !launchParty.launched?(feature: :es_v1_enabled, account: account_id)
+          true
         end
       end
     end
@@ -35,7 +35,7 @@ module Search
         account_id = ShardMapping.lookup_with_domain(request.host).try(:account_id).to_i
         if ((V1_MOBILE_PATHS.find { |path| request.path.starts_with?(path) }.present?) && 
             request.user_agent.to_s[/#{AppConfig['app_name']}_Native/].present?)
-            PodConfig['CURRENT_POD'].eql?('podeuwest1') || !launchParty.launched?(feature: :es_v1_enabled, account: account_id)
+          true
         end
       end
     end
