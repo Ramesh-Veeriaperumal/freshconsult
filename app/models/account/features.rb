@@ -239,10 +239,6 @@ class Account < ActiveRecord::Base
     link_tickets_enabled? || parent_child_infra_enabled?
   end
 
-  def allow_huge_ccs_enabled?
-    launched?(:allow_huge_ccs)
-  end
-
   def survey_enabled?
     features?(:surveys)
   end
