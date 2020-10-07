@@ -884,6 +884,7 @@
           "_podapsoutheast2": "ausattachment.freshdesk.com",
           "_podapsouth1": "indattachment.freshdesk.com"
         },
+        "_fd_microservices_internal_endpoint": "http://microservices.freshdesk.internal",
         "freshchat": {
           "token": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:Yfl0KgOlb+fB0KVQPLGimYrIxm/jB8sP:olF80D20wK3tFEJneKEE5wjdMspLa18UGviMWegqzJP30GifEQWHszL3SRNEZeWvO+8FuA==]",
           "app_id": "EJ[1:SqyFXdSuX5cXzic44ICQ6zhvhcZ1vXBmQyZBJTP2aA8=:f86mFJxT3OcgdEMVUbVHZntjEb3H5l/1:KosiL7g6Nn3E5DpRVcPQY2kH87rX0PCFd5LzcgpvIIdKDbnRDQVoi9gO8nZv8INJ3q0oUg==]"

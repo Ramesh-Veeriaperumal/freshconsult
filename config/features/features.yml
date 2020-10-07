@@ -482,8 +482,6 @@
   :fluffy_higher_plan3: false
   :fluffy_higher_plan4: false
   :assets: false
-  :filter_factory: false
-  :new_es_api: false
   :assets_toggle: false
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
@@ -492,7 +490,6 @@
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
-  :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
   :custom_product_notification: false

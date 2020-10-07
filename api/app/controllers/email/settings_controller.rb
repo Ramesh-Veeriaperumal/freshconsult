@@ -55,13 +55,23 @@ module Email
       end
 
       def validate_params
-        validate_body_params
+        # If block can be removed after LP cleanup
+        if !current_account.email_new_settings_enabled?
+          field = EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS
+          params[cname].permit(*field)
+          @validator = SettingsValidation.new(params[cname], nil, string_request_params?)
+          valid = @validator.valid?(action_name.to_sym)
+          render_custom_errors(@validator, true) unless valid
+          valid
+        else
+          validate_body_params
+        end
       end
 
       def validate_settings
         params[cname].each_key do |setting|
           setting_name = EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym
-          next if current_account.has_feature?(AccountSettings::SettingsConfig[setting_name][:feature_dependency])
+          next if current_account.dependent_feature_enabled?(setting_name)
 
           return render_request_error(:require_feature, 403, feature: setting)
         end
@@ -74,6 +84,10 @@ module Email
           allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
           original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
         }
+        if current_account.email_new_settings_enabled?
+          @item[:allow_wildcard_ticket_create] = current_account.allow_wildcard_ticket_create_enabled?
+          @item[:skip_ticket_threading] = current_account.skip_ticket_threading_enabled?
+        end
       end
   end
 end
