@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
     :sso_login_expiry_limitation, :old_link_back_url_validation, :stop_contacts_count_query,
-    :es_tickets,
+    :es_tickets, :fb_msg_realtime,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp, :custom_product_notification,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
@@ -36,7 +36,7 @@ class Account < ActiveRecord::Base
     :requester_widget_timeline, :sprout_trial_onboarding,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
-    :bot_banner, :idle_session_timeout, :solutions_dashboard,
+    :bot_banner, :idle_session_timeout, :solutions_dashboard, :block_spam_user,
     :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments,
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription, :omni_channel_team_dashboard, :filter_facebook_mentions,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
@@ -66,7 +66,7 @@ class Account < ActiveRecord::Base
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
-    :canned_forms, :customize_table_view, :solutions_templates, :disable_supress_logs,
+    :canned_forms, :customize_table_view, :solutions_templates, :disable_supress_logs, :fb_msg_realtime,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
@@ -89,6 +89,7 @@ class Account < ActiveRecord::Base
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :custom_product_notification,
     :allow_huge_ccs,
+    :fb_msg_realtime,
     :new_es_api,
     :filter_factory,
     :disable_supress_logs,
@@ -291,6 +292,10 @@ class Account < ActiveRecord::Base
 
   def freshchat_routing_enabled?
     livechat_enabled? and features?(:chat_routing)
+  end
+
+  def fb_msg_realtime_enabled?
+    launched?(:fb_msg_realtime)
   end
 
   def supervisor_feature_launched?
