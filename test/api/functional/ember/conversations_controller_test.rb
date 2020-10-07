@@ -3119,6 +3119,15 @@ module Ember
       Account.any_instance.unstub(:traffic_cop_enabled?)
     end
 
+    def test_channel_reply_with_note_save_failure
+      Helpdesk::Note.any_instance.stubs(:user_id).returns(@account.users.maximum(:id).next)
+      params_hash = { body: Faker::Lorem.paragraph, channel_id: 88, profile_unique_id: '+348989888' }
+      post :channel_reply, construct_params({ version: 'private', id: whatsapp_source_ticket.display_id }, params_hash)
+      assert_response 400
+    ensure
+      Helpdesk::Note.any_instance.unstub(:user_id)
+    end
+
     private
 
       def archive_note_payload(note, payload)
