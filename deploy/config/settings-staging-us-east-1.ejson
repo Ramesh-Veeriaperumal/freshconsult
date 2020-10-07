@@ -1759,7 +1759,7 @@
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
-          "_url": "https://thankyou.freddyproject.com/serve/",
+          "_url": "https://intelli-reopen.staging.freddyproject.com/serve/",
           "_timeout": 1,
           "_confidence_threshold": 80
         },

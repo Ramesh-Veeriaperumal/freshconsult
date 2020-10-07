@@ -1651,7 +1651,7 @@
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
-          "_url": "https://thankyou-api.eu-central-1-prod.freddyproject.com/serv/",
+          "_url": "https://intelli-reopen.eu-central-1-prod.freddyproject.com/serv/",
           "_timeout": 2,
           "_confidence_threshold": 80
         },

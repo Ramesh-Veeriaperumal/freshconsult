@@ -1556,7 +1556,7 @@
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
-          "_url": "https://thankyou-api-in.ap-south-1-prod.freddyproject.com/serv/",
+          "_url": "https://intelli-reopen.ap-south-1-prod.freddyproject.com/serv/",
           "_timeout": 1,
           "_confidence_threshold": 80
         },
