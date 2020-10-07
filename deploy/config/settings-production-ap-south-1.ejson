@@ -75,7 +75,8 @@
       "cron_webhook": {
         "_domain": "cronwebhookindia.freshdesk.com",
         "_sub_domain": "cronwebhookindia",
-        "auth_key": "EJ[1:h9A6UpOwi8ungeOiBE55MfbBknVwoI5uFRZf/PA3+i0=:vV+Dq+MnMJCKv6nrWqLaEOwjwn/z/FUc:vfMNHsEqAlC1mPi+IEbG4pCOHA2xw6fKG6KUofi4+v7jZAiQjhKQbAPl0BU64lJj]"
+        "auth_key": "EJ[1:h9A6UpOwi8ungeOiBE55MfbBknVwoI5uFRZf/PA3+i0=:vV+Dq+MnMJCKv6nrWqLaEOwjwn/z/FUc:vfMNHsEqAlC1mPi+IEbG4pCOHA2xw6fKG6KUofi4+v7jZAiQjhKQbAPl0BU64lJj]",
+        "account_based_auth_key": "EJ[1:1y+8sZic8mZ6yaQ9qfGPz1CHDKGuVw9TlQ8vaNNyByY=:qLe/71jxWjfzE+vF8Jg5x8j8ZNf9a/Fx:KJwUflm+PiaTKSQTDiquGL3IwanHS2SotIy5OIrAys6JePXmIfxAz9nvdDvXEBwK]"
       },
       "internal_tools": {
         "_domain": "supremeone.runwayci.com"
@@ -915,7 +916,8 @@
         "_global_integration_url": "https://login.freshdesk.com",
         "_marketo_api_version": "2_1",
         "_reseller_portal_user_name": "freshdesk",
-        "_reseller_portal_portal_url": "partners.freshdesk.com/freshdesk_webhooks"
+        "_reseller_portal_portal_url": "partners.freshdesk.com/freshdesk_webhooks",
+        "_haproxy_internal_domain": "http://127.0.0.1:8191"
       },
       "freshops": {
         "subdomains": {

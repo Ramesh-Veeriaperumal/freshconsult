@@ -317,7 +317,7 @@
       :ticket_summary_feature: 313
       :basic_settings_feature: 314
       :branding_feature: 315
-      :untitled_feature_2_dependency_toggle: 316
+      :solutions_agent_metrics_feature: 316
       :untitled_setting_1: 317
       :untitled_setting_2: 318
       :untitled_setting_3: 319
@@ -488,7 +488,6 @@
   :field_service_geolocation: false
   :location_tagging: false
   :kbase_spam_whitelist: false
-  :solutions_agent_metrics: false
   :disable_supress_logs: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
