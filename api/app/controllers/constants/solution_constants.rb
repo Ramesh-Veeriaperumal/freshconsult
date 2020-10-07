@@ -83,7 +83,7 @@ module SolutionConstants
   FOLDER_ARTICLES_FIELDS = (%w[portal_id tags platforms page per_page status allow_language_fallback] | INDEX_FIELDS).freeze
   SEARCH_FIELDS = %w[term language tags platforms status prefer_published allow_language_fallback page per_page].freeze
 
-  HIT_FIELDS = THUMBS_UP_FIELDS = THUMBS_DOWN_FIELDS = %w[language user_id source_type source_id].freeze
+  HIT_FIELDS = THUMBS_UP_FIELDS = THUMBS_DOWN_FIELDS = %w[language user_id source_type source_id platform].freeze
 
   RECENT_ARTICLES_FIELDS = %w[ids user_id language].freeze
   ARTICLE_CONTENT_FIELDS = %w[language].freeze
