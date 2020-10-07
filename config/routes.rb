@@ -2669,6 +2669,7 @@ Helpkit::Application.routes.draw do
           get :check_contact_import
           put :reset_login_count
           post :contact_import_destroy
+          post :sha256_enabled_feature
           post :sha1_enabled_feature
           post :api_jwt_auth_feature
           post :collab_feature
