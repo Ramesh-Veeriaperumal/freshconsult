@@ -493,10 +493,6 @@ class Account < ActiveRecord::Base
     launched?(:sidekiq_logs_to_central)
   end
 
-  def disable_supress_logs_enabled?
-    launched?(:disable_supress_logs)
-  end
-
   def skip_portal_cname_chk_enabled?
     launched?(:skip_portal_cname_chk)
   end
