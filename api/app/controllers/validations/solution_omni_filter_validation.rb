@@ -3,7 +3,7 @@
 class SolutionOmniFilterValidation < FilterValidation
   include SolutionHelper
   CHECK_PARAMS_SET_FIELDS = %w[portal_id tags platforms status prefer_published term].freeze
-  attr_accessor :portal_id, :platforms, :tags, :status, :prefer_published, :allow_language_fallback, :term, :user_id, :source_type, :source_id
+  attr_accessor :portal_id, :platforms, :tags, :status, :prefer_published, :allow_language_fallback, :term, :user_id, :source_type, :source_id, :platform
 
   validate :validate_omni_channel_feature
   validates :portal_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
@@ -27,6 +27,7 @@ class SolutionOmniFilterValidation < FilterValidation
   }, required: true, if: :source_type_required?
 
   validates :term, required: true, data_type: { rules: String, allow_nil: false }, if: :search_action
+  validates :platform, custom_inclusion: { in: SolutionConstants::PLATFORM_TYPES }, if: -> { @platform.present? }
 
   SEARCH_ACTION = %i[search].freeze
 
@@ -37,6 +38,7 @@ class SolutionOmniFilterValidation < FilterValidation
   def validate_omni_channel_feature
     unless allow_chat_platform_attributes?
       omni_channel_error(:platforms) if @request_params.key?(:platforms)
+      omni_channel_error(:platform) if @request_params.key?(:platform)
       omni_channel_error(:tags) if @request_params.key?(:tags)
     end
     errors.blank?

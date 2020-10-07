@@ -6940,5 +6940,18 @@ module Ember
     ensure
       Account.unstub(:current)
     end
+
+    def test_event_info_of_tickets_not_null
+      test_ticket = create_ticket(requester_id: add_test_agent(@account, role: Role.find_by_name('Agent').id).id)
+      Helpdesk::SchemaLessTicket.any_instance.stubs(:reports_hash).returns('lifecycle_last_updated_at' => (Time.zone.now - 10))
+      test_ticket.status = 'RESOLVED'
+      test_ticket.save!
+      event_info = test_ticket.event_info 'update'
+      assert_not_nil event_info[:action_time_in_bhrs]
+      assert_not_nil event_info[:action_time_in_chrs]
+      assert_not_nil event_info[:chrs_from_tkt_creation]
+    ensure
+      Helpdesk::SchemaLessTicket.any_instance.unstub(:reports_hash)
+    end
   end
 end

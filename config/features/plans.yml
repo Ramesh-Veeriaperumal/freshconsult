@@ -133,6 +133,7 @@
       - :analytics_knowledge_base
       - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
+      - :ticket_filter_increased_companies_limit
     :inherits:
       - :garden_jan_17
     :exclude: [:analytics_knowledge_base_report]
@@ -349,6 +350,7 @@
       - :analytics_knowledge_base
       - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
+      - :ticket_filter_increased_companies_limit
     :inherits:
       - :garden_jan_19
     :exclude: [:analytics_knowledge_base_report]
@@ -561,6 +563,7 @@
       - :analytics_knowledge_base
       - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
+      - :ticket_filter_increased_companies_limit
     :inherits:
       - :garden_jan_20
     :exclude: [:analytics_knowledge_base_report]
