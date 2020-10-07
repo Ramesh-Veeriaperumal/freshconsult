@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
     :sso_login_expiry_limitation, :old_link_back_url_validation, :stop_contacts_count_query,
-    :es_tickets,
+    :es_tickets, :fb_msg_realtime,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp, :custom_product_notification,
     :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :freshid_org_v2, :hide_agent_login, :disable_supress_logs,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
-    :solutions_agent_metrics, :fuzzy_search, :delete_trash_daily,
+    :fuzzy_search, :delete_trash_daily,
     :allow_wildcard_ticket_create, :requester_privilege, :disable_archive,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
@@ -36,14 +36,16 @@ class Account < ActiveRecord::Base
     :requester_widget_timeline, :sprout_trial_onboarding,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
-    :bot_banner, :idle_session_timeout, :solutions_dashboard,
+    :bot_banner, :idle_session_timeout, :solutions_dashboard, :block_spam_user,
     :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments,
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription, :omni_channel_team_dashboard, :filter_facebook_mentions,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
     :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
-    :feedback_widget_captcha, :gamification_perf, :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle
+    :feedback_widget_captcha, :gamification_perf, :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger, :redirect_helpdesk_ticket_index, :redirect_helpdesk_ticket_new, :redirect_helpdesk_ticket_compose_email, :redirect_helpdesk_ticket_edit,
+    :redirect_contact_new, :redirect_contact_edit, :redirect_contact_index, :redirect_companies_new, :redirect_companies_edit, :redirect_companies_index, :redirect_companies_show,
+    :redirect_archive_tickets_new, :redirect_archive_tickets_show, :redirect_archive_tickets_edit, :redirect_archive_tickets_index, :redirect_old_ui_paths
   ].freeze
 
   BITMAP_FEATURES = [
@@ -66,7 +68,7 @@ class Account < ActiveRecord::Base
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
-    :canned_forms, :customize_table_view, :solutions_templates, :disable_supress_logs,
+    :canned_forms, :customize_table_view, :solutions_templates, :disable_supress_logs, :fb_msg_realtime,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
@@ -80,7 +82,7 @@ class Account < ActiveRecord::Base
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
-    :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics, :forums_agent_portal, :solutions_agent_portal,
+    :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
     :allow_wildcard_ticket_create, :supervisor_contact_field, :whatsapp_channel, :feedback_widget_captcha,
     :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
@@ -89,11 +91,11 @@ class Account < ActiveRecord::Base
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :custom_product_notification,
     :allow_huge_ccs,
+    :fb_msg_realtime,
     :new_es_api,
     :filter_factory,
     :disable_supress_logs,
     :spam_blacklist_feature,
-    :solutions_agent_metrics,
     :allow_wildcard_ticket_create,
     :bypass_signup_captcha,
     :supervisor_contact_field,
@@ -294,6 +296,10 @@ class Account < ActiveRecord::Base
 
   def freshchat_routing_enabled?
     livechat_enabled? and features?(:chat_routing)
+  end
+
+  def fb_msg_realtime_enabled?
+    launched?(:fb_msg_realtime)
   end
 
   def supervisor_feature_launched?

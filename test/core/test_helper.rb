@@ -24,5 +24,5 @@ class ActiveSupport::TestCase
   end
 
   self.use_transactional_fixtures = false
-  fixtures :all 
+  fixtures :all
 end

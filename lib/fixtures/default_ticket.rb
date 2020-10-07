@@ -84,7 +84,7 @@ class Fixtures::DefaultTicket
     end
 
     def source_name
-      Account.current.helpdesk_sources.ticket_source_names_by_key[source]
+      Account.current.helpdesk_sources.default_ticket_source_names_by_key[source]
     end
 
     def updated_at

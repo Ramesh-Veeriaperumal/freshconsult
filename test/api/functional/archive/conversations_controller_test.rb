@@ -1,5 +1,5 @@
 require_relative '../../test_helper'
-['social_tickets_creation_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['social_tickets_creation_helper', 'twitter_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require 'sidekiq/testing'
 
 class Archive::ConversationsControllerTest < ActionController::TestCase
@@ -8,6 +8,7 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
   include ApiTicketsTestHelper
   include TicketHelper
   include SocialTicketsCreationHelper
+  include TwitterHelper
 
   ARCHIVE_DAYS = 120
   TICKET_UPDATED_DATE = 150.days.ago
@@ -20,10 +21,12 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
     @account.make_current
     @account.enable_ticket_archiving(ARCHIVE_DAYS)
     create_archive_ticket
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(Faker::Number.between(1, 999_999_999).to_s))
   end
 
   def teardown
     cleanup_archive_ticket(@archive_ticket, {conversations: true})
+    Twitter::REST::Client.any_instance.unstub(:user)
   end
 
   def test_ticket_conversations

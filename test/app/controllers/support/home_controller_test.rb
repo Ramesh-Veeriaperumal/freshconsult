@@ -83,22 +83,6 @@ class Support::HomeControllerTest < ActionController::TestCase
     assert_not_match "/support/solutions/folders/#{folder.id}", response.body
   end
 
-    def test_facebook_support_home_does_not_redirects_when_facebook_is_enabled
-      Account.current.stubs(:basic_facebook_enabled?).returns(true)
-      get :index, portal_type: 'facebook'
-      assert_match 'facebook/support', response.body
-    ensure
-      Account.current.unstub(:basic_facebook_enabled?)
-    end
-
-    def test_facebook_support_home_redirects_to_support_home_when_facebook_is_disabled
-      Account.current.stubs(:basic_facebook_enabled?).returns(false)
-      get :index, portal_type: 'facebook'
-      assert_match '/support/home', response.body
-    ensure
-      Account.current.unstub(:basic_facebook_enabled?)
-    end
-
     def test_image_property_included_in_og_meta_tags
       user = add_new_user(Account.current, active: true)
       user.make_current
@@ -124,5 +108,10 @@ class Support::HomeControllerTest < ActionController::TestCase
       assert_equal response.headers['X-Frame-Options'], 'SAMEORIGIN'
     ensure
       Account.any_instance.unstub(:multilingual?)
+    end
+
+    def test_redirect_support_home
+      get :index, portal_type: 'facebook'
+      assert_redirected_to '/support/home'
     end
 end

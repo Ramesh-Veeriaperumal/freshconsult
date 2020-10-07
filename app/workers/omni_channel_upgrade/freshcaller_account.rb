@@ -65,7 +65,7 @@ module OmniChannelUpgrade
       end
 
       def schedule_freshcaller_account_creation_callbacks(account, freshcaller_account_domain, billing_response, performer_id, action_type)
-        # For CHARGEBEE_OMNI_UPGRADE, agent sync must happen only after moving freshcaller to bundle, hence skipping here
+        # For CHARGEBEE_OMNI_UPGRADE, agent sync will not happen
         schedule_agent_sync_callback(performer_id, FRESHCALLER) if action_type == PRODUCT_OMNI_UPGRADE
         schedule_bundle_updation_callback(account, freshcaller_account_domain)
         schedule_freshcaller_billing_callback(account.subscription.trial?, billing_response, action_type)

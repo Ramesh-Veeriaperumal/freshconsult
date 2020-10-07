@@ -26,6 +26,7 @@ sidekiq_client_redis_pool_size = pool_size if sidekiq_client_redis_pool_size.zer
 poll_interval = config['scheduled_poll_interval']
 Sidekiq.default_worker_options = { backtrace: 10 }
 Sidekiq.options[:dead_max_jobs] = config['dead_max_jobs'] || MAX_DEAD_SET_SIZE
+Sidekiq.options[:dead_timeout_in_seconds] = 30 * 24 * 60 * 60
 Sidekiq.configure_client do |config|
   config.redis = redis_config.merge({:size => sidekiq_client_redis_pool_size})
   config.client_middleware do |chain|

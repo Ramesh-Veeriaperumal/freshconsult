@@ -468,6 +468,16 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal({ 'agent_reply_count' => [nil, 1] }, job['args'][1]['model_changes'])
   end
 
+  def test_central_publish_ticket_manual_publish
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    ticket.manual_publish_to_central(nil, :update, {})
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.first
+    assert_equal false, job['args'][1]['event_info']['app_update']
+  end
+
   def test_ticket_state_worker_with_response_time_null_fix_disabled
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     ticket = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))

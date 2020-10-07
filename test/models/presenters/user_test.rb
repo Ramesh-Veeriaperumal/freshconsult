@@ -254,4 +254,13 @@ class UserTest < ActiveSupport::TestCase
     event_info = user.event_info(:update)
     event_info.must_match_json_expression(cp_user_event_info_pattern(app_update: true))
   end
+
+  def test_central_publish_contact_manual_publish
+    user = add_new_user(@account)
+    CentralPublishWorker::UserWorker.jobs.clear
+    user.manual_publish_to_central(nil, :create, {})
+    assert_equal 1, CentralPublishWorker::UserWorker.jobs.size
+    job = CentralPublishWorker::UserWorker.jobs.last
+    assert_equal false, job['args'][1]['event_info']['app_update']
+  end
 end
