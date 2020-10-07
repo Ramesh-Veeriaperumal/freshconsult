@@ -423,6 +423,7 @@
       :disable_emails: 419
       :custom_product_notification: 420
       :kbase_spam_whitelist: 421
+      :fb_msg_realtime: 422
 :selectable_features:
   :redis_display_id: true
   :es_v2_writes: true
@@ -499,6 +500,7 @@
   :feedback_widget_captcha: false
   :skip_portal_cname_chk: false
   :disable_archive: false
+  :fb_msg_realtime: false
   :gamification_perf: false
   :stop_contacts_count_query: false
   :force_index_tickets: false
