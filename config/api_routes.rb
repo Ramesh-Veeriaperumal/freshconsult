@@ -708,6 +708,7 @@ Helpkit::Application.routes.draw do
         match '/split_note' => 'ember/tickets#split_note', via: :put
         post :facebook_reply, to: 'ember/conversations#facebook_reply'
         post :ecommerce_reply, to: 'ember/conversations#ecommerce_reply'
+        post 'channel-reply', to: 'ember/conversations#channel_reply'
         get :prime_association, to: 'ember/tickets/associates#prime_association'
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'

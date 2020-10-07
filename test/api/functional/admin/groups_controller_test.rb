@@ -50,8 +50,7 @@ module Admin
       match_json(pattern.ordered!)
     ensure
       Account.current.groups.where(id: group_ids).destroy_all
-      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
+      User.any_instance.unstub(:privilege?)
     end
 
     def test_get_support_agent_groups
@@ -155,7 +154,7 @@ module Admin
     end
 
     def test_index_validate_paginations
-      create_support_agent_groups(10)
+      group_ids = create_support_agent_groups(10)
       get :index, controller_params(version: 'private', type: GroupConstants::SUPPORT_GROUP_NAME, page: 1, per_page: 5)
       assert_response 200
       assert_equal((JSON.parse response.body).count, 5)
@@ -165,7 +164,7 @@ module Admin
       assert_equal((JSON.parse response.body).count, 5)
       assert_response 200
     ensure
-      Account.current.groups.delete_all
+      Account.current.groups.where(id: group_ids).destroy_all
     end
 
     def test_index_with_omni_channel_groups
@@ -186,7 +185,7 @@ module Admin
       match_json(pattern)
     ensure
       ApiGroupsController.any_instance.unstub(:request_ocr)
-      Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
+      Account.any_instance.unstub(:features?)
       Account.any_instance.unstub(:omni_agent_availability_dashboard_enabled?)
       Account.any_instance.unstub(:omni_channel_routing_enabled?)
       Account.unstub(:current)
@@ -299,22 +298,21 @@ module Admin
 
     def test_create_group_without_manage_availability_privilege
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
-      User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
 
-      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: 1,
-                       type: 'support_agent_group', escalate_to: 1, agent_ids: [1], unassigned_for: '30m' }
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.agents.first.user_id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
       group_params.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
       post :create, construct_params({ version: 'private' }, group_params)
       assert_response 403
       match_json(request_error_pattern(:access_denied))
     ensure
-      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
+      User.any_instance.unstub(:privilege?)
     end
 
     def test_create_no_valid
-      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: 1,
-                       type: 'support_agent_group', escalate_to: 1, agent_ids: [1], unassigned_for: '30m' }
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
       group_params.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
       post :create, construct_params({ version: 'private' }, group_params)
       assert_response 201
@@ -329,8 +327,8 @@ module Admin
     ASSIGNMENT_SETTINGS.each_pair do |assignment_type, assignment_payload|
       capping_limit = %i[load_based_round_robin skill_based_round_robin].include?(assignment_type)
       define_method "test_create_#{assignment_type}_valid" do
-        group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: 1,
-                         type: 'support_agent_group', escalate_to: 1, agent_ids: [1], unassigned_for: '30m' }
+        group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                         type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
         group_params.merge!(assignment_payload)
 
         capping_limit_param = assignment_type == :load_based_round_robin ? lbrr_params : sbrr_params
@@ -338,6 +336,7 @@ module Admin
 
         post :create, construct_params({ version: 'private' }, group_params)
         parsed_response = JSON.parse(response.body)
+        p parsed_response
         group_id = parsed_response['id']
         assert_response(201)
         pattern = safe_send("group_management_#{METHOD_NAME_MAPPINGS[assignment_type]}_pattern", Group.find(group_id))
@@ -460,6 +459,7 @@ module Admin
       Account.current.add_feature :round_robin_load_balancing
       existing_group = create_group(@account)
       put :update, construct_params({ version: 'private', id: existing_group.id }, automatic_agent_assignment: lbrr_params[:automatic_agent_assignment])
+      p JSON.parse(response.body)
       assert_response 200
       match_json(group_management_lbrr_pattern(existing_group))
     ensure
@@ -473,6 +473,7 @@ module Admin
       Account.current.add_feature :skill_based_round_robin
       existing_group = create_group(@account)
       put :update, construct_params({ version: 'private', id: existing_group.id }, automatic_agent_assignment: sbrr_params[:automatic_agent_assignment])
+      p JSON.parse(response.body)
       assert_response 200
       match_json(group_management_sbrr_pattern(existing_group))
     ensure
@@ -487,6 +488,7 @@ module Admin
       Account.current.add_feature :omni_channel_routing
       existing_group = create_group(@account)
       put :update, construct_params({ version: 'private', id: existing_group.id }, ASSIGNMENT_SETTINGS[:lbrr_by_omniroute])
+      p JSON.parse(response.body)
       assert_response 200
       existing_group.reload
       match_json(group_management_v2_lbrr_by_omni_pattern(existing_group))
@@ -516,6 +518,8 @@ module Admin
       put :update, construct_params({ id: group.id }, type: GroupConstants::SUPPORT_GROUP_NAME)
       assert_response 400
       match_json([bad_request_error_pattern('type', :invalid_field)])
+    ensure
+      group.destroy
     end
 
     def test_update_group_with_invalid_id
@@ -531,6 +535,8 @@ module Admin
       put :update, construct_params({ id: group.id }, agent_ids: [agent_id])
       assert_response 400
       match_json([bad_request_error_pattern('agent_ids', :invalid_list, list: agent_id.to_s)])
+    ensure
+      group.destroy
     end
 
     def test_update_group_with_invalid_field_values
@@ -545,6 +551,7 @@ module Admin
                   bad_request_error_pattern('name', :'Has 300 characters, it can have maximum of 255 characters')])
     ensure
       Account.current.revoke_feature :round_robin
+      group.destroy
     end
 
     def test_update_group_with_blank_name
@@ -555,6 +562,7 @@ module Admin
       match_json([bad_request_error_pattern('name', :blank)])
     ensure
       Account.current.revoke_feature :round_robin
+      group.destroy
     end
 
     def test_update_group_type_invalid
@@ -562,12 +570,13 @@ module Admin
       create_field_group_type
       group = create_group(@account)
       put :update, construct_params({ version: 'private', id: group.id },
-                                    escalate_to: 1, unassigned_for: '30m', agent_ids: [1], type: FIELD_GROUP_NAME)
+                                    escalate_to: Account.current.account_managers.first.id, unassigned_for: '30m', agent_ids: [Account.current.agents.first.user_id], type: FIELD_GROUP_NAME)
       assert_response 400
       match_json([bad_request_error_pattern('type', :invalid_field)])
     ensure
       destroy_field_group
       Account.current.revoke_feature(:field_service_management)
+      group.destroy
     end
 
     ##
@@ -575,8 +584,8 @@ module Admin
     # Public API test
 
     def test_create_no_valid_public
-      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: 1,
-                       type: 'support_agent_group', escalate_to: 1, agent_ids: [1], unassigned_for: '30m' }
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
       group_params.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
       post :create, construct_params({}, group_params)
       assert_response 201
@@ -630,7 +639,7 @@ module Admin
         group = FactoryGirl.build(:group, name: name)
         group.account_id = account.id
         group.description = Faker::Lorem.paragraph
-        group.escalate_to = 1
+        group.escalate_to = Account.current.agents.first.user_id
         group.group_type = options[:group_type] || GroupConstants::SUPPORT_GROUP_ID
         group.agent_ids = options[:agent_ids] || [Account.current.agents.first.user_id]
         group.business_calendar_id = 1

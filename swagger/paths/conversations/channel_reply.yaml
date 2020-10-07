@@ -1,0 +1,22 @@
+post:
+  tags: [conversation]
+  description: Send reply message to a channel conversation.
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/channel_reply_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        type: object
+        properties: 
+          conversation:
+            $ref: '#/definitions/extended_note'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

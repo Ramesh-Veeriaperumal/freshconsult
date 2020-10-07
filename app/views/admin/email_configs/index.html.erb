@@ -79,7 +79,7 @@
     </p> 
   </div>
   <div class="span2 align-right" id="survey_link_con">
-    <input rel="toggle" type="checkbox" id="Personalize_email" name="stop_sla_timer" data-checked-label="<%= t('email_configs.Personalized_email_replies_yes') %>" data-unchecked-label="<%= t('email_configs.Personalized_email_replies_no') %>" <%if current_account.features?(:personalized_email_replies)%>checked="true"<%end%>/>
+    <input rel="toggle" type="checkbox" id="Personalize_email" name="stop_sla_timer" data-checked-label="<%= t('email_configs.Personalized_email_replies_yes') %>" data-unchecked-label="<%= t('email_configs.Personalized_email_replies_no') %>" <%if current_account.personalized_email_replies_enabled? %>checked="true"<%end%>/>
   </div>
 </div>
 <div class="row-fluid">

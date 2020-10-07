@@ -40,6 +40,7 @@ class ApiRolesControllerTest < ActionController::TestCase
 
   def test_index_without_privilege
     role = Role.first
+    User.any_instance.stubs(:privilege?).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)

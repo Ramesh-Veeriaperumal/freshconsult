@@ -888,6 +888,7 @@
           "_podeuwest1": "euattachment.freshdesk.com",
           "_podeucentral1": "eucattachment.freshdesk.com"
         },
+        "_fd_microservices_internal_endpoint": "http://microservices.freshdesk.internal",
         "freshchat": {
           "token": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:JcNHs2b9Zz/Yfaj6CvQjDTUkGlnyYlSQ:b3sIGSAC1617b0Cg7PYGu4UGMy6x9X2FfZguIyrahwxE2+lkkpnk4JRQW9H0g0OaFd2rGQ==]",
           "app_id": "EJ[1:6lk0BVjOwjDuhReQUpoa2n6zbt3IKrwYEVtnv6HnDQk=:Grzjy3/P20dCwMtLsuyY+k6887soPe3r:nqroXkjDQoz10yNlZ9h330O7KpzaulLu15oXA3Uj89L/t6gRU/kbmomsTwMoZbQYu9jFXQ==]"
@@ -1651,7 +1652,7 @@
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
-          "_url": "https://thankyou-api.eu-central-1-prod.freddyproject.com/serv/",
+          "_url": "https://intelli-reopen.eu-central-1-prod.freddyproject.com/serv/",
           "_timeout": 2,
           "_confidence_threshold": 80
         },

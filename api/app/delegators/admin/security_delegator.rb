@@ -3,11 +3,12 @@
 module Admin
   class SecurityDelegator < BaseDelegator
     include Admin::SecurityConstants
-    attr_accessor :record, :notification_emails, :agent_password_policy, :contact_password_policy
+    attr_accessor :record, :notification_emails, :agent_password_policy, :contact_password_policy, :sso
     validate :check_attributes_feature
     validate :check_notification_emails, if: -> { notification_emails.present? }
     validate :check_contact_password_policy, if: -> { contact_password_policy.present? }
     validate :check_agent_password_policy, if: -> { agent_password_policy.present? }
+
     def initialize(record, options)
       super(record, options)
 

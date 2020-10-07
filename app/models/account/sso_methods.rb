@@ -22,6 +22,10 @@ class Account < ActiveRecord::Base
     freshid_sso_sync_enabled? ? freshdesk_sso_enabled? : sso_enabled?
   end
 
+  def coexist_account?
+    freshid_integration_enabled? && freshdesk_sso_enabled?
+  end
+
   def oauth2_sso_enabled?
     sso_options.present? &&
         (sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2] ||
@@ -57,10 +61,10 @@ class Account < ActiveRecord::Base
     puts 'Freshid not enabled' or return unless self.freshid_integration_enabled?
     if self.freshid_sso_sync_enabled?
       sso_config = { agent_oauth2: true, agent_oauth2_config: { logout_redirect_url: logout_redirect_url }}
-      self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
+      self.sso_options = sso_configured? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     else
       sso_config = { sso_type: SsoUtil::SSO_TYPES[:oauth2], agent_oauth2: true, agent_oauth2_config: { logout_redirect_url: logout_redirect_url } }
-      self.sso_options = customer_oauth2_sso_enabled? ? self.sso_options.merge(sso_config) : sso_config
+      self.sso_options = customer_oauth2_sso_enabled? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     end
     self.sso_enabled = true
     self.save
@@ -77,10 +81,10 @@ class Account < ActiveRecord::Base
     puts 'Freshid not enabled' or return unless self.freshid_integration_enabled?
     if self.freshid_sso_sync_enabled?
       sso_config = { customer_oauth2: true, customer_oauth2_config: { logout_redirect_url: logout_redirect_url }}
-      self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
+      self.sso_options = sso_configured? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     else
       sso_config = { sso_type: SsoUtil::SSO_TYPES[:oauth2], customer_oauth2: true, customer_oauth2_config: { logout_redirect_url: logout_redirect_url }}
-      self.sso_options = agent_oauth2_sso_enabled? ? self.sso_options.merge(sso_config) : sso_config
+      self.sso_options = agent_oauth2_sso_enabled? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     end
     self.sso_enabled = true
     self.save
@@ -141,7 +145,7 @@ class Account < ActiveRecord::Base
   def enable_agent_oidc_sso!(logout_redirect_url)
     puts 'Freshid not enabled' or return unless self.freshid_integration_enabled?
     sso_config = { agent_oidc: true, agent_oidc_config: { logout_redirect_url: logout_redirect_url }}
-    self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
+    self.sso_options = sso_configured? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     self.sso_enabled = true
     self.save
   end
@@ -156,7 +160,7 @@ class Account < ActiveRecord::Base
   def enable_customer_oidc_sso!(logout_redirect_url)
     puts 'Freshid not enabled' || return unless self.freshid_integration_enabled?
     sso_config = { customer_oidc: true, customer_oidc_config: { logout_redirect_url: logout_redirect_url }}
-    self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
+    self.sso_options = sso_configured? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     self.sso_enabled = true
     self.save
   end
@@ -229,10 +233,10 @@ class Account < ActiveRecord::Base
     puts 'Freshid not enabled' || return unless self.freshid_integration_enabled?
     if self.freshid_sso_sync_enabled?
       sso_config = { agent_freshid_saml: true, agent_freshid_saml_config: { logout_redirect_url: logout_redirect_url }}
-      self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
+      self.sso_options = sso_configured? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     else
       sso_config = { sso_type: SsoUtil::SSO_TYPES[:freshid_saml], agent_freshid_saml: true, agent_freshid_saml_config: { logout_redirect_url: logout_redirect_url }}
-      self.sso_options = customer_freshid_saml_sso_enabled? ? self.sso_options.merge(sso_config) : sso_config
+      self.sso_options = customer_freshid_saml_sso_enabled? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     end
     self.sso_enabled = true
     self.save
@@ -249,10 +253,10 @@ class Account < ActiveRecord::Base
     puts 'Freshid not enabled' || return unless self.freshid_integration_enabled?
     if self.freshid_sso_sync_enabled?
       sso_config = { customer_freshid_saml: true, customer_freshid_saml_config: { logout_redirect_url: logout_redirect_url }}
-      self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
+      self.sso_options = sso_configured? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     else
       sso_config = { sso_type: SsoUtil::SSO_TYPES[:freshid_saml], customer_freshid_saml: true, customer_freshid_saml_config: { logout_redirect_url: logout_redirect_url }}
-      self.sso_options = agent_freshid_saml_sso_enabled? ? self.sso_options.merge(sso_config) : sso_config
+      self.sso_options = agent_freshid_saml_sso_enabled? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     end
     self.sso_enabled = true
     self.save
@@ -312,7 +316,7 @@ class Account < ActiveRecord::Base
       return
     end
     sso_config = { agent_custom_sso: true, agent_custom_sso_config: entrypoint_config }
-    self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
+    self.sso_options = sso_configured? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     self.sso_enabled = true
     self.save
   end
@@ -365,7 +369,7 @@ class Account < ActiveRecord::Base
       return
     end
     sso_config = { customer_custom_sso: true, customer_custom_sso_config: entrypoint_config }
-    self.sso_options = sso_configured? ? sso_options.merge(sso_config) : sso_config
+    self.sso_options = sso_configured? ? sso_options.merge(sso_config) : HashWithIndifferentAccess.new(sso_config)
     self.sso_enabled = true
     self.save
   end
@@ -432,5 +436,21 @@ class Account < ActiveRecord::Base
         self.sso_options.delete(key)
       end
     end
+  end
+
+  def configure_sso_options(options)
+    if sso_enabled
+      cleanup_old_sso_options(options[:sso_type])
+      self.sso_options = sso_options.with_indifferent_access.merge!(options)
+    elsif freshid_sso_sync_enabled? && freshid_sso_enabled?
+      Rails.logger.info 'freshid_sso_sync enabled so removing freshdesk sso options'
+      remove_freshdesk_sso_options
+    else
+      reset_sso_options
+    end
+  end
+
+  def cleanup_old_sso_options(new_sso_type)
+    safe_send("remove_#{current_sso_type}_sso_options") if current_sso_type.present? && new_sso_type.present? && new_sso_type != current_sso_type
   end
 end

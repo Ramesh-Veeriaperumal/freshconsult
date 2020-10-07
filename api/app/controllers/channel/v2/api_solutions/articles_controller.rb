@@ -63,7 +63,7 @@ module Channel::V2::ApiSolutions
       end
 
       def set_interaction_source
-        @article.set_interaction_source(params[:source_type].to_sym, params[:source_id])
+        @article.set_interaction_source(params[:source_type].to_sym, params[:source_id], params[:platform])
       end
 
       def agent?

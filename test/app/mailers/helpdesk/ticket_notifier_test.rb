@@ -29,21 +29,23 @@ class TicketNotifierTest < ActionMailer::TestCase
   end
 
   def test_email_gets_sent_without_no_agent_when_responder_is_nil
-    Account.any_instance.stubs(:features?).returns(true)
+    Account.any_instance.stubs(:personalized_email_replies_enabled?).returns(true)
     Mail::Message.any_instance.expects(:deliver!).once
     email = Helpdesk::TicketNotifier.deliver_notify_outbound_email(@ticket)
-    Account.any_instance.unstub(:features?)
     assert_equal true, email[:from].value[0].include?("Test Account")
+  ensure
+    Account.any_instance.unstub(:personalized_email_replies_enabled?)
   end
 
   def test_email_gets_sent_with_agent_name_when_responder_is_not_nil
     user = User.first
     @ticket.responder = user
-    Account.any_instance.stubs(:features?).returns(true)
+    Account.any_instance.stubs(:personalized_email_replies_enabled?).returns(true)
     Mail::Message.any_instance.expects(:deliver!).once
     email = Helpdesk::TicketNotifier.deliver_notify_outbound_email(@ticket)
-    Account.any_instance.unstub(:features?)
     assert_equal true, email[:from].value[0].include?(user.name)
+  ensure
+    Account.any_instance.unstub(:personalized_email_replies_enabled?)
   end
 
   def test_agent_assign_email_notification_go_for_ticket
