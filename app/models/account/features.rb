@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
     :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
-    :falcon_portal_theme, :freshid, :allow_huge_ccs, :kbase_spam_whitelist,
+    :falcon_portal_theme, :freshid, :allow_huge_ccs, :email_new_settings, :kbase_spam_whitelist,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
     :es_tickets, :fb_msg_realtime,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :skip_portal_cname_chk, :ticket_source_revamp, :custom_product_notification,
-    :bot_email_channel, :description_by_default, :bot_chat_history, :new_es_api, :filter_factory,
+    :bot_email_channel, :description_by_default, :bot_chat_history,
     :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
     :native_apps, :archive_tickets_api, :bot_agent_response,
@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :fuzzy_search, :delete_trash_daily,
-    :allow_wildcard_ticket_create, :requester_privilege, :disable_archive,
+    :requester_privilege, :disable_archive,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
@@ -72,7 +72,7 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha, :new_es_api, :filter_factory, :spam_blacklist_feature,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :bypass_signup_captcha, :spam_blacklist_feature,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible, :disable_archive,
@@ -83,8 +83,8 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
-    :allow_wildcard_ticket_create, :supervisor_contact_field, :whatsapp_channel, :feedback_widget_captcha, :sidekiq_logs_to_central,
-    :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails
+    :supervisor_contact_field, :whatsapp_channel, :feedback_widget_captcha, :sidekiq_logs_to_central,
+    :basic_settings_feature, :gamification_perf, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails, :ticket_filter_increased_companies_limit
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -92,12 +92,9 @@ class Account < ActiveRecord::Base
     :custom_product_notification,
     :allow_huge_ccs,
     :fb_msg_realtime,
-    :new_es_api,
-    :filter_factory,
     :disable_supress_logs,
     :spam_blacklist_feature,
     :kbase_spam_whitelist,
-    :allow_wildcard_ticket_create,
     :bypass_signup_captcha,
     :supervisor_contact_field,
     :feedback_widget_captcha,
@@ -238,10 +235,6 @@ class Account < ActiveRecord::Base
 
   def link_tkts_or_parent_child_enabled?
     link_tickets_enabled? || parent_child_infra_enabled?
-  end
-
-  def allow_huge_ccs_enabled?
-    launched?(:allow_huge_ccs)
   end
 
   def survey_enabled?
@@ -478,10 +471,6 @@ class Account < ActiveRecord::Base
     launched?(:force_index_tickets)
   end
 
-  def stop_contacts_count_query_enabled?
-    launched?(:stop_contacts_count_query)
-  end
-
   def custom_product_notification_enabled?
     launched?(:custom_product_notification)
   end
@@ -494,20 +483,8 @@ class Account < ActiveRecord::Base
     launched?(:sidekiq_logs_to_central)
   end
 
-  def disable_supress_logs_enabled?
-    launched?(:disable_supress_logs)
-  end
-
-  def skip_portal_cname_chk_enabled?
-    launched?(:skip_portal_cname_chk)
-  end
-
   def es_v2_splqueries_enabled?
     launched?(:es_v2_splqueries)
-  end
-
-  def disable_emails_enabled?
-    launched?(:disable_emails)
   end
 
   def kbase_spam_whitelist_enabled?

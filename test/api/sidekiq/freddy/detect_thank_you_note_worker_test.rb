@@ -24,11 +24,12 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
   end
 
   class ResponseStub
-    def initialize(parsed_response, code)
+    def initialize(parsed_response, code, headers = { 'Content-Type' => 'application/json' })
       @parsed_response = parsed_response
       @code = code
+      @headers = headers
     end
-    attr_accessor :parsed_response, :code
+    attr_accessor :parsed_response, :code, :headers
   end
 
   def test_thank_you_note_worker
@@ -36,7 +37,7 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
     @ticket = create_ticket
     note = create_test_note
     args = { ticket_id: @ticket.id, note_id: note.id }
-    response_stub = ResponseStub.new({ 'reopen' => 0, 'confidence' => 99.77472623583164 }.to_json, 200)
+    response_stub = ResponseStub.new({ 'reopen' => 0, 'confidence' => 99.77472623583164 }, 200)
     HTTParty.stubs(:post).returns(response_stub)
     ::Freddy::DetectThankYouNoteWorker.new.perform(args)
     note.reload    
