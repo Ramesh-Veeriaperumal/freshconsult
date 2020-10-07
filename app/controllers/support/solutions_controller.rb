@@ -4,6 +4,7 @@ class Support::SolutionsController < SupportController
 	before_filter :load_category, :only => [:show]
 	before_filter :check_version_availability, :only => [:show]
 	before_filter { |c| c.check_portal_scope :open_solutions }
+  before_filter :redirect_to_support_home, if: :facebook?
 
   def index
     respond_to do |format|
@@ -12,6 +13,10 @@ class Support::SolutionsController < SupportController
         set_portal_page :solution_home 
       }
     end
+  end
+
+  def redirect_to_support_home
+    redirect_to "/support/solutions/#{params[:id]}"
   end
 
   def show

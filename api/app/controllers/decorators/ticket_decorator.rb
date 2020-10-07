@@ -117,11 +117,11 @@ class TicketDecorator < ApiDecorator
   end
 
   def twitter_ticket?
-    (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && record.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && record.tweet
+    record.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && record.tweet
   end
 
   def restrict_twitter_ticket_content?
-    Account.current.twitter_api_compliance_enabled? && twitter_ticket? && !private_api? && !channel_v2_api?
+    Account.current.twitter_api_compliance_enabled? && twitter_ticket? && public_v2_api?
   end
 
   def restricted_twitter_ticket_content
@@ -232,7 +232,7 @@ class TicketDecorator < ApiDecorator
       type: tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !channel_v2_api? ? twitter_requester.twitter_requester_handle_id : twitter_requester.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && public_v2_api? ? twitter_requester.twitter_requester_handle_id : twitter_requester.twitter_id
     }
     tweet_hash[:stream_id] = tweet.stream_id if channel_v2_api?
     tweet_hash

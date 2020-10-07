@@ -94,7 +94,7 @@ class ConversationDecorator < ApiDecorator
   end
 
   def restrict_twitter_content?
-    Account.current.twitter_api_compliance_enabled? && !private_api? && !channel_v2_api? && incoming && record.tweet.present?
+    Account.current.twitter_api_compliance_enabled? && public_v2_api? && incoming && record.tweet.present?
   end
 
   def twitter_public_api_body_hash(body)
@@ -177,7 +177,7 @@ class ConversationDecorator < ApiDecorator
       type: record.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !channel_v2_api? ? twitter_requester_handle_id : twitter_user.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && public_v2_api? ? twitter_requester_handle_id : twitter_user.twitter_id
     }
     tweet_hash[:stream_id] = record.tweet.stream_id if channel_v2_api?
     tweet_hash

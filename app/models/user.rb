@@ -1360,7 +1360,7 @@ class User < ActiveRecord::Base
   end
 
   def preferred_source
-    Helpdesk::Source.source_choices(:token_by_keys)[preferences[:preferred_source]]
+    source_choices[preferences[:preferred_source]]
   end
 
   def add_preferred_source(source)
@@ -1388,6 +1388,10 @@ class User < ActiveRecord::Base
   end
 
   private
+
+    def source_choices
+      @source_choices ||= Helpdesk::Source.source_choices(:token_by_keys)
+    end
 
     def perishable_token_expiry_key
       format(PERISHABLE_TOKEN_EXPIRY, account_id: account_id, user_id: id)
