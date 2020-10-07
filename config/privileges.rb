@@ -526,6 +526,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/dashboard",:only => [:agent_status]
     resource :"admin/user_skill"
     resource :api_agent, only: [:availability_count, :index]
+    resource :api_role, :only => [:index, :show]
   end
 
   manage_canned_responses do

@@ -1,7 +1,10 @@
 require_relative '../test_helper'
+['social_tickets_creation_helper.rb', 'twitter_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 class ApiContactsControllerTest < ActionController::TestCase
   include UsersTestHelper
   include CustomFieldsTestHelper
+  include TwitterHelper
+  include SocialTicketsCreationHelper
 
   def setup
     super
@@ -140,7 +143,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     get :show, construct_params(id: sample_user.id)
     assert_response 200
     res = JSON.parse(response.body)
-    assert_equal Helpdesk::Source.ticket_source_token_by_key[2].to_s, res['preferred_source']
+    assert_equal Helpdesk::Source.default_ticket_source_token_by_key[2].to_s, res['preferred_source']
   end
 
   def test_show_a_contact_without_preferred_source
@@ -3368,18 +3371,104 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_twitter_api_compliance_create_contact
     set_others_redis_key(TWITTER_API_COMPLIANCE_ENABLED, true)
     Account.current.launch(:twitter_api_compliance)
+    CustomRequestStore.store[:api_v2_request] = true
+    user_email = Faker::Internet.email
     post :create, construct_params({},  name: Faker::Lorem.characters(10),
-                                        email: Faker::Internet.email)
+                                        email: user_email)
     assert_response 201
-    match_json(deleted_contact_pattern(User.last))
+    created_user = User.find_by_email(user_email)
+    match_json(deleted_contact_pattern(created_user))
   ensure
+    created_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
     remove_others_redis_key TWITTER_API_COMPLIANCE_ENABLED
     Account.current.rollback(:twitter_api_compliance)
+  end
+
+  def test_populate_twitter_requester_handle_id_while_create_contact_with_twitter_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+    create_twitter_handle
+    user_email = Faker::Internet.email
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: user_email,
+                                        twitter_id: Faker::Lorem.word)
+    assert_response 201
+    created_user = User.find_by_email(user_email)
+    assert_equal twitter_requester_handle_id, created_user.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(created_user))
+  ensure
+    created_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_do_not_populate_twitter_requester_handle_id_while_create_contact_without_twitter_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+    create_twitter_handle
+    user_email = Faker::Internet.email
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: user_email)
+    assert_response 201
+    created_user = User.find_by_email(user_email)
+    assert_nil created_user.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(created_user))
+  ensure
+    created_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_error_in_populate_twitter_requester_handle_id_while_create_contact_with_suspended_twitter_user
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
+    Twitter::REST::Client.any_instance.stubs(:user).raises(Twitter::Error::Forbidden, 'User has been suspended.')
+    create_twitter_handle
+    user_email = Faker::Internet.email
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: user_email,
+                                        twitter_id: Faker::Lorem.word)
+    assert_response 201
+    created_user = User.find_by_email(user_email)
+    assert_nil created_user.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(created_user))
+  ensure
+    created_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_do_not_populate_twitter_requester_handle_id_while_create_contact_with_twitter_id_without_feature
+    CustomRequestStore.store[:api_v2_request] = true
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+    create_twitter_handle
+    user_email = Faker::Internet.email
+    post :create, construct_params({},  name: Faker::Lorem.characters(10),
+                                        email: user_email,
+                                        twitter_id: Faker::Lorem.word)
+    assert_response 201
+    created_user = User.find_by_email(user_email)
+    assert_nil created_user.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(created_user))
+  ensure
+    created_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
   end
 
   def test_twitter_api_compliance_update_contact
     set_others_redis_key(TWITTER_API_COMPLIANCE_ENABLED, true)
     Account.current.launch(:twitter_api_compliance)
+    CustomRequestStore.store[:api_v2_request] = true
     comp = get_company
     sample_user = add_new_user(@account)
     params_hash = { company_id: comp.id, view_all_tickets: true }
@@ -3387,19 +3476,151 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 200
     match_json(deleted_contact_pattern(sample_user.reload))
   ensure
+    sample_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
     remove_others_redis_key TWITTER_API_COMPLIANCE_ENABLED
     Account.current.rollback(:twitter_api_compliance)
+  end
+
+  def test_populate_twitter_requester_handle_id_while_contact_update_with_twitter_id_value_set
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+    create_twitter_handle
+    sample_user = add_new_user(@account)
+    assert_nil sample_user.twitter_requester_handle_id
+
+    params_hash = { twitter_id: Faker::Lorem.word }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 200
+    assert_equal twitter_requester_handle_id, sample_user.reload.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(sample_user))
+  ensure
+    sample_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_update_twitter_requester_handle_id_while_contact_update_with_twitter_id_value_changed
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
+    old_twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(old_twitter_requester_handle_id))
+    create_twitter_handle
+    sample_user = add_new_user_with_twitter_id(@account)
+    assert_equal old_twitter_requester_handle_id, sample_user.reload.twitter_requester_handle_id
+
+    new_twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(new_twitter_requester_handle_id))
+    params_hash = { twitter_id: Faker::Lorem.word }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 200
+    assert_equal new_twitter_requester_handle_id, sample_user.reload.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(sample_user))
+  ensure
+    sample_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_update_twitter_requester_handle_id_while_contact_update_with_twitter_id_value_unset
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+    create_twitter_handle
+    sample_user = add_new_user_with_twitter_id(@account)
+    assert_equal twitter_requester_handle_id, sample_user.twitter_requester_handle_id
+
+    params_hash = { twitter_id: nil }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 200
+    assert_nil sample_user.reload.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(sample_user))
+  ensure
+    sample_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_do_not_populate_twitter_requester_handle_id_while_contact_update_without_twitter_id
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+    create_twitter_handle
+    comp = get_company
+    sample_user = add_new_user(@account)
+    assert_nil sample_user.twitter_requester_handle_id
+
+    params_hash = { company_id: comp.id, view_all_tickets: true }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 200
+    assert_nil sample_user.reload.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(sample_user))
+  ensure
+    sample_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_error_in_update_twitter_requester_handle_id_while_update_contact_with_suspended_twitter_user
+    Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+    create_twitter_handle
+    sample_user = add_new_user_with_twitter_id(@account)
+    assert_equal twitter_requester_handle_id, sample_user.reload.twitter_requester_handle_id
+
+    Twitter::REST::Client.any_instance.stubs(:user).raises(Twitter::Error::Forbidden, 'User has been suspended.')
+    params_hash = { twitter_id: Faker::Lorem.word }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 200
+    assert_nil sample_user.reload.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(sample_user))
+  ensure
+    sample_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
+    Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+  end
+
+  def test_do_not_populate_twitter_requester_handle_id_while_contact_update_with_twitter_id_without_feature
+    CustomRequestStore.store[:api_v2_request] = true
+    twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
+    Twitter::REST::Client.any_instance.stubs(:user).returns(sample_twitter_user(twitter_requester_handle_id))
+    create_twitter_handle
+    sample_user = add_new_user(@account)
+    assert_nil sample_user.twitter_requester_handle_id
+
+    params_hash = { twitter_id: Faker::Lorem.word }
+    put :update, construct_params({ id: sample_user.id }, params_hash)
+    assert_response 200
+    assert_nil sample_user.reload.twitter_requester_handle_id
+    match_json(deleted_contact_pattern(sample_user))
+  ensure
+    sample_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
+    Twitter::REST::Client.any_instance.unstub(:user)
   end
 
   def test_contact_index_twitter_api_compliance
     set_others_redis_key(TWITTER_API_COMPLIANCE_ENABLED, true)
     Account.current.launch(:twitter_api_compliance)
+    CustomRequestStore.store[:api_v2_request] = true
     get :index, controller_params()
     assert_response 200
     users = @account.all_contacts.order('users.name').select { |x| x.deleted == false && x.blocked == false }
     pattern = users.map { |user| index_contact_pattern(user) }
     match_json(pattern.ordered!)
   ensure
+    CustomRequestStore.store[:api_v2_request] = false
     remove_others_redis_key TWITTER_API_COMPLIANCE_ENABLED
     Account.current.rollback(:twitter_api_compliance)
   end
@@ -3407,12 +3628,15 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_twitter_api_compliance_show_contact
     set_others_redis_key(TWITTER_API_COMPLIANCE_ENABLED, true)
     Account.current.launch(:twitter_api_compliance)
+    CustomRequestStore.store[:api_v2_request] = true
     sample_user = add_new_user(@account)
     get :show, construct_params(id: sample_user.id)
     ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
     match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
     assert_response 200
   ensure
+    sample_user.destroy
+    CustomRequestStore.store[:api_v2_request] = false
     remove_others_redis_key TWITTER_API_COMPLIANCE_ENABLED
     Account.current.rollback(:twitter_api_compliance)
   end

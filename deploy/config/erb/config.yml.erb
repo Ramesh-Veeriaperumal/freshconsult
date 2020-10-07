@@ -58,6 +58,9 @@ reseller_portal:
   portal_url:
     <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:reseller_portal_portal_url] %>
 
+haproxy:
+    internal_domain: <%= node[:ymls][:config][:haproxy_internal_domain] %>
+
 freshchat:
   <%= node[:opsworks][:environment] %>:
     token: <%= node[:ymls][:config][:freshchat][:token] %>

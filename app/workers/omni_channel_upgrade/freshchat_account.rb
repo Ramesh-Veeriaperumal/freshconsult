@@ -83,7 +83,8 @@ class OmniChannelUpgrade::FreshchatAccount < BaseWorker
     end
 
     def schedule_freshchat_account_creation_callbacks(account, freshchat_domain, billing_response, performer_id, action_type)
-      schedule_agent_sync_callback(performer_id, FRESHCHAT)
+      # For CHARGEBEE_OMNI_UPGRADE, agent sync will not happen
+      schedule_agent_sync_callback(performer_id, FRESHCHAT) if action_type == PRODUCT_OMNI_UPGRADE
       schedule_bundle_updation_callback(account, freshchat_domain)
       schedule_freshchat_billing_callback(account.subscription.trial?, billing_response, action_type)
     end

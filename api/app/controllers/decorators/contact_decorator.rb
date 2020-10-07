@@ -9,7 +9,7 @@ class ContactDecorator < ApiDecorator
             :preferences, :password_salt, :user_role, :delta, :privileges,
             :crypted_password, :last_login_at, :current_login_at, :history_column,
             :last_login_ip, :current_login_ip, :login_count, :second_email,
-            :failed_login_count, :last_seen_at, :posts_count, :preferred_source, :last_csat_rating, to: :record
+            :failed_login_count, :last_seen_at, :posts_count, :preferred_source, :last_csat_rating, :twitter_requester_handle_id, to: :record
 
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, :twitter_api_compliance_enabled?, to: 'Account.current'
@@ -174,6 +174,10 @@ class ContactDecorator < ApiDecorator
       end.compact
     end
     ret_hash
+  end
+
+  def twitter_id
+    Account.current.twitter_api_compliance_enabled? && public_v2_api? ? twitter_requester_handle_id : record.twitter_id
   end
 
   private

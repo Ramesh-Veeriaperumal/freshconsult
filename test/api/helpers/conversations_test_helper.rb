@@ -289,7 +289,7 @@ module ConversationsTestHelper
       type: note.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && !CustomRequestStore.store[:channel_api_request] ? twitter_requester_handle_id : twitter_user.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) ? twitter_requester_handle_id : twitter_user.twitter_id
     }
     tweet_hash[:stream_id] = note.tweet.stream_id if @channel_v2_api
     tweet_hash
@@ -325,7 +325,7 @@ module ConversationsTestHelper
   end
 
   def restrict_twitter_content?(note)
-    Account.current.twitter_api_compliance_enabled? && !CustomRequestStore.store[:private_api_request] && !CustomRequestStore.store[:channel_api_request] && note.incoming && note.tweet.present?
+    Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) && note.incoming && note.tweet.present?
   end
 
   def twitter_public_api_body_hash(body)

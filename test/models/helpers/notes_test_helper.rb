@@ -73,7 +73,7 @@ module NotesTestHelper
   end
 
   def event_info(event)
-    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION }
+    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION, app_update: true }
   end
 
   def central_assoc_note_pattern(expected_output = {}, note)

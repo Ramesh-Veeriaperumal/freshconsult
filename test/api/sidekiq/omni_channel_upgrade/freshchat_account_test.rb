@@ -102,7 +102,7 @@ class OmniChannelUpgrade::FreshchatAccountTest < ActionView::TestCase
     assert_nothing_raised RuntimeError do
       OmniChannelUpgrade::FreshchatAccount.new.perform(chargebee_response: omni_upgrade_chargebee_response, type: CHARGEBEE_OMNI_UPGRADE)
     end
-    assert_equal OmniChannelUpgrade::SyncAgents.jobs.size, 1
+    assert_equal OmniChannelUpgrade::SyncAgents.jobs.size, 0
     assert_equal OmniChannelUpgrade::LinkAccount.jobs.size, 1
     assert_equal Freshid::V2::AccountDetailsUpdate.jobs.size, 1
     assert_equal Billing::FreshchatSubscriptionUpdate.jobs.size, 1
