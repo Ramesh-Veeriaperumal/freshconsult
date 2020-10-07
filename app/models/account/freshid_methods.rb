@@ -213,7 +213,7 @@ class Account < ActiveRecord::Base
   def freshid_v2_signup_allowed?
     redis_key_exists? FRESHID_V2_NEW_ACCOUNT_SIGNUP_ENABLED
   end
-  
+
   def freshid_integration_signup_allowed?
     freshid_signup_allowed? || freshid_v2_signup_allowed?
   end
