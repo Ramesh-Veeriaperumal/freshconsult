@@ -108,6 +108,7 @@ module AccountsHelper
       precreated_account = Account.find(account_id)
       precreated_account.make_current
       precreated_account.users.find(&:active).make_current
+      AccountCreation::PrecreateAccounts.perform_async(precreate_account_count: 1, shard_name: ActiveRecord::Base.current_shard_selection.shard.to_s)
     end
     account_id
   rescue StandardError => e
