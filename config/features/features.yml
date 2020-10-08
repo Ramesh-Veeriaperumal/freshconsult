@@ -486,7 +486,6 @@
   :field_service_geolocation: false
   :location_tagging: false
   :kbase_spam_whitelist: false
-  :disable_supress_logs: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
