@@ -32,7 +32,7 @@ module SearchService
       to_json ? payload.to_json : payload
     end
 
-    # locale will be set based on es_multilang_soln? feature check (Pinnacle sports account)
+    # locale will be set based on es_multilang_solutions_enabled? feature check (Pinnacle sports account)
     # This may break in future when we rollout multilingul search for vrious locales and accounts
     def self.valid_locale(types, locale) 
       !(SUPPORTED_TYPES & types).size.zero? && SUPPORTED_LOCALES.include?(locale) ? locale : DEFAULT_LOCALE
