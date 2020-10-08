@@ -424,6 +424,7 @@
       :custom_product_notification: 420
       :sidekiq_logs_to_central: 421
       :fb_msg_realtime: 422
+      :kbase_spam_whitelist: 423
 :selectable_features:
   :redis_display_id: true
   :es_v2_writes: true
@@ -486,6 +487,7 @@
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
   :location_tagging: false
+  :kbase_spam_whitelist: false
   :disable_supress_logs: false
   :forums_agent_portal: false
   :solutions_agent_portal: false

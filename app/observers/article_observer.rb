@@ -96,7 +96,7 @@ private
     end
 
     def enqueue_article_for_kbase_check(article)
-			if !article.account.launched?(:kbase_spam_whitelist) && ( (article.account.created_at >= (Time.zone.now - 90.days)) || (article.account.subscription.present? && article.account.subscription.free?))
+      if !article.account.kbase_spam_whitelist_enabled? && ((article.account.created_at >= (Time.zone.now - 90.days)) || (article.account.subscription.present? && article.account.subscription.free?))
 				Rails.logger.debug "Comes inside enqueue_article_for_kbase_check loop for account : #{article.account} and article #{article.id}"
 				Solution::CheckContentForSpam.perform_async({:article_id => article.id})
 			end
