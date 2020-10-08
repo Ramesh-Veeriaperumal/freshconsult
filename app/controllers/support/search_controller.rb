@@ -91,7 +91,7 @@ class Support::SearchController < SupportController
 
     def es_search_portal(search_in)
       begin
-        @search_lang = ({ :language => current_portal.language }) if current_portal and current_account.es_multilang_soln?
+        @search_lang = ({ :language => current_portal.language }) if current_portal and current_account.es_multilang_solutions_enabled?
         Search::EsIndexDefinition.es_cluster(current_account.id)
         options = { :load => true, :page => (params[:page] || 1), :size => (params[:max_matches] || 20), :preference => :_primary_first }
         @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id, @search_lang), options do |search|

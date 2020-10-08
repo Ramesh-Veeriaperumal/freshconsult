@@ -811,3 +811,6 @@
   $ref: ./admin/groups/crud.yaml
 /admin/groups/{id}/agents:
   $ref: ./admin/groups/group_agents.yaml
+
+/omniroute_configuration:
+  $ref: ./omniroute_configuration/read_update.yaml

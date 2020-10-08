@@ -203,7 +203,7 @@ class Search::V2::SpotlightController < ApplicationController
 		# Hack for getting language and hitting corresponding alias
 		# Probably will be moved to search/search_controller when dynamic solutions goes live
 		def detect_multilingual_search
-			if params[:language].present? && current_account.es_multilang_soln?
+			if params[:language].present? && current_account.es_multilang_solutions_enabled?
 				@es_locale = params[:language].presence
 			end
 		end

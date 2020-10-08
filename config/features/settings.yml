@@ -99,6 +99,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :forums
+  :es_multilang_solutions:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :helpdesk_tickets_by_product:
     default: false
     internal: false
@@ -114,4 +118,12 @@ settings:
   :cascade_dispatcher:
     default: false
     internal: false
+    feature_dependency: :basic_settings_feature
+  :feedback_widget_captcha:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :gamification_perf:
+    default: false
+    internal: true
     feature_dependency: :basic_settings_feature

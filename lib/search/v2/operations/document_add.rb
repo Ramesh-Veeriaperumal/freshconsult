@@ -20,7 +20,7 @@ class Search::V2::Operations::DocumentAdd
       # All dates to be stored in UTC
       #
       Time.use_zone('UTC') do
-        if entity.is_a?(Solution::Article) && Account.current.es_multilang_soln?
+        if entity.is_a?(Solution::Article) && Account.current.es_multilang_solutions_enabled?
           locale = entity.solution_folder_meta.solution_category_meta.portals.last.try(:language)
           locale = SearchService::Utils.valid_locale([@type], locale)
           SearchService::Client.new(@account_id).write_object(entity, @params[:version], @params[:parent_id], @type, locale)

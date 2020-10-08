@@ -13,7 +13,6 @@ class TicketSummaryControllerTest < ActionController::TestCase
     super
     MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
     Account.stubs(:current).returns(Account.first || create_test_account)
-    Account.current.features.es_v2_writes.destroy
     Account.find(Account.current.id).make_current
   end
 

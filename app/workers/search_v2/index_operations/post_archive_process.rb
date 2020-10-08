@@ -4,8 +4,6 @@
 class SearchV2::IndexOperations::PostArchiveProcess < SearchV2::IndexOperations
   def perform(args)
     args.symbolize_keys!
-    return unless Account.current.features_included?(:es_v2_writes)
-
     # Publish to remove ticket
     ticket_uuid     = RabbitMq::Utils.generate_uuid
     ticket_message  = generate_message(

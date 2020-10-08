@@ -89,7 +89,7 @@ class Account < ActiveRecord::Base
 
   include MemcacheKeys
 
-  # Callbacks will be executed in the order in which they have been included. 
+  # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
@@ -117,7 +117,7 @@ class Account < ActiveRecord::Base
   end
 
   def update_redis_display_id
-    if features?(:redis_display_id) && @all_changes.key?(:ticket_display_id) 
+    if features?(:redis_display_id) && @all_changes.key?(:ticket_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => self.id }
       display_id_increment = @all_changes[:ticket_display_id][1] - get_display_id_redis_key(key).to_i - 1
       if display_id_increment > 0
@@ -187,7 +187,7 @@ class Account < ActiveRecord::Base
   end
 
   def parent_child_infra_features_present?
-    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")} 
+    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")}
   end
 
   def destroy_account_email_service
@@ -293,7 +293,7 @@ class Account < ActiveRecord::Base
     end
 
     def check_timezone_update
-      self.time_zone = @old_object.time_zone if @all_changes.key?("time_zone") && 
+      self.time_zone = @old_object.time_zone if @all_changes.key?("time_zone") &&
                                                 self.time_zone_updation_running?
     end
 
@@ -434,14 +434,14 @@ class Account < ActiveRecord::Base
     end
 
     def create_shard_mapping
-      if Fdadmin::APICalls.non_global_pods? && domain_mapping = DomainMapping.find_by_domain(full_domain) 
+      if Fdadmin::APICalls.non_global_pods? && domain_mapping = DomainMapping.find_by_domain(full_domain)
         self.id = domain_mapping.account_id
         populate_google_domain(domain_mapping.shard) if google_account?
       else
         shard_mapping = ShardMapping.new(shard_name: ShardMapping.current_shard_selection.shard.nil? ? ShardMapping.latest_shard : ShardMapping.current_shard_selection.shard.to_s, status: ShardMapping::STATUS_CODE[:not_found], pod_info: PodConfig['CURRENT_POD'])
-        shard_mapping.domains.build({:domain => full_domain})  
+        shard_mapping.domains.build({:domain => full_domain})
         populate_google_domain(shard_mapping) if google_account? #remove this when the new google marketplace is stable.
-        shard_mapping.save!                            
+        shard_mapping.save!
         self.id = shard_mapping.id
       end
     end
@@ -477,14 +477,14 @@ class Account < ActiveRecord::Base
 
           # Adding the settings that are under the feature
           next unless self.launched?(:feature_based_settings)
-          
+
           (AccountSettings::FeatureToSettingsMapping[key] || []).each do |setting|
             bitmap_value = self.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
           end
         end
         self.selectable_features_list.each do |feature_name, enable_on_signup|
           bitmap_value = enable_on_signup ? self.set_feature(feature_name) : bitmap_value
-        end 
+        end
         # Temp for falcon signup
         # Enable falcon UI for helpdesk by default
         [:falcon, :freshcaller, :freshcaller_widget].each do |feature_key|
@@ -521,7 +521,7 @@ class Account < ActiveRecord::Base
           :account_id => id,
           :target_method => :change_domain_mapping_for_pod ,
           :old_domain => @old_object.full_domain,
-          :new_domain => full_domain 
+          :new_domain => full_domain
         }
         response = Fdadmin::APICalls.connect_main_pod(request_parameters)
         raise ActiveRecord::Rollback, "Domain Already Taken" unless response && response["account_id"]
@@ -531,7 +531,7 @@ class Account < ActiveRecord::Base
     def update_google_domain
       if google_domain_changed? and !google_domain.blank?
         gd = GoogleDomain.find_by_account_id(id)
-        if gd.nil?  
+        if gd.nil?
           gd = GoogleDomain.new
           gd.account_id = id
           gd.domain = google_domain
@@ -616,11 +616,9 @@ class Account < ActiveRecord::Base
         SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => vendor_id})
       end
     end
-    
+
     def enable_searchv2
-      if self.features?(:es_v2_writes)
-        SearchV2::Manager::EnableSearch.perform_async
-      end
+      SearchV2::Manager::EnableSearch.perform_async
     end
 
     def enable_count_es

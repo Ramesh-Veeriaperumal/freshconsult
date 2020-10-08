@@ -16542,6 +16542,84 @@
           }
         }
       }
+    },
+    "/omniroute_configuration": {
+      "get": {
+        "tags": [
+          "ocr-accounts"
+        ],
+        "summary": "get configuration for omni route enabled accounts",
+        "description": "Allow admins to get omni route configuration for lbrr by omni route enabled accounts",
+        "operationId": "getAccount-configuration",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/omniroute_configuration"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized action"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ocr-accounts"
+        ],
+        "summary": "update configuration for omni route enabled accounts",
+        "description": "Allow admins to update omni route configuration for omni route enabled accounts",
+        "operationId": "updateAccount-configuration",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/omniroute_configuration"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/definitions/omniroute_configuration"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized action"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource Not Found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -32669,6 +32747,94 @@
           "format": "date-time"
         }
       }
+    },
+    "omniroute_configuration": {
+      "type": "object",
+      "properties": {
+        "assignment_settings": {
+          "description": "sets a standard threshold value for all agents in ticket, chat and caller",
+          "type": "object",
+          "properties": {
+            "ticket": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "assignment_preference": {
+                  "type": "string",
+                  "description": "calculates priority during ticket assignment based on one of the given properties",
+                  "enum": [
+                    "created_at",
+                    "response_due",
+                    "resolution_due"
+                  ]
+                }
+              }
+            },
+            "chat": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "phone": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "pause_assignment_on_call": {
+                  "type": "boolean",
+                  "description": "true indicates during call assignments will be paused"
+                }
+              }
+            }
+          }
+        },
+        "agent_individual_limits_enabled": {
+          "type": "boolean",
+          "description": "true indicates individual capping limits for each agent is enabled"
+        }
+      },
+      "example": {
+        "assignment_settings": {
+          "ticket": {
+            "limit": 10,
+            "preference": "created_at"
+          },
+          "chat": {
+            "limit": 10
+          },
+          "phone": {
+            "limit": 1,
+            "pause_assignment_on_call": true
+          }
+        },
+        "agent_individual_limits_enabled": true
+      }
+    },
+    "omniroute_configuration_request": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/omniroute_configuration"
+        }
+      ]
+    },
+    "omniroute_configuration_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/omniroute_configuration"
+        }
+      ]
     }
   },
   "parameters": {

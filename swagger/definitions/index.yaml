@@ -984,3 +984,10 @@ admin_groups_response:
   $ref: ./response/admin/groups.yaml
 admin_groups_agents_list_response:
   $ref: ./response/admin/groups_agents.yaml
+
+omniroute_configuration:
+  $ref: ./resource/omniroute_configuration.yaml
+omniroute_configuration_request:
+  $ref: ./request/omniroute_configuration.yaml
+omniroute_configuration_response:
+  $ref: ./response/omniroute_configuration.yaml
