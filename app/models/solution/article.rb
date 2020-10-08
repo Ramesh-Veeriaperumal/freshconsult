@@ -38,7 +38,7 @@ class Solution::Article < ActiveRecord::Base
 
   attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags, :session,
                 :unpublishing, :false_delete_attachment_trigger, :attachment_added, :version_through,
-                :model_changes, :interaction_source_id, :interaction_source_type, :tag_changes, :templates_used
+                :model_changes, :interaction_source_id, :interaction_source_type, :interaction_platform, :tag_changes, :templates_used
 
   alias_attribute :body, :article_body
   alias_attribute :suggested, :int_01
@@ -409,9 +409,10 @@ class Solution::Article < ActiveRecord::Base
     set_interaction_source(:portal, current_portal.id)
   end
 
-  def set_interaction_source(source_type, source_id)
+  def set_interaction_source(source_type, source_id, platform = nil)
     self.interaction_source_type = INTERACTION_SOURCE[source_type]
     self.interaction_source_id = source_id
+    self.interaction_platform = platform
   end
 
   def self.article_type_option
@@ -573,7 +574,7 @@ class Solution::Article < ActiveRecord::Base
     end
     
     def check_for_spam_content
-      if !self.account.launched?(:kbase_spam_whitelist) && self.account.subscription.trial? && self.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
+      if !self.account.kbase_spam_whitelist_enabled? && self.account.subscription.trial? && self.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:published]
         article_spam_regex = Regexp.new($redis_others.perform_redis_op("get", ARTICLE_SPAM_REGEX), "i")
 
         article_phone_number_spam_regex = Regexp.new($redis_others.perform_redis_op("get", PHONE_NUMBER_SPAM_REGEX), "i")

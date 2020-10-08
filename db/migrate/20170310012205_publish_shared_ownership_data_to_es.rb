@@ -11,7 +11,7 @@ class PublishSharedOwnershipDataToEs < ActiveRecord::Migration
     Account.active_accounts.find_each do |account|
       begin
         account.make_current
-        next unless account.shared_ownership_enabled? and account.features?(:es_v2_writes)
+        next unless account.shared_ownership_enabled?
 
         account.tickets.where("internal_group_id is not NULL or internal_agent_id is not NULL").find_each {|t|
           begin

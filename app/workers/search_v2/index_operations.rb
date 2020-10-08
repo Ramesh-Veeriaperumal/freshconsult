@@ -11,7 +11,7 @@ class SearchV2::IndexOperations
       folder = Account.current.solution_folder_meta.find(args[:folder_id])
       folder.solution_articles.find_in_batches do |articles|
         articles.map(&:sqs_manual_publish_without_feature_check)
-      end if folder and Account.current.try(:features_included?, :es_v2_writes)
+      end if folder
     end
   end
   
@@ -21,7 +21,7 @@ class SearchV2::IndexOperations
       forum = Account.current.forums.find(args[:forum_id])
       forum.topics.find_in_batches do |topics|
         topics.map(&:sqs_manual_publish_without_feature_check)
-      end if forum and Account.current.try(:features_included?, :es_v2_writes)
+      end if forum
     end
   end
   
@@ -31,7 +31,7 @@ class SearchV2::IndexOperations
       tag = Account.current.tags.find(args[:tag_id])
       tag.tag_uses.preload(:taggable).find_in_batches_with_rate_limit(rate_limit: rate_limit_options(args)) do |taguses|
         taguses.map(&:taggable).map(&:sqs_manual_publish_without_feature_check)
-      end if tag and Account.current.try(:features_included?, :es_v2_writes)
+      end if tag
     end
   end
   

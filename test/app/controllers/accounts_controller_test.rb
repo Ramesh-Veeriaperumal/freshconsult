@@ -73,7 +73,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_response 200, resp
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
-    assert account.has_feature?(:untitled_setting_3)
+    assert_equal account.solutions_agent_metrics_enabled?, false
     assert account.has_feature?(:untitled_setting_4)
     assert_equal account.has_feature?(:untitled_setting_1), false
   ensure
@@ -103,7 +103,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
     assert_equal account.has_feature?(:untitled_setting_1), false
-    assert_equal account.has_feature?(:untitled_setting_3), false
+    assert_equal account.solutions_agent_metrics_enabled?, false
     assert_equal account.has_feature?(:untitled_setting_4), false
   ensure
     Account.find(resp['account_id']).destroy if resp && resp['account_id']
@@ -782,6 +782,67 @@ class AccountsControllerTest < ActionController::TestCase
     Subscription.unstub(:trial_or_sprout_plan?)
     Account.any_instance.unstub(:help_widget_enabled?)
     Account.current.disable_setting(:branding)
+  end
+
+  def test_enable_ticket_summary_setting
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { ticket_summary: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert Account.current.has_feature?(:ticket_summary)
+  ensure
+    Account.current.disable_setting(:ticket_summary)
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+  end
+
+  def test_enable_ticket_summary_setting_with_dependency_disabled
+    Account.current.revoke_feature(:ticket_summary_feature)
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    assert_raise RuntimeError do
+      put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { ticket_summary: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+      assert Account.current.has_feature?(:ticket_summary), false
+    end
+  ensure
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+    Account.current.add_feature(:ticket_summary_feature)
+  end
+
+  def test_disable_ticket_summary_setting
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    Account.current.enable_setting(:ticket_summary)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { ticket_summary: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert_equal Account.current.has_feature?(:ticket_summary), false
+  ensure
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+  end
+
+  def test_disable_ticket_summary_setting_with_dependency_disabled
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    Account.current.enable_setting(:ticket_summary)
+    Account.current.revoke_feature(:ticket_summary_feature)
+    assert_raise RuntimeError do
+      put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { ticket_summary: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+      assert Account.current.has_feature?(:ticket_summary), false
+    end
+  ensure
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+    Account.current.add_feature(:ticket_summary_feature)
+  end
+
+  def test_enable_freshchat_setting
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { disable_freshchat: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert Account.current.has_feature?(:disable_freshchat)
+  ensure
+    Account.current.disable_setting(:disable_freshchat)
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
+  end
+
+  def test_disable_freshchat_setting
+    Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
+    Account.current.enable_setting(:disable_freshchat)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { disable_freshchat: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert_equal Account.current.has_feature?(:disable_freshchat), false
+  ensure
+    Account.any_instance.unstub(:helpdesk_new_settings_enabled?)
   end
 
   def test_branding_on_update_help_widget

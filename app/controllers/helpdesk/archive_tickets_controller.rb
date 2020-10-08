@@ -13,7 +13,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
 
   around_filter :run_on_slave
   before_filter :check_feature
-  
+  before_filter :redirect_old_ui_routes, only: [:index, :show, :new, :edit]
   before_filter :get_tag_name, :only => :index
   before_filter :set_filter_options, :set_data_hash, :load_sort_order, :only => [ :index, :custom_search ]
   before_filter :load_ticket, :verify_permission, :load_reply_to_all_emails, :only => [:activities, :prevnext, :activitiesv2]

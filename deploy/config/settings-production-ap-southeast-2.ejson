@@ -74,7 +74,8 @@
       "cron_webhook": {
         "_domain": "cronwebhookaus.freshdesk.com",
         "_sub_domain": "cronwebhookaus",
-        "auth_key": "EJ[1:j/Oqy7V2pa8qfYXHZBqcw7K0JD6VDLQbjmdH8zASNQI=:xxiNR6I74o+LYSucWrxoaim0ZjNzwvN3:xRhb9i0nFddnCcGQqWIg1p4euJTTOMX0uaq10Xbt2tyeXevWDAVWMU0ftDbaJN/q]"
+        "auth_key": "EJ[1:j/Oqy7V2pa8qfYXHZBqcw7K0JD6VDLQbjmdH8zASNQI=:xxiNR6I74o+LYSucWrxoaim0ZjNzwvN3:xRhb9i0nFddnCcGQqWIg1p4euJTTOMX0uaq10Xbt2tyeXevWDAVWMU0ftDbaJN/q]",
+        "account_based_auth_key": "EJ[1:0JR4vGXfFrWGM/L2fdGVYIPQ5qevvadlqIBayL1fjWM=:xTACtEOXvFYHBWyGWEGksaVn/PYAzuir:GpuhvFx9he5PKIKJU7RGUx5Ta2LYGBI6XSeQGesvqcpR7iUDKKEAO/R9HBjHhUxt]"
       },
       "internal_tools": {
         "_domain": "supremeone.runwayci.com"
@@ -877,6 +878,7 @@
           "_podeucentral1": "eucattachment.freshdesk.com",
           "_podapsoutheast2": "ausattachment.freshdesk.com"
         },
+        "_fd_microservices_internal_endpoint": "http://microservices.freshdesk.internal",
         "freshchat": {
           "token": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:fhui7OfYcDYGjVAqCHekVtkwueOQa79J:cXyXBnTmC4CdLW9N8mwuQ4/VO8G/obZAFt9UyGsRAiCod6rMZax8owC/RtP6MwapWOzD5Q==]",
           "app_id": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:mds0Omp8L9WR84xiUwIhEJljRf0H/QSe:zfFNocQvjy3ufnCPVdJqoBOwaV/4nD677UoldP/nkF9IMcaH/4J/PYnskLPW6Pm0L6A+4A==]"
@@ -909,7 +911,8 @@
         "_global_integration_url": "https://login.freshdesk.com",
         "_marketo_api_version": "2_1",
         "_reseller_portal_user_name": "freshdesk",
-        "_reseller_portal_portal_url": "partners.freshdesk.com/freshdesk_webhooks"
+        "_reseller_portal_portal_url": "partners.freshdesk.com/freshdesk_webhooks",
+        "_haproxy_internal_domain": "http://127.0.0.1:8191"
       },
       "freshops": {
         "subdomains": {
@@ -1522,7 +1525,7 @@
       },
       "freddy_skills_config": {
         "detect_thank_you_note": {
-          "_url": "https://thankyou-api-aus.ap-southeast-2-prod.freddyproject.com/serv/",
+          "_url": "https://intelli-reopen.ap-southeast-2-prod.freddyproject.com/serv/",
           "_timeout": 2,
           "_confidence_threshold": 80
         },

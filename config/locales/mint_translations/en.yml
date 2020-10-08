@@ -2463,6 +2463,8 @@ en:
         reset_for: This will reset edits for
         forum_captcha: Logged in users should enter CAPTCHA to create topic
         notify_agents: 'Send Moderation and Spam Notification to:'
+        view_only_portal_tickets: "Allow users to view only portal specific tickets"
+        track_agent_metrics: "Track article metrics of agents"
         view_forums: Who can view forums
         important: Important
         moderate_links_help: >-
@@ -4295,6 +4297,14 @@ en:
       oldest_top: You'll now see the oldest conversation on top.
       option1: Show newest on top
       option2: Show oldest on top
+
+    ticket_summary:
+        title: Ticket summary
+        helpnote: Adds a section on top of your tickets where agents can summarize conversations. <a href='https://support.freshdesk.com/en/support/solutions/articles/232562-give-your-team-more-context-with-the-summary-app-' target="_blank">Learn more</a>
+
+    freshchat_toggle:
+        title: Chat Support
+        helpnote: Allow agents to reach Freshdesk support via a chat widget in-product
     us: MONTH-DAY-YEAR
     gdpr_terms: 'By clicking on Accept , you agree to our'
     gdpr_terms_link: Terms

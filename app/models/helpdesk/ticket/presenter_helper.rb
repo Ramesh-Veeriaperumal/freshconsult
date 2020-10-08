@@ -6,7 +6,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             :sla_resolution_reminded, :nr_reminded, :escalation_level, :fr_escalated, :nr_escalated].freeze
 
   def valid_app_event?(action)
-    (self.is_a?(Helpdesk::Ticket) && !archive && (action.eql?(:create) || action.eql?(:destroy) || valid_app_changes?))
+    self.is_a?(Helpdesk::Ticket) && !@manual_central_publish && !archive && (action.eql?(:create) || action.eql?(:destroy) || valid_app_changes?)
   end
 
   private

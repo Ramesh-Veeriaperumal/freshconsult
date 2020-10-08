@@ -170,7 +170,7 @@
       :segments: 166
       :unused_167: 167
       :ecommerce: 168
-      :es_v2_writes: 169
+      :unused_169: 169
       :fluffy_higher_plan3: 170
       :fluffy_higher_plan4: 171
       :unused_172: 172
@@ -310,14 +310,14 @@
       :reports_84: 306
       :reports_85: 307
       :reports_86: 308
-      :reports_87: 309
+      :ticket_filter_increased_companies_limit: 309
       :spam_blacklist_feature: 310
       :filter_factory: 311
       :new_es_api: 312
-      :untitled_feature_3_dependency_toggle: 313
+      :ticket_summary_feature: 313
       :basic_settings_feature: 314
       :branding_feature: 315
-      :untitled_feature_2_dependency_toggle: 316
+      :solutions_agent_metrics_feature: 316
       :untitled_setting_1: 317
       :untitled_setting_2: 318
       :untitled_setting_3: 319
@@ -422,9 +422,11 @@
       :es_v2_splqueries: 418
       :disable_emails: 419
       :custom_product_notification: 420
+      :sidekiq_logs_to_central: 421
+      :fb_msg_realtime: 422
+      :kbase_spam_whitelist: 423
 :selectable_features:
   :redis_display_id: true
-  :es_v2_writes: true
   :gamification_enable: false
   :parent_child_infra: false
   :parent_child_tickets: false
@@ -440,10 +442,6 @@
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
-  :personalized_email_replies: false
-  :reply_to_based_tickets: true
-  :disable_agent_forward: false
-  :compose_email: false
   :enable_multilingual: false
   :archive_tickets: false
   :call_quality_metrics: false
@@ -469,8 +467,6 @@
   :disable_old_reports: false
   :report_field_regenerate: false
   :saml_old_issuer: false
-  :es_multilang_solutions: false
-  :sort_by_customer_response: false
   :saml_unspecified_nameid: false
   :euc_hide_agent_metrics: false
   :single_session_per_user: false
@@ -485,27 +481,21 @@
   :fluffy_higher_plan3: false
   :fluffy_higher_plan4: false
   :assets: false
-  :filter_factory: false
-  :new_es_api: false
   :assets_toggle: false
   :prevent_ticket_creation_for_others: true
   :field_service_geolocation: false
   :location_tagging: false
-  :kb_allow_base64_images: false
-  :solutions_agent_metrics: false
+  :kbase_spam_whitelist: false
   :disable_supress_logs: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
-  :skip_invoice_due_warning: false
-  :allow_wildcard_ticket_create: false
   :supervisor_contact_field: false
   :custom_product_notification: false
-  :disable_freshchat: false
-  :feedback_widget_captcha: false
   :skip_portal_cname_chk: false
+  :sidekiq_logs_to_central: false
   :disable_archive: false
-  :gamification_perf: false
+  :fb_msg_realtime: false
   :stop_contacts_count_query: false
   :force_index_tickets: false
   :es_v2_splqueries: false

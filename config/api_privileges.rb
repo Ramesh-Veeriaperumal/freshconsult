@@ -85,7 +85,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   reply_ticket do
-    resource :"ember/conversation", only: %i[reply facebook_reply tweet ecommerce_reply reply_template broadcast undo_send]
+    resource :"ember/conversation", only: %i[reply facebook_reply tweet ecommerce_reply reply_template broadcast undo_send channel_reply]
     resource :"ember/tickets/draft", only: %i[save_draft show_draft clear_draft]
     resource :"ember/tickets/bulk_action", only: [:bulk_update]
     resource :"ember/agent", only: [:enable_undo_send, :disable_undo_send]
@@ -156,6 +156,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/flow"
     resource :'ember/omni_channel', only: [:index]
     resource :'admin/group', only: [:show, :index, :update]
+    resource :api_role, only: [:index, :show]
+    resource :api_business_hour, :only => [:index, :show]
+    resource :"admin/groups/agent", only: [:index]
   end
 
   delete_ticket do

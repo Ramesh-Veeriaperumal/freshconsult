@@ -1,0 +1,50 @@
+get:
+  tags: [ocr-accounts]
+  summary: get configuration for omni route enabled accounts
+  description: Allow admins to get omni route configuration for lbrr by omni route enabled accounts
+  operationId: getAccount-configuration
+  produces:
+    - application/json
+  responses:
+    200:
+      description: success
+      schema:
+        type: object
+        properties:
+          data:
+            $ref: '#/definitions/omniroute_configuration'
+    401:
+      description: Unauthorized action
+    403:
+      description: Access denied
+    404:
+      description: Resource Not Found
+
+put:
+  tags: [ocr-accounts]
+  summary: update configuration for omni route enabled accounts
+  description: Allow admins to update omni route configuration for omni route enabled accounts
+  operationId: updateAccount-configuration
+  parameters:
+    - in: body
+      name: data
+      required: true
+      schema:
+        $ref: '#/definitions/omniroute_configuration'
+  produces:
+    - application/json
+  responses:
+    200:
+      description: success
+      schema:
+        type: object
+        properties:
+          data:
+            $ref: '#/definitions/omniroute_configuration'
+    401:
+      description: Unauthorized action
+    403:
+      description: Access denied
+    404:
+      description: Resource Not Found
+

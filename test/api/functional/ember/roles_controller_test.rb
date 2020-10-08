@@ -21,8 +21,10 @@ class RolesControllerTest < ActionController::TestCase
 
   def test_show_without_privilege
     role = Role.first
+    User.any_instance.stubs(:privilege?).returns(false)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
     get :show, construct_params(id: role.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -50,8 +52,10 @@ class RolesControllerTest < ActionController::TestCase
     CustomRequestStore.store[:private_api_request] = true
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     User.stubs(:current).returns(agent)
+    User.any_instance.stubs(:privilege?).returns(false)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
     get :show, construct_params(id: role.id)
     assert_response 403
   ensure
@@ -60,9 +64,10 @@ class RolesControllerTest < ActionController::TestCase
   end
 
   def test_index_without_privilege
-    role = Role.first
+    User.any_instance.stubs(:privilege?).returns(false)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
     get :index, controller_params
     assert_response 403
     match_json(request_error_pattern(:access_denied))
@@ -113,8 +118,10 @@ class RolesControllerTest < ActionController::TestCase
     CustomRequestStore.store[:private_api_request] = true
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     User.stubs(:current).returns(agent)
+    User.any_instance.stubs(:privilege?).returns(false)
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
     get :index, controller_params
     assert_response 403
   ensure

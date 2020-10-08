@@ -4,6 +4,7 @@ class DomainSearchController < ActionController::Base
   # ActionController::Base instead of ApplicationController
   #skip_filter filter_chain
   before_filter :ensure_email#, :unset_current_account
+  protect_from_forgery
 
   def locate_domain
 

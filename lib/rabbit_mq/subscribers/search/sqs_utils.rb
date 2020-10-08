@@ -17,7 +17,7 @@ module RabbitMq::Subscribers::Search::SqsUtils
   end
 
   def es_v2_valid?(obj, model)
-    Account.current.features_included?(:es_v2_writes) && obj.safe_send('valid_esv2_model?', model)
+    obj.safe_send('valid_esv2_model?', model)
   end
 
   # To manually publish to SQS without checks.

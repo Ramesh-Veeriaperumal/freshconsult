@@ -6,10 +6,11 @@ module Admin::SecurityConstants
   SSO_TYPES = ['simple', 'saml'].freeze
   VALIDATION_CLASS = 'Admin::SecurityValidation'
   DELEGATOR_CLASS = 'Admin::SecurityDelegator'
-  UPDATE_SECURITY_FIELDS = ['whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy', 'allow_iframe_embedding'].freeze
+  UPDATE_SECURITY_FIELDS = ['whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy', 'allow_iframe_embedding', 'sso'].freeze
   WHITELISTED_IP_NOT_CONFIGURED = {
     enabled: false
   }.freeze
+  SSO_COEXIST_PERMITTED_PARAMS = [:enabled].freeze
   WHITELISTED_SECURITY_FIELDS = [
     :notification_emails,
     :allow_iframe_embedding,
@@ -35,8 +36,26 @@ module Admin::SecurityConstants
       :have_special_character,
       :atleast_an_alphabet_and_number,
       :password_expiry
+    ].freeze,
+    sso: [
+      :enabled,
+      :type,
+      simple: [:login_url, :logout_url].freeze,
+      saml: [:login_url, :logout_url, :saml_cert_fingerprint].freeze
     ].freeze
   ].freeze
+
+  SSO_TYPE_NAMING_MAPPINGS = {
+    simple: {
+      login_url: 'login_url',
+      logout_url: 'logout_url'
+    },
+    saml: {
+      saml_login_url: 'login_url',
+      saml_logout_url: 'logout_url',
+      saml_cert_fingerprint: 'saml_cert_fingerprint'
+    }
+  }.freeze
 
   ATTRIBUTE_FEATURE_MAPPING = {
     whitelisted_ip: {
@@ -49,6 +68,51 @@ module Admin::SecurityConstants
       enabled: ['custom_password_policy'].freeze,
       disabled: ['freshid', 'freshid_org_v2'].freeze
     }
+  }.freeze
+
+  SSO_ERROR_REASON_MAPPING = {
+    freshid_v2: 'account is in freshid v2',
+    freshid_migration_in_progress: 'freshid migration is inprogress',
+    coexist_account: 'freshid is integrated and freshdesk sso is configured'
+  }.freeze
+
+  # ----------- Validation ------------- #
+
+  SIMPLE_SSO_HASH = {
+    login_url: {
+      data_type: { rules: String, allow_nil: false }.freeze
+    }.freeze,
+    logout_url: {
+      data_type: { rules: String }.freeze
+    }.freeze
+  }.freeze
+
+  SAML_SSO_HASH = {
+    login_url: {
+      data_type: { rules: String, allow_nil: false }.freeze
+    }.freeze,
+    logout_url: {
+      data_type: { rules: String }.freeze
+    }.freeze,
+    saml_cert_fingerprint: {
+      data_type: { rules: String, allow_nil: false }.freeze
+    }.freeze
+  }.freeze
+
+  SSO_HASH = {
+    enabled: { data_type: { rules: 'Boolean' } }.freeze,
+    type: {
+      data_type: { rules: String }.freeze,
+      custom_inclusion: { in: SSO_TYPES }.freeze
+    }.freeze,
+    simple: {
+      data_type: { rules: Hash }.freeze,
+      hash: SIMPLE_SSO_HASH
+    }.freeze,
+    saml: {
+      data_type: { rules: Hash }.freeze,
+      hash: SAML_SSO_HASH
+    }.freeze
   }.freeze
 
   POLICIES_CONFIGS_HASH = {

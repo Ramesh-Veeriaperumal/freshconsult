@@ -18,7 +18,7 @@ module Freddy
       time_taken = Benchmark.realtime { http_response = HTTParty.post(url, options) }
       Rails.logger.info "Time Taken for thank_you_ml - A - #{account.id} T - #{ticket_id} time - #{time_taken}"
       Rails.logger.debug http_response.inspect.to_s
-      parsed_response = JSON.parse http_response.parsed_response
+      parsed_response = http_response.parsed_response
       if (parsed_response.is_a? Hash) && (http_response.code == SUCCESS)
         @note.schema_less_note.thank_you_note = parsed_response.symbolize_keys
         @note.schema_less_note.save!

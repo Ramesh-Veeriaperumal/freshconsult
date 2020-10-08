@@ -20,7 +20,7 @@ module Ember
 
     decorate_views(
       decorate_objects: [:ticket_conversations],
-      decorate_object: %i[create update reply facebook_reply tweet broadcast ecommerce_reply]
+      decorate_object: %i[create update reply facebook_reply tweet broadcast ecommerce_reply channel_reply]
     )
 
     before_filter :can_send_user?, only: %i[create reply facebook_reply ecommerce_reply tweet broadcast]
@@ -29,7 +29,7 @@ module Ember
     before_filter :check_enabled_undo_send, only: [:undo_send]
     before_filter :check_for_ticket_param, only: [:reply]
 
-    SINGULAR_RESPONSE_FOR = %w[reply create update tweet facebook_reply broadcast ecommerce_reply].freeze
+    SINGULAR_RESPONSE_FOR = %w[reply create update tweet facebook_reply broadcast ecommerce_reply channel_reply].freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
     DUMMY_ID_FOR_UNDO_SEND_NOTE = 9_007_199_254_740_991
     QUOTED_TEXT_SPLITTER = '<div class="freshdesk_quote">'.freeze
@@ -152,6 +152,25 @@ module Ember
       handle_ebay_conversations
     end
 
+    def channel_reply
+      @validation_klass = 'ChannelReplyValidation'
+      return unless validate_body_params(@ticket)
+
+      sanitize_channel_reply_params
+      build_object
+      assign_note_attributes
+      @delegator_klass = 'ChannelReplyDelegator'
+      return unless validate_delegator(@item)
+
+      if @item.save_note
+        Channel::MessageWorker.perform_async(body: params[:body], channel_id: params[:channel_id],
+                                             profile_unique_id: params[:profile_unique_id])
+        render_response(true)
+      else
+        render_response(false)
+      end
+    end
+
     def reply_forward_template
       @item = last_forwardable_note if action_name.to_sym == :latest_note_forward_template
       @ticket.escape_liquid_attributes = true
@@ -190,6 +209,11 @@ module Ember
     alias reply_to_forward_template reply_forward_template
 
     private
+
+      def sanitize_channel_reply_params
+        sanitize_note_params
+        cname_params[:source] = Account.current.helpdesk_sources.ticket_note_source_mapping[@ticket[:source]]
+      end
 
       def attachment_attributes
         # The attachments added to reply from another item (ticket/note) using attach to response fails validation at base delegator.
@@ -415,9 +439,9 @@ module Ember
         return unless reply?
         if @delegator.email_config
           @item.email_config_id = @delegator.email_config.id
-          @item.from_email = current_account.features?(:personalized_email_replies) ? @delegator.email_config.friendly_email_personalize(current_user.name) : @delegator.email_config.friendly_email
+          @item.from_email = current_account.personalized_email_replies_enabled? ? @delegator.email_config.friendly_email_personalize(current_user.name) : @delegator.email_config.friendly_email
         else
-          @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+          @item.from_email = current_account.personalized_email_replies_enabled? ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
         end
       end
 
@@ -520,7 +544,7 @@ module Ember
       end
 
       def ember_redirect?
-        %i[create reply facebook_reply ecommerce_reply broadcast].include?(action_name.to_sym)
+        %i[create reply facebook_reply ecommerce_reply broadcast channel_reply].include?(action_name.to_sym)
       end
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)

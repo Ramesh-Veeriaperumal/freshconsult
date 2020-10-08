@@ -19,6 +19,30 @@ class CronWebhook::WebHooksControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('task_name', :not_included, list: CronWebhooks::Constants::TASKS.join(','), code: :invalid_value)])
   end
 
+  def test_sup_cron_api_with_invalid_task_name
+    task_hash = { account_type: 'scheduler_supervisor_invalid', name: 'supervisor_invalid' }
+    post :trigger_cron_api, construct_params({ version: 'cron' }.merge(task_hash), task_hash)
+    assert_response 400
+  end
+
+  def test_sla_escl_cron_api_with_valid_task_name
+    task_hash = { account_type: 'trial', name: 'sla_escalation' }
+    post :trigger_cron_api, construct_params({ version: 'cron' }.merge(task_hash), task_hash)
+    assert_response 200
+  end
+
+  def test_sla_rem_cron_api_with_valid_task_name
+    task_hash = { account_type: 'trial', name: 'sla_reminder' }
+    post :trigger_cron_api, construct_params({ version: 'cron' }.merge(task_hash), task_hash)
+    assert_response 200
+  end
+
+  def test_web_hooks_controller_cron_api_with_valid_task_name
+    task_hash = { account_type: 'trial', name: 'supervisor' }
+    post :trigger_cron_api, construct_params({ version: 'cron' }.merge(task_hash), task_hash)
+    assert_response 200
+  end
+
   def test_web_hooks_controller_with_invalid_type
     task_hash = { task_name: 'scheduler_sla', type: 'invalid', mode: 'webhook' }
     post :trigger, construct_params({ version: 'cron' }.merge(task_hash), task_hash)

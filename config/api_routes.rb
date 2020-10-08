@@ -708,6 +708,7 @@ Helpkit::Application.routes.draw do
         match '/split_note' => 'ember/tickets#split_note', via: :put
         post :facebook_reply, to: 'ember/conversations#facebook_reply'
         post :ecommerce_reply, to: 'ember/conversations#ecommerce_reply'
+        post 'channel-reply', to: 'ember/conversations#channel_reply'
         get :prime_association, to: 'ember/tickets/associates#prime_association'
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'
@@ -1152,6 +1153,7 @@ Helpkit::Application.routes.draw do
 
   cron_routes = proc do
     post 'trigger/:task_name', to: 'cron_webhook/web_hooks#trigger'
+    post 'trigger_cron_api', to: 'cron_webhook/web_hooks#trigger_cron_api'
   end
 
   # Temporary routes. Will be removed once ocr to mars is fully launched.

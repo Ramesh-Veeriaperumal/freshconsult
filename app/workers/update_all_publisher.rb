@@ -11,14 +11,13 @@ class UpdateAllPublisher
     exchange_name = RabbitMq::Constants::MODEL_TO_EXCHANGE_MAPPING[model_name]
     subscribers   = (RabbitMq::Keys.const_get("#{exchange_name.upcase}_SUBSCRIBERS") rescue [])
     
-    esv2_enabled      = Account.current.features_included?(:es_v2_writes)
     args[:options]  ||= {}
     options           = args[:options].deep_symbolize_keys
     Account.current.users.find(options[:doer_id]).make_current if options[:doer_id].present?
     # Move feature check inside if multiple subscribers added
     args[:klass_name].constantize.where(account_id: Account.current.id, id: args[:ids]).each do |record|
       #=> For search v2
-      record.sqs_manual_publish_without_feature_check if esv2_enabled && subscribers.include?('search')
+      record.sqs_manual_publish_without_feature_check if subscribers.include?('search')
       record.count_es_manual_publish if record.respond_to?(:count_es_manual_publish)
       next unless options[:manual_publish]
       key = RabbitMq::Constants.const_get("RMQ_REPORTS_#{model_name.upcase}_KEY")
