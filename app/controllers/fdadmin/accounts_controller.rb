@@ -728,7 +728,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account = Account.find(params[:account_id]).make_current
     enabled = !account.launched?(:sha1_enabled)
     Account.reset_current_account
-    render :json => { :status => enabled }
+    render :json => {:status => enabled}
   end
 
   def sha1_enabled_feature
