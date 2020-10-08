@@ -47,6 +47,11 @@ function validate_ruby_files() {
 
 
 function validate_changes_in_restricted_files() {
+  if [`git rev-parse -q --verify MERGE_HEAD | wc -c` -gt 1 ]
+  then
+    exit 0;
+  fi;
+
   is_invalid=0
   restricted_files=("config/locales/en.yml") # array of files needs to be restricted
   
