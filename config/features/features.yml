@@ -493,12 +493,10 @@
   :supervisor_contact_field: false
   :bypass_signup_captcha: false
   :custom_product_notification: false
-  :feedback_widget_captcha: false
   :skip_portal_cname_chk: false
   :sidekiq_logs_to_central: false
   :disable_archive: false
   :fb_msg_realtime: false
-  :gamification_perf: false
   :stop_contacts_count_query: false
   :force_index_tickets: false
   :es_v2_splqueries: false

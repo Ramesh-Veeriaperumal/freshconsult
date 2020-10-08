@@ -115,3 +115,11 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :feedback_widget_captcha:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :gamification_perf:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
