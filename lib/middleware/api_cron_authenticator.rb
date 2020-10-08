@@ -16,6 +16,8 @@ class Middleware::ApiCronAuthenticator
       secret = env.delete(AUTH_HEADER)
       if (CRON_HOOK_DOMAIN.eql? @host) && (CRON_HOOK_AUTH_KEY.eql? secret)
         @status, @headers, @response = @app.call(env)
+      elsif CRON_HOOK_ACCOUNT_AUTH_KEY.eql? secret
+        @status, @headers, @response = @app.call(env)
       else
         set_response(403, RESPONSE_HEADERS)
       end

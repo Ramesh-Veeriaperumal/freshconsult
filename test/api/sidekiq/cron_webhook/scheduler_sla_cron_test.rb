@@ -91,4 +91,20 @@ class SchedulerSlaCronTest < ActionView::TestCase
     @account.premium = 0
     @account.save
   end
+
+  def test_trail_sla_scheduler_cron_api
+    CronWebhooks::CronApiWebhookWorker.stubs(:perform_async).returns(true)
+    Account.current.launch(:cron_api_trigger)
+    Admin::Sla::Reminder::Trial.drain
+    CronWebhooks::CronApiWebhookWorker.drain
+    Account.any_instance.stubs(:sla_management_enabled?).returns(true)
+    change_account_state(Subscription::TRIAL, @account) unless @account.subscription.trial?
+    CronWebhooks::SchedulerSlaReminder.new.perform(type: 'trial', task_name: 'scheduler_sla_reminder')
+    assert(true, 'Failure in SLA Cron API')
+  ensure
+    change_account_state(Subscription::TRIAL, @account)
+    CronWebhooks::CronApiWebhookWorker.unstub(:perform_async)
+    Account.any_instance.unstub(:sla_management_enabled?)
+    Account.current.rollback(:cron_api_trigger)
+  end
 end

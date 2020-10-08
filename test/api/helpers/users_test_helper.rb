@@ -27,7 +27,7 @@ module UsersTestHelper
       phone: expected_output[:phone] || contact.phone,
       tags: expected_output[:tags] || contact.tags.map(&:name),
       time_zone: expected_output[:time_zone] || contact.time_zone,
-      twitter_id: expected_output[:twitter_id] || contact.twitter_id,
+      twitter_id: expected_output[:twitter_id] || twitter_id(contact),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       custom_fields:  expected_custom_field || contact_custom_field,
@@ -45,8 +45,8 @@ module UsersTestHelper
                                get_other_companies(contact) if Account.current.multiple_user_companies_enabled?
 
     result[:unique_external_id] = expected_output[:unique_external_id] || contact.unique_external_id if Account.current.unique_contact_identifier_enabled?
-    result[:twitter_profile_status] = expected_output[:twitter_profile_status] || contact.twitter_profile_status unless Account.current.twitter_api_compliance_enabled?
-    result[:twitter_followers_count] = expected_output[:twitter_followers_count] || contact.twitter_followers_count unless Account.current.twitter_api_compliance_enabled?
+    result[:twitter_profile_status] = expected_output[:twitter_profile_status] || contact.twitter_profile_status unless Account.current.twitter_api_compliance_enabled? && !@private_api
+    result[:twitter_followers_count] = expected_output[:twitter_followers_count] || contact.twitter_followers_count unless Account.current.twitter_api_compliance_enabled? && !@private_api
     result[:deleted] = true if contact.deleted
     result
   end
@@ -285,6 +285,10 @@ module UsersTestHelper
     params.merge!(options) if options.any?
     u = UserEmail.new(params)
     u.save
+  end
+
+  def twitter_id(contact)
+    Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) ? contact.twitter_requester_handle_id : contact.twitter_id
   end
 
   def create_blocked_contact(account)

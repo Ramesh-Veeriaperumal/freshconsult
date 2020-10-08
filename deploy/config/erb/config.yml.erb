@@ -58,6 +58,9 @@ reseller_portal:
   portal_url:
     <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:reseller_portal_portal_url] %>
 
+haproxy:
+    internal_domain: <%= node[:ymls][:config][:haproxy_internal_domain] %>
+
 freshchat:
   <%= node[:opsworks][:environment] %>:
     token: <%= node[:ymls][:config][:freshchat][:token] %>
@@ -120,3 +123,7 @@ support_ticket_rate_limit_period: <%= node[:ymls][:config][:support_ticket_rate_
 # Frontend Ember config.
 falcon_ui:
   index_page: https://<%=node[:falcon_ui][@color_code.to_sym][:ember_frontend_s3]%>/<%=node[:opsworks][:environment]%>/a/index.html
+
+# Internal endpoint to communicate with all Freshdesk microservices under Istio service mesh.
+microservices:
+  internal_endpoint: <%=node[:ymls][:config][:fd_microservices_internal_endpoint]%>

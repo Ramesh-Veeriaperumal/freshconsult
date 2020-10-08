@@ -287,4 +287,13 @@ class NoteTest < ActiveSupport::TestCase
   ensure
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
+
+  def test_note_central_payload_manual_publish
+    note = create_note(note_params_hash)
+    CentralPublishWorker::ActiveNoteWorker.jobs.clear
+    note.manual_publish_to_central(nil, :create, {})
+    assert_equal 1, CentralPublishWorker::ActiveNoteWorker.jobs.size
+    job = CentralPublishWorker::ActiveNoteWorker.jobs.last
+    assert_equal false, job['args'][1]['event_info']['app_update']
+  end
 end

@@ -65,6 +65,9 @@ class Support::HomeControllerTest < ActionController::TestCase
     user.save!
     filter = Segments::Match::Contact.new(user).all.first
     folder = create_folder({visibility: 6})
+    p folder.inspect
+    p filter
+    p Account.current.contact_filters_from_cache
     folder.contact_filters = [filter]
     user.make_current
     login_as(user)
@@ -82,22 +85,6 @@ class Support::HomeControllerTest < ActionController::TestCase
     get :index
     assert_not_match "/support/solutions/folders/#{folder.id}", response.body
   end
-
-    def test_facebook_support_home_does_not_redirects_when_facebook_is_enabled
-      Account.current.stubs(:basic_facebook_enabled?).returns(true)
-      get :index, portal_type: 'facebook'
-      assert_match 'facebook/support', response.body
-    ensure
-      Account.current.unstub(:basic_facebook_enabled?)
-    end
-
-    def test_facebook_support_home_redirects_to_support_home_when_facebook_is_disabled
-      Account.current.stubs(:basic_facebook_enabled?).returns(false)
-      get :index, portal_type: 'facebook'
-      assert_match '/support/home', response.body
-    ensure
-      Account.current.unstub(:basic_facebook_enabled?)
-    end
 
     def test_image_property_included_in_og_meta_tags
       user = add_new_user(Account.current, active: true)
@@ -124,5 +111,10 @@ class Support::HomeControllerTest < ActionController::TestCase
       assert_equal response.headers['X-Frame-Options'], 'SAMEORIGIN'
     ensure
       Account.any_instance.unstub(:multilingual?)
+    end
+
+    def test_redirect_support_home
+      get :index, portal_type: 'facebook'
+      assert_redirected_to '/support/home'
     end
 end

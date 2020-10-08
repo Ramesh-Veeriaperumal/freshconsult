@@ -131,8 +131,9 @@
       - :solutions_templates
       - :contact_custom_activity_api
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
+      - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
+      - :ticket_filter_increased_companies_limit
     :inherits:
       - :garden_jan_17
     :exclude: [:analytics_knowledge_base_report]
@@ -347,8 +348,9 @@
       - :twitter_field_automation
       - :solutions_templates
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
+      - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
+      - :ticket_filter_increased_companies_limit
     :inherits:
       - :garden_jan_19
     :exclude: [:analytics_knowledge_base_report]
@@ -559,8 +561,9 @@
       - :fb_ad_posts
       - :solutions_templates
       - :analytics_knowledge_base
-      - :untitled_feature_2_dependency_toggle
+      - :solutions_agent_metrics_feature
       - :kb_increased_file_limit
+      - :ticket_filter_increased_companies_limit
     :inherits:
       - :garden_jan_20
     :exclude: [:analytics_knowledge_base_report]

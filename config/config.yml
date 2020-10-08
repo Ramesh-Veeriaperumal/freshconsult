@@ -182,6 +182,10 @@ natero:
     url: 'https://api.natero.com/api/v2/accounts'
     api_key: 'icieauqsnc5tdtkz6pbkup5sg8aouptd'
 
+# haproxy common internal domain for redirecting to intended domain
+haproxy:
+  internal_domain: http://127.0.0.1:8191
+
 # Set this to true if you want to require CC info when creating a trial account for a paid plan
 require_payment_info_for_trials: false
 
@@ -214,3 +218,7 @@ support_ticket_rate_limit_period: 300
 # Frontend Ember config.
 falcon_ui:
   index_page: https://s3.amazonaws.com/falconstagingvpc-green/staging/a/index.html
+
+# Internal endpoint to communicate with all Freshdesk microservices under Istio service mesh.
+microservices:
+  internal_endpoint: http://freshdesk-services.local.internal

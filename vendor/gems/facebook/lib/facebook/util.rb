@@ -9,13 +9,13 @@ module Facebook
     def truncate_subject(subject, count)
       (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
     end
-    
+
     def get_koala_feed(klass, feed_id)
       koala_obj = ("facebook/koala_wrapper/#{klass}").camelize.constantize.new(@fan_page)
       koala_obj.fetch(feed_id)
       koala_obj
     end
-    
+
     def get_koala_comment(comment)
       koala_comment = Facebook::KoalaWrapper::Comment.new(@fan_page)
       koala_comment.comment = comment
@@ -35,9 +35,7 @@ module Facebook
           # Skipping optimal check(last argument: false) if its comment and convert_post_to_ticket. Refer: FD-16831.
           return false unless core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?, core_obj.koala_post.by_company?, core_obj.koala_comment.by_visitor?, '' , true)
 
-          return true unless filter_mentions_rule_enabled?(core_obj)
-
-          comment_has_data_excluding_mentions?(core_obj)
+          check_filter_mention_tags?(core_obj)
 
         else
           core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?)
@@ -65,9 +63,9 @@ module Facebook
       core_obj.fetch_parent_data
       return false unless core_obj.fan_page.default_ticket_rule.convert_fb_comment_to_ticket?(core_obj.koala_post.by_company?, (core_obj.koala_comment.by_visitor? || convert_company_comment_to_ticket))
 
-      return check_includes?(core_obj) unless filter_mentions_rule_enabled?(core_obj)
+      return false unless check_includes?(core_obj)
 
-      comment_has_data_excluding_mentions?(core_obj)
+      check_filter_mention_tags?(core_obj)
     end
 
     def convert_cover_photo_comment_to_ticket?(core_obj)
@@ -75,9 +73,9 @@ module Facebook
 
       return false unless core_obj.fan_page.default_ticket_rule.convert_fb_comment_to_ticket?(false, core_obj.koala_comment.by_visitor?, true)
 
-      return check_includes?(core_obj) unless filter_mentions_rule_enabled?(core_obj)
+      return false unless check_includes?(core_obj)
 
-      comment_has_data_excluding_mentions?(core_obj)
+      check_filter_mention_tags?(core_obj)
     end
 
     def check_filter_mention_tags?(core_obj)
@@ -142,9 +140,9 @@ module Facebook
       unless feed[:attachment]
         return original_post.present? ? ( COMMENT_WITH_ORIGINAL_POST % {comment: html_content, original_post: original_post} ) : html_content
       end
-      
+
       begin
-        attachment = feed[:attachment].symbolize_keys!     
+        attachment = feed[:attachment].symbolize_keys!
         if "share".eql?(attachment[:type])
           desc = feed[:description] || ""
           link_story   = "<a href=\"#{attachment[:url]}\">#{attachment[:title]}</a>" if attachment[:title]
@@ -170,7 +168,7 @@ module Facebook
       item.inline_attachments = item.inline_attachments + [inline_attachment].compact
       html_content
     end
-    
+
     #Parse the feed content from facebook message
     def html_content_from_message(message, item, original_post = nil)
       message = HashWithIndifferentAccess.new(message)
@@ -187,8 +185,8 @@ module Facebook
               if [:image].include? type
                 url = attachment[URL_PATHS[:message][type]][:url]
                 attached_url, inline_attachment = create_inline_attachment_and_get_url(url, item, i)
-                inline_attachments.push(inline_attachment) if attachment_present?(inline_attachment)                 
- 
+                inline_attachments.push(inline_attachment) if attachment_present?(inline_attachment)
+
                 html_content = MESSAGE_IMAGE % {:html_content => html_content, :url => attached_url,
                  :height => "300px" } if attached_url
               else
@@ -202,7 +200,7 @@ module Facebook
           html_content = build_normal_attachments(item, content_objects, html_content)
           html_content
         end
-      elsif message[:shares] #### for stickers 
+      elsif message[:shares] #### for stickers
         if message[:shares][:data]
           html_content =  "<div class=\"facebook_post\"><p> #{html_content}</p><p>"
           message[:shares][:data].each_with_index do |share, i|
@@ -211,7 +209,7 @@ module Facebook
               file = URI.parse(url).open # Moved here to avoid multiple calls
               stickers_url, inline_attachment = create_inline_attachment_and_get_url(url, item, i, file)
               inline_attachments.push(inline_attachment) if attachment_present?(inline_attachment)
-              
+
               html_content = MESSAGE_SHARE % {:html_content => html_content, :url => stickers_url,
                :height => "200px"} if stickers_url
 
@@ -255,7 +253,7 @@ module Facebook
       elsif attachment[:file_url] and attachment[:name]
         :file
       else
-        nil  
+        nil
       end
     end
 
@@ -281,7 +279,7 @@ module Facebook
 
     def build_normal_attachments model, attachments, html_content
       (attachments || []).each do |attach|
-        model.attachments.build({:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename]}, {:attachment_limit => HelpdeskAttachable::FACEBOOK_ATTACHMENTS_SIZE})  
+        model.attachments.build({:content => attach[:resource], :description => attach[:description], :account_id => model.account_id, :content_file_name => attach[:filename]}, {:attachment_limit => HelpdeskAttachable::FACEBOOK_ATTACHMENTS_SIZE})
       end
     rescue HelpdeskExceptions::AttachmentLimitException => e
       Rails.logger.error e
@@ -319,7 +317,7 @@ module Facebook
 
     def latest_message(thread_key = nil)
       fb_msg = nil
-      Sharding.run_on_slave do 
+      Sharding.run_on_slave do
         fb_msg = @account.facebook_posts.latest_thread(thread_key, 1, @fan_page.id).first if thread_key
       end
       fb_msg

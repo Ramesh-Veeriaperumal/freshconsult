@@ -1,6 +1,7 @@
 class Support::Solutions::FoldersController < SupportController
   include Solution::PathHelper
 
+  before_filter :redirect_to_support, only: [:show], if: :facebook?
   before_filter :scoper, :check_folder_permission
   before_filter :check_version_availability, only: [:show]
   before_filter :render_404, unless: :folder_visible?, only: :show
@@ -18,6 +19,10 @@ class Support::Solutions::FoldersController < SupportController
       format.xml { render xml: @folder.to_xml(include: :published_articles) }
       format.json { render json: @folder.as_json(include: :published_articles) }
     end
+  end
+
+  def redirect_to_support
+    redirect_to "/support/solutions/folders/#{params[:id]}"
   end
 
   private

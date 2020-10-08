@@ -27,14 +27,14 @@ module Settings
     #Tests Start
 
     def test_toggle_email_valid_enable
-      Account.current.disable_setting(:disable_emails)
+      Account.any_instance.stubs(:disable_emails_enabled?).returns(false).then(Account.any_instance.unstub(:disable_emails_enabled?))
       put :toggle_email, construct_params({ version: 'pipe', disabled: true})
       assert Account.current.disable_emails_enabled?
       Account.current.disable_setting(:disable_emails)
     end
 
     def test_toggle_email_valid_disable
-      Account.current.enable_setting(:disable_emails)
+      Account.any_instance.stubs(:disable_emails_enabled?).returns(true).then(Account.any_instance.unstub(:disable_emails_enabled?))
       put :toggle_email, construct_params({ version: 'pipe', disabled: false})
       assert !Account.current.disable_emails_enabled?
     end

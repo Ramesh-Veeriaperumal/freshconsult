@@ -565,7 +565,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     begin
       configure_email_config ticket.reply_email_config
 
-      from_email = if ticket.account.features?(:personalized_email_replies) && ticket.responder.present?
+      from_email = if ticket.account.personalized_email_replies_enabled? && ticket.responder.present?
         ticket.friendly_reply_email_personalize(ticket.responder_name)
       else
         ticket.friendly_reply_email

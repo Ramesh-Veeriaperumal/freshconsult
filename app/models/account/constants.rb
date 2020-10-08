@@ -161,7 +161,8 @@ class Account < ActiveRecord::Base
   ADMIN_CUSTOMER_PORTAL_SETTINGS = [
     :signup_link, :anonymous_tickets, :auto_suggest_solutions,
     :public_ticket_url, :open_solutions, :open_forums,
-    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts
+    :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts,
+    :helpdesk_tickets_by_product, :solutions_agent_metrics
   ].freeze
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
@@ -182,15 +183,13 @@ class Account < ActiveRecord::Base
     hide_og_meta_tags: false, api_search_beta: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
     es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
-    force_index_tickets: false,
-    gamification_perf: false,
+    force_index_tickets: false, email_new_settings: false,
     gamification_quest_perf: false, lambda_exchange: false, meta_read: false, most_viewed_articles: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
-    feedback_widget_captcha: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     kbase_spam_whitelist: false,
     whitelist_supervisor_sla_limitation: false,
@@ -199,7 +198,7 @@ class Account < ActiveRecord::Base
     sha256_enabled: false, auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
-    falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
+    falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false,
     freshid: false,
     incoming_attachment_limit_25: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,
@@ -215,8 +214,8 @@ class Account < ActiveRecord::Base
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
-    recalculate_daypass: false, allow_wildcard_ticket_create: false,
-    attachment_redirect_expiry: false, solutions_agent_metrics: false,
+    recalculate_daypass: false,
+    attachment_redirect_expiry: false,
     requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
@@ -237,7 +236,7 @@ class Account < ActiveRecord::Base
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
-    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false
+    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

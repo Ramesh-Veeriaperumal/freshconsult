@@ -9,6 +9,7 @@ class CompaniesController < ApplicationController
   include Export::Util
 
   before_filter :set_selected_tab
+  before_filter :redirect_old_ui_routes, only: [:index, :show, :new, :edit]
   before_filter :check_archive_feature, :only => [:component]
   before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies, :component]
   before_filter :build_item, :only => [:quick, :new, :create, :create_company]

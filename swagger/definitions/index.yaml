@@ -59,6 +59,8 @@ note_broadcast_input:
   $ref: ./request/conversations/broadcast.yaml
 facebook_reply_input:
   $ref: ./request/conversations/facebook_reply.yaml
+channel_reply_input:
+  $ref: ./request/conversations/channel_reply.yaml
 twitter_reply_input:
   $ref: ./request/conversations/twitter_reply.yaml
 conversation_forward_template:
@@ -982,3 +984,10 @@ admin_groups_response:
   $ref: ./response/admin/groups.yaml
 admin_groups_agents_list_response:
   $ref: ./response/admin/groups_agents.yaml
+
+omniroute_configuration:
+  $ref: ./resource/omniroute_configuration.yaml
+omniroute_configuration_request:
+  $ref: ./request/omniroute_configuration.yaml
+omniroute_configuration_response:
+  $ref: ./response/omniroute_configuration.yaml

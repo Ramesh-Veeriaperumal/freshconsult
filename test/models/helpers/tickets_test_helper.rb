@@ -164,7 +164,7 @@ module TicketsTestHelper
       status: { id: ticket.status, name: ticket.status_name },
       priority: { id: ticket.priority, name: TicketConstants::PRIORITY_NAMES_BY_KEY[ticket.priority] },
       ticket_type: ticket.ticket_type,
-      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] },
+      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.default_ticket_source_names_by_key[ticket.source] },
       requester_id: ticket.requester_id,
       due_by: ticket.due_by.try(:utc).try(:iso8601),
       created_at: ticket.created_at.try(:utc).try(:iso8601),
@@ -263,7 +263,7 @@ module TicketsTestHelper
       status: { id: ticket.status, name: ticket.status_name },
       priority: { id: ticket.priority, name: TicketConstants::PRIORITY_NAMES_BY_KEY[ticket.priority] },
       ticket_type: ticket.ticket_type,
-      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] },
+      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.default_ticket_source_names_by_key[ticket.source] },
       requester_id: ticket.requester_id,
       due_by: ticket.due_by.try(:utc).try(:iso8601),
       created_at: ticket.created_at.try(:utc).try(:iso8601),
@@ -348,7 +348,7 @@ module TicketsTestHelper
     tweet = ticket.try(:tweet)
     fb_post = ticket.try(:fb_post)
 
-    if tweet && ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_name['twitter_source']
+    if tweet && ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]
       twitter_handle = tweet.twitter_handle
       source_info = {
         twitter: {
@@ -428,7 +428,7 @@ module TicketsTestHelper
       account_id: ticket.account_id,
       archive: false,
       ticket_type: ticket.ticket_type,
-      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] }
+      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.default_ticket_source_names_by_key[ticket.source] }
     }
   end
 
@@ -439,7 +439,7 @@ module TicketsTestHelper
       account_id: ticket.account_id,
       archive: true,
       ticket_type: ticket.ticket_type,
-      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.ticket_source_names_by_key[ticket.source] }
+      source: { id: ticket.source, name: Account.current.ticket_source_revamp_enabled? ? ticket.source_name : Account.current.helpdesk_sources.default_ticket_source_names_by_key[ticket.source] }
     }
   end
 

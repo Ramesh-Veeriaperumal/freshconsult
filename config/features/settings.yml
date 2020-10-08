@@ -7,10 +7,10 @@ settings:
     default: true
     internal: false
     feature_dependency: :branding_feature
-  :untitled_setting_3:
-    default: true
+  :solutions_agent_metrics:
+    default: false
     internal: false
-    feature_dependency: :untitled_feature_2_dependency_toggle # from estate plan.Rename to actual feature
+    feature_dependency: :solutions_agent_metrics_feature
   :untitled_setting_4:
     default: true
     internal: false
@@ -43,6 +43,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :allow_wildcard_ticket_create:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
   :signup_link:
     default: true
     internal: false
@@ -71,10 +75,22 @@ settings:
     default: false
     internal: false
     feature_dependency: :forums
+  :filter_factory:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :new_es_api:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :forum_captcha_disable:
     default: false
     internal: false
     feature_dependency: :forums
+  :kb_allow_base64_images:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :moderate_posts_with_links:
     default: true
     internal: false
@@ -102,4 +118,12 @@ settings:
   :cascade_dispatcher:
     default: false
     internal: false
+    feature_dependency: :basic_settings_feature
+  :feedback_widget_captcha:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :gamification_perf:
+    default: false
+    internal: true
     feature_dependency: :basic_settings_feature
