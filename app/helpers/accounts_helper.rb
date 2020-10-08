@@ -103,12 +103,13 @@ module AccountsHelper
   def fetch_precreated_account
     return unless redis_key_exists?(PRECREATE_ACCOUNT_ENABLED) && omni_precreated_signup_enabled?
 
-    account_id = get_others_redis_rpop(format(PRECREATED_ACCOUNTS_SHARD, current_shard: ActiveRecord::Base.current_shard_selection.shard.to_s))
+    current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+    account_id = get_others_redis_rpop(format(PRECREATED_ACCOUNTS_SHARD, current_shard: current_shard))
     if account_id.present?
       precreated_account = Account.find(account_id)
       precreated_account.make_current
       precreated_account.users.find(&:active).make_current
-      AccountCreation::PrecreateAccounts.perform_async(precreate_account_count: 1, shard_name: ActiveRecord::Base.current_shard_selection.shard.to_s)
+      AccountCreation::PrecreateAccounts.perform_async(precreate_account_count: 1, shard_name: current_shard)
     end
     account_id
   rescue StandardError => e
