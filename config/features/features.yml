@@ -170,7 +170,7 @@
       :segments: 166
       :unused_167: 167
       :ecommerce: 168
-      :es_v2_writes: 169
+      :unused_169: 169
       :fluffy_higher_plan3: 170
       :fluffy_higher_plan4: 171
       :unused_172: 172
@@ -427,7 +427,6 @@
       :kbase_spam_whitelist: 423
 :selectable_features:
   :redis_display_id: true
-  :es_v2_writes: true
   :gamification_enable: false
   :parent_child_infra: false
   :parent_child_tickets: false

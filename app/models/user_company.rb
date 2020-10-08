@@ -14,8 +14,6 @@ class UserCompany < ActiveRecord::Base
   before_destroy :before_destroy_model_changes
   after_commit :associate_tickets, on: :create
   after_commit :remove_tickets_company_id, on: :destroy
-  after_commit :update_es_index
-
   publishable on: [:create, :update, :destroy], exchange_model: :user, exchange_action: :update
 
   # added at last as order of central event should be primary destroy and then next primary update.
@@ -48,11 +46,6 @@ class UserCompany < ActiveRecord::Base
       user.customer_id = uc.company_id
       user.save
     end
-  end
-
-  def update_es_index
-    return if $redis_others.sismember("DISABLE_ES_WRITES", Account.current.id) || Account.current.features_included?(:es_v2_writes)
-    AwsWrapper::SqsV2.send_message(SQS[:sqs_es_index_queue], {:op_type => "user_tickets",:user_id =>user_id, :account_id => Account.current.id}.to_json) if Account.current.esv1_enabled? && !contractor?
   end
 
   def contractor?

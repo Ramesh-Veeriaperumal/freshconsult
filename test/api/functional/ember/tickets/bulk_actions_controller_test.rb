@@ -36,7 +36,6 @@ module Ember
         @account.sections.map(&:destroy)
         return if @@before_all_run
         @account.features.forums.create
-        @account.features.es_v2_writes.destroy
         @account.ticket_fields.custom_fields.each(&:destroy)
         Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
         @@ticket_fields = []
