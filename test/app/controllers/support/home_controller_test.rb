@@ -65,6 +65,9 @@ class Support::HomeControllerTest < ActionController::TestCase
     user.save!
     filter = Segments::Match::Contact.new(user).all.first
     folder = create_folder({visibility: 6})
+    p folder.inspect
+    p filter
+    p Account.current.contact_filters_from_cache
     folder.contact_filters = [filter]
     user.make_current
     login_as(user)
