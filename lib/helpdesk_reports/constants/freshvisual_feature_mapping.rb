@@ -35,7 +35,7 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
   CURATED_REPORTS_LIST = ['Agent Performance', 'Group Performance', 'Helpdesk Ticket Volume', 'Helpdesk Performance', 'Performance Distribution', 'Ticket Volume Trends',
                           'Top Customer Analysis', 'Ticket Lifecycle', 'Time Sheet Summary', 'Satisfaction Survey Results', 'Satisfaction Survey Volume', 'Shared Ownership',
                           'Linked Tickets Summary', 'Parent Tickets Summary', 'Tags Summary', 'Field Service Volume Trends',
-                          'Field Service Performance', 'Knowledge Base', 'Knowledge Base Report'].freeze
+                          'Field Service Performance', 'Knowledge Base', 'Knowledge Base Report', 'Freddy Triage Report'].freeze
 
   # CURATED_REPORTS = {:agent_performance=>{:config_type=>:curated_reports, :value=>"Agent performance"}, :group_performance=>{:config_type=>:curated_reports, :value=>"Group performance"},...}
   CURATED_REPORTS = Hash[CURATED_REPORTS_LIST.map { |c| [c.tr('-', '_').parameterize('_').to_sym, { config_type: :curated_reports, value: c }] }]
@@ -112,7 +112,8 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     analytics_survey_results: RESOURCE_RESTRICTION[:survey_results],
     analytics_articles: RESOURCE_RESTRICTION[:articles],
     analytics_knowledge_base: CURATED_REPORTS[:knowledge_base],
-    analytics_knowledge_base_report: CURATED_REPORTS[:knowledge_base_report]
+    analytics_knowledge_base_report: CURATED_REPORTS[:knowledge_base_report],
+    triage: CURATED_REPORTS[:freddy_triage_report]
   }.freeze
 
   # Certain resources has to be enabled if some curated reports related to them is enabled. So, keeping a map like this.
