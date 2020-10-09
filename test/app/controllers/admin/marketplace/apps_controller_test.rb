@@ -44,6 +44,7 @@ class Admin::Marketplace::AppsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
     Account.any_instance.stubs(:freshid_integration_enabled?).returns(false)
     Account.any_instance.stubs(:organisation_domain).returns('testdomain')
+    Account.any_instance.stubs(:organisation_id).returns('12345')
     get :index
     assert_response 200
     assert_includes(JSON.parse(response.body)['url'], 'params')
@@ -56,6 +57,7 @@ class Admin::Marketplace::AppsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:freshid_org_v2_enabled?)
     Account.any_instance.unstub(:freshid_integration_enabled?)
     Account.any_instance.unstub(:organisation_domain)
+    Account.any_instance.unstub(:organisation_id)
   end
 
   def test_gallery_with_freshid_integration

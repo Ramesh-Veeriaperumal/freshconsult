@@ -32,8 +32,10 @@ module Ember
 
       def generate_marketplace_token
         jwt_payload = {
+          product: Marketplace::Constants::PRODUCT_NAME,
           account_id: current_account.id.to_s,
           domain: current_account.full_domain,
+          organisation_id: current_account.organisation_id.to_s,
           time: Time.now.to_i,
           user: {
             id: current_user.id.to_s,
