@@ -480,10 +480,6 @@ class Account < ActiveRecord::Base
     launched?(:sidekiq_logs_to_central)
   end
 
-  def es_v2_splqueries_enabled?
-    launched?(:es_v2_splqueries)
-  end
-
   def kbase_spam_whitelist_enabled?
     launched?(:kbase_spam_whitelist)
   end
