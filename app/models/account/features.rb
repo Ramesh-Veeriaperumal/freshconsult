@@ -465,10 +465,6 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def force_index_tickets_enabled?
-    launched?(:force_index_tickets)
-  end
-
   def custom_product_notification_enabled?
     launched?(:custom_product_notification)
   end
