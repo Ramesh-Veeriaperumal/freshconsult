@@ -161,6 +161,7 @@ module Social::Constants
   TWITTER_ERROR_CODES = {
     reauth_required: 89,
     timeout: 504,
-    archived_ticket_error: 406
+    archived_ticket_error: 406,
+    user_blocked_error: 1001
   }
 end

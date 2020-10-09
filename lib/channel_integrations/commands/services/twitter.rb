@@ -31,6 +31,9 @@ module ChannelIntegrations::Commands::Services
     rescue StandardError => e
       Rails.logger.error "Something wrong in Twitter::CreateTicket account_id: #{current_account.id}, context: #{context.inspect} #{e.message}"
       return conflict_error(context) if e.message.include? Social::Constants::TWEET_ALREADY_EXISTS
+
+      return user_blocked_error if e.message.include? ErrorConstants::ERROR_MESSAGES[:user_blocked_error]
+
       error_message("Error in creating ticket, account_id: #{current_account.id}, context: #{context.inspect}")
     end
 
@@ -144,6 +147,13 @@ module ChannelIntegrations::Commands::Services
         error[:status_code] = 409
         error[:data] = { message: "Conflict: Tweet ID: #{context[:tweet_id]} already converted.",
                          id: existing_tweet.is_ticket? ? existing_tweet.tweetable.display_id : existing_tweet.tweetable_id }
+        error
+      end
+
+      def user_blocked_error
+        error = default_error_format
+        error[:status_code] = Social::Constants::TWITTER_ERROR_CODES[:user_blocked_error]
+        error[:data] = { message: ErrorConstants::ERROR_MESSAGES[:user_blocked_error] }
         error
       end
 

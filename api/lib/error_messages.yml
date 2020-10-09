@@ -595,6 +595,7 @@ api_error_messages:
   duplicate_holiday_date: "Duplicate holiday date is present"
   duplicate_business_day: "Duplicate business day is present"
   invalid_year: "Year should be greater than 1970"
+  user_blocked_error: 'User blocked! No more tickets allowed for this user'
   #Group v2
   duplicate_group_name: "A group already exists with name - '%{name}'"
   missing_channel_settings: "At least 1 channel settings required."

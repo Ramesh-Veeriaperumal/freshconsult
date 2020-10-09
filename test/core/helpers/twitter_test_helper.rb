@@ -174,6 +174,16 @@ module TwitterTestHelper
     }
   end
 
+  def blocked_user_reply_payload
+    {
+      data: {
+        message: ErrorConstants::ERROR_MESSAGES[:user_blocked_error]
+      },
+      status_code: Social::Constants::TWITTER_ERROR_CODES[:user_blocked_error],
+      reply_status: 'error'
+    }
+  end
+
   def ticket_archived_error_payload(ticket_id)
     {
         data: {
