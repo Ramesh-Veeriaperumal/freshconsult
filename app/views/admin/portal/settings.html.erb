@@ -130,6 +130,7 @@
     <% end %>
 	</div>
 	<% if current_account.admin_setting_for_account?(:open_forums) &&
+		current_account.admin_setting_for_account?(:hide_portal_forums) &&
 		current_account.admin_setting_for_account?(:forum_captcha_disable) %>
 		<div class="control-group">
 			<div class="control-label"><%= t('.view_forums') %></div>

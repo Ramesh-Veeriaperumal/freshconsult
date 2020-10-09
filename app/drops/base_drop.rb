@@ -96,7 +96,7 @@ class BaseDrop < Liquid::Drop
     end
 
     def allowed_in_portal? f
-      portal_user || feature?(f)
+      portal_user || (AccountSettings::SettingsConfig[f] ? portal_account.safe_send("#{f}_enabled?") : feature?(f))
     end
 
     def feature? f

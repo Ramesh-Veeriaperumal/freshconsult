@@ -72,16 +72,16 @@ class ProxyFeatureTest < ActiveSupport::TestCase
     params = { features: { open_forums: false, open_solutions: false, hide_portal_forums: true } }
     [:basic_settings_feature, :forums].each { |feature| @account.add_feature(feature) }
     [:open_forums, :open_solutions].each { |setting| @account.enable_setting(setting) }
-    @account.features.hide_portal_forums.destroy
-    assert @account.has_feature?(:open_forums), 'open_forums should be true'
-    assert @account.has_feature?(:open_solutions), 'open_solutions should be true'
-    refute @account.has_feature?(:hide_portal_forums), 'hide_portal_forums should be false'
+    @account.disable_setting(:hide_portal_forums)
+    assert @account.open_forums_enabled?, 'open_forums should be true'
+    assert @account.open_solutions_enabled?, 'open_solutions should be true'
+    refute @account.hide_portal_forums_enabled?, 'hide_portal_forums should be false'
 
     @account.update_attributes!(params)
 
-    refute @account.has_feature?(:open_forums), 'open_forums should be false'
-    refute @account.has_feature?(:open_solutions), 'open_solutions should be false'
-    assert @account.has_feature?(:hide_portal_forums), 'hide_portal_forums should be true'
+    refute @account.open_forums_enabled?, 'open_forums should be false'
+    refute @account.open_solutions_enabled?, 'open_solutions should be false'
+    assert @account.hide_portal_forums_enabled?, 'hide_portal_forums should be true'
   end
 
   def test_launch_party_feature_flags

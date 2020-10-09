@@ -59,6 +59,10 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
+  :captcha:
+    default: true
+    internal: false
+    feature_dependency: :basic_settings_feature
   :auto_suggest_solutions:
     default: true
     internal: false
@@ -76,6 +80,10 @@ settings:
     internal: true
     feature_dependency: :basic_settings_feature
   :open_forums:
+    default: false
+    internal: false
+    feature_dependency: :forums
+  :hide_portal_forums:
     default: false
     internal: false
     feature_dependency: :forums

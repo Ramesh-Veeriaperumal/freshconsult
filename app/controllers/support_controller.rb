@@ -259,13 +259,13 @@ class SupportController < ApplicationController
     end
 
     def check_forums_state
-      unless current_user && current_user.agent?
-        redirect_to support_home_path if current_account.features?(:hide_portal_forums)
+      if current_account.hide_portal_forums_enabled? && !(current_user && current_user.agent?)
+        redirect_to support_home_path
       end
     end
 
     def forums_enabled?
-      feature?(:forums) && allowed_in_portal?(:open_forums) && !feature?(:hide_portal_forums)
+      feature?(:forums) && allowed_in_portal?(:open_forums) && !Account.current.hide_portal_forums_enabled?
     end
 
     def check_forums_access

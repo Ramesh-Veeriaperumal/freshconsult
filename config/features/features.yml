@@ -450,9 +450,7 @@
   :spam_blacklist_feature: false
   :twitter_signin: true
   :facebook_signin: true
-  :captcha: true
   :allow_huge_ccs: false
-  :hide_portal_forums: false
   :id_less_tickets: false
   :collision_socket: false
   :domain_restricted_access: false

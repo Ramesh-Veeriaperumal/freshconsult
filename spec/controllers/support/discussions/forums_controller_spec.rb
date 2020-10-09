@@ -45,20 +45,6 @@ describe Support::Discussions::ForumsController do
 		response.should redirect_to support_login_url
 	end
 
-	it "should redirect to support home if portal forums is disabled" do
-		forum = create_test_forum(@category)
-		@account.features.hide_portal_forums.create
-	 	
-	 	put :toggle_monitor, :id => forum.id
-	 	response.should redirect_to "/support/home"
-
-	 	get :show, :id => forum.id
-	 	response.should redirect_to "/support/home"	
-
-	 	@account.features.hide_portal_forums.destroy
-	end
-
-
 	it "should render 404 for accounts without forum feature" do
 		@account.remove_feature(:forums)
 		@account.reload
