@@ -24,7 +24,7 @@ module Admin
                          if: -> { create_or_update? && instance_variable_defined?(:@holidays) }
     validate :validate_holidays_data, if: -> { create_or_update? && instance_variable_defined?(:@holidays) && errors.blank? }
     validate :validate_channel_business_hours, if: -> { create_or_update? && instance_variable_defined?(:@channel_business_hours)  && errors.blank? }
-    validate :check_default_business_calendar, if: -> { validation_context == :destroy }
+    validate :check_default_business_calendar, if: -> { destroy? }
 
     def initialize(request_params, item, options)
       self.request_params = request_params

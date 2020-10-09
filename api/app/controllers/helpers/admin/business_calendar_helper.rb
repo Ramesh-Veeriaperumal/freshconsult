@@ -21,14 +21,16 @@ module Admin::BusinessCalendarHelper
   end
 
   def validate_channel_business_hours
+    validate_all_channel_presence(channel_business_hours)
     channel_business_hours.each do |channel_data|
-      channel_data.permit(*CHANNEL_BUSINESS_HOURS_PARAMS)
+      valid_channel_business_hours_params = channel_data[:channel] == CHAT_CHANNEL ? CHAT_CHANNEL_BUSINESS_HOURS_PARAMS : CHANNEL_BUSINESS_HOURS_PARAMS
+      channel_data.permit(*valid_channel_business_hours_params)
       channel_data = deep_symbolize_keys(channel_data)
       valid_business_type?(channel_data[:business_hours_type]) if errors.blank?
       valid_channel?(channel_data[:channel]) if errors.blank?
       valid_24x7_business_hours?(channel_data) if errors.blank? && channel_data.key?(:business_hours)
       valid_custom_business_hours?(channel_data[:business_hours]) if errors.blank? && channel_data[:business_hours_type] != ALL_TIME_AVAILABLE
-      valid_time_slots_count?(channel_data[:business_hours], channel_data[:channel]) if errors.blank? && channel_data[:business_hours_type] != ALL_TIME_AVAILABLE
+      valid_time_slots_count?(channel_data[:business_hours], channel_data[:channel]) if errors.blank? && ticket_channel_24x7?(channel_data)
     end
   end
 
@@ -67,6 +69,17 @@ module Admin::BusinessCalendarHelper
       valid_time_period?(key_name, start_hh, start_mm, end_hh, end_mm)
     end
 
+    def valid_breaks?(slots)
+      key_name = :'channel_business_hours[:business_hours][:time_slots]'
+      ordered_slots = slots.sort_by { |slot| slot[:start_time] }
+      epoch_slots = ordered_slots.each_with_object([]) do |time_slot, converted_slots_arr|
+        converted_slots_arr << Time.parse(time_slot[:start_time]).to_i # convert to unix epoch time
+        converted_slots_arr << Time.parse(time_slot[:end_time]).to_i
+      end
+
+      errors[key_name] << :invalid_breaks unless epoch_slots.each_cons(2).all? { |i, j| i < j } # check whether in asc order
+    end
+
     def valid_time_slots?(slots)
       invalid_data_type(:'channel_business_hours[:business_hours][:time_slots]', Array, :INVALID) unless slots.is_a?(Array)
       blank_value_for_attribute(:'channel_business_hours[:business_hours]', :time_slots) if slots.blank?
@@ -80,10 +93,24 @@ module Admin::BusinessCalendarHelper
         end
         valid_time_data?(time_slot[:start_time], time_slot[:end_time]) if errors.blank?
       end
+
+      valid_breaks?(slots) if errors.blank?
     end
 
     def valid_business_day?(day)
       not_included_error(:'channel_business_hours[:business_hours][:day]', WEEKDAY_HUMAN_LIST.join(', ')) if WEEKDAY_HUMAN_LIST.exclude?(day.to_s)
+    end
+
+    def validate_all_channel_presence(channel_business_hours)
+      channels = Account.current.omni_business_calendar? ? VALID_CHANNEL_PARAMS_OMNI : VALID_CHANNEL_PARAMS
+      channel_names = channel_business_hours.map {|channel_hash| channel_hash[:channel]}
+      if (channel_names.count != channels.count) || (channels - channel_names).present?
+        errors[:channel_business_hours] << :invalid_number_of_channels
+        error_options[:channel_business_hours] = {
+            count: channels.count,
+            value: channels.join(',')
+        }
+      end
     end
 
     def valid_custom_business_hours?(business_hours)
@@ -108,10 +135,15 @@ module Admin::BusinessCalendarHelper
     end
 
     def valid_channel?(name)
-      not_included_error(:'channel_business_hours[:channel]', VALID_CHANNEL_PARAMS.join(', ')) if VALID_CHANNEL_PARAMS.exclude?(name.to_s)
+      valid_params = Account.current.omni_business_calendar? ? VALID_CHANNEL_PARAMS_OMNI : VALID_CHANNEL_PARAMS
+      not_included_error(:'channel_business_hours[:channel]', valid_params.join(', ')) if valid_params.exclude?(name.to_s)
     end
 
     def valid_24x7_business_hours?(channel_data)
       unexpected_value_for_attribute(:"channel_business_hours[#{ALL_TIME_AVAILABLE}]", :business_hours) if channel_data[:business_hours_type] == ALL_TIME_AVAILABLE && channel_data.key?(:business_hours)
+    end
+
+    def ticket_channel_24x7?(channel_data)
+      channel_data[:channel] == TICKET_CHANNEL && channel_data[:business_hours_type] != ALL_TIME_AVAILABLE
     end
 end

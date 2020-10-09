@@ -1,16 +1,26 @@
 require_relative '../../test_helper.rb'
+require 'webmock/minitest'
+require 'sidekiq/testing'
 %w[business_calendars_helper.rb].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 require Rails.root.join('test', 'api', 'helpers', 'admin', 'api_business_calendar_helper.rb')
+require Rails.root.join('test', 'models', 'helpers', 'freshchat_account_test_helper.rb')
+WebMock.allow_net_connect!
+
 class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
   include BusinessHoursTestHelper
   include Admin::ApiBusinessCalendarHelper
+  include ::Freshcaller::TestHelper
+  include FreshchatAccountTestHelper
   include BusinessCalendarsTestHelper
+  include Helpdesk::IrisNotifications
 
   def setup
     super
+    Sidekiq::Worker.clear_all
     Account.stubs(:current).returns(Account.last)
     User.stubs(:current).returns(User.first)
     Account.any_instance.stubs(:multiple_business_hours_enabled?).returns(true)
+    @account = Account.current
   end
 
   def teardown
@@ -18,6 +28,8 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     Account.unstub(:current)
     User.unstub(:current)
     Account.any_instance.unstub(:multiple_business_hours_enabled?)
+    Admin::BusinessCalendar::OmniSyncWorker.clear
+    WebMock.reset!
   end
 
   def wrap_cname(params)
@@ -97,6 +109,259 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       skip if business_calendar
       get :show, controller_params(id: business_calendar_id)
       assert_response 404
+    end
+  end
+
+  def test_check_queue_size_when_destroying_omni_business_calendar
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        Sidekiq::Testing.fake! do
+          business_calendar = create_business_calendar
+          Admin::BusinessCalendar::OmniSyncWorker.clear
+          delete :destroy, construct_params(id: business_calendar.id)
+          assert_response 204
+          assert_equal Admin::BusinessCalendar::OmniSyncWorker.jobs.size, 2
+        end
+      end
+    end
+  end
+
+  def test_destroy_omni_business_calendar_freshcaller_success
+    enable_omni_business_calendar_destroy do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      Admin::BusinessCalendar::OmniSyncWorker.clear
+      stub_business_calendar_delete_success(calendar_id)
+      delete :destroy, construct_params(id: calendar_id)
+      assert_response 204
+      Admin::BusinessCalendar::OmniSyncWorker.drain
+      assert_requested(:delete, business_calendar_show_url(calendar_id), times: 1)
+    end
+  end
+
+  def test_destroy_omni_business_calendar_freshcaller_unauthorized
+    enable_omni_business_calendar_destroy do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      Admin::BusinessCalendar::OmniSyncWorker.clear
+      stub_business_calendar_delete_unauthorized(calendar_id)
+      delete :destroy, construct_params(id: calendar_id)
+      assert_response 204
+      Admin::BusinessCalendar::OmniSyncWorker.drain
+      assert_requested(:delete, business_calendar_show_url(calendar_id), times: 1)
+    end
+  end
+
+  def test_destroy_omni_business_calendar_freshcaller_invalid_authorization
+    enable_omni_business_calendar_destroy do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      Admin::BusinessCalendar::OmniSyncWorker.clear
+      stub_business_calendar_delete_invalid_authentication(calendar_id)
+      delete :destroy, construct_params(id: calendar_id)
+      assert_response 204
+      Admin::BusinessCalendar::OmniSyncWorker.drain
+      assert_requested(:delete, business_calendar_show_url(calendar_id), times: 1)
+    end
+  end
+
+  def test_destroy_omni_business_calendar_freshcaller_not_found
+    enable_omni_business_calendar_destroy do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      Admin::BusinessCalendar::OmniSyncWorker.clear
+      stub_business_calendar_delete_not_found(calendar_id)
+      delete :destroy, construct_params(id: calendar_id)
+      assert_response 204
+      Admin::BusinessCalendar::OmniSyncWorker.drain
+      assert_requested(:delete, business_calendar_show_url(calendar_id), times: 1)
+    end
+  end
+
+  def test_destroy_omni_business_calendar_freshchat_success
+    enable_omni_business_calendar_destroy do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      #business_calendar.update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, 'delete', OMNI_SYNC_STATUS[:inprogress])
+      Admin::BusinessCalendar::OmniSyncWorker.clear
+      stub_business_calendar_delete_success(calendar_id)
+      delete_url = "https://api.freshchat.com/v2/business_hours/#{calendar_id}"
+      response_hash = {
+        code: 204,
+        message: 'Delete request accepted'
+      }
+      stub_request(:delete, delete_url).to_return(body: response_hash.to_json, status: 204)
+      delete :destroy, construct_params(id: calendar_id)
+      assert_response 204
+      Admin::BusinessCalendar::OmniSyncWorker.drain
+      assert_requested(:delete, delete_url, times: 1)
+    end
+  end
+
+  def test_destroy_omni_business_calendar_freshchat_failure
+    enable_omni_business_calendar_destroy do
+      business_calendar = create_business_calendar
+      Admin::BusinessCalendar::OmniSyncWorker.clear
+      calendar_id = business_calendar.id
+      stub_business_calendar_delete_success(calendar_id)
+      delete_url = "https://api.freshchat.com/v2/business_hours/#{calendar_id}"
+      stub_request(:delete, delete_url).to_return(body: {}.to_json, status: 404)
+      delete :destroy, construct_params(id: calendar_id)
+      assert_response 204
+      Admin::BusinessCalendar::OmniSyncWorker.drain
+      assert_requested(:delete, delete_url, times: 1)
+    end
+  end
+
+  def test_show_omni_business_calendar_success
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      enable_omni_business_hours do
+        business_calendar.set_sync_channel_status(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, 'create', BusinessCalenderConstants::OMNI_SYNC_STATUS[:success])
+        business_calendar.set_sync_channel_status(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, 'create', BusinessCalenderConstants::OMNI_SYNC_STATUS[:success])
+        business_calendar.save
+        freshchat_get_url = format('%{url}/%{id}', url: chat_create_url, id: calendar_id)
+        stub_request(:get, freshchat_get_url).to_return(body: show_chat_business_hours_sample(calendar_id).to_json, status: 200)
+        stub_show_business_calendar_success(calendar_id)
+        get :show, controller_params(id: business_calendar.id)
+        response = JSON.parse(@response.body)
+        channel_hours = response['channel_business_hours']
+        assert_response 200
+        assert_requested(:get, freshchat_get_url, times: 1)
+        assert_requested(:get, business_calendar_show_url(calendar_id), times: 1)
+        assert_equal channel_hours.size, 3
+        expected_channel_hours = [
+            business_calendar.freshdesk_business_hour_data,
+            chat_channel_business_hours_sample[:channel_business_hours][0].merge({'sync_status' => BusinessCalenderConstants::OMNI_SYNC_STATUS[:success]}),
+            caller_channel_business_hours_sample[:channel_business_hours][0].merge({'sync_status' => BusinessCalenderConstants::OMNI_SYNC_STATUS[:success]})
+        ]
+        match_json(omni_business_hours_show_pattern(business_calendar, expected_channel_hours))
+        Account.any_instance.stubs(:omni_business_calendar?).returns(false)
+        business_calendar.destroy
+      end
+    end
+  end
+
+  # create is successful, update is done but not yet synced. Now get api response test.
+  def test_show_omni_business_calendar_success_with_sync_status_inprogress
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      enable_omni_business_hours_with_sidekiq_fake do
+        business_calendar.reload
+        business_calendar.set_sync_channel_status(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, 'create', BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress])
+        business_calendar.set_sync_channel_status(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, 'create', BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed])
+        business_calendar.save
+        freshchat_get_url = format('%{url}/%{id}', url: chat_create_url, id: calendar_id)
+        stub_request(:get, freshchat_get_url).to_return(body: show_chat_business_hours_sample(calendar_id).to_json, status: 200)
+        stub_show_business_calendar_success(calendar_id)
+        get :show, controller_params(id: business_calendar.id)
+        response = JSON.parse(@response.body)
+        channel_hours = response['channel_business_hours']
+        assert_response 200
+        assert_requested(:get, freshchat_get_url, times: 1)
+        assert_requested(:get, business_calendar_show_url(calendar_id), times: 1)
+        assert_equal channel_hours.size, 3
+        expected_channel_hours = [
+            business_calendar.freshdesk_business_hour_data,
+            chat_channel_business_hours_sample[:channel_business_hours][0].merge({'sync_status' => BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed]}),
+            caller_channel_business_hours_sample[:channel_business_hours][0].merge({'sync_status' => BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress]})
+        ]
+        match_json(omni_business_hours_show_pattern(business_calendar, expected_channel_hours))
+        Account.any_instance.stubs(:omni_business_calendar?).returns(false)
+        business_calendar.destroy
+      end
+    end
+  end
+
+  def test_show_omni_business_calendar_freshcaller_failure
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      enable_omni_business_hours do
+        freshchat_get_url = format('%{url}/%{id}', url: chat_create_url, id: calendar_id)
+        stub_request(:get, freshchat_get_url).to_return(body: show_chat_business_hours_sample(calendar_id).to_json, status: 200)
+        stub_show_business_calendar_failure(calendar_id)
+        get :show, controller_params(id: business_calendar.id)
+        response = JSON.parse(@response.body)
+        assert_response 503
+        assert_equal response['message'], 'Omni Business Calendar GET request failed'
+        Account.any_instance.stubs(:omni_business_calendar?).returns(false)
+        business_calendar.destroy
+      end
+    end
+  end
+
+  def test_show_omni_business_calendar_freshchat_failure
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      enable_omni_business_hours_with_sidekiq_fake do
+        freshchat_get_url = format('%{url}/%{id}', url: chat_create_url, id: calendar_id)
+        stub_request(:get, freshchat_get_url).to_return(body: {}.to_json, status: 503)
+        stub_show_business_calendar_success(calendar_id)
+        get :show, controller_params(id: business_calendar.id)
+        response = JSON.parse(@response.body)
+        assert_response 503
+        assert_equal response['message'], 'Omni Business Calendar GET request failed'
+        Account.any_instance.stubs(:omni_business_calendar?).returns(false)
+        business_calendar.destroy
+      end
+    end
+  end
+
+  def test_show_omni_business_calendar_freshcaller_failure_404
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      enable_omni_business_hours do
+        business_calendar.set_sync_channel_status(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, 'create', BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed])
+        business_calendar.set_sync_channel_status(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, 'create', BusinessCalenderConstants::OMNI_SYNC_STATUS[:success])
+        business_calendar.save
+        freshchat_get_url = format('%{url}/%{id}', url: chat_create_url, id: calendar_id)
+        stub_request(:get, freshchat_get_url).to_return(body: show_chat_business_hours_sample(calendar_id).to_json, status: 200)
+        stub_freshcaller_show_bc_failure(calendar_id)
+        get :show, controller_params(id: business_calendar.id)
+        response = JSON.parse(@response.body)
+        assert_response 200
+        expected_channel_hours = [
+            business_calendar.freshdesk_business_hour_data,
+            chat_channel_business_hours_sample[:channel_business_hours][0].merge({'sync_status' => BusinessCalenderConstants::OMNI_SYNC_STATUS[:success]}),
+            {'channel': 'phone' }.merge({'sync_status' => BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed]})
+        ]
+        match_json(omni_business_hours_show_pattern(business_calendar, expected_channel_hours))
+        Account.any_instance.stubs(:omni_business_calendar?).returns(false)
+        business_calendar.destroy
+      end
+    end
+  ensure
+    WebMock.reset!
+  end
+
+  def test_show_omni_business_calendar_freshchat_failure_404
+    enable_emberize_business_hours do
+      business_calendar = create_business_calendar
+      calendar_id = business_calendar.id
+      enable_omni_business_hours do
+        business_calendar.set_sync_channel_status(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, 'create', BusinessCalenderConstants::OMNI_SYNC_STATUS[:success])
+        business_calendar.set_sync_channel_status(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, 'create', BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed])
+        business_calendar.save
+        freshchat_get_url = format('%{url}/%{id}', url: chat_create_url, id: calendar_id)
+        stub_request(:get, freshchat_get_url).to_return(body: {}.to_json, status: 404)
+        stub_show_business_calendar_success(calendar_id)
+        get :show, controller_params(id: business_calendar.id)
+        response = JSON.parse(@response.body)
+        assert_response 200
+        expected_channel_hours = [
+            business_calendar.freshdesk_business_hour_data,
+            {'channel': 'chat' }.merge({'sync_status' => BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed]}),
+            caller_channel_business_hours_sample[:channel_business_hours][0].merge({'sync_status' => BusinessCalenderConstants::OMNI_SYNC_STATUS[:success]})
+        ]
+        match_json(omni_business_hours_show_pattern(business_calendar, expected_channel_hours))
+        Account.any_instance.stubs(:omni_business_calendar?).returns(false)
+        business_calendar.destroy
+      end
     end
   end
 
@@ -430,10 +695,9 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
   def test_create_business_calendar_with_invalid_channel
     enable_emberize_business_hours do
       params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours('invalid apple'))
-      params['channel_business_hours'].first.merge!('business_hours' => [])
       post :create, construct_params(params)
-      error_data = [bad_request_error_pattern(:"channel_business_hours[:channel]",
-                                              "It should be one of these values: 'ticket'",
+      error_data = [bad_request_error_pattern(:"channel_business_hours",
+                                              "Expected 1 channel, 'ticket'",
                                               code: 'invalid_value')]
       assert_response 400
       match_json(description: 'Validation failed', errors: error_data)
@@ -445,8 +709,8 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours('invalid apple'))
       params['channel_business_hours'].first.delete('channel')
       post :create, construct_params(params)
-      error_data = [bad_request_error_pattern(:"channel_business_hours[:channel]",
-                                              "It should be one of these values: 'ticket'",
+      error_data = [bad_request_error_pattern(:"channel_business_hours",
+                                              "Expected 1 channel, 'ticket'",
                                               code: 'invalid_value')]
       assert_response 400
       match_json(description: 'Validation failed', errors: error_data)
@@ -523,10 +787,10 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
 
   def test_create_business_calendar_with_multiple_time_slots
     enable_emberize_business_hours do
-      business_hours = { "business_hours": [{ "day": 'sunday', "time_slots": [{ "end_time": '23:59',
+      business_hours = { "business_hours": [{ "day": 'sunday', "time_slots": [{ "end_time": '10:00',
                                                                                 "start_time": '00:00' },
                                                                               { "end_time": '23:59',
-                                                                                "start_time": '00:00' }] }] }
+                                                                                "start_time": '10:30' }] }] }
       params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours)
       params['channel_business_hours'].first.merge!(business_hours)
       post :create, construct_params(params)
@@ -663,12 +927,601 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_create_bc_for_omni_with_invalid_breaks
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                chat_channel_business_hours_sample[:channel_business_hours][0].merge(
+                    "business_hours": [{ "day": 'sunday', "time_slots": [{ "end_time": '11:30',
+                                                                           "start_time": '10:00' },
+                                                                         { "end_time": '10:30',
+                                                                           "start_time": '00:00' },
+                                                                         { "end_time": '16:00',
+                                                                           "start_time": '14:00' }] },
+                                       { "day": 'monday', "time_slots": [{ "end_time": '10:00',
+                                                                           "start_time": '00:00' }] }]
+                )
+            ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        error_data = [bad_request_error_pattern(:"channel_business_hours[:business_hours][:time_slots]",
+                                                'Please enter valid time slots with breaks in between the slots',
+                                                code: 'invalid_value')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_create_bc_for_omni_with_away_message_for_ticket
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+                ticket_business_hours_sample.merge({
+                                                       "away_message": 'I am away'
+                                                   }),
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                chat_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        error_data = [bad_request_error_pattern('away_message',
+                                                'Unexpected/invalid field in request',
+                                                code: 'invalid_field')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_create_bc_for_omni_with_away_message_for_phone
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0].merge({
+                                                                                           "away_message": 'I am away'
+                                                                                       }),
+                chat_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        error_data = [bad_request_error_pattern('away_message',
+                                                'Unexpected/invalid field in request',
+                                                code: 'invalid_field')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_create_bc_for_omni_with_away_message_for_chat
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_omni_success(chat: chat_channel_business_hours_away_message_sample) do
+          params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+              ticket_business_hours_sample,
+              chat_channel_business_hours_away_message_sample[:channel_business_hours][0],
+              caller_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+          ).merge(dummy_holiday_data)
+          post :create, construct_params(params)
+          assert_response 202
+          created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+          match_json(ember_business_hours_create_pattern(created_business_calendar, expected_create_response(params).with_indifferent_access))
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], created_business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], created_business_calendar.sync_freshchat_status
+        end
+      end
+    end
+  end
+
+  def test_create_bc_for_omni_with_breaks
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_omni_success(chat: chat_channel_business_hours_breaks_sample) do
+          params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+              ticket_business_hours_sample,
+              chat_channel_business_hours_breaks_sample[:channel_business_hours][0],
+              caller_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+          ).merge(dummy_holiday_data)
+          post :create, construct_params(params)
+          assert_response 202
+          created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+          match_json(ember_business_hours_create_pattern(created_business_calendar, expected_create_response(params).with_indifferent_access))
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], created_business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], created_business_calendar.sync_freshchat_status
+        end
+      end
+    end
+  end
+
+  def test_create_bc_freshcaller_success
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_omni_success(chat: chat_channel_business_hours_sample, phone: caller_channel_business_hours_sample) do
+          params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+              ticket_business_hours_sample,
+              caller_channel_business_hours_sample[:channel_business_hours][0],
+              chat_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+          ).merge(dummy_holiday_data)
+          post :create, construct_params(params)
+          assert_response 202
+          created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+          match_json(ember_business_hours_create_pattern(created_business_calendar, expected_create_response(params).with_indifferent_access))
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], created_business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], created_business_calendar.sync_freshchat_status
+        end
+      end
+    end
+  end
+
+  def test_create_bc_freshcaller_success_with_background_proccessing
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_omni_success(chat: chat_channel_business_hours_sample, phone: caller_channel_business_hours_sample) do
+          params = dummy_business_calendar_default_params.merge(
+              'channel_business_hours' => [
+                  ticket_business_hours_sample,
+                  caller_channel_business_hours_sample[:channel_business_hours][0],
+                  chat_channel_business_hours_sample[:channel_business_hours][0]
+              ]
+          ).merge(dummy_holiday_data)
+          post :create, construct_params(params)
+          assert_response 202
+          Admin::BusinessCalendar::OmniSyncWorker.drain
+          assert_requested(:post, business_calendar_create_url, times: 1)
+          assert_requested(:post, chat_create_url, times: 1)
+          created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], created_business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], created_business_calendar.sync_freshchat_status
+        end
+      end
+    end
+  end
+  #
+  def test_create_bc_freshcaller_failure
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_bc_create_failure
+        stub_chat_bc_success(chat: chat_channel_business_hours_sample)
+        params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                chat_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        assert_response 202
+        created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+        match_json(ember_business_hours_create_pattern(created_business_calendar, expected_create_response(params).with_indifferent_access))
+        Admin::BusinessCalendar::OmniSyncWorker.drain
+        assert_requested(:post, business_calendar_create_url, times: 1)
+        assert_requested(:post, chat_create_url, times: 1)
+        created_business_calendar.reload
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed], created_business_calendar.sync_freshcaller_status
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], created_business_calendar.sync_freshchat_status
+      end
+    end
+  ensure
+    WebMock.reset!
+  end
+
+  def test_create_bc_freshchat_failure
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_caller_bc_create_success(phone: caller_channel_business_hours_sample)
+        stub_chat_create_failure
+        params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                chat_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+        )
+        post :create, construct_params(params)
+        assert_response 202
+        created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+        match_json(ember_business_hours_create_pattern(created_business_calendar, expected_create_response(params).with_indifferent_access))
+        Admin::BusinessCalendar::OmniSyncWorker.drain
+        assert_requested(:post, business_calendar_create_url, times: 1)
+        assert_requested(:post, chat_create_url, times: 1)
+        created_business_calendar.reload
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], created_business_calendar.sync_freshcaller_status
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed], created_business_calendar.sync_freshchat_status
+      end
+    end
+  ensure
+    WebMock.reset!
+  end
+
+  def test_coverage_for_logs_in_exception
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        Omni::BusinessCalendarSync.any_instance.expects(:send_channel_request).raises('some custom error')
+        Omni::FreshcallerBcSync.any_instance.expects(:send_channel_request).raises('some custom error')
+        params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                chat_channel_business_hours_sample[:channel_business_hours][0]
+            ])
+        post :create, construct_params(params)
+        assert_response 202
+        created_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], created_business_calendar.sync_freshcaller_status
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], created_business_calendar.sync_freshchat_status
+      end
+    end
+  ensure
+    Omni::BusinessCalendarSync.any_instance.unstub(:send_channel_request)
+    Omni::FreshcallerBcSync.any_instance.unstub(:send_channel_request)
+  end
+
+  def test_create_with_invalid_number_of_channels
+    enable_emberize_business_hours do
+      params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours)
+      params = dummy_business_calendar_default_params.merge(
+          'channel_business_hours' => [
+              ticket_business_hours_sample,
+              caller_channel_business_hours_sample[:channel_business_hours][0],
+              chat_channel_business_hours_sample[:channel_business_hours][0]
+          ]
+      ).merge(dummy_holiday_data)
+      post :create, construct_params(params)
+      error_data = [bad_request_error_pattern(:"channel_business_hours",
+                                              "Expected 1 channel, '#{ApiBusinessCalendarConstants::TICKET_CHANNEL}'",
+                                              code: 'invalid_value')]
+      assert_response 400
+      match_json(description: 'Validation failed', errors: error_data)
+    end
+  end
+
+  def test_create_with_invalid_number_of_channels_for_omni
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        params = dummy_business_calendar_default_params.merge('channel_business_hours' => dummy_channel_business_hours)
+        params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                chat_channel_business_hours_sample[:channel_business_hours][0],
+                ticket_business_hours_sample
+            ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        error_data = [bad_request_error_pattern(:"channel_business_hours",
+                                                "Expected 3 channel, '#{[ApiBusinessCalendarConstants::TICKET_CHANNEL, ApiBusinessCalendarConstants::CHAT_CHANNEL, ApiBusinessCalendarConstants::PHONE_CHANNEL].join(',')}'",
+                                                code: 'invalid_value')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_create_with_valid_number_of_channels_for_omni
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        params = dummy_business_calendar_default_params.merge(
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                chat_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        assert_response 202
+      end
+    end
+  end
+
+
+  def test_update_business_calendar_for_omni_with_invalid_breaks
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        business_hours = {
+            "channel": 'chat',
+            "business_hours_type": 'custom',
+            "business_hours": [{ "day": 'sunday', "time_slots": [{ "end_time": '11:30',
+                                                                   "start_time": '10:00' },
+                                                                 { "end_time": '10:30',
+                                                                   "start_time": '00:00' },
+                                                                 { "end_time": '16:00',
+                                                                   "start_time": '14:00' }] },
+                               { "day": 'monday', "time_slots": [{ "end_time": '10:00',
+                                                                   "start_time": '00:00' }] }]
+        }
+        params = {
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                business_hours,
+            ]
+        }
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        put :update, construct_params({ id: business_calendar.id }, params)
+        error_data = [bad_request_error_pattern(:"channel_business_hours[:business_hours][:time_slots]",
+                                                'Please enter valid time slots with breaks in between the slots',
+                                                code: 'invalid_value')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_update_business_calendar_for_omni_with_away_message_for_ticket
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        params = {
+            'channel_business_hours' => [
+                ticket_business_hours_sample.merge(
+                    "away_message": 'Gone!'
+                ),
+                caller_channel_business_hours_sample[:channel_business_hours][0],
+                chat_channel_business_hours_sample[:channel_business_hours][0],
+            ]
+        }
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        put :update, construct_params({ id: business_calendar.id }, params)
+        error_data = [bad_request_error_pattern('away_message',
+                                                'Unexpected/invalid field in request',
+                                                code: 'invalid_field')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_update_business_calendar_for_omni_with_away_message_for_phone
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        params = {
+            'channel_business_hours' => [
+                ticket_business_hours_sample,
+                caller_channel_business_hours_sample[:channel_business_hours][0].merge(
+                    "away_message": 'Gone!'
+                ),
+                chat_channel_business_hours_sample[:channel_business_hours][0],
+            ]
+        }
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        put :update, construct_params({ id: business_calendar.id }, params)
+        error_data = [bad_request_error_pattern('away_message',
+                                                'Unexpected/invalid field in request',
+                                                code: 'invalid_field')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_update_business_calendar_for_omni_with_away_message_for_chat
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        stub_omni_update_success(business_calendar.id, { chat: chat_channel_business_hours_away_message_sample }) do
+          params = { 'channel_business_hours' => [
+              ticket_business_hours_sample,
+              caller_channel_business_hours_sample[:channel_business_hours][0],
+              chat_channel_business_hours_away_message_sample[:channel_business_hours][0]
+          ] }
+          put :update, construct_params({ id: business_calendar.id }, params)
+          assert_response 202
+          updated_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+          match_json(ember_business_hours_create_pattern(updated_business_calendar, expected_create_response(params).with_indifferent_access))
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], updated_business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], updated_business_calendar.sync_freshchat_status
+        end
+      end
+    end
+  end
+
+  def test_update_business_calendar_for_omni_with_breaks
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        stub_omni_update_success(business_calendar.id, { chat: chat_channel_business_hours_breaks_sample }) do
+          params = { 'channel_business_hours' => [
+              ticket_business_hours_sample,
+              chat_channel_business_hours_breaks_sample[:channel_business_hours][0],
+              caller_channel_business_hours_sample[:channel_business_hours][0]
+          ] }
+          put :update, construct_params({ id: business_calendar.id }, params)
+          assert_response 202
+          updated_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+          match_json(ember_business_hours_create_pattern(updated_business_calendar, expected_create_response(params).merge(holidays: business_calendar.holiday_data.map { |data| { name: data[1], date: data[0] } }).with_indifferent_access))
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], updated_business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], updated_business_calendar.sync_freshchat_status
+        end
+      end
+    end
+  end
+
+  def test_update_business_calendar_success
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        stub_omni_update_success(business_calendar.id, { chat: chat_channel_business_hours_sample }) do
+          params = { 'channel_business_hours' => [
+              ticket_business_hours_sample,
+              caller_channel_business_hours_sample[:channel_business_hours][0],
+              chat_channel_business_hours_sample[:channel_business_hours][0]
+          ] }
+          put :update, construct_params({ id: business_calendar.id }, params)
+          updated_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+          match_json(ember_business_hours_create_pattern(updated_business_calendar, expected_create_response(params).with_indifferent_access))
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], updated_business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress], updated_business_calendar.sync_freshchat_status
+        end
+      end
+    end
+  end
+
+  def test_update_business_calendar_success_with_background_processing
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        Admin::BusinessCalendar::OmniSyncWorker.clear
+        stub_omni_update_success(business_calendar.id, { chat: chat_channel_business_hours_sample, phone: caller_channel_business_hours_sample }) do
+          params = { 'channel_business_hours' => [
+              ticket_business_hours_sample,
+              caller_channel_business_hours_sample[:channel_business_hours][0],
+              chat_channel_business_hours_sample[:channel_business_hours][0]
+          ] }
+          put :update, construct_params({ id: business_calendar.id }, params)
+          Admin::BusinessCalendar::OmniSyncWorker.drain
+          assert_requested(:put, business_calendar_update_url(business_calendar.id), times: 1)
+          updated_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], updated_business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], updated_business_calendar.sync_freshchat_status
+        end
+      end
+    end
+  end
+
+  def test_update_business_calendar_freshcaller_failure
+   enable_emberize_business_hours do
+     enable_omni_business_hours_with_sidekiq_fake do
+       params = {
+           'channel_business_hours' => [
+             ticket_business_hours_sample,
+             caller_channel_business_hours_sample[:channel_business_hours][0],
+             chat_channel_business_hours_sample[:channel_business_hours][0]
+           ]
+       }
+       business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+       Admin::BusinessCalendar::OmniSyncWorker.clear
+       stub_bc_update_failure(business_calendar.id)
+       stub_chat_business_calendar_update_success(business_calendar.id, chat: chat_channel_business_hours_sample)
+       put :update, construct_params({ id: business_calendar.id }, params)
+       assert_response 202
+       Admin::BusinessCalendar::OmniSyncWorker.drain
+       assert_requested(:put, business_calendar_update_url(business_calendar.id), times: 1)
+       updated_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+       assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed], updated_business_calendar.sync_freshcaller_status
+       assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], updated_business_calendar.sync_freshchat_status
+     end
+   end
+  ensure
+   WebMock.reset!
+  end
+
+  def test_update_business_calendar_freshchat_failure
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        params = {
+            'channel_business_hours' => [
+              ticket_business_hours_sample,
+              caller_channel_business_hours_sample[:channel_business_hours][0],
+              chat_channel_business_hours_sample[:channel_business_hours][0]
+            ]
+        }
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        Admin::BusinessCalendar::OmniSyncWorker.clear
+        stub_caller_business_calendar_update_success(business_calendar.id, phone: caller_channel_business_hours_sample)
+        stub_chat_business_calendar_update_failure(business_calendar.id)
+        put :update, construct_params({ id: business_calendar.id }, params)
+        assert_response 202
+        Admin::BusinessCalendar::OmniSyncWorker.drain
+        assert_requested(:put, business_calendar_update_url(business_calendar.id), times: 1)
+        updated_business_calendar = Account.current.business_calendar.where(name: 'Dark web with social engineering').first
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], updated_business_calendar.sync_freshcaller_status
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed], updated_business_calendar.sync_freshchat_status
+      end
+    end
+  ensure
+    WebMock.reset!
+  end
+
   private
 
+    def enable_omni_business_calendar_destroy
+      enable_emberize_business_hours do
+        enable_omni_business_hours_with_sidekiq_fake do
+          yield
+        end
+      end
+    end
+    
     def enable_emberize_business_hours
       Account.current.launch :emberize_business_hours
       yield
     ensure
       Account.current.rollback :emberize_business_hours
+    end
+
+    # if any stubs are introduced below, please see whether it has to be included in enable_omni_business_hours_with_sidekiq_fake_too
+    def enable_omni_business_hours
+      Account.any_instance.stubs(:omni_business_calendar?).returns(true)
+      Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_bundle_id).returns(123)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      User.any_instance.stubs(:freshid_authorization).returns(
+          User.first.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: SecureRandom.uuid))
+      AgentObserver.any_instance.stubs(:freshchat_domain).returns('api.freshchat.com')
+      fchat_account
+      create_freshcaller_account unless Account.current.freshcaller_account
+      Sidekiq::Testing.inline! do
+        yield
+      end
+    ensure
+      Freshid::V2::Models::User.unstub(:find_by_email)
+      Account.any_instance.unstub(:omni_bundle_id)
+      Account.any_instance.unstub(:freshcaller_enabled?)
+      Account.any_instance.unstub(:omni_business_calendar?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      User.any_instance.unstub(:freshid_authorization)
+      AgentObserver.any_instance.unstub(:freshchat_domain)
+    end
+
+    def enable_omni_business_hours_with_sidekiq_fake
+      Account.any_instance.stubs(:omni_business_calendar?).returns(true)
+      Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_bundle_id).returns(123)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      User.any_instance.stubs(:freshid_authorization).returns(
+          User.first.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: SecureRandom.uuid))
+      AgentObserver.any_instance.stubs(:freshchat_domain).returns('api.freshchat.com')
+      fchat_account
+      create_freshcaller_account unless Account.current.freshcaller_account
+      Sidekiq::Testing.fake! do
+        yield
+      end
+    ensure
+      Admin::BusinessCalendar::OmniSyncWorker.clear
+      Freshid::V2::Models::User.unstub(:find_by_email)
+      Account.any_instance.unstub(:omni_bundle_id)
+      Account.any_instance.unstub(:freshcaller_enabled?)
+      Account.any_instance.unstub(:omni_business_calendar?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      User.any_instance.unstub(:freshid_authorization)
+      AgentObserver.any_instance.unstub(:freshchat_domain)
+    end
+
+    def stub_omni_success(args = {})
+      stub_chat_bc_success(args)
+      stub_caller_bc_create_success(args)
+      yield
+    ensure
+      WebMock.reset!
+    end
+
+    def stub_omni_update_success(id, args = {})
+      stub_caller_business_calendar_update_success(id, args)
+      stub_chat_business_calendar_update_success(id, args)
+      yield
+    ensure
+      WebMock.reset!
     end
 end

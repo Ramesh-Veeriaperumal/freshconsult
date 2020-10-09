@@ -37,7 +37,8 @@ module BusinessHoursTestHelper
       description: business_hour.description,
       time_zone: business_hour.time_zone,
       default: business_hour.is_default,
-      group_ids: Account.current.groups_from_cache.select { |group| group.business_calendar_id == business_hour.id }.map(&:id)
+      group_ids: Account.current.groups_from_cache.select { |group| group.business_calendar_id == business_hour.id }.map(&:id),
+      channel_business_hours: business_hour.channel_bussiness_hour_data
     }
     result
   end

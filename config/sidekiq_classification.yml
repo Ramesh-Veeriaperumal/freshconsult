@@ -55,6 +55,7 @@
     - update_article_platform_mapping_worker
     - marketplace_app_billing
     - retry_observer
+    - omni_business_calendar_sync
     - channel_reply_messages
     - link_omni_account
   :central_realtime:

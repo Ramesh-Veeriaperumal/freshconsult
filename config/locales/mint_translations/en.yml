@@ -2990,6 +2990,12 @@ en:
   enable: Enable
   choose_a_plan: Choose a plan
   plain_yes: 'Yes'
+  bc_sync_status:
+    email:
+      user: "Hi %{user_name},"
+      message: "The changes made to %{business_calendar_name} has failed"
+      action: "If the issue persists, please contact support"
+      association: "Please modify your configuration here: %{business_calendar_url}"
   bot_training_completed:
     email:
       info3: Let's start supporting!
@@ -7863,6 +7869,7 @@ en:
     topic_update: '[Status Update] in %{title}'
     topic_merged: '[Topic Merged] to %{title}'
     send_reminder_email: 'Reminder:%{todo_body}'
+    send_sync_status_email: 'Business calendar %{action} failed'
     account_data_export: 'Data Export for %{account}'
     no_tickets_to_export: 'No tickets in range - %{domain}'
     audit_log_export: Audit Log Export

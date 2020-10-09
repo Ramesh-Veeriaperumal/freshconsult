@@ -8,6 +8,8 @@ module Freshcaller
     UPDATE_INTEGRATION = '/integrations/freshdesk/update'.freeze
     OMNI_INTEGRATION = '/integrations/support360/update'.freeze
 
+    OMNI_BC_PATH = '/ufx/v1/business_hours'.freeze
+
     def freshcaller_base_sso_url
       "#{protocol}#{current_account.freshcaller_account.domain}/sso/freshdesk/#{sign_payload(email: current_user.email)}"
     end
@@ -59,6 +61,22 @@ module Freshcaller
 
     def freshcaller_update_agent_url(user_id)
       "#{freshcaller_url}/users/#{user_id}"
+    end
+
+    def freshcaller_create_bc
+      format('%{url}%{path}', url: freshcaller_url, path: OMNI_BC_PATH)
+    end
+
+    def freshcaller_get_business_calendar(calendar_id)
+      format('%{base_url}/%{id}', base_url: freshcaller_create_bc, id: calendar_id)
+    end
+
+    def freshcaller_update_business_calendar(calendar_id)
+      format('%{business_calendar_base_url}/%{id}', business_calendar_base_url: freshcaller_base_business_calendar_url, id: calendar_id)
+    end
+
+    def freshcaller_base_business_calendar_url
+      format('%{url}%{path}', url: freshcaller_url, path: OMNI_BC_PATH)
     end
 
     def protocol

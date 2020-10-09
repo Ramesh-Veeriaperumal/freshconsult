@@ -406,6 +406,7 @@ defaults: &defaults
     - [central_publish_resync]
     - [create_and_link_omni_account]
     - [sync_omni_agents]
+    - [omni_business_calendar_sync]
     - [archive_ticket_central_publish]
     - [retry_observer]
     - [freddy_consumed_session_queue]

@@ -41,6 +41,11 @@ module Freshcaller::JwtAuthentication
         'Authorization' => "Freshdesk token=#{sign_payload(payload)}"
       }
     }
+    
+    if params.key?(:headers)
+      options[:headers].merge!(params.delete(:headers))
+    end
+
     if request_type == :get
       options.merge!({:query => params})
     else

@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20200821185341) do
+ActiveRecord::Schema.define(version: 20200827174934) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -450,6 +450,7 @@ ActiveRecord::Schema.define(version: 20200821185341) do
     t.string   "description"
     t.string   "time_zone"
     t.boolean  "is_default",                      :default => false
+    t.text     "additional_settings"
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"

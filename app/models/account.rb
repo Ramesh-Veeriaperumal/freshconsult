@@ -1027,6 +1027,10 @@ class Account < ActiveRecord::Base
     Account.current.launched?(:omni_bundle_2020) && omni_bundle_id.present?
   end
 
+  def omni_business_calendar?
+    omni_business_calendar_enabled? && omni_bundle_account?
+  end
+
   def show_omnichannel_banner?
     User.current.privilege?(:manage_account) && launched?(:explore_omnichannel_feature) && freshid_org_v2_enabled? && verified? && !not_eligible_for_omni_conversion?
   end

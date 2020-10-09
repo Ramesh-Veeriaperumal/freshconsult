@@ -60,6 +60,27 @@ module Freshcaller::TestHelper
   def signup_url
     "#{FreshcallerConfig['signup_domain']}/accounts"
   end
+  
+  def business_calendar_url
+    'https://localhost.test.domain/ufx/v1/business_hours'
+  end
+
+  def business_calendar_create_url
+    business_calendar_url
+  end
+
+  
+  def business_calendar_update_url(id)
+    format('%{url}/%{id}', url: business_calendar_url, id: id)
+  end
+  
+  def business_calendar_delete_url(calendar_id)
+    format('%{url}/%{id}', url: business_calendar_url, id: calendar_id)
+  end
+
+  def business_calendar_show_url(calendar_id)
+    format('%{url}/%{id}', url: business_calendar_url, id: calendar_id)
+  end
 
   def stub_link_account_success(email)
     response_hash = {
@@ -237,7 +258,107 @@ module Freshcaller::TestHelper
                                                         headers: { 'Content-Type' => 'application/json' })
   end
 
+  def stub_business_calendar_delete_success(id)
+    stub_request(:delete, business_calendar_show_url(id)).to_return(body: {}.to_json,
+                                                                      status: 204,
+                                                                      headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_business_calendar_delete_unauthorized(id)
+    response_hash = {
+      error_type: 'user_unauthorized',
+      message: 'The email-id/password/token is incorrect.'
+    }
+    stub_request(:delete, business_calendar_show_url(id)).to_return(body: response_hash.to_json,
+                                                                      status: 401,
+                                                                      headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_business_calendar_delete_invalid_authentication(id)
+    response_hash = {
+      result: 'unauthorized',
+      error: {
+        message: 'Access denied'
+      }
+    }
+    stub_request(:delete, business_calendar_show_url(id)).to_return(body: response_hash.to_json,
+                                                                      status: 403,
+                                                                      headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_business_calendar_delete_not_found(id)
+    response_hash = {
+      errors: {
+        message: 'Id does not exist'
+      }
+    }
+    stub_request(:delete, business_calendar_show_url(id)).to_return(body: response_hash.to_json,
+                                                                      status: 404,
+                                                                      headers: { 'Content-Type' => 'application/json' })
+  end
+
   def remove_stubs
     remove_request_stub(@req)
+  end
+
+  def stub_caller_bc_create_success(args)
+    stub_request(:post, business_calendar_create_url).to_return(body: (args[:phone].presence || {}).to_json,
+                                                                status: 201,
+                                                                headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_caller_business_calendar_update_success(id, args)
+    stub_request(:put, business_calendar_update_url(id)).to_return(body: (args[:phone].presence || {}).to_json,
+                                                                status: 200,
+                                                                headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_bc_create_failure
+    stub_request(:post, business_calendar_create_url).to_return(body: { "errors": [
+                                                                                    'Invalid data'
+                                                                                  ]
+                                                                      }.to_json,
+                                                                status: 422,
+                                                                headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_bc_update_failure(id)
+    stub_request(:put, business_calendar_update_url(id)).to_return(body: { "errors": [
+                                                                                      'Invalid data'
+                                                                                  ]
+                                                                      }.to_json,
+                                                                status: 422,
+                                                                headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_show_business_calendar_success(id)
+    response_hash = {
+      id: id,
+      name: 'caller calendar sample',
+      description: 'string',
+      time_zone: 'American Samoa',
+      default: true,
+      holidays: [
+        { name: 'hol 1', date: 'aug 15'},
+        { name: 'hol 2', date: 'may 20'},
+        { name: 'hol 3', date: 'jun 09'}
+      ],
+      channel_business_hours: caller_channel_business_hours_sample[:channel_business_hours]
+    }
+    stub_request(:get, business_calendar_show_url(id)).to_return(body: response_hash.to_json,
+                                                                status: 200,
+                                                                headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_show_business_calendar_failure(id)
+    stub_request(:get, business_calendar_show_url(id)).to_return(body: {}.to_json,
+                                                                status: 503,
+                                                                headers: { 'Content-Type' => 'application/json' })
+  end
+
+  def stub_freshcaller_show_bc_failure(id)
+    stub_request(:get, business_calendar_show_url(id)).to_return(body: {}.to_json,
+                                                                 status: 404,
+                                                                 headers: { 'Content-Type' => 'application/json' })
   end
 end

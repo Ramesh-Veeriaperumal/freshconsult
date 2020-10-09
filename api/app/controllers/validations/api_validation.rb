@@ -132,4 +132,8 @@ class ApiValidation
     def create_or_update?
       CREATE_AND_UPDATE_ACTIONS.include?(validation_context)
     end
+
+    def destroy?
+      validation_context == :destroy
+    end
 end
