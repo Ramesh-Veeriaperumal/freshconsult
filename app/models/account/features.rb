@@ -88,7 +88,8 @@ class Account < ActiveRecord::Base
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
     :supervisor_contact_field, :whatsapp_channel, :sidekiq_logs_to_central,
-    :basic_settings_feature, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails, :ticket_filter_increased_companies_limit
+    :basic_settings_feature, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails, :ticket_filter_increased_companies_limit,
+    :csat_email_scan_compatibility
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
@@ -105,7 +106,8 @@ class Account < ActiveRecord::Base
     :stop_contacts_count_query,
     :force_index_tickets,
     :es_v2_splqueries,
-    :disable_emails
+    :disable_emails,
+    :csat_email_scan_compatibility
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -481,6 +483,10 @@ class Account < ActiveRecord::Base
 
   def kbase_spam_whitelist_enabled?
     launched?(:kbase_spam_whitelist)
+  end
+
+  def csat_email_scan_compatibility_enabled?
+    launched?(:csat_email_scan_compatibility)
   end
 
   def features

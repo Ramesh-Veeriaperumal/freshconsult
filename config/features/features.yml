@@ -425,6 +425,7 @@
       :sidekiq_logs_to_central: 421
       :fb_msg_realtime: 422
       :kbase_spam_whitelist: 423
+      :csat_email_scan_compatibility: 424
 :selectable_features:
   :redis_display_id: true
   :gamification_enable: false
@@ -497,3 +498,4 @@
   :force_index_tickets: false
   :es_v2_splqueries: false
   :disable_emails: false
+  :csat_email_scan_compatibility: false
