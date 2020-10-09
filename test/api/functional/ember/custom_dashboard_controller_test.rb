@@ -2361,5 +2361,46 @@ module Ember
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
     end
+
+    # we will allow only particular amount of widgets for a single dashboard. this case tries to check more widgets can be created or not.
+    def test_dashboard_create_with_more_than_expected_widgets_returns_400
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      20.times do |n|
+        dashboard_object.add_widget(0) # 20 scorecard widgets
+        dashboard_object.add_widget(1) # 20 barchart widgets
+      end
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400
+    ensure
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_dashboard_update_with_more_than_expected_widgets_returns_400
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      16.times do |n|
+        dashboard_object.add_widget(0) # 16 scorecard widgets
+        dashboard_object.add_widget(1) # 16 barchart widgets
+      end
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      assert_response 201
+      dashboard_object1 = DashboardObject.new(0)
+      dashboard_object1.add_widget(0)
+      updated_atributes = { widgets: [WidgetObject.new('test', 0, {}).construct_widget_hash(:rest)] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 400
+      updated_atributes = { widgets: [{ id: widget_id, deleted: true }, WidgetObject.new('test', 0, {}).construct_widget_hash(:rest)] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
+      assert_response 200
+    ensure
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+    end
   end
 end

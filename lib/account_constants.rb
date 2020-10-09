@@ -84,12 +84,12 @@ module AccountConstants
 
   # min is used by default
   DASHBOARD_LIMITS = {
-    min: { dashboard: 15, widgets: { scorecard: 15, bar_chart: 5, csat: 3, leaderboard: 3, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5, freshchat_scorecard: 5, freshchat_bar_chart: 5, freshchat_availability: 5, freshchat_csat: 5, freshchat_time_trend: 5 } },
-    mid: { dashboard: 20, widgets: { scorecard: 20, bar_chart: 7, csat: 3, leaderboard: 3, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5, freshchat_scorecard: 5, freshchat_bar_chart: 5, freshchat_availability: 5, freshchat_csat: 5, freshchat_time_trend: 5 } },
-    max: { dashboard: 25, widgets: { scorecard: 25, bar_chart: 9, csat: 3, leaderboard: 3, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5, freshchat_scorecard: 5, freshchat_bar_chart: 5, freshchat_availability: 5, freshchat_csat: 5, freshchat_time_trend: 5 } }
+    min: { dashboard: 15, widgets: { scorecard: 15, bar_chart: 5, csat: 3, leaderboard: 3, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5, freshchat_scorecard: 5, freshchat_bar_chart: 5, freshchat_availability: 5, freshchat_csat: 5, freshchat_time_trend: 5 }, total_widgets: 32 },
+    mid: { dashboard: 20, widgets: { scorecard: 20, bar_chart: 7, csat: 3, leaderboard: 3, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5, freshchat_scorecard: 5, freshchat_bar_chart: 5, freshchat_availability: 5, freshchat_csat: 5, freshchat_time_trend: 5 }, total_widgets: 32 },
+    max: { dashboard: 25, widgets: { scorecard: 25, bar_chart: 9, csat: 3, leaderboard: 3, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4, freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5, freshchat_scorecard: 5, freshchat_bar_chart: 5, freshchat_availability: 5, freshchat_csat: 5, freshchat_time_trend: 5 }, total_widgets: 32 }
   }.freeze
 
-  OMNI_WIDGET_LIMITS = { widgets: { freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5, freshchat_scorecard: 5, freshchat_bar_chart: 5, freshchat_availability: 5, freshchat_csat: 5, freshchat_time_trend: 5 } }.freeze
+  OMNI_WIDGET_LIMITS = { widgets: { freshcaller_call_trend: 5, freshcaller_availability: 5, freshcaller_time_trend: 5, freshcaller_sla_trend: 5, freshchat_scorecard: 5, freshchat_bar_chart: 5, freshchat_availability: 5, freshchat_csat: 5, freshchat_time_trend: 5 }, total_widgets: 32 }.freeze
 
   PAID_BY_RESELLER = {
     'Yes' =>  true,

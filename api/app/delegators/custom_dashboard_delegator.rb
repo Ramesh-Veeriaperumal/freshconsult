@@ -69,7 +69,7 @@ class CustomDashboardDelegator < BaseDelegator
 
   def validate_widgets_limit
     @widgets_attributes.each { |w| update_widget_count(w) }
-    errors[:widgets] = :dashboard_limit_exceeded unless @widget_count.all? { |k, v| @dashboard_limits[:widgets][k.to_sym] >= v }
+    errors[:widgets] = :dashboard_limit_exceeded unless @widget_count.all? { |k, v| @dashboard_limits[:widgets][k.to_sym] >= v } && @dashboard_limits[:total_widgets] >= @widget_count.values.sum
   end
 
   def update_widget_count(widget)
