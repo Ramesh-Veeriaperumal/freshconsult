@@ -102,13 +102,13 @@ class PasswordPolicy < ActiveRecord::Base
 		end
 	end
 
-	def clear_password_policy_cache
-		if self.user_type == USER_TYPE[:contact]
-			self.account.clear_contact_password_policy_from_cache
-		elsif self.user_type == USER_TYPE[:agent]
-			self.account.clear_agent_password_policy_from_cache
-		end
-	end
+  def clear_password_policy_cache
+    if self.user_type == USER_TYPE[:contact]
+      self.account.try(:clear_contact_password_policy_from_cache)
+    elsif self.user_type == USER_TYPE[:agent]
+      self.account.try(:clear_agent_password_policy_from_cache)
+    end
+  end
 
 	def password_expiry_key
 		UPDATE_PASSWORD_EXPIRY % { :account_id => self.account.id, :user_type => self.user_type }
