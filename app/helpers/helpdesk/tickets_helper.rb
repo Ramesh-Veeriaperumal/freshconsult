@@ -242,7 +242,7 @@ module Helpdesk::TicketsHelper
 
     o << select_tag(
       'search-source',
-      options_for_select(current_account.helpdesk_sources.ticket_source_options, params[:v].to_i),
+      options_for_select(current_account.helpdesk_sources.default_ticket_sources.map { |i| [i[1], i[2]] }, params[:v].to_i),
       html)
 
     o << select_tag(
@@ -567,7 +567,7 @@ module Helpdesk::TicketsHelper
   end
 
   def compose_options(email_configs)
-    if current_account.features_included?(:personalized_email_replies)
+    if current_account.personalized_email_replies_enabled?
       email_configs.collect{|x| [x.friendly_email_personalize(current_user.name), x.id]}
     else
       email_configs.collect{|x| [x.friendly_email, x.id]}

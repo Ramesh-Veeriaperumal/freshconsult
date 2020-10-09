@@ -604,20 +604,70 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
   def test_channel_hit_payload
     stub_channel_api do
       Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(false)
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
       article_new = get_article_without_draft
       user = add_new_user(@account)
       CentralPublishWorker::SolutionArticleWorker.jobs.clear
-      put :hit, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1)
+      put :hit, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1, platform: 'ios')
       job = CentralPublishWorker::SolutionArticleWorker.jobs.first
       assert_response 204
       assert_equal 1, CentralPublishWorker::SolutionArticleWorker.jobs.size
       assert_equal user.id, job["args"][1]['current_user_id']
       assert_equal 3, job['args'][1]['event_info']['source_type']
       assert_equal 1, job['args'][1]['event_info']['source_id'].to_i
+      assert_equal 'ios', job['args'][1]['event_info']['platform']
     end
     Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
   end
-  
+
+  def test_platform_params_for_article_hits
+    stub_channel_api do
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(false)
+      article_new = get_article_without_draft
+      user = add_new_user(@account)
+      initial_views = @account.solution_articles.find(article_new.id).hits
+      put :hit, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1, platform: 'ios')
+      assert_response 204
+      final_views = @account.solution_articles.find(article_new.id).hits
+      assert_equal initial_views, final_views - 1
+    end
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
+  def test_invalid_platform_params_for_article_hits
+    stub_channel_api do
+      Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(false)
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      article_new = get_article_without_draft
+      user = add_new_user(@account)
+      put :hit, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1, platform: 'invalid')
+      assert_response 400
+      expected = { description: 'Validation failed', errors: [{ field: 'platform', message: "It should be one of these values: 'web,ios,android'", code: 'invalid_value' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
+  def test_platform_params_without_omni_bundle_for_article_hits
+    stub_channel_api do
+      article_new = get_article_without_draft
+      put :hit, controller_params(version: 'channel', id: article_new.id, source_type: 'freshchat', source_id: 1, platform: 'ios')
+      assert_response 403
+      expected = { description: 'Validation failed', errors: [{ field: 'platform', message: "The omni_bundle_2020 feature(s) is/are not supported in your plan. Please upgrade your account to use it.", code: 'access_denied' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+  end
+
   def test_search
     @enrich_response = false
     CustomRequestStore.stubs(:read).with(:channel_api_request).returns(true)
@@ -1000,11 +1050,12 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     end
   end
 
-  def test_article_thumbs_down_with_optional_source_id
+  def test_article_thumbs_down_without_optional_source_id
     stub_channel_api do
       article = get_article_without_draft
       old_thumbs_down = article.thumbs_down
       user = add_new_user(@account)
+      article.votes.map(&:destroy)
       put :thumbs_down, controller_params(version: 'channel', id: article.parent_id, user_id: user.id, source_type: 'freshchat')
       assert_response 204
       assert_equal article.reload.thumbs_down, old_thumbs_down + 1
@@ -1072,6 +1123,132 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     end
   ensure
     Account.any_instance.unstub(:solutions_agent_metrics_enabled?)
+  end
+
+  def test_article_thumbs_down_with_platform_params
+    stub_channel_api do
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      article = get_article_without_draft
+      old_thumbs_down = article.thumbs_down
+      user = add_new_user(@account)
+      put :thumbs_down, controller_params(version: 'channel', id: article.parent_id, user_id: user.id, source_type: 'freshchat', platform: 'ios')
+      assert_response 204
+      assert_equal article.reload.thumbs_down, old_thumbs_down + 1
+      assert_equal article.votes.last.user_id, user.id
+      assert_equal article.votes.last.vote, 0
+    end
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
+  def test_article_thumbs_down_with_invalid_platform_params
+    stub_channel_api do
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      article = get_article_without_draft
+      old_thumbs_down = article.thumbs_down
+      user = add_new_user(@account)
+      put :thumbs_down, controller_params(version: 'channel', id: article.parent_id, user_id: user.id, source_type: 'freshchat', platform: 'invalid')
+      assert_response 400
+      expected = { description: 'Validation failed', errors: [{ field: 'platform', message: "It should be one of these values: 'web,ios,android'", code: 'invalid_value' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
+  def test_platform_params_without_omni_bundle_for_article_thumbs_down
+    stub_channel_api do
+      article_new = get_article_without_draft
+      put :thumbs_down, controller_params(version: 'channel', id: article_new.id, source_type: 'freshchat', source_id: 1, platform: 'ios')
+      assert_response 403
+      expected = { description: 'Validation failed', errors: [{ field: 'platform', message: "The omni_bundle_2020 feature(s) is/are not supported in your plan. Please upgrade your account to use it.", code: 'access_denied' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+  end
+
+  def test_channel_thumbs_down_payload
+    stub_channel_api do
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      article_new = get_article_without_draft
+      user = add_new_user(@account)
+      CentralPublishWorker::SolutionArticleWorker.jobs.clear
+      put :thumbs_down, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1, platform: 'ios')
+      job = CentralPublishWorker::SolutionArticleWorker.jobs.first
+      assert_response 204
+      assert_equal 1, CentralPublishWorker::SolutionArticleWorker.jobs.size
+      assert_equal user.id, job['args'][1]['current_user_id']
+      assert_equal 3, job['args'][1]['event_info']['source_type']
+      assert_equal 1, job['args'][1]['event_info']['source_id'].to_i
+      assert_equal 'ios', job['args'][1]['event_info']['platform']
+    end
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
+  def test_article_thumbs_up_with_platform_params
+    stub_channel_api do
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      article = get_article_without_draft
+      old_thumbs_up = article.thumbs_up
+      user = add_new_user(@account)
+      article.votes.map(&:destroy)
+      put :thumbs_up, controller_params(version: 'channel', id: article.parent_id, user_id: user.id, source_type: 'freshchat', platform: 'ios')
+      assert_response 204
+      assert_equal article.reload.thumbs_up, old_thumbs_up + 1
+      assert_equal article.votes.last.user_id, user.id
+    end
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
+  def test_article_thumbs_up_with_invalid_platform_params
+    stub_channel_api do
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      article = get_article_without_draft
+      old_thumbs_up = article.thumbs_up
+      user = add_new_user(@account)
+      put :thumbs_up, controller_params(version: 'channel', id: article.parent_id, user_id: user.id, source_type: 'freshchat', platform: 'invalid')
+      assert_response 400
+      expected = { description: 'Validation failed', errors: [{ field: 'platform', message: "It should be one of these values: 'web,ios,android'", code: 'invalid_value' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
+  def test_platform_params_without_omni_bundle_for_article_thumbs_up
+    stub_channel_api do
+      article_new = get_article_without_draft
+      put :thumbs_up, controller_params(version: 'channel', id: article_new.id, source_type: 'freshchat', source_id: 1, platform: 'ios')
+      assert_response 403
+      expected = { description: 'Validation failed', errors: [{ field: 'platform', message: 'The omni_bundle_2020 feature(s) is/are not supported in your plan. Please upgrade your account to use it.', code: 'access_denied' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+  end
+
+  def test_channel_thumbs_up_payload
+    stub_channel_api do
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      article_new = get_article_without_draft
+      user = add_new_user(@account)
+      CentralPublishWorker::SolutionArticleWorker.jobs.clear
+      put :thumbs_up, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1, platform: 'ios')
+      job = CentralPublishWorker::SolutionArticleWorker.jobs.first
+      assert_response 204
+      assert_equal 1, CentralPublishWorker::SolutionArticleWorker.jobs.size
+      assert_equal user.id, job['args'][1]['current_user_id']
+      assert_equal 3, job['args'][1]['event_info']['source_type']
+      assert_equal 1, job['args'][1]['event_info']['source_id'].to_i
+      assert_equal 'ios', job['args'][1]['event_info']['platform']
+    end
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
   end
 
   private

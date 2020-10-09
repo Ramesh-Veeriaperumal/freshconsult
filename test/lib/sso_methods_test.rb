@@ -25,6 +25,8 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:launched?).returns(true)
     sso = @account.allow_sso_login?
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:launched?)
   end
 
   def test_reset_sso_options
@@ -36,12 +38,16 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:sso_options).returns(nil)
     sso = @account.oauth2_sso_enabled?
     assert_equal false, sso
+  ensure
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_is_saml_sso
     Account.any_instance.stubs(:sso_options).returns({})
     sso = @account.is_saml_sso?
     assert_equal false, sso
+  ensure
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_enable_agent_oauth2_sso
@@ -50,6 +56,24 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:customer_oauth2_sso_enabled?).returns(false)
     sso = @account.enable_agent_oauth2_sso!('test url')
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
+    Account.any_instance.unstub(:customer_oauth2_sso_enabled?)
+  end
+
+  def test_enable_agent_oauth2_sso_without_sso_sync
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    Account.any_instance.stubs(:customer_oauth2_sso_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(false)
+    sso = @account.enable_agent_oauth2_sso!('test url')
+    assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
+    Account.any_instance.unstub(:customer_oauth2_sso_enabled?)
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
   end
 
   def test_disable_agent_oauth2_sso
@@ -59,6 +83,11 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:reset_feature).returns(true)
     sso = @account.disable_agent_oauth2_sso!
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:agent_oauth2_sso_enabled?)
+    Account.any_instance.unstub(:sso_options)
+    Account.any_instance.unstub(:customer_oauth2_sso_enabled?)
+    Account.any_instance.unstub(:reset_feature)
   end
 
   def test_enable_customer_oauth2_sso
@@ -67,6 +96,24 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:agent_oauth2_sso_enabled?).returns(false)
     sso = @account.enable_customer_oauth2_sso!('test url')
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
+    Account.any_instance.unstub(:agent_oauth2_sso_enabled?)
+  end
+
+  def test_enable_customer_oauth2_sso_without_sso_sync
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    Account.any_instance.stubs(:agent_oauth2_sso_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(false)
+    sso = @account.enable_customer_oauth2_sso!('test url')
+    assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
+    Account.any_instance.unstub(:agent_oauth2_sso_enabled?)
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
   end
 
   def test_disable_customer_oauth2_sso
@@ -76,6 +123,11 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:agent_oauth2_sso_enabled?).returns(false)
     sso = @account.disable_customer_oauth2_sso!
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:customer_oauth2_sso_enabled?)
+    Account.any_instance.unstub(:sso_options)
+    Account.any_instance.unstub(:reset_feature)
+    Account.any_instance.unstub(:agent_oauth2_sso_enabled?)
   end
 
   def test_remove_oauth2_sso_options
@@ -83,30 +135,41 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:sso_options).returns(nil)
     sso = @account.remove_oauth2_sso_options
     assert_equal nil, sso
+  ensure
+    Account.any_instance.unstub(:revoke_feature)
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_agent_oauth2_logout_redirect_url
     Account.any_instance.stubs(:agent_oauth2_sso_enabled?).returns(false)
     sso = @account.agent_oauth2_logout_redirect_url
     assert_equal nil, sso
+  ensure
+    Account.any_instance.unstub(:agent_oauth2_sso_enabled?)
   end
 
   def test_customer_oauth2_logout_redirect_url
     Account.any_instance.stubs(:customer_oauth2_sso_enabled?).returns(false)
     sso = @account.customer_oauth2_logout_redirect_url
     assert_equal nil, sso
+  ensure
+    Account.any_instance.unstub(:customer_oauth2_sso_enabled?)
   end
 
   def test_freshid_saml_sso_enabled
     Account.any_instance.stubs(:sso_options).returns(nil)
     sso = @account.freshid_saml_sso_enabled?
     assert_equal false, sso
+  ensure
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_freshid_sso_enabled
     Account.any_instance.stubs(:sso_options).returns(nil)
     sso = @account.freshid_sso_enabled?
     assert_equal false, sso
+  ensure
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_enable_agent_freshid_saml_sso
@@ -115,14 +178,50 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:customer_freshid_saml_sso_enabled?).returns(false)
     sso = @account.enable_agent_freshid_saml_sso!('test_url')
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
+    Account.any_instance.unstub(:customer_freshid_saml_sso_enabled?)
+  end
+
+  def test_enable_agent_freshid_saml_sso_without_sso_sync
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    Account.any_instance.stubs(:customer_freshid_saml_sso_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(false)
+    sso = @account.enable_agent_freshid_saml_sso!('test_url')
+    assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
+    Account.any_instance.unstub(:customer_freshid_saml_sso_enabled?)
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
   end
 
   def test_enable_customer_freshid_saml_sso
     Account.any_instance.stubs(:freshid_enabled?).returns(true)
     Account.any_instance.stubs(:add_feature).returns(true)
     Account.any_instance.stubs(:agent_freshid_saml_sso_enabled?).returns(false)
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(false)
     sso = @account.enable_customer_freshid_saml_sso!('test_url')
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
+    Account.any_instance.unstub(:agent_freshid_saml_sso_enabled?)
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
+  end
+
+  def test_enable_customer_freshid_saml_sso_without_sso_sync
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Account.any_instance.stubs(:add_feature).returns(true)
+    Account.any_instance.stubs(:agent_freshid_saml_sso_enabled?).returns(false)
+    sso = @account.enable_customer_freshid_saml_sso!('test_url')
+    assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
+    Account.any_instance.unstub(:agent_freshid_saml_sso_enabled?)
   end
 
   def test_disable_agent_freshid_saml_sso
@@ -131,6 +230,8 @@ class SsoMethodsTest < ActionView::TestCase
     sso = @account.disable_agent_freshid_saml_sso!
     assert_equal true, sso
     assert_equal false, @account.sso_enabled
+  ensure
+    Account.any_instance.unstub(:reset_feature)
   end
 
   def test_disable_customer_freshid_saml_sso
@@ -140,6 +241,11 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:reset_feature).returns(true)
     sso = @account.disable_customer_freshid_saml_sso!
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:customer_freshid_saml_sso_enabled?)
+    Account.any_instance.unstub(:sso_options)
+    Account.any_instance.unstub(:agent_freshid_saml_sso_enabled?)
+    Account.any_instance.unstub(:reset_feature)
   end
 
   def test_remove_freshid_saml_sso_options
@@ -147,18 +253,25 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:sso_options).returns(nil)
     sso = @account.remove_freshid_saml_sso_options
     assert_equal nil, sso
+  ensure
+    Account.any_instance.unstub(:revoke_feature)
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_agent_freshid_saml_logout_redirect_url
     Account.any_instance.stubs(:agent_freshid_saml_sso_enabled?).returns(false)
     sso = @account.agent_freshid_saml_logout_redirect_url
     assert_equal nil, sso
+  ensure
+    Account.any_instance.unstub(:agent_freshid_saml_sso_enabled?)
   end
 
   def test_customer_freshid_saml_logout_redirect_url
     Account.any_instance.stubs(:customer_freshid_saml_sso_enabled?).returns(false)
     sso = @account.customer_freshid_saml_logout_redirect_url
     assert_equal nil, sso
+  ensure
+    Account.any_instance.unstub(:customer_freshid_saml_sso_enabled?)
   end
 
   def test_sso_login_url_with_saml
@@ -166,6 +279,9 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:sso_options).returns(saml_login_url: 'login_url')
     sso = @account.sso_login_url
     assert_equal 'login_url', sso
+  ensure
+    Account.any_instance.unstub(:is_saml_sso?)
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_sso_login_url_without_saml
@@ -173,6 +289,9 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:sso_options).returns(login_url: 'login_url')
     sso = @account.sso_login_url
     assert_equal 'login_url', sso
+  ensure
+    Account.any_instance.unstub(:is_saml_sso?)
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_sso_logout_url_with_saml
@@ -180,6 +299,9 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:sso_options).returns(saml_logout_url: 'logout_url')
     sso = @account.sso_logout_url
     assert_equal 'logout_url', sso
+  ensure
+    Account.any_instance.unstub(:is_saml_sso?)
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_sso_logout_url_without_saml
@@ -187,6 +309,9 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:sso_options).returns(logout_url: 'logout_url')
     sso = @account.sso_logout_url
     assert_equal 'logout_url', sso
+  ensure
+    Account.any_instance.unstub(:is_saml_sso?)
+    Account.any_instance.unstub(:sso_options)
   end
 
   def test_enable_agent_custom_sso
@@ -194,6 +319,9 @@ class SsoMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:add_feature).returns(true)
     sso = @account.enable_agent_custom_sso!({entrypoint_url: 'some_login_link'})
     assert_equal true, sso
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
   end
 
   def test_enable_agent_custom_sso_with_freshid_disabled
@@ -243,6 +371,9 @@ class SsoMethodsTest < ActionView::TestCase
     sso = @account.enable_contact_custom_sso!({entrypoint_url: 'some_login_link'})
     assert_equal true, sso
     assert_equal true, @account.sso_enabled
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
   end
 
   def test_enable_contact_custom_sso_with_freshid_disabled
@@ -270,6 +401,9 @@ class SsoMethodsTest < ActionView::TestCase
     sso = @account.enable_agent_oidc_sso!('logout_url')
     assert_equal true, sso
     assert_equal true, @account.sso_enabled
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
   end
 
   def test_disable_agent_oidc
@@ -290,6 +424,9 @@ class SsoMethodsTest < ActionView::TestCase
     sso = @account.enable_customer_oidc_sso!('logout_url')
     assert_equal true, sso
     assert_equal true, @account.sso_enabled
+  ensure
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:add_feature)
   end
 
   def test_disable_customer_oidc
@@ -307,6 +444,45 @@ class SsoMethodsTest < ActionView::TestCase
   def test_agent_custom_login_url
     sso = @account.account_additional_settings.enable_freshid_custom_policy(custom_policy_addtional_settings_config('agent', 'login_url', 'logout'))
     assert_equal 'login_url', @account.agent_custom_login_url
+  end
+
+  def test_configure_sso_with_sso_enabled
+    @account.sso_enabled = true
+    @account.configure_sso_options(sso_type: 'simple', login_url: 'lofin.com')
+    assert @account.simple_sso_enabled?
+    @account.sso_options[:sso_type] = 'oauth2'
+    @account.enable_agent_oauth2_sso!('logout_url')
+    assert @account.oauth2_sso_enabled?
+    @account.configure_sso_options(sso_type: 'saml', saml_login_url: 'lofin.com', saml_cert_fingerprint: '111:333')
+    assert @account.saml_sso_enabled?
+  ensure
+    @account.reset_sso_options
+  end
+
+  def test_reset_sso_when_sso_disabled
+    @account.sso_enabled = true
+    @account.sso_options = { sso_type: 'oauth2', agent_oauth2: true, agent_oauth2_config: { logout_redirect_url: 'logout.co' } }
+    assert @account.oauth2_sso_enabled?
+    @account.sso_enabled = false
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(false)
+    @account.configure_sso_options({})
+    refute @account.oauth2_sso_enabled?
+  ensure
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
+    @account.reset_sso_options
+  end
+
+  def test_reset_freshdesk_sso_when_sso_disable
+    @account.sso_enabled = true
+    @account.sso_options = { sso_type: 'simple', login_url: 'abc.com', logout_url: 'xyz.com', agent_oauth2: true, agent_oauth2_config: { logout_redirect_url: 'logout.co' } }
+    assert @account.simple_sso_enabled?
+    @account.sso_enabled = false
+    Account.any_instance.stubs(:freshid_sso_sync_enabled?).returns(true)
+    @account.configure_sso_options({})
+    refute @account.simple_sso_enabled?
+  ensure
+    Account.any_instance.unstub(:freshid_sso_sync_enabled?)
+    @account.reset_sso_options
   end
 
   private

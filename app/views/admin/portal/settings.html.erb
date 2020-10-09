@@ -101,6 +101,15 @@
 						:public_ticket_url => "#{t('.public_ticket_urls_option')}<a href=\"#puburl-popover-content\" rel=\"hover-popover\" id=\"puburl-popover\" data-content=\"<div class='input-xlarge'>#{t('.public_ticket_urls_help')}</div>\"><span class=\"ficon-help fsize-22 ml10\"></span></a>".html_safe,
 						}) %>
 			</div>
+      <% if current_account.launched?(:portal_new_settings) &&
+      current_account.admin_setting_for_account?(:helpdesk_tickets_by_product) %>
+        <div class="controls mt-20">
+          <div class="checkbox">
+            <%= f.feature_check_box :helpdesk_tickets_by_product, {:id => "helpdesk_tickets_by_product"} %>
+            <%= label_for(t('.view_only_portal_tickets'), 'view_only_portal_tickets')%>
+          </div>
+        </div>
+      <% end %>
 		</div>
 	<% end %>
 
@@ -111,6 +120,14 @@
 						:default => t('.logged_in'),
 						:open_solutions => t('.everyone')}) %>
 		</div>
+    <% if current_account.launched?(:portal_new_settings) && current_account.admin_setting_for_account?(:solutions_agent_metrics)%>
+      <div class="controls mt-20">
+        <div class="checkbox">
+          <%= f.feature_check_box :solutions_agent_metrics, {:id => ":solutions_agent_metrics"} %>
+          <%= label_for(t('.track_agent_metrics'), 'track_agent_metrics')%>
+        </div>
+      </div>
+    <% end %>
 	</div>
 	<% if current_account.admin_setting_for_account?(:open_forums) &&
 		current_account.admin_setting_for_account?(:forum_captcha_disable) %>

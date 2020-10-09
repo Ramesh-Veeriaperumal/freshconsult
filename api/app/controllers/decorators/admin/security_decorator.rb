@@ -36,7 +36,7 @@ module Admin
 
     def private_sso
       {}.tap do |sso|
-        sso[:enabled] = sso_enabled
+        sso[:enabled] = sso_enabled || false
         sso[:type] = current_sso_type
         sso[current_sso_type.to_sym] = safe_send("#{current_sso_type}_sso_settings") if freshdesk_sso_enabled?
         sso[:simple] ||= { shared_secret: shared_secret }
@@ -45,7 +45,7 @@ module Admin
 
     def public_sso
       {}.tap do |sso|
-        sso[:enabled] = sso_enabled
+        sso[:enabled] = sso_enabled || false
         if sso_enabled
           sso[:type] = current_sso_type
           sso[current_sso_type.to_sym] = safe_send("#{current_sso_type}_sso_settings") if freshdesk_sso_enabled?

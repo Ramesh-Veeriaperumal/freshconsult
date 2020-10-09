@@ -55,6 +55,7 @@
     - update_article_platform_mapping_worker
     - marketplace_app_billing
     - retry_observer
+    - channel_reply_messages
     - link_omni_account
   :central_realtime:
     - central_publish
@@ -365,3 +366,4 @@
     - quality_management_system
     - update_agent_status_availability
     - central_publish_resync
+    - cron_api_triggers

@@ -32,5 +32,39 @@ module Admin
         max_value: WHITELISTED_IP_LIMIT
       }
     }
+    validates :sso, data_type: { rules: Hash }, hash: SSO_HASH
+    validate :check_sso_setting_keys, if: -> { sso.present? && errors[:sso].blank? }
+
+    def check_sso_setting_keys
+      errors[:sso] << :more_than_one_sso_settings_available if (SSO_TYPES.map(&:to_sym) - sso.keys).empty?
+
+      type = sso[:type].try(:to_sym)
+      if sso.key?(:type) && sso[type].blank?
+        errors[:sso] << :level_missing_field
+        @error_options[:sso] = {
+          field: type
+        }
+      end
+      if sso_configuration_error.present?
+        errors[:sso] << :action_restricted
+        @error_options[:sso] = { action: 'sso configuration', reason: sso_configuration_error, attribute: :sso }
+      end
+    end
+
+    def sso_configuration_error
+      @sso_configuration_error ||= begin
+        if !Account.current.freshdesk_sso_configurable?
+          SSO_ERROR_REASON_MAPPING[:freshid_v2]
+        elsif Account.current.freshid_migration_in_progress?
+          SSO_ERROR_REASON_MAPPING[:freshid_migration_in_progress]
+        elsif Account.current.coexist_account? && unpermitted_coexist_sso_param?
+          SSO_ERROR_REASON_MAPPING[:coexist_account]
+        end
+      end
+    end
+
+    def unpermitted_coexist_sso_param?
+      (sso.keys.map(&:to_sym) - SSO_COEXIST_PERMITTED_PARAMS).present?
+    end
   end
 end
