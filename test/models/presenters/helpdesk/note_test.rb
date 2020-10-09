@@ -45,7 +45,7 @@ class NoteTest < ActiveSupport::TestCase
     payload = note.central_publish_payload.to_json
     event_info = note.event_info(:create)
     payload.must_match_json_expression(central_publish_note_pattern(note))
-    event_info.must_match_json_expression(event_info(:create))
+    event_info.must_match_json_expression(event_info(note, :create))
   end
 
   def test_central_publish_payload_event_info_check_hypertrail_version
@@ -54,7 +54,19 @@ class NoteTest < ActiveSupport::TestCase
     create_event_info = note.event_info(:create)
     assert_equal CentralConstants::HYPERTRAIL_VERSION, create_event_info[:hypertrail_version]
     payload.must_match_json_expression(central_publish_note_pattern(note))
-    create_event_info.must_match_json_expression(event_info(:create))
+    create_event_info.must_match_json_expression(event_info(note, :create))
+  ensure
+    note.destroy
+  end
+
+  def test_central_publish_payload_event_info_on_note_with_twitter_feed_note_activity
+    note = create_note(note_params_hash)
+    note.activity_type = { type: Social::Constants::TWITTER_FEED_NOTE }
+    create_event_info = note.event_info(:create)
+    assert_equal Social::Constants::TWITTER_FEED_NOTE, create_event_info[:activity_type][:type]
+    payload = note.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_note_pattern(note))
+    create_event_info.must_match_json_expression(event_info(note, :create))
   ensure
     note.destroy
   end
@@ -141,7 +153,7 @@ class NoteTest < ActiveSupport::TestCase
     payload = note.central_publish_payload.to_json
     event_info = note.event_info(:create)
     payload.must_match_json_expression(central_publish_note_pattern(note))
-    event_info.must_match_json_expression(event_info(:create))
+    event_info.must_match_json_expression(event_info(note, :create))
   end
 
   def test_note_central_publish_payload_for_note_containing_survey_remark

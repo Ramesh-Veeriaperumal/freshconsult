@@ -171,8 +171,9 @@ class Helpdesk::Note < ActiveRecord::Base
     @note_central_changes.include?(field)
   end
 
-  def event_info(event)
-    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION, app_update: !@manual_central_publish }
+  def event_info(_event)
+    activity_hash = construct_activity_hash
+    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION, app_update: !@manual_central_publish }.merge(activity_hash)
   end
 
   def parsed_to_emails
@@ -186,5 +187,15 @@ class Helpdesk::Note < ActiveRecord::Base
     rescue StandardError => e
       Rails.logger.error "Error in to_email parse of Note central publish :: #{e.message} :: #{e.backtrace}"
     end
+  end
+
+  def construct_activity_hash
+    activity_type && activity_type[:type] == Social::Constants::TWITTER_FEED_NOTE ? twitter_feed_note_activity_hash(activity_type) : {}
+  end
+
+  def twitter_feed_note_activity_hash(activity_type)
+    {
+      activity_type: activity_type
+    }
   end
 end
