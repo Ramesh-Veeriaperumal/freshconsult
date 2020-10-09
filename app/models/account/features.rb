@@ -1,5 +1,9 @@
 class Account < ActiveRecord::Base
 
+  FRONTEND_LP_FEATURES = [
+    :bot_canned_response
+  ].freeze
+
   LP_FEATURES = [
     :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
@@ -46,7 +50,7 @@ class Account < ActiveRecord::Base
     :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger, :redirect_helpdesk_ticket_index, :redirect_helpdesk_ticket_new, :redirect_helpdesk_ticket_compose_email, :redirect_helpdesk_ticket_edit,
     :redirect_contact_new, :redirect_contact_edit, :redirect_contact_index, :redirect_companies_new, :redirect_companies_edit, :redirect_companies_index, :redirect_companies_show,
     :redirect_archive_tickets_new, :redirect_archive_tickets_show, :redirect_archive_tickets_edit, :redirect_archive_tickets_index, :redirect_old_ui_paths
-  ].freeze
+  ].concat(FRONTEND_LP_FEATURES).uniq
 
   BITMAP_FEATURES = [
     :allow_huge_ccs,
