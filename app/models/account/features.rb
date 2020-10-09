@@ -476,10 +476,6 @@ class Account < ActiveRecord::Base
     launched?(:custom_product_notification)
   end
 
-  def disable_archive_enabled?
-    launched?(:disable_archive)
-  end
-
   def sidekiq_logs_to_central_enabled?
     launched?(:sidekiq_logs_to_central)
   end
