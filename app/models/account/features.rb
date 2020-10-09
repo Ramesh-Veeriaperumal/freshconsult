@@ -465,10 +465,6 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def custom_product_notification_enabled?
-    launched?(:custom_product_notification)
-  end
-
   def sidekiq_logs_to_central_enabled?
     launched?(:sidekiq_logs_to_central)
   end
