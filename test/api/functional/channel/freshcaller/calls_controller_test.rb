@@ -275,7 +275,20 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
 
+  def test_update_with_convert_call_to_note_params
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    put :update, construct_params(convert_call_to_note_params(call_id, 'completed'))
+    call = Account.current.freshcaller_calls.find_by_fc_call_id(call_id)
+    assert call.notable.present?, 'Ticket not linked to call!'
+    match_json(ticket_with_note_pattern(call))
+    assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
   def test_update_with_convert_call_to_ticket_with_subject_and_description_params
+    set_auto_settings(:connected_calls, true)
     ::Freshcaller::Call.destroy_all
     set_auth_header
     call_id = get_call_id
@@ -293,24 +306,14 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
     match_json(ticket_with_note_pattern(call))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
-  end
-
-  def test_update_with_convert_call_to_note_params
-    set_auth_header
-    call_id = get_call_id
-    create_call(fc_call_id: call_id)
-    put :update, construct_params(convert_call_to_note_params(call_id, 'completed'))
-    call = Account.current.freshcaller_calls.find_by_fc_call_id(call_id)
-    assert call.notable.present?, 'Ticket not linked to call!'
-    match_json(ticket_with_note_pattern(call))
-    assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
+    set_auto_settings_to_default
     call&.destroy
   end
 
   def test_update_with_convert_inprogress_call_to_note_params
     set_auth_header
+    set_auto_settings(:connected_calls, true)
     call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(call_note_params(call_id, 'in-progress'))
@@ -318,6 +321,9 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     match_json(ticket_with_note_pattern(call))
     assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    set_auto_settings_to_default
+    call&.destroy
   end
 
   def test_update_with_invalid_params
@@ -343,28 +349,32 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:not_found]
   end
 
-  # Update removing auto ticket creation
-  def test_update_recording_status_with_create_ticket_revamp
-    Account.current.launch(:freshcaller_ticket_revamp)
+  def test_update_with_convert_call_to_note_with_existing_ticket_with_create_ticket_revamp
+    Account.current.launch :freshcaller_ticket_revamp
     set_auth_header
-    assert_update
-  ensure
-    Account.current.rollback(:freshcaller_ticket_revamp)
-  end
-
-  def test_update_recording_status_with_contact_with_create_ticket_revamp
-    Account.current.launch(:freshcaller_ticket_revamp)
-    auth_header_with_contact_key
     call_id = get_call_id
     create_call(fc_call_id: call_id)
-    put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+    put :update, construct_params(convert_call_to_note_params(call_id, 'completed'))
+    call = ::Freshcaller::Call.last
+    sec_ticket = call.associated_ticket
+    set_auth_header
+    put :update, construct_params(convert_call_to_note_params(call_id, 'completed'))
+    call.reload
+    match_json(ticket_with_note_pattern(call))
+    prim_ticket = call.associated_ticket
+    assert sec_ticket.parent_ticket == prim_ticket.id
+    call.destroy
+    prim_ticket.destroy
+    sec_ticket.destroy
   ensure
-    Account.current.rollback(:freshcaller_ticket_revamp)
+    Account.current.rollback :freshcaller_ticket_revamp
   end
 
-  def test_update_with_missed_call_params_with_create_ticket_revamp
+  # Update without auto ticket creation
+
+  def test_update_with_missed_call_params_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, false)
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
@@ -374,14 +384,17 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     match_json(create_pattern(call))
     assert call.call_info.present?
     assert call.call_info[:description].present?
+    assert call.notable.blank?
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_missed_call_params_with_agent_with_create_ticket_revamp
+  def test_update_with_missed_call_params_with_agent_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, false)
     auth_header_with_agent_email
     call_id = get_call_id
     create_call(fc_call_id: call_id)
@@ -391,13 +404,15 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     match_json(create_pattern(call))
     assert call.call_info.present?
     assert call.call_info[:description].present?
+    assert call.notable.blank?
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_missed_call_params_with_contact_with_create_ticket_revamp
+  def test_update_with_missed_call_params_with_contact_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
     auth_header_with_contact_key
     assert_voicemail_missed_call_unauthorized('no-answer')
@@ -405,7 +420,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     Account.current.rollback(:freshcaller_ticket_revamp)
   end
 
-  def test_update_with_default_call_status_params_with_create_ticket_revamp
+  def test_update_with_default_call_status_params_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
     set_auth_header
     call_id = get_call_id
@@ -416,14 +431,16 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     match_json(create_pattern(call))
     assert call.call_info.present?
     assert call.call_info[:description].present?
+    assert call.notable.blank?
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
     call&.destroy
   end
 
-  def test_update_with_voicemail_params_with_create_ticket_revamp
+  def test_update_with_voicemail_params_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, false)
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
@@ -436,11 +453,13 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_voicemail_params_with_agent_with_create_ticket_revamp
+  def test_update_with_voicemail_params_with_agent_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, false)
     auth_header_with_agent_email
     call_id = get_call_id
     create_call(fc_call_id: call_id)
@@ -453,19 +472,13 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_voicemail_params_with_contact_with_create_ticket_revamp
+  def test_update_with_abandoned_params_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
-    auth_header_with_contact_key
-    assert_voicemail_missed_call_unauthorized('voicemail')
-  ensure
-    Account.current.rollback(:freshcaller_ticket_revamp)
-  end
-
-  def test_update_with_abandoned_params_with_create_ticket_revamp
-    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:abandoned_calls, false)
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
@@ -476,11 +489,14 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_voicemail_abandoned_sceanrio_with_create_ticket_revamp
+  def test_update_with_voicemail_abandoned_sceanrio_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:abandoned_calls, false)
+    set_auto_settings(:missed_calls, false)
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
@@ -494,11 +510,90 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_callback_parent_missed_scenario_with_create_ticket_revamp
+  def test_update_with_callback_abandoned_scenario_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:abandoned_calls, false)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'abandoned')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(create_pattern(call))
+    assert call.call_info.present?
+    assert call.call_info[:description].present?
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_voicemail_scenario_without_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, false)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'voicemail')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(create_pattern(call))
+    assert call.call_info.present?
+    assert call.call_info[:description].present?
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_missed_scenario_without_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, false)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'no-answer')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(create_pattern(call))
+    assert call.call_info.present?
+    assert call.call_info[:description].present?
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_child_completed_scenario_without_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:connected_calls, false)
+    ::Freshcaller::Call.destroy_all
+    set_auth_header
+    call_id = get_call_id
+    user = @account.technicians.first
+    create_call(fc_call_id: call_id, account_id: @account.id)
+    params = convert_call_params(call_id, 'completed').merge(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    call = ::Freshcaller::Call.where(fc_call_id: call_id).all.first
+    match_json(create_pattern(call))
+    assert call.call_info.present?
+    assert call.call_info[:description].present?
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_parent_missed_scenario_without_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, false)
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
@@ -510,11 +605,13 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_convert_call_to_ticket_params_with_create_ticket_revamp
+  def test_update_with_convert_call_to_ticket_params_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:connected_calls, false)
     ::Freshcaller::Call.destroy_all
     set_auth_header
     call_id = get_call_id
@@ -529,11 +626,13 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_subject_and_description_params_with_create_ticket_revamp
+  def test_update_with_subject_and_description_params_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:connected_calls, false)
     ::Freshcaller::Call.destroy_all
     set_auth_header
     call_id = get_call_id
@@ -550,10 +649,11 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_convert_call_to_note_params_with_create_ticket_revamp
+  def test_update_with_convert_call_to_note_params_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
     set_auth_header
     call_id = get_call_id
@@ -568,11 +668,13 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_ticket_already_linked_with_create_ticket_revamp
+  def test_update_with_ticket_already_linked_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:connected_calls, false)
     set_auth_header
     call_id = get_call_id
     user = @account.technicians.first
@@ -591,11 +693,13 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
   end
 
-  def test_update_with_note_already_linked_with_create_ticket_revamp
+  def test_update_with_note_already_linked_without_auto_creation
     Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:connected_calls, false)
     set_auth_header
     call_id = get_call_id
     user = @account.technicians.first
@@ -615,6 +719,211 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   ensure
     Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
     call&.destroy
+  end
+
+  # Update with auto ticket creation
+
+  def test_update_with_missed_call_params_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auth_header
+    set_auto_settings(:missed_calls, true)
+    assert_voice_mail_missed_call('no-answer')
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_missed_call_params_with_agent_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    auth_header_with_agent_email
+    set_auto_settings(:missed_calls, true)
+    assert_voice_mail_missed_call('no-answer')
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_missed_call_params_with_contact_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    auth_header_with_contact_key
+    set_auto_settings(:missed_calls, true)
+    assert_voicemail_missed_call_unauthorized('no-answer')
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_default_call_status_params_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:connected_calls, true)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    put :update, construct_params(convert_call_params(call_id, 'default'))
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_with_note_pattern(call))
+    assert_equal call.notable.notable.description.present?, true # for default call status, the call will be directly assocaited to ticket
+    assert_equal call.notable.notable.description_html.present?, true
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_voicemail_params_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, true)
+    set_auth_header
+    assert_voice_mail_missed_call('voicemail')
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_voicemail_params_with_agent_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, true)
+    auth_header_with_agent_email
+    assert_voice_mail_missed_call('voicemail')
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_abandoned_params_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:abandoned_calls, true)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    put :update, construct_params(convert_call_params(call_id, 'abandoned'))
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_only_pattern(call))
+    assert_equal call.notable.description.present?, true
+    assert_equal call.notable.description_html.present?, true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_voicemail_abandoned_sceanrio_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:abandoned_calls, true)
+    set_auto_settings(:missed_calls, true)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    put :update, construct_params(convert_call_params(call_id, 'voicemail'))
+    put :update, construct_params(convert_call_params(call_id, 'abandoned'))
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_with_note_pattern(call))
+    assert_equal Helpdesk::Ticket.default_cc_hash, call.notable.notable.cc_email
+    assert_equal call.notable.notable.description.present?, true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_abandoned_scenario_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:abandoned_calls, true)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'abandoned')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_only_pattern(call))
+    assert_equal call.notable.description.present?, true
+    assert_equal call.notable.description_html.include?('Callback'), true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_voicemail_scenario_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, true)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'voicemail')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_with_note_pattern(call))
+    assert_equal call.notable.notable.description.present?, true
+    assert_equal call.notable.notable.description_html.include?('Voicemail'), true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_missed_scenario_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, true)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'no-answer')).merge!(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_with_note_pattern(call))
+    assert_equal call.notable.notable.subject.include?('Missed callback'), true
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_child_completed_scenario_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:connected_calls, true)
+    ::Freshcaller::Call.destroy_all
+    set_auth_header
+    call_id = get_call_id
+    user = @account.technicians.first
+    create_call(fc_call_id: call_id, account_id: @account.id)
+    params = convert_call_params(call_id, 'completed').merge(ancestry: get_call_id, callback: true, call_type: 'outgoing')
+    put :update, construct_params(params)
+    call = ::Freshcaller::Call.where(fc_call_id: call_id).all.first
+    call_notable = call.notable.notable
+    assert_equal call_notable.description.present?, true
+    assert_equal call_notable.description_html.include?('Conversation between'), true
+    assert_equal call_notable.subject.include?('Outgoing call'), true
+    assert_equal Helpdesk::Ticket.default_cc_hash, call_notable.cc_email
+    match_json(ticket_with_note_pattern(call))
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
+  end
+
+  def test_update_with_callback_parent_missed_scenario_with_auto_creation
+    Account.current.launch(:freshcaller_ticket_revamp)
+    set_auto_settings(:missed_calls, true)
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    params = construct_params(convert_call_params(call_id, 'no-answer')).merge!(ancestry: nil, callback: true)
+    put :update, construct_params(params)
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(create_pattern(call))
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  ensure
+    Account.current.rollback(:freshcaller_ticket_revamp)
+    set_auto_settings_to_default
   end
 end

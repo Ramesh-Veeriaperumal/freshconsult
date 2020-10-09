@@ -91,6 +91,20 @@ module Freshcaller::CallsTestHelper
     Random.rand(2..100000)
   end
 
+  def set_auto_settings_to_default
+    fc_account = Account.current.freshcaller_account
+    fc_account.settings = Freshcaller::Account::DEFAULT_SETTINGS
+    fc_account.save
+  end
+
+  def set_auto_settings(call_type, condition)
+    fc_account = Account.current.freshcaller_account
+    settings_hash = fc_account.settings.presence || Freshcaller::Account::DEFAULT_SETTINGS
+    settings_hash[:automatic_ticket_creation][call_type] = condition
+    fc_account.settings = settings_hash
+    fc_account.save
+  end
+
   private
 
     def assert_create_unauthorized

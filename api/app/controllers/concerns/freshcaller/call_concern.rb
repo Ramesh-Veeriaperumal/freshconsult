@@ -112,6 +112,26 @@ module Freshcaller::CallConcern
     @options[:note].present?
   end
 
+  def fc_account
+    @fc_account ||= current_account.freshcaller_account
+  end
+
+  def auto_ticket_creation_enabled?
+    missed_call_auto_ticket_enabled? || abandoned_call_auto_ticket_enabled? || connected_call_auto_ticket_enabled?
+  end
+
+  def missed_call_auto_ticket_enabled?
+    fc_account.missed_call_auto_ticket_enabled? && (incoming_missed_call? || outgoing_missed_call? || voicemail?) && !callback_parent?
+  end
+
+  def abandoned_call_auto_ticket_enabled?
+    fc_account.abandoned_call_auto_ticket_enabled? && abandoned?
+  end
+
+  def connected_call_auto_ticket_enabled?
+    fc_account.connected_call_auto_ticket_enabled? && (ongoing? || (completed? && !callback_parent?))
+  end
+
   def generate_title
     call_date = DateTime.parse(@options[:call_created_at]).in_time_zone(current_account.time_zone)
     return I18n.t("call.ticket.callback_#{call_status_string}_title", customer: customer_title) if missed_callback?
@@ -168,5 +188,19 @@ module Freshcaller::CallConcern
   def formatted_duration
     format = (@options[:duration] < 3600) ? '%M:%S' : '%H:%M:%S'
     Time.at(@options[:duration]).utc.strftime(format)
+  end
+
+  def merge_ticket_params(primary, secondary)
+    {
+      note_in_primary: {
+        body: I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', ticket_id: secondary.display_id, full_domain: secondary.portal.host),
+        private: true
+      },
+      note_in_secondary: {
+        body: I18n.t('helpdesk.merge.confirm_merge.source_merge_description', ticket_id: primary.display_id, full_domain: primary.portal.host),
+        private: true
+      },
+      convert_recepients_to_cc: false
+    }
   end
 end

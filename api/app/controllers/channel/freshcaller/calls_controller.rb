@@ -20,7 +20,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     call_delegator = CallDelegator.new(@item, @options.slice(:ticket_display_id, :agent_email, :call_agent_email, :contact_id))
     if call_delegator.valid?
       load_call_attributes call_delegator
-      Account.current.launched?(:freshcaller_ticket_revamp) ? add_call_info : handle_call_status_flows # We can remove this in auto ticket creation check PR
+      Account.current.launched?(:freshcaller_ticket_revamp) ? handle_ticket_creation_flow : handle_call_status_flows
       @item.recording_status = params[:recording_status] if params[:recording_status].present?
       if @item.save
         response.api_root_key = 'freshcaller_call'
@@ -49,19 +49,39 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
       create_ticket_add_note if (voicemail? || completed? || outgoing_missed_call?) && !callback_parent?
     end
 
-    def add_call_info
+    def handle_ticket_creation_flow
+      return merge_to_existing_ticket if params[:ticket_display_id] && @item.associated_ticket.present?
+
+      return auto_create_ticket_and_note if auto_ticket_creation_enabled?
+
       if params[:call_status].present?
         @item.call_info = call_info
-        return if @ticket.blank?
-        return create_and_link_note unless update_existing_note?
-
-        update_note_body
+        create_or_update_note if @ticket.present?
       end
     end
 
     def create_or_update_ticket
       return update_ticket_details if @ticket.present? && abandoned?
       create_and_link_ticket
+    end
+
+    def auto_create_ticket_and_note
+      create_and_link_ticket if @ticket.blank?
+      return if incoming_missed_call? || abandoned?
+
+      create_or_update_note
+    end
+
+    def create_or_update_note
+      return create_and_link_note unless update_existing_note?
+
+      update_note_body
+    end
+
+    def merge_to_existing_ticket
+      existing_ticket = @item.associated_ticket
+      TicketMerge.new(@ticket, [existing_ticket], merge_ticket_params(@ticket, existing_ticket)).perform
+      @item.notable = @ticket
     end
 
     def create_and_link_ticket

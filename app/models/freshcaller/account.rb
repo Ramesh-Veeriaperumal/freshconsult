@@ -37,6 +37,26 @@ class Freshcaller::Account < ActiveRecord::Base
     update_attributes(enabled: false)
   end
 
+  def auto_ticket_creation_default_settings
+    Freshcaller::Account::DEFAULT_SETTINGS[:automatic_ticket_creation]
+  end
+
+  def auto_ticket_creation_settings
+    settings[:automatic_ticket_creation] || {}
+  end
+
+  def missed_call_auto_ticket_enabled?
+    auto_ticket_creation_settings.fetch(:missed_calls, auto_ticket_creation_default_settings[:missed_calls])
+  end
+
+  def abandoned_call_auto_ticket_enabled?
+    auto_ticket_creation_settings.fetch(:abandoned_calls, auto_ticket_creation_default_settings[:abandoned_calls])
+  end
+
+  def connected_call_auto_ticket_enabled?
+    auto_ticket_creation_settings.fetch(:connected_calls, auto_ticket_creation_default_settings[:connected_calls])
+  end
+
   def handle_ocr_to_mars_redis_key
     return unless (Account.current || account).ocr_to_mars_api_enabled?
 
