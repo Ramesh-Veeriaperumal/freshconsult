@@ -187,7 +187,7 @@ class Account < ActiveRecord::Base
   end
 
   def parent_child_infra_features_present?
-    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")}
+    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?") }
   end
 
   def destroy_account_email_service
@@ -293,7 +293,7 @@ class Account < ActiveRecord::Base
     end
 
     def check_timezone_update
-      self.time_zone = @old_object.time_zone if @all_changes.key?("time_zone") &&
+      self.time_zone = @old_object.time_zone if @all_changes.key?('time_zone') &&
                                                 self.time_zone_updation_running?
     end
 
@@ -434,12 +434,13 @@ class Account < ActiveRecord::Base
     end
 
     def create_shard_mapping
-      if Fdadmin::APICalls.non_global_pods? && domain_mapping = DomainMapping.find_by_domain(full_domain)
+      domain_mapping = DomainMapping.find_by_domain(full_domain)
+      if Fdadmin::APICalls.non_global_pods? && domain_mapping
         self.id = domain_mapping.account_id
         populate_google_domain(domain_mapping.shard) if google_account?
       else
         shard_mapping = ShardMapping.new(shard_name: ShardMapping.current_shard_selection.shard.nil? ? ShardMapping.latest_shard : ShardMapping.current_shard_selection.shard.to_s, status: ShardMapping::STATUS_CODE[:not_found], pod_info: PodConfig['CURRENT_POD'])
-        shard_mapping.domains.build({:domain => full_domain})
+        shard_mapping.domains.build(domain: full_domain)
         populate_google_domain(shard_mapping) if google_account? #remove this when the new google marketplace is stable.
         shard_mapping.save!
         self.id = shard_mapping.id
@@ -521,7 +522,7 @@ class Account < ActiveRecord::Base
           :account_id => id,
           :target_method => :change_domain_mapping_for_pod ,
           :old_domain => @old_object.full_domain,
-          :new_domain => full_domain
+          new_domain: full_domain
         }
         response = Fdadmin::APICalls.connect_main_pod(request_parameters)
         raise ActiveRecord::Rollback, "Domain Already Taken" unless response && response["account_id"]
