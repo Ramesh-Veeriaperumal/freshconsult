@@ -139,3 +139,7 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :bypass_signup_captcha:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
