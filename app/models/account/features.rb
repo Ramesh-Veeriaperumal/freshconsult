@@ -8,7 +8,7 @@ class Account < ActiveRecord::Base
     :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
-    :falcon_portal_theme, :freshid, :allow_huge_ccs, :email_new_settings, :kbase_spam_whitelist,
+    :falcon_portal_theme, :freshid, :email_new_settings, :kbase_spam_whitelist,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
@@ -53,7 +53,6 @@ class Account < ActiveRecord::Base
   ].concat(FRONTEND_LP_FEATURES).uniq
 
   BITMAP_FEATURES = [
-    :allow_huge_ccs,
     :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
     :custom_ticket_views, :supervisor, :archive_tickets, :sitemap, :kbase_spam_whitelist,
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
@@ -95,7 +94,6 @@ class Account < ActiveRecord::Base
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :custom_product_notification,
-    :allow_huge_ccs,
     :fb_msg_realtime,
     :spam_blacklist_feature,
     :kbase_spam_whitelist,

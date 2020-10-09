@@ -23,6 +23,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :allow_huge_ccs:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :compose_email:
     default: false
     internal: false

@@ -216,7 +216,7 @@ class Account < ActiveRecord::Base
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false,
     attachment_redirect_expiry: false,
-    requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
+    requester_privilege: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
     hide_mailbox_error_from_agents: false, helpdesk_new_settings: false,
