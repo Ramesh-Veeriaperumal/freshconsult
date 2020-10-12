@@ -11,7 +11,7 @@
 		</h1>
 		<% if @topic.published? %>
 			<div class="tooltip ml20 view_on_portal pull-right">
-				<%= preview_portal(support_discussions_topic_path(@topic.id), @topic.forum.forum_category) unless current_account.hide_portal_forums_enabled?) %>		
+				<%= preview_portal(support_discussions_topic_path(@topic.id), @topic.forum.forum_category) unless current_account.hide_portal_forums_enabled? %>		
 			</div>
 			<div class="sub-action-list">
 				<ul>
