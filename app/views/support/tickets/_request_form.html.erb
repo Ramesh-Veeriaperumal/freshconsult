@@ -33,7 +33,7 @@
     <% end %>
   <% end %>
 <!-- block ends here for fragment cache -->
-  <% if show_captcha?(feature?(:captcha)) %>
+  <% if show_captcha?(current_account.captcha_enabled?) %>
     <div class="control-group">
         <div class="controls recaptcha-control">
           <%= recaptcha_tags :display => { :theme => "white" } %>

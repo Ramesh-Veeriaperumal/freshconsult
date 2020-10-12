@@ -128,7 +128,7 @@ class Account < ActiveRecord::Base
     :bi_reports => false, :custom_dashboard => false,
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
-    :redis_display_id => true, :es_multilang_solutions => false,
+    :redis_display_id => true,
     :survey_links => true,
     :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
     :single_session_per_user => false, :marketplace_app => false,
@@ -143,7 +143,7 @@ class Account < ActiveRecord::Base
     :call_quality_metrics => false,
     :disable_rr_toggle => false, :domain_restricted_access => false,
     :marketplace => false, :archive_tickets => false,
-    :ecommerce => false, :es_v2_writes => true, :shared_ownership => false,
+    :ecommerce => false, :shared_ownership => false,
     :cobrowsing => false,
     :threading_without_user_check => false,
     :restricted_helpdesk => false, :enable_multilingual => false,
@@ -155,12 +155,12 @@ class Account < ActiveRecord::Base
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES = {
     :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-    :captcha => true, :prevent_ticket_creation_for_others => true, :hide_portal_forums => false
+    :prevent_ticket_creation_for_others => true
   }
 
   ADMIN_CUSTOMER_PORTAL_SETTINGS = [
-    :signup_link, :anonymous_tickets, :auto_suggest_solutions,
-    :public_ticket_url, :open_solutions, :open_forums,
+    :signup_link, :anonymous_tickets, :captcha, :auto_suggest_solutions,
+    :public_ticket_url, :open_solutions, :open_forums, :hide_portal_forums,
     :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts,
     :helpdesk_tickets_by_product, :solutions_agent_metrics
   ].freeze
@@ -182,22 +182,20 @@ class Account < ActiveRecord::Base
   LAUNCHPARTY_FEATURES = {
     hide_og_meta_tags: false, api_search_beta: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
-    es_down: false, es_tickets: false, es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
+    es_down: false, es_tickets: false, es_v1_enabled: false, fb_msg_realtime: false,
     force_index_tickets: false, email_new_settings: false,
-    gamification_perf: false,
     gamification_quest_perf: false, lambda_exchange: false, meta_read: false, most_viewed_articles: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
-    feedback_widget_captcha: false, es_multilang_solutions: false,
     spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
     kbase_spam_whitelist: false,
     whitelist_supervisor_sla_limitation: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
-    sha256_enabled: false, auto_ticket_export: false,
+    auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false, disable_emails: false, skip_portal_cname_chk: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false,
@@ -218,7 +216,7 @@ class Account < ActiveRecord::Base
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
     recalculate_daypass: false,
     attachment_redirect_expiry: false,
-    requester_privilege: false, allow_huge_ccs: false, sso_unique_session: false,
+    requester_privilege: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
     hide_mailbox_error_from_agents: false, helpdesk_new_settings: false,

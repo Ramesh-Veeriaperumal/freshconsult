@@ -13,7 +13,7 @@ class PrecreatedSignup < ActivePresenter::Base
   before_validation :set_time_zone, :set_fs_cookie, :set_i18n_locale, :set_freshid_signup_version, :update_current_user_info, :update_current_account_info
 
   before_save :assign_freshid_v2_org_and_account, if: proc { freshid_v2_signup_allowed? && aloha_signup }
-  after_save :create_new_precreated_account, :update_account_domain, :update_main_portal_info, :update_subscription, :update_email_config_name
+  after_save :update_account_domain, :update_main_portal_info, :update_subscription, :update_email_config_name
   after_save :create_freshid_v2_org_and_account, if: proc { freshid_v2_signup_allowed? && !aloha_signup }
   after_save :complete_signup_process
 
@@ -38,7 +38,7 @@ class PrecreatedSignup < ActivePresenter::Base
 
   def update_current_account_info
     @email = Mail::Address.new(user.email.to_str)
-    account.name = account_name || name_from_email
+    account.name = account_name
   end
 
   def locale=(language)
@@ -68,7 +68,7 @@ class PrecreatedSignup < ActivePresenter::Base
     freshid_organisation = JSON.parse(organisation.to_json, object_class: OpenStruct)
     freshid_organisation.alternate_domain = nil
     account.organisation = Organisation.find_or_create_from_freshid_org(freshid_organisation)
-    fid_user = JSON.parse(freshid_user.to_json, object_class: OpenStruct)
+    fid_user = Freshid::V2::Models::User.find_by_email(freshid_user['email'], account.organisation.domain)
     user.sync_profile_from_freshid(fid_user) if fid_user.present?
   end
 
@@ -105,7 +105,7 @@ class PrecreatedSignup < ActivePresenter::Base
     end
 
     def account_name
-      account.name == AccountConstants::ANONYMOUS_ACCOUNT_NAME ? company_name_from_email : account.name
+      account.name.blank? || account.name == AccountConstants::ANONYMOUS_ACCOUNT_NAME ? company_name_from_email : account.name
     end
 
     def first_name
@@ -138,9 +138,5 @@ class PrecreatedSignup < ActivePresenter::Base
 
     def set_freshid_signup_version
       account.fresh_id_version = fresh_id_version
-    end
-
-    def create_new_precreated_account
-      AccountCreation::PrecreateAccounts.perform_async(precreate_account_count: 1, shard_name: ActiveRecord::Base.current_shard_selection.shard.to_s)
     end
 end

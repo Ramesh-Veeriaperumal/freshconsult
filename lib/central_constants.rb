@@ -5,7 +5,7 @@ module CentralConstants
   MODEL_PAYLOAD_VERSION = {
     'Account' => '1.5',
     'Helpdesk::Ticket' => '2.18',
-    'Helpdesk::Note' => '1.1',
+    'Helpdesk::Note' => '1.2',
     'Solution::Category' => '0.3',
     'Solution::Folder' => '0.4',
     'Solution::Article' => '0.5',
@@ -45,7 +45,7 @@ module CentralConstants
     'ContactFieldChoice' => '0.2',
     'CompanyField' => '0.2',
     'CompanyFieldChoice' => '0.2',
-    'Freshcaller::Account' => '0.3',
+    'Freshcaller::Account' => '0.4',
     'Freshchat::Account' => '0.2',
     'Admin::CannedResponses::Folder' => '0.2',
     'Admin::CannedResponses::Response' => '0.2',

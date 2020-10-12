@@ -35,7 +35,18 @@ module BusinessCalenderConstants
 
   WEEKDAY_HUMAN_LIST = [ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" ]
 
+  IRIS_NOTIFICATION_TYPE = 'omni_sync_status'.freeze
+
+  # if the below status is changed, then it needs to be changed in the iris configuration.
+  OMNI_SYNC_STATUS = {
+      inprogress: 'INPROGRESS',
+      failed: 'FAILED',
+      success: 'SUCCESS'
+  }
+
   def self.weekday_human_list
     WEEKDAY_HUMAN_LIST.map { |i| I18n.t("helpdesk_reports.days.#{i}") }
   end
+
+  RESOURCE_NAME = 'business_calendar'.freeze
 end

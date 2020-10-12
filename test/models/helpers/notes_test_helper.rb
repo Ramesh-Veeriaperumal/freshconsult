@@ -72,8 +72,9 @@ module NotesTestHelper
     ret_hash
   end
 
-  def event_info(event)
-    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION, app_update: true }
+  def event_info(note, _event)
+    activity_hash = construct_activity_hash(note.activity_type)
+    { pod: ChannelFrameworkConfig['pod'], hypertrail_version: CentralConstants::HYPERTRAIL_VERSION, app_update: true }.merge(activity_hash)
   end
 
   def central_assoc_note_pattern(expected_output = {}, note)
@@ -202,5 +203,15 @@ module NotesTestHelper
       end
     end
     latest_tweet_info
+  end
+
+  def construct_activity_hash(activity_type)
+    activity_type && activity_type[:type] == Social::Constants::TWITTER_FEED_NOTE ? twitter_feed_note_activity_hash(activity_type) : {}
+  end
+
+  def twitter_feed_note_activity_hash(activity_type)
+    {
+      activity_type: activity_type
+    }
   end
 end

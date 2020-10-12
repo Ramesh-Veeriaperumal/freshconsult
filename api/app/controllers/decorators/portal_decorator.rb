@@ -30,6 +30,6 @@ class PortalDecorator < ApiDecorator
 
     def forums_enabled?
       Account.current.features?(:forums) &&
-        !Account.current.features?(:hide_portal_forums)
+        !Account.current.hide_portal_forums_enabled?
     end
 end

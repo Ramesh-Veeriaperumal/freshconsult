@@ -186,40 +186,6 @@ describe Support::Discussions::PostsController do
 			response.should redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
 		end
 	end
-	
-	it "should redirect to support home if portal forums is disabled" do
-		topic = publish_topic(create_test_topic(@forum))
-		@account.features.hide_portal_forums.create
-
-		post :create, 
-      :post => {
-      :body_html =>"<p>#{Faker::Lorem.paragraph}</p>"
-    },
-      :topic_id => create_test_post(topic).id
-		response.should redirect_to "/support/home"
-
-		post = create_test_post(topic)
-
-		get :show, :topic_id => topic.id, :id => post.id
-		response.should redirect_to "/support/home"
-
-		get :edit, :topic_id => topic.id, :id => post.id
-		response.should redirect_to "/support/home"
-
-		get :best_answer, :topic_id => topic.id, :id => post.id
-		response.should redirect_to "/support/home"
-
-		put :update, :topic_id => topic.id, :id => post.id
-		response.should redirect_to "/support/home"
-
-		put :toggle_answer, :topic_id => topic.id, :id => post.id
-		response.should redirect_to "/support/home"
-    
-		delete :destroy, :topic_id => topic.id, :id => post.id
-		response.should redirect_to "/support/home"			
-      
-		@account.features.hide_portal_forums.destroy
-	end
 
 	describe "it should create a post if the user is agent" do
 

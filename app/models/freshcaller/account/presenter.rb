@@ -14,6 +14,7 @@ class Freshcaller::Account < ActiveRecord::Base
     fc.add :freshcaller_account_id
     fc.add :domain, as: :freshcaller_domain
     fc.add :enabled
+    fc.add :settings_hash, as: :settings
     fc.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     fc.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
   end

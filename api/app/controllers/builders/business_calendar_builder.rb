@@ -29,6 +29,10 @@ module BusinessCalendarBuilder
     end
   end
 
+  def assign_channel_bc_api_params
+    @item.channel_bc_api_params = params[cname][:channel_business_hours]
+  end
+
   private
 
     def find_freshdesk_business_hours

@@ -30,21 +30,6 @@ describe Support::DiscussionsController do
 		response.should render_template "support/discussions/show"
 	end
 
-	it "should redirect to support home if portal forums is disabled" do
-		@account.features.hide_portal_forums.create
-
-		get :show, :id => @category.id
-		response.should redirect_to "/support/home"
-
-		get :index
-		response.should redirect_to "/support/home"
-
-		get :user_monitored
-		response.should redirect_to "/support/home"
-
-		@account.features.hide_portal_forums.destroy		
-	end
-
 	# it "should render index page on get 'show'" do
 	# 	get :user_monitored, :user_id => @user.id,
 	# 						:page => 1,

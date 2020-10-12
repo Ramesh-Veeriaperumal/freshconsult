@@ -4,11 +4,14 @@
 class BusinessCalendar < ActiveRecord::Base
   include BusinessCalenderConstants
 
+  SYNC_FAILURE = 'failed to sync'.freeze
+
   self.primary_key = :id
 
   include MemcacheKeys
   serialize :business_time_data
   serialize :holiday_data
+  serialize :additional_settings, Hash
 
   after_find :set_business_time_data
   after_create :set_business_time_data
@@ -17,6 +20,7 @@ class BusinessCalendar < ActiveRecord::Base
   #for now, a sporadically structured hash is used.
   #can revisit this data model later...
   belongs_to_account
+
   before_create :set_default_version, :valid_working_hours?
   after_commit ->(obj) {
       obj.clear_cache
@@ -29,7 +33,14 @@ class BusinessCalendar < ActiveRecord::Base
       remove_livechat_bc_data
     }, on: :destroy
   ####
+  after_commit -> { omni_business_calendar_sync(:create) }, on: :create, if: -> { Account.current.omni_business_calendar? }
+  after_commit -> { omni_business_calendar_sync(:update) }, on: :update, if: lambda {
+    Account.current.omni_business_calendar? &&
+        channel_bc_api_params.present? && channel_bc_api_params.is_a?(Array)
+  }
+  after_commit -> { omni_business_calendar_sync(:delete) }, on: :destroy, if: -> { Account.current.omni_business_calendar? }
 
+  attr_accessor :channel_bc_api_params, :freshchat_business_hours, :freshcaller_business_hours
   attr_accessible :holiday_data, :business_time_data, :version, :is_default, :name, :description, :time_zone
   validates_presence_of :time_zone, :name
 
@@ -177,9 +188,17 @@ class BusinessCalendar < ActiveRecord::Base
     @holiday_set ||= holidays.collect { |holiday| "#{holiday.day} #{holiday.mon}" }.to_set.freeze
   end
 
+  def mint_url
+    "#{account.url_protocol}://#{account.host}/a/admin/business_calendars/#{id}"
+  end
+
   def channel_bussiness_hour_data
     channel_business_hours = []
     channel_business_hours << freshdesk_business_hour_data
+    if Account.current.omni_business_calendar?
+      channel_business_hours << freshchat_business_hour_data
+      channel_business_hours << freshcaller_business_hour_data
+    end
     channel_business_hours
   end
 
@@ -195,8 +214,80 @@ class BusinessCalendar < ActiveRecord::Base
     data
   end
 
+  def freshchat_business_hour_data
+    if freshchat_business_hours.present?
+      data = freshchat_business_hours
+    else
+      data = {}.with_indifferent_access
+      data[:channel] = ApiBusinessCalendarConstants::CHAT_CHANNEL
+    end
+    data[:sync_status] = sync_freshchat_status || OMNI_SYNC_STATUS[:inprogress]
+    data
+  end
+
+  def freshcaller_business_hour_data
+    if freshcaller_business_hours.present?
+      data = freshcaller_business_hours
+    else
+      data = {}.with_indifferent_access
+      data[:channel] = ApiBusinessCalendarConstants::PHONE_CHANNEL
+    end
+    data[:sync_status] = sync_freshcaller_status || OMNI_SYNC_STATUS[:inprogress]
+    data
+  end
+
   def time_slots(day)
     [{ start_time: time_in_24hr_format(business_time_data[:working_hours][day][:beginning_of_workday]), end_time: time_in_24hr_format(business_time_data[:working_hours][day][:end_of_workday]) }]
+  end
+
+  def sync_freshcaller_status
+    additional_settings.try(:[], 'sync_freshcaller_results').try(:[], 'status')
+  end
+
+  def sync_freshchat_status
+    additional_settings.try(:[], 'sync_freshchat_results').try(:[], 'status')
+  end
+
+  def sync_freshcaller_action
+    additional_settings.try(:[], 'sync_freshcaller_results').try(:[], 'action')
+  end
+
+  def sync_freshchat_action
+    additional_settings.try(:[], 'sync_freshchat_results').try(:[], 'action')
+  end
+
+  def set_sync_channel_status(channel, action, status)
+    self.additional_settings = (self.additional_settings ||= {}).merge!(
+                                                                         {
+                                                                           "sync_#{channel}_results" => {
+                                                                             "status" => status,
+                                                                             "action" => action
+                                                                           }
+                                                                         }
+                                                                       )
+  end
+
+  def update_sync_status_without_callbacks(channel, action, status)
+    settings = (self.additional_settings ||= {}).merge!(
+      {
+          "sync_#{channel}_results" => {
+              "status" => status,
+              "action" => action.to_s
+          }
+      }
+    )
+    self.update_column('additional_settings', settings.to_yaml)
+  end
+
+  def fetch_omni_business_calendar
+    [ApiBusinessCalendarConstants::API_CHANNEL_TO_PRODUCT[ApiBusinessCalendarConstants::PHONE_CHANNEL],
+    ApiBusinessCalendarConstants::API_CHANNEL_TO_PRODUCT[ApiBusinessCalendarConstants::CHAT_CHANNEL]].each do |channel|
+      sync_success, service_unavailable, response = fetch_business_calendar_from_channel(channel)
+      return if service_unavailable
+      self.safe_send("#{channel}_business_hours=", response['channel_business_hours'].try(:[], 0)) if sync_success
+    end
+  rescue StandardError => e
+    NewRelic::Agent.notice_error(e, args: "#{account_id}: Exception in omni business calendar GET")
   end
 
   private
@@ -259,4 +350,58 @@ class BusinessCalendar < ActiveRecord::Base
       end
     end
 
+    def fetch_business_calendar_from_channel(name)
+      channel_sync_obj = Omni::SyncFactory.fetch_bc_sync(channel: name, resource_id: id, action: :get, performed_by_id: User.current.id)
+      channel_response = channel_sync_obj.sync_channel
+      channel_sync_success = channel_sync_obj.response_success?
+      channel_service_unavailable = channel_sync_obj.service_unavailable_response?
+      if !channel_sync_success && channel_service_unavailable
+        Rails.logger.info "Omni Business calendar #{name} GET request failed as service unavailable"
+        errors.add("#{name}_business_hours".to_sym, "Omni Business Calendar fetch for #{name} failed")
+      end
+      [channel_sync_success, channel_service_unavailable, channel_response]
+    end
+
+    def omni_business_calendar_sync(action)
+      Rails.logger.info 'Omni Business calendar sync started'
+      method_params = { id: id, performed_by_id: User.current.id }
+      method_params.merge!(params: safe_send("#{action.to_s}_params")) if [:create, :update].include?(action)
+
+      freshcaller_action = channel_action(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, action)
+      freshchat_action = channel_action(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, action)
+      caller_job_id = Admin::BusinessCalendar::OmniSyncWorker.perform_async(method_params.merge(
+        channel: ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT,
+        action: freshcaller_action
+      ))
+      chat_job_id = Admin::BusinessCalendar::OmniSyncWorker.perform_async(method_params.merge(
+        channel: ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT,
+        action: freshchat_action
+      ))
+      Rails.logger.info "caller_job_id #{caller_job_id}, chat_job_id #{chat_job_id}"
+      update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, freshcaller_action, OMNI_SYNC_STATUS[:inprogress])
+      reload
+      update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, freshchat_action, OMNI_SYNC_STATUS[:inprogress])
+    rescue StandardError => e
+      update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, freshcaller_action, OMNI_SYNC_STATUS[:failed])
+      update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, freshchat_action, OMNI_SYNC_STATUS[:failed])
+      Rails.logger.info "Exception in omni_business_calendar_sync method #{e.message}"
+      NewRelic::Agent.notice_error(exception, args: "#{account_id}: Exception in omni business calendar sync")
+    end
+
+    def channel_action(channel, action)
+      safe_send("sync_#{channel}_status") == OMNI_SYNC_STATUS[:failed] ? safe_send("sync_#{channel}_action") : action
+    end
+
+    def create_params
+      {
+        name: name,
+        description: description,
+        time_zone: time_zone,
+        default: is_default,
+        holidays: holiday_data.map { |data| { name: data[1], date: data[0] } },
+        channel_business_hours: channel_bc_api_params
+      }
+    end
+
+    alias_method :update_params, :create_params
 end

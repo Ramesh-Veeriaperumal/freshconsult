@@ -102,7 +102,7 @@ module Ember
 
         def construct_mq_solution_params
           Hash.new.tap do |es_params|
-            es_params[:language_id] = params[:language].present? && current_account.es_multilang_soln? ? params[:language] : Language.for_current_account.id
+            es_params[:language_id] = params[:language].present? && current_account.es_multilang_solutions_enabled? ? params[:language] : Language.for_current_account.id
           end
         end
 

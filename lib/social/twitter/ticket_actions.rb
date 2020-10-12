@@ -73,6 +73,8 @@ module Social::Twitter::TicketActions
       :body_html => construct_item_body(account, note, twt, options)
     }
 
+    note.activity_type = { type: TWITTER_FEED_NOTE } if options[:from_social_tab] == true
+
     if note.save_note
       Rails.logger.debug "This note has been added - #{note_hash[:tweet_id]}, user : #{user.id}"
     else

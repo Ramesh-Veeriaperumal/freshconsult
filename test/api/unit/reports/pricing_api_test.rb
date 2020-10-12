@@ -135,6 +135,15 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
     @account.revoke_feature :analytics_knowledge_base
   end
 
+  def test_worker_enqueue_on_triage_feature_addition
+    @account.revoke_feature(:triage)
+    Reports::FreshvisualConfigs.jobs.clear
+    @account.add_feature :triage
+    assert_equal Reports::FreshvisualConfigs.jobs.size, 1
+  ensure
+    @account.revoke_feature :triage
+  end
+
   def test_kbanalytics_feature_upgrade_secondary
     Account.stubs(:current).returns(@account)
     @account.stubs(:subscription).returns(Subscription.new(subscription_plan_id: SubscriptionPlan.where(name: 'Blossom Jan 20').first.id, state: 'active', account_id: @account.id))

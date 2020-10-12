@@ -591,10 +591,15 @@ api_error_messages:
   invalid_date_for_holidays: "Day should be from %{range} inclusive in {D, DD} format"
   invalid_start_end_business_time: "HH should be between 0 and 23 inclusive and MM should be inside the range inclusive of '00..59'"
   invalid_time_slot: "Please enter a valid time slot"
+  invalid_breaks: "Please enter valid time slots with breaks in between the slots"
   time_slot_count_for_channel_error: "Too many time slots for '%{value}' channel in '%{name}'"
   duplicate_holiday_date: "Duplicate holiday date is present"
   duplicate_business_day: "Duplicate business day is present"
+  invalid_number_of_channels: "Expected %{count} channel, '%{value}'"
+  fetch_omni_business_calendar: "Omni Business Calendar GET request failed"
+
   invalid_year: "Year should be greater than 1970"
+  user_blocked_error: 'User blocked! No more tickets allowed for this user'
   #Group v2
   duplicate_group_name: "A group already exists with name - '%{name}'"
   missing_channel_settings: "At least 1 channel settings required."

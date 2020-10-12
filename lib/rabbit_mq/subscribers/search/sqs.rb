@@ -14,7 +14,6 @@ module RabbitMq::Subscribers::Search::Sqs
   end
 
   def sqs_manual_publish_with_feature_check
-    return unless Account.current.try(:features_included?, :es_v2_writes)
     sqs_manual_publish_without_feature_check
   end
   

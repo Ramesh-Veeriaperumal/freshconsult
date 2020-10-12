@@ -96,7 +96,7 @@ class SitemapTest < ActiveSupport::TestCase
   end
 
   test "No discussion URLs should be present, When 'who can view forums' is set as none" do
-    @account.add_features(:hide_portal_forums) unless @account.features_included?(:hide_portal_forums)
+    @account.enable_setting(:hide_portal_forums) unless @account.hide_portal_forums_enabled?
     create_test_topic(create_test_forum(create_test_category))
     build_sitemap
     forum_category_urls = @xml.css("loc").select { |node|

@@ -150,7 +150,10 @@ class Community::Sitemap
   end
 
   def discussion_present?
-    Account.current.features?(:forums, :open_forums) && !Account.current.features?(:hide_portal_forums) && portal_forums.exists?
+    Account.current.features?(:forums) &&
+      Account.current.open_forums_enabled? &&
+      !Account.current.hide_portal_forums_enabled? &&
+      portal_forums.exists?
   end
 
   def portal_forums

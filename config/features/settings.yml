@@ -23,6 +23,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :allow_huge_ccs:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :compose_email:
     default: false
     internal: false
@@ -34,6 +38,10 @@ settings:
   :disable_agent_forward:
     default: false
     internal: false
+    feature_dependency: :basic_settings_feature
+  :disable_supress_logs:
+    default: false
+    interal: true
     feature_dependency: :basic_settings_feature
   :fetch_ticket_from_ref_first:
     default: false
@@ -55,6 +63,10 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
+  :captcha:
+    default: true
+    internal: false
+    feature_dependency: :basic_settings_feature
   :auto_suggest_solutions:
     default: true
     internal: false
@@ -72,6 +84,10 @@ settings:
     internal: true
     feature_dependency: :basic_settings_feature
   :open_forums:
+    default: false
+    internal: false
+    feature_dependency: :forums
+  :hide_portal_forums:
     default: false
     internal: false
     feature_dependency: :forums
@@ -99,6 +115,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :forums
+  :es_multilang_solutions:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :helpdesk_tickets_by_product:
     default: false
     internal: false
@@ -114,4 +134,16 @@ settings:
   :cascade_dispatcher:
     default: false
     internal: false
+    feature_dependency: :basic_settings_feature
+  :feedback_widget_captcha:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :gamification_perf:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :bypass_signup_captcha:
+    default: false
+    internal: true
     feature_dependency: :basic_settings_feature

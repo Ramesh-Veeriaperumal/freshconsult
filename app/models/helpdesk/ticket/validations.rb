@@ -19,7 +19,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       ticket.spam = true if req.deleted?
       if req.blocked?
         Rails.logger.debug "User blocked! No more tickets allowed for this user"
-        ticket.errors.add(:base,"User blocked! No more tickets allowed for this user")
+        ticket.errors.add(:base, ErrorConstants::ERROR_MESSAGES[:user_blocked_error])
       end
     end
   end

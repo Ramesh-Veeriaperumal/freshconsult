@@ -6,6 +6,15 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
 
   before_filter :business_calendar_validation, only: [:create, :update, :destroy]
 
+  def load_object(items = scoper)
+    @item = items.find_by_id(params[:id])
+    log_and_render_404 unless @item
+    if @item && show? && Account.current.omni_business_calendar?
+      @item.fetch_omni_business_calendar
+      render_request_error(:fetch_omni_business_calendar, 503) if @item.errors.present?
+    end
+  end
+
   def index
     super
     response.api_meta = { count: @items_count }
@@ -20,8 +29,9 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
     construct_business_hours_time_data
     construct_holiday_data
     @item.holiday_data = [] if @item.holiday_data.blank?
+    assign_channel_bc_api_params
     if @item.save!
-      render status: :created
+      render status: Account.current.omni_business_calendar? ? 202 : 201
     else
       render_custom_errors
     end
@@ -31,7 +41,10 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
     construct_default_params
     construct_business_hours_time_data
     construct_holiday_data
-    unless @item.save!
+    assign_channel_bc_api_params
+    if @item.save!
+      render status: Account.current.omni_business_calendar? ? 202 : 200
+    else
       render_custom_errors
     end
   end

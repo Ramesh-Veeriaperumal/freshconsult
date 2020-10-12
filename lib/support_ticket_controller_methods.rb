@@ -20,7 +20,7 @@ module SupportTicketControllerMethods
   end
   
   def create
-    if !current_account.ehawk_spam? && create_the_ticket(enforce_captcha?(feature?(:captcha)))
+    if !current_account.ehawk_spam? && create_the_ticket(enforce_captcha?(current_account.captcha_enabled?))
       respond_to do |format|
         format.html {
           flash.keep(:notice)

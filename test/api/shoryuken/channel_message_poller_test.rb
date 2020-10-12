@@ -64,6 +64,22 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal conflict_result, conflict_reply_payload(ticket.display_id, payload[:tweet_id])
   end
 
+  def test_twitter_mention_convert_as_ticket_for_blocked_user
+    sample_user = add_new_user(@account)
+    sample_user.twitter_id = Faker::Lorem.characters(10)
+    sample_user.blocked = true
+    sample_user.blocked_at = Time.zone.now
+    sample_user.save
+
+    payload, command_payload = twitter_create_ticket_command('mention', sample_user)
+    push_to_channel(command_payload)
+
+    conflict_result = ChannelIntegrations::Commands::Processor.new.process(command_payload[:payload])
+    assert_equal conflict_result, blocked_user_reply_payload
+  ensure
+    sample_user.destroy
+  end
+
   def test_twitter_mention_convert_as_note_and_ticket_archived_case
     @account.enable_ticket_archiving(ARCHIVE_DAYS)
     @account.features.send(:archive_tickets).create
@@ -691,8 +707,8 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   private
 
-    def twitter_create_ticket_command(tweet_type)
-      user = create_twitter_user
+    def twitter_create_ticket_command(tweet_type, twitter_user = nil)
+      user = twitter_user || create_twitter_user
       payload = {
         "subject": SecureRandom.uuid,
         "description": Faker::Lorem.characters(100),

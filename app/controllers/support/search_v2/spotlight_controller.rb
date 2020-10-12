@@ -251,7 +251,7 @@ class Support::SearchV2::SpotlightController < SupportController
     end
     
     def set_es_locale
-      @es_locale = current_portal.language if (current_portal && current_account.es_multilang_soln?)
+      @es_locale = current_portal.language if (current_portal && current_account.es_multilang_solutions_enabled?)
     end
 
     # ESType - [model, associations] mapping

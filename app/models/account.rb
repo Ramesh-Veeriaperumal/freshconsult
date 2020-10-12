@@ -179,10 +179,6 @@ class Account < ActiveRecord::Base
     ismember?(VALIDATE_REQUIRED_TICKET_FIELDS, self.id)
   end
 
-  def es_multilang_soln?
-    features_included?(:es_multilang_solutions) || launched?(:es_multilang_solutions)
-  end
-
   def active_groups
     active_groups_in_account(id)
   end
@@ -1029,6 +1025,10 @@ class Account < ActiveRecord::Base
 
   def omni_bundle_account?
     Account.current.launched?(:omni_bundle_2020) && omni_bundle_id.present?
+  end
+
+  def omni_business_calendar?
+    omni_business_calendar_enabled? && omni_bundle_account?
   end
 
   def show_omnichannel_banner?

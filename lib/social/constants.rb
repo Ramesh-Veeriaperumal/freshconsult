@@ -156,10 +156,12 @@ module Social::Constants
   FACEBOOK_POST_ALREADY_EXISTS = 'Facebook Post already converted to a ticket'.freeze
 
   TWITTER_FEED_TICKET = 'twitter_feed_ticket'.freeze
+  TWITTER_FEED_NOTE = 'twitter_feed_note'.freeze
 
   TWITTER_ERROR_CODES = {
     reauth_required: 89,
     timeout: 504,
-    archived_ticket_error: 406
+    archived_ticket_error: 406,
+    user_blocked_error: 1001
   }
 end

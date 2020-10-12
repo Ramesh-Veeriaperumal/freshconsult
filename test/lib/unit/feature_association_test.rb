@@ -2,14 +2,14 @@ require_relative '../test_helper'
 class FeaturesTest < ActiveSupport::TestCase
 
   def test_creation_of_db_features_in_mass_assignment
-    features = { features: {open_forums: false, open_solutions: false, hide_portal_forums: true } }
+    features = { features: { open_forums: false, open_solutions: false, hide_portal_forums: true } }
     create_test_features
     destroy_test_features
-    @account.features.hide_portal_forums.destroy
+    @account.disable_setting(:hide_portal_forums)
     @account.update_attributes!(features)
-    refute @account.has_feature? :open_forums
-    refute @account.has_feature? :open_solutions
-    assert @account.has_feature? :hide_portal_forums
+    refute @account.open_forums_enabled?
+    refute @account.open_solutions_enabled?
+    assert @account.hide_portal_forums_enabled?
     features = @account.features.map(&:to_sym)
     refute features.include? :open_forums
     refute features.include? :open_solutions
@@ -17,18 +17,18 @@ class FeaturesTest < ActiveSupport::TestCase
   end
 
   def create_test_features
-    [:basic_settings_feature, :forums].each { |feature| @account.add_feature(feature) }
+    @account.add_feature(:basic_settings_feature)
     [:open_forums, :open_solutions].each { |setting| @account.enable_setting(setting) }
-    assert @account.has_feature? :open_forums
-    assert @account.has_feature? :open_solutions
+    assert @account.open_forums_enabled?
+    assert @account.open_solutions_enabled?
     features = @account.features.map(&:to_sym)
     assert features.include? :open_forums
     assert features.include? :open_solutions
   end
 
   def destroy_test_features
-    @account.features.hide_portal_forums.destroy
-    refute @account.has_feature? :hide_portal_forums
+    @account.disable_setting(:hide_portal_forums)
+    refute @account.hide_portal_forums_enabled?
     refute @account.features.map(&:to_sym).include? :hide_portal_forums
   end
 end

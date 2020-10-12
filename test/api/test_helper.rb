@@ -27,7 +27,6 @@ class ActionController::TestCase
     # Enabling Private API
     @account.launch(:falcon)
     @account.add_feature(:falcon)
-    @account.features.es_v2_writes.destroy if @account.features?(:es_v2_writes)
     if @account.reputation != 1
       @account.reputation = 1
       @account.save

@@ -8,7 +8,7 @@ class SearchSidekiq::UpdateSearchIndex < SearchSidekiq::BaseWorker
     @update_item = args[:klass_name].constantize.find_by_id(args[:id])
     unless @update_item.blank?
       send_to_es(@update_item)
-      handle_multiplexing if @update_item.is_a?(Solution::Article) and @update_item.account.es_multilang_soln?
+      handle_multiplexing if @update_item.is_a?(Solution::Article) and @update_item.account.es_multilang_solutions_enabled?
     end
     ensure
       key = Redis::RedisKeys::SEARCH_KEY % { :account_id => Account.current.id, :klass_name => args[:klass_name], :id => args[:id] }

@@ -161,7 +161,7 @@ class PortalDrop < BaseDrop
 
   # Access to Discussions
   def has_forums
-    @has_forums ||= (feature?(:forums) && allowed_in_portal?(:open_forums) && !feature?(:hide_portal_forums) && forums.present?)
+    @has_forums ||= (feature?(:forums) && allowed_in_portal?(:open_forums) && !Account.current.hide_portal_forums_enabled? && forums.present?)
   end
 
   def forum_categories
