@@ -4,6 +4,14 @@ class Account < ActiveRecord::Base
     :bot_canned_response
   ].freeze
 
+  REDIRECT_OLD_UI_PATH_FEATURES = [
+    :redirect_helpdesk_ticket_index, :redirect_helpdesk_ticket_new, :redirect_helpdesk_ticket_compose_email, :redirect_helpdesk_ticket_edit,
+    :redirect_contact_new, :redirect_contact_edit, :redirect_contact_index,
+    :redirect_companies_new, :redirect_companies_edit, :redirect_companies_index, :redirect_companies_show,
+    :redirect_archive_tickets_new, :redirect_archive_tickets_show, :redirect_archive_tickets_edit, :redirect_archive_tickets_index,
+    :redirect_helpdesk_dashboard_index, :redirect_old_ui_paths
+  ].freeze
+
   LP_FEATURES = [
     :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
@@ -47,10 +55,8 @@ class Account < ActiveRecord::Base
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
     :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
-    :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger, :redirect_helpdesk_ticket_index, :redirect_helpdesk_ticket_new, :redirect_helpdesk_ticket_compose_email, :redirect_helpdesk_ticket_edit,
-    :redirect_contact_new, :redirect_contact_edit, :redirect_contact_index, :redirect_companies_new, :redirect_companies_edit, :redirect_companies_index, :redirect_companies_show,
-    :redirect_archive_tickets_new, :redirect_archive_tickets_show, :redirect_archive_tickets_edit, :redirect_archive_tickets_index, :redirect_old_ui_paths
-  ].concat(FRONTEND_LP_FEATURES).uniq
+    :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger
+  ].concat(FRONTEND_LP_FEATURES + REDIRECT_OLD_UI_PATH_FEATURES).uniq
 
   BITMAP_FEATURES = [
     :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
