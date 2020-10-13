@@ -12,10 +12,10 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
-    :sso_login_expiry_limitation, :old_link_back_url_validation, :stop_contacts_count_query,
+    :sso_login_expiry_limitation, :old_link_back_url_validation,
     :es_tickets, :fb_msg_realtime,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
-    :skip_portal_cname_chk, :ticket_source_revamp, :custom_product_notification,
+    :ticket_source_revamp, :custom_product_notification,
     :bot_email_channel, :description_by_default, :bot_chat_history,
     :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
     :supervisor_contact_field, :whatsapp_channel, :sidekiq_logs_to_central,
-    :basic_settings_feature, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails, :ticket_filter_increased_companies_limit,
+    :basic_settings_feature, :force_index_tickets, :es_v2_splqueries, :disable_emails, :ticket_filter_increased_companies_limit,
     :csat_email_scan_compatibility
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
@@ -99,9 +99,7 @@ class Account < ActiveRecord::Base
     :kbase_spam_whitelist,
     :supervisor_contact_field,
     :disable_archive,
-    :skip_portal_cname_chk,
     :sidekiq_logs_to_central,
-    :stop_contacts_count_query,
     :force_index_tickets,
     :es_v2_splqueries,
     :disable_emails,

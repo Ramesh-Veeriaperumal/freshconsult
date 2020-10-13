@@ -285,11 +285,11 @@ class Account::SettingsTest < ActiveSupport::TestCase
 
   def test_fetch_admin_settings_enabled
     enabled_admin_settings = @account.enabled_admin_settings
-    @account.enable_setting(:untitled_setting_1)
+    @account.enable_setting(:disable_freshchat)
     enabled_admin_settings_after_enable = @account.enabled_admin_settings
     assert_equal enabled_admin_settings_after_enable.count, enabled_admin_settings.count + 1
   ensure
-    @account.disable_setting(:untitled_setting_1)
+    @account.disable_setting(:disable_freshchat)
   end
 
   def test_fetch_internal_settings_enabled

@@ -74,8 +74,8 @@ class AccountsControllerTest < ActionController::TestCase
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
     assert_equal account.solutions_agent_metrics_enabled?, false
-    assert account.has_feature?(:untitled_setting_4)
-    assert_equal account.has_feature?(:untitled_setting_1), false
+    assert_equal account.has_feature?(:branding), true
+    assert_equal account.has_feature?(:filter_factory), false
   ensure
     Account.find(resp['account_id']).destroy if resp && resp['account_id']
     unstub_signup_calls
@@ -102,9 +102,9 @@ class AccountsControllerTest < ActionController::TestCase
     assert_response 200, resp
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
-    assert_equal account.has_feature?(:untitled_setting_1), false
+    assert_equal account.has_feature?(:branding), false
     assert_equal account.solutions_agent_metrics_enabled?, false
-    assert_equal account.has_feature?(:untitled_setting_4), false
+    assert_equal account.has_feature?(:filter_factory), false
   ensure
     Account.find(resp['account_id']).destroy if resp && resp['account_id']
     unstub_signup_calls
