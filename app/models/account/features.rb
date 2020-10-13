@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
   LP_FEATURES = [
     :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
-    :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
+    :scheduled_ticket_export, :ticket_contact_export,
     :falcon_portal_theme, :freshid, :email_new_settings, :kbase_spam_whitelist,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
@@ -87,7 +87,7 @@ class Account < ActiveRecord::Base
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
     :supervisor_contact_field, :whatsapp_channel, :sidekiq_logs_to_central,
-    :basic_settings_feature, :force_index_tickets, :es_v2_splqueries, :disable_emails, :ticket_filter_increased_companies_limit,
+    :basic_settings_feature, :force_index_tickets, :es_v2_splqueries, :ticket_filter_increased_companies_limit,
     :csat_email_scan_compatibility
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
@@ -101,7 +101,6 @@ class Account < ActiveRecord::Base
     :sidekiq_logs_to_central,
     :force_index_tickets,
     :es_v2_splqueries,
-    :disable_emails,
     :csat_email_scan_compatibility
   ].freeze
 

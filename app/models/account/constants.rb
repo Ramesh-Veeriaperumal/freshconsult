@@ -197,7 +197,7 @@ class Account < ActiveRecord::Base
     freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
     auto_ticket_export: false,
     ticket_contact_export: false,
-    api_jwt_auth: false, disable_emails: false,
+    api_jwt_auth: false,
     falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false,
     freshid: false, security_new_settings: false,
     incoming_attachment_limit_25: false, outgoing_attachment_limit_25: false,
