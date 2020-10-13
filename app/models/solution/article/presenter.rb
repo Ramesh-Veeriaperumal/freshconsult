@@ -64,7 +64,10 @@ class Solution::Article < ActiveRecord::Base
 
   def event_info(action)
     event_info = { ip_address: Thread.current[:current_ip] }
-    event_info.merge!(source_type: @interaction_source_type, source_id: @interaction_source_id, platform: @interaction_platform) if action == :interactions
+    if action == :interactions
+      event_info.merge!(source_type: @interaction_source_type, source_id: @interaction_source_id)
+      event_info.merge!(platform: @interaction_platform) unless @interaction_platform.nil?
+    end
     event_info
   end
 
