@@ -147,3 +147,7 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :custom_product_notification:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature

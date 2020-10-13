@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
     :sso_login_expiry_limitation, :old_link_back_url_validation,
     :es_tickets, :fb_msg_realtime,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
-    :ticket_source_revamp, :custom_product_notification,
+    :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history,
     :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
@@ -63,7 +63,7 @@ class Account < ActiveRecord::Base
     :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
     :ticket_activity_export, :caching, :private_inline, :collaboration, :hipaa,
-    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :custom_product_notification,
+    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
     :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
     :tam_default_fields, :todos_reminder_scheduler, :smart_filter,
@@ -93,7 +93,6 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :custom_product_notification,
     :fb_msg_realtime,
     :spam_blacklist_feature,
     :kbase_spam_whitelist,

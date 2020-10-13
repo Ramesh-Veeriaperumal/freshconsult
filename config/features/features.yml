@@ -488,7 +488,6 @@
   :solutions_agent_portal: false
   :whatsapp_channel: false
   :supervisor_contact_field: false
-  :custom_product_notification: false
   :sidekiq_logs_to_central: false
   :disable_archive: false
   :fb_msg_realtime: false
