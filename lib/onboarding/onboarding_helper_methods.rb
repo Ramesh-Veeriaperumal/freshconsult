@@ -54,6 +54,7 @@ module Onboarding::OnboardingHelperMethods
     add_account_info_to_dynamo(admin_email) unless precreated_account
     current_account.enable_fresh_connect
     enqueue_for_enrichment unless precreated_account
+    current_account.update_sendgrid
   end
 
   def update_portal_info(language = nil)
