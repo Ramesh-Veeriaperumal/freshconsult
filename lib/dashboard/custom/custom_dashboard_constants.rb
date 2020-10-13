@@ -15,7 +15,7 @@ module Dashboard::Custom::CustomDashboardConstants
   SLA_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :ticket_type, :metric, :date_range, :threshold_max, :threshold_min].freeze
   MS_SCORECARD_ATTRIBUTES = [:view, :threshold_min, :threshold_max].freeze
   MS_BAR_CHART_ATTRIBUTES = [:group_ids, :representation].freeze
-  MS_AVAILABILITY_ATTRIBUTES = [:queue_id, :group_ids, :threshold_min, :threshold_max].freeze
+  MS_AVAILABILITY_ATTRIBUTES = [:team_id, :group_ids, :threshold_min, :threshold_max].freeze
   MS_CSAT_ATTRIBUTES = [:group_ids, :date_type].freeze
   MS_TIME_TREND_ATTRIBUTES = [:metric, :queue_id, :time_type, :computation, :date_range, :group_ids, :threshold_min, :threshold_max].freeze
   MS_SLA_TREND_ATTRIBUTES = [:queue_id, :time_type, :threshold_min, :threshold_max].freeze

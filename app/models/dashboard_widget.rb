@@ -9,7 +9,7 @@ class DashboardWidget < ActiveRecord::Base
                   :grid_config, :name, :refresh_interval, :ticket_filter_id, :widget_type, :x, :y, :width, :height,
                   :threshold_min, :threshold_max, :representation, :sort, :categorised_by, :group_id,
                   :time_range, :group_ids, :product_id, :metric, :date_range, :metric_type, :ticket_type,
-                  :source, :time_type, :queue_id, :view, :url, :date_type, :computation
+                  :source, :time_type, :queue_id, :view, :url, :date_type, :computation, :team_id
 
   serialize :config_data, Hash
   serialize :grid_config, Hash
