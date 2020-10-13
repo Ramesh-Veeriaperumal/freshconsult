@@ -12472,7 +12472,6 @@ en:
     agent_export: "Agents List Export for %{account}"
     audit_log_export: Audit Log Export
     spam_watcher: "Freshdesk :: Spam watcher"
-    account_cancelled: "%{account_domain} has been cancelled"
     notify_dkim_activation: "DKIM signatures activation email"
   mobile_onboarding:
     try_mobile_app: "Try using the Freshdesk app for a"

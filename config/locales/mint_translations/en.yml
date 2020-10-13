@@ -7874,7 +7874,7 @@ en:
     no_tickets_to_export: 'No tickets in range - %{domain}'
     audit_log_export: Audit Log Export
     spam_watcher: 'Freshdesk :: Spam watcher'
-    account_cancelled: '%{account_domain} has been cancelled'
+    account_cancelled: '%{account_domain} has been cancelled (%{account_id})'
     notify_dkim_activation: DKIM signatures activation email
     notify_new_watcher: 'Added as Watcher %{display_id} %{subject}'
     notify_on_reply: 'New Activity %{display_id} %{subject}'
