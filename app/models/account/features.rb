@@ -247,10 +247,6 @@ class Account < ActiveRecord::Base
     features?(:default_survey) && !custom_survey_enabled?
   end
 
-  def spam_blacklist_feature_enabled?
-    launched?(:spam_blacklist_feature)
-  end
-
   def count_public_api_filter_factory_enabled?
     public_api_filter_factory_enabled? && new_es_api_enabled? && count_service_es_reads_enabled?
   end
