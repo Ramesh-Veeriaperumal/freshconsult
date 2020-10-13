@@ -23,7 +23,6 @@ class PrecreatedSignup < ActivePresenter::Base
     update_admin_account_config(user.email, user.phone)
     account.update_default_forum_category(account_name)
     convert_to_trial(true, referring_product)
-    enable_external_services(user.email, true)
   end
 
   def update_main_portal_info
@@ -82,6 +81,7 @@ class PrecreatedSignup < ActivePresenter::Base
   end
 
   def execute_post_signup_steps
+    enable_external_services(user.email, true)
     user.publish_agent_update_central_payload
     SAAS::SubscriptionEventActions.new(account, @old_subscription).change_plan
   end
