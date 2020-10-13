@@ -198,4 +198,84 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
     OpenSSL::HMAC.unstub(:hexdigest)
     FreshopsSubdomains.unstub(:include?)
   end
+
+  def test_check_eligibility_for_omni_upgrade
+    Account.stubs(:current).returns(@account)
+    ShardMapping.stubs(:find).returns(ShardMapping.first)
+    OpenSSL::HMAC.stubs(:hexdigest).returns('xyz')
+    domain_name = @account.full_domain
+    FreshopsSubdomains.stubs(:include?).returns(true)
+    Fdadmin::DevopsMainController.stubs(:verify_signature).returns(nil)
+    Fdadmin::DevopsMainController.stubs(:permit_internal_tools_ip).returns(nil)
+    $redis_routes.stubs(:perform_redis_op).returns(true)
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
+    Fdadmin::AccountsController.any_instance.stubs(:freshchat_and_freshcaller_integrated?).returns(false)
+    Fdadmin::AccountsController.any_instance.stubs(:integrated_accounts_present_in_org?).returns(false)
+    Fdadmin::AccountsController.any_instance.stubs(:fd_agents_are_superset_of_fch_agents?).returns(false)
+    Fdadmin::AccountsController.any_instance.stubs(:fd_agents_are_superset_of_fcl_agents?).returns(false)
+
+    params = { version: 'v1', account_id: @account.id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil }
+    get :check_eligibility_for_omni_upgrade, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal false, response['status']
+    assert_equal 'Freshid org v2 not enabled.', response['reason']
+
+
+    Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    params = { version: 'v1', account_id: @account.id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil }
+    get :check_eligibility_for_omni_upgrade, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal false, response['status']
+    assert_equal 'Freshchat or Freshcaller or both not integrated.', response['reason']
+
+    Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(true)
+    params = { version: 'v1', account_id: @account.id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil }
+    get :check_eligibility_for_omni_upgrade, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal false, response['status']
+    assert_equal 'Freshcaller or Freshchat or both are present in organization but not integrated.', response['reason']
+
+    Fdadmin::AccountsController.any_instance.stubs(:freshchat_and_freshcaller_integrated?).returns(true)
+    get :check_eligibility_for_omni_upgrade, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal false, response['status']
+    assert_equal 'Integrated freshchat or freshcaller or both accounts are not present in organization.', response['reason']
+
+    Fdadmin::AccountsController.any_instance.stubs(:integrated_accounts_present_in_org?).returns(true)
+    get :check_eligibility_for_omni_upgrade, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal false, response['status']
+    assert_equal 'Some Freshchat agents are not added to Freshdesk.', response['reason']
+
+    Fdadmin::AccountsController.any_instance.stubs(:fd_agents_are_superset_of_fch_agents?).returns(true)
+    get :check_eligibility_for_omni_upgrade, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal false, response['status']
+    assert_equal 'Some Freshcaller agents are not added to Freshdesk.', response['reason']
+
+    Fdadmin::AccountsController.any_instance.stubs(:fd_agents_are_superset_of_fcl_agents?).returns(true)
+    get :check_eligibility_for_omni_upgrade, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal true, response['status']
+  ensure
+    Account.unstub(:current)
+    FreshopsSubdomains.unstub(:include?)
+    ShardMapping.unstub(:find)
+    OpenSSL::HMAC.unstub(:hexdigest)
+    Fdadmin::DevopsMainController.unstub(:verify_signature)
+    Fdadmin::DevopsMainController.unstub(:permit_internal_tools_ip)
+    Fdadmin::AccountsController.unstub(:freshchat_and_freshcaller_integrated?)
+    Fdadmin::AccountsController.unstub(:integrated_accounts_present_in_org?)
+    Fdadmin::AccountsController.unstub(:fd_agents_are_superset_of_fcl_agents?)
+    Fdadmin::AccountsController.unstub(:fd_agents_are_superset_of_fch_agents?)
+    Account.unstub(:freshid_org_v2_enabled?)
+    Account.unstub(:omni_accounts_present_in_org?)
+  end
 end

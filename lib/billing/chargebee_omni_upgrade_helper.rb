@@ -48,7 +48,8 @@ module Billing::ChargebeeOmniUpgradeHelper
     end
 
     def org_pre_conditions_satisfied?
-      freshchat_and_freshcaller_integrated? && integrated_accounts_present_in_org?
+      Account.current.freshid_org_v2_enabled? && freshchat_and_freshcaller_integrated? &&
+        integrated_accounts_present_in_org?
     end
 
     def integrated_accounts_present_in_org?
@@ -86,13 +87,16 @@ module Billing::ChargebeeOmniUpgradeHelper
     end
 
     def freshchat_and_freshcaller_integrated?
-      Account.current.freshid_org_v2_enabled? && Account.current.freshchat_account_present? && Account.current.freshcaller_account_present?
+      Account.current.freshchat_account_present? && Account.current.freshcaller_account_present?
     end
 
     def freshdesk_agents_are_superset_of_freshchat_and_freshcaller_agents?
-      fd_agents = Account.current.full_time_support_agents
-      fd_agent_emails = fd_agents.map { |agent| agent.user.email if agent.user.present? }
       fd_agents_are_superset_of_fch_agents?(fd_agent_emails) && fd_agents_are_superset_of_fcl_agents?(fd_agent_emails)
+    end
+
+    def fd_agent_emails
+      @fd_agent_emails ||=
+        Account.current.full_time_support_agents.map { |agent| agent.user.email if agent.user.present? }
     end
 
     def fd_agents_are_superset_of_fch_agents?(fd_agent_emails)
