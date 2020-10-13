@@ -19,12 +19,15 @@ module Cache::Memcache::Portal
       key = PORTAL_BY_URL % { :portal_url => url}
       MemcacheKeys.delete_from_cache key
 
-      key = ACCOUNT_MAIN_PORTAL % { :account_id => account_id }
-      MemcacheKeys.delete_from_cache key
+      clear_main_portal_cache(account_id)
+  end
+
+  def clear_main_portal_cache(account_id)
+    key = ACCOUNT_MAIN_PORTAL % { :account_id => account_id }
+    MemcacheKeys.delete_from_cache key 
   end
 
   def clear_portal_cache
-
     (@all_changes && @all_changes[:portal_url] || [] ).each do |url|
       key = PORTAL_BY_URL % { :portal_url => url}
       MemcacheKeys.delete_from_cache key
@@ -33,8 +36,7 @@ module Cache::Memcache::Portal
     key = PORTAL_BY_URL % { :portal_url => @old_object.portal_url}
     MemcacheKeys.delete_from_cache key
 
-    key = ACCOUNT_MAIN_PORTAL % { :account_id => @old_object.account_id }
-    MemcacheKeys.delete_from_cache key
+    clear_main_portal_cache(@old_object.account_id)
   end
 
   def fetch_template
