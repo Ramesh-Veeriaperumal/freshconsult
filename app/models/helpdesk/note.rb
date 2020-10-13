@@ -66,8 +66,13 @@ class Helpdesk::Note < ActiveRecord::Base
             last_note_id, last_note_created_at])
   }
 
+  scope :updated_since, ->(last_note_id, last_note_updated_at) {
+    where(['helpdesk_notes.id != ? AND helpdesk_notes.updated_at >= ?',
+      last_note_id, last_note_updated_at])
+  }
+
   scope :conversations, -> (preload_options = nil, order_conditions = nil, limit = nil) {
-    where(["source NOT IN (?) and deleted = false", Account.current.helpdesk_sources.note_exclude_sources.map{|s| Account.current.helpdesk_sources.note_source_keys_by_token[s]}]).
+    where(['source NOT IN (?) and deleted = false', conversation_sources]).
     order(order_conditions).
     includes(preload_options).
     limit(limit)
@@ -84,6 +89,24 @@ class Helpdesk::Note < ActiveRecord::Base
     limit(4)
   }
   
+  scope :parent_facebook_comments, ->(ancestry = nil, preload_options = nil, order_conditions = nil, limit = nil) {
+    where(['helpdesk_notes.source NOT IN (?) and helpdesk_notes.deleted = false', conversation_sources])
+      .where(['(social_fb_posts.postable_type = "Helpdesk::Note" and social_fb_posts.ancestry = (?)) OR social_fb_posts.id is null', ancestry])
+      .joins('LEFT JOIN social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id')
+      .order(order_conditions)
+      .includes(preload_options)
+      .limit(limit)
+  }
+
+  scope :child_facebook_comments, ->(ancestry = nil, preload_options = nil, order_conditions = nil, limit = nil) {
+    where(['helpdesk_notes.source NOT IN (?) and helpdesk_notes.deleted = false', conversation_sources])
+      .where(['social_fb_posts.postable_type = "Helpdesk::Note" and social_fb_posts.ancestry = (?)', ancestry])
+      .joins('INNER JOIN social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id')
+      .order(order_conditions)
+      .includes(preload_options)
+      .limit(limit)
+  }
+
   scope :latest_facebook_message, -> {
     where([" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"]).
     joins("INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id").
@@ -589,5 +612,9 @@ class Helpdesk::Note < ActiveRecord::Base
       att.attachable_type = 'UserDraft'
       att.save
       att
+    end
+
+    def self.conversation_sources
+      Account.current.helpdesk_sources.note_exclude_sources.map { |s| Account.current.helpdesk_sources.note_source_keys_by_token[s] }
     end
 end

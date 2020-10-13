@@ -10,6 +10,8 @@ class ConversationDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @ticket = options[:ticket]
+    @child_conversations_count = options[:child_conversations_count]
+    @parent_id = options[:parent_id]
     @ticket_decorator = options[:ticket_decorator]
     @send_and_set = options[:send_and_set]
     @sideload_options = options[:sideload_options] || []
@@ -56,7 +58,6 @@ class ConversationDecorator < ApiDecorator
       support_email: support_email,
       source: source,
       category: schema_less_note.try(:category),
-      ticket_id: @ticket.display_id,
       to_emails: to_emails,
       from_email: from_email,
       cc_emails: cc_emails,
@@ -67,6 +68,7 @@ class ConversationDecorator < ApiDecorator
       updated_at: updated_at.try(:utc),
       attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash(@cdn_url) }
     }
+    response_hash[:ticket_id] = @ticket.display_id if @parent_id.blank?
     construct_note_body_hash.merge(response_hash)
   end
 
@@ -90,7 +92,7 @@ class ConversationDecorator < ApiDecorator
   end
 
   def to_hash
-    [to_json, freshcaller_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
+    [to_json, freshcaller_call, tweet_hash, facebook_hash, feedback_hash, requester_hash, threading_info_hash].inject(&:merge)
   end
 
   def restrict_twitter_content?
@@ -139,6 +141,15 @@ class ConversationDecorator < ApiDecorator
     {
       fb_post: FacebookPostDecorator.new(record.fb_post).to_hash
     }
+  end
+
+  def threading_info_hash
+    return {} unless record.fb_note? && record.fb_post.present?
+
+    threading_info = {}
+    threading_info[:child_count] = @child_conversations_count.fetch(record.id, 0) if @child_conversations_count.present?
+    threading_info[:parent_id] = @parent_id if @parent_id
+    threading_info
   end
   
   def freshcaller_call

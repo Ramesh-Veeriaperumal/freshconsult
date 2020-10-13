@@ -12,6 +12,7 @@ module Ember
     include AssociateTicketsHelper
     include AttachmentsValidationConcern
     include DeleteSpamConcern
+    include ConversationThreadingConcern
     include Redis::UndoSendRedis
     include Ecommerce::Ebay::ReplyHelper
     include TicketUpdateHelper
@@ -37,6 +38,8 @@ module Ember
     def ticket_conversations
       validate_filter_params
       return unless @conversation_filter.valid?
+
+      return unless validate_threading_delegator
 
       load_conversations
       response.api_meta = { count: @items_count }
@@ -243,20 +246,49 @@ module Ember
       end
 
       def load_conversations
-        order_type = params[:order_type]
-        order_conditions = "created_at #{order_type}"
-        since_id = params[:since_id] && params[:since_id].to_i <= 0 ? nil : params[:since_id]
-        conversations = @ticket.notes.conversations(conditional_preload_options,order_conditions)
+        conversations = conversations_scoper
         filtered_conversations = if since_id
-                                   last_created_at = @ticket.notes.where(id: since_id).pluck(:created_at).first
-                                   conversations.created_since(since_id, last_created_at)
+                                    conversations_since(conversations, since_id, order_by)
                                  else
-                                   conversations
+                                    conversations
                                  end
-
         @items = paginate_items(filtered_conversations)
         Rails.logger.info "Traffic cop alert :: #{@ticket.display_id} :: #{filtered_conversations.map(&:id).inspect} :: #{@items.map(&:id).inspect}" if Account.current.traffic_cop_enabled?
         @items_count = conversations.count
+      end
+
+      def conversations_scoper
+        case true
+        when parent_conversations?
+          parent_conversations_scoper
+        when child_conversations?
+          child_conversations_scoper
+        else
+          @ticket.notes.conversations(conditional_preload_options, order_conditions)
+        end
+      end
+
+      def conversations_since(conversations, since_id, order_by_attr)
+        if order_by_attr == ConversationConstants::DEFAULT_ORDER_BY
+          last_created_at = @ticket.notes.where(id: since_id).pluck(:created_at).first
+          conversations.created_since(since_id, last_created_at)
+        else
+          last_updated_at = @ticket.notes.where(id: since_id).pluck(:updated_at).first
+          conversations.updated_since(since_id, last_updated_at)
+        end
+      end
+
+      def order_by
+        @order_by ||= params.fetch(:order_by, ConversationConstants::DEFAULT_ORDER_BY)
+      end
+
+      def since_id
+        params[:since_id] && params[:since_id].to_i <= 0 ? nil : params[:since_id]
+      end
+
+      def order_conditions
+        order_type = params[:order_type]
+        "#{order_by} #{order_type}"
       end
 
       def index?
@@ -284,6 +316,8 @@ module Ember
       def decorator_options
         options = {}
         options[:sideload_options] = sideload_options
+        options[:child_conversations_count] = child_conversations_count if parent_conversations?
+        options[:parent_id] = parent_id.to_i if child_conversations?
         options[:send_and_set] = true if @ticket.schedule_observer == true
         options[:ticket_decorator] = TicketDecorator.new(@ticket, ticket_decorator_options)
         super(options)
@@ -291,6 +325,11 @@ module Ember
 
       def sideload_options
         @conversation_filter.try(:include_array) || []
+      end
+
+      def validate_threading_delegator
+        @delegator_klass = ConversationConstants::THREADING_DELEGATOR_CLASS
+        validate_delegator(@ticket, parent_id: params[:parent_id])
       end
 
       def sanitize_body_text
