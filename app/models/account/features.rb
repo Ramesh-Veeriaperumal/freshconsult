@@ -64,7 +64,7 @@ class Account < ActiveRecord::Base
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
     :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
     :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
-    :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas,
+    :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas, :falcon_portal_theme,
     :layout_customization, :advanced_reporting, :timesheets, :multiple_emails,
     :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
@@ -104,6 +104,7 @@ class Account < ActiveRecord::Base
     :kbase_spam_whitelist,
     :supervisor_contact_field,
     :disable_archive,
+    :falcon_portal_theme,
     :sidekiq_logs_to_central,
     :force_index_tickets,
     :es_v2_splqueries,
@@ -459,6 +460,10 @@ class Account < ActiveRecord::Base
 
   def omni_channel_team_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
+  end
+
+  def falcon_portal_theme_enabled?
+    launched?(:falcon_portal_theme)
   end
 
   def sidekiq_logs_to_central_enabled?
