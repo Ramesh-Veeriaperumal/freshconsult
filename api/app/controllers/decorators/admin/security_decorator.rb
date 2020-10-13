@@ -24,6 +24,7 @@ module Admin
       u.add :contact_password_policy_hash, if: proc { Account.current.custom_password_policy_enabled? }, as: :contact_password_policy
       u.add :agent_password_policy_hash, if: proc { |obj| obj.show_agent_password_policy? }, as: :agent_password_policy
       u.add :allow_iframe_embedding
+      u.add :secure_attachments_enabled, if: proc { Account.current.security_new_settings_enabled? && Account.current.dependent_feature_enabled?(:secure_attachments) }
     end
 
     api_accessible :private_api, extend: :security_api do |u|
@@ -71,6 +72,10 @@ module Admin
 
     def whitelisted_ip_settings
       whitelisted_ip.present? ? show_whitelisted_ip : WHITELISTED_IP_NOT_CONFIGURED
+    end
+
+    def secure_attachments_enabled
+      Account.current.secure_attachments_enabled?
     end
 
     def show_whitelisted_ip

@@ -2,6 +2,7 @@
 
 module Admin
   class ApiSecurityController < ApiApplicationController
+    before_filter :validate_settings, only: [:update]
     include HelperConcern
     include Admin::SecurityConstants
     include SecurityConcern
@@ -21,6 +22,7 @@ module Admin
     def update
       return unless validate_delegator(@item, cname_params)
 
+      toggle_settings_from_params
       render_errors(@item.errors) unless @item.save
       render_errors(@item.account_configurations.errors) if cname_params[:notification_emails].present? && !@item.account_configuration.save
     end
@@ -32,7 +34,7 @@ module Admin
       end
 
       def validate_params
-        cname_params.permit(*WHITELISTED_SECURITY_FIELDS)
+        @item.security_new_settings_enabled? ? cname_params.permit(*WHITELISTED_SECURITY_FIELDS) : cname_params.permit(*(WHITELISTED_SECURITY_FIELDS - SECURITY_NEW_SETTINGS))
         security_validation = validation_klass.new(cname_params, @item, string_request_params?)
         render_custom_errors(security_validation, true) unless security_validation.valid?(action_name.to_sym)
       end
@@ -45,6 +47,20 @@ module Admin
 
       def constants_class
         'Admin::SecurityConstants'
+      end
+
+      def toggle_settings_from_params
+        setting_params = AccountSettings::SettingsConfig.keys & cname_params.keys
+        setting_params.each do |setting|
+          cname_params[setting] ? @item.enable_setting(setting.to_sym) : @item.disable_setting(setting.to_sym)
+        end
+      end
+
+      def validate_settings
+        setting_params = AccountSettings::SettingsConfig.keys & cname_params.keys
+        setting_params.each do |setting|
+          return render_request_error(:require_feature, 403, feature: setting) unless @item.dependent_feature_enabled?(setting.to_sym)
+        end
       end
   end
 end

@@ -135,6 +135,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :secure_attachments:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
   :feedback_widget_captcha:
     default: false
     internal: true

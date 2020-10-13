@@ -24,16 +24,16 @@ class AccountTest < ActiveSupport::TestCase
 
   def test_enable_secure_attachments
     @account.revoke_feature(:private_inline)
-    @account.add_feature(:secure_attachments)
+    @account.enable_setting(:secure_attachments)
     assert @account.private_inline_enabled?
   ensure
-    @account.revoke_feature(:secure_attachments)
+    @account.disable_setting(:secure_attachments)
   end
 
   def test_disable_secure_attachments
-    @account.add_feature(:secure_attachments)
+    @account.enable_setting(:secure_attachments)
     @account.add_feature(:private_inline)
-    @account.revoke_feature(:secure_attachments)
+    @account.disable_setting(:secure_attachments)
     assert_equal @account.private_inline_enabled?, false
   ensure
     @account.revoke_feature(:private_inline)
