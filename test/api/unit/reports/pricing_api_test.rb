@@ -65,7 +65,14 @@ class Reports::PricingApiTest < ActiveSupport::TestCase
       FD_FRESVISUAL_FEATURE_MAPPING.keys.each do |f|
         config = FD_FRESVISUAL_FEATURE_MAPPING[f]
         if config.class == Array
-          Account.any_instance.stubs("#{f}_enabled?".to_sym).returns(false)
+          value = false
+          config.each do |c|
+            if c[:config_type] == CONFIG_TYPES[:RESOURCE_RESTRICTIONS]
+              value = true
+              break
+            end
+          end
+          Account.any_instance.stubs("#{f}_enabled?".to_sym).returns(value)
         else
           value = config[:config_type] == CONFIG_TYPES[:CURATED_REPORTS] ? true : false
           Account.any_instance.stubs("#{f}_enabled?".to_sym).returns(true)

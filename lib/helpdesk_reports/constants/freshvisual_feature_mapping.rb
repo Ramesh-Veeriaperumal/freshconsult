@@ -41,7 +41,7 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
   CURATED_REPORTS = Hash[CURATED_REPORTS_LIST.map { |c| [c.tr('-', '_').parameterize('_').to_sym, { config_type: :curated_reports, value: c }] }]
 
   # List of Freshdesk resources that can be restricted at the account level in Fresh Visuals.
-  RESOURCE_RESTRICTION_LIST = ['Tickets', 'Timesheets', 'Tags', 'Surveys', 'Survey results', 'Articles'].freeze
+  RESOURCE_RESTRICTION_LIST = ['Tickets', 'Timesheets', 'Tags', 'Surveys', 'Survey results', 'Articles', 'Triage'].freeze
 
   # RESOURCE_RESTRICTION = {:tickets=>{:config_type=>:resource_restriction, :value=>"Tickets"}, :csat=>{:config_type=>:resource_restriction, :value=>"CSAT"}, :timesheet=>{:config_type=>:resource_restriction, :value=>"Timesheet"}, :tags=>{:config_type=>:resource_restriction, :value=>"Tags"}}
   RESOURCE_RESTRICTION = Hash[RESOURCE_RESTRICTION_LIST.map { |c| [c.parameterize('_').to_sym, { config_type: :resource_restriction, value: c }] }]
@@ -113,7 +113,7 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     analytics_articles: RESOURCE_RESTRICTION[:articles],
     analytics_knowledge_base: CURATED_REPORTS[:knowledge_base],
     analytics_knowledge_base_report: CURATED_REPORTS[:knowledge_base_report],
-    triage: CURATED_REPORTS[:freddy_triage_report]
+    triage: [CURATED_REPORTS[:freddy_triage_report], RESOURCE_RESTRICTION[:triage]]
   }.freeze
 
   # Certain resources has to be enabled if some curated reports related to them is enabled. So, keeping a map like this.
