@@ -291,10 +291,6 @@ class Account < ActiveRecord::Base
     livechat_enabled? and features?(:chat_routing)
   end
 
-  def fb_msg_realtime_enabled?
-    launched?(:fb_msg_realtime)
-  end
-
   def supervisor_feature_launched?
     features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end
@@ -463,10 +459,6 @@ class Account < ActiveRecord::Base
 
   def falcon_portal_theme_enabled?
     launched?(:falcon_portal_theme)
-  end
-
-  def sidekiq_logs_to_central_enabled?
-    launched?(:sidekiq_logs_to_central)
   end
 
   def kbase_spam_whitelist_enabled?
