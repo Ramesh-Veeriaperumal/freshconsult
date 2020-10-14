@@ -159,3 +159,7 @@ settings:
     default: false
     interal: true
     feature_dependency: :basic_settings_feature
+  :disable_archive:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
