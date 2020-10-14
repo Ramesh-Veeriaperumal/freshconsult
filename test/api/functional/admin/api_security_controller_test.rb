@@ -369,6 +369,95 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:custom_password_policy_enabled?)
   end
 
+  def test_show_secure_attachments
+    Account.any_instance.stubs(:security_new_settings_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_attachments_enabled?).returns(true)
+    Account.current.add_feature(:basic_settings_feature)
+    get :show, controller_params
+    assert_response 200
+    assert_equal JSON.parse(response.body)['secure_attachments_enabled'], true
+  ensure
+    Account.any_instance.unstub(:security_new_settings_enabled?)
+    Account.any_instance.unstub(:secure_attachments_enabled?)
+  end
+
+  def test_enable_secure_attachments
+    Account.current.add_feature(:basic_settings_feature)
+    Account.any_instance.stubs(:security_new_settings_enabled?).returns(true)
+    request_params = {
+      secure_attachments_enabled: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert_equal Account.current.secure_attachments_enabled?, true
+  ensure
+    Account.current.disable_setting(:secure_attachments)
+    Account.any_instance.unstub(:security_new_settings_enabled?)
+  end
+
+  def test_disable_secure_attachments
+    Account.any_instance.stubs(:security_new_settings_enabled?).returns(true)
+    Account.current.add_feature(:basic_settings_feature)
+    Account.current.enable_setting(:secure_attachments)
+    request_params = {
+      secure_attachments_enabled: false
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert_equal Account.current.secure_attachments_enabled?, false
+  ensure
+    Account.any_instance.unstub(:security_new_settings_enabled?)
+  end
+
+  def test_update_secure_attachments_without_launch_party
+    Account.any_instance.stubs(:security_new_settings_enabled?).returns(false)
+    request_params = {
+      secure_attachments_enabled: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:secure_attachments_enabled, :invalid_field, attribute: 'input')])
+  ensure
+    Account.any_instance.unstub(:security_new_settings_enabled?)
+  end
+
+  def test_update_secure_attachments_without_dependent_feature
+    Account.any_instance.stubs(:security_new_settings_enabled?).returns(true)
+    Account.current.revoke_feature(:basic_settings_feature)
+    request_params = {
+      secure_attachments_enabled: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: 'secure_attachments'))
+  ensure
+    Account.any_instance.unstub(:security_new_settings_enabled?)
+    Account.current.add_feature(:basic_settings_feature)
+  end
+
+  def test_show_secure_attachments_without_dependent_feature
+    Account.any_instance.stubs(:security_new_settings_enabled?).returns(true)
+    Account.current.revoke_feature(:basic_settings_feature)
+    Account.any_instance.stubs(:secure_attachments_enabled?).returns(true)
+    get :show, controller_params
+    assert_response 200
+    assert_nil JSON.parse(response.body)['secure_attachments_enabled']
+  ensure
+    Account.any_instance.unstub(:security_new_settings_enabled?)
+    Account.current.add_feature(:basic_settings_feature)
+  end
+
+  def test_show_secure_attachments_without_launchparty
+    Account.any_instance.stubs(:security_new_settings_enabled?).returns(false)
+    Account.any_instance.stubs(:secure_attachments_enabled?).returns(true)
+    get :show, controller_params
+    assert_response 200
+    assert_nil JSON.parse(response.body)['secure_attachments_enabled']
+  ensure
+    Account.any_instance.unstub(:security_new_settings_enabled?)
+    Account.any_instance.unstub(:secure_attachments_enabled?)
+  end
+
   def test_update_agent_password_policy_without_custom_password_policy_features
     Account.any_instance.stubs(:custom_password_policy_enabled?).returns(false)
     request_params = {

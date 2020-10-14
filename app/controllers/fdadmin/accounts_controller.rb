@@ -9,6 +9,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   include SandboxConstants
   include Freshid::Fdadmin::MigrationHelper
   include ::Freshcaller::Util
+  include Billing::ChargebeeOmniUpgradeHelper
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard, only: [:api_jwt_auth_feature,
@@ -16,7 +17,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                                             :features, :agents, :tickets,
                                             :portal, :user_info,
                                             :check_contact_import,
-                                            :latest_solution_articles]
+                                            :latest_solution_articles,
+                                            :check_eligibility_for_omni_upgrade]
   around_filter :select_master_shard , :only => [:extend_higher_plan_trial, :change_trial_plan, :collab_feature,:add_day_passes,
                 :migrate_to_freshconnect, :add_feature, :add_launch_party, :add_setting, :change_url, :single_sign_on, :remove_feature,
                 :remove_launch_party, :remove_setting, :change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy,
@@ -25,7 +27,10 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                 :disable_min_level_fluffy, :min_level_fluffy_info, :reset_ticket_display_id, :skip_mandatory_checks, :make_account_admin]
   before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit, :change_fluffy_min_level_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
-    :migrate_to_freshconnect, :extend_higher_plan_trial, :change_trial_plan]
+                                         :migrate_to_freshconnect,
+                                         :extend_higher_plan_trial,
+                                         :change_trial_plan,
+                                         :check_eligibility_for_omni_upgrade]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
   before_filter :symbolize_feature_name, :only => [:add_feature, :add_launch_party, :add_setting, :remove_feature, :remove_launch_party, :remove_setting]
   before_filter :check_freshconnect_migrate, :only => [:migrate_to_freshconnect]
@@ -1003,6 +1008,36 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       Account.reset_current_account
     end
     render :json => {:status => result[:status]}
+  end
+
+  def check_eligibility_for_omni_upgrade
+    result = { status: false }
+
+    result[:reason] =
+      if !Account.current.freshid_org_v2_enabled?
+        'Freshid org v2 not enabled.'
+      elsif !freshchat_and_freshcaller_integrated?
+        if Account.current.omni_accounts_present_in_org?
+          'Freshcaller or Freshchat or both are present in organization but not integrated.'
+        else
+          'Freshchat or Freshcaller or both not integrated.'
+        end
+      elsif !integrated_accounts_present_in_org?
+        'Integrated freshchat or freshcaller or both accounts are not present in organization.'
+      elsif !fd_agents_are_superset_of_fch_agents?(fd_agent_emails)
+        'Some Freshchat agents are not added to Freshdesk.'
+      elsif !fd_agents_are_superset_of_fcl_agents?(fd_agent_emails)
+        'Some Freshcaller agents are not added to Freshdesk.'
+      else
+        result[:status] = true
+        ''
+      end
+  rescue StandardError => e
+    Rails.logger.error "Error when checking eligibility for omni upgrade for account #{Account.current.id} :  Message :: #{e.message} :: Backtrace :: #{e.backtrace[0..20]}"
+    result[:status] = 'failure'
+  ensure
+    Account.reset_current_account
+    render json: result
   end
 
   def check_domain

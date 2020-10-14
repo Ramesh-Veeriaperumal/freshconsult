@@ -471,7 +471,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def facebook?
-     source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] and (fb_post) and (fb_post.facebook_page)
+    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] && fb_post.present? && fb_post.facebook_page.present?
   end
 
   def facebook_realtime_message?
@@ -1576,6 +1576,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def custom_field_value(field_name)
     safe_send(field_name)
+  end
+
+  def threading_enabled?
+    facebook? && is_fb_wall_post?
   end
 
   private

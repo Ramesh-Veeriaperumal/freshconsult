@@ -179,13 +179,12 @@ module ModelsSolutionsTestHelper
     }
   end
 
-  def central_publish_article_interactions_event_info(platform = nil)
+  def central_publish_article_interactions_event_info
     current_portal = Portal.current || Account.current.main_portal
     {
       source_type: 1,
       source_id: current_portal.id,
-      ip_address: Thread.current[:current_ip],
-      platform: platform
+      ip_address: Thread.current[:current_ip]
     }
   end
 

@@ -101,4 +101,7 @@ properties:
   allow_iframe_embedding:
     type: boolean
     description: Decides whether portal can be embedded in iframe
+  secure_attachments:
+    type: boolean
+    description: Decides whether secure_attachments can be enabled or not
 

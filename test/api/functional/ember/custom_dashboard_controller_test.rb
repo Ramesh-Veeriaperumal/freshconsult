@@ -1871,8 +1871,8 @@ module Ember
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
-      dashboard_object.add_widget(13, queue_id: 0, source: 'freshcaller')
-      dashboard_object.add_widget(13, queue_id: 0, source: 'freshcaller')
+      dashboard_object.add_widget(13, team_id: 0, source: 'freshcaller')
+      dashboard_object.add_widget(13, team_id: 1, source: 'freshcaller')
       post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
       response_hash = JSON.parse(response.body).deep_symbolize_keys
       dashboard_id = response_hash[:id]
@@ -1880,10 +1880,10 @@ module Ember
       assert_response 201
       match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
-      updated_atributes = { widgets: [{ id: widget_id, queue_id: -1 }] }
+      updated_atributes = { widgets: [{ id: widget_id, team_id: -1 }] }
       put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
       assert_response 400
-      updated_atributes = { widgets: [{ id: widget_id, queue_id: 1 }] }
+      updated_atributes = { widgets: [{ id: widget_id, team_id: 1 }] }
       put :update, controller_params(wrap_cname(updated_atributes).merge(id: dashboard_id, version: 'private'), false)
       assert_response 200
       updated_atributes = { widgets: [{ id: widget_id, deleted: true }] }
@@ -1902,7 +1902,7 @@ module Ember
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
-      dashboard_object.add_widget(13, queue_id: -1, source: 'freshcaller')
+      dashboard_object.add_widget(13, team_id: -1, source: 'freshcaller')
       post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
       response_hash = JSON.parse(response.body).deep_symbolize_keys
       assert_response 400, response_hash
@@ -1915,7 +1915,7 @@ module Ember
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
-      dashboard_object.add_widget(13, queue_id: 0, source: 'freshcall')
+      dashboard_object.add_widget(13, team_id: 0, source: 'freshcall')
       post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
       response_hash = JSON.parse(response.body).deep_symbolize_keys
       assert_response 400, response_hash

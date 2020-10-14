@@ -4,18 +4,26 @@ class Account < ActiveRecord::Base
     :bot_canned_response
   ].freeze
 
+  REDIRECT_OLD_UI_PATH_FEATURES = [
+    :redirect_helpdesk_ticket_index, :redirect_helpdesk_ticket_new, :redirect_helpdesk_ticket_compose_email, :redirect_helpdesk_ticket_edit,
+    :redirect_contact_new, :redirect_contact_edit, :redirect_contact_index,
+    :redirect_companies_new, :redirect_companies_edit, :redirect_companies_index, :redirect_companies_show,
+    :redirect_archive_tickets_new, :redirect_archive_tickets_show, :redirect_archive_tickets_edit, :redirect_archive_tickets_index,
+    :redirect_helpdesk_dashboard_index, :redirect_old_ui_paths
+  ].freeze
+
   LP_FEATURES = [
     :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
-    :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
+    :scheduled_ticket_export, :ticket_contact_export,
     :falcon_portal_theme, :freshid, :email_new_settings, :kbase_spam_whitelist,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
-    :sso_login_expiry_limitation, :old_link_back_url_validation, :stop_contacts_count_query,
+    :sso_login_expiry_limitation, :old_link_back_url_validation,
     :es_tickets, :fb_msg_realtime,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
-    :skip_portal_cname_chk, :ticket_source_revamp, :custom_product_notification,
+    :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history,
     :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update,
@@ -23,7 +31,7 @@ class Account < ActiveRecord::Base
     :id_for_choices_write, :fluffy, :fluffy_email, :fluffy_email_signup, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data,
     :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
-    :freshid_org_v2, :hide_agent_login,
+    :freshid_org_v2, :hide_agent_login, :security_new_settings,
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :fuzzy_search, :delete_trash_daily,
@@ -47,10 +55,8 @@ class Account < ActiveRecord::Base
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
     :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
-    :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger, :redirect_helpdesk_ticket_index, :redirect_helpdesk_ticket_new, :redirect_helpdesk_ticket_compose_email, :redirect_helpdesk_ticket_edit,
-    :redirect_contact_new, :redirect_contact_edit, :redirect_contact_index, :redirect_companies_new, :redirect_companies_edit, :redirect_companies_index, :redirect_companies_show,
-    :redirect_archive_tickets_new, :redirect_archive_tickets_show, :redirect_archive_tickets_edit, :redirect_archive_tickets_index, :redirect_old_ui_paths
-  ].concat(FRONTEND_LP_FEATURES).uniq
+    :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger
+  ].concat(FRONTEND_LP_FEATURES + REDIRECT_OLD_UI_PATH_FEATURES).uniq
 
   BITMAP_FEATURES = [
     :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
@@ -58,12 +64,12 @@ class Account < ActiveRecord::Base
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
     :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
     :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
-    :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas,
+    :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas, :falcon_portal_theme,
     :layout_customization, :advanced_reporting, :timesheets, :multiple_emails,
     :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
     :ticket_activity_export, :caching, :private_inline, :collaboration, :hipaa,
-    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :custom_product_notification,
+    :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
     :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
     :tam_default_fields, :todos_reminder_scheduler, :smart_filter,
@@ -81,30 +87,27 @@ class Account < ActiveRecord::Base
     :ticket_properties_suggester, :ticket_properties_suggester_eligible, :disable_archive,
     :hide_first_response_due, :agent_articles_suggest, :agent_articles_suggest_eligible, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
-    :secure_attachments, :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
+    :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
     :supervisor_contact_field, :whatsapp_channel, :sidekiq_logs_to_central,
-    :basic_settings_feature, :skip_portal_cname_chk, :stop_contacts_count_query, :force_index_tickets, :es_v2_splqueries, :disable_emails, :ticket_filter_increased_companies_limit,
+    :basic_settings_feature, :force_index_tickets, :es_v2_splqueries, :ticket_filter_increased_companies_limit,
     :csat_email_scan_compatibility
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :custom_product_notification,
     :fb_msg_realtime,
     :spam_blacklist_feature,
     :kbase_spam_whitelist,
     :supervisor_contact_field,
     :disable_archive,
-    :skip_portal_cname_chk,
+    :falcon_portal_theme,
     :sidekiq_logs_to_central,
-    :stop_contacts_count_query,
     :force_index_tickets,
     :es_v2_splqueries,
-    :disable_emails,
     :csat_email_scan_compatibility
   ].freeze
 
@@ -247,10 +250,6 @@ class Account < ActiveRecord::Base
 
   def default_survey_enabled?
     features?(:default_survey) && !custom_survey_enabled?
-  end
-
-  def spam_blacklist_feature_enabled?
-    launched?(:spam_blacklist_feature)
   end
 
   def count_public_api_filter_factory_enabled?
@@ -461,6 +460,10 @@ class Account < ActiveRecord::Base
 
   def omni_channel_team_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
+  end
+
+  def falcon_portal_theme_enabled?
+    launched?(:falcon_portal_theme)
   end
 
   def sidekiq_logs_to_central_enabled?

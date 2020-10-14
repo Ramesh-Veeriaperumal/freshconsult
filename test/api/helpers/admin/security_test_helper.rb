@@ -13,7 +13,8 @@ module Admin
       { sso: { enabled: true, saml: { login_url: 'end', saml_cert_fingerprint: 'ssss' } } },
       { sso: { type: 'simple', simple: { login_url: 'hai', logout_url: 'bye' } } },
       { sso: { type: 'simple', simple: { logout_url: 'bye' } } },
-      { allow_iframe_embedding: true }
+      { allow_iframe_embedding: true },
+      { secure_attachments_enabled: true }
     ].freeze
     INVALID_SECURITY_SETTINGS = [
       { notification_emails: 1 }, # 0
@@ -55,7 +56,9 @@ module Admin
       { sso: { saml: { login_url: nil } } }, # 27
       { sso: { saml: { saml_cert_fingerprint: nil } } },
       { allow_iframe_embedding: 1 },
-      { allow_iframe_embedding: nil }
+      { allow_iframe_embedding: nil },
+      { secure_attachments_enabled: 1 },
+      { secure_attachments_enabled: nil }
     ].freeze
 
     def whitelisted_ip

@@ -56,6 +56,7 @@ class Admin::TemplatesController < Admin::AdminController
     set_preview_and_redirect_mint_ui if params[:mint_preview_button]
 
     if params[:publish_button]
+      clear_main_portal_cache(current_account.id)
       save_and_publish
     else
       flash[:notice] = t("admin.portal_settings.flash.portal_saved_success") unless params[:preview_button]

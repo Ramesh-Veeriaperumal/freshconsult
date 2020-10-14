@@ -964,6 +964,143 @@ module Ember
       t.update_attributes(spam: false)
     end
 
+    def test_ticket_conversations_facebook_ticket_parent_comments
+      ticket = create_ticket_from_fb_post(true, true)
+      create_private_note(ticket)
+      create_reply_note(ticket)
+      create_forward_note(ticket)
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent: true)
+      ticket.notes.reload
+      match_json(conversations_pattern_facebook_parent(ticket).ordered!)
+      assert_response 200
+    end
+
+    def test_ticket_conversations_facebook_ticket_parent_comments_order_by_updated_at
+      ticket = create_ticket_from_fb_post(true, true)
+      create_private_note(ticket)
+      create_reply_note(ticket)
+      create_forward_note(ticket)
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent: true, order_by: 'updated_at')
+      ticket.notes.reload
+      match_json(conversations_pattern_facebook_parent(ticket, 'updated_at').ordered!)
+      assert_response 200
+    end
+
+    def test_ticket_conversations_facebook_ticket_parent_comments_order_by_and_order_type
+      ticket = create_ticket_from_fb_post(true, true)
+      create_private_note(ticket)
+      create_reply_note(ticket)
+      create_forward_note(ticket)
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent: true, order_by: 'updated_at', order_type: 'asc')
+      ticket.notes.reload
+      match_json(conversations_pattern_facebook_parent(ticket, 'updated_at', 'asc').ordered!)
+      assert_response 200
+    end
+
+    def test_ticket_conversations_parent_comments_for_non_fb_ticket
+      ticket = create_ticket
+      create_private_note(ticket)
+      create_reply_note(ticket)
+      create_forward_note(ticket)
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent: true)
+      ticket.notes.reload
+      match_json(conversations_pattern(ticket))
+      assert_response 200
+    end
+
+    def test_ticket_conversations_facebook_ticket_parent_comments_with_since_id
+      ticket = create_ticket_from_fb_post(true, true)
+      parent_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      3.times do
+        create_reply_note(ticket)
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, per_page: 50, page: 1, order_type: 'desc', since_id: parent_note.id, parent: true)
+      assert_response 200
+      assert JSON.parse(response.body).count == 3
+    end
+
+    def test_ticket_conversations_facebook_ticket_parent_comments_with_since_id_order_by_updated_at
+      ticket = create_ticket_from_fb_post(true, true)
+      parent_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      3.times do
+        create_reply_note(ticket)
+      end
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, per_page: 50, page: 1, order_type: 'desc', since_id: parent_note.id, parent: true, order_by: 'updated_at')
+      assert_response 200
+      assert JSON.parse(response.body).count == 3
+    end
+
+    def test_ticket_conversations_facebook_ticket_with_invalid_parent_attribute
+      ticket = create_ticket_from_fb_post(true, true)
+      parent_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent: 'test')
+      assert_response 400
+      match_json([bad_request_error_pattern(:parent, :datatype_mismatch, expected_data_type: 'Boolean')])
+    end
+
+    def test_ticket_conversations_facebook_ticket_with_invalid_parent_id_attribute
+      ticket = create_ticket_from_fb_post(true, true)
+      parent_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent_id: 'test')
+      assert_response 400
+      match_json([bad_request_error_pattern(:parent_id, :datatype_mismatch, expected_data_type: 'Positive Integer')])
+    end
+
+    def test_ticket_conversations_facebook_ticket_with_invalid_order_by_attribute
+      ticket = create_ticket_from_fb_post(true, true)
+      parent_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, order_by: 'test')
+      assert_response 400
+      bad_request_error_pattern('order_type', :not_included, list: 'created_at,updated_at')
+    end
+
+    def test_ticket_conversations_facebook_ticket_child_comments
+      ticket = create_ticket_from_fb_post(true, true)
+      parent_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      create_private_note(ticket)
+      create_reply_note(ticket)
+      create_forward_note(ticket)
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent_id: parent_note.id)
+      ticket.notes.reload
+      match_json(conversations_pattern_facebook_child(ticket, parent_note.id).ordered!)
+      assert_response 200
+    end
+
+    def test_ticket_conversations_facebook_ticket_child_comments_order_by_updated_at
+      ticket = create_ticket_from_fb_post(true, true)
+      parent_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      create_private_note(ticket)
+      create_reply_note(ticket)
+      create_forward_note(ticket)
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent_id: parent_note.id, order_by: 'updated_at', order_type: 'asc')
+      ticket.notes.reload
+      match_json(conversations_pattern_facebook_child(ticket, parent_note.id, 'updated_at', 'asc').ordered!)
+      assert_response 200
+    end
+
+    def test_ticket_conversations_facebook_ticket_child_comments_order_by_and_order_type
+      ticket = create_ticket_from_fb_post(true, true)
+      parent_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      create_private_note(ticket)
+      create_reply_note(ticket)
+      create_forward_note(ticket)
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent_id: parent_note.id, order_by: 'updated_at')
+      ticket.notes.reload
+      match_json(conversations_pattern_facebook_child(ticket, parent_note.id, 'updated_at').ordered!)
+      assert_response 200
+    end
+
+    def test_ticket_conversations_child_comments_for_non_fb_ticket
+      ticket = create_ticket
+      create_private_note(ticket)
+      create_reply_note(ticket)
+      create_forward_note(ticket)
+      get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id, parent_id: 1234)
+      ticket.notes.reload
+      match_json([bad_request_error_pattern('parent_id', 'Value not present: 1234', code: :invalid_value)])
+      assert_response 400
+    end
+
     def test_facebook_reply_without_params
       ticket = create_ticket_from_fb_post
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, {})

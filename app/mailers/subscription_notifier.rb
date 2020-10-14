@@ -153,7 +153,7 @@ class SubscriptionNotifier < ActionMailer::Base
     period = { 1 => "Monthly", 3 => "Quarterly", 6 => "Half Yearly", 12 => "Annual" }
     @account = Account.current
     from_email = current_user.present? ? current_user.email : @account.admin_email
-    setup_email(AppConfig['cs_email'], "Cancellation request from #{Account.current.full_domain}.", from_email, Account.current.id, 'Cancellation Request')
+    setup_email(AppConfig['cs_email'], "Cancellation request from #{@account.full_domain} (#{@account.id})", from_email, @account.id, 'Cancellation Request')
     customer_details = @account.subscription.billing.retrieve_subscription(@account.id)
     @billing_start_date = Time.zone.at(customer_details.subscription.current_term_start).to_date.to_s(:db)
     @reason  = feedback
@@ -166,12 +166,12 @@ class SubscriptionNotifier < ActionMailer::Base
   end
 
   def admin_account_cancelled(account_admins_email_list)
+    @account = Account.current
     setup_email(account_admins_email_list[:group],
-                I18n.t('mailer_notifier_subject.account_cancelled', account_domain: Account.current.full_domain),
+                I18n.t('mailer_notifier_subject.account_cancelled', account_domain: @account.full_domain, account_id: @account.id),
                 AppConfig['from_email'],
                 Account.current.id,
                 'Account Cancelled')
-    @account = Account.current
     @support_email = AppConfig['from_email']
     @other_emails = account_admins_email_list[:other]
     mail(@headers) do |part|

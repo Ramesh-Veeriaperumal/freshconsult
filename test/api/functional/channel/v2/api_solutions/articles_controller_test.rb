@@ -623,6 +623,25 @@ class Channel::V2::ApiSolutions::ArticlesControllerTest < ActionController::Test
     Account.current.rollback :kbase_omni_bundle
   end
 
+  def test_channel_hit_payload_when_platform_params_is_not_sent
+    stub_channel_api do
+      Channel::V2::ApiSolutions::ArticlesController.any_instance.stubs(:agent?).returns(false)
+      Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+      Account.current.launch(:kbase_omni_bundle)
+      article_new = get_article_without_draft
+      user = add_new_user(@account)
+      CentralPublishWorker::SolutionArticleWorker.jobs.clear
+      put :hit, controller_params(version: 'channel', id: article_new.id, user_id: user.id, source_type: 'freshchat', source_id: 1)
+      job = CentralPublishWorker::SolutionArticleWorker.jobs.first
+      assert_response 204
+      assert_equal 1, CentralPublishWorker::SolutionArticleWorker.jobs.size
+      assert_equal false, job['args'][1]['event_info'].key?('platform')
+    end
+    Channel::V2::ApiSolutions::ArticlesController.any_instance.unstub(:agent?)
+    Account.any_instance.unstub(:omni_bundle_account?)
+    Account.current.rollback :kbase_omni_bundle
+  end
+
   def test_platform_params_for_article_hits
     stub_channel_api do
       Account.any_instance.stubs(:omni_bundle_account?).returns(true)

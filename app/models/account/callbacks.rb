@@ -47,7 +47,7 @@ class Account < ActiveRecord::Base
   after_commit :enable_fresh_connect, on: :create, unless: :is_anonymous_account
   after_commit :enable_searchv2, :enable_count_es, :set_falcon_preferences, on: :create
   after_commit :disable_searchv2, on: :destroy
-  after_commit :update_sendgrid, on: :create
+  after_commit :update_sendgrid, on: :create, unless: :is_anonymous_account
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
   after_commit :update_crm_and_map, :send_domain_change_email, :update_account_domain_in_chargebee, on: :update, if: :account_domain_changed?
@@ -156,7 +156,7 @@ class Account < ActiveRecord::Base
 
     # Temp for falcon signup
     # Enable customer portal by default
-    self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
+    self.enable_setting(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
 
     if freshid_integration_signup_allowed?
       freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar
@@ -275,6 +275,10 @@ class Account < ActiveRecord::Base
 
   def sandbox_account_id
     @sandbox_account_id ||= sandbox_job.try(:sandbox_account_id)
+  end
+
+  def update_sendgrid
+    SendgridDomainUpdates.perform_async(action: 'create', domain: full_domain, vendor_id: Account::MAIL_PROVIDER[:sendgrid])
   end
 
   protected
@@ -628,10 +632,6 @@ class Account < ActiveRecord::Base
 
     def disable_searchv2
       SearchV2::Manager::DisableSearch.perform_async(account_id: self.id)
-    end
-
-    def update_sendgrid
-      SendgridDomainUpdates.perform_async({:action => 'create', :domain => full_domain, :vendor_id => Account::MAIL_PROVIDER[:sendgrid]})
     end
 
     def set_falcon_preferences

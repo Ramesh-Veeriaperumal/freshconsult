@@ -7,7 +7,7 @@ class Dashboard::Custom::MSScorecard < Dashboards
     include Dashboard::Custom::OmniWidgetConfigValidationMethods
 
     def validate_view(source, view)
-      source == Dashboard::Custom::CustomDashboardConstants::SOURCES[:freshchat] ? view.to_i.positive? : false
+      source == Dashboard::Custom::CustomDashboardConstants::SOURCES[:freshchat] ? view.to_i >= 0 : false
     end
   end
 end

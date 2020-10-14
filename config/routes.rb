@@ -2697,6 +2697,7 @@ Helpkit::Application.routes.draw do
           post :enable_freshid_org_v2
           post :validate_and_fix_freshid
           post :skip_mandatory_checks
+          get :check_eligibility_for_omni_upgrade
         end
       end
 

@@ -8,7 +8,7 @@ module ConversationConstants
 
   IGNORE_PARAMS = %w(full_text send_survey last_note_id inline_attachment_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
 
-  TICKET_CONVERSATIONS_FIELDS = %w(include order_type since_id).freeze
+  TICKET_CONVERSATIONS_FIELDS = %w[include order_by order_type since_id parent parent_id].freeze
   SIDE_LOADING = %w(requester).freeze
   PERMITTED_ARCHIVE_FIELDS = (TICKET_CONVERSATIONS_FIELDS + ApiConstants::PAGINATE_FIELDS).freeze
 
@@ -22,6 +22,10 @@ module ConversationConstants
   UPDATE_FIELDS = %w(body).freeze | UPDATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FACEBOOK_REPLY_FIELDS = %w[body agent_id note_id last_note_id attachment_ids msg_type include_surveymonkey_link].freeze
   ECOMMERCE_REPLY_FIELDS = %w[body agent_id last_note_id attachment_ids].freeze
+
+  ORDER_BY = %w[created_at updated_at].freeze
+  DEFAULT_ORDER_BY = 'created_at'.freeze
+
   CHANNEL_REPLY_FIELDS = %w[body channel_id last_note_id profile_unique_id].freeze
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {
@@ -80,4 +84,6 @@ module ConversationConstants
   VALIDATION_CLASS = 'ConversationValidation'.freeze
   DELEGATOR_CLASS = 'ConversationDelegator'.freeze
   CARRIAGE_RETURN = "\r".freeze
+
+  THREADING_DELEGATOR_CLASS = 'ConversationThreadingDelegator'.freeze
 end.freeze

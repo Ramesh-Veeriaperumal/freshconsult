@@ -2,7 +2,7 @@
 
 class SolutionOmniFilterValidation < FilterValidation
   include SolutionHelper
-  CHECK_PARAMS_SET_FIELDS = %w[portal_id tags platforms status prefer_published term].freeze
+  CHECK_PARAMS_SET_FIELDS = %w[portal_id tags platforms status prefer_published term platform source_id user_id].freeze
   attr_accessor :portal_id, :platforms, :tags, :status, :prefer_published, :allow_language_fallback, :term, :user_id, :source_type, :source_id, :platform
 
   validate :validate_omni_channel_feature
@@ -17,9 +17,9 @@ class SolutionOmniFilterValidation < FilterValidation
 
   validates :allow_language_fallback, data_type: { rules: 'Boolean' }, if: -> { @allow_language_fallback.present? }
   validates :status, custom_inclusion: { in: proc { |x| x.allowed_statuses }, ignore_string: :allow_string_param }
-  validates :user_id, numericality: { only_integer: true, greater_than: 0 }, if: -> { user_id }
+  validates :user_id, numericality: { only_integer: true, greater_than: 0 }, if: -> { @user_id_set }
   validates :prefer_published, data_type: { rules: 'Boolean' }
-  validates :source_id, numericality: { only_integer: true, greater_than: 0 }, if: -> { @source_id.present? }
+  validates :source_id, numericality: { only_integer: true, greater_than: 0 }, if: -> { @source_id_set }
   validates :source_type, custom_inclusion: {
     in: Solution::Constants::INTERACTION_SOURCE.keys.map(&:to_s),
     ignore_string: :allow_string_param,
@@ -27,7 +27,7 @@ class SolutionOmniFilterValidation < FilterValidation
   }, required: true, if: :source_type_required?
 
   validates :term, required: true, data_type: { rules: String, allow_nil: false }, if: :search_action
-  validates :platform, custom_inclusion: { in: SolutionConstants::PLATFORM_TYPES }, if: -> { @platform.present? }
+  validates :platform, custom_inclusion: { in: SolutionConstants::PLATFORM_TYPES }, if: -> { @platform_set }
 
   SEARCH_ACTION = %i[search].freeze
 

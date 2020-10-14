@@ -331,7 +331,7 @@
       :auto_article_order: 327
       :business_hours: 328
       :scenario_automations: 329
-      :unused_330: 330
+      :falcon_portal_theme: 330
       :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
@@ -440,6 +440,7 @@
   :freshcaller_widget: false
   :falcon: false
   :opt_out_analytics: false
+  :falcon_portal_theme: false
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
@@ -488,13 +489,9 @@
   :solutions_agent_portal: false
   :whatsapp_channel: false
   :supervisor_contact_field: false
-  :custom_product_notification: false
-  :skip_portal_cname_chk: false
   :sidekiq_logs_to_central: false
   :disable_archive: false
   :fb_msg_realtime: false
-  :stop_contacts_count_query: false
   :force_index_tickets: false
   :es_v2_splqueries: false
-  :disable_emails: false
   :csat_email_scan_compatibility: false

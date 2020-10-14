@@ -39,6 +39,7 @@ module ApiTicketsTestHelper
   CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' => Faker::Lorem.paragraph, 'dropdown' => CUSTOM_FIELDS_CHOICES[0], 'date' => '2015-09-09' }.freeze
   PRIVATE_KEY_STRING = OpenSSL::PKey::RSA.new(File.read('config/cert/jwe_decryption_key.pem'), 'securefield')
   DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
+  NOTE_ANCESTRY = '%{ticket_fb_post_id}/%{note_fb_post_id}'.freeze
 
 
   # pattern
@@ -1154,6 +1155,57 @@ module ApiTicketsTestHelper
       note_pattern
     end
     limit ? notes_pattern.take(limit) : notes_pattern
+  end
+
+  def conversations_pattern_facebook_parent(ticket, order_by = 'created_at', order_type = '', limit = false)
+    order = "#{order_by} #{order_type}"
+    ancestry = fetch_fb_post_ancestry(ticket)
+    notes = ticket.notes.parent_facebook_comments(ancestry, nil, order)
+    child_conversations_count = child_conversations_count(fetch_fb_post_ancestry_ids(ticket, notes))
+    notes_pattern = notes.map do |n|
+      note_pattern = note_pattern_index_freshcaller(n)
+      if n.fb_note? && n.fb_post.present?
+        note_pattern.merge!(child_count: child_conversations_count.fetch(n.id, 0))
+        note_pattern.merge!(fb_post: FacebookPostDecorator.new(n.fb_post).to_hash)
+      end
+      note_pattern
+    end
+    limit ? notes_pattern.take(limit) : notes_pattern
+  end
+
+  def child_conversations_count(note_ancestry_mapping)
+    count_ancestry_mapping = Account.current.facebook_posts.total_child_posts(note_ancestry_mapping.keys)
+
+    count_ancestry_mapping.each_with_object({}) do |fb_post, h|
+      h[note_ancestry_mapping[fb_post.ancestry]] = fb_post.child_posts_count
+    end
+  end
+
+  def conversations_pattern_facebook_child(ticket, parent_id, order_by = 'created_at', order_type = 'desc', limit = false)
+    order = "#{order_by} #{order_type}"
+    ancestry = fetch_fb_post_ancestry(ticket, parent_id)
+    notes_pattern = ticket.notes.child_facebook_comments(ancestry, nil, order).map do |n|
+      note_pattern = note_pattern_index_freshcaller(n)
+      note_pattern.delete(:ticket_id)
+      note_pattern.merge!(parent_id: parent_id.to_i)
+      note_pattern
+    end
+    limit ? notes_pattern.take(limit) : notes_pattern
+  end
+
+  def fetch_fb_post_ancestry(ticket, note_id = nil)
+    if note_id.blank?
+      ticket.fb_post.id.to_s
+    else
+      note_fb_post = Account.current.facebook_posts.where(postable_type: 'Helpdesk::Note', postable_id: note_id).last
+      format(NOTE_ANCESTRY, ticket_fb_post_id: ticket.fb_post.id, note_fb_post_id: note_fb_post.id)
+    end
+  end
+
+  def fetch_fb_post_ancestry_ids(ticket, notes)
+    notes.each_with_object({}) do |note, h|
+      h[format(NOTE_ANCESTRY, ticket_fb_post_id: ticket.fb_post.id, note_fb_post_id: note.fb_post.id)] = note.id if note.fb_post.present?
+    end
   end
 
   def note_pattern_index(note)

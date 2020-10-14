@@ -6,7 +6,7 @@ module Admin::SecurityConstants
   SSO_TYPES = ['simple', 'saml'].freeze
   VALIDATION_CLASS = 'Admin::SecurityValidation'
   DELEGATOR_CLASS = 'Admin::SecurityDelegator'
-  UPDATE_SECURITY_FIELDS = ['whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy', 'allow_iframe_embedding', 'sso'].freeze
+  UPDATE_SECURITY_FIELDS = ['whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy', 'allow_iframe_embedding', 'sso', 'secure_attachments_enabled'].freeze
   WHITELISTED_IP_NOT_CONFIGURED = {
     enabled: false
   }.freeze
@@ -14,6 +14,7 @@ module Admin::SecurityConstants
   WHITELISTED_SECURITY_FIELDS = [
     :notification_emails,
     :allow_iframe_embedding,
+    :secure_attachments_enabled,
     whitelisted_ip: [
       :enabled,
       :applies_only_to_agents,
@@ -45,6 +46,7 @@ module Admin::SecurityConstants
     ].freeze
   ].freeze
 
+  SECURITY_NEW_SETTINGS = [:secure_attachments_enabled].freeze
   SSO_TYPE_NAMING_MAPPINGS = {
     simple: {
       login_url: 'login_url',

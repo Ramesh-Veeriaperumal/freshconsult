@@ -31,6 +31,12 @@ class Social::FbPost < ActiveRecord::Base
           limit(num)
         }
 
+  scope :total_child_posts, ->(ancestry_ids, p_type = 'Helpdesk::Note') {
+    select('count(*) AS child_posts_count, ancestry')
+      .where(['social_fb_posts.ancestry IN (?) and social_fb_posts.postable_type=?', ancestry_ids, p_type])
+      .group('ancestry')
+  }
+
   def post?
     msg_type == 'post' || msg_type == 'ad_post'
   end

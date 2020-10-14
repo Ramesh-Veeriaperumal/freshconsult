@@ -1,7 +1,7 @@
 settings:
-  :untitled_setting_1:
+  :skip_portal_cname_chk:
     default: false
-    internal: false
+    internal: true
     feature_dependency: :basic_settings_feature
   :branding:
     default: true
@@ -11,9 +11,9 @@ settings:
     default: false
     internal: false
     feature_dependency: :solutions_agent_metrics_feature
-  :untitled_setting_4:
-    default: true
-    internal: false
+  :stop_contacts_count_query:
+    default: false
+    internal: true
     feature_dependency: :basic_settings_feature
   :skip_invoice_due_warning:
     default: false
@@ -135,6 +135,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :secure_attachments:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
   :feedback_widget_captcha:
     default: false
     internal: true
@@ -146,4 +150,12 @@ settings:
   :bypass_signup_captcha:
     default: false
     internal: true
+    feature_dependency: :basic_settings_feature
+  :custom_product_notification:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :disable_emails:
+    default: false
+    interal: true
     feature_dependency: :basic_settings_feature
