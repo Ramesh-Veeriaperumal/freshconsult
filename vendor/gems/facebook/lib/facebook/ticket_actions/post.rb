@@ -48,7 +48,7 @@ module Facebook
         return note if note # TODO what do we do here ? note will already be there in dynamoDB ...
         
         parent_id      = koala_comment.parent.nil? ? koala_comment.parent_post_id : koala_comment.parent[:id]        
-        parent_fb_post = @account.facebook_posts.find_by_post_id(parent_id, :select => :id)
+        parent_fb_post = @account.facebook_posts.find_by_post_id(parent_id)
         requester      = facebook_user(koala_comment.requester)
         
         unless ticket.blank? || koala_comment.comment.blank?
@@ -81,6 +81,11 @@ module Facebook
             if note.save_note
               if !koala_comment.created_at.blank?
                 @fan_page.update_attribute(:fetch_since, koala_comment.created_at.to_i)
+              end
+              if parent_fb_post.is_note?
+                parent_note = parent_fb_post.postable
+                parent_note.updated_at = koala_comment.created_at
+                parent_note.save
               end
             else
               puts "error while saving the note #{note.errors.to_json} - #{@fan_page.account_id} : #{@fan_page.page_id} : #{koala_comment.comment_id}"
