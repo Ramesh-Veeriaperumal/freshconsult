@@ -22,7 +22,7 @@ class MessageWorkerTest < ActionView::TestCase
     Faraday::Request::Retry.any_instance.stubs(:call).returns(Faraday::Response.new(status: 200))
     Channel::MessageWorker.jobs.clear
     Sidekiq::Testing.inline! do
-      args = { body: Faker::Lorem.paragraph, channel_id: 12, profile_unique_id: '+2389238' }
+      args = { body: Faker::Lorem.paragraph, channel_id: 12, profile_unique_id: '+2389238', ticket_id: 23 }
       Channel::MessageWorker.perform_async(args)
     end
     assert_equal 0, Channel::MessageWorker.jobs.size

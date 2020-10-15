@@ -167,7 +167,8 @@ module Ember
 
       if @item.save_note
         Channel::MessageWorker.perform_async(body: params[:body], channel_id: params[:channel_id],
-                                             profile_unique_id: params[:profile_unique_id])
+                                             profile_unique_id: params[:profile_unique_id],
+                                             ticket_id: @ticket.display_id)
         render_response(true)
       else
         render_response(false)
