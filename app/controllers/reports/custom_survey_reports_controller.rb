@@ -16,7 +16,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
   attr_accessor :report_type
 
   def index
-    @hide_agent_reporting = Account.current.hide_agent_metrics_feature?
+    @hide_agent_reporting = Account.current.euc_hide_agent_metrics_enabled?
     @surveys = surveys_json
     @agents = agents
     @groups = groups

@@ -130,7 +130,7 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true,
     :survey_links => true,
-    :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
+    :saml_unspecified_nameid => false,
     :single_session_per_user => false, :marketplace_app => false,
     :collaboration => false
   }

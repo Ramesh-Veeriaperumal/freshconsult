@@ -6,7 +6,7 @@
 		</h3>
 	</div>
 
-	<% unless Account.current.hide_agent_metrics_feature? %>
+	<% unless Account.current.euc_hide_agent_metrics_enabled? %>
 		<div id="responder-box" class="filter-metric-widget">
 			<% if current_account.shared_ownership_enabled? %>
 				<a class="title drop-right nav-trigger agent_text" href="#" value="" menuid="#agentSort">

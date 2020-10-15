@@ -81,7 +81,7 @@
                <h3 class="title"><span><%= t('helpdesk_reports.productivity') %></span></h3>
                    <ul class="report_icon">
                     <% if Account.current.performance_report_enabled? %>
-                      <%unless Account.current.hide_agent_metrics_feature? %>
+                      <%unless Account.current.euc_hide_agent_metrics_enabled? %>
                         <li>
                          <a href="/reports/agent_summary" data-pjax="#body-container">
                             <div class="img-outer"><i class="fsize-36 ficon-agent_summary"></i></div>

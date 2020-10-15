@@ -305,10 +305,6 @@ class Account < ActiveRecord::Base
     ismember?(RESTRICTED_COMPOSE, self.id)
   end
 
-  def hide_agent_metrics_feature?
-    features?(:euc_hide_agent_metrics)
-  end
-
   def advance_facebook_enabled?
     features?(:facebook)
   end

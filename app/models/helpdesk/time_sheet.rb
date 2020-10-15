@@ -122,7 +122,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   def self.group_by_options
     [ [I18n.t('helpdesk.time_sheets.customer') , :customer_name],
-      ([I18n.t('helpdesk.time_sheets.agent') , :agent_name] unless Account.current.hide_agent_metrics_feature?),
+      ([I18n.t('helpdesk.time_sheets.agent') , :agent_name] unless Account.current.euc_hide_agent_metrics_enabled?),
       [I18n.t('helpdesk.time_sheets.group') , :group_name],
       ([I18n.t('helpdesk.time_sheets.product') , :product_name] if Account.current.products.any?),
       [I18n.t('helpdesk.time_sheets.ticket') , :workable],

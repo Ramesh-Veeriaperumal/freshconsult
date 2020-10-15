@@ -139,6 +139,10 @@ settings:
     default: false
     internal: false
     feature_dependency: :basic_settings_feature
+  :euc_hide_agent_metrics:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :secure_attachments:
     default: false
     internal: false

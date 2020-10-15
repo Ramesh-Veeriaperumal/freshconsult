@@ -1,6 +1,6 @@
 <%= admin_account_verification_message %>
 
-<% unless current_account.hide_agent_metrics_feature? %>
+<% unless current_account.euc_hide_agent_metrics_enabled? %>
 <%= assumed_identity_message %>
 <% end %>
 <% if logged_in? %>
@@ -94,7 +94,7 @@
 						<span class="seperator"></span>
 						<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
 					<% elsif privilege?(:manage_users) && current_account.assume_identity_enabled? %>  			
-					<% unless current_account.hide_agent_metrics_feature? %>		
+					<% unless current_account.euc_hide_agent_metrics_enabled? %>		
 						<div class="info switch_agent" id="switch_agent_container">
               <div id="agt_loading" class="link load_agent"><span><%= t("agent_loading_msg") %></span></div>
               <select id="assumed_select_id" data-placeholder="<%= t("swith_agent_msg") %>" class="header-agent-select hide">
@@ -207,7 +207,7 @@
 <%  if logged_in? and current_user.agent?  %>
   <script type="text/javascript">   	
     jQuery(document).ready(function() {
-      App.Header.init(<%= is_assumed_user? || !current_user.privilege?(:manage_users) || current_account.hide_agent_metrics_feature? %>);
+      App.Header.init(<%= is_assumed_user? || !current_user.privilege?(:manage_users) || current_account.euc_hide_agent_metrics_enabled? %>);
     })
    
 		var raw_store_data = <%= get_store_data.html_safe %>

@@ -58,7 +58,7 @@ module Reports::TimesheetReport
       status_name:I18n.t('helpdesk.time_sheets.status'),
     created_at: I18n.t('helpdesk.time_sheets.createdAt')}
 
-    default_colset[:agent_name] = I18n.t('helpdesk.time_sheets.agent') unless  Account.current.hide_agent_metrics_feature?
+    default_colset[:agent_name] = I18n.t('helpdesk.time_sheets.agent') unless Account.current.euc_hide_agent_metrics_enabled?
     default_colset[:product_name] = I18n.t('helpdesk.time_sheets.product') if Account.current.products.any?
 
     selected_colset = transform_selected_columns
@@ -85,7 +85,7 @@ module Reports::TimesheetReport
     view_headers = [:workable , :customer_name , :priority_name, :status_name , :group_by_day_criteria , :agent_name,
                     :group_name, :note ]
 
-    view_headers -= [:agent_name] if Account.current.hide_agent_metrics_feature?
+    view_headers -= [:agent_name] if Account.current.euc_hide_agent_metrics_enabled?
     view_headers.push(:product_name) if Account.current.products.any?
     view_headers.concat(@time_sheet_columns.map(&:to_sym))
     view_headers.push(:hours)
@@ -290,7 +290,7 @@ module Reports::TimesheetReport
       if key == :product_name
         report_columns_arr.push({name:value, id: key, default: true, is_custom: false})  if Account.current.products.any?
       elsif key== [:agent_name]
-        report_columns_arr.push({name:value, id: key, default: true , is_custom: false})  unless Account.current.hide_agent_metrics_feature?
+        report_columns_arr.push({ name: value, id: key, default: true , is_custom: false })  unless Account.current.euc_hide_agent_metrics_enabled?
       else
         report_columns_arr.push({name:value,id: key, default: true, is_custom: false})
       end
@@ -557,7 +557,7 @@ module Reports::TimesheetReport
       :start_date  => start_date,
       :end_date    => end_date,
       :customer_id => (@filter_conditions[:company_id] ||  []),
-      :user_id     => (Account.current.hide_agent_metrics_feature? ? [] : (@filter_conditions[:user_id] || [])),
+      :user_id     => (Account.current.euc_hide_agent_metrics_enabled? ? [] : (@filter_conditions[:user_id] || [])),
       :headers     => list_view_items,
       :billable    => billable_and_non? ? [true, false] : @filter_conditions[:billable].map {|val| val.to_bool},
       :group_id    => @filter_conditions[:group_id] || [],

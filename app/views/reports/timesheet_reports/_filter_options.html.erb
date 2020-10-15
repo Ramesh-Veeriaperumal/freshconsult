@@ -16,7 +16,7 @@
       <label class="control-label"><%=t('helpdesk.time_sheets.customer')%></label>  
 			
 			<%= render_autocomplete({ :selected_values => selected_companies(@customer_id), :type => :companies }) %>
-		<%unless Account.current.hide_agent_metrics_feature? %>
+		<%unless Account.current.euc_hide_agent_metrics_enabled? %>
 			<label class="control-label"><%=t('helpdesk.time_sheets.agent')%></label>
 			<%= select_tag :user_id, 
 							options_for_select(current_account.users.technicians.collect{ |c| [c.name, c.id] },
