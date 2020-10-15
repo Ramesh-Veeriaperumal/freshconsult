@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
     :language, :address, :external_id, :unique_external_id, :perishable_token]
 
   FRESHID_IGNORED_EMAIL_IDS = ["custserv@freshdesk.com"]
-  CONTACT_NAME_SANITIZER_REGEX = /www\..*|\/|"/.freeze
+  CONTACT_NAME_SANITIZER_REGEX = /(http[s]?:\/\/|www\.)[^\s\/$.?#].[^\s]*|(\w+\.\w{1,6}|\w+:\d+)\/|"/.freeze
   CONTACT_COMPANY_PRIVILEGES_SPLIT = [:manage_companies, :delete_company].freeze
   HARD_DELETE_DELAY = 1.minute
 end
