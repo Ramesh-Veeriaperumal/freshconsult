@@ -1588,6 +1588,7 @@ class ConversationsControllerTest < ActionController::TestCase
   def test_ticket_conversations_with_restricted_tweet_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
     CustomRequestStore.store[:private_api_request] = false
+    CustomRequestStore.store[:api_v2_request] = true
     @twitter_handle = get_twitter_handle
     @default_stream = @twitter_handle.default_stream
     ticket = create_twitter_ticket
@@ -1605,11 +1606,13 @@ class ConversationsControllerTest < ActionController::TestCase
     ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
     CustomRequestStore.store[:private_api_request] = true
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_ticket_conversations_with_restricted_twitter_dm_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
     CustomRequestStore.store[:private_api_request] = false
+    CustomRequestStore.store[:api_v2_request] = true
     @twitter_handle = get_twitter_handle
     @default_stream = @twitter_handle.default_stream
     ticket = create_twitter_ticket(tweet_type: 'dm')
@@ -1627,6 +1630,7 @@ class ConversationsControllerTest < ActionController::TestCase
     ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
     CustomRequestStore.store[:private_api_request] = true
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_ticket_conversations_with_unrestricted_tweet_content
@@ -1674,6 +1678,7 @@ class ConversationsControllerTest < ActionController::TestCase
     twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
     User.any_instance.stubs(:twitter_requester_handle_id).returns(twitter_requester_handle_id)
     CustomRequestStore.store[:private_api_request] = false
+    CustomRequestStore.store[:api_v2_request] = true
     @twitter_handle = get_twitter_handle
     @default_stream = @twitter_handle.default_stream
     ticket = create_twitter_ticket(tweet_type: 'dm')
@@ -1692,6 +1697,7 @@ class ConversationsControllerTest < ActionController::TestCase
     User.any_instance.unstub(:twitter_requester_handle_id)
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
     CustomRequestStore.store[:private_api_request] = true
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_reply_with_nil_array_fields

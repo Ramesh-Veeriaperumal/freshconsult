@@ -84,47 +84,29 @@ class ConversationDecorator < ApiDecorator
     )
   end
 
-  def default_body_hash
-    {
-      body: body_html,
-      body_text: body
-    }
-  end
-
   def to_hash
     [to_json, freshcaller_call, tweet_hash, facebook_hash, feedback_hash, requester_hash, threading_info_hash].inject(&:merge)
   end
 
-  def restrict_twitter_content?
+  def restrict_twitter_note_content?
     Account.current.twitter_api_compliance_enabled? && public_v2_api? && incoming && record.tweet.present?
   end
 
-  def twitter_public_api_body_hash(body)
+  def default_twitter_body
+    tweet_type = record.tweet.tweet_type.to_sym
     {
-      body: body,
-      body_text: body
+      body: Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT_HTML[tweet_type],
+      body_text: Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT[tweet_type]
     }
   end
 
   def construct_note_body_hash
-    return default_body_hash unless restrict_twitter_content?
+    return default_twitter_body if restrict_twitter_note_content?
 
-    handle = record.tweet.twitter_handle
-    twitter_user = record.user
-    twitter_requester_handle_id = twitter_user.twitter_requester_handle_id || record.tweet.twitter_handle_id
-    if record.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      tweet_body = "View the tweet at https://twitter.com/#{twitter_requester_handle_id}/status/#{record.tweet.tweet_id}"
-      return twitter_public_api_body_hash(tweet_body)
-    else
-      dm_body_prefix = 'View the message at https://twitter.com/messages'
-      if handle && twitter_user.twitter_requester_handle_id
-        handle_ids = [handle.twitter_user_id.to_i, twitter_requester_handle_id.to_i]
-        dm_body = "#{dm_body_prefix}/#{handle_ids.min}-#{handle_ids.max}"
-      else
-        dm_body = dm_body_prefix
-      end
-      twitter_public_api_body_hash(dm_body)
-    end
+    {
+      body: body_html,
+      body_text: body
+    }
   end
 
   def source_additional_info

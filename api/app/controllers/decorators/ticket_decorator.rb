@@ -96,15 +96,8 @@ class TicketDecorator < ApiDecorator
   end
 
   def description_info
-    return default_description_info unless restrict_twitter_ticket_content?
+    return default_twitter_description if restrict_twitter_ticket_content?
 
-    {
-      description: restricted_twitter_ticket_content,
-      description_text: restricted_twitter_ticket_content
-    }
-  end
-
-  def default_description_info
     ticket_body = record.archive? ? record : record.ticket_body
     {
       description: ticket_body.description_html,
@@ -112,8 +105,16 @@ class TicketDecorator < ApiDecorator
     }
   end
 
+  def default_twitter_description
+    tweet_type = record.tweet.tweet_type.to_sym
+    {
+      description: Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT_HTML[tweet_type],
+      description_text: Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT[tweet_type]
+    }
+  end
+
   def subject_info
-    restrict_twitter_ticket_content? ? restricted_twitter_ticket_content : record.subject
+    restrict_twitter_ticket_content? ? Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT[record.tweet.tweet_type.to_sym] : record.subject
   end
 
   def twitter_ticket?
@@ -122,23 +123,6 @@ class TicketDecorator < ApiDecorator
 
   def restrict_twitter_ticket_content?
     Account.current.twitter_api_compliance_enabled? && twitter_ticket? && public_v2_api?
-  end
-
-  def restricted_twitter_ticket_content
-    handle = record.tweet.twitter_handle
-    twitter_requester = record.requester
-    twitter_requester_handle_id = twitter_requester.twitter_requester_handle_id || record.tweet.twitter_handle_id
-    if record.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      "View the tweet at https://twitter.com/#{twitter_requester_handle_id}/status/#{record.tweet.tweet_id}"
-    else
-      dm_body_prefix = 'View the message at https://twitter.com/messages'
-      if handle && twitter_requester.twitter_requester_handle_id
-        handle_ids = [handle.twitter_user_id.to_i, twitter_requester_handle_id.to_i]
-        "#{dm_body_prefix}/#{handle_ids.min}-#{handle_ids.max}"
-      else
-        dm_body_prefix
-      end
-    end
   end
 
   def description_allowed?
