@@ -13,7 +13,6 @@ class Account < ActiveRecord::Base
   ].freeze
 
   LP_FEATURES = [
-    :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export,
     :falcon_portal_theme, :freshid, :email_new_settings, :kbase_spam_whitelist,
@@ -81,7 +80,7 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :spam_blacklist_feature,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
@@ -100,7 +99,6 @@ class Account < ActiveRecord::Base
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :fb_msg_realtime,
-    :spam_blacklist_feature,
     :kbase_spam_whitelist,
     :supervisor_contact_field,
     :falcon_portal_theme,

@@ -449,7 +449,6 @@
   :call_quality_metrics: false
   :custom_encrypted_fields: false
   :google_signin: true
-  :spam_blacklist_feature: false
   :twitter_signin: true
   :facebook_signin: true
   :id_less_tickets: false
