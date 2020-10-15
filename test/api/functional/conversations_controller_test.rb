@@ -49,7 +49,7 @@ class ConversationsControllerTest < ActionController::TestCase
 
   def note
     @agent.preferences[:agent_preferences][:undo_send] = false
-    Helpdesk::Note.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
+    ticket.notes.where(source: 2, deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
   end
 
   def reply_note_params_hash

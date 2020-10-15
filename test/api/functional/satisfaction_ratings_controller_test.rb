@@ -201,7 +201,7 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
   end
 
   def test_view_all_survey_with_invalid_user_ids
-    get :index, controller_params(user_id: 1000)
+    get :index, controller_params(user_id: Faker::Number.between(1000020, 1000000000))
     assert_response 400
     match_json([bad_request_error_pattern('user_id', :absent_in_db, resource: 'contact', attribute: 'user_id')])
   end
