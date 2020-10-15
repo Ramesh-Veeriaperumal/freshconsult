@@ -2,6 +2,8 @@
 
 class OmniChannelDashboard::Client
   include OmniChannelDashboard::Constants
+  include Redis::OthersRedis
+  include Redis::Keys::Others
 
   def initialize(endpoint, method, jwt_token, timeout = DEFAULT_TIMEOUT)
     @endpoint = endpoint
@@ -15,6 +17,7 @@ class OmniChannelDashboard::Client
     response = fetch_touchstone_response(payload_hash)
     if SUCCESS.include?(response) && !@account.omni_channel_dashboard_enabled?
       @account.launch(:omni_channel_dashboard)
+      @account.launch(:omni_channel_team_dashboard) if redis_key_exists?(OMNI_TEAM_DASHBOARD_ENABLED_ON_SIGNUP)
       Rails.logger.info("Omni Channel Dashboard feature is enabled for A - #{@account.id}.")
     end
   end
