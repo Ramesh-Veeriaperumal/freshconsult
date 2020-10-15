@@ -249,7 +249,7 @@ module TicketConcern
 
       if compose_email?
         ticket_update_params[:status] = ApiTicketConstants::CLOSED unless ticket_update_params.key?(:status)
-        ticket_update_params[:source] = Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email] if ticket_update_params[:source].nil?
+        ticket_update_params[:source] = Helpdesk::Source::OUTBOUND_EMAIL if ticket_update_params[:source].nil?
       end
       ParamsHelper.modify_custom_fields(ticket_update_params[:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
     end

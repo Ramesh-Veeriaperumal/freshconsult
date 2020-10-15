@@ -378,7 +378,7 @@ class Social::TwitterController < Social::BaseController
         },
         :incoming   => false,
         :private    => false,
-        :source     => current_account.helpdesk_sources.ticket_source_keys_by_token[:twitter],
+        :source     => Helpdesk::Source::TWITTER,
         :account_id => current_account.id,
         :user_id    => current_user.id
       )

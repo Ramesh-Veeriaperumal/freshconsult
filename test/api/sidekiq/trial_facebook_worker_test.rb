@@ -17,7 +17,7 @@ class TrialFacebookWorkerTest < ActionView::TestCase
     super
     @account.facebook_pages.destroy_all
     @account.facebook_streams.destroy_all
-    @account.tickets.where(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]).destroy_all
+    @account.tickets.where(source: Helpdesk::Source::FACEBOOK).destroy_all
     Social::FacebookPage.any_instance.unstub(:gateway_facebook_page_mapping_details)
     Account.unstub(:current)
   end

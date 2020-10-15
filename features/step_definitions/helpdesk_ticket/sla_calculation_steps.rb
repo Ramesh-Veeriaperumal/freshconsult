@@ -148,7 +148,7 @@ end
 When(/^I update the ticket's source to "([^"]*)" at "([^"]*)"$/) do |source, time|
   Timecop.freeze(get_datetime(time)) do
     put helpdesk_ticket_path(@ticket), { :helpdesk_ticket => {
-                                            :source => @account.helpdesk_sources.ticket_source_keys_by_token[:"#{source}"],
+                                            :source => Helpdesk::Source.default_ticket_source_keys_by_token[:"#{source}"],
                                             :status => @ticket.status
                                           }
                                         }, @headers

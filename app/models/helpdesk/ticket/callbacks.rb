@@ -135,7 +135,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_default_values
-    self.source       = Account.current.helpdesk_sources.ticket_source_keys_by_token[:portal] if self.source == 0
+    self.source       = Helpdesk::Source::PORTAL if self.source == 0
     self.ticket_type  = nil if self.ticket_type.blank?
 
     self.subject    ||= ''
@@ -191,7 +191,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def save_sentiment
     if Account.current.customer_sentiment_enabled?
      if User.current.nil? || User.current.language.nil? || User.current.language = "en"
-       if [Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat], Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone]].include?(self.source)
+       if [Helpdesk::Source::CHAT, Helpdesk::Source::PHONE].include?(self.source)
          schema_less_ticket.sentiment = 0
          Rails.logger.info "Helpdesk::Ticket::save_sentiment::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
          schema_less_ticket.save
@@ -851,7 +851,7 @@ private
     if can_add_requester?
       portal = self.product.try(:portal)
       detect_language = Account.current.helpdesk_sources.ticket_sources_for_language_detection.include?(self.source) && account.features?(:dynamic_content)
-      language = portal.language if (portal and self.source!= Account.current.helpdesk_sources.ticket_source_keys_by_token[:email] and !detect_language) #Assign languages only for non-email tickets
+      language = portal.language if (portal and self.source != Helpdesk::Source::EMAIL and !detect_language) # Assign languages only for non-email tickets
       requester = account.users.new
       requester.account = account
       requester.signup!({:user => {
@@ -1121,7 +1121,7 @@ private
 
   def update_spam_detection_service
     if (Account.current.proactive_spam_detection_enabled? && @model_changes.include?(:spam) &&
-     self.source.eql?(Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]))
+     self.source.eql?(Helpdesk::Source::EMAIL))
       type = @model_changes[:spam][1] ? :spam : :ham
       SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id,
         :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})

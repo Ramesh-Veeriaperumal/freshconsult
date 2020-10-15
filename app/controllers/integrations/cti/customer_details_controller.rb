@@ -106,7 +106,7 @@ class Integrations::Cti::CustomerDetailsController < ApplicationController
       end
     end
     @ticket = current_account.tickets.build(
-                  :source => current_account.helpdesk_sources.ticket_source_keys_by_token[:phone],
+                  :source => Helpdesk::Source::PHONE,
                   :requester_id => user.id,
                   :subject  => params[:ticket][:subject],
                   :responder_id => current_user.id,

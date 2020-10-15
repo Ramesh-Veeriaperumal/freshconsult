@@ -2881,7 +2881,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_source_as_bot
-    params_hash = { source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot] }
+    params_hash = { source: Helpdesk::Source::BOT }
     put :update, construct_params({ id: ticket.display_id }, params_hash)
     match_json(update_ticket_pattern({}, ticket.reload))
     assert_response 200

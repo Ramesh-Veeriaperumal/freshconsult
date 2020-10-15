@@ -126,7 +126,7 @@ module FacebookTestHelper
     dm_created_at = Time.zone.parse(message[:created_time])
     direct_message_content = message[:message]
     assert_equal ticket.description, direct_message_content 
-    assert_equal ticket.source, Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] 
+    assert_equal ticket.source, Helpdesk::Source::FACEBOOK 
     assert_equal ticket.requester.fb_profile_id, fb_user_id 
     assert_equal ticket.created_at, dm_created_at
   end

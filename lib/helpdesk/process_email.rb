@@ -640,7 +640,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           :bcc_emails => [], :reply_cc => global_cc.dup, :tkt_cc => parse_cc_email },
         :email_config => email_config,
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-        :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
+        :source => Helpdesk::Source::EMAIL
       }
       ticket_params.merge!({
                   :created_at => params[:migration_internal_date].to_time,
@@ -666,7 +666,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def check_for_chat_scources(ticket,from_email)
-      ticket.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
+      ticket.source = Helpdesk::Source::CHAT if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
       if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
         emailreg = Regexp.new(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
         chat_email =  params[:subject].scan(emailreg).uniq[0]

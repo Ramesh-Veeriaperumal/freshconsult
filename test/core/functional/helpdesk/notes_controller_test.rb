@@ -53,14 +53,14 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
 
 
   def test_email_note_customer
-    notification_count ,ticket = create_ticket_add_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["email"], Account.current.helpdesk_sources.note_source_keys_by_token["email"], nil, CUSTOMER_REPLIED_UNIQ_STRING, PUBLIC, CUSTOMER)
+    notification_count ,ticket = create_ticket_add_note(Helpdesk::Source::EMAIL, Account.current.helpdesk_sources.note_source_keys_by_token["email"], nil, CUSTOMER_REPLIED_UNIQ_STRING, PUBLIC, CUSTOMER)
     assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
     assert_equal notification_count + 1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
   end
 
   def test_note_source_email_public
     customer_notification =  Delayed::Job.where(AGENT_REPLIED_STRING).all.count
-    notification_count ,ticket = create_ticket_add_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["email"], Account.current.helpdesk_sources.note_source_keys_by_token["email"], nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT)
+    notification_count ,ticket = create_ticket_add_note(Helpdesk::Source::EMAIL, Account.current.helpdesk_sources.note_source_keys_by_token["email"], nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT)
     assert_equal Helpdesk::Ticketfields::TicketStatus::RESOLVED, ticket.status
     assert_equal notification_count , Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
     assert_equal customer_notification+1, Delayed::Job.where(AGENT_REPLIED_STRING).all.count
@@ -68,7 +68,7 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
 
   def test_email_note_agent_private
     agent_notification =  Delayed::Job.where(AGENT_NOTE_ADDED_UNIQ_STRING).all.count
-    notification_count ,ticket = create_ticket_add_agent_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["email"], Account.current.helpdesk_sources.note_source_keys_by_token["note"], nil, COMMENT_ADDED_UNIQ_STRING, PRIVATE, AGENT)
+    notification_count ,ticket = create_ticket_add_agent_note(Helpdesk::Source::EMAIL, Account.current.helpdesk_sources.note_source_keys_by_token["note"], nil, COMMENT_ADDED_UNIQ_STRING, PRIVATE, AGENT)
     assert_equal Helpdesk::Ticketfields::TicketStatus::RESOLVED, ticket.status
     assert_equal notification_count, Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
     assert_equal agent_notification+1, Delayed::Job.where(AGENT_NOTE_ADDED_UNIQ_STRING).all.count
@@ -76,7 +76,7 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
 
   def test_email_note_agent_public
     customer_notification =  Delayed::Job.where(AGENT_REPLIED_STRING).all.count
-    notification_count ,ticket = create_ticket_add_agent_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["email"], Account.current.helpdesk_sources.note_source_keys_by_token["note"], nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT)
+    notification_count ,ticket = create_ticket_add_agent_note(Helpdesk::Source::EMAIL, Account.current.helpdesk_sources.note_source_keys_by_token["note"], nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT)
     assert_equal Helpdesk::Ticketfields::TicketStatus::RESOLVED, ticket.status
     assert_equal notification_count, Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
     assert_equal customer_notification, Delayed::Job.where(AGENT_REPLIED_STRING).all.count
@@ -84,7 +84,7 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
 
   def test_note_source_email_public_agent_as_requestor
     customer_notification =  Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
-    notification_count ,ticket = create_ticket_add_agent_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["email"], Account.current.helpdesk_sources.note_source_keys_by_token["email"], nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT, true)
+    notification_count ,ticket = create_ticket_add_agent_note(Helpdesk::Source::EMAIL, Account.current.helpdesk_sources.note_source_keys_by_token["email"], nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT, true)
     assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
     assert_equal notification_count , Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
     assert_equal customer_notification+1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
@@ -92,34 +92,34 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
 
   def test_note_source_note_public_agent_as_requestor
     customer_notification =  Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
-    notification_count ,ticket = create_ticket_add_agent_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["email"], Account.current.helpdesk_sources.note_source_keys_by_token["note"], nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT, true)
+    notification_count ,ticket = create_ticket_add_agent_note(Helpdesk::Source::EMAIL, Account.current.helpdesk_sources.note_source_keys_by_token["note"], nil, COMMENT_ADDED_UNIQ_STRING, PUBLIC, AGENT, true)
     assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
     assert_equal notification_count , Delayed::Job.where(COMMENT_ADDED_UNIQ_STRING).all.count
     assert_equal customer_notification+1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
   end
 
   def test_feedback_note_customer
-    notification_count ,ticket = create_ticket_add_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["email"], Account.current.helpdesk_sources.note_source_keys_by_token["feedback"], nil, CUSTOMER_REPLIED_UNIQ_STRING, PUBLIC, CUSTOMER)
+    notification_count ,ticket = create_ticket_add_note(Helpdesk::Source::EMAIL, Account.current.helpdesk_sources.note_source_keys_by_token["feedback"], nil, CUSTOMER_REPLIED_UNIQ_STRING, PUBLIC, CUSTOMER)
     assert_equal Helpdesk::Ticketfields::TicketStatus::RESOLVED, ticket.status
     assert_equal notification_count + 1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
   end
 
   def test_public_note_email_status_change_customer
-    notification_count ,ticket = create_ticket_add_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["email"], Account.current.helpdesk_sources.note_source_keys_by_token["email"], nil,
+    notification_count ,ticket = create_ticket_add_note(Helpdesk::Source::EMAIL, Account.current.helpdesk_sources.note_source_keys_by_token["email"], nil,
                                                         CUSTOMER_REPLIED_UNIQ_STRING, PUBLIC, CUSTOMER)
     assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
     assert_equal notification_count + 1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
   end
 
   def test_private_note_contact_twitter_status_change_customer
-    notification_count ,ticket = create_ticket_add_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["twitter"], Account.current.helpdesk_sources.note_source_keys_by_token["twitter"], nil,
+    notification_count ,ticket = create_ticket_add_note(Helpdesk::Source::TWITTER, Account.current.helpdesk_sources.note_source_keys_by_token["twitter"], nil,
                                                         CUSTOMER_REPLIED_UNIQ_STRING, PRIVATE, CUSTOMER)
     assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
     assert_equal notification_count + 1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count
   end
 
   def test_private_note_contact_facebook_status_change_customer
-    notification_count ,ticket = create_ticket_add_note(Account.current.helpdesk_sources.ticket_source_keys_by_token["facebook"], Account.current.helpdesk_sources.note_source_keys_by_token["facebook"], nil,
+    notification_count ,ticket = create_ticket_add_note(Helpdesk::Source::FACEBOOK, Account.current.helpdesk_sources.note_source_keys_by_token["facebook"], nil,
                                                         CUSTOMER_REPLIED_UNIQ_STRING, PRIVATE, CUSTOMER)
     assert_equal Helpdesk::Ticketfields::TicketStatus::OPEN, ticket.status
     assert_equal notification_count + 1, Delayed::Job.where(CUSTOMER_REPLIED_UNIQ_STRING).all.count

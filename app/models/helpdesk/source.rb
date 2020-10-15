@@ -5,16 +5,8 @@ class Helpdesk::Source < Helpdesk::Choice
 
   serialize :meta, HashWithIndifferentAccess
 
-  SOURCE_FORMATTER = {
-    all_ids: proc { source_from.map(&:account_choice_id) },
-    keys_by_token: proc { source_from.map { |choice| [choice.try(:[], :from_constant) ? choice.translated_name : choice.translated_source_name(translation_record_from_ticket_fields), choice.account_choice_id] } },
-    token_by_keys: proc { Hash[*source_from.map { |choice| [choice.account_choice_id, choice.default ? SOURCE_TOKENS_BY_KEY[choice.account_choice_id] : choice.name] }.flatten] }
-  }.freeze
-
-  private_constant :SOURCE_FORMATTER
-
   class << self
-    def ticket_source_keys_by_token
+    def default_ticket_source_keys_by_token
       if Account.current && Account.current.launched?(:whatsapp_ticket_source)
         SOURCE_KEYS_BY_TOKEN
       else
@@ -31,7 +23,7 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def ticket_sources_for_language_detection
-      [ticket_source_keys_by_token[:portal], ticket_source_keys_by_token[:feedback_widget]]
+      [PORTAL, FEEDBACK_WIDGET]
     end
 
     def note_sources
@@ -43,27 +35,24 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def ticket_note_source_mapping
+      note_sources = note_source_keys_by_token
       ret_hash = {
-        ticket_source_keys_by_token[:email] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:portal] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:phone] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:forum] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:twitter] => note_source_keys_by_token['twitter'],
-        ticket_source_keys_by_token[:facebook] => note_source_keys_by_token['facebook'],
-        ticket_source_keys_by_token[:chat] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:bot] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:mobihelp] => note_source_keys_by_token['mobihelp'],
-        ticket_source_keys_by_token[:feedback_widget] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:outbound_email] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:ecommerce] => note_source_keys_by_token['ecommerce'],
-        ticket_source_keys_by_token[:canned_form] => note_source_keys_by_token['canned_form']
+        EMAIL => note_sources['email'],
+        PORTAL => note_sources['email'],
+        PHONE => note_sources['email'],
+        FORUM => note_sources['email'],
+        TWITTER => note_sources['twitter'],
+        FACEBOOK => note_sources['facebook'],
+        CHAT => note_sources['email'],
+        BOT => note_sources['email'],
+        MOBIHELP => note_sources['mobihelp'],
+        FEEDBACK_WIDGET => note_sources['email'],
+        OUTBOUND_EMAIL => note_sources['email'],
+        ECOMMERCE => note_sources['ecommerce'],
+        nil => note_sources['canned_form']
       }
-      ret_hash[ticket_source_keys_by_token[:whatsapp]] = note_source_keys_by_token['whatsapp'] if ticket_source_keys_by_token[:whatsapp].present?
+      ret_hash[WHATSAPP] = note_sources['whatsapp'] if default_ticket_source_keys_by_token[:whatsapp].present?
       ret_hash
-    end
-
-    def ticket_bot_source
-      ticket_source_keys_by_token[:bot]
     end
 
     def note_source_names_by_key
@@ -72,7 +61,7 @@ class Helpdesk::Source < Helpdesk::Choice
 
     def note_activities_hash
       {
-        ticket_source_keys_by_token[:twitter] => 'twitter',
+        TWITTER => 'twitter',
         note_source_keys_by_token['ecommerce'] => 'ecommerce'
       }
     end
@@ -81,7 +70,7 @@ class Helpdesk::Source < Helpdesk::Choice
       if revamp_enabled?
         visible_sources.map(&:account_choice_id) - API_CREATE_EXCLUDED_VALUES
       else
-        ticket_source_keys_by_token.slice(:email, :portal, :phone, :twitter, :facebook, :chat, :mobihelp, :feedback_widget, :ecommerce).values
+        default_ticket_source_keys_by_token.slice(:email, :portal, :phone, :twitter, :facebook, :chat, :mobihelp, :feedback_widget, :ecommerce).values
       end
     end
 
@@ -98,12 +87,13 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def note_blacklisted_thank_you_detector_note_sources
+      note_sources = note_source_keys_by_token
       [
-        note_source_keys_by_token['feedback'],
-        note_source_keys_by_token['meta'],
-        note_source_keys_by_token['summary'],
-        note_source_keys_by_token['automation_rule_forward'],
-        note_source_keys_by_token['automation_rule']
+        note_sources['feedback'],
+        note_sources['meta'],
+        note_sources['summary'],
+        note_sources['automation_rule_forward'],
+        note_sources['automation_rule']
       ]
     end
 
@@ -116,22 +106,23 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def archive_note_ticket_note_source_mapping
+      note_sources = note_source_keys_by_token
       {
-        ticket_source_keys_by_token[:email] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:portal] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:phone] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:forum] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:twitter] => note_source_keys_by_token['twitter'],
-        ticket_source_keys_by_token[:facebook] => note_source_keys_by_token['facebook'],
-        ticket_source_keys_by_token[:chat] => note_source_keys_by_token['email'],
-        ticket_source_keys_by_token[:mobihelp] => note_source_keys_by_token['mobihelp'],
-        ticket_source_keys_by_token[:feedback_widget] => note_source_keys_by_token['email']
+        EMAIL => note_sources['email'],
+        PORTAL => note_sources['email'],
+        PHONE => note_sources['email'],
+        FORUM => note_sources['email'],
+        TWITTER => note_sources['twitter'],
+        FACEBOOK => note_sources['facebook'],
+        CHAT => note_sources['email'],
+        MOBIHELP => note_sources['mobihelp'],
+        FEEDBACK_WIDGET => note_sources['email']
       }
     end
 
     def archive_note_activities_hash
       {
-        ticket_source_keys_by_token[:twitter] => 'twitter'
+        TWITTER => 'twitter'
       }
     end
 

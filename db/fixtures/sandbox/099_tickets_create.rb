@@ -42,7 +42,7 @@ fixtures_data.each do |data|
         s.subject     = data[:subject] #I18
         s.email       = requester.email
         s.status      = Helpdesk::TicketStatus::DEFAULT_STATUSES.keys.sample
-        s.source      = account.helpdesk_sources.ticket_source_keys_by_token.keys.sample
+        s.source      = Helpdesk::Source.default_ticket_source_keys_by_token.keys.sample
         s.priority    = TicketConstants::PRIORITY_KEYS_BY_TOKEN.keys.sample
         s.disable_observer_rule   = true
         s.ticket_body_attributes  = {:description => data[:description], :description_html => data[:description_html] }

@@ -65,7 +65,7 @@ class TopicObserver < ActiveRecord::Observer
         :description => topic.posts.first.body,
         :description_html => topic.posts.first.body_html
       },
-      :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:forum]
+      :source => Helpdesk::Source::FORUM
     }
     ticket = topic.account.tickets.build(ticket_params)
     ticket.build_ticket_topic(:topic_id => topic.id)

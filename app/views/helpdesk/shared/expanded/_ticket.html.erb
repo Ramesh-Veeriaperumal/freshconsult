@@ -87,7 +87,7 @@
 	</td>
 
   <td class="source-icon hideForList">
-		<div class="status-source source-detailed-<%= Account.current.helpdesk_sources.default_ticket_source_token_by_key[ticket.source].to_s %> hideForList"
+		<div class="status-source source-detailed-<%= Helpdesk::Source.default_ticket_source_token_by_key[ticket.source].to_s %> hideForList"
 	  		title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>">  
 	  </div>
   </td>

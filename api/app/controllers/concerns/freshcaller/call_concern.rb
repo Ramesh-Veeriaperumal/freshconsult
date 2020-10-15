@@ -11,7 +11,7 @@ module Freshcaller::CallConcern
   include Search::V2::AbstractController
 
   def ticket_params
-    params_hash = { source: current_account.helpdesk_sources.ticket_source_keys_by_token[:phone],
+    params_hash = { source: Helpdesk::Source::PHONE,
                     subject: ticket_title,
                     phone: @options[:customer_number],
                     name: @options[:customer_number],

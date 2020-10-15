@@ -1045,7 +1045,7 @@ module Ember
       assert_response 201
       latest_ticket = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(latest_ticket))
-      assert latest_ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone]
+      assert latest_ticket.source == Helpdesk::Source::PHONE
     end
 
     def test_create_with_attachment_and_attachment_ids
@@ -2282,7 +2282,7 @@ module Ember
     end
 
     def test_split_note_with_outbound_email_reply
-      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email])
+      ticket = create_ticket(source: Helpdesk::Source::OUTBOUND_EMAIL)
       reply = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:email]))
       put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
       assert_response 200
@@ -2294,7 +2294,7 @@ module Ember
         initialize_internal_agent_with_default_internal_group
         group_restricted_agent = add_agent_to_group(group_id = @internal_group.id,
                                                     ticket_permission = 2, role_id = @account.roles.first.id)
-        ticket = create_ticket({ status: @status.status_id, source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email], internal_agent_id: @internal_agent.id }, nil, @internal_group)
+        ticket = create_ticket({ status: @status.status_id, source: Helpdesk::Source::OUTBOUND_EMAIL, internal_agent_id: @internal_agent.id }, nil, @internal_group)
         login_as(@internal_agent)
         reply = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:email]))
         put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
@@ -2321,7 +2321,7 @@ module Ember
       user = add_new_user_without_email(@account)
       params_hash = {
         requester_id: user.id,
-        source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone]
+        source: Helpdesk::Source::PHONE
       }
       ticket = create_ticket(params_hash)
       note = create_normal_reply_for(ticket)
@@ -2449,7 +2449,7 @@ module Ember
     end
 
     def test_update_properties_with_subject_description_requester_source_phone
-      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone])
+      ticket = create_ticket(source: Helpdesk::Source::PHONE)
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       user = add_new_user(@account)
@@ -2476,7 +2476,7 @@ module Ember
     end
 
     def test_update_properties_with_subject_description_requester_source_email
-      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:email])
+      ticket = create_ticket(source: Helpdesk::Source::EMAIL)
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       user = add_new_user(@account)
@@ -5150,7 +5150,7 @@ module Ember
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       t = @account.tickets.last
       match_json(ticket_show_pattern(t))
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
     end
 
@@ -5164,7 +5164,7 @@ module Ember
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       t = @account.tickets.last
       match_json(ticket_show_pattern(t))
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
     end
 
@@ -5190,7 +5190,7 @@ module Ember
       match_json(ticket_show_pattern(t))
       assert_equal t.group_id, agent_group.group_id
       assert_equal nil, t.responder_id
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
     ensure
       Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
@@ -5208,7 +5208,7 @@ module Ember
       match_json(ticket_show_pattern(t))
       assert_equal t.group_id, agent_group.group_id
       assert_equal t.responder_id, agent_group.user_id
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
     ensure
       Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
@@ -5333,7 +5333,7 @@ module Ember
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
       @account.email_configs.find(email_config.id).destroy
       update_params = { status: 5, email: agent.email }
@@ -6930,9 +6930,8 @@ module Ember
 
     def test_channel_ticket_show
       Account.stubs(:current).returns(Account.first)
-      whatsapp_as_source = Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2]
       ticket = create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
-                             channel_message_id: 'sdl892dk', source: whatsapp_as_source)
+                             channel_message_id: 'sdl892dk', source: Helpdesk::Source::WHATSAPP)
       get :show, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(ticket_show_pattern(ticket))

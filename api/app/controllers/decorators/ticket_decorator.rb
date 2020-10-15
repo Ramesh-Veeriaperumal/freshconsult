@@ -118,7 +118,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def twitter_ticket?
-    record.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && record.tweet
+    record.source == Helpdesk::Source::TWITTER && record.tweet
   end
 
   def restrict_twitter_ticket_content?
@@ -410,8 +410,8 @@ class TicketDecorator < ApiDecorator
     # response_hash[:meta] = meta
     response_hash[:collaboration] = collaboration_hash if include_collab?
     response_hash[:meta][:secret_id] = generate_secret_id if Account.current.agent_collision_revamp_enabled?
-    response_hash[:social_additional_info] = { tweet_type: record.tweet_type } if source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && response_hash[:tweet].blank?
-    response_hash[:social_additional_info] = { fb_msg_type: record.fb_msg_type } if source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] && response_hash[:fb_post].blank?
+    response_hash[:social_additional_info] = { tweet_type: record.tweet_type } if source == Helpdesk::Source::TWITTER && response_hash[:tweet].blank?
+    response_hash[:social_additional_info] = { fb_msg_type: record.fb_msg_type } if source == Helpdesk::Source::FACEBOOK && response_hash[:fb_post].blank?
     response_hash[:channel_info] = channel_info_hash if channel_id.present?
     response_hash
   end

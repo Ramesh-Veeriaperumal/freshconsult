@@ -142,7 +142,7 @@ module Proactive
       def set_default_values
         if email_action?
           @email_action_params[:status] = ApiTicketConstants::CLOSED unless @email_action_params.key?(:status)
-          @email_action_params[:source] =  current_account.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+          @email_action_params[:source] = Helpdesk::Source::OUTBOUND_EMAIL
         end
         ParamsHelper.modify_custom_fields(@email_action_params[:custom_fields], @name_mapping.invert) # Using map instead of invert does not show any perf improvement.
       end

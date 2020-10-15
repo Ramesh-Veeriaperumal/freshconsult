@@ -89,7 +89,7 @@ module Facebook
             requester:          requester,
             product_id:         @fan_page.product_id,
             group_id:           group_id,
-            source:             Helpdesk::Source.ticket_source_keys_by_token[:facebook],
+            source:             Helpdesk::Source::FACEBOOK,
             created_at:         Time.zone.parse(first_message_from_customer[:created_time]),
             fb_post_attributes: {
               post_id:          first_message_from_customer[:id],

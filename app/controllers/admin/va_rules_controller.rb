@@ -451,7 +451,7 @@ class Admin::VaRulesController < Admin::AdminController
     def source_choices
       # Since we don't enqueue the ticket in Dispatchr when the ticket is created through Outbound email, there is no need to show the option 'Outbound email' for 'Ticket Source' in the Dispatchr's Create/Edit page
       va_rules_controller? ? 
-        TicketConstants.source_list.except(current_account.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]) :
+        TicketConstants.source_list.except(Helpdesk::Source::OUTBOUND_EMAIL) :
                 TicketConstants.source_list
     end
 

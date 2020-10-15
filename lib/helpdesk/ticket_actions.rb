@@ -55,7 +55,7 @@ module Helpdesk::TicketActions
 
   def set_default_values
     @ticket.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(current_account).key?(@ticket.status) or @ticket.ticket_status.try(:deleted?))
-    @ticket.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:portal] if @ticket.source == 0
+    @ticket.source = Helpdesk::Source::PORTAL if @ticket.source == 0
     if current_user
       if !current_account.features_included?(:prevent_ticket_creation_for_others) || current_account.has_feature?(:anonymous_tickets)
         @ticket.email ||= current_user.email

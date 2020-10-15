@@ -430,15 +430,15 @@ module TicketConstants
   end
 
   def self.source_list
-    Hash[*Account.current.helpdesk_sources.default_ticket_sources.map { |i| [i[2], I18n.t(i[1])] }.flatten]
+    Hash[*Helpdesk::Source.default_ticket_sources.map { |i| [i[2], I18n.t(i[1])] }.flatten]
   end
 
   def self.source_names
-    Account.current.helpdesk_sources.default_ticket_sources.map { |i| [I18n.t(i[1]), i[2]] }
+    Helpdesk::Source.default_ticket_sources.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
   def self.source_token(key)
-    Account.current.helpdesk_sources.default_ticket_source_token_by_key[key]
+    Helpdesk::Source.default_ticket_source_token_by_key[key]
   end
 
   def self.due_by_list
@@ -500,7 +500,7 @@ module TicketConstants
   end
 
   def self.readable_source_names_by_key
-    Hash[*Account.current.helpdesk_sources.default_ticket_sources.map { |i| [i[2].to_s, I18n.t(i[1])] }.flatten]
+    Hash[*Helpdesk::Source.default_ticket_sources.map { |i| [i[2].to_s, I18n.t(i[1])] }.flatten]
   end
 
   def self.archive_date_options

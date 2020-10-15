@@ -77,7 +77,7 @@ module SplitNoteHelper
 
   def ticket_params
     company_id = @note.user.companies.map(&:id).include?(@item.company_id) ? @item.company_id : @note.user.company_id
-    source = @item.source ==  Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email] ?  Account.current.helpdesk_sources.ticket_source_keys_by_token[:email] : @item.source
+    source = @item.source == Helpdesk::Source::OUTBOUND_EMAIL ? Helpdesk::Source::EMAIL : @item.source
     {
       subject: @item.subject,
       email: @note.user.email,

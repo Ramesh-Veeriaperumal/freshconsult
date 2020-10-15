@@ -15,7 +15,7 @@ module Channel::V2
     end
 
     def facebook_ticket?
-      Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] == self.source
+      Helpdesk::Source::FACEBOOK == self.source
     end
 
     def twitter_handle_presence
@@ -25,7 +25,7 @@ module Channel::V2
     end
 
     def twitter_ticket?
-      Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] == self.source
+      Helpdesk::Source::TWITTER == self.source
     end
   end
 end

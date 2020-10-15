@@ -44,7 +44,7 @@ module EmailCommands
 
   def source(ticket, value, user, note)
     value.downcase!
-    ticket.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[value.to_sym] unless Account.current.helpdesk_sources.ticket_source_keys_by_token[value.to_sym].blank?    
+    ticket.source = Helpdesk::Source.default_ticket_source_keys_by_token[value.to_sym] if Helpdesk::Source.default_ticket_source_keys_by_token[value.to_sym].present?
   end
 
   def type(ticket, value, user, note)

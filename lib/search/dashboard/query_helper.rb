@@ -266,7 +266,7 @@ module Search::Dashboard::QueryHelper
   end
 
   def fr_due_conditions
-    " AND (#{transform_filter('source', Account.current.helpdesk_sources.ticket_source_keys_by_token.except(:outbound_email).values)}) AND agent_responded_at:null"
+    " AND (#{transform_filter('source', Helpdesk::Source.default_ticket_source_keys_by_token.except(:outbound_email).values)}) AND agent_responded_at:null"
   end
 
   def minimum_required_due_condition(conditions)

@@ -208,7 +208,7 @@ module Channel
           ticket = @account.tickets.last
           assert_response 201
           validate_bot_ticket_data ticket, params[:bot_external_id], params[:query_id], params[:conversation_id]
-          assert_equal Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot], ticket.source
+          assert_equal Helpdesk::Source::BOT, ticket.source
         end
       end
 
@@ -224,14 +224,14 @@ module Channel
           assert_response 201
           validate_bot_ticket_data ticket, params[:bot_external_id], params[:query_id], params[:conversation_id]
           assert_equal product.id, ticket.product_id
-          assert_equal Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot], ticket.source
+          assert_equal Helpdesk::Source::BOT, ticket.source
         end
       end
 
       def test_create_with_source
         enable_bot_feature do
           set_jwe_auth_header(SUPPORT_BOT)
-          params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b', source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot] }
+          params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b', source: Helpdesk::Source::BOT }
           post :create, construct_params({version: 'channel'}, params)
           assert_response 400
           match_json([bad_request_error_pattern('source', :invalid_field)])

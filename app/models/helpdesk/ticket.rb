@@ -244,7 +244,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     where(["frDueBy <=? AND fr_escalated=? AND status IN (?) AND
       helpdesk_ticket_states.first_response_time IS ? AND source != ?",
       due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil,
-      Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]])
+      Helpdesk::Source::OUTBOUND_EMAIL])
   }
 
   scope :response_reminder, -> (sla_rule_ids) {
@@ -261,7 +261,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     where(['due_by <=? AND isescalated=? AND status IN (?) AND source != ?',
                 due_by,false, 
                 Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
-                Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]])
+                Helpdesk::Source::OUTBOUND_EMAIL])
   }
 
   scope :resolution_reminder, -> (sla_rule_ids) {
@@ -277,7 +277,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     select('helpdesk_tickets.*').
     where(["nr_due_by <=? AND nr_escalated=? AND status IN (?) AND source != ?",
                             due_by,false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),
-                            Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]])
+                            Helpdesk::Source::OUTBOUND_EMAIL])
   }
 
   scope :next_response_reminder, ->(sla_rule_ids) {
@@ -455,11 +455,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def twitter?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] and (tweet) and (tweet.twitter_handle)
+    source == Helpdesk::Source::TWITTER and (tweet) and (tweet.twitter_handle)
   end
 
   def email?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
+    source == Helpdesk::Source::EMAIL
   end
 
   def show_facebook_reply?
@@ -471,7 +471,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def facebook?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] && fb_post.present? && fb_post.facebook_page.present?
+    source == Helpdesk::Source::FACEBOOK && fb_post.present? && fb_post.facebook_page.present?
   end
 
   def facebook_realtime_message?
@@ -480,15 +480,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #This is for mobile app since it expects twitter handle & facebook page and not a boolean value
   def is_twitter
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] ? (tweet and tweet.twitter_handle) : nil
+    source == Helpdesk::Source::TWITTER ? (tweet and tweet.twitter_handle) : nil
   end
 
   def is_facebook
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] ? (fb_post and fb_post.facebook_page) : nil
+    source == Helpdesk::Source::FACEBOOK ? (fb_post and fb_post.facebook_page) : nil
   end
 
   def bot?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot]
+    source == Helpdesk::Source::BOT
   end
   alias :is_bot :bot?
 
@@ -510,11 +510,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def mobihelp?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:mobihelp]
+    source == Helpdesk::Source::MOBIHELP
   end
 
   def outbound_email?
-    (source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]) && Account.current.compose_email_enabled?
+    (source == Helpdesk::Source::OUTBOUND_EMAIL) && Account.current.compose_email_enabled?
   end
 
   def parent_ticket?
@@ -628,7 +628,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def source=(val)
-    self[:source] = Account.current.helpdesk_sources.ticket_source_keys_by_token[val] || val
+    Rails.logger.debug "Ticket Source value :: #{val}"
+    self[:source] = Helpdesk::Source.default_ticket_source_keys_by_token[val] || val
   end
 
   def source_name
@@ -644,7 +645,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def chat?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat]
+    source == Helpdesk::Source::CHAT
   end
 
   def requester_info
@@ -1184,7 +1185,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   #Ecommerce methods
   def ecommerce?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:ecommerce] && self.ebay_question.present?
+    source == Helpdesk::Source::ECOMMERCE && self.ebay_question.present?
   end
 
   def allow_ecommerce_reply?

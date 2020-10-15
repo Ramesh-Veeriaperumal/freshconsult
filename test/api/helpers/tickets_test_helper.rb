@@ -365,7 +365,7 @@ module ApiTicketsTestHelper
   end
 
   def twitter_ticket?(ticket)
-    ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && ticket.tweet
+    ticket.source == Helpdesk::Source::TWITTER && ticket.tweet
   end
 
   def restrict_twitter_ticket_content?(ticket)
@@ -578,7 +578,7 @@ module ApiTicketsTestHelper
       },
       incoming: true,
       user_id:  ticket.requester.id,
-      source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]
+      source: Helpdesk::Source::TWITTER
     }
   end
 
@@ -1475,7 +1475,7 @@ module ApiTicketsTestHelper
     ebay_account = @account.ebay_accounts.new(name: Faker::Lorem.characters(10), configs: {}, status: 2, reauth_required: false)
     ebay_account.external_account_id = Faker::Number.number(10)
     ebay_account.save
-    ecommerce_ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:ecommerce])
+    ecommerce_ticket = create_ticket(source: Helpdesk::Source::ECOMMERCE)
     ecommerce_ticket.requester.external_id = 'bssmb_us_03'
     ecommerce_ticket.requester.save
     ecommerce_ticket.build_ebay_question(user_id: ecommerce_ticket.requester.id, item_id: Faker::Number.number(10).to_s, ebay_account_id: ebay_account.id, account_id: @account.id, message_id: Faker::Number.number(10).to_s)

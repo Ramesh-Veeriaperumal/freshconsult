@@ -55,14 +55,13 @@ module Channel::V2
     end
 
     def sources
-      ticket_source_keys_by_token = Account.current.helpdesk_sources.ticket_source_keys_by_token
-      ticket_sources = super | [ticket_source_keys_by_token[:facebook], ticket_source_keys_by_token[:twitter]]
-      ticket_sources << ticket_source_keys_by_token[:whatsapp] if Account.current.launched?(:whatsapp_ticket_source)
+      ticket_sources = super | [Helpdesk::Source::FACEBOOK, Helpdesk::Source::TWITTER]
+      ticket_sources << Helpdesk::Source::WHATSAPP if Account.current.launched?(:whatsapp_ticket_source)
       ticket_sources
     end
 
     def facebook_ticket?
-      Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] == source
+      Helpdesk::Source::FACEBOOK == source
     end
 
     def facebook_hash_presence?
@@ -114,7 +113,7 @@ module Channel::V2
     end
 
     def twitter_ticket?
-      Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] == source
+      Helpdesk::Source::TWITTER == source
     end
 
     def twitter_hash_presence?

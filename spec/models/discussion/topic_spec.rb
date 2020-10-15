@@ -208,7 +208,7 @@ describe Topic do
 			@topic.ticket.subject.should eql @topic.title
         	@topic.ticket.description.should eql @topic.posts.first.body
     		@topic.ticket.requester.should eql @topic.user
-    		@topic.ticket.source.should eql Account.current.helpdesk_sources.ticket_source_keys_by_token[:forum]
+    		@topic.ticket.source.should eql Helpdesk::Source::FORUM
 		end
 
 		it "Should NOT create a ticket if the user is an agent and if 'convert_to_ticket' is set for the forum" do
