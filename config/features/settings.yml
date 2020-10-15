@@ -1,4 +1,12 @@
 settings:
+  :es_v2_splqueries:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
+  :force_index_tickets:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :skip_portal_cname_chk:
     default: false
     internal: true

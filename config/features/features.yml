@@ -489,6 +489,4 @@
   :supervisor_contact_field: false
   :sidekiq_logs_to_central: false
   :fb_msg_realtime: false
-  :force_index_tickets: false
-  :es_v2_splqueries: false
   :csat_email_scan_compatibility: false
