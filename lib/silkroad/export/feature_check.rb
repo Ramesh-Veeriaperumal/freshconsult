@@ -7,11 +7,16 @@ module Silkroad
 
       def send_to_silkroad?(export_params)
         export_params = export_params.deep_symbolize_keys
-        check_account_and_user_features &&
+        check_export_type(export_params) &&
+          check_account_and_user_features &&
           check_ticket_fields(export_params[:ticket_fields]) &&
           check_filter_conditions(export_params[:data_hash]) &&
           check_contacts_and_company_fields(export_params[:contact_fields], export_params[:company_fields]) &&
           check_default_time_format
+      end
+
+      def check_export_type(export_params)
+        !export_params.key?(:archived_tickets)
       end
 
       def check_account_and_user_features

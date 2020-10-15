@@ -1609,7 +1609,7 @@
         "jwt_secret": "EJ[1:GjARK2Af/FBiJAa6HfIiOWSHRTMHSepbwg0aye/OrBQ=:RG8tn/37eaWJnIQpQ7YnDy9eyqVBfiGx:XthPTNKpb+arlLRnoBc89ZfbrjK/r78JQ5Ctb0/hWs7xZ7f3juhOQAnC5z++rjgU]"
       },
       "silkroad_config": {
-        "_host": "https://silkroad-service.internal.podapsoutheast2.freshdesk.com/",
+        "_host": "https://silkroad-service-aus.freshdesk.com/",
         "_timeout": 10
       }
     },

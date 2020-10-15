@@ -1721,7 +1721,7 @@
         "jwt_secret": "EJ[1:vQXuAL5tBrqTKdx8vzi8fHhWOTRpIJhLkY+b2bCrjBQ=:zDzrFufhp1lk2g2iGr0dOVXTYNxNB84F:Md6gUGBcZMF7TwkX9GixtfYPADuk3MD7HD4w95ruHc8dCywnENRtgojCco6DInt2]"
       },
       "silkroad_config": {
-        "_host": "https://silkroad-service.internal.podeucentral1.freshdesk.com/",
+        "_host": "https://silkroad-service-euc.freshdesk.com/",
         "_timeout": 10
       }
     },

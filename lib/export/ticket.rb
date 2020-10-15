@@ -30,13 +30,13 @@ class Export::Ticket < Struct.new(:export_params)
         send_no_ticket_email
       else
         upload_file(@file_path)
+        DataExportMailer.send_email(:ticket_export, email_params[:user], email_params)
         if send_to_silkroad?(export_params)
           Rails.logger.info 'Silkroad Shadow Mode Started'
           silkroad_params = export_params.merge(helpkit_export_id: @data_export.id)
           silkroad_data_export = Silkroad::Export::Ticket.new.create_job(silkroad_params)
           custom_export_logger.info logging_format(silkroad_data_export) if silkroad_data_export && custom_export_logger.present?
         end
-        DataExportMailer.send_email(:ticket_export, email_params[:user], email_params)
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
