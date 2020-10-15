@@ -853,11 +853,31 @@ class Subscription < ActiveRecord::Base
       end
     end
 
+    def add_addons(params)
+      addons_to_be_added = []
+      params['addons']['add'].each do |new_addon|
+        addons_to_be_added.push(*Subscription::Addon.where(name: new_addon['name']))
+      end
+      addons_to_be_added
+    end
+
+    def delete_addons(params)
+      addons_to_be_deleted = []
+      params['addons']['remove'].each do |deleted_addon|
+        addons_to_be_deleted.push(*Subscription::Addon.where(name: deleted_addon['name']))
+      end
+      addons_to_be_deleted
+    end
+
     def save_subscription(params)
       self.renewal_period = params[:renewal_period] if params[:renewal_period].present?
       self.agent_limit = params[:agent_seats] if params[:agent_seats]
       # If in future when we get the addon params in this subscription api, we have to handle the addons
       updated_addons = update_billing_based_addon(self.addons, self.renewal_period) || self.addons
+      if account.launched?(:whatsapp_addon) && params['addons'].present?
+        updated_addons.push(add_addons(params))
+        updated_addons.delete(delete_addons(params))
+      end
       if params[:plan_id].present? && params[:plan_id] != plan_id
         new_plan = SubscriptionPlan.current.find_by_id(params[:plan_id])
         self.plan = new_plan

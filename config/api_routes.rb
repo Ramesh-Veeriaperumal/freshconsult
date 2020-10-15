@@ -1036,6 +1036,7 @@ Helpkit::Application.routes.draw do
       end
     end
     post '/iam/token', to: 'channel/v2/iam/authentication#iam_authenticate_token'
+    put '/subscription', to: 'channel/v2/subscriptions#update'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index, :update]
     resources :fbms, controller: 'channel/v2/fbms' do
