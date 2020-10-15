@@ -279,7 +279,9 @@ module SearchTestHelper
       facebook_id: contact.fb_profile_id,
       external_id: contact.external_id,
       unique_external_id: contact.unique_external_id,
-      other_emails: other_emails(contact)
+      other_emails: other_emails(contact),
+      created_at: contact.created_at.try(:utc).try(:iso8601),
+      updated_at: contact.updated_at.try(:utc).try(:iso8601)
     }
     contact_pattern[:other_companies] = other_companies(contact) if @account.multiple_user_companies_enabled?
     contact_pattern
