@@ -293,46 +293,7 @@ module Ember
       assert_response 400
     end
 
-    def test_widget_data_preview_for_scorecard_with_default_filter
-      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns({ unresolved: 55 })
-      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'unresolved')
-      assert_response 200
-      match_json({ 'count' => 55 })
-    end
-
-    def test_widget_data_preview_for_scorecard_invalid_es_response
-      options = { time_range: 3 }
-      Account.current.launch(:es_msearch)
-      dashboard = create_dashboard_with_widgets(nil, 1, 0, [options])
-      ::Search::Filters::Docs.any_instance.stubs(:bulk_es_request).returns({ 'responses' => [{ 'error': { 'root_cause':'I dont know' } }, { 'took':2, 'timed_out':false, '_shards': { 'total':1, 'successful':1, 'failed':0 },'hits': { 'total':1, 'max_score':0.0, 'hits':[] }}] }.to_json)
-      get :widgets_data, controller_params(version: 'private', type: 'scorecard', id: dashboard.id)
-      assert_response 400
-    ensure
-      Account.current.rollback(:es_msearch)
-    end
-
-    def test_widget_data_preview_for_scorecard_with_custom_filter
-      ticket_filter = create_filter
-      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns({ :"#{ticket_filter.id}" => 87 })
-      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
-      assert_response 200
-      match_json({ 'count' => 87 })
-    end
-
-    def test_widget_data_preview_for_scorecard_with_custom_filter_with_comma_choices
-      choices = ['Chennai, IN', 'Bangalore']
-      @custom_field = create_custom_field_dropdown('test_custom_dropdown_scorecard_with_comma', choices)
-      ticket_filter = create_filter(@custom_field)
-      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns(:"#{ticket_filter.id}" => 87)
-      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
-      assert_response 200
-      match_json('count' => 87)
-    ensure
-      @custom_field.destroy
-    end
-
     def test_widget_data_preview_for_scorecard_with_none_custom_filter
-      Account.current.launch(:count_service_es_reads)
       none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'none' }] }
       ticket_filter = create_filter(nil, none_hash)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 77 } } }))
@@ -341,11 +302,9 @@ module Ember
       match_json('count' => 77)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_in_the_past_filter
-      Account.current.launch(:count_service_es_reads)
       none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'in_the_past' }] }
       ticket_filter = create_filter(nil, none_hash)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 14 } } }))
@@ -354,11 +313,9 @@ module Ember
       match_json('count' => 14)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_appointment_start_and_end_time
-      Account.current.launch(:count_service_es_reads)
       filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => ' - 2019-12-12T23:59:59+00:00' },
                                   { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_end_time', 'value' => '2019-12-22T23:59:59+00:00 - ' }] }
       ticket_filter = create_filter(nil, filter_hash)
@@ -368,11 +325,9 @@ module Ember
       match_json('count' => 14)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_appointment_start_time
-      Account.current.launch(:count_service_es_reads)
       filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => ' - 2019-12-12T23:59:59+00:00' },
                                   { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_end_time', 'value' => ' ' }] }
       ticket_filter = create_filter(nil, filter_hash)
@@ -382,11 +337,9 @@ module Ember
       match_json('count' => 14)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_appointment_end_time
-      Account.current.launch(:count_service_es_reads)
       filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => ' ' },
                                   { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_end_time', 'value' => '2019-12-22T23:59:59+00:00 - ' }] }
       ticket_filter = create_filter(nil, filter_hash)
@@ -396,11 +349,9 @@ module Ember
       match_json('count' => 14)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_out_appointment_start_and_end_time
-      Account.current.launch(:count_service_es_reads)
       filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => ' ' },
                                   { 'condition' => 'flexifields.ff_date02', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_end_time', 'value' => ' ' }] }
       ticket_filter = create_filter(nil, filter_hash)
@@ -410,11 +361,9 @@ module Ember
       match_json('count' => 14)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_today_filter
-      Account.current.launch(:count_service_es_reads)
       none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'today' }] }
       ticket_filter = create_filter(nil, none_hash)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 17 } } }))
@@ -423,11 +372,9 @@ module Ember
       match_json('count' => 17)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_yesterday_filter
-      Account.current.launch(:count_service_es_reads)
       none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'yesterday' }] }
       ticket_filter = create_filter(nil, none_hash)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 40 } } }))
@@ -436,11 +383,9 @@ module Ember
       match_json('count' => 40)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_tomorrow_filter
-      Account.current.launch(:count_service_es_reads)
       none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'tomorrow' }] }
       ticket_filter = create_filter(nil, none_hash)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 48 } } }))
@@ -449,11 +394,9 @@ module Ember
       match_json('count' => 48)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_week_filter
-      Account.current.launch(:count_service_es_reads)
       none_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'week' }] }
       ticket_filter = create_filter(nil, none_hash)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 68 } } }))
@@ -462,11 +405,9 @@ module Ember
       match_json('count' => 68)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_next_week_custom_filter
-      Account.current.launch(:count_service_es_reads)
       filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'next_week' }] }
       ticket_filter = create_filter(nil, filter_hash)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 77 } } }))
@@ -475,11 +416,9 @@ module Ember
       match_json('count' => 77)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_last_week_custom_filter
-      Account.current.launch(:count_service_es_reads)
       filter_hash = { data_hash: [{ 'condition' => 'flexifields.ff_date01', 'operator' => 'is', 'ff_name' => 'cf_fsm_appointment_start_time', 'value' => 'last_week' }] }
       ticket_filter = create_filter(nil, filter_hash)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 77 } } }))
@@ -488,7 +427,6 @@ module Ember
       match_json('count' => 77)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     # Bar chart preview tests
@@ -553,107 +491,20 @@ module Ember
       assert_response 400
     end
 
-    def test_widget_data_preview_for_bar_chart_with_custom_filter
-      ticket_filter = create_filter
-      field = Account.current.ticket_fields.find_by_field_type('default_status')
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field.id))
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_custom_filter_with_comma_choices
-      choices = ['Chennai, IN', 'Bangalore']
-      @custom_field = create_custom_field_dropdown('test_custom_dropdown_barchart_with_comma', choices)
-      field2 = Account.current.ticket_fields.where(field_type: 'default_group').first
-      ticket_filter = create_filter(@custom_field)
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field2.id))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field2.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field2.id))
-    ensure
-      @custom_field.destroy
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_custom_filter_categorized_by_field_with_comma_choices
-      choices = ['Chennai, IN', 'Bangalore']
-      field = create_custom_field_dropdown('test_custom_dropdown_barchart_with_comma', choices)
-      ticket_filter = create_filter
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id, field.choices))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field.id, field.choices))
-    ensure
-      field.destroy
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_default_filter
-      field = Account.current.ticket_fields.find_by_field_type('default_group')
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field.id))
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_default_field
-      field = Account.current.ticket_fields.find_by_field_type('default_agent')
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field.id))
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_custom_field
-      choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
-      field = create_custom_field_dropdown('test_custom_dropdown_bar_chart', choices)
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id, choices))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field.id, choices))
-    end
-
     def test_widget_data_preview_for_bar_chart_with_numeric_values
       choices = ['Get Smart 123', '123 Pursuit of Happiness', '123']
       field = create_custom_field_dropdown('test_custom_dropdown_bar_chart', choices)
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id, choices))
+      ::SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id, 'unresolved', choices))
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
       assert_response 200
       match_json(bar_chart_preview_response_pattern(field.id, choices))
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_number_field
-      field = Account.current.ticket_fields.find_by_field_type('default_agent')
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
-      assert_response 200
-      match_json(bar_chart_preview_response_pattern(field.id))
-    end
-
-    def test_widget_data_preview_for_bar_chart_with_percentage_representation
-      field = Account.current.ticket_fields.find_by_field_type('default_status')
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
-      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
-      assert_response 200
-      match_json(bar_chart_preview_response_percentage_pattern(field.id))
     end
 
     def test_widget_data_preview_for_bar_chart_with_internal_group_percentage_representation
       enable_feature(:shared_ownership) do
         add_internal_fields
         field = Account.current.ticket_fields.find_by_field_type('default_internal_group')
-        ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
-        get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
-        assert_response 200
-        match_json(bar_chart_preview_response_percentage_pattern(field.id))
-        delete_internal_fields
-      end
-    end
-
-    def test_widget_data_preview_for_bar_chart_internal_agent_with_percentage_representation
-      enable_feature(:shared_ownership) do
-        add_internal_fields
-        field = Account.current.ticket_fields.find_by_field_type('default_internal_agent')
-        ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
+        ::SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
         get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
         assert_response 200
         match_json(bar_chart_preview_response_percentage_pattern(field.id))
@@ -1110,26 +961,6 @@ module Ember
       assert_response 404
     end
 
-    def test_widgets_data_for_scorecard_widgets
-      stub_data = fetch_scorecard_stub(@@scorecard_dashboard.widgets)
-      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns(stub_data)
-      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'scorecard')
-      assert_response 200
-      match_json(scorecard_response_pattern(@@scorecard_dashboard.widgets, stub_data))
-    ensure
-      ::Dashboard::TrendCount.any_instance.unstub(:fetch_count)
-    end
-
-    def test_widgets_data_for_bar_chart_widgets
-      stub_data = fetch_bar_chart_stub(@@bar_chart_dashboard.widgets)
-      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(stub_data)
-      get :widgets_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, type: 'bar_chart')
-      assert_response 200
-      match_json(bar_chart_response_pattern(@@bar_chart_dashboard.widgets, stub_data))
-    ensure
-      ::Search::Dashboard::Custom::Count.any_instance.unstub(:fetch_count)
-    end
-
     def test_bar_chart_data_for_bar_chart_widget
       widget = @@bar_chart_dashboard.widgets.first
       stub_data = bar_chart_data_es_response_stub(widget)
@@ -1423,7 +1254,6 @@ module Ember
 
     # To check service writes test
     def test_widgets_data_api_meta_from_search_service
-      Account.current.launch(:count_service_es_reads)
       stub_data = fetch_search_service_scorecard_stub(@@scorecard_dashboard.widgets)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :widgets_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, type: 'scorecard')
@@ -1432,23 +1262,19 @@ module Ember
       assert_not_nil response.api_meta[:dashboard][:last_modified_since]
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
      def test_widget_data_preview_for_scorecard_with_default_filter_from_search_service
-      Account.current.launch(:count_service_es_reads)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new({"records" => {"results" => { "unresolved" => { "total" => 55 } }} }))
       get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'unresolved')
       assert_response 200
       match_json({ 'count' => 55 })
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_custom_filter_from_search_service
       ticket_filter = create_filter
-      Account.current.launch(:count_service_es_reads)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new({"records" => { "results" => {"#{ticket_filter.id}" => {"total" => 87} }}}))
       # ::Dashboard::SearchServiceTrendCount.any_instance.stubs(:fetch_count).returns({ "results" => {"#{ticket_filter.id}" => {"total" => 87} }})
       get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
@@ -1456,14 +1282,12 @@ module Ember
       match_json({ 'count' => 87 })
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_custom_filter_with_comma_choices_from_search_service
       choices = ['Chennai, IN', 'Bangalore']
       @custom_field = create_custom_field_dropdown('test_custom_dropdown_scorecard_with_comma', choices)
       ticket_filter = create_filter(@custom_field)
-      Account.current.launch(:count_service_es_reads)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 87 } } }))
       get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
       assert_response 200
@@ -1471,14 +1295,12 @@ module Ember
     ensure
       @custom_field.destroy
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_scorecard_with_custom_filter_with_special_chars_from_search_service_new_fql
       choices = ['\'Chennai" \\IN', 'Bangalore']
       @custom_field = create_custom_field_dropdown('test_custom_dropdown_scorecard_with_comma', choices)
       ticket_filter = create_filter(@custom_field)
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { ticket_filter.id.to_s => { 'total' => 87 } } }))
       get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
@@ -1487,12 +1309,10 @@ module Ember
     ensure
       @custom_field.destroy
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
     end
 
     def test_widgets_data_preview_for_scorecard_with_unassigned_service_tasks_filter_from_search_new_fql
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { 'unassigned_service_tasks' => { 'total' => 87 } } }))
@@ -1501,13 +1321,11 @@ module Ember
       match_json('count' => 87)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
     def test_widgets_data_preview_for_scorecard_with_overdue_service_tasks_filter_from_search_new_fql
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { 'overdue_service_tasks' => { 'total' => 87 } } }))
@@ -1516,13 +1334,11 @@ module Ember
       match_json('count' => 87)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
     def test_widgets_data_preview_for_scorecard_with_service_tasks_due_today_filter_from_search_new_fql
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { 'service_tasks_due_today' => { 'total' => 87 } } }))
@@ -1531,13 +1347,11 @@ module Ember
       match_json('count' => 87)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
 
     def test_widgets_data_preview_for_scorecard_with_service_tasks_starting_today_filter_from_search_new_fql
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new('records' => { 'results' => { 'service_tasks_starting_today' => { 'total' => 87 } } }))
@@ -1546,7 +1360,6 @@ module Ember
       match_json('count' => 87)
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
       Account.any_instance.unstub(:field_service_management_enabled?)
     end
@@ -1554,79 +1367,66 @@ module Ember
     def test_widget_data_preview_for_bar_chart_with_custom_filter_from_search_service
       ticket_filter = create_filter
       field = Account.current.ticket_fields.find_by_field_type('default_status')
-      Account.current.launch(:count_service_es_reads)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id, ticket_filter.id))
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
       assert_response 200
       match_json(bar_chart_preview_response_pattern(field.id))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_bar_chart_with_default_filter_from_search_service
       field = Account.current.ticket_fields.find_by_field_type('default_group')
-      Account.current.launch(:count_service_es_reads)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
       assert_response 200
       match_json(bar_chart_preview_response_pattern(field.id))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_bar_chart_with_default_field_from_search_service
       field = Account.current.ticket_fields.find_by_field_type('default_agent')
-      Account.current.launch(:count_service_es_reads) 
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
       assert_response 200
       match_json(bar_chart_preview_response_pattern(field.id))
       ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_bar_chart_with_custom_field_from_search_service
       choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
       field = create_custom_field_dropdown('test_custom_dropdown_bar_chart', choices)
-      Account.current.launch(:count_service_es_reads)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id, 'unresolved', choices))
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
       assert_response 200
       match_json(bar_chart_preview_response_pattern(field.id, choices))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_bar_chart_with_number_field_from_search_service
       field = Account.current.ticket_fields.find_by_field_type('default_agent')
-      Account.current.launch(:count_service_es_reads)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
       assert_response 200
       match_json(bar_chart_preview_response_pattern(field.id))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_bar_chart_with_percentage_representation_from_search_service
       field = Account.current.ticket_fields.find_by_field_type('default_status')
-      Account.current.launch(:count_service_es_reads)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
       assert_response 200
       match_json(bar_chart_preview_response_percentage_pattern(field.id))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widget_data_preview_for_bar_chart_with_custom_filter_with_comma_choices_search_service
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:wf_comma_filter_fix)
       choices = ['Chennai, IN', 'Bangalore']
       @custom_field = create_custom_field_dropdown('test_custom_dropdown_barchart_with_comma', choices)
@@ -1639,7 +1439,6 @@ module Ember
     ensure
       @custom_field.destroy
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:wf_comma_filter_fix)
     end
 
@@ -1647,7 +1446,6 @@ module Ember
       choices = ['Chennai, IN', 'Bangalore']
       field = create_custom_field_dropdown('test_custom_dropdown_barchart_with_comma', choices)
       ticket_filter = create_filter
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:wf_comma_filter_fix)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id, ticket_filter.id, choices))
       get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
@@ -1656,12 +1454,10 @@ module Ember
     ensure
       field.destroy
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:wf_comma_filter_fix)
     end
 
     def test_widgets_data_for_scorecard_widgets_from_search_service
-      Account.current.launch(:count_service_es_reads)
       stub_data = fetch_search_service_scorecard_stub(@@scorecard_dashboard.widgets)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'scorecard')
@@ -1669,11 +1465,9 @@ module Ember
       match_json(scorecard_response_pattern_search_service(@@scorecard_dashboard.widgets, stub_data))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_widgets_data_for_bar_chart_widgets_from_search_service
-      Account.current.launch(:count_service_es_reads)
       stub_data = fetch_bar_chart_from_service_stub(@@bar_chart_dashboard.widgets)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :widgets_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, type: 'bar_chart')
@@ -1681,12 +1475,10 @@ module Ember
       match_json(bar_chart_from_service_response_pattern(@@bar_chart_dashboard.widgets, stub_data))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_bar_chart_data_for_bar_chart_widget_from_search_service
       widget = @@bar_chart_dashboard.widgets.first
-      Account.current.launch(:count_service_es_reads)
       stub_data = bar_chart_data_es_response_service_stub(widget)
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :bar_chart_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, widget_id: widget.id)
@@ -1694,7 +1486,6 @@ module Ember
       match_json(bar_chart_data_response_pattern(widget))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_create_announcement_without_privilege

@@ -81,13 +81,9 @@ module DashboardConcern
     elsif instance_variable_get("@#{@group_by.first}").present? || User.current.assigned_ticket_permission
       options[:include_missing] = false
     end
-    if Account.current.launched?(:count_service_es_reads)
-      options[:filter_condition].merge!({spam: [false], deleted: [false]})
-      ticket_counts = Dashboard::SearchServiceTrendCount.new(options).fetch_count
-      ticket_counts = parse_results(ticket_counts)
-    else
-      ticket_counts = ::Dashboard::DataLayer.new(current_account.count_es_enabled?, options).aggregated_data
-    end
+    options[:filter_condition].merge!(spam: [false], deleted: [false])
+    ticket_counts = Dashboard::SearchServiceTrendCount.new(options).fetch_count
+    ticket_counts = parse_results(ticket_counts)
     build_response(ticket_counts, options[:include_missing], params[:widget])
   end
 

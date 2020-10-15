@@ -1412,13 +1412,11 @@ module ApiTicketsTestHelper
     CustomRequestStore.store[:channel_api_request] = true
     @channel_v2_api = true
     TicketDecorator.any_instance.stubs(:private_api?).returns(true)
-    Account.any_instance.stubs(:count_es_enabled?).returns(true)
     Account.any_instance.stubs(:api_es_enabled?).returns(true)
   end
 
   def unstub_requirements_for_stats
     TicketDecorator.any_instance.unstub(:private_api?)
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     @channel_v2_api = false
     CustomRequestStore.store[:channel_api_request] = false

@@ -14,7 +14,7 @@ module DashboardTestHelper
     options[:filter_options][:group_id] = parameter[:group_id] if parameter.key?(:group_id)
     options[:filter_options][:product_id] = parameter[:product_id] if parameter.key?(:product_id)
     options[:is_agent] = @dashboard_type.include?('agent')
-    scorecard_hash = ::Dashboard::TrendCount.new(Account.first.count_es_enabled?, options).fetch_count
+    scorecard_hash = ::Dashboard::TrendCount.new(true, options).fetch_count
     @scorecard = {}
     scorecard_hash.each_with_index do |(key, value),index|
       @scorecard[key] = {
@@ -162,7 +162,7 @@ module DashboardTestHelper
   end
 
   def fetch_unresolved_tickets params
-    es_enabled = Account.first.count_es_enabled?
+    es_enabled = true
     #Send only column names to ES for aggregation since column names are used as keys
     #need to work here based on es and db
     options = {:group_by => @group_by, :filter_condition => @filter_condition, :cache_data => false, :include_missing => true, :workload => @group_by.first.to_s}

@@ -28,17 +28,6 @@ module Ember
       User.any_instance.unstub(:privilege?)
     end
 
-    def test_scorecard_without_filter_data
-      Account.first.make_current
-      User.first.make_current
-      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
-      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
-      get :scorecard, controller_params(version: 'private')
-      assert_response 200
-      match_json(scorecard_pattern)
-    end
-
     def test_scorecard_with_product_id
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
@@ -459,40 +448,6 @@ module Ember
 
     # Unresolved tickets
 
-    def test_unresolved_tickets_widget_with_group_filter
-      group = create_group(@account)
-      get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, group_ids: [group.id], group_by: 'group_id')
-      assert_response 200
-      match_json(unresolved_tickets_pattern(widget: 1, group_ids: [group.id], group_by: 'group_id'))
-    end
-
-    def test_unresolved_tickets_widget_with_product_filter
-      product = create_product()
-      get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, product_ids: [product.id], group_by: 'group_id')
-      assert_response 200
-      match_json(unresolved_tickets_pattern(widget: 1, product_ids: [product.id], group_by: 'group_id'))
-    end
-
-    def test_unresolved_tickets_widget_without_filter
-      get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, group_by: 'group_id', status_ids: [2])
-      assert_response 200
-      match_json(unresolved_tickets_pattern(widget: 1, group_by: 'group_id', status_ids: [2]))
-    end
-
-    def test_unresolved_tickets_detailed_page_without_filter
-      get :unresolved_tickets_data, controller_params(version: 'private', group_by: 'responder_id')
-      assert_response 200
-      match_json(unresolved_tickets_pattern(group_by: 'responder_id'))
-    end
-
-    def test_unresolved_tickets_detailed_page_with_filter
-      groups = []
-      create_groups(@account).each { |group| groups << group.id }
-      get :unresolved_tickets_data, controller_params(version: 'private', group_by: 'group_id', group_ids: groups)
-      assert_response 200
-      match_json(unresolved_tickets_pattern(group_by: 'group_id', group_ids: groups))
-    end
-
     # def test_unresolved_tickets_with_group_id_not_in_db
     #   group = (Group.maximum(:id) || 0).to_i + 50
     #   get :unresolved_tickets_data, controller_params(version: 'private', widget: true, group_by: 'group_id', group_ids: [group], status_ids: [2])
@@ -723,7 +678,6 @@ module Ember
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
-      Account.current.launch(:count_service_es_reads)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :scorecard, controller_params(version: 'private')
@@ -732,7 +686,6 @@ module Ember
     ensure
       User.any_instance.unstub(:privilege?)
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_scorecard_with_product_id_search_service
@@ -740,7 +693,6 @@ module Ember
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       product = create_product
-      Account.current.launch(:count_service_es_reads)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :scorecard, controller_params(version: 'private', product_ids: [product.id])
@@ -749,7 +701,6 @@ module Ember
     ensure
       User.any_instance.unstub(:privilege?)
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_scorecard_with_group_id_that_agent_belong_search_service
@@ -757,7 +708,6 @@ module Ember
       @controller.stubs(:current_user).returns(agent)
       group = create_group_with_agents(@account, agent_list: [agent.id])
       User.any_instance.stubs(:agent_groups).returns(group.agent_groups)
-      Account.current.launch(:count_service_es_reads)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :scorecard, controller_params(version: 'private', group_ids: [group.id])
@@ -765,7 +715,6 @@ module Ember
       match_json(scorecard_pattern_search_service(stub_data))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       User.any_instance.unstub(:agent_groups)
       @controller.unstub(:current_user)
     end
@@ -774,7 +723,6 @@ module Ember
       agent = add_test_agent(@account, role: Role.where(name: 'Supervisor').first.id)
       group = create_group(@account)
       @controller.stubs(:current_user).returns(agent)
-      Account.current.launch(:count_service_es_reads)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :scorecard, controller_params(version: 'private', group_ids: [group.id])
@@ -782,7 +730,6 @@ module Ember
       match_json(scorecard_pattern_search_service(stub_data))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       @controller.unstub(:current_user)
     end
 
@@ -790,7 +737,6 @@ module Ember
       agent = add_test_agent(@account, role: Role.where(name: 'Administrator').first.id)
       group = create_group(@account)
       @controller.stubs(:current_user).returns(agent)
-      Account.current.launch(:count_service_es_reads)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
       get :scorecard, controller_params(version: 'private', group_ids: [group.id])
@@ -798,7 +744,6 @@ module Ember
       match_json(scorecard_pattern_search_service(stub_data))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       @controller.unstub(:current_user)
     end
 
@@ -809,7 +754,6 @@ module Ember
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
@@ -819,7 +763,6 @@ module Ember
     ensure
       User.any_instance.unstub(:privilege?)
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
     end
 
@@ -828,7 +771,6 @@ module Ember
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       product = create_product
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
@@ -838,7 +780,6 @@ module Ember
     ensure
       User.any_instance.unstub(:privilege?)
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
     end
 
@@ -847,7 +788,6 @@ module Ember
       @controller.stubs(:current_user).returns(agent)
       group = create_group_with_agents(@account, agent_list: [agent.id])
       User.any_instance.stubs(:agent_groups).returns(group.agent_groups)
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
@@ -856,7 +796,6 @@ module Ember
       match_json(scorecard_pattern_search_service(stub_data))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
       User.any_instance.unstub(:agent_groups)
       @controller.unstub(:current_user)
@@ -866,7 +805,6 @@ module Ember
       agent = add_test_agent(@account, role: Role.where(name: 'Supervisor').first.id)
       group = create_group(@account)
       @controller.stubs(:current_user).returns(agent)
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
@@ -875,7 +813,6 @@ module Ember
       match_json(scorecard_pattern_search_service(stub_data))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
       @controller.unstub(:current_user)
     end
@@ -884,7 +821,6 @@ module Ember
       agent = add_test_agent(@account, role: Role.where(name: 'Administrator').first.id)
       group = create_group(@account)
       @controller.stubs(:current_user).returns(agent)
-      Account.current.launch(:count_service_es_reads)
       Account.current.launch(:dashboard_java_fql_performance_fix)
       stub_data = scorecard_stub_data
       SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
@@ -893,68 +829,57 @@ module Ember
       match_json(scorecard_pattern_search_service(stub_data))
     ensure
       SearchService::Client.any_instance.unstub(:multi_aggregate)
-      Account.current.rollback(:count_service_es_reads)
       Account.current.rollback(:dashboard_java_fql_performance_fix)
       @controller.unstub(:current_user)
     end
 
     def test_unresolved_tickets_widget_with_group_filter_search_service
       group = create_group(@account)
-      Account.current.launch(:count_service_es_reads)
       stub_data = unreloved_tickets_stub_data(group_ids: [group.id], group_by: 'group_id')
       SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
       get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, group_ids: [group.id], group_by: 'group_id')
       assert_response 200
     ensure
       SearchService::Client.any_instance.unstub(:aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_unresolved_tickets_widget_with_product_filter_search_service
       product = create_product()
-      Account.current.launch(:count_service_es_reads)
       stub_data = unreloved_tickets_stub_data(product_ids: [product.id], group_by: 'group_id')
       SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
       get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, product_ids: [product.id], group_by: 'group_id')
       assert_response 200
     ensure
       SearchService::Client.any_instance.unstub(:aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_unresolved_tickets_widget_without_filter_search_service
-      Account.current.launch(:count_service_es_reads)
       stub_data = unreloved_tickets_stub_data(group_by: 'group_id', status_ids: [2])
       SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
       get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, group_by: 'group_id', status_ids: [2])
       assert_response 200
     ensure
       SearchService::Client.any_instance.unstub(:aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_unresolved_tickets_detailed_page_without_filter_search_service
-      Account.current.launch(:count_service_es_reads)
       stub_data = unreloved_tickets_stub_data(group_by: 'responder_id')
       SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
       get :unresolved_tickets_data, controller_params(version: 'private', group_by: 'responder_id')
       assert_response 200
     ensure
       SearchService::Client.any_instance.unstub(:aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_unresolved_tickets_detailed_page_with_filter_search_service
       groups = []
       create_groups(@account).each { |group| groups << group.id }
-      Account.current.launch(:count_service_es_reads)
       stub_data = unreloved_tickets_stub_data(group_by: 'group_id', group_ids: groups)
       SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
       get :unresolved_tickets_data, controller_params(version: 'private', group_by: 'group_id', group_ids: groups)
       assert_response 200
     ensure
       SearchService::Client.any_instance.unstub(:aggregate)
-      Account.current.rollback(:count_service_es_reads)
     end
 
     private

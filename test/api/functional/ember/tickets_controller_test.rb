@@ -448,27 +448,6 @@ module Ember
       match_json(private_api_ticket_index_pattern(false, false, true, 'created_at', 'desc', true))
     end
 
-    def test_index_with_only_count
-      @account.stubs(:count_es_enabled?).returns(false)
-      get :index, controller_params(version: 'private', only: 'count')
-      assert_response 200
-      assert response.api_meta[:count] == @account.tickets.where(['spam = false AND deleted = false AND created_at > ?', 30.days.ago]).count
-      match_json([])
-    ensure
-      @account.unstub(:count_es_enabled?)
-    end
-
-    def test_meta_count_with_internal_agent_or_agent_filter
-      enable_feature(:shared_ownership) do
-        initialize_internal_agent_with_default_internal_group
-        query_hash_params = { '0' => query_hash_param('any_agent_id', 'is_in', [@agent.id.to_s, '-1']), '1' => query_hash_param('created_at', 'is_greater_than', 'last_month') }
-        @account.stubs(:count_es_enabled?).returns(false)
-        get :index, controller_params({ version: 'private', only: 'count', query_hash: query_hash_params }, false)
-        assert_response 200
-        assert_equal response.api_meta[:count], @account.tickets.where(['((responder_id = ? OR ISNULL(responder_id)) OR (internal_agent_id = ? OR ISNULL(internal_agent_id))) AND spam = false AND deleted = false AND created_at > ?', @agent.id, @internal_agent.id, 30.days.ago]).count
-      end
-    end
-
     def query_hash_param(condition, operator, value, type = 'default')
       {
         'condition' => condition,
@@ -5437,8 +5416,7 @@ module Ember
       Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
     end
 
-    def test_index_with_spam_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(true)
+    def test_index_with_spam
       Account.any_instance.stubs(:es_tickets_enabled?).returns(true)
       t = create_ticket(spam: true)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5449,12 +5427,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_new_and_my_open_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_new_and_my_open
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t = create_ticket(status: 2)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5465,12 +5441,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_stats_with_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_stats
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t = create_ticket
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5481,12 +5455,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_description_with_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(true)
+    def test_index_with_description
       Account.any_instance.stubs(:es_tickets_enabled?).returns(true)
       t = create_ticket
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5498,12 +5470,10 @@ module Ember
       match_json(pattern)
     ensure
       t.try(:destroy)
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_requester_with_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_requester
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       user = add_new_user(@account)
       t = create_ticket(requester_id: user.id)
@@ -5515,12 +5485,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_filter_order_by_with_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_filter_order_by
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t_1 = create_ticket(status: 2, created_at: 10.days.ago)
       t_2 = create_ticket(status: 3, created_at: 11.days.ago)
@@ -5533,12 +5501,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_default_filter_order_type_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_default_filter_order_type
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t_1 = create_ticket(created_at: 10.days.ago)
       t_2 = create_ticket(created_at: 11.days.ago)
@@ -5551,12 +5517,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_updated_since_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_updated_since
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t = create_ticket(updated_at: 2.days.from_now)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5567,12 +5531,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_company_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_company
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       company = create_company
       user = add_new_user(@account)
@@ -5589,7 +5551,6 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
@@ -6873,25 +6834,6 @@ module Ember
     ensure
       group.destroy if group.present?
       agent.destroy if agent.present?
-    end
-
-    def test_index_with_only_count_for_read_access_agent
-      @account.stubs(:count_es_enabled?).returns(false)
-      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
-      group = create_group_with_agents(@account, agent_list: [agent.id])
-      agent_group = agent.agent_groups.where(group_id: group.id).first
-      agent_group.write_access = false
-      agent_group.save!
-      agent.make_current
-      ticket = create_ticket({}, group)
-      login_as(agent)
-      get :index, controller_params(version: 'private', filter: 'all_tickets', only: 'count')
-      tickets_count1 = @response.api_meta[:count] 
-      assert_equal tickets_count1, 1
-    ensure
-      group.destroy if group.present?
-      agent.destroy if agent.present?
-      @account.unstub(:count_es_enabled?)
     end
     
     def test_latest_note_ticket_with_public_note_with_read_scope

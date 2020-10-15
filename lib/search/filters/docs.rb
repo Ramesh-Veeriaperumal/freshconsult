@@ -32,14 +32,8 @@ class Search::Filters::Docs
 
   # Fetch count from Elasticsearch based on filters
   def count(model_class)
-    if Account.current.launched?(:count_service_es_reads)
-      count = Dashboard::SearchServiceTrendCount.new.fetch_count(params)["total"] 
-      return count if count >= 0 # To handle if any error occurs in new count cluster
-    end
-    response = es_request(model_class, '_search', {}, { :search_type => "count"})
-    parsed_response = JSON.parse(response)
-    Rails.logger.info "ES count response:: Account -> #{Account.current.id}, Took:: #{parsed_response['took']}"
-    parsed_response['hits']['total']
+    count = Dashboard::SearchServiceTrendCount.new.fetch_count(params)['total']
+    count
   end
 
   def bulk_count(aggs = false)

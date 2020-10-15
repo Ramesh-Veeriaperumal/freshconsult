@@ -330,11 +330,7 @@ module Ember
 
       def optimized_count
         set_all_agent_groups_permission
-        if current_account.count_es_enabled?
-          ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
-        else
-          tickets_filter.count
-        end
+        ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
       end
 
       def d_query_hash

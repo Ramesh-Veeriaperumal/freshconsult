@@ -231,7 +231,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def match_query_response_with_es_enabled(query_hash_params, order_by = 'created_at', order_type = 'desc')
-    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api, :count_service_es_reads]) do
+    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api]) do
       response_stub = public_api_filter_factory_es_cluster_response_stub(query_hash_params.deep_dup)
       SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
       SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
@@ -242,7 +242,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def match_order_query_with_es_enabled(order_params, all_tickets = false)
-    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api, :count_service_es_reads]) do
+    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api]) do
       response_stub = public_api_filter_factory_order_response_stub(order_params[:order_by], order_params[:order_type], all_tickets)
       SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
       SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
@@ -4495,7 +4495,6 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_spam_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(true)
     Account.any_instance.stubs(:api_es_enabled?).returns(true)
     t = create_ticket(spam: true)
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -4506,12 +4505,10 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
   end
 
   def test_index_with_new_and_my_open_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
     Account.any_instance.stubs(:api_es_enabled?).returns(:true)
     t = create_ticket(status: 2)
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -4522,12 +4519,10 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
   end
 
   def test_index_with_stats_with_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
     Account.any_instance.stubs(:api_es_enabled?).returns(:true)
     t = create_ticket
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -4538,12 +4533,10 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
   end
 
   def test_index_with_requester_with_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
     Account.any_instance.stubs(:api_es_enabled?).returns(:true)
     user = add_new_user(@account)
     t = create_ticket(requester_id: user.id)
@@ -4555,12 +4548,10 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
   end
 
   def test_index_with_filter_order_by_with_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
     Account.any_instance.stubs(:api_es_enabled?).returns(:true)
     t_1 = create_ticket(status: 2, created_at: 10.days.ago)
     t_2 = create_ticket(status: 3, created_at: 11.days.ago)
@@ -4573,12 +4564,10 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
     match_json(pattern)
   ensure
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
   end
 
   def test_index_with_default_filter_order_type_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
     Account.any_instance.stubs(:api_es_enabled?).returns(:true)
     t_1 = create_ticket(created_at: 10.days.ago)
     t_2 = create_ticket(created_at: 11.days.ago)
@@ -4591,12 +4580,10 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
     match_json(pattern)
   ensure
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
   end
 
   def test_index_updated_since_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
     Account.any_instance.stubs(:api_es_enabled?).returns(:true)
     t = create_ticket(updated_at: 2.days.from_now)
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -4607,12 +4594,10 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
   end
 
   def test_index_with_company_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
     Account.any_instance.stubs(:api_es_enabled?).returns(:true)
     company = create_company
     user = add_new_user(@account)
@@ -4629,7 +4614,6 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
   end
 
@@ -7336,7 +7320,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_public_api_index_filter_factory_with_read_scope
     order_params = { order_by: 'created_at', order_type: 'asc' }
-    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api, :count_service_es_reads]) do
+    enable_public_api_filter_factory([:public_api_filter_factory, :new_es_api]) do
       User.any_instance.stubs(:access_all_agent_groups).returns(true)
       agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
       group = create_group_with_agents(@account, agent_list: [agent.id])

@@ -39,13 +39,9 @@ module Helpdesk::TagsHelper
   end
 
   def ticket_tags_count(tag)
-    if Account.current.count_es_enabled?
-      action_hash = [{"condition" => "helpdesk_tags.id", "operator" => "is_in", "value" => tag.id }]
-      negative_conditions = [{ "condition" => "spam", "operator" => "is", "value" => "true" },{ "condition" => "deleted", "operator" => "is", "value" => "true" }]
-      Search::Tickets::Docs.new(action_hash, negative_conditions,false).count(Helpdesk::Ticket)
-    else
-      tags_count(tag, "Helpdesk::Ticket")
-    end      
+    action_hash = [{ 'condition' => 'helpdesk_tags.id', 'operator' => 'is_in', 'value' => tag.id }]
+    negative_conditions = [{ 'condition' => 'spam', 'operator' => 'is', 'value' => 'true' }, { 'condition' => 'deleted', 'operator' => 'is', 'value' => 'true' }]
+    Search::Tickets::Docs.new(action_hash, negative_conditions, false).count(Helpdesk::Ticket)
   end
 
   def tags_count tag, association

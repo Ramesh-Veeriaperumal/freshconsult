@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
     :falcon_portal_theme, :freshid, :email_new_settings, :kbase_spam_whitelist,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
-    :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
+    :auto_complete_off, :new_ticket_recieved_metric, :ner,
     :sso_login_expiry_limitation, :old_link_back_url_validation,
     :es_tickets, :fb_msg_realtime,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
@@ -247,19 +247,15 @@ class Account < ActiveRecord::Base
   end
 
   def count_public_api_filter_factory_enabled?
-    public_api_filter_factory_enabled? && new_es_api_enabled? && count_service_es_reads_enabled?
-  end
-
-  def count_es_enabled?
-    launched?(:count_service_es_reads)
+    public_api_filter_factory_enabled? && new_es_api_enabled?
   end
 
   def count_es_api_enabled?
-    count_es_enabled? && api_es_enabled?
+    api_es_enabled?
   end
 
   def count_es_tickets_enabled?
-    count_es_enabled? && es_tickets_enabled?
+    es_tickets_enabled?
   end
 
   def customer_sentiment_enabled?

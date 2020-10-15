@@ -117,7 +117,8 @@ module Helpdesk::DashboardHelper
 
   def snapshot_menu
     options = [default_dashboard[0]]
-    return options if !dashboardv2_available? || current_account.launched?(:es_down) #Show only Standard Dashboard if ES is down. This ideally shouldn't occur, fingers crossed.
+    return options if current_account.launched?(:es_down) # Show only Standard Dashboard if ES is down. This ideally shouldn't occur, fingers crossed.
+
     if current_user.privilege?(:admin_tasks)
       options << default_dashboard[3]
     elsif current_user.privilege?(:view_reports)

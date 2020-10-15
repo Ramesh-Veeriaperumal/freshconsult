@@ -28,12 +28,8 @@ module Ember
       options[:filter_options][:group_id] = params[:group_id] if params.key?(:group_id)
       options[:filter_options][:product_id] = params[:product_id] if params.key?(:product_id)
       options[:is_agent] = dashboard_type.include?('agent')
-      if Account.current.launched?(:count_service_es_reads)
-        scorecard_hash = ::Dashboard::SearchServiceTrendCount.new(options).fetch_count
-        scorecard_hash = parse_scorecard_hash(scorecard_hash,options[:trends])
-      else
-        scorecard_hash = ::Dashboard::TrendCount.new(current_account.count_es_enabled?, options).fetch_count
-      end
+      scorecard_hash = ::Dashboard::SearchServiceTrendCount.new(options).fetch_count
+      scorecard_hash = parse_scorecard_hash(scorecard_hash, options[:trends])
       @scorecard = {}
       # ember needs an id to store it in model,so building scorecard hash with id.
       scorecard_hash.each_with_index do |(key, value), index|
