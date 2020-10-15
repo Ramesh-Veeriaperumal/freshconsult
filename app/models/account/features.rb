@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
     :redirect_contact_new, :redirect_contact_edit, :redirect_contact_index,
     :redirect_companies_new, :redirect_companies_edit, :redirect_companies_index, :redirect_companies_show,
     :redirect_archive_tickets_new, :redirect_archive_tickets_show, :redirect_archive_tickets_edit, :redirect_archive_tickets_index,
-    :redirect_helpdesk_dashboard_index, :redirect_old_ui_paths
+    :redirect_old_ui_paths, :redirect_helpdesk_ticket_show, :redirect_helpdesk_dashboard_index, :redirect_contact_show
   ].freeze
 
   LP_FEATURES = [
