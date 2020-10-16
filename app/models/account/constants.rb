@@ -130,7 +130,7 @@ class Account < ActiveRecord::Base
     :chat_enable => false, :saml_old_issuer => false,
     :redis_display_id => true,
     :survey_links => true,
-    :saml_unspecified_nameid => false, :euc_hide_agent_metrics => false,
+    :saml_unspecified_nameid => false,
     :single_session_per_user => false, :marketplace_app => false,
     :collaboration => false
   }
@@ -190,11 +190,11 @@ class Account < ActiveRecord::Base
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     es_v2_splqueries: false, suggest_tickets: false,
-    spam_blacklist_feature: false, antivirus_service: false, hide_api_key: false,
+    antivirus_service: false, hide_api_key: false,
     kbase_spam_whitelist: false,
     whitelist_supervisor_sla_limitation: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
-    freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false, disable_archive: false,
+    freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false,
     auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false,
@@ -235,7 +235,8 @@ class Account < ActiveRecord::Base
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
-    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false
+    mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false, whatsapp_addon: false,
+    enhanced_freshcaller_search: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

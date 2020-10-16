@@ -26,7 +26,7 @@ module HelpdeskReports::Helper::QnaInsightsReports
       final_config = (current_user.qna_insight && current_user.qna_insight.get_insights_config(widget_id)) || get_default_insight_configuration(widget_id)
     end
     scope = Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]
-    final_config.delete(:d10) if (Account.current.hide_agent_metrics_feature? || scope == :assigned_tickets ||  Account.current.groups_from_cache.count < 1 ) 
+    final_config.delete(:d10) if Account.current.euc_hide_agent_metrics_enabled? || scope == :assigned_tickets || Account.current.groups_from_cache.count < 1
     final_config.delete(:d11) if ((User.current.agent.agent_groups.count < 2 && ( scope == :group_tickets || scope == :assigned_tickets )) || Account.current.groups_from_cache.count < 2) 
     final_config
   end

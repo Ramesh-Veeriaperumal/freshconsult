@@ -1075,6 +1075,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_twitter_ticket_with_restricted_tweet_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
     ticket = create_twitter_ticket(tweet_type: 'mention')
     update_params = { priority: 2, status: 3 }
     put :update, construct_params({ id: ticket.display_id }, update_params)
@@ -1087,6 +1088,7 @@ class TicketsControllerTest < ActionController::TestCase
   ensure
     ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_update_twitter_ticket_with_unrestricted_tweet_content
@@ -1105,6 +1107,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_twitter_ticket_with_restricted_dm_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
     ticket = create_twitter_ticket(tweet_type: 'dm')
     update_params = { priority: 2, status: 3 }
     put :update, construct_params({ id: ticket.display_id }, update_params)
@@ -1117,6 +1120,7 @@ class TicketsControllerTest < ActionController::TestCase
   ensure
     ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_update_twitter_ticket_with_unrestricted_dm_content
@@ -3872,6 +3876,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_show_twitter_ticket_with_restricted_tweet_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
     ticket = create_twitter_ticket(tweet_type: 'mention')
     get :show, controller_params(id: ticket.display_id)
     assert_response 200
@@ -3879,6 +3884,7 @@ class TicketsControllerTest < ActionController::TestCase
   ensure
     ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_show_twitter_ticket_with_unrestricted_tweet_content
@@ -3892,6 +3898,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_show_twitter_ticket_with_restricted_dm_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
     ticket = create_twitter_ticket(tweet_type: 'dm')
     get :show, controller_params(id: ticket.display_id)
     assert_response 200
@@ -3899,10 +3906,12 @@ class TicketsControllerTest < ActionController::TestCase
   ensure
     ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_show_twitter_ticket_with_restricted_dm_content_with_requester_handle_id
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
     requester = create_tweet_user(name: Faker::Name.name, screen_name: Faker::Lorem.word)
     requester.twitter_requester_handle_id = Faker::Number.between(1, 999_999_999).to_s
     ticket = create_twitter_ticket(tweet_type: 'dm', requester: requester)
@@ -3912,6 +3921,7 @@ class TicketsControllerTest < ActionController::TestCase
   ensure
     ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_show_twitter_ticket_with_unrestricted_dm_content
@@ -4201,6 +4211,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_twitter_tickets_with_restricted_twitter_content
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
     twitter_user = add_new_user_with_twitter_id(@account)
     tweet_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'mention')
     dm_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'dm')
@@ -4217,6 +4228,7 @@ class TicketsControllerTest < ActionController::TestCase
     tweet_ticket.destroy
     dm_ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_index_twitter_tickets_with_unrestricted_twitter_content
@@ -4239,6 +4251,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_twitter_tickets_with_restricted_twitter_content_including_description
     Account.any_instance.stubs(:twitter_api_compliance_enabled?).returns(true)
+    CustomRequestStore.store[:api_v2_request] = true
     twitter_user = add_new_user_with_twitter_id(@account)
     tweet_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'mention')
     dm_ticket = create_twitter_ticket(requester: twitter_user, tweet_type: 'dm')
@@ -4258,6 +4271,7 @@ class TicketsControllerTest < ActionController::TestCase
     tweet_ticket.destroy
     dm_ticket.destroy
     Account.any_instance.unstub(:twitter_api_compliance_enabled?)
+    CustomRequestStore.store[:api_v2_request] = false
   end
 
   def test_index_twitter_tickets_with_unrestricted_twitter_content_including_description

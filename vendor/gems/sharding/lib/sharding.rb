@@ -22,11 +22,19 @@ class Sharding
   end
 
   def run_on_slave(&block)
+    # TODO Remove the thread variable usage after fixing switch to replica
+    Thread.current[:replica] = true
     ActiveRecord::Base.on_slave(&block)
+  ensure
+    Thread.current[:replica] = nil
   end
 
   def run_on_master(&block)
+    on_replica = Thread.current[:replica]
+    Thread.current[:replica] = false
     ActiveRecord::Base.on_master(&block)
+  ensure
+    Thread.current[:replica] = on_replica
   end
 
   def select_latest_shard(&block)

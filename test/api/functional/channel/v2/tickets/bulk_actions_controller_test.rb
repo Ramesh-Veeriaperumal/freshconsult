@@ -22,11 +22,11 @@ class Channel::V2::Tickets::BulkActionsControllerTest < ActionController::TestCa
 
   def test_archive_with_disable_archive_enabled
     # need to stub instead of destroy
-    Account.any_instance.stubs(:all_launched_features).returns([:disable_archive])
+    Account.any_instance.stubs(:disable_archive_enabled?).returns(true)
     params = { archive_days: 0, ids: [SAMPLE_TICKET_ID] }
     post :bulk_archive, construct_params({}, params)
     assert_response 403
-    Account.any_instance.unstub(:all_launched_features)
+    Account.any_instance.unstub(:disable_archive_enabled?)
   end
 
   def test_archive_without_archive_tickets_api

@@ -101,6 +101,11 @@ class FeatureCheckTest < ActionView::TestCase
     assert_equal false, send_to_silkroad?(export_params)
   end
 
+  def test_params_with_archived_tickets_param
+    export_params = get_archive_export_params
+    assert_equal false, send_to_silkroad?(export_params)
+  end
+
   def test_send_to_silkroad_check_default_time_format_true
     assert_equal true, check_default_time_format
   end
@@ -117,5 +122,12 @@ class FeatureCheckTest < ActionView::TestCase
         data_hash: [{ condition: 'status', operator: 'is_in', value: ['2'] }],
         contact_fields: { name: 'Full name' }.stringify_keys,
         company_fields: { name: 'Company name' }.stringify_keys }
+    end
+
+    def get_archive_export_params
+      {
+        export_fields: { subject: 'Subject' }.stringify_keys,
+        archived_tickets: 1
+      }
     end
 end

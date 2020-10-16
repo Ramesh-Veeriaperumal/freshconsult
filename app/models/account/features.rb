@@ -9,11 +9,10 @@ class Account < ActiveRecord::Base
     :redirect_contact_new, :redirect_contact_edit, :redirect_contact_index,
     :redirect_companies_new, :redirect_companies_edit, :redirect_companies_index, :redirect_companies_show,
     :redirect_archive_tickets_new, :redirect_archive_tickets_show, :redirect_archive_tickets_edit, :redirect_archive_tickets_index,
-    :redirect_helpdesk_dashboard_index, :redirect_old_ui_paths
+    :redirect_old_ui_paths, :redirect_helpdesk_ticket_show, :redirect_helpdesk_dashboard_index, :redirect_contact_show
   ].freeze
 
   LP_FEATURES = [
-    :spam_blacklist_feature,
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export,
     :falcon_portal_theme, :freshid, :email_new_settings, :kbase_spam_whitelist,
@@ -35,7 +34,7 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :fuzzy_search, :delete_trash_daily,
-    :requester_privilege, :disable_archive,
+    :requester_privilege,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
     :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
@@ -55,7 +54,7 @@ class Account < ActiveRecord::Base
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
     :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
-    :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger
+    :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger, :whatsapp_addon, :enhanced_freshcaller_search
   ].concat(FRONTEND_LP_FEATURES + REDIRECT_OLD_UI_PATH_FEATURES).uniq
 
   BITMAP_FEATURES = [
@@ -81,10 +80,10 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation, :spam_blacklist_feature,
+    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
-    :ticket_properties_suggester, :ticket_properties_suggester_eligible, :disable_archive,
+    :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :agent_articles_suggest_eligible, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
@@ -100,10 +99,8 @@ class Account < ActiveRecord::Base
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :fb_msg_realtime,
-    :spam_blacklist_feature,
     :kbase_spam_whitelist,
     :supervisor_contact_field,
-    :disable_archive,
     :falcon_portal_theme,
     :sidekiq_logs_to_central,
     :force_index_tickets,
@@ -292,10 +289,6 @@ class Account < ActiveRecord::Base
     livechat_enabled? and features?(:chat_routing)
   end
 
-  def fb_msg_realtime_enabled?
-    launched?(:fb_msg_realtime)
-  end
-
   def supervisor_feature_launched?
     features?(:freshfone_call_monitoring) || features?(:agent_conference)
   end
@@ -310,10 +303,6 @@ class Account < ActiveRecord::Base
 
   def restricted_compose_enabled?
     ismember?(RESTRICTED_COMPOSE, self.id)
-  end
-
-  def hide_agent_metrics_feature?
-    features?(:euc_hide_agent_metrics)
   end
 
   def advance_facebook_enabled?
@@ -464,10 +453,6 @@ class Account < ActiveRecord::Base
 
   def falcon_portal_theme_enabled?
     launched?(:falcon_portal_theme)
-  end
-
-  def sidekiq_logs_to_central_enabled?
-    launched?(:sidekiq_logs_to_central)
   end
 
   def kbase_spam_whitelist_enabled?

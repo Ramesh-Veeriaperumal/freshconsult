@@ -35,7 +35,7 @@ class ReportsController < ApplicationController
     @account_products = Account.current.products.any? ? Account.current.products.collect {|p| [p.id, p.name]} : []
     @date_lag_by_plan = disable_date_lag? ? 0 : 1
     @is_trial_account = Account.current.subscription.trial?
-    @hide_agent_metrics_feature = Account.current.hide_agent_metrics_feature?
+    @hide_agent_metrics_feature = Account.current.euc_hide_agent_metrics_enabled?
   end
 
   def enable_new_ticket_recieved_metric?

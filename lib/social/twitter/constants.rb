@@ -76,4 +76,14 @@ module Social::Twitter::Constants
   STATUS_UPDATE_COMMAND_NAME = 'update_twitter_message'.freeze
 
   SURVEY_DM_COMMAND_NAME = 'send_survey_twitter_dm'.freeze
+
+  DEFAULT_TWITTER_CONTENT = {
+    dm: 'View the message on Twitter',
+    mention: 'View the tweet on Twitter'
+  }.freeze
+
+  DEFAULT_TWITTER_CONTENT_HTML = {
+    dm: '<div>View the message on Twitter</div>',
+    mention: '<div>View the tweet on Twitter</div>'
+  }.freeze
 end

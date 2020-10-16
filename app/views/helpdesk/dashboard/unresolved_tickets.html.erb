@@ -15,7 +15,7 @@
 	<div class="unresolved-data-tab hide">
 	<ul class="nav nav-tabs sleek-tab" id="unresolved-tab">
 	  		<li data-groupby = "group_id" data-redirect="group" class="active"><a href="javascript:void(0)" value="g" ><%=t('unresolved_tickets.group_label') %></a></li>
-	  		<% unless Account.current.hide_agent_metrics_feature? %>
+	  		<% unless Account.current.euc_hide_agent_metrics_enabled? %>
 		  		<li data-groupby = "responder_id" data-redirect="agent" class=""><a href="javascript:void(0)" value="a" ><%=t('unresolved_tickets.agent_label') %></a></li>
 		  	<% end %>
 	</ul>
@@ -36,7 +36,7 @@
 	<li>
 		{{html groupfilterlabel }} : <strong> {{html Array.prototype.join.call(groupfilter, ", ") }} </strong>
 	</li>
-	<% unless Account.current.hide_agent_metrics_feature? %>
+	<% unless Account.current.euc_hide_agent_metrics_enabled? %>
 		<li>
 			{{html agentfilterlabel }} : <strong> {{html Array.prototype.join.call(agentfilter, ", ") }} </strong>
 		</li>

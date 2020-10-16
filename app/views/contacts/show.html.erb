@@ -53,7 +53,7 @@
 			<div class="btn-group pull-right">
 				<%= link_to t('assume_identity_button'), assume_identity_user_path(@user),{
 											:class => "btn"
-										} if is_allowed_to_assume?(@user) and !current_account.hide_agent_metrics_feature? %>
+										} if is_allowed_to_assume?(@user) and !current_account.euc_hide_agent_metrics_enabled? %>
 				
 				<% if privilege?(:admin_tasks) and @user.allow_password_update?%>
 			    <%= link_to(t('change_password').html_safe, change_password_contact_path(@user), {:class => "btn", :'data-pjax' => "#body-container"}) %>

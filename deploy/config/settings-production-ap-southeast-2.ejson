@@ -1084,7 +1084,22 @@
             "_username": "dbuser",
             "_host": "shard1.internal.podapsoutheast2.freshdesk.com",
             "_slave1_host": "shard1slave1.internal.podapsoutheast2.freshdesk.com",
-            "_slave2_host": "shard1slave2.internal.podapsoutheast2.freshdesk.com"
+            "_slave2_host": "shard1slave2.internal.podapsoutheast2.freshdesk.com",
+            "_proxy_enabled": true,
+            "_proxy_master_enabled": true,
+            "slave2_proxy": { "_username": "aus_shard_1_slave" },
+            "slave_proxy": {
+                           "password": "EJ[1:lSgw4awYXa5dbHi/qlaolKiqcBHb0VBeyp9d6X+94Ck=:wfcYT5so1Nvcn5CekDN9ck6sdqkd2WIf:ZwoQ4oOfncB7MDV0Gh4TmAWZlLHzgRwnNXnO]",
+                           "_host": "127.0.0.1",
+                           "_port": "6033",
+                           "_username": "aus_shard_1_proxy"
+                         },
+            "master_proxy": {
+                          "password": "EJ[1:lSgw4awYXa5dbHi/qlaolKiqcBHb0VBeyp9d6X+94Ck=:ibubInqKm3gVdFTdXaX/qWaQZXrCiyAY:PDkVfO5k1zDvvrApMedC/yu9XmzuziqCQtKh]",
+                          "_host": "127.0.0.1",
+                          "_port": "6033",
+                          "_username": "aus_shard_1_writer"
+              }
           },
           "sandbox_shard_au": {
             "password": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:oyUGH1eNjKxjO7FRnMiEMoiVTtDi9nwM:8WC1hbhIdD2NNeY43+pJwfkSvF1rpuvXliU=]",
@@ -1594,7 +1609,7 @@
         "jwt_secret": "EJ[1:GjARK2Af/FBiJAa6HfIiOWSHRTMHSepbwg0aye/OrBQ=:RG8tn/37eaWJnIQpQ7YnDy9eyqVBfiGx:XthPTNKpb+arlLRnoBc89ZfbrjK/r78JQ5Ctb0/hWs7xZ7f3juhOQAnC5z++rjgU]"
       },
       "silkroad_config": {
-        "_host": "https://silkroad-service.internal.podapsoutheast2.freshdesk.com/",
+        "_host": "https://silkroad-service-aus.freshdesk.com/",
         "_timeout": 10
       }
     },

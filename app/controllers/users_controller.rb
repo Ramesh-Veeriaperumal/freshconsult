@@ -210,7 +210,7 @@ class UsersController < ApplicationController
     end
 
     def assume_allowed?
-      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) if current_account.hide_agent_metrics_feature?
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) if current_account.euc_hide_agent_metrics_enabled?
     end
 
     def redirect_to_falcon

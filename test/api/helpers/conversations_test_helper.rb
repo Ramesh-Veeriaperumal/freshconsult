@@ -289,7 +289,7 @@ module ConversationsTestHelper
       type: note.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) ? twitter_requester_handle_id : twitter_user.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && public_v2_api? ? twitter_requester_handle_id : twitter_user.twitter_id
     }
     tweet_hash[:stream_id] = note.tweet.stream_id if @channel_v2_api
     tweet_hash
@@ -315,46 +315,31 @@ module ConversationsTestHelper
     source_info.presence
   end
 
-  def default_body_hash(expected_output, note)
+  def restrict_twitter_note_content?(note)
+    Account.current.twitter_api_compliance_enabled? && public_v2_api? && note.incoming && note.tweet.present?
+  end
+
+  def public_v2_api?
+    CustomRequestStore.read(:api_v2_request)
+  end
+
+  def default_twitter_body(note)
+    tweet_type = note.tweet.tweet_type.to_sym
+    {
+      body: Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT_HTML[tweet_type],
+      body_text: Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT[tweet_type]
+    }
+  end
+
+  def construct_note_body_hash(expected_output, note)
+    return default_twitter_body(note) if restrict_twitter_note_content?(note)
+
     body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
     body = note.class == Helpdesk::ArchiveNote ? (expected_output[:body] || note.body) : note.body
     {
       body: body_html || note.body_html,
       body_text: body
     }
-  end
-
-  def restrict_twitter_content?(note)
-    Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) && note.incoming && note.tweet.present?
-  end
-
-  def twitter_public_api_body_hash(body)
-    {
-      body: body,
-      body_text: body
-    }
-  end
-
-  def construct_note_body_hash(expected_output, note)
-    tweet_record = note.tweet
-    return default_body_hash(expected_output, note) unless restrict_twitter_content?(note)
-
-    handle = tweet_record.twitter_handle
-    twitter_user = note.user
-    twitter_requester_handle_id = twitter_user.twitter_requester_handle_id || tweet_record.twitter_handle_id
-    if tweet_record.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      tweet_body = "View the tweet at https://twitter.com/#{twitter_requester_handle_id}/status/#{tweet_record.tweet_id}"
-      return twitter_public_api_body_hash(tweet_body)
-    else
-      dm_body_prefix = 'View the message at https://twitter.com/messages'
-      if handle && twitter_user.twitter_requester_handle_id
-        handle_ids = [handle.twitter_user_id.to_i, twitter_requester_handle_id.to_i]
-        dm_body = "#{dm_body_prefix}/#{handle_ids.min}-#{handle_ids.max}"
-      else
-        dm_body = dm_body_prefix
-      end
-      twitter_public_api_body_hash(dm_body)
-    end
   end
 
   def validation_error_pattern(value)

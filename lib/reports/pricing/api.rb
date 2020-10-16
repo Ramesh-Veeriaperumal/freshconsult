@@ -168,7 +168,7 @@ module Reports::Pricing
 
       def custom_deletion(payload)
         curated_reports_to_delete = []
-        if Account.current.features?(:euc_hide_agent_metrics)
+        if Account.current.euc_hide_agent_metrics_enabled?
           # IN EUC admin should not see agent metrics.
           curated_reports_to_delete.push(CURATED_REPORTS[:agent_performance][:value])
         end

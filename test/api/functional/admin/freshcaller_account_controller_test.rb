@@ -421,6 +421,7 @@ module Admin
     end
 
     def test_create_new_account_success
+      delete_freshcaller_account
       agent = add_test_agent(@account)
       stub_create_success
       post :create, controller_params(version: 'private')
@@ -453,6 +454,7 @@ module Admin
     end
 
     def test_create_new_account_spam_email_error
+      delete_freshcaller_account
       agent = add_test_agent(@account)
       stub_create_spam_email_error
       post :create, controller_params(version: 'private')
@@ -463,6 +465,7 @@ module Admin
     end
 
     def test_create_new_account_domain_taken_error
+      delete_freshcaller_account
       agent = add_test_agent(@account)
       stub_create_domain_taken_error
       post :create, controller_params(version: 'private')

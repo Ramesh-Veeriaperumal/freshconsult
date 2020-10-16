@@ -55,7 +55,7 @@ module HelpdeskReports::Helper::PlanConstraints
 
   def hide_agent_reporting?
     return @hide_agent_metrics if defined?(@hide_agent_metrics)
-    @hide_agent_metrics ||= Account.current.hide_agent_metrics_feature?
+    @hide_agent_metrics ||= Account.current.euc_hide_agent_metrics_enabled?
   end
 
   def plan_based_report?(report_type)

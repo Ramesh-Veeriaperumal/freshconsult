@@ -644,23 +644,30 @@ unless Account.current
     a.addon_type = addon_types[:for_account]
   end
 
+  native_whatsapp = Subscription::Addon.seed(:name) do |a|
+    a.name = 'Native Whatsapp'
+    a.amount = 49.0
+    a.renewal_period = 1
+    a.addon_type = addon_types[:for_account]
+  end
+
   all_addons = [agent_collision, custom_ssl, custom_roles, gamification, layout_customization,
                 multiple_business_hours, round_robin, chat, enterprise_reporting, custom_domain,
                 custom_slas, custom_mailbox, whitelisted_ips, chat_routing, dynamic_sections,
                 custom_surveys, call_center_advanced, helpdesk_restriction,
                 ticket_templates, round_robin_load_balancing, one_contact_multiple_companies, unique_external_id, sandbox]
 
-  estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin, field_service_management, freddy_self_service, freddy_session_packs]
-  garden_addons  = all_addons + [shared_ownership_toggle, field_service_management, freddy_self_service, freddy_session_packs] - [multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates, sandbox]
+  estate_addons  = [custom_mailbox, whitelisted_ips, call_center_advanced, skill_based_round_robin, field_service_management, freddy_self_service, freddy_session_packs, native_whatsapp]
+  garden_addons  = all_addons + [shared_ownership_toggle, field_service_management, freddy_self_service, freddy_session_packs, native_whatsapp] - [multiple_business_hours, custom_domain, custom_slas, custom_surveys, ticket_templates, sandbox]
   blossom_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle, field_service_management] - [custom_domain, sandbox]
 
   estate_17_addons  = estate_addons + [sandbox]
-  garden_17_addons  = all_addons + [shared_ownership_toggle, field_service_management, freddy_self_service, freddy_session_packs] - [custom_domain, custom_surveys, ticket_templates, sandbox]
+  garden_17_addons  = all_addons + [shared_ownership_toggle, field_service_management, freddy_self_service, freddy_session_packs, native_whatsapp] - [custom_domain, custom_surveys, ticket_templates, sandbox]
   blossom_17_addons = all_addons + [link_tickets_toggle, parent_child_tickets_toggle, field_service_management, freddy_self_service, freddy_session_packs] - [custom_domain, one_contact_multiple_companies, sandbox]
   sprout_17_addons  = [custom_domain, call_center_advanced]
 
   estate_19_addons = estate_17_addons + [fluffy_forest, fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4]
-  forest_19_addons = [fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4, field_service_management, freddy_ultimate, freddy_self_service, freddy_session_packs]
+  forest_19_addons = [fluffy_higher_plan1, fluffy_higher_plan2, fluffy_higher_plan3, fluffy_higher_plan4, field_service_management, freddy_ultimate, freddy_self_service, freddy_session_packs, native_whatsapp]
 
   estate_20_addons = estate_19_addons + [auditlogui_unlimitedmultiproduct]
   forest_20_addons = forest_19_addons

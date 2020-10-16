@@ -344,48 +344,36 @@ module ApiTicketsTestHelper
   end
 
   def description_info(ticket)
-    return default_description_info(ticket) unless restrict_twitter_ticket_content?(ticket)
+    return default_twitter_description(ticket) if restrict_twitter_ticket_content?(ticket)
 
-    {
-      description: restricted_twitter_ticket_content(ticket),
-      description_text: restricted_twitter_ticket_content(ticket)
-    }
-  end
-
-  def default_description_info(ticket)
     {
       description: ticket.description_html,
       description_text: ticket.description
     }
   end
 
+  def default_twitter_description(ticket)
+    tweet_type = ticket.tweet.tweet_type.to_sym
+    {
+      description: Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT_HTML[tweet_type],
+      description_text: Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT[tweet_type]
+    }
+  end
+
   def subject_info(ticket)
-    restrict_twitter_ticket_content?(ticket) ? restricted_twitter_ticket_content(ticket) : ticket.subject
+    restrict_twitter_ticket_content?(ticket) ? Social::Twitter::Constants::DEFAULT_TWITTER_CONTENT[ticket.tweet.tweet_type.to_sym] : ticket.subject
   end
 
   def twitter_ticket?(ticket)
-    (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && ticket.tweet
+    ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] && ticket.tweet
   end
 
   def restrict_twitter_ticket_content?(ticket)
-    Account.current.twitter_api_compliance_enabled? && twitter_ticket?(ticket) && CustomRequestStore.read(:api_v2_request)
+    Account.current.twitter_api_compliance_enabled? && twitter_ticket?(ticket) && public_v2_api?
   end
 
-  def restricted_twitter_ticket_content(ticket)
-    handle = ticket.tweet.twitter_handle
-    twitter_requester = ticket.requester
-    twitter_requester_handle_id = twitter_requester.twitter_requester_handle_id || ticket.tweet.twitter_handle_id
-    if ticket.tweet.tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
-      "View the tweet at https://twitter.com/#{twitter_requester_handle_id}/status/#{ticket.tweet.tweet_id}"
-    else
-      dm_body_prefix = 'View the message at https://twitter.com/messages'
-      if handle && twitter_requester.twitter_requester_handle_id
-        handle_ids = [handle.twitter_user_id.to_i, twitter_requester_handle_id.to_i]
-        "#{dm_body_prefix}/#{handle_ids.min}-#{handle_ids.max}"
-      else
-        dm_body_prefix
-      end
-    end
+  def public_v2_api?
+    CustomRequestStore.read(:api_v2_request)
   end
 
   def latest_note_as_ticket_pattern(expected_output = {}, ticket)
@@ -1453,7 +1441,7 @@ module ApiTicketsTestHelper
       type: ticket.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
-      requester_screen_name: Account.current.twitter_api_compliance_enabled? && CustomRequestStore.read(:api_v2_request) ? twitter_requester.twitter_requester_handle_id : twitter_requester.twitter_id
+      requester_screen_name: Account.current.twitter_api_compliance_enabled? && public_v2_api? ? twitter_requester.twitter_requester_handle_id : twitter_requester.twitter_id
     }
     if @channel_v2_api
       tweet_hash.merge!(stream_id: ticket.tweet.stream_id)

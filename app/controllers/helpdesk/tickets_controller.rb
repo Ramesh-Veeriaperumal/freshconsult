@@ -40,7 +40,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]
   before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
-  before_filter :redirect_old_ui_routes, only: [:index, :new, :edit, :compose_email]
+  before_filter :redirect_old_ui_routes, only: [:index, :show, :new, :edit, :compose_email]
   before_filter :set_ui_preference, only: [:index, :show]
   before_filter :check_compose_feature, :check_trial_outbound_limit, :only => :compose_email
 

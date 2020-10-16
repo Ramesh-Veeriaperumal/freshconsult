@@ -120,7 +120,9 @@ class ContactDecorator < ApiDecorator
       facebook_id: fb_profile_id,
       external_id: external_id,
       unique_external_id: unique_external_id,
-      other_emails: other_emails
+      other_emails: other_emails,
+      created_at: created_at.try(:utc),
+      updated_at: updated_at.try(:utc)
     }
     response_hash[:other_companies] = other_company_items if multiple_user_companies_enabled?
     response_hash

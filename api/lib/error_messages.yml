@@ -595,6 +595,10 @@ api_error_messages:
   time_slot_count_for_channel_error: "Too many time slots for '%{value}' channel in '%{name}'"
   duplicate_holiday_date: "Duplicate holiday date is present"
   duplicate_business_day: "Duplicate business day is present"
+  invalid_addon: "Invalid Addon %{addon}"
+  addon_not_applicable: "Invalid Addon %{addon} for %{plan} plan"
+  duplicate_addon: "%{addon} addon already present"
+  missing_addon: "%{addon} addon not present"
   invalid_number_of_channels: "Expected %{count} channel, '%{value}'"
   fetch_omni_business_calendar: "Omni Business Calendar GET request failed"
 

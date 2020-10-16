@@ -11,6 +11,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
   include TicketFieldsTestHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   include AutomationsHelper
+  include Redis::RateLimitRedis
 
   def setup
     Subscription.any_instance.stubs(:freshdesk_freshsales_bundle_enabled?).returns(false)
@@ -207,6 +208,28 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.reload
     assert_equal @account.subscription.subscription_request.nil?, true
     assert_equal @account.subscription.subscription_plan_id, current_plan_id
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    SubscriptionPlan.any_instance.unstub(:amount)
+  end
+
+  def test_api_rate_limit_for_trial_account
+    plan_ids = SubscriptionPlan.current.map(&:id)
+    stub_chargebee_requests
+    params_plan_id = SubscriptionPlan.current.where(id: plan_ids).map { |x| x.id if x.amount != 0.0 }.compact.first
+    params = { plan_id: params_plan_id }
+    SubscriptionPlan.any_instance.stubs(:amount).returns(0)
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.currency = Subscription::Currency.last
+    current_subscription.save!
+    @account.rollback(:downgrade_policy)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:plan_id)))
+    @account.reload
+    assert_equal @account.subscription.subscription_request.nil?, true
+    assert_equal @account.subscription.subscription_plan_id, params_plan_id
+    assert_equal get_account_api_limit, get_api_rate_limit(plan_api_limit_key(params_plan_id))
     assert_response 302
   ensure
     unstub_chargebee_requests
@@ -1325,7 +1348,11 @@ class SubscriptionsControllerTest < ActionController::TestCase
       chargebee_plan = ChargeBee::Result.new(stub_chargebee_plan)
       ChargeBee::Plan.stubs(:retrieve).returns(chargebee_plan)
       ChargeBee::Subscription.stubs(:retrieve).returns(chargebee_update)
+      chargebee_cancel = ChargeBee::Result.new(stub_cancel_params(@account.id))
+      ChargeBee::Subscription.stubs(:cancel).returns(chargebee_cancel)
       @controller.stubs(:set_current_account).returns(@account)
+      chargebee_reactivate = ChargeBee::Result.new(stubs_reactivate_params(@account.id))
+      ChargeBee::Subscription.stubs(:reactivate).returns(chargebee_reactivate)
       @controller.stubs(:request_host).returns('test1.freshpo.com')
       @account.subscription.state = 'active'
       @account.subscription.save!
@@ -1350,6 +1377,8 @@ class SubscriptionsControllerTest < ActionController::TestCase
       ChargeBee::Subscription.unstub(:retrieve)
       ChargeBee::Plan.unstub(:retrieve)
       ChargeBee::Coupon.unstub(:retrieve)
+      ChargeBee::Subscription.unstub(:cancel)
+      ChargeBee::Subscription.unstub(:reactivate)
       Subscription.any_instance.unstub(:active?)
       @controller.unstub(:set_current_account)
       @controller.unstub(:request_host)

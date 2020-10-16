@@ -219,7 +219,8 @@ class ContactValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
     ContactForm.any_instance.stubs(:default_contact_fields).returns([])
-    ['sam https://www.test.com', 'test name/cont "', 'test name / sime'].each do |name|
+    ['sam https://www.test.com', 'test name/cont "', 'bitly.cc/test', 'localhost:8070/',
+     'https://facebook.com', '192.168.123.12:8080/', 'https://192.168.1.3/', 'mail.google.com/'].each do |name|
       controller_params = { name: name, email: Faker::Internet.email }
       item = nil
       contact = ContactValidation.new(controller_params, item)
@@ -239,7 +240,8 @@ class ContactValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
     ContactForm.any_instance.stubs(:default_contact_fields).returns([])
-    ['sam https://www.test.com', 'test name/cont "', 'test name / sime'].each do |name|
+    ['sam https://www.test.com', 'test name/cont "', 'bitly.cc/test', 'localhost:8070/',
+     'https://facebook.com', '192.168.123.12:8080/', 'https://192.168.1.3/', 'mail.google.com/'].each do |name|
       controller_params = { name: name, email: Faker::Internet.email }
       item = nil
       contact = ContactValidation.new(controller_params, item)
@@ -252,6 +254,32 @@ class ContactValidationTest < ActionView::TestCase
           code: :invalid_format
         }
       }, contact.error_options)
+    end
+  end
+
+  def test_name_valid_create
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    ['test name / sime', 'test.notadomain/sime', 'test.domain', 'firstname lastname',
+     'first/name last/name', 'firstname.lastname'].each do |name|
+      controller_params = { name: name, email: Faker::Internet.email }
+      item = nil
+      contact = ContactValidation.new(controller_params, item)
+      assert contact.valid?(:create)
+    end
+  end
+
+  def test_name_valid_update
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    ['test name / sime', 'test.notadomain/sime', 'test.domain', 'firstname lastname',
+     'first/name last/name', 'firstname.lastname'].each do |name|
+      controller_params = { name: name, email: Faker::Internet.email }
+      item = nil
+      contact = ContactValidation.new(controller_params, item)
+      assert contact.valid?(:update)
     end
   end
 

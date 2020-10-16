@@ -1,6 +1,6 @@
 <li>
 	<%= user_avatar( ticket.requester ) %>
-	<%= link_to("##{ticket.display_id} " + h(ticket.subject), ticket, :class => "title",  :'data-pjax' => '#body-container') %>
+	<%= link_to("##{ticket.display_id} " + h(ticket.subject), "/a/tickets/#{ticket.display_id}", :class => "title", target: "_top") %>
 	<div class="info_data">
 		<%= formated_date(ticket.created_at) %>
 		|

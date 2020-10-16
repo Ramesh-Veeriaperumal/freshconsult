@@ -45,7 +45,7 @@
 						<%= link_to t('edit'), edit_agent_path(agent.user), :class => "btn btn-mini" %>
 					<% end %>
                   	<% if(current_user != agent.user) %>
-						<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => agent.user.id } ,:method => 'put' ,:id => "agent_convert_id_"+agent.id.to_s , :class => "hide"%>
+						<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => agent.user.id } ,:method => 'put' ,:id => "agent_convert_id_"+agent.id.to_s , :class => "hide", target: "_top" %>
 						 
 				 		<a href="#agent-deletion-confirmation" 
 			 				rel="freshdialog"

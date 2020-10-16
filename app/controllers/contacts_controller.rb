@@ -9,7 +9,7 @@ class ContactsController < ApplicationController
    include Export::Util
 
    before_filter :redirect_to_mobile_url
-   before_filter :redirect_old_ui_routes, only: [:index, :new, :edit]
+   before_filter :redirect_old_ui_routes, only: [:index, :show, :new, :edit]
    before_filter :set_ui_preference, :only => [:show]
    before_filter :clean_params, :only => [:update, :update_contact, :update_description_and_tags]
    before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_description_and_tags, :create, :create_contact]

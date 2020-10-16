@@ -230,6 +230,75 @@ class FacebookRealtimeTest < ActionView::TestCase
 
   end
 
+  def test_reply_to_comment_not_change_parent_note_updated_at_if_parent_is_ticket
+    rule = @fb_page.default_stream.ticket_rules[0]
+    rule[:filter_data] = { rule_type: RULE_TYPE[:broad] }
+    rule.save!
+
+    user_id = rand(10**10)
+    post_id = rand(10**15)
+    comment_id = rand(10**15)
+    time = Time.now.utc
+
+    comment_feed = sample_realtime_comment(@fb_page.page_id, user_id, comment_id, user_id, time)
+    koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time - 1.day)
+    koala_comment = sample_comment_feed(post_id, user_id, comment_id, time)
+    koala_post[0]['comments'] = koala_comment
+    sqs_msg = Hashit.new(body: comment_feed.to_json)
+    sleep(1)
+    koala_post[0]['created_time'] = (Time.zone.parse('2020-09-24 09:47:36 UTC') - 1.day).to_s
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
+    Koala::Facebook::API.any_instance.unstub(:get_object)
+    fb_post_id = koala_post[0]['id']
+
+    fb_comment_id = koala_comment['data'][0]['id']
+
+    assert_equal @account.facebook_posts.find_by_post_id(fb_post_id).postable.is_a?(Helpdesk::Ticket), true
+    note = @account.facebook_posts.find_by_post_id(fb_comment_id).postable
+    parent_note = @account.facebook_posts.find_by_post_id(fb_comment_id).parent.postable
+    assert_not_equal parent_note.updated_at, note.updated_at
+  end
+
+  def test_reply_to_comment_change_parent_note_updated_at_if_parent_is_note
+    rule = @fb_page.default_stream.ticket_rules[0]
+    rule[:filter_data] = { rule_type: RULE_TYPE[:broad] }
+    rule.save!
+
+    user_id = rand(10**10)
+    post_id = rand(10**15)
+    comment_id = rand(10**15)
+    time = Time.now.utc
+
+    comment_feed = sample_realtime_comment(@fb_page.page_id, user_id, comment_id, user_id, time)
+    koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
+    koala_comment = sample_comment_feed(post_id, user_id, comment_id, time)
+    koala_post[0]['comments'] = koala_comment
+    sqs_msg = Hashit.new(body: comment_feed.to_json)
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
+    Koala::Facebook::API.any_instance.unstub(:get_object)
+    obj_id = { id: koala_post[0]['id'].split('_').last }
+    parent_id = { id: koala_post[0]['comments']['data'][0]['id'] }
+    post_id2 = rand(10**15)
+    comment_feed = sample_realtime_comment(@fb_page.page_id, user_id, comment_id, user_id, time)
+    comment_feed[:data][:payload]['entry']['changes'][0]['value']['item'] = 'reply_to_comment'
+    koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id2, time)
+    koala_comment = sample_comment_feed(post_id2, user_id, comment_id, time)
+    koala_comment['data'][0]['object'] = obj_id
+    koala_comment['data'][0]['parent'] = parent_id
+    koala_post[0]['comments'] = koala_comment
+    sqs_msg = Hashit.new(body: comment_feed.to_json)
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
+    Koala::Facebook::API.any_instance.unstub(:get_object)
+    fb_comment_id = koala_comment['data'][0]['id']
+
+    note = @account.facebook_posts.find_by_post_id(fb_comment_id).postable
+    parent_note = @account.facebook_posts.find_by_post_id(fb_comment_id).parent.postable
+    assert_equal parent_note.updated_at, note.created_at
+  end
+
   def test_do_not_convert_company_posts_with_broad_rule_type
     rule = @fb_page.default_stream.ticket_rules[0]
     rule[:filter_data] = { rule_type: RULE_TYPE[:broad] }

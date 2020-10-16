@@ -28,7 +28,8 @@ module ChannelIntegrations::Multiplexer
     def payload(params)
       {
         profile_unique_id: params[:profile_unique_id],
-        body: params[:body]
+        body: params[:body],
+        ticket_id: params[:ticket_id]
       }.to_json
     end
   end

@@ -28,6 +28,8 @@ module Sqs
       @messages.each do |message|
         fb_message = Facebook::Core::Message.new(page_id, message, @entry.try(:[], 'account_id'))
         validity = fb_message.account_and_page_validity
+        return Rails.logger.debug "Invalid validity for page id: #{page_id}, account_id: #{@entry.try(:[], 'account_id')}, message: #{@entry.try(:[], 'messaging')}" if validity.nil? || !validity.is_a?(Hash)
+
         if validity[:valid_account] && validity[:realtime_messaging] && validity[:import_dms]
           if validity[:valid_page]
             set_account_id(page_id, @entry)

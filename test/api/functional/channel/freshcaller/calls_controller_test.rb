@@ -360,7 +360,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     set_auth_header
     put :update, construct_params(convert_call_to_note_params(call_id, 'completed'))
     call.reload
-    match_json(ticket_with_note_pattern(call))
+    match_json(ticket_only_pattern(call))
     prim_ticket = call.associated_ticket
     assert sec_ticket.parent_ticket == prim_ticket.id
     call.destroy

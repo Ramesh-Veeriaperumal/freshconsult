@@ -1,5 +1,5 @@
 class SAAS::SubscriptionEventActions
-
+  include Redis::RateLimitRedis
   attr_accessor :account, :old_plan, :add_ons, :new_plan, :existing_add_ons, :skipped_features
 
   DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps,
@@ -300,8 +300,9 @@ class SAAS::SubscriptionEventActions
     end
 
     def change_api_limit
-      account.change_fluffy_api_limit if account.fluffy_enabled?
-      account.change_fluffy_api_min_limit if account.fluffy_min_level_enabled?
+      new_subscription_plan_id = new_plan.subscription_plan_id
+      account.change_fluffy_api_limit(get_api_limit_from_redis(account.id, new_subscription_plan_id))
+      account.change_fluffy_api_min_limit(new_subscription_plan_id)
     end
 
     def add_implicit_features_to_new_plan

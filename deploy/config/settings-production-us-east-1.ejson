@@ -3291,7 +3291,7 @@
         "jwt_secret": "EJ[1:sce6qUErnG8vjXujuJ0BnkzZ2svXPHuY5ToGQeXnu00=:WFhFqt/nPGw0+xb/IqYbRcvzVyNbumXm:/kJju850Rd8u8kv2hcKJEZPoJ3NQ0/m3X965SSCa4nTW9XBtM314x8WXYbIh4z+4]"
       },
       "silkroad_config": {
-        "_host": "https://silkroad-service.internal.poduseast1.freshdesk.com/",
+        "_host": "https://silkroad-service-us.freshdesk.com/",
         "_timeout": 10
       }
     },
