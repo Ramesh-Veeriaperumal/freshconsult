@@ -228,7 +228,7 @@ class ContactValidationTest < ActionView::TestCase
       assert_equal({
         email: {},
         name: {
-          pattern: '/,",www.',
+          pattern: 'URLs,"',
           field: :name,
           code: :invalid_format
         }
@@ -249,7 +249,7 @@ class ContactValidationTest < ActionView::TestCase
       assert_equal({
         email: {},
         name: {
-          pattern: '/,",www.',
+          pattern: 'URLs,"',
           field: :name,
           code: :invalid_format
         }
