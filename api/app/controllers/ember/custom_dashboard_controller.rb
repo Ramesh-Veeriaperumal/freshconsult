@@ -11,7 +11,7 @@ module Ember
 
     SLAVE_ACTIONS = %w(index, widgets_data bar_chart_data)
 
-    skip_before_filter :load_object, only: [:widget_data_preview, :show]
+    skip_before_filter :load_object, only: [:widget_data_preview, :show, :omni_widget_data_preview]
 
     before_filter :load_dashboard_from_cache, only: :show
     before_filter :load_objects, only: :index
@@ -94,6 +94,28 @@ module Ember
 
     def fetch_announcement
       @announcement = fetch_announcement_with_viewers
+    end
+
+    def omni_widget_data
+      return access_denied unless Account.current.omni_channel_team_dashboard_enabled? && dashboard_accessible?
+
+      @widget = @item.widgets.find_by_id(params[:widget_id])
+      head 404 && return unless @widget
+      @response, code = OmniChannelDashboard::Client.new(@widget.url, :get).widget_data_request
+      render "#{controller_path}/omni_widget_data", status: code
+    end
+
+    def omni_widget_data_preview
+      return access_denied unless Account.current.omni_channel_team_dashboard_enabled? && omni_preview_accesible?(params[:source])
+
+      valid_module = valid_omni_widget_module?(params)
+      if valid_module == true
+        url = OmniChannelDashboard::Constants::BASE_URL + params.except(:version, :format, :controller, :action, :id).to_query
+        @response, code = OmniChannelDashboard::Client.new(url, :get).widget_data_request
+        render "#{controller_path}/omni_widget_data", status: code
+      else
+        render_request_error(:invalid_values, 400, valid_module)
+      end
     end
 
     private

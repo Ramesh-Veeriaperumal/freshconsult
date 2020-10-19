@@ -50,7 +50,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/search/multiquery", only: [:search_results]
     resource :"ember/search/logger", only: [:log_click]
     resource :"ember/year_in_review", only: %i[index clear]
-    resource :"ember/custom_dashboard", only: %i[widgets_data show index bar_chart_data]
+    resource :"ember/custom_dashboard", only: %i[widgets_data show index bar_chart_data omni_widget_data]
     resource :"settings/helpdesk", only: [:index]
     resource :'ember/rt', only: [:show]
     resource :"out_of_office", only: %i[index show create update destroy]
@@ -313,7 +313,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_dashboard do
-    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview, :create_announcement, :end_announcement, :get_announcements, :fetch_announcement]
+    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview, :create_announcement, :end_announcement, :get_announcements, :fetch_announcement, :omni_widget_data_preview]
   end
 
   manage_segments do

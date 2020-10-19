@@ -139,4 +139,21 @@ module CustomDashboardConcern
     viewers = iris_response.map { |r| r['identifier'] }
     @dashboard_announcement.as_json['dashboard_announcement'].merge(viewers: viewers)
   end
+
+  def omni_preview_accesible?(source)
+    case source
+    when SOURCES[:freshcaller]
+      User.current.freshcaller_agent_enabled?
+    when SOURCES[:freshchat]
+      User.current.freshchat_agent_enabled?
+    else
+      false
+    end
+  end
+
+  def valid_omni_widget_module?(params)
+    type = params['type']
+    module_klass = WIDGET_MODULES_BY_TOKEN[type.to_i].constantize
+    module_klass.valid_config?(params)
+  end
 end

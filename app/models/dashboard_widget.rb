@@ -24,7 +24,6 @@ class DashboardWidget < ActiveRecord::Base
   validates_inclusion_of :widget_type, in: WIDGET_MODULES_BY_TOKEN.keys
 
   before_save :set_active, on: :update, if: :inactive_widget_updated?
-  before_save :set_url, if: :omni_widget_source?
 
   scope :all_active, -> { where(active: true) }
   scope :of_types, -> (types) { where(active: true, widget_type: types) }
@@ -56,13 +55,5 @@ class DashboardWidget < ActiveRecord::Base
 
   def set_active
     self.active = true
-  end
-
-  def omni_widget_source?
-    Account.current.omni_channel_team_dashboard_enabled? && OMNI_DASHBOARD_SOURCES.include?(config_data[:source])
-  end
-
-  def set_url
-    config_data[:url] = config_data.select { |k, v| OMNI_VALID_QUERY_PARAMS.include?(k.to_sym) && v.present? }.to_query + "&type=#{widget_type}"
   end
 end

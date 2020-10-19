@@ -120,6 +120,7 @@ module Dashboard::Custom::CustomDashboardConstants
 
   OMNI_WIDGET_TYPES = [WIDGET_MODULE_TOKEN_BY_NAME['ms_scorecard'], WIDGET_MODULE_TOKEN_BY_NAME['ms_bar_chart'], WIDGET_MODULE_TOKEN_BY_NAME['ms_availability'], WIDGET_MODULE_TOKEN_BY_NAME['ms_csat'], WIDGET_MODULE_TOKEN_BY_NAME['ms_time_trend'], WIDGET_MODULE_TOKEN_BY_NAME['ms_sla_trend'], WIDGET_MODULE_TOKEN_BY_NAME['ms_call_trend']].freeze
   OMNI_WIDGET_DATA_URL = '/api/data/widget-data?'.freeze
+  OMNI_WIDGET_DATA_HELPKIT_API = '/api/_/dashboards/%{dashboard_id}/widgets/%{widget_id}'.freeze
 
   # User access type doesn't apply to custom dashboards    users: 1, 
   DASHBOARD_ACCESS_TYPE = { all: 0, groups: 2 }.freeze

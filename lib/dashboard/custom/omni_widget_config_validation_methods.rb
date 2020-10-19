@@ -20,7 +20,7 @@ module Dashboard::Custom::OmniWidgetConfigValidationMethods
   end
 
   def validate_queue_id(source, queue_id)
-    source == SOURCES[:freshcaller] ? queue_id.present? && queue_id >= ALL_QUEUES : queue_id.blank?
+    source == SOURCES[:freshcaller] ? queue_id.present? && queue_id.to_i >= ALL_QUEUES : queue_id.blank?
   end
 
   def validate_time_type(source, time_type)

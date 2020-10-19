@@ -2,6 +2,8 @@ require_relative '../../test_helper'
 ['dashboard_object.rb', 'widget_object.rb','search_service_result.rb'].each { |filename| require_relative "#{Rails.root}/test/api/helpers/custom_dashboard/#{filename}"}
 require "#{Rails.root}/test/core/helpers/account_test_helper.rb"
 require "#{Rails.root}/test/api/helpers/custom_dashboard_test_helper.rb"
+require 'webmock/minitest'
+WebMock.allow_net_connect!
 module Ember
   class CustomDashboardControllerTest < ActionController::TestCase
     include ::Dashboard::Custom::CustomDashboardConstants
@@ -2320,6 +2322,213 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+    end
+
+    def test_dashboard_omni_widget_data_with_freshchat_time_trend_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
+      dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      assert_response 201
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data, controller_params(id: dashboard_id, widget_id: widget_id)
+      assert_response 200
+      match_json('success': true)
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_with_freshchat_time_trend_widget_with_valid_params_without_feature
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
+      dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      dashboard_id = response_hash[:id]
+      widget_id = response_hash[:widgets][0][:id]
+      assert_response 201
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(false)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data, controller_params(id: dashboard_id, widget_id: widget_id)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      User.any_instance.unstub(:privilege?)
+      dashboard = @account.dashboards.find_by_id(dashboard_id)
+      dashboard.destroy if dashboard.present?
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshchat_time_trend_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat', type: 16)
+      assert_response 200
+      match_json('success': true)
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshchat_time_trend_widget_with_invalid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(metric: 2, computation: -3, group_ids: [-1], date_range: 3000, source: 'freshchat', type: 16)
+      assert_response 400
+      match_json('code': 'invalid_values', 'message': 'Invalid value(s) for field(s): computationdate_range')
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshchat_time_trend_widget_with_valid_params_with_user_not_freshchat_agent
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(false)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat', type: 16)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshchat_time_trend_widget_with_valid_params_without_feature
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(false)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat', type: 16)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshchat_time_trend_widget_without_privilege
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat', type: 16)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshcaller_call_trend_widget_with_valid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(view: 1, queue_id: 0, time_type: 1, source: 'freshcaller', type: 18)
+      assert_response 200
+      match_json('success': true)
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshcaller_call_trend_widget_with_invalid_params
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(view: 1, queue_id: -1, time_type: 1, source: 'freshcaller', type: 18)
+      assert_response 400
+      match_json('code': 'invalid_values', 'message': 'Invalid value(s) for field(s): queue_id')
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshcaller_call_trend_widget_with_valid_params_with_user_not_freshcaller_agent
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Account.any_instance.stubs(:freshcaller_enabled?).returns(false)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(view: 1, queue_id: 0, time_type: 1, source: 'freshcaller', type: 18)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      Account.any_instance.unstub(:freshcaller_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshcaller_call_trend_widget_with_invalid_source
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_return(body: { success: true }.to_json, headers: { 'Content-Type' => 'application/json', 'x-touchstone-request-id' => '1234' }, status: 200)
+      get :omni_widget_data_preview, controller_params(view: 1, queue_id: 0, time_type: 1, source: 'freshcall', type: 18)
+      assert_response 403
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
+    end
+
+    def test_dashboard_omni_widget_data_preview_with_freshcaller_call_trend_widget_with_valid_params_with_touchstone_error
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      request_stub = stub_request(:get, %r{^#{TOUCHSTONE_CONFIG[:api_endpoint]}.*?$}).to_raise(StandardError)
+      get :omni_widget_data_preview, controller_params(view: 1, queue_id: 0, time_type: 1, source: 'freshcaller', type: 18)
+      assert_response 502
+      match_json(error_type: 'BAD_GATEWAY', message: 'Failed to handle the request')
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      remove_request_stub(request_stub)
     end
   end
 end

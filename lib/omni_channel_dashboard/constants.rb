@@ -8,4 +8,7 @@ module OmniChannelDashboard::Constants
   ACCOUNT_UPDATE_API_PATH = '/api/data/accounts/'
   ACCOUNT_CREATE_API_PATH = '/api/data/accounts'
   DEFAULT_TIMEOUT = 10
+  BASE_URL = (TOUCHSTONE_CONFIG['api_endpoint'] + '/api/data/custom-widget-data?').freeze
+  ERROR_RESPONSE = { error_type: 'BAD_GATEWAY', message: 'Failed to handle the request' }.freeze
+  GMT_OFFSET = 'GMT'
 end

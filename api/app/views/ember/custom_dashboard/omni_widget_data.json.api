@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+if @response.present? && @response.is_a?(Hash)
+  @response.to_json
+elsif @response.present? && @response.is_a?(String)
+  @response
+end

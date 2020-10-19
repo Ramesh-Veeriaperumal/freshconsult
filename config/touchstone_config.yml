@@ -1,0 +1,14 @@
+defaults: &defaults
+  api_endpoint: "http://localhost:3002/"
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults
