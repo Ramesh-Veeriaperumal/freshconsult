@@ -447,10 +447,6 @@ class Account < ActiveRecord::Base
     launched?(:falcon_portal_theme)
   end
 
-  def kbase_spam_whitelist_enabled?
-    launched?(:kbase_spam_whitelist)
-  end
-
   def csat_email_scan_compatibility_enabled?
     launched?(:csat_email_scan_compatibility)
   end
