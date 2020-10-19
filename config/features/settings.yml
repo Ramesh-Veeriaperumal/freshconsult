@@ -179,3 +179,7 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :caching:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature

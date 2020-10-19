@@ -434,7 +434,6 @@
   :link_tickets: false
   :shared_ownership: false
   :advanced_search_bulk_actions: false
-  :caching: false
   :private_inline: false
   :freshcaller: false
   :freshcaller_widget: false
