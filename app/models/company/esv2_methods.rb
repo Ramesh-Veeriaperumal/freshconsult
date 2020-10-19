@@ -122,7 +122,7 @@ class Company < ActiveRecord::Base
   #
   def self.es_filter(account_id, letter,page, field_name, sort_order, per_page, uuid)
     Search::V2::QueryHandler.new(account_id: account_id,
-                                 context: :company_v2_search,
+                                 context: letter ? :filtered_company_search : :company_v2_search,
                                  exact_match:  false,
                                  es_models:    { 'company' => { model: 'Company', associations: [:flexifield, :company_domains] } },
                                  current_page: page,

@@ -11,7 +11,7 @@ module ApiCompanyHelper
     company.industry = options[:industry] if options.key?(:industry)
     company.renewal_date = options[:renewal_date] if options.key?(:renewal_date)
     company.custom_field = options[:custom_fields] if options.key?(:custom_fields)
-    company.save
+    company.save!
     company.reload
   end
 end
