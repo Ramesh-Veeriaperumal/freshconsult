@@ -2206,7 +2206,8 @@ ActiveRecord::Schema.define(version: 20200827174934) do
     t.boolean  "toggle_availability",               :default => false
     t.integer  "capping_limit",                     :default => 0
     t.integer  "group_type",                        :default => 1
-    t.string   'uid'
+    t.string   "uid"
+    t.text     "additional_settings"
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
