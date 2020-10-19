@@ -4,6 +4,7 @@ class ApiGroupsController < ApiApplicationController
   decorate_views
   before_filter :prepare_agents, only: [:create, :update]
   before_filter :check_if_group_exists, only: [:create, :update]
+  before_filter :validate_supervisor_privilege, only: [:update]
 
   def index
     if include_omni_channel_groups?
@@ -52,6 +53,14 @@ class ApiGroupsController < ApiApplicationController
         @item.errors[:name] << :"has already been taken"
         @additional_info = { group_id: group.id }
         render_custom_errors
+      end
+    end
+
+    def validate_supervisor_privilege
+      if !api_current_user.privilege?(:admin_tasks) && api_current_user.privilege?(:manage_availability)
+        cname_params.select do |attr, value|
+          render_request_error(:access_denied, 403) and return if GroupConstants::ACCESSIBLE_FIELDS_FOR_SUPERVISOR.exclude?(attr)
+        end
       end
     end
 

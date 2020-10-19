@@ -35,7 +35,6 @@ module Admin
       def validate_type_field
         field_name = 'automatic_agent_assignment[:type]'.to_sym
         missing_field_error(field_name) if @enabled && @automatic_agent_assignment[:type].nil?
-        invalid_field_error(field_name) if @automatic_agent_assignment[:type].present? && !@enabled
         expected = AUTOMATIC_AGENT_ASSIGNMENT_TYPES
         not_included_error(field_name, expected.join(', ')) if @automatic_agent_assignment[:type] && !expected.include?(@type)
       end

@@ -32,7 +32,7 @@ module GroupConstants
 
   ALLOWED_INCLUDE_PARAMS = %w[omni_channel_groups].freeze
 
-  ACCESSIBLE_FIELDS_FOR_SUPERVISOR= %w(auto_ticket_assign)  
+  ACCESSIBLE_FIELDS_FOR_SUPERVISOR= %w(auto_ticket_assign allow_agents_to_change_availability automatic_agent_assignment capping_limit assignment_type ticket_assign_type toggle_availability)  
 
   ASSIGNMENT_TYPES_SANITIZE = {0 => 0, 1 =>1, 2 => 10}
 
