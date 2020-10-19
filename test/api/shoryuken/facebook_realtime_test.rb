@@ -407,16 +407,17 @@ class FacebookRealtimeTest < ActionView::TestCase
     ticket_rule.save!
     comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
     koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
-    koala_comment = sample_comment_feed_with_mentions(post_id, user_id, comment_id, time)
+    message_tags = message_tags('tags')
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
     koala_post[0]['comments'] = koala_comment
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
-  ensure
-    Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     assert_nil @account.facebook_posts.where(post_id: fb_comment_id).first
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_convert_company_post_comments_to_ticket_with_message_tags_when_filter_mentions_disabled
@@ -433,17 +434,103 @@ class FacebookRealtimeTest < ActionView::TestCase
     ticket_rule.save!
     comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
     koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
-    koala_comment = sample_comment_feed_with_mentions(post_id, user_id, comment_id, time)
+    message_tags = message_tags('tags')
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
     koala_post[0]['comments'] = koala_comment
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
-  ensure
-    Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     fb_post = @account.facebook_posts.where(post_id: fb_comment_id).first.postable
     assert fb_post.is_a?(Helpdesk::Ticket)
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
+  end
+
+  def test_convert_company_post_comments_to_ticket_with_hash_tags_when_filter_mentions_enabled
+    user_id = rand(10**10)
+    post_id = rand(10**15)
+    comment_id = rand(10**15)
+    time = Time.now.utc
+    post_user_id = @fb_page.page_id
+    ticket_rule = @fb_page.default_ticket_rule
+    filter_data_hash = ticket_rule.filter_data
+    filter_data_hash[:includes] = []
+    filter_data_hash[:filter_mentions] = true
+    ticket_rule.filter_data = filter_data_hash
+    ticket_rule.save!
+    comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
+    koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
+    message_tags = [message_tags('tags', nil)]
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
+    koala_post[0]['comments'] = koala_comment
+    sqs_msg = Hashit.new(body: comment_feed.to_json)
+
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
+    fb_comment_id = koala_comment['data'][0]['id']
+    fb_post = @account.facebook_posts.where(post_id: fb_comment_id).first.postable
+    assert fb_post.is_a?(Helpdesk::Ticket)
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
+  end
+
+  def test_convert_company_post_comments_to_ticket_with_page_mentions_when_filter_mentions_enabled
+    user_id = rand(10**10)
+    post_id = rand(10**15)
+    comment_id = rand(10**15)
+    time = Time.now.utc
+    post_user_id = @fb_page.page_id
+    ticket_rule = @fb_page.default_ticket_rule
+    filter_data_hash = ticket_rule.filter_data
+    filter_data_hash[:includes] = []
+    filter_data_hash[:filter_mentions] = true
+    ticket_rule.filter_data = filter_data_hash
+    ticket_rule.save!
+    comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
+    koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
+    message_tags = [message_tags('tags', 'page')]
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
+    koala_post[0]['comments'] = koala_comment
+    sqs_msg = Hashit.new(body: comment_feed.to_json)
+
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
+    fb_comment_id = koala_comment['data'][0]['id']
+    fb_post = @account.facebook_posts.where(post_id: fb_comment_id).first.postable
+    assert fb_post.is_a?(Helpdesk::Ticket)
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
+  end
+
+  def test_convert_company_post_comments_to_ticket_with_page_mentions_and_hashtags_when_filter_mentions_enabled
+    user_id = rand(10**10)
+    post_id = rand(10**15)
+    comment_id = rand(10**15)
+    time = Time.now.utc
+    post_user_id = @fb_page.page_id
+    ticket_rule = @fb_page.default_ticket_rule
+    filter_data_hash = ticket_rule.filter_data
+    filter_data_hash[:includes] = []
+    filter_data_hash[:filter_mentions] = true
+    ticket_rule.filter_data = filter_data_hash
+    ticket_rule.save!
+    comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
+    koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
+    message_tags = [message_tags('tags', 'page'), message_tags('messages', nil)]
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
+    koala_comment['message'] = 'tags😁😃#messages'
+    koala_post[0]['comments'] = koala_comment
+    sqs_msg = Hashit.new(body: comment_feed.to_json)
+
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
+    Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
+    fb_comment_id = koala_comment['data'][0]['id']
+    fb_post = @account.facebook_posts.where(post_id: fb_comment_id).first.postable
+    assert fb_post.is_a?(Helpdesk::Ticket)
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_do_not_convert_comments_to_ticket_with_includes_and_filter_mentions_enabled_when_keyword_is_absent
@@ -466,10 +553,10 @@ class FacebookRealtimeTest < ActionView::TestCase
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
-  ensure
-    Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     assert_nil @account.facebook_posts.where(post_id: fb_comment_id).first
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_do_not_convert_comments_to_visitor_post_as_notes_on_the_same_ticket_by_post_with_broad_rule_type_with_mentions_when_filter_mentions_enabled
@@ -484,18 +571,17 @@ class FacebookRealtimeTest < ActionView::TestCase
 
     comment_feed = sample_realtime_comment(@fb_page.page_id, user_id, comment_id, user_id, time)
     koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
-    koala_comment = sample_comment_feed_with_mentions(post_id, user_id, comment_id, time)
+    message_tags = message_tags('tags')
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
     koala_post[0]['comments'] = koala_comment
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
+    fb_comment_id = koala_comment['data'][0]['id']
+    assert_nil @account.facebook_posts.where(post_id: fb_comment_id).first
   ensure
     Koala::Facebook::API.any_instance.unstub(:get_object)
-
-    fb_comment_id = koala_comment['data'][0]['id']
-
-    assert_nil @account.facebook_posts.where(post_id: fb_comment_id).first
   end
 
   def test_convert_comments_to_visitor_post_as_notes_on_the_same_ticket_by_post_with_broad_rule_type_with_mentions_when_filter_mentions_disabled
@@ -510,14 +596,13 @@ class FacebookRealtimeTest < ActionView::TestCase
 
     comment_feed = sample_realtime_comment(@fb_page.page_id, user_id, comment_id, user_id, time)
     koala_post = sample_post_feed(@fb_page.page_id, user_id, post_id, time)
-    koala_comment = sample_comment_feed_with_mentions(post_id, user_id, comment_id, time)
+    message_tags = [message_tags('tags')]
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
     koala_post[0]['comments'] = koala_comment
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
-  ensure
-    Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_post_id = koala_post[0]['id']
 
     fb_comment_id = koala_comment['data'][0]['id']
@@ -525,6 +610,8 @@ class FacebookRealtimeTest < ActionView::TestCase
     assert @account.facebook_posts.where(post_id: fb_post_id).first.postable.is_a?(Helpdesk::Ticket)
     note = @account.facebook_posts.where(post_id: fb_comment_id).first.postable
     assert note.is_a?(Helpdesk::Note)
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_do_not_convert_comments_to_company_posts_add_as_note_on_same_ticket_as_post_with_broad_rule_type_with_mentions_when_filter_mentions_enabled
@@ -540,16 +627,17 @@ class FacebookRealtimeTest < ActionView::TestCase
 
     comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
     koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
-    koala_comment = sample_comment_feed_with_mentions(post_id, user_id, comment_id, time)
+    message_tags = [message_tags('tags')]
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
     koala_post[0]['comments'] = koala_comment
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
-  ensure
-    Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     assert_nil @account.facebook_posts.where(post_id: fb_comment_id).first
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_convert_comments_to_company_posts_add_as_note_on_same_ticket_as_post_with_broad_rule_type_with_mentions_when_filter_mentions_disabled
@@ -565,19 +653,20 @@ class FacebookRealtimeTest < ActionView::TestCase
 
     comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
     koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
-    koala_comment = sample_comment_feed_with_mentions(post_id, user_id, comment_id, time)
+    message_tags = [message_tags('tags')]
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
     koala_post[0]['comments'] = koala_comment
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
-  ensure
-    Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_post_id = koala_post[0]['id']
     fb_comment_id = koala_comment['data'][0]['id']
     assert @account.facebook_posts.where(post_id: fb_post_id).first.postable.is_a?(Helpdesk::Ticket)
     note = @account.facebook_posts.where(post_id: fb_comment_id).first.postable
     assert note.is_a?(Helpdesk::Note)
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_do_not_convert_comments_to_company_posts_add_as_note_on_same_ticket_as_post_with_broad_rule_type_with_multiple_mentions_and_special_chars_when_filter_mentions_enabled
@@ -593,16 +682,17 @@ class FacebookRealtimeTest < ActionView::TestCase
 
     comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
     koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
-    koala_comment = sample_comment_feed_with_multiple_mentions(post_id, user_id, comment_id, time)
+    message_tags = [message_tags('tags'), message_tags('messages')]
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
     koala_post[0]['comments'] = koala_comment
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
-  ensure
-    Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     assert_nil @account.facebook_posts.where(post_id: fb_comment_id).first
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_do_not_convert_comments_to_company_posts_add_as_note_on_same_ticket_as_post_with_broad_rule_type_with_mentions_and_emojis_when_filter_mentions_enabled
@@ -618,15 +708,17 @@ class FacebookRealtimeTest < ActionView::TestCase
 
     comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
     koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
-    koala_comment = sample_comment_feed_with_mentions_and_emojis(post_id, user_id, comment_id, time)
+    message_tags = [message_tags('tags')]
+    koala_comment = sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
+    koala_comment[message] = 'tags😁😃'
     koala_post[0]['comments'] = koala_comment
     sqs_msg = Hashit.new(body: comment_feed.to_json)
 
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
     Ryuken::FacebookRealtime.new.perform(sqs_msg, nil)
-  ensure
-    Koala::Facebook::API.any_instance.unstub(:get_object)
     fb_comment_id = koala_comment['data'][0]['id']
     assert_nil @account.facebook_posts.where(post_id: fb_comment_id).first
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 end

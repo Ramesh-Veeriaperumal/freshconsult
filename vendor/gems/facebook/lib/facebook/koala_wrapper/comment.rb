@@ -46,7 +46,7 @@ module Facebook
         message = @feed[:message].to_s
         if @feed[:message_tags]
           @feed[:message_tags].each do |tags|
-            message = message.gsub(tags[:name].to_s, '')
+            message = message.gsub(tags[:name].to_s, '') if tags.dig(:type) == 'user'
           end
           message = message.gsub(EMOJI_UNICODE_REGEX, '')
           message = message.gsub(Regexp.union(EMOJI_SPECIAL_CHARS_ARRAY), '')
