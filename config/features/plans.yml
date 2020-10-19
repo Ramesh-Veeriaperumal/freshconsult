@@ -596,6 +596,7 @@
       - :estate_jan_20
     :exclude: [:analytics_knowledge_base_report]
     :freddy_sessions: 5000
+    :freddy_auto_recharge_packs: 1
   :forest_omni_jan_20:
     :name: Forest Omni Channel
     :features:
@@ -606,3 +607,4 @@
       - :forest_jan_20
     :exclude: [:analytics_knowledge_base_report]
     :freddy_sessions: 5000
+    :freddy_auto_recharge_packs: 1

@@ -125,7 +125,8 @@ class SubscriptionPlan < ActiveRecord::Base
   FREDDY_DEFAULT_SESSIONS_MAP = {
     freddy_self_service: 1000,
     freddy_ultimate: 5000,
-    freddy_session_packs: 1000
+    freddy_session_packs: 1000,
+    freddy_auto_recharge_packs: 1000
   }.freeze
 
   def fetch_discount(billing_cycle)

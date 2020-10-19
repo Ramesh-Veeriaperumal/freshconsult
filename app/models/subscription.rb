@@ -114,7 +114,7 @@ class Subscription < ActiveRecord::Base
   scope :filter_with_currency, -> (currency) {
     where(subscription_currency_id: currency.id)
   }
-  
+
   scope :filter_with_state, -> (state) {
     where(state: state)
   }
@@ -560,6 +560,24 @@ class Subscription < ActiveRecord::Base
     self.additional_info[:freddy_session_packs] = session_packs
   end
 
+  def freddy_auto_recharge_packs
+    self.additional_info.try(:[], :freddy_auto_recharge_packs).to_i
+  end
+
+  def freddy_auto_recharge_packs=(session_packs)
+    self.additional_info ||= {}
+    self.additional_info[:freddy_auto_recharge_packs] = session_packs
+  end
+
+  def freddy_auto_recharge_enabled?
+    self.additional_info[:freddy_auto_recharge_enabled].present?
+  end
+
+  def freddy_auto_recharge_enabled=(state)
+    self.additional_info ||= {}
+    self.additional_info[:freddy_auto_recharge_enabled] = state
+  end
+
   def freddy_billing_model
     self.additional_info.try(:[], :freddy_billing_model)
   end
@@ -884,8 +902,17 @@ class Subscription < ActiveRecord::Base
         updated_addons = applicable_addons(addons, new_plan)
         self.free_agents = new_plan.free_agents
         convert_to_free if new_sprout?
+
+        new_plan_name = self.subscription_plan.name.parameterize.underscore.to_sym
+        if account.auto_recharge_eligible_enabled? && auto_recharge_enabled_in_plan?(new_plan_name) && !self.freddy_auto_recharge_enabled?
+          self.freddy_auto_recharge_enabled = true
+          self.freddy_auto_recharge_packs = PLANS[:subscription_plans][new_plan_name][:freddy_auto_recharge_packs]
+        end
       end
-      self.freddy_sessions = calculate_freddy_session(updated_addons, self, self.subscription_plan.name.parameterize.underscore.to_sym, self.renewal_period) if account.launched?(:freddy_subscription)
+
+      new_plan_name = self.subscription_plan.name.parameterize.underscore.to_sym
+      self.freddy_sessions = calculate_freddy_session(updated_addons, self, new_plan_name, self.renewal_period) if account.launched?(:freddy_subscription)
+
       return false if validate_errors_on_update
 
       applicable_coupon = verify_coupon(present_subscription.coupon)

@@ -49,6 +49,12 @@ window.App = window.App || {};
     freddy_sessions_addon_key: 'freddy_session_packs',
     freddy_session_pack_reduced: false,
     freddy_session_pack_changed: false,
+    freddy_sessions: 0,
+    freddy_auto_recharge_launched: false,
+    freddy_auto_recharge_enabled: false,
+    freddy_auto_recharge_enabled_changed: false,
+    freddy_auto_recharge_packs: 1,
+    freddy_auto_recharge_packs_changed: 1,
     initialize: function (planInfo) {
       this.currency = ''+planInfo.currency_name;
       this.billing_cycle = planInfo.renewal_period;
@@ -68,6 +74,12 @@ window.App = window.App || {};
       this.freddy_disabled = !planInfo.freddy_enabled;
       this.initial_freddy_option = planInfo.freddy_option;
       this.freddy_option = planInfo.freddy_option;
+      this.freddy_sessions = planInfo.freddy_sessions || 0;
+      this.freddy_auto_recharge_launched = planInfo.freddy_auto_recharge_launched;
+      this.freddy_auto_recharge_enabled = planInfo.freddy_auto_recharge_enabled;
+      this.freddy_auto_recharge_enabled_changed = planInfo.freddy_auto_recharge_enabled;
+      this.freddy_auto_recharge_packs = planInfo.freddy_auto_recharge_packs || 1;
+      this.freddy_auto_recharge_packs_changed = planInfo.freddy_auto_recharge_packs || 1;
       this.subscription_state = planInfo.subscription_state;
       this.pending_cancellation_request = planInfo.has_account_cancellation_request;
       this.free_agent_count = parseInt(planInfo.free_agents_count);
@@ -75,7 +87,8 @@ window.App = window.App || {};
       if(this.downgrade_launched && this.pending_cancellation_request && this.subscription_state !== this.suspended_key) {
         $('.downgrade-plan-button, .free-plan-button').removeAttr('rel');
       }
-      this.bindEvents()
+      this.bindEvents();
+      this.initializeAutoRechargeTooltip();
     },
     namespace: function(){
       return '.selectplans';
@@ -99,13 +112,15 @@ window.App = window.App || {};
       $(document).on('click'+$this.namespace(),  '.fsm-toggle-holder .toggle-button', function(ev, triggerType){ $this.toggleFSMAddon(this, false, triggerType) })
       $(document).on('click'+$this.namespace(),  '.fsm-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFSMAddon(this, true, triggerType) })
       $(document).on('change'+$this.namespace(), '#field-agents-text-box', function(){ $this.fieldAgentChange(this) })
-      $(document).on('click'+$this.namespace(),  '#buy-more-sesion', function(){ $('.edit-plan').trigger("click") })
+      $(document).on('click'+$this.namespace(),  '#buy-more-sesion, .enable-auto-recharge-here', function(){ $('.edit-plan').trigger("click") })
       $(document).on('click'+$this.namespace(),  '.freddy-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFreddyAddon(this, true, triggerType, false) })
       $(document).on('click'+$this.namespace(),  '.freddy-cx-self-billing-edit .toggle-button', function(ev, triggerType){ $this.toggleFreddyAddon(this, true, triggerType, true) })
       $(document).on('click'+$this.namespace(),  'input[name="freddy_options"]', function(){ $this.toggleFreddyCXPlanOptions(this) })
       $(document).on('change'+$this.namespace(), '#freddy-session-pack', function(){ $this.freddySessionPackChange(this) })
       $(document).on('click'+$this.namespace(),  '#warning-freddy-billing-edit-submit', function(){ $this.checkAndRemoveFreddyCX('submit') })
       $(document).on('click'+$this.namespace(),  '#warning-freddy-billing-edit-cancel, #warning-freddy-billing-edit .modal-header .close', function(){ $this.checkAndRemoveFreddyCX('cancel', true) })
+      $(document).on('click'+$this.namespace(),  '#freddy_auto_recharge_enabled_field', function(){ $this.toggleFreddyAutorecharge(this) })
+      $(document).on('change'+$this.namespace(), '#freddy_auto_recharge_packs_field', function(){ $this.freddyAutoRechargePacksChange(this) })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change-submit', function(){ $this.checkAndRemoveFSM('submit') })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change-cancel', function(){ $this.checkAndRemoveFSM('cancel', false) })
       $(document).on('click'+$this.namespace(),  '#warning-fsm-billing-change .modal-header .close', function(){ $this.checkAndRemoveFSM('cancel', false) })
@@ -123,6 +138,8 @@ window.App = window.App || {};
     editingSubscription: function() {
       this.editBilling = true;
       $('#buy-more-sesion').get(0) ? $('#buy-more-sesion').hide() : '';
+      $('.auto-recharge-section').get(0) ? $('.auto-recharge-section').hide() : '';
+      $('.auto-recharge-tooltip').popover('hide');
     },
     tryFreshsalesEvent: function(isInvite) {
       var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
@@ -213,7 +230,9 @@ window.App = window.App || {};
       ev.preventDefault();
       $("#billing-template").detach().appendTo('#Pagearea').hide();
       $(".features-billing-edit").addClass('hide');
-      $('#buy-more-sesion').show();
+      $('#buy-more-sesion, .auto-recharge-section').show();
+      $('.auto-recharge-tooltip').popover('hide');
+      this.initializeAutoRechargeTooltip();
       var data_content = this.original_data;
       $(".subscribed-plan-details").html(data_content);
     },
@@ -455,6 +474,7 @@ window.App = window.App || {};
           } else {
             this.addFreddySelfServiceAddon();
           }
+          $('.freddy_auto_recharge_section').show();
           this.calculateCost(non_omni_plan_id, parent_plan_element);
         } else {
           var freddyWarning = editBilling ? $("#warning-btn-freddy-billing-edit") : $("#warning-btn-freddy-billing-change");
@@ -482,6 +502,7 @@ window.App = window.App || {};
         this.disableFreddyValues();
         this.removeFreddyAddon();
         this.includeFreddySessionPacks(this.freddy_addon_count > 2 ? Number($("#freddy-session-pack").val()) : 0);
+        this.freddy_sessions > 0 ? $('.freddy_auto_recharge_section').show() : $('.freddy_auto_recharge_section').hide();
         this.selected_plan_id ? this.calculateCost(this.selected_plan_id) : this.calculateCost();
       } else if(action === 'cancel') {
         if (editBilling) {
@@ -524,6 +545,43 @@ window.App = window.App || {};
     showFreddyUltimateHTML: function()  {
       $("#freddy_ultimate").removeClass('hide');
       $("#freddy_self_service").addClass('hide');
+    },
+    toggleFreddyAutorecharge: function(toggler) {
+      if (toggler.checked) {
+        toggler.setAttribute('checked', 'checked');
+        toggler.value = true;
+        $("input[name='freddy_auto_recharge_enabled']").val(true);
+        $(".freddy_auto_recharge_packs_section").show();
+      } else {
+        toggler.removeAttribute('checked');
+        toggler.value = false;
+        $("input[name='freddy_auto_recharge_enabled']").val(false);
+        $('.freddy_auto_recharge_packs_section').hide();
+      }
+      this.freddy_auto_recharge_enabled_changed = toggler.checked;
+      $(".billing-submit").removeAttr("disabled");
+    },
+    freddyAutoRechargePacksChange: function(pack) {
+      if(this.IsNumeric(pack.value) && Boolean(Number(pack.value)) && (pack.value !== this.freddy_auto_recharge_packs) && pack.value >= 0) {
+        $("input[name='freddy_auto_recharge_packs']").val(pack.value);
+        $(".billing-submit").removeAttr("disabled");
+        this.freddy_auto_recharge_packs_changed = pack.value;
+      } else {
+        pack.value = this.freddy_auto_recharge_packs;
+        $("input[name='freddy_auto_recharge_packs']").val(this.freddy_auto_recharge_packs);
+      }
+    },
+    setFreddyAutorecharge: function() {
+      if (this.freddy_auto_recharge_enabled_changed) {
+        $("#freddy_auto_recharge_enabled_field").attr('checked', 'checked');
+        $(".freddy_auto_recharge_packs_section").show();
+      } else {
+        $("#freddy_auto_recharge_enabled_field").removeAttr('checked');
+        $(".freddy_auto_recharge_packs_section").hide();
+      }
+      $("#freddy_auto_recharge_packs_field").val(this.freddy_auto_recharge_packs_changed);
+      $("input[name='freddy_auto_recharge_enabled']").val(this.freddy_auto_recharge_enabled_changed);
+      $("input[name='freddy_auto_recharge_packs']").val(Number(this.freddy_auto_recharge_packs_changed));
     },
     addAddon: function(key, value) {
       this.addons[key] = { enabled: true, value: value };
@@ -649,7 +707,8 @@ window.App = window.App || {};
       var should_disabled_update = (omni_no_change && fsm_no_change && freddy_no_change && !this.freddy_session_pack_changed  && !(this.plan_changed) && !(this.agent_changed) && !(this.billing_cycle_changed)) && (!this.fsm_disabled ? !(this.field_agent_changed) : true);
 
       this.calculate_request = $.post( "/subscription/calculate_amount",
-        { "billing_cycle": this.billing_cycle,
+        {
+          "billing_cycle": this.billing_cycle,
           "agent_limit" : this.agents,
           "addons" : this.addons,
           "plan_id" : plan_id,
@@ -661,7 +720,8 @@ window.App = window.App || {};
           var billing_actions = $(".billing-actions");
           var billing_toggle = $(".omni-billing-edit .toggle-button");
           billing_template.removeClass("sloading inner-form-hide").html(data);
-
+          $this.initializeAutoRechargeTooltip();
+          $this.freddy_auto_recharge_launched ? $this.setFreddyAutorecharge() : '';
           if($this.subscription_state === 'trial' || $this.subscription_state === 'suspended' || (!$this.editBilling && !should_disabled_update) || plan_changed) {
             $(".billing-submit").removeAttr("disabled");
           } else {
@@ -722,6 +782,7 @@ window.App = window.App || {};
               } else {
                 $this.disableFreddy();
               }
+              $('.freddy_auto_recharge_section').hide();
             }
           }
           $this.perMonthCost();
@@ -751,6 +812,35 @@ window.App = window.App || {};
 
     destroy: function(){
       $(document).off(this.namespace());
+    },
+
+    initializeAutoRechargeTooltip: function() {
+      var popover_target = $('.auto-recharge-tooltip');
+      if(popover_target){
+        popover_target.popover({
+          html: true,
+          trigger: 'manual',
+          placement: 'right',
+          reloadContent: false,
+          template: "<div class='arrow'></div><div class='inner'><div class='content auto-recharge-content'><p></p></div></div>",
+          content: function(){
+            return "<div>" +popover_target.attr("data-content") + "</div>"
+          }
+        }).hover(function(){
+          $(this).popover("show");
+        })
+      }
+      this.closePopover();
+    },
+
+    closePopover: function() {
+      $(document).on('click', function(e){
+        if($('.popover').is(':visible')){
+          $('.popover').remove();
+        }
+      })
     }
   };
+
+
 }(window.jQuery));

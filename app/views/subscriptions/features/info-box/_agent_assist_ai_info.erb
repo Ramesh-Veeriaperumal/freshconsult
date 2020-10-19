@@ -1,0 +1,6 @@
+<div class="features-card agent-assist-card">
+  <h4 class="features-card__title"><%= t('agent_assist_ai') %></h4>
+  <% SubscriptionsHelper::AGENT_ASSIST_AI.each do |feature_item| %>
+  <span class="features-card__features--list"><%= t("features.#{feature_item}").html_safe %></span>
+  <% end %>
+</div>

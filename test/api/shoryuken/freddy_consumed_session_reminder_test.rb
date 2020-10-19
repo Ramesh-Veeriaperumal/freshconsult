@@ -88,4 +88,23 @@ class FreddyConsumedSessionReminderTest < ActionView::TestCase
     Account.any_instance.unstub(:current)
     Bot::Emailbot::FreddyConsumedSessionWorker.unstub(:perform_async)
   end
+
+  def test_freddy_autorecharge
+    Account.stubs(:current).returns(Account.first)
+    Subscription.any_instance.stubs(:freddy_sessions).returns(1000)
+    Subscription.any_instance.stubs(:freddy_auto_recharge_enabled?).returns(true)
+    Subscription.any_instance.stubs(:freddy_auto_recharge_packs).returns(5)
+    ChargeBee::Invoice.stubs(:charge_addon).returns(true)
+    session_payload = { data: { payload: { model_properties: { productAccountId: Account.current.id, auto_recharge_threshold_reached: true } } } }
+    sqs_msg = Hashit.new(body: session_payload.to_json)
+    assert_nothing_raised do
+      Ryuken::FreddyConsumedSessionReminder.new.perform(sqs_msg, nil)
+    end
+  ensure
+    Subscription.any_instance.unstub(:freddy_sessions)
+    Subscription.any_instance.unstub(:freddy_auto_recharge_enabled?)
+    Subscription.any_instance.unstub(:freddy_auto_recharge_packs)
+    Account.any_instance.unstub(:current)
+    ChargeBee::Invoice.unstub(:charge_addon)
+  end
 end

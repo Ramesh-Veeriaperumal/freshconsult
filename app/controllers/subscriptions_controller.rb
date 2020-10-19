@@ -132,6 +132,7 @@ class SubscriptionsController < ApplicationController
   end
 
   private
+
     def convert_to_free_plan(need_feature_update)
       scoper.state = FREE if scoper.card_number.blank?
       scoper.convert_to_free if new_sprout?
@@ -243,6 +244,36 @@ class SubscriptionsController < ApplicationController
       @addons = scoper.applicable_addons(@addons, @subscription_plan)
       populate_addon_based_limits
       scoper.free_agents = @subscription_plan.free_agents
+      set_freddy_auto_recharge if current_account.auto_recharge_eligible_enabled?
+    end
+
+    def set_freddy_auto_recharge
+      # Moving plan from (Estate to Forest with Autorecharge off state) or (change plan state from trial to active) then set default values or else retian UI values
+      @is_auto_recharge_changed = false
+      plan_name = @subscription_plan.name.parameterize.underscore.to_sym
+      if eligible_to_set_autorecharge_default_value(plan_name)
+        scoper.freddy_auto_recharge_packs = PLANS[:subscription_plans][plan_name][:freddy_auto_recharge_packs]
+        scoper.freddy_auto_recharge_enabled = true
+        @is_auto_recharge_changed = true
+      elsif !params[:freddy_auto_recharge_enabled].nil? && !params[:freddy_auto_recharge_packs].nil?
+        scoper.freddy_auto_recharge_enabled = params[:freddy_auto_recharge_enabled].to_bool
+        scoper.freddy_auto_recharge_packs = params[:freddy_auto_recharge_packs].to_i
+        @is_auto_recharge_changed = true
+      end
+      @is_auto_recharge_changed
+    end
+
+    def update_auto_recharge
+      if @is_auto_recharge_changed
+        additional_info = @cached_subscription.additional_info
+        additional_info[:freddy_auto_recharge_packs] = scoper.freddy_auto_recharge_packs
+        additional_info[:freddy_auto_recharge_enabled] = scoper.freddy_auto_recharge_enabled?
+        scoper.update_column(:additional_info, additional_info.to_yaml)
+      end
+    end
+
+    def eligible_to_set_autorecharge_default_value(plan_name)
+      (plan_changed? || scoper.state != ACTIVE) && auto_recharge_enabled_in_plan?(plan_name) && !scoper.freddy_auto_recharge_enabled?
     end
 
     def billing_period
@@ -328,6 +359,7 @@ class SubscriptionsController < ApplicationController
         scoper.total_amount(@addons, coupon_applicable? ? @coupon : nil)
         response = billing_subscription.update_subscription(scoper, false, @addons, coupon, true)
         construct_subscription_request(response.subscription.current_term_end).save!
+        update_auto_recharge
         return false
       else
         flash[:notice] = t('subscription_info_update') if current_account.launched?(:downgrade_policy) && scoper.subscription_request.present?

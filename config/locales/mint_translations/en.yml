@@ -5819,6 +5819,15 @@ en:
     abandoned_call_reports: Abandoned call reports
     service_level_report: Service level report
     cre_metrics: CRE metrics
+    agent_assist_ai  : "AGENT-ASSIST AI"
+    agent_triage_fields: "Auto Triage (Fields-Type, Priority & Group)"
+    agent_scripts: "Agent Scripts"
+    article_suggester: "Article suggester"
+    thank_you_detector: "Thank you detector"
+    social_signals: "Social signals"
+    built_in_reports: "Built-in reports"
+    self_service: "SELF-SERVICE"
+    email_bot: "Email bot"
   admin_onboarding:
     modal:
       channels_frame:
@@ -8058,7 +8067,7 @@ en:
   phone_credits: Phone credits
   auto_recharge:
     enabled: Auto recharge for
-    disabled: Auto recharge is disabled
+    disabled: Auto-recharge is disabled
   chat: "Chat"
   manage_settings: "Manage settings"
   unsubscribe:
@@ -8066,6 +8075,9 @@ en:
     landing_subheading: 'We’re sorry to see you go! If you unsubscribe now, we will no longer be able to send you any more updates. You can click on ‘unsubscribe’ button below to confirm your unsubscription.'
     success_heading: 'Successfully unsubscribed.'
     success_subheading: 'You have successfully unsubscribed from our updates and notifications mailing lists.'
+  agent_assist_ai: Agent-assist AI
+  session_packs_month: You’ll get <span class='session-pack'>5,000</span> Freddy sessions/month.
+  auto_recharge_default: Your account is set on auto recharge. <a href="https://support.freshdesk.com/en/support/solutions/articles/50000002910" target="_blank">Click here</a> to know how to change this preference
   freddy:
     title: Freddy AI for CX
     self_service: Self-service
@@ -8079,6 +8091,13 @@ en:
     sessions_consumed: Freddy sessions consumed
     total_session_consumption: %{consumed} of %{total}
     percentage_session_consumed: %{percentage}% sessions consumed
+    auto_recharge: Auto-recharge (Freddy sessions)
+    auto_recharge_with: Auto-recharge
+    auto_recharge_packs: packs
+    auto_recharge_enabled: Auto-recharge is enabled.
+    auto_recharge_disabled: Auto-recharge is disabled.
+    enable_auto_recharge: "Enable it <span class='enable-auto-recharge-here freddy-semi-bold'>here</span>."
+    auto_recharge_tooltip: Ensure uninterrupted chatbot support. <a href="https://support.freshdesk.com/en/support/solutions/articles/50000002910" target="_blank">Learn more</a>
   freddy_self_service_enabled: "<span class='freddy-semi-bold'>Freddy Self-service</span> - included"
   freddy_ultimate_enabled: "<span class='freddy-semi-bold'>Freddy Ultimate</span> - included"
   buy_more_sessions: "Buy more sessions"

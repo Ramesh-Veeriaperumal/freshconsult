@@ -217,6 +217,8 @@
   - 'api_rate_limit_forest'
   - 'api_rate_limit_extendable'
   - 'fsm_option'
+  - 'agent_assist_ai'
+  - 'self_service'
 :estate omni jan 20:
   - 'everything_in_garden'
   - 'multiple_products'
@@ -238,3 +240,5 @@
   - 'api_rate_limit_extendable'
   - 'fsm_option'
   - 'omni_channel_option'
+  - 'agent_assist_ai'
+  - 'self_service'

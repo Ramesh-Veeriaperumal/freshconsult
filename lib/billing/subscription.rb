@@ -23,6 +23,8 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
   MAPPED_PLANS = Array.new
 
+  AUTO_RECHARGE_ADDON = 'freddy_auto_recharge_packs'.freeze
+
   PLANS.map { |plan|
     BILLING_PERIOD.each do |months, cycle_name|
       MAPPED_PLANS << [ %{#{plan}_#{cycle_name}}, plan.to_s, months ]
@@ -93,6 +95,10 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
   def buy_day_passes(account, quantity)
     update_non_recurring_addon(day_pass_data(account, quantity))
+  end
+
+  def purchase_auto_recharge_addon(account, quantity)
+    update_non_recurring_addon(auto_recharge_addon(account, quantity))
   end
 
   def cancel_subscription(account, data = {})
@@ -245,6 +251,14 @@ class Billing::Subscription < Billing::ChargebeeWrapper
         :subscription_id => account.id,
         :addon_id => account.plan_name.to_s,
         :addon_quantity => quantity
+      }
+    end
+
+    def auto_recharge_addon(account, quantity)
+      {
+        subscription_id: account.id,
+        addon_id: AUTO_RECHARGE_ADDON,
+        addon_quantity: quantity
       }
     end
 
