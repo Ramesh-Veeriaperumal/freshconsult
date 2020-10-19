@@ -18,7 +18,7 @@ if SH_ENABLED
     config.server_middleware do |chain|
       chain.add PrometheusExporter::Instrumentation::Shoryuken if ENV['ENABLE_PROMETHEUS'] == '1'
       chain.add Middleware::Shoryuken::Server::ResetThread
-      chain.add Middleware::Shoryuken::Server::SupressSqlLogs
+      chain.add Middleware::Shoryuken::Server::Logs
       chain.add Middleware::Shoryuken::Server::BelongsToAccount, :ignore => [
         'Ryuken::FacebookRealtime',
         'Email::MailFetchWorker',

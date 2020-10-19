@@ -19,7 +19,7 @@ class Middleware::GlobalTracer
       NewRelic::Agent.notice_error(e,{:description => "Middleware Global trace error"})
     ensure
       @status, @headers, @response =  @app.call(env)
-      ::NewRelic::Agent.add_custom_attributes(:requestId => env['HTTP_X_REQUEST_ID'])
+      ::NewRelic::Agent.add_custom_attributes(requestId: env['HTTP_X_REQUEST_ID'], appVersion: ENV['APP_VERSION'])
       return [@status, @headers, @response]
     end
   end

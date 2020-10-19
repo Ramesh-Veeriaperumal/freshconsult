@@ -1,11 +1,14 @@
 module Middleware
   module Shoryuken
     module Server
-      class SupressSqlLogs
+      class Logs
         def call(worker_instance, _queue, _sqs_msg, _body)
+          # Supress SQL logs
           worker_name = worker_instance.class.name
           logger_level = fetch_logger_level_for_shoryuken_worker(worker_name)
           ActiveRecord::Base.logger.level = logger_level
+          # Adds release version in newrelic
+          ::NewRelic::Agent.add_custom_attributes(appVersion: ENV['APP_VERSION'])
           yield
         end
 

@@ -167,7 +167,7 @@ Sidekiq.configure_server do |config|
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
     chain.add Middleware::Sidekiq::Server::UnsetThread
     chain.add Middleware::Sidekiq::Server::RouteORDrop
-    chain.add Middleware::Sidekiq::Server::SupressSqlLogs
+    chain.add Middleware::Sidekiq::Server::Logs
     chain.add Middleware::Sidekiq::Server::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
       "Social::TwitterReplyStreamWorker",
