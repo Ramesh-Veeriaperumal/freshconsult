@@ -4482,7 +4482,6 @@ ar:
   attachment_limit_failed_message: >-
     تم إهمال ملف واحد أو ا:ثر من الملفات المرفقة لأنها تجاوزت الحجم الأقصى
     %{size}.
-  attachment_contain_virus: '%{size} attachments are discarded since they contain virus.'
   cc_dropped_message: 'The following cc''s are dropped due to moderation - %{emails}'
   emails_dropped_message: 'The following emails are dropped due to moderation - %{emails}'
   emails_added_to_cc: Email(s) successfully added to CC.

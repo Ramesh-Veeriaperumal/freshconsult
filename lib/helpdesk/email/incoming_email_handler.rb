@@ -841,10 +841,6 @@ module Helpdesk
 						raise e
 					end
 				end
-				if @total_virus_attachment
-					message = virus_attachment_message(@total_virus_attachment)
-					add_notification_text item, message
-				end
 				item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
 				return attachments, inline_attachments
 			end

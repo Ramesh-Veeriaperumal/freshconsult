@@ -366,7 +366,6 @@ es-LA:
   attachment_limit_failed_message: >-
     Se descartaron uno o más archivos adjuntos, dado que se superó el límite de
     %{size}.
-  attachment_contain_virus: 'Se descartan los documentos adjuntos de %{size} porque contienen virus.'
   cc_dropped_message: las siguientes cc serán excluidas por moderación
   emails_dropped_message: los siguientes emails serán excluidos por moderación
   emails_added_to_cc: emails exitosamente agregados a cc

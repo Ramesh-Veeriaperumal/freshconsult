@@ -307,7 +307,6 @@ test-ui:
   attachments: Attachments Sit d
   attachment_delete: You're about to permanently delete this attachment. Continue? Sit delectus nam non veli
   attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded. Sit delectus nam non velit di
-  attachment_contain_virus: "%{size} attachments are discarded since they contain virus. Sit delectus nam non vel"
   cc_dropped_message: The following cc's are dropped due to moderation - %{emails} Sit delectus nam non veli
   emails_dropped_message: The following emails are dropped due to moderation - %{emails} Sit delectus nam non veli
   emails_added_to_cc: Email(s) successfully added to CC. Sit delectus n

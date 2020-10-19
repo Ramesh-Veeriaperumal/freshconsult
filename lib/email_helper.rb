@@ -46,10 +46,6 @@ module EmailHelper
 		I18n.t('attachment_limit_failed_message', :size => number_to_human_size(size)).html_safe
 	end
 
-  def virus_attachment_message size
-    I18n.t('attachment_contain_virus', :size => size)
-  end
-
   def invalid_ccs_message ccs
     I18n.t('cc_dropped_message', :emails => h(ccs.join(", ")))
   end

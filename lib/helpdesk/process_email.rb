@@ -942,8 +942,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           end
           content_id = content_ids["attachment#{i+1}"] && 
                         verify_inline_attachments(item, content_ids["attachment#{i+1}"])
-          att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
-                  params["attachment#{i+1}"], i, content_id, true) unless virus_attachment?(params["attachment#{i+1}"], account)
+          att = Helpdesk::Attachment.create_for_3rd_party(account, item,
+                                                          params["attachment#{i + 1}"], i, content_id, true)
           if att && (att.is_a? Helpdesk::Attachment)
             if content_id && !att["content_file_name"].include?(".svg")
               content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
@@ -964,29 +964,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           raise e
         end
       end
-      if @total_virus_attachment
-        message = virus_attachment_message(@total_virus_attachment)
-        add_notification_text item, message
-      end
       item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
       return attachments, inline_attachments
-    end
-
-    def virus_attachment? attachment, account
-      if account.launched?(:antivirus_service)
-        begin
-          file_attachment = (attachment.is_a? StringIO) ? attachment : File.open(attachment.tempfile)
-          result = Email::AntiVirus.scan(io: file_attachment) 
-          if result && result[0] == "virus"
-            @total_virus_attachment = 0 unless @total_virus_attachment
-            @total_virus_attachment += 1  
-            return true
-          end
-        rescue => e
-         Rails.logger.info "Error While checking attachment for virus in account #{account.id}, #{e.class}, #{e.message}, #{e.backtrace}"
-        end 
-      end
-      return false
     end
 
     def add_notification_text item, message

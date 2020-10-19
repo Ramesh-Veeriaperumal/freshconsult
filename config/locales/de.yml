@@ -575,7 +575,6 @@ de:
   attachment_limit_failed_message: >-
     Anhänge, die größer als %{size} sind, wurden gelöscht. Bitte kontaktieren
     Sie den Absender.
-  attachment_contain_virus: '%{size} Anhänge werden verworfen, da sie einen Virus enthalten.'
   cc_dropped_message: 'Folgende CC-Adressen sind durch Moderation weggefallen – %{emails}'
   emails_dropped_message: 'Folgende E-Mail-Adressen sind durch Moderation weggefallen – %{emails}'
   emails_added_to_cc: E-Mail-Adresse(n) erfolgreich ins CC gesetzt.

@@ -365,7 +365,6 @@ pt-BR:
   attachments: Anexos
   attachment_delete: Você está prestes a excluir permanentemente este anexo. Continuar?
   attachment_limit_failed_message: 'Um ou mais anexos descartados porque o limite de %{size} foi excedido.'
-  attachment_contain_virus: '%{size} anexos foram removidos porque continham vírus.'
   cc_dropped_message: 'Os seguintes emails em CC foram retirados devido a moderação - %{emails}'
   emails_dropped_message: 'Os seguintes emails foram retirados devido a moderação - %{emails}'
   emails_added_to_cc: Emails adicionados com sucesso em CC.
