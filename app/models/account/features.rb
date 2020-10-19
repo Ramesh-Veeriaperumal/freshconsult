@@ -63,7 +63,7 @@ class Account < ActiveRecord::Base
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
     :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
     :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
-    :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas, :falcon_portal_theme,
+    :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas,
     :layout_customization, :advanced_reporting, :timesheets, :multiple_emails,
     :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
@@ -99,7 +99,7 @@ class Account < ActiveRecord::Base
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :fb_msg_realtime,
     :kbase_spam_whitelist,
-    :falcon_portal_theme,
+    :supervisor_contact_field,
     :sidekiq_logs_to_central,
     :csat_email_scan_compatibility
   ].freeze
@@ -443,8 +443,8 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def falcon_portal_theme_enabled?
-    launched?(:falcon_portal_theme)
+  def kbase_spam_whitelist_enabled?
+    launched?(:kbase_spam_whitelist)
   end
 
   def csat_email_scan_compatibility_enabled?

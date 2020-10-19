@@ -331,7 +331,7 @@
       :auto_article_order: 327
       :business_hours: 328
       :scenario_automations: 329
-      :falcon_portal_theme: 330
+      :unused_330: 330
       :unused_331: 331
       :activity_revamp: 332
       :portal_article_filters: 333
@@ -439,7 +439,6 @@
   :freshcaller_widget: false
   :falcon: false
   :opt_out_analytics: false
-  :falcon_portal_theme: false
   :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
