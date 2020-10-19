@@ -131,4 +131,12 @@ module Concerns::ApplicationConcern
     action = request.env['PATH_INFO']
     ['/robots', '/robots.txt', '/robots.text'].include?(action)
   end
+
+  def set_same_site_enabled
+    env['SAME_SITE_NONE'] = true if Account.current &&
+                                    Account.current.launched?(:same_site_none) &&
+                                    Account.current.ssl_enabled? &&
+                                    Account.current.account_additional_settings.present? && Account.current.account_additional_settings.additional_settings.present? &&
+                                    (Account.current.account_additional_settings.additional_settings[:security].present? ? !Account.current.account_additional_settings.additional_settings[:security][:deny_iframe_embedding] : true)
+  end
 end

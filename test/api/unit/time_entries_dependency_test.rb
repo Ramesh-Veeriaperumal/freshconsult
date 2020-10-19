@@ -6,7 +6,7 @@ class TimeEntriesDependencyTest < ActionView::TestCase
                         :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_current_ip, :reset_language, :set_shard_for_payload,
                         :set_default_locale, :set_locale, :set_msg_id, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
                         :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params, :log_old_ui_path,
-                        :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
+                        :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_same_site_enabled, :set_last_active_time, :reset_language,
                         :set_affiliate_cookie, :verify_authenticity_token, :load_time_entry, :load_ticket,
                         :create_permission, :validate_params, :timer_permission, :verify_permission, :check_agents_in_account, :set_mobile,
                         :unset_thread_variables, :set_native_mobile, :ensure_proper_sts_header, :record_query_comment, :log_csrf, :remove_session_data,

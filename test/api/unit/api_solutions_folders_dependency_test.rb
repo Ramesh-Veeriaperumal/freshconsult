@@ -6,7 +6,7 @@ class ApiSolutionsFoldersDependencyTest < ActionView::TestCase
                         :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_current_ip, :reset_language, :set_shard_for_payload,
                         :set_default_locale, :set_locale, :set_msg_id, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
                         :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params,
-                        :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
+                        :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_same_site_enabled, :set_last_active_time, :reset_language,
                         :set_affiliate_cookie, :verify_authenticity_token, :language, :set_modal, :log_old_ui_path,
                         :sanitize_item_id, :portal_check, :set_selected_tab, :load_meta, :validate_and_set_customers, :set_parent_for_old_params,
                         :unset_thread_variables, :old_category, :check_new_category, :bulk_update_category, :clear_cache, :ensure_proper_sts_header,

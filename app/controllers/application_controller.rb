@@ -63,6 +63,7 @@ class ApplicationController < ActionController::Base
 
   # Will set the request url for pjax to change the state
   after_filter :remove_session_data
+  after_filter :set_same_site_enabled
 
   OLD_UI_PATHS_TO_IGNORE = %w[/support /admin].freeze
   

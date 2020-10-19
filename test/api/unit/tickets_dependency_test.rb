@@ -9,7 +9,7 @@ class TicketsDependencyTest < ActionView::TestCase
       :set_locale, :set_msg_id, :set_ui_preference, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
       :check_account_state, :set_time_zone, :check_day_pass_usage, :log_old_ui_path,
       :force_utf8_params, :persist_user_agent, :set_cache_buster, :remove_pjax_param,
-      :set_pjax_url, :set_last_active_time, :reset_language,
+      :set_pjax_url, :set_same_site_enabled, :set_last_active_time, :reset_language,
       :set_affiliate_cookie, :verify_authenticity_token, :build_item, :load_multiple_items,
       :load_ticket_item, :build_note_body_attributes, :build_conversation_for_ticket,
       :check_for_from_email, :kbase_email_included, :set_default_source, :prepare_mobile_note_for_send_set,

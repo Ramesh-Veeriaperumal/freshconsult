@@ -12,7 +12,8 @@ INTEGRATION_TESTS = [
   'test/api/integration/flows/contact_fields_flows_test.rb',
   'test/api/integration/flows/ticket_fields_flows_test.rb',
   'test/api/integration/flows/surveys_flows_test.rb',
-  'test/api/integration/flows/sla_flow_test.rb'
+  'test/api/integration/flows/sla_flow_test.rb',
+  'test/api/integration/flows/action_dispatch_cookies_flows_test.rb'
 ].freeze
 
 WIDGET_PUBLIC_API_FLOW_TESTS = ['test/api/integration/flows/widget_api_flows_test.rb'].freeze

@@ -7,7 +7,7 @@ class ApiAgentsDependencyTest < ActionView::TestCase
                         :set_current_ip, :reset_language, :set_shard_for_payload, :set_default_locale, :set_locale, :set_msg_id,
                         :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
                         :check_account_state, :set_time_zone, :check_day_pass_usage, :force_utf8_params, :persist_user_agent,
-                        :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
+                        :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_same_site_enabled, :set_last_active_time, :reset_language,
                         :set_affiliate_cookie, :verify_authenticity_token, :load_object,
                         :ssl_check, :can_assume_identity, :load_roles, :load_groups, :check_demo_site, :restrict_current_user,
                         :check_current_user, :check_agent_limit, :check_agent_limit_on_update, :validate_params,
