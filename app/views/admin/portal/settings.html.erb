@@ -106,7 +106,7 @@
         <div class="controls mt-20">
           <div class="checkbox">
             <%= f.feature_check_box :helpdesk_tickets_by_product, {:id => "helpdesk_tickets_by_product"} %>
-            <%= label_for(t('.view_only_portal_tickets'), 'view_only_portal_tickets')%>
+            <%= label_for(t('.helpdesk_tickets_by_product'), 'helpdesk_tickets_by_product')%>
           </div>
         </div>
       <% end %>
@@ -123,8 +123,8 @@
     <% if current_account.launched?(:portal_new_settings) && current_account.admin_setting_for_account?(:solutions_agent_metrics)%>
       <div class="controls mt-20">
         <div class="checkbox">
-          <%= f.feature_check_box :solutions_agent_metrics, {:id => ":solutions_agent_metrics"} %>
-          <%= label_for(t('.track_agent_metrics'), 'track_agent_metrics')%>
+          <%= f.feature_check_box :solutions_agent_metrics, {:id => "solutions_agent_metrics"} %>
+          <%= label_for(t('.solutions_agent_metrics'), 'solutions_agent_metrics')%>
         </div>
       </div>
     <% end %>
