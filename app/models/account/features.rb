@@ -99,7 +99,6 @@ class Account < ActiveRecord::Base
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :fb_msg_realtime,
     :kbase_spam_whitelist,
-    :supervisor_contact_field,
     :sidekiq_logs_to_central,
     :csat_email_scan_compatibility
   ].freeze
@@ -441,10 +440,6 @@ class Account < ActiveRecord::Base
 
   def omni_channel_team_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
-  end
-
-  def kbase_spam_whitelist_enabled?
-    launched?(:kbase_spam_whitelist)
   end
 
   def csat_email_scan_compatibility_enabled?
