@@ -22,7 +22,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
   concerned_with :associations, :constants, :callbacks, :rabbitmq, :esv2_methods, :presenter
 
-  spam_watcher_callbacks :user_column => "user_id", :import_column => "import_id"
   #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] }
 
   attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text,

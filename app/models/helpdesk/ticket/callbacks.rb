@@ -105,6 +105,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include RabbitMq::Publisher
   include AdvancedTicketScopes
 
+  spam_watcher_callbacks user_column: 'requester_id', import_column: 'import_id'
+
   def trigger_va_actions
     self.enqueue_va_actions.each do |action_params|
       action = action_params[:action]

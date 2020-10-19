@@ -58,7 +58,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
                  :round_robin_methods, :association_methods, :skill_based_round_robin,
                  :sla_calculation_methods, :kairos_methods, :presenter_helper
 
-  spam_watcher_callbacks :user_column => "requester_id", :import_column => "import_id"
   #zero_downtime_migration_methods :methods => {:remove_columns => [ "description", "description_html"] }
 
   #by Shan temp

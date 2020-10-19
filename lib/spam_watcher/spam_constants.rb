@@ -25,6 +25,21 @@ module SpamConstants
 
   }
 
+  AGENT_SPAM_WATCHER = {
+    'sw_helpdesk_tickets' => {
+      'threshold' => 100
+    },
+    'sw_helpdesk_notes' => {
+      'threshold' => 100
+    },
+    'sw_solution_articles' => {
+      'threshold' => 30
+    },
+    'sw_posts' => {
+      'threshold' => 100
+    }
+  }.freeze
+
   # push all the ban keys to spam watcher queue for processing later
   SPAM_WATCHER_BAN_KEY = "spam_watcher_queue"
 

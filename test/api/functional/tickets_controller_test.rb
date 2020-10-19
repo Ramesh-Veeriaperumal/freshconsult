@@ -6,7 +6,7 @@ require Rails.root.join('test', 'api', 'helpers', 'privileges_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'advanced_scope_test_helper.rb')
 ['social_tickets_creation_helper.rb', 'twitter_helper'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-['shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+['shared_ownership_test_helper', 'spam_watcher_redis_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 Sidekiq::Testing.fake!
 
@@ -26,6 +26,7 @@ class TicketsControllerTest < ActionController::TestCase
   include PrivilegesHelper
   include FieldServiceManagementTestHelper
   include AdvancedScopeTestHelper
+  include SpamWatcherRedisTestHelper
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
   VALIDATABLE_CUSTOM_FIELDS =  %w(number checkbox decimal text paragraph date)
@@ -7397,6 +7398,107 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: Helpdesk::Source.api_unpermitted_sources_for_update.join(','))])
   ensure
     Account.current.rollback(:whatsapp_ticket_source)
+  end
+
+  def test_create_ticket_with_customer_email_spam_watch_queue_within_threshold
+    user = add_new_user(@account)
+    stub_spam_watcher_keys(user) do
+      params = ticket_params_hash.except(:email).merge(email: user.email)
+      current_user_ticket_length_before_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      current_user_note_length_before_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      post :create, construct_params({}, params)
+      current_user_ticket_length_after_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      current_user_note_length_after_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      spam_ban_key_length_after_run = $spam_watcher.llen(SpamConstants::SPAM_WATCHER_BAN_KEY)
+      assert_response 201
+      assert_equal current_user_ticket_length_before_run + 1, current_user_ticket_length_after_run
+      assert_equal current_user_note_length_before_run + 1, current_user_note_length_after_run
+      assert_equal Helpdesk::Ticket.last.requester.email, params[:email]
+    end
+  end
+
+  def test_create_with_existing_email_spam_watcher_with_zero_threshold
+    user = add_new_user(@account)
+    stub_spam_watcher_keys(user) do
+      spam_ban_key_length_before_run = $spam_watcher.llen(SpamConstants::SPAM_WATCHER_BAN_KEY)
+      current_user_ticket_length_before_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      current_user_note_length_before_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      params = ticket_params_hash.except(:email).merge(email: user.email)
+      ticket_key = format(Redis::Keys::SpamWatcher::DEFAULT_AGENT_SPAM_THRESHOLD, state: Account.current.subscription.state, model: SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space'])
+      prev_ticket_value = $spam_watcher.perform_redis_op('exists', ticket_key) && $spam_watcher.perform_redis_op('get', ticket_key)
+      $spam_watcher.perform_redis_op('set', ticket_key, 0)
+      note_key = format(Redis::Keys::SpamWatcher::DEFAULT_AGENT_SPAM_THRESHOLD, state: Account.current.subscription.state, model: SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space'])
+      prev_note_value = $spam_watcher.perform_redis_op('exists', note_key) && $spam_watcher.perform_redis_op('get', note_key)
+      $spam_watcher.perform_redis_op('set', note_key, 0)
+      post :create, construct_params({}, params)
+      current_user_ticket_length_after_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      current_user_note_length_after_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      spam_ban_key_length_after_run = $spam_watcher.llen(SpamConstants::SPAM_WATCHER_BAN_KEY)
+      assert_response 201
+      assert_equal current_user_ticket_length_before_run, current_user_ticket_length_after_run
+      assert_equal current_user_note_length_before_run, current_user_note_length_after_run
+      assert_equal spam_ban_key_length_before_run + 2, spam_ban_key_length_after_run
+      assert_equal Helpdesk::Ticket.last.requester.email, params[:email]
+      $spam_watcher.perform_redis_op('set', ticket_key, prev_ticket_value) if prev_ticket_value
+      $spam_watcher.perform_redis_op('set', note_key, prev_note_value) if prev_note_value
+    end
+  end
+
+  def test_create_with_existing_email_spam_watcher_with_zero_threshold_block_agent
+    user = add_agent(@account)
+    stub_spam_watcher_keys(user) do
+      current_user = User.current
+      user.make_current
+      login_as(user)
+      Account.any_instance.stubs(:block_spam_user_enabled?).returns(true)
+      SpamWatcherRedisMethods.stubs(:update_freshops_activity).returns(true)
+      $spam_watcher.del(SpamConstants::SPAM_WATCHER_BAN_KEY)
+      spam_ban_key_length_before_run = $spam_watcher.llen(SpamConstants::SPAM_WATCHER_BAN_KEY)
+      current_user_ticket_length_before_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      current_user_note_length_before_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      params = ticket_params_hash.except(:email).merge(email: user.email)
+      ticket_key = format(Redis::Keys::SpamWatcher::DEFAULT_AGENT_SPAM_THRESHOLD, state: Account.current.subscription.state, model: SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space'])
+      prev_ticket_value = $spam_watcher.perform_redis_op('exists', ticket_key) && $spam_watcher.perform_redis_op('get', ticket_key)
+      $spam_watcher.perform_redis_op('set', ticket_key, 0)
+      note_key = format(Redis::Keys::SpamWatcher::DEFAULT_AGENT_SPAM_THRESHOLD, state: Account.current.subscription.state, model: SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space'])
+      prev_note_value = $spam_watcher.perform_redis_op('exists', note_key) && $spam_watcher.perform_redis_op('get', note_key)
+      $spam_watcher.perform_redis_op('set', note_key, 0)
+      post :create, construct_params({}, params)
+      current_user_ticket_length_after_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      current_user_note_length_after_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{User.current.id}")
+      spam_ban_key_length_after_run = $spam_watcher.llen(SpamConstants::SPAM_WATCHER_BAN_KEY)
+      assert_response 201
+      assert_equal current_user_ticket_length_before_run, current_user_ticket_length_after_run
+      assert_equal current_user_note_length_before_run, current_user_note_length_after_run
+      assert_equal spam_ban_key_length_before_run + 1, spam_ban_key_length_after_run
+      core_spam_watcher_rake(Account.current, User.current)
+      assert_equal true, user.blocked if Account.current.subscription.trial?
+      assert_equal Helpdesk::Ticket.last.requester.email, params[:email]
+      $spam_watcher.perform_redis_op('set', ticket_key, prev_ticket_value) if prev_ticket_value
+      $spam_watcher.perform_redis_op('set', note_key, prev_note_value) if prev_note_value
+      current_user.make_current
+      login_as(current_user)
+      Account.any_instance.unstub(:block_spam_user_enabled?)
+      SpamWatcherRedisMethods.unstub(:update_freshops_activity)
+    end
+  end
+
+  def stub_spam_watcher_keys(user)
+    $spam_watcher.del("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{User.current.id}")
+    $spam_watcher.del("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{user.id}")
+    $spam_watcher.del("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{User.current.id}")
+    $spam_watcher.del("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{user.id}")
+    $spam_watcher.del(format(Redis::Keys::SpamWatcher::SPAM_THRESHOLD, account_id: Account.current.id, user_id: User.current.id, model: SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']))
+    $spam_watcher.del(format(Redis::Keys::SpamWatcher::SPAM_THRESHOLD, account_id: Account.current.id, user_id: '', model: SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']))
+    $spam_watcher.del(format(Redis::Keys::SpamWatcher::SPAM_THRESHOLD, account_id: Account.current.id, user_id: User.current.id, model: SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']))
+    $spam_watcher.del(format(Redis::Keys::SpamWatcher::SPAM_THRESHOLD, account_id: Account.current.id, user_id: '', model: SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']))
+    requester_ticket_length_before_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{user.id}")
+    requester_note_length_before_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{user.id}")
+    yield
+    requester_ticket_length_after_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_tickets']['key_space']}:#{Account.current.id}:#{user.id}")
+    requester_note_length_after_run = $spam_watcher.llen("#{SpamConstants::SPAM_WATCHER['helpdesk_notes']['key_space']}:#{Account.current.id}:#{user.id}")
+    assert_equal requester_ticket_length_before_run, requester_ticket_length_after_run
+    assert_equal requester_note_length_before_run, requester_note_length_after_run
   end
 
   def create_ticket_params

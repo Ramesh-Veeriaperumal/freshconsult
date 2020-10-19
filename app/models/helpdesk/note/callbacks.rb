@@ -48,6 +48,8 @@ class Helpdesk::Note < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
+  spam_watcher_callbacks user_column: 'user_id', import_column: 'import_id'
+
   # For using Redis related functionalities
   include Redis::RedisKeys
   include Redis::OthersRedis

@@ -56,43 +56,47 @@ module SpamWatcherCallbacks
                                          self.spam_watcher_options[:import_column]
       threshold,sec_expire =  self.spam_watcher_options[:threshold], self.spam_watcher_options[:sec_expire]
 
-      class_eval %Q(
-        after_commit :spam_watcher_counter, on: :create
-        def spam_watcher_counter
-          import_column = "#{import_column}"
-          return if import_column.present? && self.safe_send(import_column)
-          begin
-            Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
-              if "#{user_column}".blank?
-                user_id = ""
-              else
-                user_id = self.safe_send("#{user_column}") 
-              end
-              account_id = self.account_id
-              key = "#{key}"
-              max_count = "#{threshold}".to_i
-              threshold_from_redis = SpamWatcherRedisMethods.spam_threshold account_id, user_id, key
-              max_count = threshold_from_redis.to_i unless threshold_from_redis.nil?
-              final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
-              # this case is added for the sake of skipping imports
-              return true if (((key == "sw_helpdesk_tickets") or (key == "sw_helpdesk_notes")) && ((Time.now.to_i - self.created_at.to_i) > 1.day))
-              begin
-                $spam_watcher.evalsha(self.spam_check_redis_script_sha, [account_id.to_s + "-" + user_id.to_s, final_key, SpamConstants::SPAM_WATCHER_BAN_KEY], [Time.now.to_i, "#{sec_expire}".to_i+1.minute, max_count])
-              rescue Redis::BaseError => e
-                Rails.logger.error e.backtrace
-                NewRelic::Agent.notice_error(e, description: "Error occured in running of spam_watcher redis script")
-                if e.message =~ /NOSCRIPT No matching script/
-                  self.class.init_spam_watcher_redis_script
-                  $spam_watcher.evalsha(self.spam_check_redis_script_sha, [account_id.to_s + "-" + user_id.to_s, final_key, SpamConstants::SPAM_WATCHER_BAN_KEY], [Time.now.to_i, "#{sec_expire}".to_i+1.minute, max_count])
-                end
-              end
-          }
-          rescue Exception => e
-            Rails.logger.error e.backtrace
-            NewRelic::Agent.notice_error(e,{:description => "error occured in updating spam_watcher_counter"})
+      after_commit on: :create do
+        spam_watcher_counter(key, user_column, import_column, threshold, sec_expire)
+      end
+    end
+  end
+
+  def spam_watcher_counter(key, user_column, import_column, threshold, sec_expire)
+    import_column = import_column.to_s
+    return if import_column.present? && self.safe_send(import_column)
+
+    begin
+      Timeout::timeout(SpamConstants::SPAM_TIMEOUT) do
+        if user_column.to_s.blank?
+          user_id = ''
+        else
+          user_id = User.current.id if [Helpdesk::Ticket, Helpdesk::Note].include?(self.class) && User.current
+          user_id ||= self.safe_send(user_column.to_s)
+        end
+        account_id = self.account_id
+        key = key.to_s
+        max_count = threshold.to_s.to_i
+        threshold_from_redis = SpamWatcherRedisMethods.spam_threshold account_id, user_id, key
+        max_count = threshold_from_redis.to_i unless threshold_from_redis.nil?
+        final_key = key + ':' + account_id.to_s + ':' + user_id.to_s
+        # this case is added for the sake of skipping imports
+        return true if ['sw_helpdesk_tickets', 'sw_helpdesk_notes'].include?(key) && (Time.now.to_i - self.created_at.to_i) > 1.day
+
+        begin
+          $spam_watcher.evalsha(self.spam_check_redis_script_sha, [account_id.to_s + '-' + user_id.to_s, final_key, SpamConstants::SPAM_WATCHER_BAN_KEY], [Time.now.to_i, sec_expire.to_s.to_i + 1.minute, max_count])
+        rescue Redis::BaseError => e
+          Rails.logger.error e.backtrace
+          NewRelic::Agent.notice_error(e, description: 'Error occured in running of spam_watcher redis script')
+          if e.message =~ /NOSCRIPT No matching script/
+            self.class.init_spam_watcher_redis_script
+            $spam_watcher.evalsha(self.spam_check_redis_script_sha, [account_id.to_s + '-' + user_id.to_s, final_key, SpamConstants::SPAM_WATCHER_BAN_KEY], [Time.now.to_i, sec_expire.to_s.to_i + 1.minute, max_count])
           end
         end
-      )
+      end
+    rescue StandardError => e
+      Rails.logger.error e.backtrace
+      NewRelic::Agent.notice_error(e, description: 'error occured in updating spam_watcher_counter')
     end
   end
 end
