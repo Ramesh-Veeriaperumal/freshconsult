@@ -1577,6 +1577,7 @@ module Ember
 
     def test_dashboard_crud_flow_with_freshcaller_call_trend_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(18, view: 1, queue_id: 0, time_type: 1, source: 'freshcaller')
@@ -1604,10 +1605,12 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_call_trend_widget_with_invalid_view
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(18, view: -1, queue_id: 0, time_type: 1, source: 'freshcaller')
@@ -1617,10 +1620,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_call_trend_widget_with_invalid_queue_id
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(18, view: 1, queue_id: -1, time_type: 1, source: 'freshcaller')
@@ -1630,10 +1635,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_call_trend_widget_with_invalid_source
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(18, view: 1, queue_id: 0, time_type: 1, source: 'freshcall')
@@ -1643,10 +1650,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_call_trend_widget_with_invalid_time_type
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(18, view: 1, queue_id: 0, time_type: 11, source: 'freshcaller')
@@ -1656,10 +1665,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_dashboard_crud_flow_with_freshcaller_availability_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(13, team_id: 0, source: 'freshcaller')
@@ -1687,10 +1698,12 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_availability_widget_with_invalid_queue_id
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(13, team_id: -1, source: 'freshcaller')
@@ -1700,10 +1713,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_availability_widget_with_invalid_source
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(13, team_id: 0, source: 'freshcall')
@@ -1713,10 +1728,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_dashboard_crud_flow_with_freshcaller_sla_trend_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(17, time_type: 1, queue_id: 0, source: 'freshcaller')
@@ -1744,10 +1761,12 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_sla_trend_widget_with_invalid_queue_id
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(17, time_type: 1, queue_id: -1, source: 'freshcaller')
@@ -1757,10 +1776,29 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
+    end
+
+    def test_create_dashboard_with_freshcaller_sla_trend_widget_with_agent_not_in_freshcaller
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:freshcaller_agent).returns(nil)
+      Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(17, time_type: 1, queue_id: 1, source: 'freshcaller')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:freshcaller_agent)
+      Account.any_instance.unstub(:freshcaller_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_sla_trend_widget_with_invalid_source
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(17, time_type: 1, queue_id: 0, source: 'freshcall')
@@ -1770,10 +1808,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_sla_trend_widget_with_invalid_time_type
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(17, time_type: -1, queue_id: 0, source: 'freshcaller')
@@ -1783,10 +1823,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_dashboard_crud_flow_with_freshcaller_time_trend_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: 1, time_type: 1, queue_id: 0, source: 'freshcaller')
@@ -1814,10 +1856,12 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_time_trend_widget_with_invalid_queue_id
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: 1, time_type: 1, queue_id: -1, source: 'freshcaller')
@@ -1827,10 +1871,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_time_trend_widget_with_invalid_source
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: 1, time_type: 1, queue_id: 0, source: 'freshcall')
@@ -1840,10 +1886,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_time_trend_widget_with_invalid_time_type
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: 1, time_type: -1, queue_id: 0, source: 'freshcaller')
@@ -1853,10 +1901,12 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshcaller_time_trend_widget_with_invalid_matric
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:freshcaller_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: -1, time_type: 1, queue_id: 0, source: 'freshcaller')
@@ -1866,10 +1916,13 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      User.any_instance.unstub(:freshcaller_agent_enabled?)
     end
 
     def test_dashboard_crud_flow_with_freshchat_scorecard_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(11, view: 1, source: 'freshchat')
@@ -1897,10 +1950,14 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_scorecard_widget_with_invalid_view
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(11, view: -1, source: 'freshchat')
@@ -1910,10 +1967,14 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_dashboard_crud_flow_with_freshchat_bar_chart_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(12, group_ids: [0], representation: 0, source: 'freshchat')
@@ -1941,10 +2002,14 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_bar_chart_widget_with_invalid_group_ids
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(12, representation: 0, source: 'freshchat')
@@ -1954,10 +2019,31 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
+    end
+
+    def test_create_dashboard_with_freshchat_bar_chart_widget_with_agent_not_in_freshchat
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(false)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(12, group_ids: [0], representation: 0, source: 'freshchat')
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 400, response_hash
+    ensure
+      Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
+      User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_bar_chart_widget_with_invalid_representation
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(12, group_ids: [0], representation: 3, source: 'freshchat')
@@ -1967,10 +2053,14 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_dashboard_crud_flow_with_freshchat_availability_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(13, group_ids: [0], source: 'freshchat')
@@ -1998,10 +2088,14 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_availability_widget_with_invalid_group_ids
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(13, source: 'freshchat')
@@ -2011,10 +2105,14 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_dashboard_crud_flow_with_freshchat_csat_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(14, group_ids: [0], date_type: 1, source: 'freshchat')
@@ -2042,10 +2140,14 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_csat_widget_with_invalid_group_ids
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(14, date_type: 1, source: 'freshchat')
@@ -2055,10 +2157,14 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_csat_widget_with_invalid_date_type
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(14, group_ids: [1], date_type: -1, source: 'freshchat')
@@ -2068,10 +2174,14 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_dashboard_crud_flow_with_freshchat_time_trend_widget_with_valid_params
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
@@ -2099,10 +2209,14 @@ module Ember
       User.any_instance.unstub(:privilege?)
       dashboard = @account.dashboards.find_by_id(dashboard_id)
       dashboard.destroy if dashboard.present?
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_time_trend_widget_with_invalid_group_ids
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: 2, computation: 3, date_range: 30, source: 'freshchat')
@@ -2112,10 +2226,14 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_time_trend_widget_with_invalid_metric
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: -2, computation: 3, group_ids: [1], date_range: 30, source: 'freshchat')
@@ -2125,10 +2243,14 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_time_trend_widget_with_invalid_computation
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: 2, computation: -3, group_ids: [1], date_range: 30, source: 'freshchat')
@@ -2138,10 +2260,14 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     def test_create_dashboard_with_freshchat_time_trend_widget_with_invalid_date_range
       User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      Agent.any_instance.stubs(:agent_freshchat_enabled?).returns(true)
+      Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
       Account.any_instance.stubs(:omni_channel_team_dashboard_enabled?).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(16, metric: 2, computation: 3, group_ids: [1], date_range: -30, source: 'freshchat')
@@ -2151,6 +2277,8 @@ module Ember
     ensure
       Account.any_instance.unstub(:omni_channel_team_dashboard_enabled?)
       User.any_instance.unstub(:privilege?)
+      Agent.any_instance.unstub(:agent_freshchat_enabled?)
+      Account.any_instance.unstub(:omni_chat_agent_enabled?)
     end
 
     # we will allow only particular amount of widgets for a single dashboard. this case tries to check more widgets can be created or not.

@@ -89,8 +89,8 @@ class CustomDashboardDelegator < BaseDelegator
     widget[:id].nil? || widget[:_destroy].present?
   end
 
-  def valid_widget_config?(widget, type)
-    WIDGET_MODULES_BY_TOKEN[type].constantize.valid_config?(widget) == true
+  def valid_widget_config?(widget, type, new_widget_params = {})
+    WIDGET_MODULES_BY_TOKEN[type].constantize.valid_config?(widget) == true && widget_update_allowed_for_current_user?(widget, new_widget_params)
   end
 
   def valid_widget?(widget)
@@ -102,7 +102,7 @@ class CustomDashboardDelegator < BaseDelegator
     return true if widget.length == 1 || widget[:_destroy].present?
     widget_to_be_updated = @widget_by_id[widget[:id]]
     widget_changes = widget_to_be_updated.config_data.merge(ticket_filter_id: widget_to_be_updated.ticket_filter_id).merge(widget)
-    valid_widget_config?(widget_changes, widget_to_be_updated['widget_type'])
+    valid_widget_config?(widget_changes, widget_to_be_updated['widget_type'], widget)
   end
 
   def all_access_dashboard?(access_type)
@@ -116,4 +116,35 @@ class CustomDashboardDelegator < BaseDelegator
   def validate_announcement
     errors[:announcement] = :announcement_limit_exceeded unless @dashboard.present? && @dashboard.announcements.active.empty?
   end
+
+  def widget_update_allowed_for_current_user?(widget, new_widget_params = {})
+    return true unless widget_privilege_check_needed?(new_widget_params)
+
+    case widget[:source] || (widget[:id] && @widget_by_id[widget[:id]].source)
+    when SOURCES[:freshcaller]
+      freshcaller_agent?
+    when SOURCES[:freshchat]
+      freshchat_agent?
+    else
+      true
+    end
+  end
+
+  private
+
+    def freshcaller_agent?
+      return @freshcaller_agent if defined?(@freshcaller_agent)
+
+      @freshcaller_agent ||= User.current.freshcaller_agent_enabled?
+    end
+
+    def freshchat_agent?
+      return @freshchat_agent if defined?(@freshchat_agent)
+
+      @freshchat_agent ||= User.current.freshchat_agent_enabled?
+    end
+
+    def widget_privilege_check_needed?(new_widget_params)
+      Account.current.omni_channel_team_dashboard_enabled? && (new_widget_params[:id].blank? || !new_widget_params.except(:x, :y, :id).empty?)
+    end
 end

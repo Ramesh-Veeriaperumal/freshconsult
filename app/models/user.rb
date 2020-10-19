@@ -1387,6 +1387,15 @@ class User < ActiveRecord::Base
     }
   end
 
+  def freshcaller_agent_enabled?
+    freshcaller_agent = agent.try(:freshcaller_agent)
+    Account.current.freshcaller_enabled? && freshcaller_agent.present? && freshcaller_agent.try(:fc_enabled)
+  end
+
+  def freshchat_agent_enabled?
+    Account.current.omni_chat_agent_enabled? && agent.agent_freshchat_enabled?
+  end
+
   private
 
     def source_choices
