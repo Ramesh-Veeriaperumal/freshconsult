@@ -888,6 +888,17 @@ class User < ActiveRecord::Base
     self.privilege?(:manage_tickets) && agent.assigned_ticket_permission
   end
 
+  def freshcaller_ticket_permission(ticket)
+    return false unless ticket.source == Helpdesk::Source::PHONE
+    meta_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['meta']).first
+    meta = YAML.safe_load(meta_note.body) if meta_note.present?
+    meta.present? && meta['freshcaller'] && meta['created_by'] == id && allow_ticket_restricted_access?(meta['time'])
+  end
+
+  def allow_ticket_restricted_access?(fc_time)
+    fc_time.present? && ((Time.now.utc - fc_time.to_datetime.utc) <= Freshcaller::Call::RESTRICTED_FRESHCALLER_TICKET_VIEW_TIME)
+  end
+
   alias :all_tickets_permission?      :can_view_all_tickets?
   alias :group_tickets_permission?    :group_ticket_permission
   alias :assigned_tickets_permission? :assigned_ticket_permission
@@ -941,7 +952,7 @@ class User < ActiveRecord::Base
   end
 
   def has_ticket_permission?(ticket, agent_group_ids = nil)
-    (ticket_agent?(ticket) && !read_group_ticket?(ticket)) || can_view_all_tickets? || (group_ticket_permission && group_ticket?(ticket, agent_group_ids))
+    (ticket_agent?(ticket) && !read_group_ticket?(ticket)) || can_view_all_tickets? || (group_ticket_permission && group_ticket?(ticket, agent_group_ids)) || freshcaller_ticket_permission(ticket)
   end
 
   def has_read_ticket_permission?(ticket)

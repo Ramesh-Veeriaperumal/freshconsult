@@ -625,6 +625,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    get '/freshcaller/calls/:id/ticket', to: 'ember/freshcaller/calls/tickets#show'
+
     resources :bots, controller: 'ember/admin/bots', only: [:index, :new, :create, :show, :update] do
       member do
         put :map_categories

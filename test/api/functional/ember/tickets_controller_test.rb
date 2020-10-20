@@ -685,6 +685,23 @@ module Ember
       Account.current.tickets.last.destroy
     end
 
+    def test_create_with_valid_freshcaller_id_and_ticket_already_created
+      fc_call_id = Faker::Number.number(3).to_i
+      params_hash = ticket_params_hash.merge(fc_call_id: fc_call_id)
+      fc_call = Account.current.freshcaller_calls.new(fc_call_id: fc_call_id)
+      fc_call.save!
+      ticket = create_ticket
+      ticket.freshcaller_call = fc_call
+      ticket.save!
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json('description' => 'Validation failed', 'errors' => [bad_request_error_pattern('fc_call_ticket', 'A ticket already exists for the freshcaller call', code: 'invalid_request').merge!('additional_info': { ticket_id: ticket.display_id } )])
+    ensure
+      fc_call.destroy
+      ticket.destroy
+      Account.current.tickets.last.destroy
+    end
+
     def test_create_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = ticket_params_hash.merge(attachment_ids: [attachment_id])

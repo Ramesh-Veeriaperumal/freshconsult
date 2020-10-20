@@ -446,6 +446,7 @@ api_error_messages:
   fc_invalid_token: "Given token is invalid"
   fc_invalid_request: "Invalid request"
   fc_account_absent: "Freshcaller integration not present"
+  freshcaller_duplicate_ticket: "A ticket already exists for the freshcaller call"
 
   # Search settings
   ticket_search_settings_blank: "ticket search settings should not be blank"

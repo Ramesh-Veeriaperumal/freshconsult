@@ -173,4 +173,89 @@ class FakeControllerTest < ActionController::TestCase
   ensure
     status.destroy
   end
+
+  def test_verify_ticket_permission_for_freshcaller_ticket
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
+    ticket = Helpdesk::Ticket.first
+    ticket.source = Helpdesk::Source::PHONE
+    ticket.save!
+    ticket.reload
+    old_meta = ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
+    old_meta.destroy if old_meta.present?
+    meta_data = {
+      freshcaller: true,
+      created_by: @agent.id,
+      time: Time.now + 2.minutes
+    }
+    meta_note = ticket.notes.build(
+          note_body_attributes: { body: meta_data.map { |k, v| "#{k}: #{v}" }.join("\n") },
+          private: true,
+          notable: ticket,
+          user: ticket.requester,
+          source: Account.current.helpdesk_sources.note_source_keys_by_token['meta'],
+          account_id: ticket.account.id,
+          user_id: ticket.requester.id,
+          disable_observer: true
+        )
+    meta_note.save
+    freshcaller_call = Freshcaller::Call.new(fc_call_id: Faker::Number.number(2), notable_id: ticket.id, notable_type: 'Helpdesk::Ticket')
+    freshcaller_call.save!
+    ticket.freshcaller_call = freshcaller_call
+    ticket.save!
+    actual = @controller.send(:verify_ticket_permission, @agent,  ticket)
+    assert actual
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission)
+    ticket.freshcaller_call.destroy
+    ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token["meta"]).destroy
+  end
+
+  def test_verify_ticket_permission_for_invalid_freshcaller_agent
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
+    ticket = Helpdesk::Ticket.first
+    old_meta = ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token['meta'])
+    old_meta.destroy if old_meta.present?
+    meta_data = {
+      created_by: Faker::Number.number(5),
+      freshcaller: true,
+      time: Time.now + 2.minutes
+    }
+    meta_note = ticket.notes.build(
+                  note_body_attributes: { body: meta_data.map { |k, v| "#{k}: #{v}" }.join("\n") },
+                  private: true,
+                  notable: ticket,
+                  user: ticket.requester,
+                  source: Account.current.helpdesk_sources.note_source_keys_by_token['meta'],
+                  account_id: ticket.account.id,
+                  user_id: ticket.requester.id,
+                  disable_observer: true
+                )
+    meta_note.save
+    freshcaller_call = Freshcaller::Call.new(fc_call_id: Faker::Number.number(2), notable_id: ticket.id, notable_type: 'Helpdesk::Ticket')
+    freshcaller_call.save!
+    @controller.send(:verify_ticket_permission, @agent, ticket)
+    assert_equal 403, response.status
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission)
+    ticket.freshcaller_call.destroy
+    ticket.notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token["meta"]).destroy
+  end
+
+  def test_verify_ticket_permission_for_non_freshcaller_ticket
+    response = ActionDispatch::TestResponse.new
+    @controller.response = response
+    User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
+    User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
+    ticket = Helpdesk::Ticket.first
+    @controller.send(:verify_ticket_permission, @agent, ticket)
+    assert_equal 403, response.status
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission)
+  end
 end

@@ -18,7 +18,7 @@ module Freshcaller::CallConcern
                     cc_email: Helpdesk::Ticket.default_cc_hash,
                     ticket_body_attributes: { description_html: description, description: description } }
     params_hash = params_hash.merge(requester_id: @contact.id) if @contact.present?
-    params_hash = params_hash.merge(meta_data: { 'created_by' => @creator.id }, responder_id: @agent.id) if @agent.present?
+    params_hash = params_hash.merge(meta_data: { 'created_by' => @creator.id, 'freshcaller' => true }, responder_id: @agent.id) if @agent.present?
     params_hash
   end
 

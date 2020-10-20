@@ -923,7 +923,7 @@ module ApiTicketsTestHelper
     param_object = OpenStruct.new(stats: true)
     pattern = ticket_pattern_with_association(ticket, param_object).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
-    pattern[:freshcaller_call] = freshcaller_call_pattern(ticket) if freshcaller_call_pattern(ticket).present?
+    # pattern[:freshcaller_call] = freshcaller_call_pattern(ticket) if freshcaller_call_pattern(ticket).present?
     if (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && ticket.facebook?
       fb_pattern = ticket.fb_post.post? ? fb_post_pattern({}, ticket.fb_post) : fb_dm_pattern({}, ticket.fb_post)
       pattern[:fb_post] = fb_pattern

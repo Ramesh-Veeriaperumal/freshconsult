@@ -2,6 +2,7 @@
 class TicketDelegator < BaseDelegator
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
   attr_accessor :ticket_fields, :version
+  validate :validate_freshcaller_call_id, if: -> { (validation_context == :create) && @fc_call_id }
   validate :group_presence, if: -> { group_id && (attr_changed?('group_id') || (property_update? && required_for_closure_field?('group') && status_set_to_closed?)) }
   validate :responder_presence, if: -> { responder_id && (attr_changed?('responder_id') || (property_update? && required_for_closure_field?('agent') && status_set_to_closed?)) }
   validate :email_config_presence,  if: -> { !property_update? && email_config_id && outbound_email? && attr_changed?('email_config_id') }
@@ -68,8 +69,6 @@ class TicketDelegator < BaseDelegator
 
   validate :secure_field_update_permissible?, if: -> { (validation_context == :update) && @custom_fields }
 
-  validate :validate_freshcaller_call_id, if: -> { (validation_context == :create) && @fc_call_id }
-
   def initialize(record, options)
     @version = options[:version]
     @ticket_fields = options[:ticket_fields]
@@ -115,7 +114,13 @@ class TicketDelegator < BaseDelegator
       errors[:fc_call_id] << :invalid_value
       @error_options[:fc_call_id] = { value: @fc_call_id }
     else
-      self.freshcaller_call = freshcaller_call
+      ticket = freshcaller_call.ticket || freshcaller_call.note.try(:notable)
+      if ticket.present?
+        errors[:fc_call_ticket] << :freshcaller_duplicate_ticket
+        @error_options[:fc_call_ticket] = { code: :invalid_request, additional_info: { ticket_id: ticket.display_id } }
+      else
+        self.freshcaller_call = freshcaller_call
+      end
     end
   end
 
