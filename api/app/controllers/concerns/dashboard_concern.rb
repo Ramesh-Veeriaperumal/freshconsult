@@ -202,7 +202,7 @@ module DashboardConcern
         activities: !non_sprout_plan,
         todo: true,
         trend_count: non_sprout_plan,
-        unresolved_tickets: current_account.unresolved_tickets_widget_for_sprout_enabled? || non_sprout_plan
+        unresolved_tickets: true
       }
       widgets_with_feature = check_widgets_with_feature(non_sprout_plan)
       chat_related_widgets = check_chat_related_widgets(non_sprout_plan)

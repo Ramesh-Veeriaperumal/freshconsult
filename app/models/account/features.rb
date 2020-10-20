@@ -78,7 +78,7 @@ class Account < ActiveRecord::Base
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
     :canned_forms, :customize_table_view, :solutions_templates, :fb_msg_realtime,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
-    :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
+    :social_tab, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
     :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation,
     :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
