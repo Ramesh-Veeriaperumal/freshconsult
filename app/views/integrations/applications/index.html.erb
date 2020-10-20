@@ -31,7 +31,7 @@
         <% if current_account.custom_apps_enabled? %>
         <div class="button-bar create-new pull-right" style="display:none;">
           <a class="browse-btn btn btn-flat get-custom-apps <%= active_account ? '' : 'disabled' %>" href="" data-url="<%= active_account ? "#{custom_apps_admin_marketplace_extensions_path}" : '' %>"><%= t('integrations.custom_application.get_custom_apps') %></a>
-          <% if current_account.launched?(:freshplug_enabled) && platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>
+          <% if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>
             <%= link_to t('integrations.custom_application.new_custom_app').html_safe, new_admin_integrations_freshplug_path, :class =>"btn btn-flat new-customapp" %>
           <% else %>
             <a class="btn btn-flat" href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('integrations.custom_application.new_custom_app') %></a>

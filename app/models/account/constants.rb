@@ -193,7 +193,7 @@ class Account < ActiveRecord::Base
     kbase_spam_whitelist: false,
     whitelist_supervisor_sla_limitation: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
-    freshplug_enabled: false, dkim: false, dkim_email_service: false, sha1_enabled: false,
+    dkim: false, dkim_email_service: false, sha1_enabled: false,
     auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false,
