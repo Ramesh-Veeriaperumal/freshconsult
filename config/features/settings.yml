@@ -31,6 +31,14 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :fb_msg_realtime:
+    default: false
+    interal: true
+    feature_dependency: :basic_settings_feature
+  :sidekiq_logs_to_central:
+    default: false
+    interal: true
+    feature_dependency: :basic_settings_feature
   :personalized_email_replies:
     default: false
     internal: false

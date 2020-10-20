@@ -182,7 +182,7 @@ class Account < ActiveRecord::Base
   LAUNCHPARTY_FEATURES = {
     hide_og_meta_tags: false, api_search_beta: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
-    es_down: false, es_tickets: false, es_v1_enabled: false, fb_msg_realtime: false, email_new_settings: false,
+    es_down: false, es_tickets: false, es_v1_enabled: false, email_new_settings: false,
     gamification_quest_perf: false, lambda_exchange: false, meta_read: false, most_viewed_articles: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
@@ -218,8 +218,7 @@ class Account < ActiveRecord::Base
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
     launch_fsm_geolocation: false, geolocation_historic_popup: false, allow_update_agent: false,
     hide_mailbox_error_from_agents: false, helpdesk_new_settings: false,
-    jira_onpremise_reporter: false, sidekiq_logs_to_central: false,
-    encode_emoji_in_solutions: false,
+    jira_onpremise_reporter: false, encode_emoji_in_solutions: false,
     mailbox_google_oauth: false, migrate_euc_pages_to_us: false, agent_collision_revamp: false,
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
