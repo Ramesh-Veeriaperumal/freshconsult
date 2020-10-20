@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
     :falcon_portal_theme, :freshid, :email_new_settings, :kbase_spam_whitelist,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
-    :auto_complete_off, :new_ticket_recieved_metric, :ner, :count_service_es_reads,
+    :auto_complete_off, :new_ticket_recieved_metric, :ner,
     :sso_login_expiry_limitation, :old_link_back_url_validation,
     :es_tickets, :fb_msg_realtime,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
@@ -47,14 +47,14 @@ class Account < ActiveRecord::Base
     :requester_widget_timeline, :sprout_trial_onboarding,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
-    :bot_banner, :idle_session_timeout, :solutions_dashboard, :block_spam_user,
+    :bot_banner, :idle_session_timeout, :solutions_dashboard, :block_spam_user, :same_site_none,
     :observer_race_condition_fix, :contact_graphical_avatar, :omni_bundle_2020, :article_versioning_redis_lock, :freshid_sso_sync, :fw_sso_admin_security, :cre_account, :cdn_attachments,
     :omni_chat_agent, :portal_frameworks_update, :ticket_filters_central_publish, :new_email_regex, :auto_refresh_revamp, :agent_statuses, :omni_reports, :freddy_subscription, :omni_channel_team_dashboard, :filter_facebook_mentions,
     :omni_plans_migration_banner, :parse_replied_email, :wf_comma_filter_fix, :composed_email_check, :omni_channel_dashboard, :omni_business_calendar, :csat_for_social_surveymonkey, :fresh_parent, :trim_special_characters, :kbase_omni_bundle,
     :omni_agent_availability_dashboard, :twitter_api_compliance, :silkroad_export, :silkroad_shadow, :silkroad_multilingual, :group_management_v2, :symphony, :invoke_touchstone, :explore_omnichannel_feature, :hide_omnichannel_toggle,
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
-    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :supervisor_contact_field, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
-    :force_index_tickets, :es_v2_splqueries, :launch_kbase_omni_bundle, :cron_api_trigger, :whatsapp_addon, :enhanced_freshcaller_search
+    :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
+    :launch_kbase_omni_bundle, :cron_api_trigger, :whatsapp_addon, :enhanced_freshcaller_search, :auto_recharge_eligible
   ].concat(FRONTEND_LP_FEATURES + REDIRECT_OLD_UI_PATH_FEATURES).uniq
 
   BITMAP_FEATURES = [
@@ -67,7 +67,7 @@ class Account < ActiveRecord::Base
     :layout_customization, :advanced_reporting, :timesheets, :multiple_emails,
     :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
-    :ticket_activity_export, :caching, :private_inline, :collaboration, :hipaa,
+    :ticket_activity_export, :private_inline, :collaboration, :hipaa,
     :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
     :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
@@ -91,8 +91,7 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
-    :supervisor_contact_field, :whatsapp_channel, :sidekiq_logs_to_central,
-    :basic_settings_feature, :force_index_tickets, :es_v2_splqueries, :ticket_filter_increased_companies_limit,
+    :whatsapp_channel, :sidekiq_logs_to_central, :basic_settings_feature, :ticket_filter_increased_companies_limit,
     :csat_email_scan_compatibility
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
@@ -100,10 +99,7 @@ class Account < ActiveRecord::Base
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :fb_msg_realtime,
     :kbase_spam_whitelist,
-    :supervisor_contact_field,
     :sidekiq_logs_to_central,
-    :force_index_tickets,
-    :es_v2_splqueries,
     :csat_email_scan_compatibility
   ].freeze
 
@@ -249,19 +245,15 @@ class Account < ActiveRecord::Base
   end
 
   def count_public_api_filter_factory_enabled?
-    public_api_filter_factory_enabled? && new_es_api_enabled? && count_service_es_reads_enabled?
-  end
-
-  def count_es_enabled?
-    launched?(:count_service_es_reads)
+    public_api_filter_factory_enabled? && new_es_api_enabled?
   end
 
   def count_es_api_enabled?
-    count_es_enabled? && api_es_enabled?
+    api_es_enabled?
   end
 
   def count_es_tickets_enabled?
-    count_es_enabled? && es_tickets_enabled?
+    es_tickets_enabled?
   end
 
   def customer_sentiment_enabled?
@@ -448,10 +440,6 @@ class Account < ActiveRecord::Base
 
   def omni_channel_team_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
-  end
-
-  def kbase_spam_whitelist_enabled?
-    launched?(:kbase_spam_whitelist)
   end
 
   def csat_email_scan_compatibility_enabled?

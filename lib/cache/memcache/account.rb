@@ -961,9 +961,9 @@ module Cache::Memcache::Account
 
     def sources
       if Account.current.compose_email_enabled?
-        Account.current.helpdesk_sources.ticket_source_keys_by_token.values | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
+        Helpdesk::Source.default_ticket_source_keys_by_token.values | [Helpdesk::Source::OUTBOUND_EMAIL]
       else
-        Account.current.helpdesk_sources.ticket_source_keys_by_token.values
+        Helpdesk::Source.default_ticket_source_keys_by_token.values
       end
     end
 

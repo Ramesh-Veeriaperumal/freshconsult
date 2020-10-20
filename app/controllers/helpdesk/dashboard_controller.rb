@@ -268,10 +268,9 @@ class Helpdesk::DashboardController < ApplicationController
   end
 
   def fetch_unresolved_tickets
-    es_enabled = current_account.count_es_enabled?
     #Send only column names to ES for aggregation since column names are used as keys
     options = {:group_by => [@group_by, "status"], :filter_condition => @filter_condition, :cache_data => false, :include_missing => true}
-    ticket_counts = Dashboard::DataLayer.new(es_enabled,options).aggregated_data
+    ticket_counts = Dashboard::DataLayer.new(true, options).aggregated_data
     map_id_to_names(ticket_counts)
   end
 

@@ -31,7 +31,7 @@ class Ember::ProductFeedbackController < ApiApplicationController
         status: Helpdesk::Ticketfields::TicketStatus::OPEN,
         priority: PRIORITY_KEYS_BY_TOKEN[:low],
         description: description,
-        source: current_account.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget],
+        source: Helpdesk::Source::FEEDBACK_WIDGET,
         tags: params[cname][:tags],
         attachment_ids: params[cname][:attachment_ids],
         ticket_reference: params[cname][:ticket_reference]

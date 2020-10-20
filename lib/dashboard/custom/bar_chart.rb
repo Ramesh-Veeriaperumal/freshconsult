@@ -84,13 +84,8 @@ class Dashboard::Custom::BarChart < Dashboards
     end
 
     def fetch_agg_data
-      if Account.current.launched?(:count_service_es_reads)
-        count_result= Dashboard::SearchServiceTrendCount.new(trend_count_options).fetch_count
-        count_result= parse_search_count_result(count_result)
-      else
-        count_result = Search::Dashboard::Custom::Count.new(true, trend_count_options).fetch_count
-        count_result= parse_count_result(count_result)
-      end
+      count_result = Dashboard::SearchServiceTrendCount.new(trend_count_options).fetch_count
+      count_result = parse_search_count_result(count_result)
       Rails.logger.info "Count response:: #{count_result.inspect}"
       count_result
     end

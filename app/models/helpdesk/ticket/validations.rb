@@ -161,11 +161,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def inclusion_of_source
-    Account.current.helpdesk_sources.ticket_source_keys_by_token.values.include?(source)
+    Helpdesk::Source.default_ticket_source_keys_by_token.values.include?(source)
   end
 
   def exclusion_of_source
-    !Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot].equal?(source)
+    !Helpdesk::Source::BOT.equal?(source)
   end
 
   private

@@ -1,6 +1,7 @@
 class Group < ActiveRecord::Base
   self.primary_key = :id
   
+  serialize :additional_settings, HashWithIndifferentAccess
   xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
   belongs_to_account
   include Cache::Memcache::Group

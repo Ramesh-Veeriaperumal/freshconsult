@@ -3280,7 +3280,7 @@ module Ember
       def whatsapp_source_ticket
         @whatsapp_source_ticket ||= create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
                                                   channel_message_id: 'sdl892dk',
-                                                  source: Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2])
+                                                  source: Helpdesk::Source::WHATSAPP)
       end
   end
 end

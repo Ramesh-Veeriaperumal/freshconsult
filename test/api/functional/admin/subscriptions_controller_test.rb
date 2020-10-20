@@ -474,6 +474,37 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:full_time_support_agents)
   end
 
+  def test_off_auto_recharge_eligible
+    account = Account.current
+    stub_auto_recharge_request
+    plan = SubscriptionPlan.cached_current_plans.find { |p| p.display_name == 'Blossom' }
+    put :update, construct_params({ version: 'private', plan_id: plan.id, agent_seats: 5 }, {})
+    account.reload
+    account.subscription.freddy_auto_recharge_enabled = false
+    account.subscription.save!
+    plan = SubscriptionPlan.cached_current_plans.find { |p| p.display_name == 'Forest' }
+    put :update, construct_params({ version: 'private', plan_id: plan.id, agent_seats: 5 }, {})
+    account.reload
+    assert_response 200
+    assert_equal account.subscription.freddy_auto_recharge_enabled?, false
+  ensure
+    unstub_auto_recharge_request
+  end
+
+  def test_autorecharge_update_plan_to_forest
+    account = Account.current
+    stub_auto_recharge_request
+    Account.any_instance.stubs(:auto_recharge_eligible_enabled?).returns(true)
+    plan = SubscriptionPlan.cached_current_plans.find { |p| p.display_name == 'Forest' }
+    put :update, construct_params({ version: 'private', plan_id: plan.id, agent_seats: 5 }, {})
+    account.reload
+    assert_response 200
+    assert_equal account.subscription.freddy_auto_recharge_enabled?, true
+  ensure
+    unstub_auto_recharge_request
+    Account.any_instance.unstub(:auto_recharge_eligible_enabled?)
+  end
+
   private
 
     def sprout_plan_id
@@ -482,6 +513,39 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
 
     def paid_plans
       @paid_plans ||= SubscriptionPlan.current.where('amount != 0').pluck(:id)
+    end
+
+    def stub_auto_recharge_request
+      chargebee_update = ChargeBee::Result.new(stub_update_params(@account.id))
+      ChargeBee::Subscription.stubs(:retrieve).returns(chargebee_update)
+      result = ChargeBee::Result.new(stub_update_params(@account.id))
+      chargebee_coupon = ChargeBee::Result.new(stub_chargebee_coupon)
+      ChargeBee::Coupon.stubs(:retrieve).returns(chargebee_coupon)
+      chargebee_estimate = ChargeBee::Result.new(stub_estimate_params)
+      ChargeBee::Estimate.stubs(:update_subscription).returns(chargebee_estimate)
+      ChargeBee::Subscription.stubs(:update).returns(result)
+      Subscription.any_instance.stubs(:active?).returns(true)
+      Subscription.any_instance.stubs(:card_number).returns(true)
+      Subscription.any_instance.stubs(:downgrade?).returns(false)
+      chargebee_plan = ChargeBee::Result.new(stub_chargebee_plan)
+      ChargeBee::Plan.stubs(:retrieve).returns(chargebee_plan)
+      Account.any_instance.stubs(:full_time_support_agents).returns([1, 2, 3, 4, 5])
+      Subscription.any_instance.stubs(:auto_recharge_enabled_in_plan?).returns(true)
+      ChargeBee::Subscription.stubs(:remove_scheduled_cancellation).returns(true)
+    end
+
+    def unstub_auto_recharge_request
+      Subscription.any_instance.unstub(:active?)
+      Subscription.any_instance.unstub(:card_number)
+      ChargeBee::Subscription.unstub(:update)
+      Account.any_instance.unstub(:full_time_support_agents)
+      Subscription.any_instance.unstub(:auto_recharge_enabled_in_plan?)
+      ChargeBee::Subscription.unstub(:retrieve)
+      ChargeBee::Coupon.unstub(:retrieve)
+      ChargeBee::Estimate.unstub(:update_subscription)
+      ChargeBee::Plan.unstub(:retrieve)
+      ChargeBee::Subscription.unstub(:remove_scheduled_cancellation)
+      Subscription.any_instance.unstub(:downgrade?)
     end
 
     def stub_chargebee_requests

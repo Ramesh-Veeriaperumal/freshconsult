@@ -448,27 +448,6 @@ module Ember
       match_json(private_api_ticket_index_pattern(false, false, true, 'created_at', 'desc', true))
     end
 
-    def test_index_with_only_count
-      @account.stubs(:count_es_enabled?).returns(false)
-      get :index, controller_params(version: 'private', only: 'count')
-      assert_response 200
-      assert response.api_meta[:count] == @account.tickets.where(['spam = false AND deleted = false AND created_at > ?', 30.days.ago]).count
-      match_json([])
-    ensure
-      @account.unstub(:count_es_enabled?)
-    end
-
-    def test_meta_count_with_internal_agent_or_agent_filter
-      enable_feature(:shared_ownership) do
-        initialize_internal_agent_with_default_internal_group
-        query_hash_params = { '0' => query_hash_param('any_agent_id', 'is_in', [@agent.id.to_s, '-1']), '1' => query_hash_param('created_at', 'is_greater_than', 'last_month') }
-        @account.stubs(:count_es_enabled?).returns(false)
-        get :index, controller_params({ version: 'private', only: 'count', query_hash: query_hash_params }, false)
-        assert_response 200
-        assert_equal response.api_meta[:count], @account.tickets.where(['((responder_id = ? OR ISNULL(responder_id)) OR (internal_agent_id = ? OR ISNULL(internal_agent_id))) AND spam = false AND deleted = false AND created_at > ?', @agent.id, @internal_agent.id, 30.days.ago]).count
-      end
-    end
-
     def query_hash_param(condition, operator, value, type = 'default')
       {
         'condition' => condition,
@@ -1045,7 +1024,7 @@ module Ember
       assert_response 201
       latest_ticket = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(latest_ticket))
-      assert latest_ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone]
+      assert latest_ticket.source == Helpdesk::Source::PHONE
     end
 
     def test_create_with_attachment_and_attachment_ids
@@ -2282,7 +2261,7 @@ module Ember
     end
 
     def test_split_note_with_outbound_email_reply
-      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email])
+      ticket = create_ticket(source: Helpdesk::Source::OUTBOUND_EMAIL)
       reply = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:email]))
       put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
       assert_response 200
@@ -2294,7 +2273,7 @@ module Ember
         initialize_internal_agent_with_default_internal_group
         group_restricted_agent = add_agent_to_group(group_id = @internal_group.id,
                                                     ticket_permission = 2, role_id = @account.roles.first.id)
-        ticket = create_ticket({ status: @status.status_id, source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email], internal_agent_id: @internal_agent.id }, nil, @internal_group)
+        ticket = create_ticket({ status: @status.status_id, source: Helpdesk::Source::OUTBOUND_EMAIL, internal_agent_id: @internal_agent.id }, nil, @internal_group)
         login_as(@internal_agent)
         reply = create_note(custom_note_params(ticket, Account.current.helpdesk_sources.note_source_keys_by_token[:email]))
         put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
@@ -2321,7 +2300,7 @@ module Ember
       user = add_new_user_without_email(@account)
       params_hash = {
         requester_id: user.id,
-        source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone]
+        source: Helpdesk::Source::PHONE
       }
       ticket = create_ticket(params_hash)
       note = create_normal_reply_for(ticket)
@@ -2449,7 +2428,7 @@ module Ember
     end
 
     def test_update_properties_with_subject_description_requester_source_phone
-      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone])
+      ticket = create_ticket(source: Helpdesk::Source::PHONE)
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       user = add_new_user(@account)
@@ -2476,7 +2455,7 @@ module Ember
     end
 
     def test_update_properties_with_subject_description_requester_source_email
-      ticket = create_ticket(source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:email])
+      ticket = create_ticket(source: Helpdesk::Source::EMAIL)
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       user = add_new_user(@account)
@@ -5150,7 +5129,7 @@ module Ember
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       t = @account.tickets.last
       match_json(ticket_show_pattern(t))
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
     end
 
@@ -5164,7 +5143,7 @@ module Ember
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       t = @account.tickets.last
       match_json(ticket_show_pattern(t))
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
     end
 
@@ -5190,7 +5169,7 @@ module Ember
       match_json(ticket_show_pattern(t))
       assert_equal t.group_id, agent_group.group_id
       assert_equal nil, t.responder_id
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
     ensure
       Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
@@ -5208,7 +5187,7 @@ module Ember
       match_json(ticket_show_pattern(t))
       assert_equal t.group_id, agent_group.group_id
       assert_equal t.responder_id, agent_group.user_id
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
     ensure
       Account.any_instance.unstub(:advanced_ticket_scopes_enabled?)
@@ -5333,7 +5312,7 @@ module Ember
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_show_pattern(t))
-      assert t.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      assert t.source == Helpdesk::Source::OUTBOUND_EMAIL
       assert_response 201
       @account.email_configs.find(email_config.id).destroy
       update_params = { status: 5, email: agent.email }
@@ -5437,8 +5416,7 @@ module Ember
       Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
     end
 
-    def test_index_with_spam_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(true)
+    def test_index_with_spam
       Account.any_instance.stubs(:es_tickets_enabled?).returns(true)
       t = create_ticket(spam: true)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5449,12 +5427,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_new_and_my_open_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_new_and_my_open
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t = create_ticket(status: 2)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5465,12 +5441,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_stats_with_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_stats
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t = create_ticket
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5481,12 +5455,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_description_with_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(true)
+    def test_index_with_description
       Account.any_instance.stubs(:es_tickets_enabled?).returns(true)
       t = create_ticket
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5498,12 +5470,10 @@ module Ember
       match_json(pattern)
     ensure
       t.try(:destroy)
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_requester_with_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_requester
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       user = add_new_user(@account)
       t = create_ticket(requester_id: user.id)
@@ -5515,12 +5485,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_filter_order_by_with_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_filter_order_by
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t_1 = create_ticket(status: 2, created_at: 10.days.ago)
       t_2 = create_ticket(status: 3, created_at: 11.days.ago)
@@ -5533,12 +5501,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_default_filter_order_type_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_default_filter_order_type
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t_1 = create_ticket(created_at: 10.days.ago)
       t_2 = create_ticket(created_at: 11.days.ago)
@@ -5551,12 +5517,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_updated_since_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_updated_since
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       t = create_ticket(updated_at: 2.days.from_now)
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -5567,12 +5531,10 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
-    def test_index_with_company_count_es_enabled
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    def test_index_with_company
       Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
       company = create_company
       user = add_new_user(@account)
@@ -5589,7 +5551,6 @@ module Ember
       pattern.push(index_ticket_pattern_with_associations(t, param_object))
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:es_tickets_enabled?)
     end
 
@@ -6874,25 +6835,6 @@ module Ember
       group.destroy if group.present?
       agent.destroy if agent.present?
     end
-
-    def test_index_with_only_count_for_read_access_agent
-      @account.stubs(:count_es_enabled?).returns(false)
-      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
-      group = create_group_with_agents(@account, agent_list: [agent.id])
-      agent_group = agent.agent_groups.where(group_id: group.id).first
-      agent_group.write_access = false
-      agent_group.save!
-      agent.make_current
-      ticket = create_ticket({}, group)
-      login_as(agent)
-      get :index, controller_params(version: 'private', filter: 'all_tickets', only: 'count')
-      tickets_count1 = @response.api_meta[:count] 
-      assert_equal tickets_count1, 1
-    ensure
-      group.destroy if group.present?
-      agent.destroy if agent.present?
-      @account.unstub(:count_es_enabled?)
-    end
     
     def test_latest_note_ticket_with_public_note_with_read_scope
       agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
@@ -6930,9 +6872,8 @@ module Ember
 
     def test_channel_ticket_show
       Account.stubs(:current).returns(Account.first)
-      whatsapp_as_source = Helpdesk::Source::TICKET_SOURCES.find { |ts| ts[0] == :whatsapp }[2]
       ticket = create_ticket(channel_id: 1234, profile_unique_id: '+919798678923',
-                             channel_message_id: 'sdl892dk', source: whatsapp_as_source)
+                             channel_message_id: 'sdl892dk', source: Helpdesk::Source::WHATSAPP)
       get :show, controller_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(ticket_show_pattern(ticket))

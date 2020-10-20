@@ -348,7 +348,7 @@ module TicketsTestHelper
     tweet = ticket.try(:tweet)
     fb_post = ticket.try(:fb_post)
 
-    if tweet && ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]
+    if tweet && ticket.source == Helpdesk::Source::TWITTER
       twitter_handle = tweet.twitter_handle
       source_info = {
         twitter: {
@@ -378,8 +378,8 @@ module TicketsTestHelper
   end
 
   def email_ticket?(source)
-    [Account.current.helpdesk_sources.ticket_source_keys_by_token[:email],
-     Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat]].include?(source)
+    [Helpdesk::Source::EMAIL,
+     Helpdesk::Source::CHAT].include?(source)
   end
 
   def cp_assoc_ticket_pattern(expected_output = {}, ticket)

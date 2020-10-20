@@ -112,3 +112,5 @@ OmniChannelBundleConfig = YAML.load_file(Rails.root.join('config', 'omni_channel
 TracingConfig = YAML.load_file(Rails.root.join('config', 'tracing.yml'))[Rails.env]
 
 KbServiceConfig = YAML.load_file(Rails.root.join('config', 'kbservice.yml'))[Rails.env]
+
+TOUCHSTONE_CONFIG = YAML.load_file(Rails.root.join('config', 'touchstone_config.yml'))[Rails.env].with_indifferent_access

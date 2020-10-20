@@ -66,7 +66,7 @@ class FbReplyValidationTest < ActionView::TestCase
     refute fb_reply_validation.valid?
     assert fb_reply_validation.errors.full_messages.include?('Ticket not_a_facebook_ticket')
 
-    item.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]
+    item.source = Helpdesk::Source::FACEBOOK
     fb_reply_validation = FbReplyValidation.new(controller_params, item)
     assert fb_reply_validation.valid?
   end
@@ -78,7 +78,7 @@ class FbReplyValidationTest < ActionView::TestCase
     refute fb_reply_validation.valid?
     assert fb_reply_validation.errors.full_messages.include?('Ticket not_a_facebook_ticket')
 
-    item.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]
+    item.source = Helpdesk::Source::FACEBOOK
     fb_reply_validation = FbReplyValidation.new(controller_params, item)
     assert fb_reply_validation.valid?
   end

@@ -26,6 +26,7 @@ class Middleware::ApiResponseWrapper
     !@response.request.env["ORIGINAL_FULLPATH"].include?('/ocr_proxy/') &&
     !@response.request.env['ORIGINAL_FULLPATH'].include?('/autofaq/') &&
     !@response.request.env['ORIGINAL_FULLPATH'].include?('/botflow/') &&
+      !(@response.request.env['ORIGINAL_FULLPATH'].include?('/dashboards/') && !@response.request.env['ORIGINAL_FULLPATH'].include?('/widgets_data') && @response.request.env['ORIGINAL_FULLPATH'].include?('/widgets')) &&
 
     @response.respond_to?(:code) &&
     WRAPPABLE_RESPONSE_CODES.include?(@response.code.to_i) &&

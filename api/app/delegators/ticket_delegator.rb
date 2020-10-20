@@ -323,7 +323,7 @@ class TicketDelegator < BaseDelegator
   private
 
     def widget_ticket?
-      @ticket.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget]
+      @ticket.source == Helpdesk::Source::FEEDBACK_WIDGET
     end
 
     def property_update?

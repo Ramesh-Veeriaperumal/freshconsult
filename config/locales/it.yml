@@ -4724,7 +4724,6 @@ it:
   attachment_limit_failed_message: >-
     Uno o più allegati sono stati ignorati perché superavano il limite di
     %{size}
-  attachment_contain_virus: '%{size} allegati sono stati eliminati poiché contengono virus.'
   cc_dropped_message: 'I seguenti cc non sono stati elaborati a causa della moderazione - %{emails}'
   emails_dropped_message: >-
     Le seguenti e-mail non sono state elaborate a cause della moderazione -

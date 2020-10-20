@@ -132,7 +132,7 @@ class SpamWatcherRedisMethods
       threshold = spam_threshold_for_account account, user, model
       threshold = spam_threshold_for_account account, nil, model if threshold.nil?
       if threshold.nil?
-        threshold = default_spam_threshold_based_on_account_status account, model
+        threshold = default_spam_threshold_based_on_account_status account, model, user
         set_spam_threshold_for_account account_id, model, threshold
       end
       threshold
@@ -154,17 +154,20 @@ class SpamWatcherRedisMethods
       SPAM_THRESHOLD%{account_id: account_id, user_id: user_id, model: model}
     end
 
-    def default_spam_threshold_based_on_account_status account, model
+    def default_spam_threshold_based_on_account_status(account, model, user)
       if(!account.nil? && !account.subscription.nil?)
         state = account.subscription.state
       end
       state = state.nil? ? "" : state
-      key = default_spam_threshold_key state, model
-      $spam_watcher.perform_redis_op("get",key)
+      agent = user.present? && user.class == User && user.try(:helpdesk_agent)
+      key = default_spam_threshold_key state, model, agent
+      default_threshold = $spam_watcher.perform_redis_op("get",key)
+      default_threshold = SpamConstants::AGENT_SPAM_WATCHER[model]['threshold'] if default_threshold.blank? && agent
+      default_threshold
     end
 
-    def default_spam_threshold_key state, model
-      DEFAULT_SPAM_THRESHOLD%{state: state, model: model}
+    def default_spam_threshold_key(state, model, agent)
+      agent ? format(DEFAULT_AGENT_SPAM_THRESHOLD, state: state, model: model) : format(DEFAULT_SPAM_THRESHOLD, state: state, model: model)
     end
 
     def incoming_email_spam(account)

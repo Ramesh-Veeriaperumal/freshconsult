@@ -59,9 +59,7 @@ class TicketFilterMethodsTest < ActionView::TestCase
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     assert_not_nil filter_count
     assert_not_nil filter_count(nil, true)
-    Account.any_instance.stubs(:count_es_enabled?).returns(true)
     assert_not_nil filter_count(nil, true)
-    Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.stubs(:launched?).returns(true)
     ActiveRecord::Relation.any_instance.stubs(:count).returns(1)
     assert_equal filter_count(nil, true), 1

@@ -1,11 +1,12 @@
 module Middleware
   module Sidekiq
     module Server
-      class SupressSqlLogs
+      class Logs
         def call(_worker, msg, _queue)
           queue_name = msg['queue']
           logger_level = fetch_logger_level_for_sidekiq_queue(queue_name)
           ActiveRecord::Base.logger.level = logger_level
+          ::NewRelic::Agent.add_custom_attributes(appVersion: ENV['APP_VERSION'])
           yield
         end
 

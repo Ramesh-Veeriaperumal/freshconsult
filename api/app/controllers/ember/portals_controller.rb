@@ -94,7 +94,7 @@ module Ember
       end
 
       def tickets_count
-        current_account.count_es_enabled? ? ::Search::Filters::Docs.new([], []).count(Helpdesk::Ticket) : current_account.tickets.count
+        ::Search::Filters::Docs.new([], []).count(Helpdesk::Ticket)
       end
 
       def articles_count

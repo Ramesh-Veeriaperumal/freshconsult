@@ -85,7 +85,7 @@
                             omni_features_list = SubscriptionsHelper::IMPORTANT_OMNI_FEATURES["#{plan.name.downcase}"].clone.map{ |x| x.to_s }
                           end
                           plans_features = SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].clone
-                          features_list = omni_account ? plans_features.insert(plans_features.length - 2, *omni_features_list) : plans_features
+                          features_list = omni_account ? plans_features.insert(plans_features.index("fsm_option"), *omni_features_list) : plans_features
                         %>
                         <% features_list.each do |feature_name| %>
                           <% if feature_name == "omni_channel_option" || feature_name == "omni_channel_option_basic" %>
@@ -94,6 +94,16 @@
                           <% elsif feature_name == "fsm_option" %>
                             <%= render :partial => "/subscriptions/features/info-box/fsm_info", :locals => { :plan => plan,
                               :feature_name => feature_name }%>
+                          <% elsif feature_name == "agent_assist_ai" %>
+                            <% if current_account.freddy_subscription_enabled? && current_account.auto_recharge_eligible_enabled? %>
+                              <%= render :partial => "/subscriptions/features/info-box/agent_assist_ai_info", :locals => { :plan => plan,
+                                :feature_name => feature_name }%>
+                            <% end %>
+                          <% elsif feature_name == "self_service" %>
+                            <% if current_account.freddy_subscription_enabled? && current_account.auto_recharge_eligible_enabled? %>
+                              <%= render :partial => "/subscriptions/features/info-box/self_service_info", :locals => { :plan => plan,
+                                  :feature_name => feature_name }%>
+                            <% end %>
                           <% else %>
 
                                  <% if feature_name.include? "api_rate_limit_"%>
@@ -342,7 +352,11 @@
       freddy_addon_count: <%= @subscription.subscription_plan.freddy_addon_count || 0 %>,
       freddy_enabled: <%= freddy_enabled %>,
       freddy_option: '<%= freddy_option %>',
+      freddy_sessions: <%= @subscription.freddy_sessions || 0 %>,
       freddy_session_pack: <%= @subscription.freddy_session_packs || 0 %>,
+      freddy_auto_recharge_launched: <%= current_account.freddy_subscription_enabled? && current_account.auto_recharge_eligible_enabled? %>,
+      freddy_auto_recharge_enabled: <%= @subscription.freddy_auto_recharge_enabled? %>,
+      freddy_auto_recharge_packs: <%= @subscription.freddy_auto_recharge_packs %>,
       subscription_state: '<%= @subscription.state %>',
       has_account_cancellation_request: <%= current_account.account_cancellation_requested? %>,
       free_agents_count: <%= @subscription.free_agents %>,

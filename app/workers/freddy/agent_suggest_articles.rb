@@ -41,15 +41,15 @@ module Freddy
 
       def ticket_eligible_to_suggestion?
         (@ticket.portal.freddy_bot.present? || @ticket.portal.bot.present?) &&
-          (ticket_source(:email) || ticket_source(:portal))
+          (ticket_source(Helpdesk::Source::EMAIL) || ticket_source(Helpdesk::Source::PORTAL))
       end
 
       def ticket_source(source)
-        @ticket.source == account.helpdesk_sources.ticket_source_keys_by_token[source]
+        @ticket.source == source
       end
 
       def source_email?
-        ticket_source(:email) && (account.bot_email_channel_enabled? || account.email_articles_suggest_enabled?)
+        ticket_source(Helpdesk::Source::EMAIL) && (account.bot_email_channel_enabled? || account.email_articles_suggest_enabled?)
       end
 
       def fetch_ml_response

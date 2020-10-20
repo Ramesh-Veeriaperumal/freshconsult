@@ -1166,6 +1166,138 @@ class SubscriptionsControllerTest < ActionController::TestCase
     unstub_chargebee_requests
   end
 
+  def test_new_subscription_plan_change_freddy_autorecharge
+    params_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    SubscriptionsController.any_instance.stubs(:plan_changed?).returns(true)
+    Account.any_instance.stubs(:auto_recharge_eligible_enabled?).returns(true)
+    stub_chargebee_requests
+    @account.subscription.agent_limit = 1
+    @account.subscription.save!
+    post :plan, construct_params({}, { agent_limit: '12', plan_id: params_plan_id }.merge!(params_hash.except(:plan_id, :agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.freddy_auto_recharge_enabled?, true
+    assert_equal @account.subscription.freddy_auto_recharge_packs, 1
+    assert_response 302
+  ensure
+    Account.any_instance.unstub(:auto_recharge_eligible_enabled?)
+    unstub_chargebee_requests
+    SubscriptionsController.any_instance.unstub(:plan_changed?)
+  end
+
+  def test_state_change_freddy_autorecharge_launch_off
+    params = { agent_limit: '1' }
+    stub_chargebee_requests
+    Account.any_instance.stubs(:field_agents_count).returns(2)
+    @account.rollback(:downgrade_policy)
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.agent_limit = 6
+    current_subscription.additional_info[:field_agent_limit] = 3
+    current_subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.freddy_auto_recharge_enabled?, false
+    assert_equal @account.subscription.freddy_auto_recharge_packs, 0
+    assert_response 302
+  ensure
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:field_agents_count)
+  end
+
+  def test_state_change_freddy_autorecharge_with_trial_to_active
+    params = { agent_limit: '1' }
+    stub_chargebee_requests
+    Account.any_instance.stubs(:field_agents_count).returns(2)
+    Account.any_instance.stubs(:auto_recharge_eligible_enabled?).returns(true)
+    @account.rollback(:downgrade_policy)
+    current_subscription = @account.subscription
+    current_subscription.state = 'trial'
+    current_subscription.agent_limit = 6
+    current_subscription.additional_info[:field_agent_limit] = 3
+    current_subscription.save!
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_equal @account.subscription.freddy_auto_recharge_enabled?, true
+    assert_equal @account.subscription.freddy_auto_recharge_packs, 1
+    assert_response 302
+  ensure
+    Account.any_instance.unstub(:auto_recharge_eligible_enabled?)
+    unstub_chargebee_requests
+    Account.any_instance.unstub(:field_agents_count)
+  end
+
+  def test_freddy_autorecharge_downgrade_case
+    Account.any_instance.stubs(:auto_recharge_eligible_enabled?).returns(true)
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, freddy_auto_recharge_packs: '6', freddy_auto_recharge_enabled: 'true', agent_limit: '4' }
+    stub_chargebee_requests
+    create_subscription_request(@account)
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.launch(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_response 302
+    assert_equal @account.subscription.freddy_auto_recharge_enabled?, true
+    assert_equal @account.subscription.freddy_auto_recharge_packs, 6
+  ensure
+    Account.any_instance.unstub(:auto_recharge_eligible_enabled?)
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    unstub_chargebee_requests
+  end
+
+  def test_subscription_change_when_adding_freddy_autorecharge
+    Account.any_instance.stubs(:auto_recharge_eligible_enabled?).returns(true)
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, freddy_auto_recharge_packs: '5', freddy_auto_recharge_enabled: 'true', agent_limit: '10' }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.additional_info[:freddy_sessions] = 0
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.launch(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_response 302
+    assert_equal @account.subscription.freddy_auto_recharge_enabled?, true
+    assert_equal @account.subscription.freddy_auto_recharge_packs, 5
+  ensure
+    Account.any_instance.unstub(:auto_recharge_eligible_enabled?)
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    unstub_chargebee_requests
+  end
+
+  def test_subscription_change_when_adding_freddy_autorecharge_with_off_state
+    Account.any_instance.stubs(:auto_recharge_eligible_enabled?).returns(true)
+    forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
+    params = { plan_id: forest_plan_id, freddy_auto_recharge_packs: '5', freddy_auto_recharge_enabled: 'false', agent_limit: '10' }
+    stub_chargebee_requests
+    current_subscription = @account.subscription
+    current_subscription.agent_limit = 6
+    current_subscription.renewal_period = 1
+    current_subscription.additional_info[:freddy_sessions] = 0
+    current_subscription.save!
+    @account.launch(:downgrade_policy)
+    @account.launch(:freddy_subscription)
+    post :plan, construct_params({}, params.merge!(params_hash.except(:agent_limit)))
+    @account.reload
+    assert_response 302
+    assert_equal @account.subscription.freddy_auto_recharge_enabled?, false
+    assert_equal @account.subscription.freddy_auto_recharge_packs, 5
+  ensure
+    Account.any_instance.unstub(:auto_recharge_eligible_enabled?)
+    @account.rollback(:downgrade_policy)
+    @account.rollback(:freddy_subscription)
+    unstub_chargebee_requests
+  end
+
   def test_subscription_change_when_adding_freddy_addons
     forest_plan_id = SubscriptionPlan.select(:id).where(name: 'Forest Jan 20').map(&:id).last
     params = { plan_id: forest_plan_id, agent_limit: '10', addons: { freddy_self_service: { enabled: 'true' }, freddy_session_packs: { enabled: 'true', value: '1' } } }

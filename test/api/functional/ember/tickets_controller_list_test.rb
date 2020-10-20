@@ -157,13 +157,18 @@ module Ember
       enable_es_api_load(query_hash_params) do
         response_stub = filter_factory_es_cluster_response_stub(query_hash_params, order_by, order_type)
         SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Client.any_instance.stubs(:aggregate).returns(SearchService::Response.new(response_stub))
         SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
         params = { version: 'private', query_hash: query_hash_params, order_by: order_by, order_type: order_type, only: 'count' }
         get :index, controller_params(params, false)
         assert_response 200
         count = @response.api_meta[:count]
-        assert_equal count, 1
+        assert_equal count, 31
       end
+    ensure
+      SearchService::Client.any_instance.unstub(:query)
+      SearchService::Client.any_instance.unstub(:aggregate)
+      SearchService::Response.any_instance.unstub(:records)
     end
 
     def match_filter_response_with_es_enabled(ticket_filter)

@@ -75,7 +75,7 @@ class Ecommerce::Ebay::Processor
       ticket = @account.tickets.build(
             :subject => subject,
             :requester => requester,
-            :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:ecommerce],
+            :source => Helpdesk::Source::ECOMMERCE,
             :product_id => @ebay_account.product_id,
             :group_id => @ebay_account.group_id
         )

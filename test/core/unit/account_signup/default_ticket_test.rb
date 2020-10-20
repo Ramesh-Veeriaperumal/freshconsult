@@ -14,7 +14,7 @@ include AccountTestHelper
     @responder = @account.all_users.find_by_email(Helpdesk::AGENT[:email])
     
     DEFAULT_TICKET_SOURCES.each do |type|
-      instance_variable_set("@#{type}_ticket", @account.tickets.order(:created_at).find_by_source(Account.current.helpdesk_sources.ticket_source_keys_by_token["#{type}".to_sym]))
+      instance_variable_set("@#{type}_ticket", @account.tickets.order(:created_at).find_by_source(Helpdesk::Source.default_ticket_source_keys_by_token[type]))
       instance_variable_set("@#{type}_note", instance_variable_get("@#{type}_ticket").notes.find_by_source(Account.current.helpdesk_sources.note_source_keys_by_token["email"]))
       instance_variable_set("@expected_#{type}_ticket", eval("Fixtures::Default#{type.to_s.camelize()}Ticket").new )
     end

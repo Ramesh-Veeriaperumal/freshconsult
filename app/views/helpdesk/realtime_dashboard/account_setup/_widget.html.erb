@@ -17,7 +17,7 @@
 						<%= hidden_field_tag "helpdesk_ticket[subject]", value="Message from " + current_user.name + " (" + current_user.email + ")" %>
 						<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
 						<%= hidden_field_tag "meta[referrer]", h(request.url) %>
-						<%= hidden_field_tag "helpdesk_ticket[source]", current_account.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget] %>
+						<%= hidden_field_tag "helpdesk_ticket[source]", Helpdesk::Source::FEEDBACK_WIDGET %>
 						<%= hidden_field_tag "helpdesk_ticket[email]", current_user.email %>
 						<div class="buttons-container pull-right">
 							<a class="btn" id="cancel-feedback"><%= t('cancel') %></a>

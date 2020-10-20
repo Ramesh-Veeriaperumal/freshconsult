@@ -565,6 +565,31 @@ module Admin
       group.destroy
     end
 
+    def test_update_group_name_as_supervisor
+      group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, ticket_assign_type: 1)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+      put :update, construct_params({ id: group.id }, name: "test", description: "change description")
+      assert_response 403
+    ensure
+      group.destroy
+    end
+
+    def test_update_load_based_round_robin_valid_as_supervisor
+      Account.current.add_feature :round_robin
+      Account.current.add_feature :round_robin_load_balancing
+      existing_group = create_group(@account)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+      put :update, construct_params({ version: 'private', id: existing_group.id }, automatic_agent_assignment: lbrr_params[:automatic_agent_assignment])
+      assert_response 200
+      match_json(group_management_lbrr_pattern(existing_group))
+    ensure
+      Account.current.revoke_feature :round_robin
+      Account.current.revoke_feature :round_robin_load_balancing
+      existing_group.destroy
+    end
+
     def test_update_group_type_invalid
       Account.current.add_feature(:field_service_management)
       create_field_group_type

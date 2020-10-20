@@ -229,9 +229,7 @@ class Admin::VaRulesController < Admin::AdminController
           :data_url => tags_search_autocomplete_index_path, :operatortype => "object_id_array",
           :condition => !supervisor_rules_controller?, :autocomplete_choices => @tag_hash },
         { :name => -1, :value => "-----------------------",
-          :condition => (contact_field_enabled? || company_field_enabled?) },
-        { :name => "contact_name", :value => t('contact_name'), :domtype => "text",
-          :operatortype => "text", :condition =>  contact_field_enabled?},
+          condition: company_field_enabled? },
         { :name => "company_name", :value => t('company_name'), :domtype => "text",
           :operatortype => "text", :condition =>  company_field_enabled?}
       ]
@@ -451,7 +449,7 @@ class Admin::VaRulesController < Admin::AdminController
     def source_choices
       # Since we don't enqueue the ticket in Dispatchr when the ticket is created through Outbound email, there is no need to show the option 'Outbound email' for 'Ticket Source' in the Dispatchr's Create/Edit page
       va_rules_controller? ? 
-        TicketConstants.source_list.except(current_account.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]) :
+        TicketConstants.source_list.except(Helpdesk::Source::OUTBOUND_EMAIL) :
                 TicketConstants.source_list
     end
 
@@ -461,11 +459,7 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def requester_email_enabled?
-      !supervisor_rules_controller? || contact_field_enabled?
-    end
-
-    def contact_field_enabled?
-      supervisor_rules_controller? && current_account.supervisor_contact_field_enabled?
+      !supervisor_rules_controller?
     end
 
     def company_field_enabled?

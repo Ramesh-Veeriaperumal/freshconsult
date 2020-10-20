@@ -487,7 +487,7 @@ module IntegrationServices::Services
     def assign_ticket_prop ticket, fd_user, co_attributes
       co_attributes["freshdesk__RequesterEmail__c"] = fd_user.safe_send("email")
       co_attributes["freshdesk__TicketPriority__c"] = TicketConstants::PRIORITY_NAMES_BY_KEY[ticket.priority].titlecase
-      co_attributes['freshdesk__TicketSource__c'] = Account.current.helpdesk_sources.default_ticket_source_token_by_key[ticket.source].to_s.titlecase
+      co_attributes['freshdesk__TicketSource__c'] = Helpdesk::Source.default_ticket_source_token_by_key[ticket.source].to_s.titlecase
       co_attributes["freshdesk__TicketProduct__c"] = (ticket.product.present?) ? ticket.product.name : nil
       co_attributes["freshdesk__TicketGroup__c"] = (ticket.group.present?) ? ticket.group.name : nil
       co_attributes["freshdesk__TicketTags__c"] = ticket.ticket_tags

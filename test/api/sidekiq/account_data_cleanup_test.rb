@@ -114,7 +114,7 @@ class NewPlanChangeWorkerTest < ActionView::TestCase
     custom_source.reload
     ticket_template.reload
     assert custom_source.deleted
-    assert_equal ticket_template.template_data['source'], Helpdesk::Source.ticket_source_keys_by_token[:phone].to_s
+    assert_equal ticket_template.template_data['source'], Helpdesk::Source::PHONE.to_s
   end
 
   def test_custom_source_fails_reset_ticket_templates_data
@@ -129,7 +129,7 @@ class NewPlanChangeWorkerTest < ActionView::TestCase
     custom_source.reload
     ticket_template.reload
     assert custom_source.deleted
-    assert_not_equal source_id, Helpdesk::Source.ticket_source_keys_by_token[:phone].to_s
+    assert_not_equal source_id, Helpdesk::Source::PHONE.to_s
   end
 
   private

@@ -14,6 +14,7 @@
     isSelected_plan_present = @selected_plan.present?
     isSelected_plan_nil = @selected_plan.nil?
     hide_omnichannel_toggle = current_account.launched?(:hide_omnichannel_toggle) && !@not_eligible_for_omni_upgrade
+    auto_collection = @subscription.additional_info[:auto_collection]
     is_prepaid = @subscription.freddy_billing_model.nil?
     consumed_freddy_sessions = fetch_consumed_freddy_sessions.to_i
     show_session_metering_info = current_account.freddy_subscription_enabled? && freddy_addon_count != 0 && (freddy_addon_count > 2 || freddy_enabled) && (is_prepaid ? @subscription.freddy_sessions > 0 : true )
@@ -105,21 +106,47 @@
 
     <% if show_session_metering_info %>
       <div class="session-metering">
-        <h4 class="session-metering-meter">
-          <% if is_prepaid %>
-            <% sessions = consumed_freddy_sessions > @subscription.freddy_sessions ? @subscription.freddy_sessions : consumed_freddy_sessions  %>
-            <%= t('freddy.total_session_consumption', :consumed => sessions, :total => @subscription.freddy_sessions) %>
-          <% else %>
-            <%= consumed_freddy_sessions %>
-          <% end %>
-        </h4>
-        <div class="session-metering-title"><%= t('freddy.sessions_consumed') %></div>
+        <div class="session-metering-spacing">
+          <h4 class="session-metering-meter">
+            <% if is_prepaid %>
+              <% sessions = consumed_freddy_sessions > @subscription.freddy_sessions ? @subscription.freddy_sessions : consumed_freddy_sessions  %>
+              <%= t('freddy.total_session_consumption', :consumed => sessions, :total => @subscription.freddy_sessions) %>
+            <% else %>
+              <%= consumed_freddy_sessions %>
+            <% end %>
+          </h4>
+          <div class="session-metering-title"><%= t('freddy.sessions_consumed') %></div>
+        </div>
         <% if is_prepaid %>
-          <div class="session-metering-progress">
-            <div class="session-metering-progress-bar <%= session_color %>" style="width:<%=percentage_session_consumed%>%"></div>
+          <div class="session-metering-spacing">
+            <div class="session-metering-progress">
+              <div class="session-metering-progress-bar <%= session_color %>" style="width:<%=percentage_session_consumed%>%"></div>
+            </div>
+            <p class="session-metering-consumed"><%= t('freddy.percentage_session_consumed', :percentage => percentage_session_consumed) %></p>
+            <% if auto_collection %>
+              <button class="btn btn-secondary buy-session" id="buy-more-sesion"> <%=t('buy_more_sessions')%></button>
+            <% end %>
           </div>
-          <p class="session-metering-consumed"><%= t('freddy.percentage_session_consumed', :percentage => percentage_session_consumed) %></p>
-          <button class="btn btn-secondary buy-session" id="buy-more-sesion"> <%=t('buy_more_sessions')%></button>
+          <% if current_account.auto_recharge_eligible_enabled? %>
+            <div class="auto-recharge-section">
+              <div class="auto-recharge-status">
+                <div>
+                  <% if @subscription.freddy_auto_recharge_enabled? %>
+                    <%= t("freddy.auto_recharge_enabled") %>
+                  <% else %>
+                    <%= t("freddy.auto_recharge_disabled") %>
+                  <% end %>
+                  <img alt="<%= t('fd_omni_channel_experience') %>" class="auto-recharge-tooltip" src="/assets/info-icon.svg" width="11"
+                    data-content="<%= t("freddy.auto_recharge_tooltip") %>" />
+                </div>
+              </div>
+              <% unless @subscription.freddy_auto_recharge_enabled? %>
+                <% if auto_collection %>
+                  <div class="session-metering-spacing enable-auto-recharge"><%= t("freddy.enable_auto_recharge").html_safe %></div>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
         <% end %>
       </div>
     <% end %>
@@ -308,6 +335,26 @@
       }, 100, 'easeInOut');
       $(".plan-expand").toggleClass("plan-expand-click");
     });
+    var popover_target = $('.auto-recharge-tooltip');
+    if(popover_target){
+      popover_target.popover({
+        html: true,
+        trigger: 'manual',
+        placement: 'right',
+        reloadContent: false,
+        template: "<div class='arrow'></div><div class='inner'><div class='content auto-recharge-content'><p></p></div></div>",
+        content: function(){
+          return "<div>" +popover_target.attr("data-content") + "</div>"
+        }
+      }).hover(function(){
+        $(this).popover("show");
+      })
+    }
+    $(document).on('click', function(e){
+      if($('.popover').is(':visible')){
+        $('.popover').remove();
+      }
+    })
   })(jQuery);
 </script>
 

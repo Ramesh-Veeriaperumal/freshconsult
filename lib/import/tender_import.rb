@@ -8,8 +8,8 @@ class Import::TenderImport < Struct.new(:params)
 #       tender.perform
 #   This is done for ordercup
 
- TENDER_TICKET_SOURCE = { :web=> Helpdesk::Source.ticket_source_keys_by_token[:portal], 
-                          :email=> Helpdesk::Source.ticket_source_keys_by_token[:email]
+ TENDER_TICKET_SOURCE = { :web=> Helpdesk::Source::PORTAL,
+                          :email=> Helpdesk::Source::EMAIL
                         }
  OBJ_TO_PATH = {:ticket => "categories" , :solution => "sections"}
 

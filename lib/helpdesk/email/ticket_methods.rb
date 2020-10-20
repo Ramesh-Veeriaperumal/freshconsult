@@ -42,7 +42,7 @@ module Helpdesk::Email::TicketMethods
         :cc_email => hash_cc_emails,
         :email_config => email[:email_config],
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-        :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
+        :source => Helpdesk::Source::EMAIL
       )
     self.ticket.build_archive_child(:archive_ticket_id => archive_ticket.id) if archive_ticket
     ticket.sender_email = self.original_sender
@@ -74,7 +74,7 @@ module Helpdesk::Email::TicketMethods
   end
 
   def set_chat_source
-    ticket.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(email[:from][:domain])
+    ticket.source = Helpdesk::Source::CHAT if Helpdesk::Ticket::CHAT_SOURCES.has_value?(email[:from][:domain])
   end
 
   def snap_engage?

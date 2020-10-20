@@ -120,14 +120,14 @@ module TicketFieldsTestHelper
 
   def api_ticket_sources
     if Account.current.compose_email_enabled?
-      Account.current.helpdesk_sources.api_sources | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
+      Account.current.helpdesk_sources.api_sources | [Helpdesk::Source::OUTBOUND_EMAIL]
     else
       Account.current.helpdesk_sources.api_sources
     end
   end
 
   def api_update_ticket_sources
-    api_ticket_sources | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot]]
+    api_ticket_sources | [Helpdesk::Source::BOT]
   end
 
   def sample_status_ticket_fields(locale = 'en', val, cx_display_name, position)

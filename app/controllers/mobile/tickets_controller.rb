@@ -176,18 +176,7 @@ class Mobile::TicketsController < ApplicationController
   end
 
   def filter_count(selector, agent_filter=false)
-    if current_account.count_es_enabled?
-      TicketsFilter.es_filter_count(selector, true, agent_filter)
-    else
-      Sharding.run_on_slave do
-        tickets = filter_tickets(agent_filter,selector)
-        if current_account.force_index_tickets_enabled?
-          tickets.use_index("index_helpdesk_tickets_status_and_account_id").unresolved.count
-        else
-          tickets.unresolved.count
-        end
-      end
-    end
+    TicketsFilter.es_filter_count(selector, true, agent_filter)
   end
 
   def ticket_filter_hash

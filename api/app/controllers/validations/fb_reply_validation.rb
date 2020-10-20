@@ -20,7 +20,7 @@ class FbReplyValidation < ApiValidation
   end
 
   def validate_facebook_ticket
-    errors[:ticket_id] << :not_a_facebook_ticket unless @ticket.source ==  Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook]
+    errors[:ticket_id] << :not_a_facebook_ticket unless @ticket.source == Helpdesk::Source::FACEBOOK
   end
 
   def either_body_attachment_ids

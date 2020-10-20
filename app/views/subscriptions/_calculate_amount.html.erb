@@ -13,6 +13,8 @@
 						((@subscription.subscription_plan_id != current_subscription.subscription_plan_id && @subscription.cost_per_agent < current_subscription.cost_per_agent)|| ((current_subscription_plan.omni_plan? || current_subscription_plan.free_omni_channel_plan?) &&
 						@subscription.subscription_plan.basic_variant?))
 	is_prepaid = @subscription.freddy_billing_model.nil?
+	freddy_auto_recharge_enabled = current_account.freddy_subscription_enabled? && current_account.auto_recharge_eligible_enabled?
+	freddy_auto_recharge_packs = freddy_auto_recharge_enabled ? @subscription.freddy_auto_recharge_packs == 0 ? 1 : @subscription.freddy_auto_recharge_packs : 1
 %>
 
 <div class="billing-cost">
@@ -173,6 +175,27 @@
 			<% end %>
 		<% end %>
 
+		<% showFreddyAutorechargeSection = freddy_auto_recharge_enabled && @subscription.freddy_sessions > 0 && is_prepaid %>
+		<div class="freddy_auto_recharge_section <%= showFreddyAutorechargeSection ? '' : 'hide' %>">
+			<div class="freddy_auto_recharge">
+				<label class="checkbox">
+					<input type="checkbox" id="freddy_auto_recharge_enabled_field" <%= 'checked' if @subscription.freddy_auto_recharge_enabled? %> value="<%= @subscription.freddy_auto_recharge_enabled? %>" />
+				</label>
+				<div class="freddy_auto_recharge_label">
+					<span class="auto-recharge-info"><%= t("freddy.auto_recharge") %></span>
+					<img alt="<%= t('fd_omni_channel_experience') %>" class="auto-recharge-info auto-recharge-tooltip" src="/assets/info-icon.svg" width="11" data-content="<%= t("freddy.auto_recharge_tooltip") %>" />
+				</div>
+			</div>
+
+			<dl class="freddy_auto_recharge_packs_section <%= 'hide' unless @subscription.freddy_auto_recharge_enabled? %> ">
+				<dt><%= t("freddy.auto_recharge_with") %></dt>
+				<dd class="numbers">
+					<input type="text" value="<%= freddy_auto_recharge_packs %>" id="freddy_auto_recharge_packs_field" class="text auto-recharge-count" autocomplete="off" />
+					<span class="auto-recharge-packs"><%= t("freddy.auto_recharge_packs") %></span>
+				</dd>
+			</dl>
+		</div>
+
 	<div class="billing-actions">
 		<input type="hidden" id="plan_id" name="plan_id" value="" />
 		<input type="hidden" id="currency" name="currency" value="<%= @subscription.currency_name %>" />
@@ -186,6 +209,10 @@
 			<input type="hidden" name="addons[freddy_ultimate][value]" value="<%= agent_limit || current_account.full_time_support_agents.count %>" />
 			<input type="hidden" name="addons[freddy_session_packs][enabled]" value="false" />
 			<input type="hidden" name="addons[freddy_session_packs][value]" value="<%= freddy_session_packs %>" />
+			<% if current_account.auto_recharge_eligible_enabled? %>
+				<input type="hidden" name="freddy_auto_recharge_enabled" value="<%= @subscription.freddy_auto_recharge_enabled? %>" />
+				<input type="hidden" name="freddy_auto_recharge_packs" value="<%= freddy_auto_recharge_packs %>" />
+			<% end %>
 		<% end %>
 		<% downgrade_confirm = ( (@subscription.subscription_plan_id < current_subscription.subscription_plan_id) or (current_subscription.classic? and @subscription.sprout?) ) ? true : false %>
 		<% submit_text = @subscription.state == 'trial' ? t('enter_payment') : @subscription.non_free_agents <= @subscription.free_agents ? t('activate_free_plan') : t('make_payment') %>

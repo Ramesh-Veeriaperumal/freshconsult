@@ -218,22 +218,7 @@ module Helpdesk::TicketFilterMethods
   end
 
   def filter_count(selector=nil, unresolved=false)
-    if Account.current.count_es_enabled?
-      TicketsFilter.es_filter_count(selector, unresolved)
-    else
-      filter = TicketsFilter.filter(filter(selector), User.current, Account.current.tickets.permissible(User.current))
-      Sharding.run_on_slave do
-        if unresolved
-          if Account.current.force_index_tickets_enabled?
-            filter.use_index("index_helpdesk_tickets_status_and_account_id").unresolved.count
-          else
-            filter.unresolved.count
-          end
-        else
-          filter.count
-        end
-      end
-    end
+    TicketsFilter.es_filter_count(selector, unresolved)
   end
 
   def current_filter

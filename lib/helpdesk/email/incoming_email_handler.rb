@@ -677,7 +677,7 @@ module Helpdesk
 						:bcc_emails => [], :reply_cc => global_cc.dup, :tkt_cc => parse_cc_email },
 					:email_config => email_config,
 					:status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-					:source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
+					:source => Helpdesk::Source::EMAIL
 				}
 				ticket_params.merge!({
 					:created_at => params[:migration_internal_date].to_time,
@@ -726,7 +726,7 @@ module Helpdesk
 			end
 
 			def check_for_chat_scources(ticket,from_email)
-				ticket.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat] if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
+				ticket.source = Helpdesk::Source::CHAT if Helpdesk::Ticket::CHAT_SOURCES.has_value?(from_email[:domain])
 				if from_email[:domain] == Helpdesk::Ticket::CHAT_SOURCES[:snapengage]
 					emailreg = Regexp.new(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/)
 					chat_email =  params[:subject].scan(emailreg).uniq[0]
@@ -840,10 +840,6 @@ module Helpdesk
 						Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
 						raise e
 					end
-				end
-				if @total_virus_attachment
-					message = virus_attachment_message(@total_virus_attachment)
-					add_notification_text item, message
 				end
 				item.header_info = {:content_ids => content_id_hash} unless content_id_hash.blank?
 				return attachments, inline_attachments

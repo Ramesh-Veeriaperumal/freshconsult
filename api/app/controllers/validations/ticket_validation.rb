@@ -345,20 +345,20 @@ class TicketValidation < ApiValidation
 
   def sources
     if Account.current.compose_email_enabled? && validation_context == :compose_email
-      [Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
+      [Helpdesk::Source::OUTBOUND_EMAIL]
     elsif Account.current.compose_email_enabled?
-      Account.current.helpdesk_sources.api_sources | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]]
+      Account.current.helpdesk_sources.api_sources | [Helpdesk::Source::OUTBOUND_EMAIL]
     else
       Account.current.helpdesk_sources.api_sources
     end
   end
 
   def update_sources
-    sources | [Account.current.helpdesk_sources.ticket_source_keys_by_token[:bot]]
+    sources | [Helpdesk::Source::BOT]
   end
 
   def source_as_outbound_email?
-    @outbound_email ||= (source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]) && Account.current.compose_email_enabled?
+    @outbound_email ||= (source == Helpdesk::Source::OUTBOUND_EMAIL) && Account.current.compose_email_enabled?
   end
 
   def default_field_validations

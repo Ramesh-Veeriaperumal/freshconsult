@@ -1095,7 +1095,6 @@ module Channel::V2
       TicketDecorator.any_instance.stubs(:private_api?).returns(false)
       CustomRequestStore.store[:channel_api_request] = true
       @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(true)
       Account.any_instance.stubs(:api_es_enabled?).returns(true)
       t = create_ticket
       @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
@@ -1108,7 +1107,6 @@ module Channel::V2
       match_json(pattern)
     ensure
       TicketDecorator.any_instance.unstub(:private_api?)
-      Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:api_es_enabled?)
       remove_request_stub(@request_stub)
       @channel_v2_api = false
@@ -1162,7 +1160,7 @@ module Channel::V2
       unstub_requirements_for_stats
     end
 
-    def test_index_updated_since_count_es_enabled
+    def test_index_updated_since_with_count_es_enabled
       stub_requirements_for_stats
       t = create_ticket(updated_at: 2.days.from_now)
       @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)

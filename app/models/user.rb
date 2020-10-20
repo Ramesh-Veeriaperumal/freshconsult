@@ -901,7 +901,7 @@ class User < ActiveRecord::Base
   end
 
   def read_or_write_group_ticket_member?(group_id)
-    group_id && all_associated_group_ids.include?(group_id)
+    group_id.present? && all_associated_group_ids.include?(group_id)
   end
 
   def read_group_ticket?(ticket)
@@ -909,7 +909,7 @@ class User < ActiveRecord::Base
   end
 
   def read_group_ticket_member?(group_id)
-    group_id && read_associated_group_ids.include?(group_id)
+    group_id.present? && read_associated_group_ids.include?(group_id)
   end
 
   # associated_group_ids have only write access groups
@@ -932,7 +932,7 @@ class User < ActiveRecord::Base
   end
 
   def group_member?(group_id, agent_group_ids = nil)
-    group_id && (agent_group_ids.nil? ? associated_group_ids.include?(group_id) : agent_group_ids.include?(group_id))
+    group_id.present? && (agent_group_ids.nil? ? associated_group_ids.include?(group_id) : agent_group_ids.include?(group_id))
   end
 
   
@@ -1385,6 +1385,15 @@ class User < ActiveRecord::Base
       first_name: username[0],
       last_name:  username[1]
     }
+  end
+
+  def freshcaller_agent_enabled?
+    freshcaller_agent = agent.try(:freshcaller_agent)
+    Account.current.freshcaller_enabled? && freshcaller_agent.present? && freshcaller_agent.try(:fc_enabled)
+  end
+
+  def freshchat_agent_enabled?
+    Account.current.omni_chat_agent_enabled? && agent.agent_freshchat_enabled?
   end
 
   private

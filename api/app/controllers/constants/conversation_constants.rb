@@ -41,8 +41,8 @@ module ConversationConstants
 
   PUBLIC_API_DEFAULT_FIELDS = %w[body user_id attachments].freeze
   PUBLIC_API_FIELDS = {
-    Helpdesk::Source.ticket_source_keys_by_token[:facebook] => %w[parent_note_id].freeze | PUBLIC_API_DEFAULT_FIELDS,
-    Helpdesk::Source.ticket_source_keys_by_token[:twitter] => [twitter: [:tweet_type, :twitter_handle_id]].freeze | PUBLIC_API_DEFAULT_FIELDS
+    Helpdesk::Source::FACEBOOK => %w[parent_note_id].freeze | PUBLIC_API_DEFAULT_FIELDS,
+    Helpdesk::Source::TWITTER => [twitter: [:tweet_type, :twitter_handle_id]].freeze | PUBLIC_API_DEFAULT_FIELDS
   }.freeze
 
   PIPE_REPLY_FIELDS  = REPLY_FIELDS | %w(created_at updated_at)

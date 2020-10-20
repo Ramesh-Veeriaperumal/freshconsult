@@ -133,4 +133,6 @@ helpdesk:
     - coverband
     - silkroad_config
     - tracing
+    - rack_monkey_patch
+    - action_dispatch_cookies_monkey_patch
 

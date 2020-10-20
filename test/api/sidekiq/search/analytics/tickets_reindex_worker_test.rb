@@ -42,7 +42,7 @@ class TicketsReindexWorkerTest < ActionView::TestCase
     def ticket_params
       {
         email: 'sample@freshdesk.com',
-        source: Account.current.helpdesk_sources.ticket_source_keys_by_token[:email]
+        source: Helpdesk::Source::EMAIL
       }
     end
 end

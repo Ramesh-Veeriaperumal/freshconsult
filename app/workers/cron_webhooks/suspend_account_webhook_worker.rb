@@ -65,7 +65,7 @@ module CronWebhooks
         time_taken = Time.at((@start_time - Time.current).to_i.abs).utc.strftime('%H:%M:%S')
         account_ids = @deleted_accounts.map { |h| h[:account] }
         Rails.logger.info("successfully enqueued #{@deleted_accounts.size} jobs for deletion in #{time_taken}. Deleted Accounts - #{account_ids.inspect}")
-        Rails.logger.info("Deleted account details :: #{@deleted_accounts.inspect}")
+        @deleted_accounts.each_slice(250).each { |del_acc| Rails.logger.info("Deleted account details :: #{del_acc.inspect}") }
       end
 
       def fetch_next_account_from_shard(shard_name)

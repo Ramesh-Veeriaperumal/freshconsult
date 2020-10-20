@@ -876,10 +876,20 @@ Helpkit::Application.routes.draw do
         resources :announcements do
           get '', to: 'ember/custom_dashboard#fetch_announcement'
         end
+        resources :widgets, only: ['/:widget_id'] do
+          collection do
+            get '/:widget_id', to: 'ember/custom_dashboard#omni_widget_data'
+          end
+        end
       end
 
       collection do
         get :widget_data_preview, to: 'ember/custom_dashboard#widget_data_preview'
+        resources :widgets, only: [:preview] do
+          collection do
+            get :preview, to: 'ember/custom_dashboard#omni_widget_data_preview'
+          end
+        end
         get :leaderboard_agents, to: 'ember/leaderboard#agents'
         get :leaderboard_groups, to: 'ember/leaderboard#groups'
       end

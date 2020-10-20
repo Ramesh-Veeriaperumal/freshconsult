@@ -20,6 +20,6 @@ class EbayReplyValidation < ApiValidation
   end
 
   def validate_ebay_ticket
-    errors[:ticket_id] << :not_an_ebay_ticket unless @ticket.source ==  Account.current.helpdesk_sources.ticket_source_keys_by_token[:ecommerce]
+    errors[:ticket_id] << :not_an_ebay_ticket unless @ticket.source == Helpdesk::Source::ECOMMERCE
   end
 end

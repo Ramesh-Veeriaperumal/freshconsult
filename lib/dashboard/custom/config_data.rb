@@ -29,11 +29,26 @@ module Dashboard::Custom
       super
     end
 
+    def url
+      OmniChannelDashboard::Constants::BASE_URL + config_data.select { |k, v| OMNI_VALID_QUERY_PARAMS.include?(k.to_sym) && v.present? }.to_query + "&type=#{widget_type}" + user_access_url
+    end
+
     private
 
       def merge_config_data(updated_config)
         self.config_data = HashWithIndifferentAccess.new(config_data.merge(updated_config))
         ticket_filter_id
+      end
+
+      def user_access_url
+        case config_data[:source]
+        when SOURCES[:freshcaller]
+          "&freshcaller_agent=#{User.current.freshcaller_agent_enabled? ? '1' : '0'}"
+        when SOURCES[:freshchat]
+          "&freshchat_agent=#{User.current.freshchat_agent_enabled? ? '1' : '0'}"
+        else
+          ''
+        end
       end
   end
 end

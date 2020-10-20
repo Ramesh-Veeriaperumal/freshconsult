@@ -458,7 +458,6 @@ en:
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attachment_limit_failed_message: Attachment(s) that exceed the %{size} limit have been dropped. Please reach out to the sender.
-  attachment_contain_virus: "%{size} attachments are discarded since they contain virus."
   cc_dropped_message: The following cc's are dropped due to moderation - %{emails}
   emails_dropped_message: The following emails are dropped due to moderation - %{emails}
   emails_added_to_cc: Email(s) successfully added to CC.

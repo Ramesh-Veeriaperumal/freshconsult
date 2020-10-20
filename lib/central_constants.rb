@@ -57,7 +57,7 @@ module CentralConstants
     'Helpdesk::ArchiveTicket' => '1.2'
   }
 
-  HYPERTRAIL_VERSION = '0.0.1'.freeze
+  HYPERTRAIL_VERSION = '0.0.2'.freeze
   # To avoid duplicate central event of associated models(user_companies) with model(user) as exchange payload,
   # include attr_accessor(associated_model_changes) in model, it will skip associated model central events for a certain model action.
   SKIP_EVENT = [

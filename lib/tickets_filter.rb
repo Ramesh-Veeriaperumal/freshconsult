@@ -328,8 +328,8 @@ module TicketsFilter
                                 AND helpdesk_ticket_statuses.deleted IS FALSE
                                 and helpdesk_ticket_statuses.status_id NOT IN 
                                 (#{RESOLVED},#{CLOSED})"],
-        :twitter          => ["source = ?", Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter]],
-        :mobihelp          => ["source = ?", Account.current.helpdesk_sources.ticket_source_keys_by_token[:mobihelp]],
+        :twitter          => ["source = ?", Helpdesk::Source::TWITTER],
+        :mobihelp          => ["source = ?", Helpdesk::Source::MOBIHELP],
         :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=? and spam=?" , RESOLVED, CLOSED , false, false],
         visible_and_resolved: visible_status(RESOLVED),
         visible_and_pending:  visible_status(PENDING),

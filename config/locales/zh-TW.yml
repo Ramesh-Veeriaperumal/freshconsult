@@ -312,7 +312,6 @@ zh-TW:
   attachments: 附件
   attachment_delete: 你要永久刪除此附件。確定繼續嗎？
   attachment_limit_failed_message: '一個或多個附加檔案因為容量%{size}超過限制而被不能使用。'
-  attachment_contain_virus: '已捨棄 %{size} 附件，因為含有病毒。'
   cc_dropped_message: '已由於仲裁而丟失以下副本 - %{emails}'
   emails_dropped_message: '已由於仲裁而丟失以下電子郵件 - %{emails}'
   emails_added_to_cc: 電子郵件已成功新增至副本。

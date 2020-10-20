@@ -45,6 +45,14 @@
 	display: inline-block;
 }
 
+.auto-recharge-info {
+	padding-left: 3px;
+}
+
+.auto-recharge-content {
+	width: 350px;
+}
+
 .submit-confirm {
 	padding-top: 3px;
 }
@@ -233,6 +241,15 @@
 	  font-weight: 300;
 	  line-height: 24px;
 	  margin-left: 20px;
+	}
+
+	&__features--common {
+		font-size: 13px;
+		margin-top: 10px;
+
+		.session-pack {
+			color: #00A886;
+		}
 	}
 }
 
@@ -451,6 +468,7 @@ dt.vertical-top {
   	}
 		dl{ margin-top: 7px; }
 		dd, dt{
+			position: relative;
 			display: inline-block;
 		}
 		dt{
@@ -494,6 +512,38 @@ dt.vertical-top {
 				margin: 10px;
 			}
 		}
+	}
+
+	.freddy_auto_recharge {
+		display: flex;
+		font-size: 12px;
+
+		.checkbox {
+			padding-bottom: 0;
+			align-self: center;
+		}
+
+		&_label {
+			display: flex;
+			align-items: center;
+		}
+
+		&_packs_section {
+			.auto-recharge-count {
+				padding: 4px 10px;
+				padding-right: 50px;
+				width: 38px;
+				margin: 0;
+			}
+
+			.auto-recharge-packs {
+				position: absolute;
+				top: 5px;
+				right: 10px;
+				color: #475867;
+			}
+		}
+
 	}
 }
 
@@ -1237,10 +1287,14 @@ input[type=text].input-agent-count{
     box-shadow: 0px 2px 4px rgba(207, 215, 223, 0.24);
     border-radius: 8px;
     background: #fff;
-		padding: 16px 20px;
+		padding: 16px 0;
 		margin-top: 15px;
 		margin-right: 15px;
 		max-width: 280px;
+
+		&-spacing {
+			padding: 0 20px;
+		}
 
 		&-progress {
 			background: #EBEFF3;
@@ -1286,6 +1340,25 @@ input[type=text].input-agent-count{
 		.buy-session {
 			margin-top: 8px;
 			margin-left: 0;
+		}
+
+		.auto-recharge {
+			&-section {
+				margin-top: 16px;
+				border-top: 1px solid #E7EBEF;
+				color: #475867;
+				font-size: 14px;
+
+				.enable-auto-recharge-here {
+					color: #2C5CC5;
+					cursor: pointer;
+				}
+			}
+
+			&-status {
+				display: flex;
+				padding: 12px 20px 0;
+			}
 		}
 	}
 

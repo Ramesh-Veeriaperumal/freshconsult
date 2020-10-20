@@ -2,7 +2,7 @@ module Helpdesk::DashboardV2Helper
 
   def dashboard_widget_list snapshot
     widgets = []
-    widget_type = if dashboardv2_available?
+    widget_type =
       if current_user.privilege?(:admin_tasks)
         (snapshot == 'admin') ? Dashboards::ADMIN_DASHBOARD : Dashboards::STANDARD_DASHBOARD
       elsif current_user.privilege?(:view_reports)
@@ -10,9 +10,6 @@ module Helpdesk::DashboardV2Helper
       else
         (snapshot == 'agent') ? Dashboards::AGENT_DASHBOARD : Dashboards::STANDARD_DASHBOARD
       end
-    else
-      Dashboards::STANDARD_DASHBOARD
-    end
 
     widget_type.each do |widget|
        widgets << widget if widget_privilege[widget.first.to_sym]
@@ -33,10 +30,6 @@ module Helpdesk::DashboardV2Helper
       :agent_status   =>  (round_robin? || (chat_activated? && current_account.chat_setting.active)),
       :trend_count    =>  true
     }
-  end
-
-  def dashboardv2_available?
-    current_account.count_es_enabled?
   end
 
 end

@@ -99,19 +99,18 @@ module Reports::HelpdeskAnalysisReport
     data_hash
   end
 
-  def prepare_source_data_series(col_name,data_array)
-    data_hash = { Account.current.helpdesk_sources.ticket_source_keys_by_token[:email].to_s =>{:name=>I18n.t('email'),:type=>'line',:color=>'#98b954',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:portal].to_s=>{:name=>I18n.t('portal_key'),:type=>'line',:color=>'#1E1ECA',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone].to_s=>{:name=>I18n.t('phone'),:type=>'line',:color=>'#be4b48',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:forum].to_s=>{:name=>I18n.t('forum_key'),:type=>'line',:color=>'#80699b',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter].to_s=>{:name=>I18n.t('twitter_source'),:type=>'line',:color=>'#3ba4c1',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook].to_s=>{:name=>I18n.t('facebook_source'),:type=>'line',:color=>'#225222',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat].to_s=>{:name=>I18n.t('chat'),:type=>'line',:color=>'#8E7722',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:mobihelp].to_s=>{:name=>I18n.t('mobihelp'),:type=>'line',:color=>'#EEA222',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:feedback_widget].to_s=>{:name=>I18n.t('feedback_widget'),:type=>'line',:color=>'#C46865',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email].to_s=>{:name=>I18n.t('outbound_email'),:type=>'line',:color=>'#62bce1',:data=>[]},
-                 Account.current.helpdesk_sources.ticket_source_keys_by_token[:ecommerce].to_s=>{:name=>I18n.t('ecommerce'),:type=>'line',:color=>'#C4552AB',:data=>[]}
-                }
+  def prepare_source_data_series(col_name, data_array)
+    data_hash = { Helpdesk::Source::EMAIL.to_s => { name: I18n.t('email'), type: 'line', color: '#98b954', data: [] },
+                  Helpdesk::Source::PORTAL.to_s => { name: I18n.t('portal_key'), type: 'line', color: '#1E1ECA', data: [] },
+                  Helpdesk::Source::PHONE.to_s => { name: I18n.t('phone'), type: 'line', color: '#be4b48', data: [] },
+                  Helpdesk::Source::FORUM.to_s => { name: I18n.t('forum_key'), type: 'line', color: '#80699b', data: [] },
+                  Helpdesk::Source::TWITTER.to_s => { name: I18n.t('twitter_source'), type: 'line', color: '#3ba4c1', data: [] },
+                  Helpdesk::Source::FACEBOOK.to_s => { name: I18n.t('facebook_source'), type: 'line', color: '#225222', data: [] },
+                  Helpdesk::Source::CHAT.to_s => { name: I18n.t('chat'), type: 'line', color: '#8E7722', data: [] },
+                  Helpdesk::Source::MOBIHELP.to_s => { name: I18n.t('mobihelp'), type: 'line', color: '#EEA222', data: [] },
+                  Helpdesk::Source::FEEDBACK_WIDGET.to_s => { name: I18n.t('feedback_widget'), type: 'line', color: '#C46865', data: [] },
+                  Helpdesk::Source::OUTBOUND_EMAIL.to_s => { name: I18n.t('outbound_email'), type: 'line', color: '#62bce1', data: [] },
+                  Helpdesk::Source::ECOMMERCE.to_s => { name: I18n.t('ecommerce'), type: 'line', color: '#C4552AB', data: [] } }
 
     dates_with_data = {}
     #Storing the dates having data

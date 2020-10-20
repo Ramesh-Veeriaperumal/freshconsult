@@ -100,7 +100,7 @@ module Concerns
 
       def user_details_template(item)
         if (item.is_a? Helpdesk::Ticket)
-          if item.source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+          if item.source == Helpdesk::Source::OUTBOUND_EMAIL
             user = { "name" => item.reply_name, "email" => item.reply_email }
           else
             user = item.requester

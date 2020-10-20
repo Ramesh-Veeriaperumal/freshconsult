@@ -96,6 +96,7 @@ class ApiApplicationController < MetalApiController
   around_filter :response_cache, only: [:index, :show], if: :private_api?
 
   after_filter :remove_session_data, :unset_current_languge
+  after_filter :set_same_site_enabled
 
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze

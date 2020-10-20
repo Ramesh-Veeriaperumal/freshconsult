@@ -62,7 +62,7 @@ TICKET_DETAILS_DATA['draft']['default_reply'] = document.getElementById('ticket_
 			closed 		: 	<%= Helpdesk::Ticketfields::TicketStatus::CLOSED %>,
 		},
 		sources: {
-			twitter     :   <%=Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] %>,
+			twitter     :   <%=Helpdesk::Source::TWITTER %>,
 		}
 	}
 </script>

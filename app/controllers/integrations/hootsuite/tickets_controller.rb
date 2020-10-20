@@ -171,7 +171,7 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
 
   def build_tweet_params
     params[:helpdesk_ticket][:tweet_attributes] = {"twitter_handle_id" => params[:twitter_handle_id],"tweet_id" => params[:tweet_id]}
-    params[:helpdesk_ticket][:source] = current_account.helpdesk_sources.ticket_source_keys_by_token[:twitter]
+    params[:helpdesk_ticket][:source] = Helpdesk::Source::TWITTER
     params[:helpdesk_ticket][:requester] = get_twitter_user(params[:helpdesk_ticket][:twitter_id],params[:image])
   end
 
@@ -188,7 +188,7 @@ class Integrations::Hootsuite::TicketsController < Integrations::Hootsuite::Hoot
           :post_type   => Facebook::Constants::POST_TYPE_CODE[:post]
         }
       }
-    params[:helpdesk_ticket][:source] = current_account.helpdesk_sources.ticket_source_keys_by_token[:facebook]
+    params[:helpdesk_ticket][:source] = Helpdesk::Source::FACEBOOK
   end
 
   def load_object

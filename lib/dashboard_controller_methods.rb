@@ -12,17 +12,17 @@ module DashboardControllerMethods
   #Check custom ticket fileter for supported trends in DEFAULT_FILTERS
   #This is for standard dashboard. Not checking feature for this end point.
   def trend_count
-    trend_count = Dashboard::TrendCount.new(@es_enabled, @filter_params).fetch_count
+    trend_count = Dashboard::TrendCount.new(true, @filter_params).fetch_count
     render :json => {:trends => trend_count}.to_json
   end
 
   def overdue
-    overdue_count = Dashboard::Overdue.new(@es_enabled,@filter_params).fetch_count
+    overdue_count = Dashboard::Overdue.new(true, @filter_params).fetch_count
     render :json => {:overdue => overdue_count}.to_json
   end
 
   def due_today
-    due_today_count = Dashboard::DueToday.new(@es_enabled,@filter_params).fetch_count
+    due_today_count = Dashboard::DueToday.new(true, @filter_params).fetch_count
     render :json => {:due_today => due_today_count}.to_json
   end
 
@@ -35,18 +35,17 @@ module DashboardControllerMethods
     @filter_params[:workload] = params[:workload] if params[:workload]
     @widget_name = params[:widget_name].to_sym if params[:widget_name]
     @filter_params[:widget_name] = params[:widget_name] || ""
-    @es_enabled = current_account.count_es_enabled?
   end
 
   def unresolved_tickets_dashboard
     widget_type = Dashboard::UnresolvedTicket::WIDGET_OPTIONS[@widget_name][:method]
-    widget_count = Dashboard::UnresolvedTicket.new(@es_enabled,@filter_params).safe_send("fetch_#{widget_type}")
+    widget_count = Dashboard::UnresolvedTicket.new(true, @filter_params).safe_send("fetch_#{widget_type}")
     render :json => {@widget_name.to_sym => widget_count}.to_json
   end
 
   def unresolved_tickets_workload
-     widget_count = Dashboard::UnresolvedTicketWorkload.new(@es_enabled,@filter_params).fetch_aggregation
-     render :json => {:workload => widget_count}.to_json
+    widget_count = Dashboard::UnresolvedTicketWorkload.new(true, @filter_params).fetch_aggregation
+    render json: { workload: widget_count }.to_json
   end
 
   def survey_info

@@ -44,7 +44,7 @@ Before('@sla_policy1') do
 end
 
 Before('@sla_policy2') do
-  conditions = { "source" => [Account.current.helpdesk_sources.ticket_source_keys_by_token[:forum]] }
+  conditions = { 'source' => [Helpdesk::Source::FORUM] }
   resolution_time = [3600, 7200, 10800, 14400] #[urgent, high, medium, low]
   response_time = [2700, 3600, 7200, 10800] #[urgent, high, medium, low]
   create_sla_policy(true, conditions, {}, {}, { :resolution_time => resolution_time, :response_time => response_time })

@@ -13,7 +13,7 @@ module Integrations::CtiHelper
     ticket_desc += cti_call_url_msg(cti_call)
     ticket_desc += cti_call_info_msg(cti_call)
     ticket = cti_call.account.tickets.build(
-      :source => Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone],
+      :source => Helpdesk::Source::PHONE,
       :requester_id => cti_call.requester_id,
       :subject  => ticket_subject,
       :responder_id => cti_call.responder_id,

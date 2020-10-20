@@ -45,7 +45,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
 
   after_commit :enable_fresh_connect, on: :create, unless: :is_anonymous_account
-  after_commit :enable_searchv2, :enable_count_es, :set_falcon_preferences, on: :create
+  after_commit :enable_searchv2, :set_falcon_preferences, on: :create
   after_commit :disable_searchv2, on: :destroy
   after_commit :update_sendgrid, on: :create, unless: :is_anonymous_account
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -624,10 +624,6 @@ class Account < ActiveRecord::Base
 
     def enable_searchv2
       SearchV2::Manager::EnableSearch.perform_async
-    end
-
-    def enable_count_es
-      self.launch(:count_service_es_reads)
     end
 
     def disable_searchv2

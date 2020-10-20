@@ -63,7 +63,7 @@ class ChatsController < ApplicationController
       return if !check_permissibility(params[:ticket][:email])
     end
     ticket_params = {
-                      :source => current_account.helpdesk_sources.ticket_source_keys_by_token[:chat],
+                      :source => Helpdesk::Source::CHAT,
                       :email  => params[:ticket][:email],
                       :phone  => params[:ticket][:phone],
                       :subject  => params[:ticket][:subject],
@@ -331,7 +331,7 @@ class ChatsController < ApplicationController
       desc = desc + "<br>" + message
     end
     ticket_params = {
-                      :source => current_account.helpdesk_sources.ticket_source_keys_by_token[:chat],
+                      :source => Helpdesk::Source::CHAT,
                       :email  => params[:email],
                       :subject  => subject,
                       :requester_name => params[:name],

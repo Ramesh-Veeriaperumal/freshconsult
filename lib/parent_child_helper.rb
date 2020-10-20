@@ -16,11 +16,11 @@ module ParentChildHelper
     @item.build_ticket_body
     if compose_email?
       @item.status = Helpdesk::Ticketfields::TicketStatus::CLOSED
-      source = :outbound_email
+      source = Helpdesk::Source::OUTBOUND_EMAIL
     else
-      source = :phone
+      source = Helpdesk::Source::PHONE
     end
-    @item.source = Account.current.helpdesk_sources.ticket_source_keys_by_token[source]
+    @item.source = source
   end
 
   def compose_email?

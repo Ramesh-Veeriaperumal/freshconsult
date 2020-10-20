@@ -281,7 +281,7 @@ module Ember
         @item.schema_less_ticket.product ||= current_portal.product unless cname_params.key?(:product_id)
 
         # Default source is set to phone. Instead of portal as set in the model.
-        @item.source = current_account.helpdesk_sources.ticket_source_keys_by_token[:phone] if @item.source === 0
+        @item.source = Helpdesk::Source::PHONE if @item.source == 0
       end
 
       def load_objects
@@ -330,11 +330,7 @@ module Ember
 
       def optimized_count
         set_all_agent_groups_permission
-        if current_account.count_es_enabled?
-          ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
-        else
-          tickets_filter.count
-        end
+        ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
       end
 
       def d_query_hash
@@ -428,7 +424,7 @@ module Ember
       end
 
       def build_topic_ticket
-        @item.source =  current_account.helpdesk_sources.ticket_source_keys_by_token[:forum]
+        @item.source = Helpdesk::Source::FORUM
         @item.build_ticket_topic(topic_id: @topic_id)
       end
 

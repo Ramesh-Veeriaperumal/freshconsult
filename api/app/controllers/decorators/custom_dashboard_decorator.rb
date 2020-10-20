@@ -60,6 +60,6 @@ class CustomDashboardDecorator < ApiDecorator
   end
 
   def omni_config_data(widget)
-    { source: widget.config_data[:source], url: OMNI_WIDGET_DATA_URL + widget.config_data[:url] }
+    { source: widget.config_data[:source], url: format(OMNI_WIDGET_DATA_HELPKIT_API, dashboard_id: record.id, widget_id: widget.id) }
   end
 end

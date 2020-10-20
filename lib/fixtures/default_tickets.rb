@@ -38,7 +38,7 @@ class Fixtures::DefaultTickets
       subject: tickets_content[ind][:subject],
       email: ticket_requester.email,
       status: account.ticket_statuses.find_by_name(ticket["status"].to_sym).status_id,
-      source: Account.current.helpdesk_sources.ticket_source_keys_by_token[ticket["source"].to_sym],
+      source: Helpdesk::Source.default_ticket_source_keys_by_token[ticket["source"].to_sym],
       priority:  TicketConstants::PRIORITY_KEYS_BY_TOKEN[ticket["priority"].to_sym],
       group: ticket_group(ticket["group"]),
       ticket_type: ticket_type(ticket["type"]),

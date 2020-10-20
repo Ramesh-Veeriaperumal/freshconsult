@@ -490,7 +490,7 @@ class SAAS::AccountDataCleanup
     account.ticket_templates.each do |template|
       run_with_rescue('custom source template deletion') do
         if template.template_data.present? && template.template_data['source'].present? && template.template_data['source'].to_i >= Helpdesk::Source::CUSTOM_SOURCE_BASE_SOURCE_ID
-          template.template_data['source'] = Helpdesk::Source.ticket_source_keys_by_token[:phone].to_s
+          template.template_data['source'] = Helpdesk::Source::PHONE.to_s
           template.save!
         end
       end

@@ -18,7 +18,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     @account.facebook_pages.destroy_all
     @account.facebook_streams.destroy_all
     @account.rollback(:fb_message_echo_support)
-    @account.tickets.where(source: Helpdesk::Source.ticket_source_keys_by_token[:facebook]).destroy_all
+    @account.tickets.where(source: Helpdesk::Source::FACEBOOK).destroy_all
     HttpRequestProxy.any_instance.unstub(:fetch_using_req_params)
     Account.unstub(:current)
     super

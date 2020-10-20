@@ -409,7 +409,7 @@
       :helpdesk_tickets_by_product: 405
       :skip_invoice_due_warning: 406
       :allow_wildcard_ticket_create: 407
-      :supervisor_contact_field: 408
+      :unused_408: 408
       :bypass_signup_captcha: 409
       :disable_freshchat: 410
       :whatsapp_channel: 411
@@ -434,7 +434,6 @@
   :link_tickets: false
   :shared_ownership: false
   :advanced_search_bulk_actions: false
-  :caching: false
   :private_inline: false
   :freshcaller: false
   :freshcaller_widget: false
@@ -485,9 +484,6 @@
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
-  :supervisor_contact_field: false
   :sidekiq_logs_to_central: false
   :fb_msg_realtime: false
-  :force_index_tickets: false
-  :es_v2_splqueries: false
   :csat_email_scan_compatibility: false

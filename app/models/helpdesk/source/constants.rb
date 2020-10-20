@@ -1,27 +1,69 @@
+# frozen_string_literal: true
+
 class Helpdesk::Source < Helpdesk::Choice
+  EMAIL = 1
+  PORTAL = 2
+  PHONE = 3
+  FORUM = 4
+  TWITTER = 5
+  FACEBOOK = 6
+  CHAT = 7
+  MOBIHELP = 8
+  FEEDBACK_WIDGET = 9
+  OUTBOUND_EMAIL = 10
+  ECOMMERCE = 11
+  BOT = 12
+  WHATSAPP = 13
+
+  DEFAULT_SOURCES = {
+    EMAIL => 'Email',
+    PORTAL => 'Portal',
+    PHONE => 'Phone',
+    FORUM => 'Forum',
+    TWITTER => 'Twitter',
+    FACEBOOK => 'Facebook',
+    CHAT => 'Chat',
+    MOBIHELP => 'MobiHelp',
+    FEEDBACK_WIDGET => 'Feedback Widget',
+    OUTBOUND_EMAIL => 'Outbound Email',
+    ECOMMERCE => 'Ecommerce',
+    BOT => 'Bot',
+    WHATSAPP => 'Whatsapp'
+  }.freeze
+
   TICKET_SOURCES = [
-    [:email,            'email',            1],
-    [:portal,           'portal_key',       2],
-    [:phone,            'phone',            3],
-    [:forum,            'forum_key',        4],
-    [:twitter,          'twitter_source',   5],
-    [:facebook,         'facebook_source',  6],
-    [:chat,             'chat',             7],
-    [:mobihelp,         'mobihelp',         8],
-    [:feedback_widget,  'feedback_widget',  9],
-    [:outbound_email,   'outbound_email',   10],
-    [:ecommerce,        'ecommerce',        11],
-    [:bot,              'bot',              12],
-    [:whatsapp,         'whatsapp',         13]
+    [:email,            'email',            EMAIL],
+    [:portal,           'portal_key',       PORTAL],
+    [:phone,            'phone',            PHONE],
+    [:forum,            'forum_key',        FORUM],
+    [:twitter,          'twitter_source',   TWITTER],
+    [:facebook,         'facebook_source',  FACEBOOK],
+    [:chat,             'chat',             CHAT],
+    [:mobihelp,         'mobihelp',         MOBIHELP],
+    [:feedback_widget,  'feedback_widget',  FEEDBACK_WIDGET],
+    [:outbound_email,   'outbound_email',   OUTBOUND_EMAIL],
+    [:ecommerce,        'ecommerce',        ECOMMERCE],
+    [:bot,              'bot',              BOT],
+    [:whatsapp,         'whatsapp',         WHATSAPP]
   ].freeze
 
-  NOTE_SOURCES = ['email', 'form', 'note', 'status', 'meta', 'twitter', 'feedback', 'facebook', 'forward_email',
-                  'phone', 'mobihelp', 'mobihelp_app_review', 'ecommerce', 'summary', 'canned_form', 'automation_rule', 'automation_rule_forward', 'whatsapp'].freeze
+  private_constant :TICKET_SOURCES
 
-  NOTE_EXCLUDE_SOURCES = ['meta', 'summary'].freeze
+  SOURCE_FORMATTER = {
+    all_ids: proc { source_from.map(&:account_choice_id) },
+    keys_by_token: proc { source_from.map { |choice| [choice.try(:[], :from_constant) ? choice.translated_name : choice.translated_source_name(translation_record_from_ticket_fields), choice.account_choice_id] } },
+    token_by_keys: proc { Hash[*source_from.map { |choice| [choice.account_choice_id, choice.default ? SOURCE_TOKENS_BY_KEY[choice.account_choice_id] : choice.name] }.flatten] }
+  }.freeze
+
+  private_constant :SOURCE_FORMATTER
+
+  NOTE_SOURCES = %w[email form note status meta twitter feedback facebook forward_email
+                    phone mobihelp mobihelp_app_review ecommerce summary canned_form automation_rule automation_rule_forward whatsapp].freeze
+
+  NOTE_EXCLUDE_SOURCES = %w[meta summary].freeze
   MAXIMUM_NUMBER_OF_SOURCES = 1000
-  ARCHIVE_NOTE_SOURCES = ['email', 'form', 'note', 'status', 'meta', 'twitter', 'feedback', 'facebook',   
-               'forward_email', 'phone', 'mobihelp', 'mobihelp_app_review', 'summary', 'automation_rule_forward'].freeze
+  ARCHIVE_NOTE_SOURCES = %w[email form note status meta twitter feedback facebook
+                            forward_email phone mobihelp mobihelp_app_review summary automation_rule_forward].freeze
 
   CUSTOM_SOURCE_MAX_ACTIVE_COUNT = 20
   SOURCE_KEYS_BY_TOKEN = Hash[*TICKET_SOURCES.map { |i| [i[0], i[2]] }.flatten].freeze

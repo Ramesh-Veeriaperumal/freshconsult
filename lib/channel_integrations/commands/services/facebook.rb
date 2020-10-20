@@ -151,7 +151,7 @@ module ChannelIntegrations::Commands::Services
 
       def get_source_hash(owner, is_ticket)
         { source: if is_ticket
-                    current_account.helpdesk_sources.ticket_source_keys_by_token[owner.to_sym]
+                    Helpdesk::Source.default_ticket_source_keys_by_token[owner.to_sym]
                   else
                     current_account.helpdesk_sources.note_source_keys_by_token[owner]
                   end }

@@ -126,7 +126,7 @@ module FacebookTestHelper
     dm_created_at = Time.zone.parse(message[:created_time])
     direct_message_content = message[:message]
     assert_equal ticket.description, direct_message_content 
-    assert_equal ticket.source, Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] 
+    assert_equal ticket.source, Helpdesk::Source::FACEBOOK 
     assert_equal ticket.requester.fb_profile_id, fb_user_id 
     assert_equal ticket.created_at, dm_created_at
   end
@@ -197,54 +197,26 @@ module FacebookTestHelper
     }
   end
 
-  def sample_comment_feed_with_mentions(post_id, user_id, comment_id, time)
+  def sample_comment_feed_with_options(post_id, user_id, comment_id, time, message_tags)
     comments = {
       'data' => [
-        'id'   => "#{post_id}_#{comment_id}",
+        'id' => "#{post_id}_#{comment_id}",
         'from' => {
           'name' => Faker::Lorem.words(1).to_s,
-          'id'   => user_id.to_s
+          'id' => user_id.to_s
         },
-        'can_comment'  => true,
+        'can_comment' => true,
         'created_time' => time.to_s,
-        'message'      => 'tags',
-        'message_tags' => [{ 'name' => 'tags' }]
+        'message' => 'tags',
+        'message_tags' => message_tags
       ]
     }
   end
 
-  def sample_comment_feed_with_mentions_and_emojis(post_id, user_id, comment_id, time)
-    comments = {
-      'data' => [
-        'id'   => "#{post_id}_#{comment_id}",
-        'from' => {
-          'name' => Faker::Lorem.words(1).to_s,
-          'id'   => user_id.to_s
-        },
-        'can_comment'  => true,
-        'created_time' => time.to_s,
-        'message'      => 'emojis😁😃',
-        'message_tags' => [{ 'name' => 'emojis' }]
-      ]
-    }
-  end
-
-  def sample_comment_feed_with_multiple_mentions(post_id, user_id, comment_id, time)
-    comments = {
-      'data' => [
-        'id'   => "#{post_id}_#{comment_id}",
-        'from' => {
-          'name' => Faker::Lorem.words(1).to_s,
-          'id'   => user_id.to_s
-        },
-        'can_comment'  => true,
-        'created_time' => time.to_s,
-        'message'      => 'tags messages',
-        'message_tags' => [
-          { 'name' => 'tags' },
-          { 'name' => 'messages' }
-        ]
-      ]
+  def message_tags(name, type = 'user')
+    {
+        'name' => name,
+        'type' => type
     }
   end
 

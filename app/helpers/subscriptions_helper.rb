@@ -80,6 +80,8 @@ module SubscriptionsHelper
     ]
   }
 
+  AGENT_ASSIST_AI = ['agent_triage_fields', 'agent_scripts', 'article_suggester', 'thank_you_detector', 'social_signals', 'built_in_reports'].freeze
+  SELF_SERVICE = ['email_bot', 'built_in_reports'].freeze
 
   NEW_SPROUT = ['Sprout Jan 17', 'Sprout Jan 19', 'Sprout Jan 20'].freeze
 
@@ -250,6 +252,10 @@ module SubscriptionsHelper
                        SubscriptionPlan::FREDDY_DEFAULT_SESSIONS_MAP[:freddy_self_service]
                      end
     addon_sessions.to_i * billing_period.to_i
+  end
+
+  def auto_recharge_enabled_in_plan?(plan_name)
+    PLANS[:subscription_plans][plan_name].present? && PLANS[:subscription_plans][plan_name][:freddy_auto_recharge_packs]
   end
 
   def is_addon_enabled(addons, addon_name)

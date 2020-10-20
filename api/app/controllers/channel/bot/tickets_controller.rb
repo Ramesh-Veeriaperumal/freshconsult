@@ -39,7 +39,7 @@ module Channel
         end
 
         def set_bot_source
-          @item.source = current_account.helpdesk_sources.ticket_bot_source
+          @item.source = Helpdesk::Source::BOT
         end
 
         def create_bot_ticket

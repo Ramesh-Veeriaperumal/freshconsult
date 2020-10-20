@@ -1503,6 +1503,9 @@
         "_jwt_default_expiry": "30",
         "touchstone_secret": "EJ[1:De4mwWKtdyWWJt1a88A1w2Bcu7kSCPwHsGuh+waFUSU=:SCs/3VU3LILQFOS5H463M4axiM6FnEBS:1pvRW5yO8tX0cPPMhqGMVKJb4TJE1CeUxiisiRKayw0Hiak1JOiXVcwjXV1nB8d0]"
       },
+      "touchstone_config": {
+        "_api_endpoint": "http://microservices.freshdesk.internal"
+      },
       "datadog": {
         "license_key": "EJ[1:v6SPhl8bG6DTEyF45u5tqxoJznYkXjoeFNe9qYNWAyw=:jUX9zlSFmnv4xsT+Zu3D4F+itxGpDcRP:YNl2UJhNgkoUiPRPcLNXHxQCjcxOiR+tIefjb2IyECDEecK+MQxzIfR4O3UYOPiA]",
         "_enable": false

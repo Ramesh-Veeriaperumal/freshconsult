@@ -23,7 +23,7 @@ module ChannelIntegrations::Commands::Services
       build_tags(payload)
       build_custom_fields(payload)
       build_placeholders(payload)
-      payload[:data][:source] = Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]
+      payload[:data][:source] = Helpdesk::Source::OUTBOUND_EMAIL
       context = payload[:context][:from]
       ticket = create_ticket(payload)
       ::Rails.logger.info("Ticket created for #{context} :: Account ID : #{payload['account_id']}")

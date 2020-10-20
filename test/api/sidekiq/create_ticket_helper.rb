@@ -15,7 +15,7 @@ module CreateTicketHelper
                           :description_html => desc},
         :email => params[:email],
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-        :source => params[:source] || Account.current.helpdesk_sources.ticket_source_keys_by_token[:phone],
+        :source => params[:source] || Helpdesk::Source::PHONE,
         :group_id => params[:group_id],
         :created_at => params[:created_at] || Time.now,
         cc_email: Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),

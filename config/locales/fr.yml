@@ -373,7 +373,6 @@ fr:
   attachment_limit_failed_message: >-
     Une ou plusieurs pièces jointes ont été supprimées après que la limite de
     %{size} a été atteinte.
-  attachment_contain_virus: '%{size} pièces jointes sont supprimées, car elles contiennent des virus.'
   cc_dropped_message: >-
     Les personnes copiées suivantes ont été retirées par le modérateur :
     %{emails}

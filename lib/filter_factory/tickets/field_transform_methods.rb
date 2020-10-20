@@ -250,7 +250,7 @@ module FilterFactory::Tickets
 
       def append_fr_due_conditions
         args[:conditions] += [
-          { condition: 'source', operator: 'is_in', value: Account.current.helpdesk_sources.ticket_source_keys_by_token.except(:outbound_email).values },
+          { condition: 'source', operator: 'is_in', value: Helpdesk::Source.default_ticket_source_keys_by_token.except(:outbound_email).values },
           { condition: 'helpdesk_ticket_states.agent_responded_at', operator: 'is', value: '-1' }
         ]
       end

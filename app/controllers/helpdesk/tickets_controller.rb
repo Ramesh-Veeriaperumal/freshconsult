@@ -1139,7 +1139,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def create
     if (!params[:topic_id].blank? && find_topic) && (@topic.ticket.nil? || (@topic.ticket.present? && @topic.ticket.deleted))
-      @item.source = current_account.helpdesk_sources.ticket_source_keys_by_token[:forum]
+      @item.source = Helpdesk::Source::FORUM
       @item.build_ticket_topic(:topic_id => params[:topic_id])
     end
 
@@ -1620,7 +1620,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def outbound_email_allowed?
       return unless params[:helpdesk_ticket].present?
-      access_denied if (!current_account.verified? && params[:helpdesk_ticket][:source].to_i == current_account.helpdesk_sources.ticket_source_keys_by_token[:outbound_email])
+      access_denied if (!current_account.verified? && params[:helpdesk_ticket][:source].to_i == Helpdesk::Source::OUTBOUND_EMAIL)
     end
 
     def set_trashed_column
@@ -1940,7 +1940,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def check_trial_customers_limit
       if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) && (Freemail.free?(current_account.admin_email)))
-        if (@item.source == current_account.helpdesk_sources.ticket_source_keys_by_token[:outbound_email] || @item.source == current_account.helpdesk_sources.ticket_source_keys_by_token[:phone])
+        if (@item.source == Helpdesk::Source::OUTBOUND_EMAIL || @item.source == Helpdesk::Source::PHONE)
           if max_to_cc_threshold_crossed?
               flash[:error] = t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )
               redirect_to :back

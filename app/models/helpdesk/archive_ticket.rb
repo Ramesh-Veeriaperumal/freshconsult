@@ -199,16 +199,16 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def email?
-    source == account.helpdesk_sources.ticket_source_keys_by_token[:email]
+    source == Helpdesk::Source::EMAIL
   end
 
   def twitter?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:twitter] and (tweet) and (tweet.twitter_handle)
+    source == Helpdesk::Source::TWITTER and (tweet) and (tweet.twitter_handle)
   end
   alias :is_twitter :twitter?
 
   def facebook?
-     source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:facebook] and (fb_post) and (fb_post.facebook_page)
+     source == Helpdesk::Source::FACEBOOK and (fb_post) and (fb_post.facebook_page)
   end
   alias :is_facebook :facebook?
 
@@ -226,11 +226,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def mobihelp?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:mobihelp]
+    source == Helpdesk::Source::MOBIHELP
   end
 
   def chat?
-    source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:chat]
+    source == Helpdesk::Source::CHAT
   end
 
   def description
@@ -589,7 +589,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def outbound_email?
-    (source == Account.current.helpdesk_sources.ticket_source_keys_by_token[:outbound_email]) && Account.current.compose_email_enabled?
+    (source == Helpdesk::Source::OUTBOUND_EMAIL) && Account.current.compose_email_enabled?
   end
 
     #This method will return the user who initiated the outbound email
