@@ -438,10 +438,6 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
-  def csat_email_scan_compatibility_enabled?
-    launched?(:csat_email_scan_compatibility)
-  end
-
   def features
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
   end
