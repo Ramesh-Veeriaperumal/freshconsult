@@ -2,7 +2,8 @@ development:
   enabled: true
   service_name: "Helpkit"
   tracing_host: "localhost"
-  tracing_host_port: 6831
+  tracing_host_port: 55681
+  otlp_tracing_path: "/v1/trace"
   span_batch_size: 10
   sampler_probability: 0.9
   host_name: "localhost"

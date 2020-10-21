@@ -191,7 +191,7 @@ group :production, :staging, :test, :development do
   # gem 'opentelemetry-instrumentation-net_http', git: "git@github.com:freshdesk/opentelemetry-ruby.git",  glob: 'instrumentation/net_http/*.gemspec', branch: 'v0.4.0-ruby-2.3-compatible'
   gem 'opentelemetry-api', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'api'
   gem 'opentelemetry-sdk', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'sdk'
-  gem 'opentelemetry-exporters-jaeger', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'exporter-jaeger'
+  gem 'opentelemetry-exporter-otlp', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'exporter-otlp'
   gem 'opentelemetry-instrumentation-rails', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'rails'
   gem 'opentelemetry-instrumentation-action_pack', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'action-pack'
   gem 'opentelemetry-instrumentation-rack', git:'git@github.com:freshdesk/opentelemetry-ruby.git', branch: 'rack'

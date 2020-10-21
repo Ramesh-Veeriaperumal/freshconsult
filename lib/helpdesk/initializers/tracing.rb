@@ -11,12 +11,9 @@ if TracingConfig['enabled']
       require 'custom_logger'
       logger = CustomLogger.new(Rails.root.join('log', 'tracing.log'))
     else
-      # TODO: Based on runtime -
-      # Append `_{web/sidekiq/rake/shoryuken}` to TracingConfig['service_name']
-      exporter = OpenTelemetry::Exporters::Jaeger::Exporter.new(
-        service_name: TracingConfig['service_name'],
-        host: TracingConfig['tracing_host'],
-        port: TracingConfig['tracing_host_port']
+      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(
+        endpoint: "#{TracingConfig['tracing_host']}:#{TracingConfig['tracing_host_port']}#{TracingConfig['otlp_tracing_path']}",
+        insecure: true
       )
       logger = Rails.logger
     end
@@ -27,8 +24,8 @@ if TracingConfig['enabled']
 
     {
       'logger'         => logger,
-      'sampler'        => OpenTelemetry::SDK::Trace::Samplers.parent_or_else(
-        OpenTelemetry::SDK::Trace::Samplers.probability(
+      'sampler'        => OpenTelemetry::SDK::Trace::Samplers.parent_based(
+        root: OpenTelemetry::SDK::Trace::Samplers.trace_id_ratio_based(
           TracingConfig['sampler_probability']
         )
       ),
@@ -55,8 +52,12 @@ if TracingConfig['enabled']
     c.use 'OpenTelemetry::Instrumentation::Net::HTTP'
 
     c.add_span_processor(configurator_options['span_processor'])
+    # TODO: Based on runtime -
+    # Append `_{web/sidekiq/rake/shoryuken}` to TracingConfig['service_name']
     c.resource = OpenTelemetry::SDK::Resources::Resource.create(
-      'host.ip' => host_ip, 'host.name' => TracingConfig['host_name']
+      'host.ip' => host_ip,
+      'host.name' => TracingConfig['host_name'],
+      'service.name' => TracingConfig['service_name']
     )
     c.tracer_provider.active_trace_config = OpenTelemetry::SDK::Trace::Config::TraceConfig.new(
       sampler: configurator_options['sampler']
