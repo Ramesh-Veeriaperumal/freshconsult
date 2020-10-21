@@ -59,7 +59,7 @@ module Admin
       def validate_settings
         setting_params = AccountSettings::SettingsConfig.keys & cname_params.keys
         setting_params.each do |setting|
-          return render_request_error(:require_feature, 403, feature: setting) unless @item.dependent_feature_enabled?(setting.to_sym)
+          return render_request_error(:require_feature, 403, feature: setting) unless @item.dependencies_enabled?(setting.to_sym)
         end
       end
   end

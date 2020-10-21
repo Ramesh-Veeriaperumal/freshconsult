@@ -71,7 +71,7 @@ module Email
       def validate_settings
         params[cname].each_key do |setting|
           setting_name = EMAIL_SETTINGS_PARAMS_MAPPING[setting.to_sym] || setting.to_sym
-          next if current_account.dependent_feature_enabled?(setting_name)
+          next if current_account.dependencies_enabled?(setting_name)
 
           return render_request_error(:require_feature, 403, feature: setting)
         end

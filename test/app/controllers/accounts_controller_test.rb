@@ -74,6 +74,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
     assert_equal account.solutions_agent_metrics_enabled?, false
+    assert_equal account.has_feature?(:field_service_geolocation), false
     assert_equal account.has_feature?(:branding), true
     assert_equal account.has_feature?(:filter_factory), false
   ensure
@@ -103,6 +104,7 @@ class AccountsControllerTest < ActionController::TestCase
     assert_not_nil resp['account_id'], resp
     account = Account.find(resp['account_id'])
     assert_equal account.has_feature?(:branding), false
+    assert_equal account.has_feature?(:field_service_geolocation), false
     assert_equal account.solutions_agent_metrics_enabled?, false
     assert_equal account.has_feature?(:filter_factory), false
   ensure

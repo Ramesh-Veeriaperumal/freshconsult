@@ -621,10 +621,43 @@ module Ember
 
       def test_revoke_geolocation_when_fsm_disabled
         Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-        Account.current.add_feature(:field_service_geolocation)
-        assert_equal Account.current.has_feature?(:field_service_geolocation), true
+        Account.current.enable_setting(:field_service_geolocation)
+        assert_equal Account.current.field_service_geolocation_enabled?, true
         cleanup_fsm
+        assert_equal Account.current.field_service_geolocation_enabled?, false
         assert_equal Account.current.has_feature?(:field_service_geolocation), false
+      ensure
+        Account.any_instance.unstub(:field_service_management_enabled?)
+      end
+
+      def test_retain_location_tagging_when_fsm_disabled
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        Account.current.enable_setting(:location_tagging)
+        assert_equal Account.current.location_tagging_enabled?, true
+        cleanup_fsm
+        assert_equal Account.current.location_tagging_enabled?, true
+      ensure
+        Account.any_instance.unstub(:field_service_management_enabled?)
+      end
+
+      def test_fsm_settings_to_retain_state_if_enabled_when_fsm_disabled
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        FSM_SETTINGS_TO_RETAIN_STATE.each { |setting| Account.current.enable_setting(setting) }
+        FSM_SETTINGS_TO_RETAIN_STATE.each { |setting| assert Account.current.safe_send("#{setting}_enabled?") }
+        cleanup_fsm
+        FSM_SETTINGS_TO_RETAIN_STATE.each { |setting| assert Account.current.safe_send("#{setting}_enabled?") }
+      ensure
+        Account.any_instance.unstub(:field_service_management_enabled?)
+      end
+
+      def test_disable_fsm_settings_when_fsm_disabled
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        fsm_settings = AccountSettings::SettingToSettingsMapping[:field_service_management] - FSM_SETTINGS_TO_RETAIN_STATE
+        fsm_settings.each { |setting| Account.current.enable_setting(setting) }
+        fsm_settings.each { |setting| assert Account.current.safe_send("#{setting}_enabled?") }
+        cleanup_fsm
+        fsm_settings.each { |setting| assert_equal Account.current.safe_send("#{setting}_enabled?"), false }
+        fsm_settings.each { |setting| assert_equal Account.current.has_feature?(setting), false }
       ensure
         Account.any_instance.unstub(:field_service_management_enabled?)
       end

@@ -50,6 +50,6 @@ class Admin::AccountFeaturesController < ApiApplicationController
     def validate_setting_dependency
       return unless @is_setting
 
-      render_request_error(:require_feature, 403, feature: @feature_name.to_s) unless @account.dependent_feature_enabled?(@feature_name)
+      render_request_error(:require_feature, 403, feature: @feature_name.to_s) unless @account.dependencies_enabled?(@feature_name)
     end
 end

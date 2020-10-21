@@ -281,6 +281,23 @@ class Account < ActiveRecord::Base
     SendgridDomainUpdates.perform_async(action: 'create', domain: full_domain, vendor_id: Account::MAIL_PROVIDER[:sendgrid])
   end
 
+  def settings_to_add_dependent_on_feature(feature)
+    return [] unless launched?(:feature_based_settings)
+
+    (AccountSettings::FeatureToSettingsMapping[feature] || []).select { |setting| AccountSettings::SettingsConfig[setting][:default] }
+  end
+
+  def filter_settings_with_settings_dependency(settings_list = [])
+    return [] unless launched?(:feature_based_settings)
+
+    # Filtering the settings whose settings_dependency is not default setting to enable / not applicable for the plan to enable
+    settings_dependency_to_exclude = AccountSettings::SettingToSettingsMapping.keys - settings_list
+    settings_dependency_to_exclude.each do |setting|
+      settings_list -= AccountSettings::SettingToSettingsMapping[setting]
+    end
+    settings_list
+  end
+
   protected
 
     def set_default_values
@@ -476,17 +493,19 @@ class Account < ActiveRecord::Base
 
         plan_features_list.delete(:support_bot) if revoke_support_bot?
         plan_features_list = plan_features_list - (UnsupportedFeaturesList || [])
+        settings_dependent_on_feature_list = []
 
         plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
-
-          # Adding the settings that are under the feature
-          next unless self.launched?(:feature_based_settings)
-
-          (AccountSettings::FeatureToSettingsMapping[key] || []).each do |setting|
-            bitmap_value = self.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
-          end
+          settings_dependent_on_feature_list |= settings_to_add_dependent_on_feature(key) # Getting the settings that are dependent on the feature
         end
+
+        # Adding settings dependent on added feature
+        settings_to_add = filter_settings_with_settings_dependency(settings_dependent_on_feature_list)
+        settings_to_add.each do |setting|
+          bitmap_value = self.set_feature(setting)
+        end
+
         self.selectable_features_list.each do |feature_name, enable_on_signup|
           bitmap_value = enable_on_signup ? self.set_feature(feature_name) : bitmap_value
         end

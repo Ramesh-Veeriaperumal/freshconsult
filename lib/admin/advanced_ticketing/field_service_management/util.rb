@@ -30,6 +30,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
         create_fsm_section
         create_fsm_dashboard
+        enable_fsm_default_settings
         generate_fsm_seed_data
         expire_cache
         Rails.logger.info "Completed adding FSM artifacts for Account - #{Account.current.id}"
@@ -270,7 +271,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         destroy_field_agent
         destroy_field_group
         destroy_customer_signature
-        revoke_geo_location if Account.current.field_service_geolocation_enabled?
+        disable_fsm_settings
         handle_service_task_automations
         Rails.logger.info "Completed disabling FSM feature for Account - #{Account.current.id}"
       rescue StandardError => e
@@ -306,10 +307,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def destroy_customer_signature
         Account.current.ticket_fields.where(name: CUSTOMER_SIGNATURE + "_#{Account.current.id}").destroy_all
-      end
-
-      def revoke_geo_location
-        Account.current.revoke_feature(:field_service_geolocation)
       end
 
       def handle_service_task_automations
@@ -385,6 +382,24 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def add_required_features_for_lower_plans
         Account.current.add_feature(:dynamic_sections) unless Account.current.has_feature?(:dynamic_sections)
+      end
+
+      def enable_fsm_default_settings
+        return unless AccountSettings::SettingToSettingsMapping.include?(:field_service_management)
+
+        fsm_settings_to_add = AccountSettings::SettingToSettingsMapping[:field_service_management].select { |setting| AccountSettings::SettingsConfig[setting][:default] }
+        Rails.logger.debug("Adding FSM default settings for account - #{Account.current.id} :: #{fsm_settings_to_add.inspect}")
+        fsm_settings_to_add.each { |setting| Account.current.set_setting(setting) }
+        Account.current.save!
+      end
+
+      def disable_fsm_settings
+        return unless AccountSettings::SettingToSettingsMapping.include?(:field_service_management)
+
+        fsm_settings_to_reset = AccountSettings::SettingToSettingsMapping[:field_service_management].select { |setting| !FSM_SETTINGS_TO_RETAIN_STATE.include?(setting) && Account.current.has_feature?(setting) }
+        Rails.logger.debug("Resetting FSM settings for account - #{Account.current.id} :: #{fsm_settings_to_reset.inspect}")
+        fsm_settings_to_reset.each { |setting| Account.current.reset_feature(setting) }
+        Account.current.save!
       end
   end
 end

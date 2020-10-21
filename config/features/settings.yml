@@ -171,6 +171,16 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :location_tagging:
+    default: false
+    internal: false
+    feature_dependency: :field_service_management_toggle
+    settings_dependency: :field_service_management
+  :field_service_geolocation:
+    default: false
+    internal: false
+    feature_dependency: :field_service_management_toggle
+    settings_dependency: :field_service_management
   :bypass_signup_captcha:
     default: false
     internal: true
