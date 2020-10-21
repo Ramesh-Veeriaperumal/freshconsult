@@ -294,13 +294,15 @@ def executeTestCase(category) {
             def tmp_file = "temp_${category}_suite.rb"
             def log_file = "test_log/${category}.log"
             def minitest_report_dir = category.contains('public') ? "test/reports/public/$category" : "test/reports/private/$category"
-            def coverage_dir = category.contains('public') ? "tmp/coverage/public" : "tmp/coverage/private"
+            
+            // add these 2 lines if separate coverage for public/private suite
+            // def coverage_dir = category.contains('public') ? "tmp/coverage/public" : "tmp/coverage/private"
+            // export COVERAGE_DIR=${coverage_dir}
 
             sh """#!/bin/bash
                 source /etc/profile.d/rvm.sh
                 export CODECOV_TOKEN=${env.CODECOV_TOKEN}
                 export MINITEST_REPORT_DIR=${minitest_report_dir}
-                export COVERAGE_DIR=${coverage_dir}
 
                 echo "============ $category > Suite To Run ============"
                 cat test/api/suites/$tmp_file
@@ -340,16 +342,14 @@ def executeTestCase(category) {
 }
 
 def publishReport() {
-    ['public','private'].each {
-        publishHTML([
-            allowMissing: true,
-            alwaysLinkToLastBuild: true,
-            keepAll: true,
-            reportDir: "tmp/coverage/$it",
-            reportFiles: 'index.html',
-            reportName: "coverage $it"
-        ])
-    }
+    publishHTML([
+        allowMissing: true,
+        alwaysLinkToLastBuild: true,
+        keepAll: true,
+        reportDir: "tmp/coverage",
+        reportFiles: 'index.html',
+        reportName: "overall coverage"
+    ])
 }
 
 def pushLogsToS3() {
