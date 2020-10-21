@@ -103,7 +103,8 @@ module CustomDashboardConcern
   end
 
   def dashboard_accessible?
-    return true if @item[:type] == DASHBOARD_ACCESS_TYPE[:all] || current_user.agent.all_ticket_permission && dashboard_admin?
+    return true if dashboard_accessible_type == DASHBOARD_ACCESS_TYPE[:all] || current_user.agent.all_ticket_permission && dashboard_admin?
+
     user_group_ids = current_user.agent_groups.pluck(:group_id)
     @item[:group_ids].present? && @item[:group_ids].any? { |x| user_group_ids.include?(x) }
   end
@@ -155,5 +156,9 @@ module CustomDashboardConcern
     type = params['type']
     module_klass = WIDGET_MODULES_BY_TOKEN[type.to_i].constantize
     module_klass.valid_config?(params)
+  end
+
+  def dashboard_accessible_type
+    @item.is_a?(Hash) ? @item[:type] : @item.accessible[:access_type]
   end
 end
