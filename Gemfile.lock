@@ -235,10 +235,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshid-ruby-client.git
-  revision: e2275ec038dd9c0dc797030921d82f1f59103123
-  tag: v4.0.13
+  revision: 9c83694d5ee79b744c2bfc1c38c64b7da67dfc77
+  tag: v4.0.19
   specs:
-    freshid (4.0.11)
+    freshid (4.0.16)
       freshid-sdk
 
 GIT
@@ -352,12 +352,12 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/platforms-sdk-ruby.git
-  revision: eb01504a27c4118fe268c24ba01c7158c0fc999f
-  tag: 1.1.3
+  revision: 5443d3135db0ec9aaa0d704adce64105e69f7c01
+  tag: 1.2.1
   glob: gems/freshid-sdk/freshid-sdk.gemspec
   specs:
     freshid-sdk (0.1.0)
-      google-protobuf (~> 3.6.1)
+      google-protobuf (= 3.7.0)
       grpc (~> 1.17.0)
       opentracing (>= 0.4.1)
       rest-client
@@ -1026,7 +1026,7 @@ GEM
       retriable (>= 1.4)
       signet (>= 0.5.0)
       uuidtools (>= 2.1.0)
-    google-protobuf (3.6.1)
+    google-protobuf (3.7.0)
     googleapis-common-protos-types (1.0.4)
       google-protobuf (~> 3.0)
     grpc (1.17.1)
