@@ -221,7 +221,7 @@
       :seafarers_1: 217 # do not use
       :unused_218: 218 # do not use
       :unused_219: 219 # do not use
-      :disable_rr_toggle: 220
+      :unused_220: 220 # do not use
       :unused_221: 221 # do not use
       :XX_unused_222: 222 # do not use
       :analytics_landing_search: 223
@@ -467,7 +467,6 @@
   :single_session_per_user: false
   :proactive_spam_detection: true
   :bi_reports: false
-  :disable_rr_toggle: false
   :activity_revamp: true
   :hide_first_response_due: false
   :fluffy_forest: false

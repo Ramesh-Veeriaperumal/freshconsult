@@ -141,7 +141,7 @@ class Account < ActiveRecord::Base
     :id_less_tickets => false,
     :collision_socket => false,
     :call_quality_metrics => false,
-    :disable_rr_toggle => false, :domain_restricted_access => false,
+    :domain_restricted_access => false,
     :marketplace => false, :archive_tickets => false,
     :ecommerce => false, :shared_ownership => false,
     :cobrowsing => false,
