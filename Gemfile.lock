@@ -253,7 +253,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/opentelemetry-ruby.git
-  revision: 1fd7e5ce92c1ecc4b5e43becc5cb8524625ce9d0
+  revision: b80e8b3e5d43b6b3a8081bc7bd190567c1c4c59d
   branch: action-pack
   specs:
     opentelemetry-instrumentation-action_pack (0.6.0)
