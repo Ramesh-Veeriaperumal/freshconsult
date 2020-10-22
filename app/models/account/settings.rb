@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
 
   AccountSettings::SettingsConfig.each do |setting, config|
     define_method "#{setting}_enabled?" do
-      has_feature?(config[:feature_dependency]) && has_feature?(setting.to_sym)
+      dependencies_enabled?(setting.to_sym) && has_feature?(setting.to_sym)
     end
   end
 
@@ -24,11 +24,6 @@ class Account < ActiveRecord::Base
     settings_hash && settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
   end
 
-  def dependent_feature_enabled?(setting)
-    settings_hash = AccountSettings::SettingsConfig[setting]
-    settings_hash && has_feature?(settings_hash[:feature_dependency])
-  end
-
   def enabled_admin_settings
     features_list.select { |feature| admin_setting_for_account?(feature) }
   end
@@ -41,39 +36,52 @@ class Account < ActiveRecord::Base
     features_list.select { |feature| !AccountSettings::SettingsConfig.keys.include?(feature.to_s) }
   end
 
-  # Move feature dependency check inside the valid_setting once, all Settings migrate to bitmap from LP
+  # Can remove the valid_setting check once, all settings are migrated from LP to bitmap
   def enable_setting(setting)
     if valid_setting(setting)
-      has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) ? add_feature(setting) : raise_invalid_setting_error(setting)
+      dependencies_enabled?(setting) ? add_feature(setting) : raise_invalid_setting_error(setting)
     elsif Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(setting)
       launch(setting)
       add_feature(setting)
     end
   end
 
+  # Can remove the valid_setting check once, all settings are migrated from LP to bitmap
   def set_setting(setting)
     if valid_setting(setting)
-      has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) ? set_feature(setting) : raise_invalid_setting_error(setting)
+      dependencies_enabled?(setting) ? set_feature(setting) : raise_invalid_setting_error(setting)
     end
   end
 
+  # Can remove the valid_setting check once, all settings are migrated from LP to bitmap
   def disable_setting(setting)
     if valid_setting(setting)
-      has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) ? revoke_feature(setting) : raise_invalid_setting_error(setting)
+      dependencies_enabled?(setting) ? revoke_feature(setting) : raise_invalid_setting_error(setting)
     elsif Account::LP_TO_BITMAP_MIGRATION_FEATURES.include?(setting)
       rollback(setting)
       revoke_feature(setting)
     end
   end
 
+  # Can remove the valid_setting check once, all settings are migrated from LP to bitmap
   def reset_setting(setting)
     if valid_setting(setting)
-      has_feature?(AccountSettings::SettingsConfig[setting][:feature_dependency]) ? reset_feature(setting) : raise_invalid_setting_error(setting)
+      dependencies_enabled?(setting) ? reset_feature(setting) : raise_invalid_setting_error(setting)
+    end
+  end
+
+  def dependencies_enabled?(setting)
+    settings_hash = AccountSettings::SettingsConfig[setting]
+    if settings_hash.present? && has_feature?(settings_hash[:feature_dependency])
+      return settings_hash[:settings_dependency].blank? || self.safe_send("#{settings_hash[:settings_dependency]}_enabled?")
+    else
+      return false
     end
   end
 
   private
 
+    # Can be removed once all settings are migrated from LP to bitmap
     def valid_setting(setting)
       AccountSettings::SettingsConfig[setting].present?
     end

@@ -34,7 +34,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def save_field_service_management_settings(params)
-    fsm_settings_default_value_hash = Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_SETTINGS_DEFAULT_VALUES
+    fsm_settings_default_value_hash = Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_ADDITIONAL_SETTINGS_DEFAULT_VALUES
     additional_settings[:field_service] = additional_settings.delete(:field_service_management) if additional_settings[:field_service_management]
     fsm_additional_settings = additional_settings[:field_service] || {}
     params.each do |key, value|

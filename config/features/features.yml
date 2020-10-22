@@ -62,8 +62,8 @@
       :mailbox: 57
       :whitelisted_ips: 58
       :branding: 59
-      :unused_60: 60
-      :unused_61: 61
+      :unused_60: 60  # do not use
+      :unused_61: 61  # do not use
       :basic_dkim: 62
       :advanced_dkim: 63
       :shared_ownership_toggle: 64
@@ -116,20 +116,20 @@
       :redis_display_id: 112
       :chat_enable: 113
       :survey_links: 114
-      :unused_115: 115
+      :unused_115: 115 # do not use
       :personalized_email_replies: 116
       :anonymous_tickets: 117
-      :unused_118: 118
+      :unused_118: 118 # do not use
       :collision_socket: 119
       :single_session_per_user: 120
       :fluffy_higher_plan2: 121
       :suicide_squad_10: 122
       :sandbox: 123
       :call_quality_metrics: 124
-      :unused_125: 125
-      :unused_126: 126
+      :unused_125: 125 # do not use
+      :unused_126: 126 # do not use
       :id_less_tickets: 127
-      :unused_128: 128
+      :unused_128: 128 # do not use
       :saml_unspecified_nameid: 129
       :euc_hide_agent_metrics: 130
       :open_solutions: 131
@@ -139,64 +139,64 @@
       :reply_to_based_tickets: 135
       :reports_44: 136
       :disable_agent_forward: 137
-      :unused_138: 138
+      :unused_138: 138 # do not use
       :domain_restricted_access: 139
       :sort_by_customer_response: 140
-      :unresolved_tickets_widget_for_sprout: 141
+      :unused_141: 141 # do not use
       :hide_first_response_due: 142
       :field_service_management: 143
       :field_service_management_toggle: 144
       :parent_child_infra: 145
       :enable_multilingual: 146
-      :unused_147: 147
-      :marketplace: 148
-      :unused_149: 149
+      :unused_147: 147 # do not use
+      :marketplace: 148 # do not use
+      :unused_149: 149 # do not use
       :es_multilang_solutions: 150
       :compose_email: 151
       :wild_cards_10: 152
       :contact_company_notes: 153
       :undo_send: 154
-      :unused_155: 155
+      :unused_155: 155 # do not use
       :archive_tickets: 156
-      :unused_157: 157
-      :unused_158: 158
+      :unused_157: 157 # do not use
+      :unused_158: 158 # do not use
       :report_field_regenerate: 159
       :saml_old_issuer: 160
-      :unused_161: 161
+      :unused_161: 161 # do not use
       :reverse_notes: 162
       :opt_out_analytics: 163
       :disable_old_ui: 164
       :omni_channel_routing: 165
       :segments: 166
-      :unused_167: 167
+      :unused_167: 167 # do not use
       :ecommerce: 168
-      :unused_169: 169
+      :unused_169: 169 # do not use
       :fluffy_higher_plan3: 170
       :fluffy_higher_plan4: 171
-      :unused_172: 172
+      :unused_172: 172 # do not use
       :custom_translations: 173
       :cobrowsing: 174
       :threading_without_user_check: 175
-      :unused_176: 176
-      :unused_177: 177
-      :unused_178: 178
-      :unused_179: 179
+      :unused_176: 176 # do not use
+      :unused_177: 177 # do not use
+      :unused_178: 178 # do not use
+      :unused_179: 179 # do not use
       :canned_forms: 180
       :shadow_fax9: 181
       :shadow_fax10: 182
       :audit_logs_central_publish: 183
       :audit_log_ui: 184
       :restricted_helpdesk: 185
-      :unused_186: 186
+      :unused_186: 186 # do not use
       :cti: 187
       :all_notify_by_custom_server: 188
-      :unused_189: 189
+      :unused_189: 189 # do not use
       :advanced_automations: 190
       :freddy_self_service: 191
       :freddy_ultimate: 192
       :agent_scope: 193
       :social_tab: 194
-      :unused_195: 195
+      :unused_195: 195 # do not use
       :add_to_response: 196
       :customer_journey: 197
       :customize_table_view: 198
@@ -211,19 +211,19 @@
       :proactive_spam_detection: 207
       :api_v2: 208
       :bi_reports: 209
-      :XX_unused_210: 210
-      :unused_211: 211
-      :unused_212: 212
-      :XX_unused_213: 213
-      :unused_214: 214
-      :unused_215: 215
-      :unused_216: 216
-      :seafarers_1: 217
-      :unused_218: 218
-      :unused_219: 219
-      :disable_rr_toggle: 220
-      :unused_221: 221
-      :XX_unused_222: 222
+      :XX_unused_210: 210 # do not use
+      :unused_211: 211 # do not use
+      :unused_212: 212 # do not use
+      :XX_unused_213: 213 # do not use
+      :unused_214: 214 # do not use
+      :unused_215: 215 # do not use
+      :unused_216: 216 # do not use
+      :seafarers_1: 217 # do not use
+      :unused_218: 218 # do not use
+      :unused_219: 219 # do not use
+      :unused_220: 220 # do not use
+      :unused_221: 221 # do not use
+      :XX_unused_222: 222 # do not use
       :analytics_landing_search: 223
       :analytics_landing_data_schedules: 224
       :analytics_landing_new_report: 225
@@ -331,8 +331,8 @@
       :auto_article_order: 327
       :business_hours: 328
       :scenario_automations: 329
-      :unused_330: 330
-      :unused_331: 331
+      :unused_330: 330 # do not use
+      :unused_331: 331 # do not use
       :activity_revamp: 332
       :portal_article_filters: 333
       :article_versioning: 334
@@ -409,7 +409,7 @@
       :helpdesk_tickets_by_product: 405
       :skip_invoice_due_warning: 406
       :allow_wildcard_ticket_create: 407
-      :unused_408: 408
+      :unused_408: 408 # do not use
       :bypass_signup_captcha: 409
       :disable_freshchat: 410
       :whatsapp_channel: 411
@@ -467,7 +467,6 @@
   :single_session_per_user: false
   :proactive_spam_detection: true
   :bi_reports: false
-  :disable_rr_toggle: false
   :activity_revamp: true
   :hide_first_response_due: false
   :fluffy_forest: false
@@ -478,12 +477,8 @@
   :assets: false
   :assets_toggle: false
   :prevent_ticket_creation_for_others: true
-  :field_service_geolocation: false
-  :location_tagging: false
   :kbase_spam_whitelist: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
-  :sidekiq_logs_to_central: false
-  :fb_msg_realtime: false
   :csat_email_scan_compatibility: false

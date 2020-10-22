@@ -5,7 +5,6 @@ class Admin::Integrations::FreshplugsController < Admin::AdminController
   before_filter {|c| requires_this_feature :custom_apps}
 
   def new
-    redirect_to "#{MarketplaceConfig::DEV_URL}/dashboard/#{current_account.full_domain}/login" unless current_account.launched?(:freshplug_enabled)
     @application = Integrations::Application.example_app
   end
 

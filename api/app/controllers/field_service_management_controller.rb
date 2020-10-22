@@ -5,29 +5,23 @@ class FieldServiceManagementController < ApiApplicationController
 
   skip_before_filter :load_object
   before_filter :validate_fsm_enabled
-  before_filter :check_params, :validate_bitmap_features, :validate_body_params, only: [:update_settings]
+  before_filter :check_params, :validate_body_params, :sanitize_params, :validate_settings, only: [:update_settings]
 
   def update_settings
-    update_bitmap_features(@bitmap_features) if @bitmap_features.present?
-    if @setting_keys.present?
-      settings = {}
-      @setting_keys.each do |key|
-        settings[key.to_sym] = params[cname][key.to_sym]
-      end
-      scoper.account_additional_settings.save_field_service_management_settings(settings) if @setting_keys.present?
-    end
-    @fsm_settings = fetch_fsm_settings(current_account.account_additional_settings)
+    toggle_bitmap_settings(@fsm_bitmap_settings.symbolize_keys) if @fsm_bitmap_settings.present?
+    scoper.account_additional_settings.save_field_service_management_settings(@fsm_additional_settings.symbolize_keys) if @fsm_additional_settings.present?
+    @fsm_settings = fetch_fsm_settings
     render 'show_settings'
   end
 
-  def update_bitmap_features(features)
-    features.each do |feature|
-      params[cname][feature.to_sym] ? scoper.add_feature(FEATURE_MAPPING[feature]) : scoper.revoke_feature(FEATURE_MAPPING[feature])
+  def toggle_bitmap_settings(settings)
+    settings.each do |setting, value|
+      value ? scoper.enable_setting(setting) : scoper.disable_setting(setting)
     end
   end
 
   def show_settings
-    @fsm_settings = fetch_fsm_settings(current_account.account_additional_settings)
+    @fsm_settings = fetch_fsm_settings
   end
 
   private
@@ -44,25 +38,30 @@ class FieldServiceManagementController < ApiApplicationController
     current_account
   end
 
+  def sanitize_params
+    FIELD_SERVICE_PARAMS_SETTINGS_MAPPING.each do |param_key, setting_key|
+      params[cname][setting_key] = params[cname].delete(param_key) if params[cname].key?(param_key)
+    end
+  end
+
   def validate_body_params
     @validation_klass = FieldServiceManagementValidation.to_s.freeze
     @constants_klass = Admin::AdvancedTicketing::FieldServiceManagement::Constant.to_s.freeze
     validate_request(nil, params[cname], nil)
   end
 
-  def validate_bitmap_features
-    @bitmap_features = FEATURE_MAPPING.keys & params[cname].keys
-    @setting_keys = params[cname].keys - FEATURE_MAPPING.keys
-    return if @bitmap_features.empty?
+  def validate_settings
+    @fsm_bitmap_settings = params[cname].slice(*(AccountSettings::SettingsConfig.keys & params[cname].keys))
+    @fsm_additional_settings = params[cname].slice(*(params[cname].keys - @fsm_bitmap_settings.keys))
+    return if @fsm_bitmap_settings.empty?
 
-    @bitmap_features.each do |feature|
-      return render_request_error(:access_denied, 403) unless supported_feature?(feature)
+    @fsm_bitmap_settings.each_key do |setting|
+      return render_request_error(:access_denied, 403) unless supported_setting?(setting.to_sym)
+      return render_request_error(:require_feature, 403) unless scoper.dependencies_enabled?(setting.to_sym)
     end
   end
 
-  def supported_feature?(feature)
-    toggle_feature = "#{FEATURE_MAPPING[feature]}_toggle".to_sym
-    return false if Fdadmin::FeatureMethods::BITMAP_FEATURES.include?(toggle_feature) && !scoper.has_feature?(toggle_feature)
-    LAUNCH_PARTY_MAPPING[feature] ? scoper.launched?(LAUNCH_PARTY_MAPPING[feature]) : true
+  def supported_setting?(setting)
+    SETTINGS_LAUNCH_PARTY_MAPPING[setting] ? scoper.launched?(SETTINGS_LAUNCH_PARTY_MAPPING[setting]) : true
   end
 end

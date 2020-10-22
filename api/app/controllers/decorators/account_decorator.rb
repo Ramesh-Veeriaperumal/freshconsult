@@ -113,7 +113,7 @@ class AccountDecorator < ApiDecorator
         onboarding_version: acct_additional_settings.additional_settings[:onboarding_version],
         freshdesk_freshsales_bundle: record.account_additional_settings.additional_settings[:freshdesk_freshsales_bundle] || false
       }
-      settings_hash[:field_service] = fetch_fsm_settings(acct_additional_settings) if record.field_service_management_enabled?
+      settings_hash[:field_service] = fetch_fsm_settings if record.field_service_management_enabled?
       settings_hash[:kb_cumulative_attachment_limit] = acct_additional_settings.additional_settings[:kb_cumulative_attachment_limit] if acct_additional_settings.additional_settings.key? :kb_cumulative_attachment_limit
       settings_hash[:kb_individual_attachment_limit] = acct_additional_settings.additional_settings[:kb_individual_attachment_limit] if acct_additional_settings.additional_settings.key? :kb_individual_attachment_limit
       settings_hash[:bundle_id] = acct_additional_settings.additional_settings.try(:[], :bundle_id)

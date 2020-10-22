@@ -115,7 +115,7 @@ module BootstrapTestHelper
       ssl_enabled: account.ssl_enabled?
     }
 
-    fetch_fsm_settings(account.account_additional_settings) if account.field_service_management_enabled?
+    fetch_fsm_settings if account.field_service_management_enabled?
     pattern[:collaboration] = collab_pattern(account) if ( account.collaboration_enabled? || (account.freshconnect_enabled? && account.freshid_integration_enabled? && User.current.freshid_authorization))
     pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
     pattern[:dashboard_limits] = account.account_additional_settings.custom_dashboard_limits if account.custom_dashboard_enabled?

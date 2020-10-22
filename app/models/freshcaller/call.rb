@@ -24,6 +24,8 @@ module Freshcaller
       deleted: 3
     }
 
+    RESTRICTED_FRESHCALLER_TICKET_VIEW_TIME = 5.minutes
+
     RECORDING_STATUS_NAMES_BY_KEY = RECORDING_STATUS_HASH.invert
 
     RECORDING_STATUS_HASH.each_pair do |k, v|

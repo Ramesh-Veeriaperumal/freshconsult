@@ -24,7 +24,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                 :remove_launch_party, :remove_setting, :change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy,
                 :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language,
                 :trigger_action, :clone_account, :enable_fluffy, :change_fluffy_limit, :change_fluffy_min_level_limit, :enable_min_level_fluffy ,
-                :disable_min_level_fluffy, :min_level_fluffy_info, :reset_ticket_display_id, :skip_mandatory_checks, :make_account_admin]
+                :disable_min_level_fluffy, :min_level_fluffy_info, :reset_ticket_display_id, :skip_mandatory_checks, :make_account_admin,
+                :add_selectable_feature, :remove_selectable_feature]
   before_filter :validate_params, :only => [:change_api_limit, :change_webhook_limit, :change_fluffy_limit, :change_fluffy_min_level_limit]
   before_filter :load_account, :only => [:user_info, :reset_login_count,
                                          :migrate_to_freshconnect,
@@ -32,7 +33,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
                                          :change_trial_plan,
                                          :check_eligibility_for_omni_upgrade]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
-  before_filter :symbolize_feature_name, :only => [:add_feature, :add_launch_party, :add_setting, :remove_feature, :remove_launch_party, :remove_setting]
+  before_filter :symbolize_feature_name, only: [:add_feature, :add_launch_party, :add_setting, :remove_feature,
+                                                   :remove_launch_party, :remove_setting, :add_selectable_feature,
+                                                   :remove_selectable_feature]
   before_filter :check_freshconnect_migrate, :only => [:migrate_to_freshconnect]
   before_filter :validate_extend_higher_plan_trial, only: [:extend_higher_plan_trial]
   before_filter :validate_change_trial_plan, only: [:change_trial_plan]
@@ -308,122 +311,35 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def add_feature
-    result = {}
-    @account = Account.find(params[:account_id])
-    @account.make_current
-    result[:account_id] = @account.id
-    result[:account_name] = @account.name
-    begin
-      render :json => {:status => "notice"}.to_json and return unless enableable?(@feature_name)
-      enable_feature(@feature_name)
-      result[:status] = "success"
-    rescue Exception => e
-      result[:status] = "error"
-    end
-    respond_to do |format|
-      format.json do
-        render :json => result
-      end
-    end
+    add_functionality_to_account
   end
 
   def remove_feature
-    @account = Account.find(params[:account_id]).make_current
-    result = {:account_id => @account.id, :account_name => @account.name}
-    begin
-      render :json => {:status => "notice"}.to_json and return unless disableable?(@feature_name)
-      disable_feature(@feature_name)
-      result[:status] = "success"
-    rescue Exception => e
-      result[:status] = "error"
-    end
-    respond_to do |format|
-      format.json do
-        render :json => result
-      end
-    end
+    remove_functionality_from_account
   end
 
   def add_launch_party
-    @account = Account.find(params[:account_id])
-    @account.make_current
-    result = { account_id: @account.id, account_name: @account.name }
-    begin
-      if enableable?(@feature_name)
-        enable_feature(@feature_name)
-        result[:status] = 'success'
-      else
-        result[:status] = 'notice'
-      end
-    rescue RuntimeError
-      result[:status] = 'error'
-    end
-    respond_to do |format|
-      format.json do
-        render json: result
-      end
-    end
+    add_functionality_to_account
   end
 
   def remove_launch_party
-    @account = Account.find(params[:account_id]).make_current
-    result = { account_id: @account.id, account_name: @account.name }
-    begin
-      if disableable?(@feature_name)
-        disable_feature(@feature_name)
-        result[:status] = 'success'
-      else
-        result[:status] = 'notice'
-      end
-    rescue RuntimeError
-      result[:status] = 'error'
-    end
-    respond_to do |format|
-      format.json do
-        render json: result
-      end
-    end
+    remove_functionality_from_account
   end
 
   def add_setting
-    @account = Account.find(params[:account_id])
-    @account.make_current
-    result = { account_id: @account.id, account_name: @account.name }
-    begin
-      if enableable?(@feature_name)
-        enable_feature(@feature_name)
-        result[:status] = 'success'
-      else
-        result[:status] = 'notice'
-      end
-    rescue RuntimeError
-      result[:status] = 'error'
-    end
-    respond_to do |format|
-      format.json do
-        render json: result
-      end
-    end
+    add_functionality_to_account
   end
 
   def remove_setting
-    @account = Account.find(params[:account_id]).make_current
-    result = { account_id: @account.id, account_name: @account.name }
-    begin
-      if disableable?(@feature_name)
-        disable_feature(@feature_name)
-        result[:status] = 'success'
-      else
-        result[:status] = 'notice'
-      end
-    rescue RuntimeError
-      result[:status] = 'error'
-    end
-    respond_to do |format|
-      format.json do
-        render json: result
-      end
-    end
+    remove_functionality_from_account
+  end
+
+  def add_selectable_feature
+    add_functionality_to_account
+  end
+
+  def remove_selectable_feature
+    remove_functionality_from_account
   end
 
   def change_currency
@@ -1457,5 +1373,45 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       end
       Admin::FdadminFreshidMigrationWorker.perform_async(args)
       { status: 'success' }
+    end
+
+    def add_functionality_to_account
+      @account = Account.find(params[:account_id]).make_current
+      result = { account_id: @account.id, account_name: @account.name }
+      begin
+        if enableable?(@feature_name)
+          enable_feature(@feature_name)
+          result[:status] = 'success'
+        else
+          result[:status] = 'notice'
+        end
+      rescue RuntimeError
+        result[:status] = 'error'
+      end
+      respond_to do |format|
+        format.json do
+          render json: result
+        end
+      end
+    end
+
+    def remove_functionality_from_account
+      @account = Account.find(params[:account_id]).make_current
+      result = { account_id: @account.id, account_name: @account.name }
+      begin
+        if disableable?(@feature_name)
+          disable_feature(@feature_name)
+          result[:status] = 'success'
+        else
+          result[:status] = 'notice'
+        end
+      rescue RuntimeError
+        result[:status] = 'error'
+      end
+      respond_to do |format|
+        format.json do
+          render json: result
+        end
+      end
     end
 end

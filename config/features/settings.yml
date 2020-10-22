@@ -31,6 +31,14 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :fb_msg_realtime:
+    default: false
+    interal: true
+    feature_dependency: :basic_settings_feature
+  :sidekiq_logs_to_central:
+    default: false
+    interal: true
+    feature_dependency: :basic_settings_feature
   :personalized_email_replies:
     default: false
     internal: false
@@ -163,6 +171,16 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :location_tagging:
+    default: false
+    internal: false
+    feature_dependency: :field_service_management_toggle
+    settings_dependency: :field_service_management
+  :field_service_geolocation:
+    default: false
+    internal: false
+    feature_dependency: :field_service_management_toggle
+    settings_dependency: :field_service_management
   :bypass_signup_captcha:
     default: false
     internal: true

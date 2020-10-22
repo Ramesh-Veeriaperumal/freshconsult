@@ -17,6 +17,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create, :show]
     resource :"ember/freshcaller/setting", only: %i[index desktop_notification redirect_url]
+    resource :"ember/freshcaller/calls/ticket", only: [:show]
     resource :"ember/conversation", only: %i[create ticket_conversations full_text]
     resource :"ember/ticket_field", only: [:index]
     resource :"ember/todo", only: [:index, :create, :update, :destroy]

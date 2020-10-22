@@ -431,11 +431,7 @@ class SAAS::AccountDataCleanup
     cleanup_fb_ad_posts
   end
 
-  def handle_field_service_management_toggle_drop_data
-    Rails.logger.info "Removing Location Tagging for account #{account.id}"
-    Account.current.revoke_feature(:location_tagging)
-    handle_field_service_management_drop_data
-  end
+  alias handle_field_service_management_toggle_drop_data handle_field_service_management_drop_data
 
   private
 

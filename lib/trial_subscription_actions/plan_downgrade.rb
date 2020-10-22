@@ -5,8 +5,8 @@ class TrialSubscriptionActions::PlanDowngrade < TrialSubscriptionActions::Base
     def reset_plan_features
       features_list.each do |feature| 
         unless account_add_ons.include?(feature)
-          account.reset_feature(feature) 
-          reset_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
+          reset_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings) # Resetting all settings dependent on this feature
+          account.reset_feature(feature)
         end
       end
       Rails.logger.info "Trial subscriptions : #{account.id} : 
@@ -14,7 +14,7 @@ class TrialSubscriptionActions::PlanDowngrade < TrialSubscriptionActions::Base
       account.save!
     end
 
-    def add_new_plan_features
+    def add_new_plan_features_and_settings
       # No new features will get added in trial downgrade
     end
 

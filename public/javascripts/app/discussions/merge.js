@@ -146,7 +146,8 @@ window.App.Discussions = window.App.Discussions || {};
 					var replace_element = element.find('.item_info');
 					var title =  replace_element.attr('title');
 					var topic_id = element.find(".merge-topic").data("id")
-					var replace_html = "<a class='item_info' target='_blank' title='"+title+"' href='/discussions/topics/"+topic_id+"'>"+replace_element.html()+"</a>"
+					var replace_html = jQuery('<a>', { class: 'item_info', target: '_blank', href: '/discussions/topics/'+ topic_id, title: title, html: replace_element.html() });
+
 					replace_element.replaceWith(replace_html);
 					_this.enableContinue();
 				}

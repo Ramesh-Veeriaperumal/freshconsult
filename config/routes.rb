@@ -2654,6 +2654,7 @@ Helpkit::Application.routes.draw do
           put :add_feature
           put :add_launch_party
           put :add_setting
+          put :add_selectable_feature
           put :change_url
           get :single_sign_on
           put :change_account_name
@@ -2663,6 +2664,7 @@ Helpkit::Application.routes.draw do
           put :remove_feature
           put :remove_launch_party
           put :remove_setting
+          put :remove_selectable_feature
           put :whitelist
           put :block_account
           get :user_info

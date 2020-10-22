@@ -1,10 +1,10 @@
 module Fdadmin::FeatureMethods
 
-    BITMAP_FEATURES_WITH_VALUES = YAML.load_file(File.join(
-      Rails.root, 'config/features', 'features.yml'))[:features][:plan_features][:feature_list]
+    BITMAP_FEATURES_WITH_VALUES = YAML.load_file(Rails.root.join('config/features', 'features.yml'))[:features][:plan_features][:feature_list]
 
-    SETTINGS_FEATURES = YAML.load_file(File.join(
-      Rails.root, 'config/features', 'settings.yml'))['settings']
+    SELECTABLE_FEATURES_LIST = YAML.load_file(Rails.root.join('config/features', 'features.yml'))[:selectable_features].keys
+
+    SETTINGS_FEATURES = YAML.load_file(Rails.root.join('config/features', 'settings.yml'))['settings']
 
     INTERNAL_SETTINGS = SETTINGS_FEATURES.select { |x| SETTINGS_FEATURES[x]['internal'] }.keys
 
@@ -14,20 +14,25 @@ module Fdadmin::FeatureMethods
 
     BLACKLISTED_LP_FEATURES = [:freshid, :freshid_org_v2, :fluffy, :fluffy_min_level].freeze
 
-    BITMAP_FEATURES_TO_IGNORE = [:support_bot, :field_service_management].freeze
+    BITMAP_FEATURES_TO_IGNORE = [:support_bot].freeze
 
     LAUNCH_PARTY_ACTIONS = ['add_launch_party', 'remove_launch_party'].freeze
 
     SETTINGS_ACTIONS = ['add_setting', 'remove_setting'].freeze
 
+    SELECTABLE_FEATURES_ACTION = ['add_selectable_feature', 'remove_selectable_feature'].freeze
+
     private
 
     def feature_types(feature_name)
       feature_types = []
-      if LAUNCH_PARTY_ACTIONS.include?(params['action']) && enableable_lp?(feature_name)
+      action = params['action']
+      if LAUNCH_PARTY_ACTIONS.include?(action) && enableable_lp?(feature_name)
         feature_types << 'launchparty'
-      elsif SETTINGS_ACTIONS.include?(params['action']) && valid_setting?(feature_name)
+      elsif SETTINGS_ACTIONS.include?(action) && valid_setting?(feature_name)
         feature_types << 'setting'
+      elsif SELECTABLE_FEATURES_ACTION.include?(action) && SELECTABLE_FEATURES_LIST.include?(feature_name)
+        feature_types << 'bitmap'
       end
       feature_types
     end

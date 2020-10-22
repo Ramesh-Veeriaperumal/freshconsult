@@ -53,7 +53,7 @@ class SAAS::SubscriptionEventActions
       remove_old_plan_db_features if old_plan.present?
       reset_plan_features
       remove_chat_feature
-      add_new_plan_features
+      add_new_plan_features_and_settings
       handle_collab_feature
       disable_chat_routing unless account.has_feature?(:chat_routing)
       handle_daypass if recalculate_daypass_enabled?
@@ -74,24 +74,31 @@ class SAAS::SubscriptionEventActions
         next if plan_features.include?(addon) # Don't remove features which are all related to current plan
 
         begin
-          Rails.logger.debug "ADDON::REMOVED with feature, #{addon}"
+          Rails.logger.debug "ADDON::REMOVED with feature, #{addon} for account #{account.id}"
+          reset_settings_dependent_on_feature(addon) if account.launched?(:feature_based_settings) # Resetting all settings dependent on this addon
           account.reset_feature(addon)
-          reset_settings_dependent_on_feature(addon) if account.launched?(:feature_based_settings)
         rescue StandardError => e
           Rails.logger.error("Exception while revoking addon feature addon: \
             #{addon}, error: #{e.backtrace}")
         end
       end
       #to add new addons thats coming in to get added
+      settings_dependent_on_feature_list = []
       to_be_added.each do |addon|
         begin
-          Rails.logger.debug "ADDON::ADDED with feature, #{addon}"
+          Rails.logger.debug "ADDON::ADDED with feature, #{addon} for account #{account.id}"
           account.set_feature(addon)
-          add_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
+          settings_dependent_on_feature_list |= account.settings_to_add_dependent_on_feature(addon)
         rescue StandardError => e
-          Rails.logger.error "Exception while revoking addon feature acc_id: \
+          Rails.logger.error "Exception while adding addon feature acc_id: \
             #{account.id} addon: #{addon}, error: #{e.backtrace}"
         end
+      end
+      # adding settings dependent on features of added addons
+      settings_to_add = account.filter_settings_with_settings_dependency(settings_dependent_on_feature_list)
+      Rails.logger.debug "ADDON :: List of settings to be for account #{account.id}"
+      settings_to_add.each do |setting|
+        account.set_feature(setting)
       end
       account.save
     end
@@ -127,29 +134,35 @@ class SAAS::SubscriptionEventActions
       features_list = account.features_list
       Rails.logger.debug "List of features to reset for account #{account.id} :: #{features_list.inspect}"
       Rails.logger.debug "account add ons :: #{account_add_ons}"
-      features_list.each do |feature|
-        unless plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature)
-
-          next if a_setting?(feature) && applicable_for_plan?(feature)
+      # skipping settings as setting will be reset when its dependent feature is reset
+      (features_list - AccountSettings::SettingsConfig.symbolize_keys.keys).each do |feature|
+        unless feature_applicable_for_new_plan?(feature)
+          reset_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings) # Resetting all settings dependent on this feature
           account.reset_feature(feature)
         end
       end
       account.save
     end
 
-    def applicable_for_plan?(setting)
-      plan_features.include?(AccountSettings::SettingsConfig[setting][:feature_dependency])
+    def feature_applicable_for_new_plan?(feature)
+      plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature) || skipped_features.include?(feature)
     end
 
-    def add_new_plan_features
+    def add_new_plan_features_and_settings
       Rails.logger.debug "List of new plan features for account #{account.id} :: #{plan_features.inspect}"
       plan_features.delete(:support_bot) if account.revoke_support_bot?
       plan_features.delete(:lbrr_by_omniroute) if account.round_robin_capping_enabled? && !account.lbrr_by_omniroute_enabled?
+      settings_dependent_on_feature_list = []
       plan_features.each do |feature|
         unless skipped_features.include?(feature)
           account.set_feature(feature)
-          add_settings_dependent_on_feature(feature) if account.launched?(:feature_based_settings)
+          settings_dependent_on_feature_list |= account.settings_to_add_dependent_on_feature(feature)
         end
+      end
+      settings_to_add = account.filter_settings_with_settings_dependency(settings_dependent_on_feature_list)
+      Rails.logger.debug "List of new plan settings for account #{account.id} :: #{settings_to_add.inspect}"
+      settings_to_add.each do |setting|
+        account.set_feature(setting)
       end
       account.save
     end
@@ -161,15 +174,16 @@ class SAAS::SubscriptionEventActions
       end
     end
 
-    def add_settings_dependent_on_feature(feature)
+    def reset_settings_dependent_on_feature(feature)
       (AccountSettings::FeatureToSettingsMapping[feature] || []).each do |setting|
-        account.set_feature(setting) if AccountSettings::SettingsConfig[setting][:default]
+        reset_settings_dependent_on_setting(setting) # Resetting all settings which are dependent on this setting
+        account.reset_feature(setting)
       end
     end
 
-    def reset_settings_dependent_on_feature(feature)
-      (AccountSettings::FeatureToSettingsMapping[feature] || []).each do |setting|
-        account.reset_feature(setting)
+    def reset_settings_dependent_on_setting(setting)
+      (AccountSettings::SettingToSettingsMapping[setting] || []).each do |dependent_settings|
+        account.reset_feature(dependent_settings)
       end
     end
 
@@ -309,9 +323,5 @@ class SAAS::SubscriptionEventActions
       if account.field_service_management_toggle_enabled? && account.field_service_management_enabled?
         account.add_feature(:dynamic_sections) unless account.has_feature?(:dynamic_sections)
       end
-    end
-
-    def a_setting?(feature)
-      AccountSettings::SettingsConfig[feature].present?
     end
 end

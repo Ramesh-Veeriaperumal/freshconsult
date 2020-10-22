@@ -19,8 +19,7 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none, :api_es,
     :auto_complete_off, :new_ticket_recieved_metric, :ner,
-    :sso_login_expiry_limitation, :old_link_back_url_validation,
-    :es_tickets, :fb_msg_realtime,
+    :sso_login_expiry_limitation, :old_link_back_url_validation, :es_tickets,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history,
@@ -40,7 +39,7 @@ class Account < ActiveRecord::Base
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup, :helpdesk_new_settings,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
-    :jira_onpremise_reporter, :sidekiq_logs_to_central, :encode_emoji_in_solutions,
+    :jira_onpremise_reporter, :encode_emoji_in_solutions,
     :agent_shifts, :mailbox_google_oauth, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log,
@@ -76,12 +75,12 @@ class Account < ActiveRecord::Base
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
-    :canned_forms, :customize_table_view, :solutions_templates, :fb_msg_realtime,
+    :canned_forms, :customize_table_view, :solutions_templates,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
-    :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
+    :social_tab, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
-    :personal_canned_response, :marketplace, :reverse_notes, :field_service_geolocation,
-    :location_tagging, :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
+    :personal_canned_response, :marketplace, :reverse_notes,
+    :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :hide_first_response_due, :agent_articles_suggest, :agent_articles_suggest_eligible, :email_articles_suggest, :customer_journey, :botflow,
@@ -91,15 +90,12 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
-    :whatsapp_channel, :sidekiq_logs_to_central, :basic_settings_feature, :ticket_filter_increased_companies_limit,
-    :csat_email_scan_compatibility
+    :whatsapp_channel, :basic_settings_feature, :ticket_filter_increased_companies_limit, :csat_email_scan_compatibility
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :fb_msg_realtime,
     :kbase_spam_whitelist,
-    :sidekiq_logs_to_central,
     :csat_email_scan_compatibility
   ].freeze
 
@@ -440,10 +436,6 @@ class Account < ActiveRecord::Base
 
   def omni_channel_team_dashboard_enabled?
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
-  end
-
-  def csat_email_scan_compatibility_enabled?
-    launched?(:csat_email_scan_compatibility)
   end
 
   def features
