@@ -1256,8 +1256,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def first_response_status
+    # skipping first response status for service task as frDueBy is null for service tasks
     #Hack: for outbound emails, first response status needs to be blank.
-    (outbound_email? or first_response_time.nil?) ? "" : ((first_response_time < frDueBy) ? t('export_data.in_sla') : t('export_data.out_of_sla'))
+    return '' if service_task? || outbound_email? || first_response_time.nil?
+
+    first_response_time < frDueBy ? t('export_data.in_sla') : t('export_data.out_of_sla')
   end
 
   def every_response_status
