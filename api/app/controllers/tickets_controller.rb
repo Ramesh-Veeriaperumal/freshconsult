@@ -172,8 +172,6 @@ class TicketsController < ApiApplicationController
       if use_public_api_filter_factory?
         items = FilterFactory::TicketFilterer.filter(updated_params, true).preload(conditional_preload_options)
         @items = paginate_items(items, true)
-      elsif current_account.count_es_api_enabled?
-        tickets_from_es
       else
         super tickets_filter.preload(conditional_preload_options)
       end
