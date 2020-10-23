@@ -247,17 +247,27 @@ module SupportHelper
     else
       username = user['name']
       username = username.lstrip if username
-      if username && username[0] && isalpha(username[0])
-        output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
-        output << %( #{username[0]} )
-        output << %( </div>)
-      else
-        output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
-        Rails.logger.error("Showing blank profile thumbnail for User: #{username} Account:#{Account.current.id}")
-      end
+      output << default_profile_image(username, profile_size)
     end
     output << %( </div> )
     output.join("").html_safe
+  end
+
+  def email_name_profile_image(username, profile_size = 'thumb')
+    %( <div class="user-pic-thumb image-lazy-load user-pointer-bottom"> #{default_profile_image(username, profile_size)} </div> ).html_safe
+  end
+
+  def default_profile_image(username, profile_size = 'thumb')
+    output = []
+    if username && username[0] && isalpha(username[0])
+      output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
+      output << %( #{username[0]} )
+      output << %( </div>)
+    else
+      output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+      Rails.logger.error("Showing blank profile thumbnail for User: #{username} Account:#{Account.current.id}")
+    end
+    output.join('')
   end
 
   #user avatar for canned form preview

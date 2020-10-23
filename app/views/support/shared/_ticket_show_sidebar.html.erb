@@ -57,11 +57,20 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 
 <% content_for :sidebar do %>
     <% if @ticket.responder && !@ticket.deleted %>
-		<div class="sidepanel clearfix">
-			<h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
-			<%= user_avatar(@ticket.responder, :thumb)  %>
-			<%= content_tag(:b, h(@ticket.responder.name)) %>			
-		</div>
+	    <% if current_account.has_feature?(:personalized_email_replies) %> 
+		  <div class="sidepanel clearfix">
+		  	<h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
+		  	<%= user_avatar(@ticket.responder, :thumb)  %>
+		  	<%= content_tag(:b, h(@ticket.responder.name)) %>			
+		  </div>
+		<% else %>
+		  <div class="sidepanel clearfix">
+		  	<h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
+			<% email_name = @ticket.product.try(:primary_email_config) ? @ticket.product.primary_email_config.name : current_account.primary_email_config.name %>
+            <%= avatar_generator(email_name, :thumb, "preview_pic" , { :width => "36px", :height => "36px" }) %>
+		    <%= content_tag(:b, h(email_name)) %>
+		  </div>
+		<% end %>
   	<% end %>
 	<%
 		has_visible_field = false;
