@@ -155,7 +155,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def ticket_type_list
-    ticket_type = 'Question,Incident,Problem,Feature Request,Refund'
+    ticket_type = 'Question,Incident,Problem,Feature Request,Refunds and Returns,Bulk orders,Refund'
     ticket_type << ",#{SERVICE_TASK_TYPE}" if Account.current.picklist_values.map(&:value).include?(SERVICE_TASK_TYPE)
     ticket_type
   end

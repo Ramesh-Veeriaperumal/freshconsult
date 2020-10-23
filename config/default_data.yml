@@ -143,6 +143,43 @@ default_ticket:
           email: matt.rogers@freshdesk.com
       replies:
         - content: 0
+    - status: Open
+      priority: urgent
+      source: email
+      type: Refunds and Returns
+      requester:
+        info:
+          name: Bob Tree
+          email: bob.tree@freshdesk.com
+      replies:
+        - content: 0
+    - status: Pending
+      priority: high
+      source: email
+      type: Refunds and Returns
+      requester:
+        info:
+          name: Polly
+          email: polly@freshdesk.com
+      replies:
+        - content: 0 
+          private: 1
+    - status: Open
+      priority: medium
+      source: email
+      type: Bulk orders
+      requester:
+        info:
+          name: John
+          email: john@freshdesk.com
+    - status: Open
+      priority: low
+      source: email
+      type: Refunds and Returns
+      requester:
+        info:
+          name: Matt Rogers
+          email: matt.rogers@freshdesk.com
   ecommerce:
     - status: open
       priority: medium

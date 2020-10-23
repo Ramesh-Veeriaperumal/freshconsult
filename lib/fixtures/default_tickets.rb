@@ -162,7 +162,7 @@ class Fixtures::DefaultTickets
         reply_note = ticket.notes.new(
           :user_id      => reply["requester"]? @requester.id : agent.id,
           :source       => Account.current.helpdesk_sources.note_source_keys_by_token["email"],
-          :private      => false,
+          :private      => reply['private'] || false,
           :note_body_attributes  => {:body_html => tickets_content[ind]["replies"][reply["content"]]},
           :skip_notification     => true,
           :disable_observer_rule => true,

@@ -43,7 +43,7 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
     match_json(integrated_resource_pattern(Integrations::IntegratedResource.find_by_id(integ_resource['id'])))
   end
 
-  def test_create_integrated_resource_for_application_which_uses_display_id
+  def test_create_integ_resource_for_application_which_uses_display_id
     t1 = create_ticket
     app = Integrations::Application.find_by_name('google_calendar')
     gcal_app = Account.current.installed_applications.find_by_application_id(app.id)

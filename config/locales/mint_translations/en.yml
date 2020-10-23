@@ -8126,3 +8126,553 @@ en:
       To continue deflecting incoming requests, you can buy more sessions for your account by visiting your account’s <a
       href="%{billing_url}">Plans & Billing</a> page.
     additional_sessions_note_body: "Please note that additional freddy sessions bought are valid for the current billing cycle."
+  fixtures:
+    ticket_templates:
+      name: "Initiate a Refund"
+      desc: "To initiate a refund for all cancellation requests"
+      subject: "Refund for customer"
+      content: "<div><p>Initiating refund for a customer who has called us on our phone line. <br> <br>
+Name: <br>
+Email address: <br>
+Order ID: <br>
+Date of purchase: <br><br>
+Regards,<br>
+&lt;company name&gt; support.</p></div>"
+    canned_response:
+      title: We’ve received your request
+    default_forum:
+      - subject: End of season sale
+        content: "We hope you’re all set for the end of summer sale, 2018.<br><br>
+Tune in on the 5th of August, from 12PM to 4PM, for some really cool offers (it’s the end of summer after all). <br><br>
+Here’s a sneak peek on what’s in store for you - <br><br>
+<ul>
+<li>Flat 30% off, on a selected range of products. </li>
+<li>Flat 20% off, on all items of Saul’s original collection. </li>
+</ul><br>
+
+- Joe"
+      - subject: June offer
+        content: "June is our birthday month and it calls for a celebration. <br><br>
+For every purchase that is over 15$, you get a voucher for 5$ (valid for 60 days) which is redeemable at Saul’s. <br><br>
+Get shopping! :D<br><br>
+-  Sam"
+        replies:
+          - "It's been only two years since Saul's started. It's my favorite place to shop already. Cheers! <br><br>
+- Bob"
+          - "Whoa! Jackpot! Thanks, @Sam.<br> <br>
+-Phileas"
+          -  "This just made my day. Super happy! :D <br><br>
+- Jhonny"
+      - subject: A message along with the delivery
+        content: "I’d like to write a message and have it delivered along with my order, mainly when I’m ordering a gift for someone, to add that personal touch. I’m surprised you don’t offer this already - every eCommerce store I know has this option. It’d be great if you could get something out like this. <br><br>
+-  Lewis"
+      - subject: SMS tracking
+        content: "Hi, can we have an option to track our orders using SMS and not just email? There are times, when I do not have access to the internet.<br><br> - Maria"
+        replies:
+          - "I have an internet connection at home, and I went through the same trouble when I was out of town. Having SMS tracking would be quite helpful.<br><br> - Matt"
+          - "@Maria and @Matt, we’re working on this. Should be out soon. :) <br><br> - Sam"
+      - subject: Choosing delivery slots
+        content: "A lot of times, our customers are not around at the time of delivery. This causes an inconvenience at both the ends. <br><br>
+To fix this, we now provide four time slots. The next time you place an order, you’ll have the option to pick a time slot based on your availability and convenience. This option will be present right below your delivery address under the name “Delivery slot”.<br>
+Happy shopping now! :) <br><br>
+- Sam"
+        replies:
+          - "This is great!<br><br> - Lewis"
+          - "I’ve faced this issue three times already. This is a perfect fix.<br><br> Thanks!<br> - Emily"
+      - subject: Fast tracked delivery
+        content: "Ordered a package you need urgently? <br><br>
+We’ve got you covered. :) <br><br>
+You now have an option to have your package delivered to you within 48 hours of placing your order. You can avail this option for one order a month.<br><br>
+All you have to do is choose ‘fast tracked delivery’, when you’re placing an order. This is only available for premium customers. <br><br>
+- Joe"
+        replies:
+          - "Oh, this is a godsend. Thank you!<br><br> - Clarice"
+      - subject: Horrible service
+        content: "One day prior to the delivery of my package, I was told it was “Undeliverable”. Sucks that I had to wait for four days just to hear this.<br><br>
+- Finch"
+        replies:
+          - "@Finch, we’re sorry for the inconvenience caused. We’ll make sure it doesn’t happen again.<br><br>
+- Sam"
+      - subject: "Quality was a let down"
+        content: "The product I received for order #123, did not meet the quality promised.<br> I’ve requested for a refund but I just thought I’ll put the word out, in hope that it does not happen again. <br><br>
+- Mark"
+        replies:
+          - "@Mark, apologies. We’ve looked into that and we’re hoping it does not happen again. <br><br>
+- Joe"
+    sample_solution_articles:
+      "software & services":
+        - category: Getting started with us
+          folder: Your account
+          title: Changing account details
+          description: "Update your account details like name, email address, phone number or address, anytime by following these steps: <br><br>
+<ol><li>Select <b>account details</b> from the menu bar.</li>
+<li>Click <b>edit icon</b> on the field you'd like to change.</li>
+<li>After you’ve added the updated details, click <b>save changes</b>.</li>
+<li>Click <b>done</b> after completing all the updates.</li>
+<li>You will receive an email from us to verify the changes.</li></ol><br>
+In case you have <i>forgotten your password</i>, click on the <b>forgot password</b> button and follow the instructions there. <br><br>
+Note: Once you verify the updated email details, you can resume your activities on your account."
+        - category: Getting started with us
+          folder: Your account
+          title: Inviting your team onboard
+          description: "Add your team members to your account to make collaboration easy. You can have multiple teams in an account. You can also add one contact to many teams.<br><br>
+Follow these steps to get your team onboard:<br><br>
+<ol><li>Select <b>my account</b> from the menu bar.</li>
+<li>Click on the <b>send invitation</b> link.</li>
+<li>Type in the email addresses and click <b>send</b>.</li></ol><br><br>
+<i>Alternatively</i>, from the contacts page, you can toggle on the <b>add member</b> and an invitation link will be sent to that respective contact. <br><br>
+Pro tip - Tag your team to collaborate and get feedback on your work by typing “@” followed by the team name.You can make announcements about progress of your work, deadlines, updates or anything you want to communicate with the rest of your team, by tagging teams."
+        - category: Getting started with us
+          folder: Your documents
+          title: Creating templates
+          description: "Tired of documenting the same kind of things (meeting notes, product requirements, and ideas) over and over again every day? Just create a doc and save it as a template, in three simple steps.<br><br>
+Step 1 - Create a new document or reuse an existing one, to fill in the content you’d like to save as a template. <br><br>
+Step 2 - Click <b>create template</b>. Give your template a name and click <b>save</b>. <br><br>
+Step 3 - Type the addresses in the share with field and click <b>send</b>.<br><br>
+Note: You can shares templates within and across teams.<br><br>
+Also, you can add tags on the templates, to boost the article visibility on search results across folders or documentation gets easier. "
+        - category: "FAQs:"
+          folder: Trial FAQs
+          title: "Can I invite my team members on the free trial?"
+          description: "Yes, you can invite your team members on the free trial. However, during the trial period you can only have five members on board.<br>"
+        - category: "FAQs:"
+          folder: Trial FAQs
+          title: "I want to trial a different plan. How do I go about this?"
+          description: "You can reach out to your account manager or write to our support team if you'd like to change the plan."
+        - category: "FAQs:"
+          folder: Trial FAQs
+          title: "How many days can I trial a plan for?"
+          description: "If you already are on another plan and wish to try out other plans, then you will have a 14-day free trial period.<br>
+However, if you are trialing the application for the first time, then your free trial period is for 21 days."
+        - category: Files and folders
+          folder: Shared files
+          title: "Setting permissions for files"
+          description: "<p> </p>"
+        - category: Files and folders
+          folder: Shared files
+          title: "Changing owners of files and folders"
+          description: "<p> </p>"
+        - category: Files and folders
+          folder: Deleted files
+          title: "Restoring files that have been moved to trash"
+          description: "<p> </p>"
+        - category: Files and folders
+          folder: Deleted files
+          title: "Recovering permanently deleted files"
+          description: "<p> </p>"
+        - category: Premium club
+          folder: Premium features
+          title: "Bandwidth and direct downloading"
+          description: "<p> </p>"
+        - category: Premium club
+          folder: Premium features
+          title: "Bulk downloading"
+          description: "<p> </p>"
+        - category: Premium club
+          folder: Premium subscription
+          title: "Business plan"
+          description: "<p> </p>"
+        - category: Premium club
+          folder: Premium subscription
+          title: "Professional plan"
+          description: "<p> </p>"
+      ecommerce:
+        - category: Getting started with us
+          folder: Your account
+          title: Changing account details
+          description: "Update your account details like name, email address, phone number or address, anytime by following these steps: <br><br>
+<ol><li>Select <b>account details</b> from the menu bar.</li>
+<li>Click <b>edit icon</b> on the field you'd like to change.</li>
+<li>After you’ve added the updated details, click <b>save changes</b>.</li>
+<li>Click <b>done</b> after completing all the updates.</li>
+<li>You will receive an email from us to verify the changes.</li></ol><br>
+In case you have <i>forgotten your password</i>, click on the <b>forgot password</b> button and follow the instructions there. <br><br>
+Note: Once you verify the updated email details, you can resume your activities on your account."
+        - category: Getting started with us
+          folder: Your account
+          title: Adding a payment method
+          description: "To set up payment channels on your account, <br><br>
+<ol><li>Select <b>payment options</b> from the menu bar.</li>
+<li>Click the <b>add payment</b> method option. </li>
+<li>Pick the options from the checklist and fill in the required details. </li>
+<li>After you’ve added the details, click <b>save</b>.</li>
+<li>Click <b>done</b> once you’ve finished.</li></ol><br>
+Tip: You can always come back and add or delete more options, by following the same steps.<br><br>
+The different payment channels supported at Saul’s are - <br>
+<ul><li>Google Pay</li>
+<li>PayPal<br></li>
+<li>WePay</li></ul><br>
+Note: We also offer cash on delivery."
+        - category: Orders and refunds
+          folder: Your order
+          title: Tracking your order
+          description: "If you have placed on order and you want to check its status, you can view this from Saul’s account.<br>
+Step 1 - Go to <b>my orders</b>.<br><br>
+Step 2 - Click on the order you want to track.<br><br>
+Step 3 - Click on <b>details</b>.<br><br>
+You can also check the status of your order on your phone, by clicking the “Enable updates via SMS” button. <br><br>
+Make sure the phone number present there is valid (if not, you can edit it by clicking on the <b>edit icon</b> next to the field).<br><br>
+The updates on your orders will be messaged to you on your phone."
+        - category: FAQs
+          folder: Shipping FAQs
+          title: "How long will the delivery take?"
+          description: "Typically, your package should reach you within 2-9 days of placing an order. In case you want your order to reach you within three days, then you select the fast delivery option before placing your order."
+        - category: FAQs
+          folder: Shipping FAQs
+          title: "Is the delivery time flexible?"
+          description: "We understand that you might not always be available at the scheduled time for delivery generated by us. So we let you pick your delivery slot based on your convenience. <br>
+In case you miss it, we make two more attempts at the slot selected by you on two consecutive business days."
+        - category: FAQs
+          folder: Shipping FAQs
+          title: "I need a copy of my invoice for my order. How do I go about with it?"
+          description: "We ship all packages with an invoice that can be found along with the product. If you need a copy of the invoice, we can email it to you."
+        - category: Gifts and coupons
+          folder: Gifts
+          title: "Gift vouchers for birthdays"
+          description: "<p> </p>"
+        - category: Gifts and coupons
+          folder: Gifts
+          title: "Gift vouchers for anniversaries"
+          description: "<p> </p>"
+        - category: Gifts and coupons
+          folder: Coupons
+          title: "Coupons for members"
+          description: "<p> </p>"
+        - category: Gifts and coupons
+          folder: Coupons
+          title: "Coupons for non-members"
+          description: "<p> </p>"
+        - category: Information collected
+          folder: Privacy policy
+          title: Information safety and security
+          description: "<p> </p>"
+        - category: Information collected
+          folder: Privacy policy
+          title: Legal requirements
+          description: "<p> </p>"
+        - category: Information collected
+          folder: Opt-out policy
+          title: Email-marketing
+          description: "<p> </p>"
+        - category: Information collected
+          folder: Opt-out policy
+          title: Service related announcements
+          description: "<p> </p>"
+      travel:
+        - category: Getting started with us
+          folder: Your Account
+          title: Changing account details
+          description: "Update your account details like name, email address, phone number or address, anytime by following these steps: <br><br>
+<ol><li>Select <b>account details</b> from the menu bar.</li>
+<li>Click <b>edit icon</b> on the field you'd like to change.</li>
+<li>After you’ve added the updated details, click <b>save changes</b>.</li>
+<li>Click <b>done</b> after completing all the updates.</li>
+<li>You will receive an email from us to verify the changes.</li></ol><br>
+In case you have <i>forgotten your password</i>, click on the <b>forgot password</b> button and follow the instructions there. <br><br>
+Note: Once you verify the updated email details, you can resume your activities on your account."
+        - category: Getting started with us
+          folder: Booking your trip
+          title: Booking your trip
+          description: "1. Select the dates of your trip. <br><br>
+2. Type the name of the location you would like to visit and the number of passengers travelling (infants and children have to be counted too).<br><br>
+3. Choose a package from the list of options.<br><br>
+4. Enter the passenger details of one member (an adult).<br><br>
+5. Proceed to make the payment. If you have a discount code please enter it."
+        - category: Your journey
+          folder: Travel details
+          title: Baggage restrictions
+          description: "The baggage restrictions for intercontinental flights are as follows: <br><br>
+<ul><li>Economy Class: 1 bag up to 23 kg</li><br>
+<li>Premium Economy Class: 2 bags up to 23 kg each</li><br>
+<li>Business Class: 2 bags up to 32 kg each</li><br>
+<li>First Class: 3 bags up to 32 kg each</li></ul><br>
+For carry-on luggage: <br>
+<ul><li>First and Business class passengers are allowed two carry-ons.</li><br>
+<li>Economy class and Premium Economy class passengers are permitted one carry-on.</li></ul> <br>
+Note: Carry-on luggage can be upto 8 kgs."
+        - category: FAQs
+          folder: Flight FAQs
+          title: "How can I cancel my booking and how much will it cost?"
+          description: "Select the trip that you would like to cancel, and click on the “cancel trip” button that is below the trip details. We will hold back 15% of the trip’s fare and transfer the rest of the amount to your account."
+        - category: FAQs
+          folder: Flight FAQs
+          title: "What happens if my flight is delayed or cancelled?"
+          description: "We monitor the flight timings closely (cruises too). In case of a delay, we’ll let you know well in advance and we can work around the timings of the rest of your trip. If your flight has been cancelled by the airlines, we will book another flight for you at no additional cost."
+        - category: FAQs
+          folder: Flight FAQs
+          title: "Can we customize the trip to our liking?"
+          description: "We can customise the trip for group bookings if there are 10 or more passengers. Contact us at least one week prior to the commencement of your trip to let us know the changes you’d like to have."
+        - category: Membership
+          folder: Platinum club
+          title: Membership guidelines
+          description: "<p> </p>"
+        - category: Membership
+          folder: Platinum club
+          title: Gifts and packages
+          description: "<p> </p>"
+        - category: Membership
+          folder: Platinum club
+          title: Trips and hotels
+          description: "<p> </p>"
+        - category: Membership
+          folder: Diamond club
+          title: Membership guidelines
+          description: "<p> </p>"
+        - category: Membership
+          folder: Diamond club
+          title: Gifts and packages
+          description: "<p> </p>"
+        - category: Membership
+          folder: Diamond club
+          title: Trips and hotels
+          description: "<p> </p>"
+        - category: Travel insurance
+          folder: Travel insurance for members
+          title: Platinum club members
+          description: "<p> </p>"
+        - category: Travel insurance
+          folder: Travel insurance for members
+          title: Diamond club members
+          description: "<p> </p>"
+        - category: Travel insurance
+          folder: Travel insurance for non-members
+          title: Applying for travel insurance
+          description: "<p> </p>"
+        - category: Travel insurance
+          folder: Travel insurance for non-members
+          title: Availing travel insurance
+          description: "<p> </p>"
+    sample_tickets:
+      base_tickets:
+        - subject: "Payment failed?"
+          description: "Hello there,<br><br>
+  When I tried to make the payment, I kept getting the same message “Your payment failed” (I’ve attached a screenshot). But I have been charged already for it. <br> Can you help me get a refund? <br>
+  <img src = 'https://s3.amazonaws.com/assets.freshpo.com/sample_data/PaymentFailed.png'>
+  Thanks<br>
+  James"
+        - subject: Mary Jane shoes in Size 8?
+          description: "<p>Hello there,</p><br /><p>I’m looking to buy a pair of Mary Jane shoes and I noticed that you have a local store in Aldovia. Could you let me know if the Mary Jane shoes are available in Size 8? I can pick it up from there.</p><br /><p>Thanks,\n<br />Emily.</p>"
+          replies:
+            - "<p>Hey Emily,</p><br /><p>Thanks for writing to us!\n<br />I can confirm that our Aldovia store does have the Mary Jane shoes in size 8. I’ve asked them to block a pair for you. Feel free to pick them up anytime :)</p><br /><p>Cheers,\n<br />Rebecca.</p><br /><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href = https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk target= _blank>See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
+        - subject: Vintage table lamp - Out of stock?
+          description: "<p>Hello,</p><br /><p>I saw a vintage table lamp on your site last month and I’d bookmarked it to buy it later for a friend. I can’t seem to find it anymore though. Is it out of stock or do you not sell those anymore?</p><br /><p>Thanks,\n<br />Matt.</p><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget target= _blank>See how you can add your own feedback widget</a> on your website or app</p>"
+          replies:
+            - "<p>Hi Matt,</p><br /><p>Thanks for writing in!</p><br /><p>I’m sorry to say those vintage lamps are currently out of stock. I checked with our supplier though and they think it should be available by the end of next month. But if you’d rather not wait that long, I’d love to help you find something else to gift your friend. Let me know what their interests are and I’ll send across a list :)</p><br /><p>Cheers,\n<br />Janet\n<br />Saul’s Emporium Support</p>"
+        - subject: How much time does it take to get my money back!????
+          description: "<p>Hi,</p><br /><p>I had initiated a refund for my order ID 6854 (Perception Sound 9.5). It's been a while since your team initiated the process. Any updates on this?</p>"
+          replies:
+            - "<p>Hi Bob,</p><br /><p>Thanks for getting in touch with Sauls Support.\n<br />The invoice amount will be refunded to your account in 5 - 7 business days. Our delivery partners will collect the item, if any, from you within 3 - 5 business days of placing the return request.</p><br /><p>Thanks,\n<br />Emily.</p>"
+        - subject: My return was not picked up
+          description: "<p>Hi,</p><br /><p>My Return ID is 35303100 and the product hasn’t been picked up and replaced. The request was raised almost a week ago. Please expedite.</p>"
+          replies:
+            - "<p>Have we assigned a delivery executive to pick up the item and replace the customer’s order?</p>"
+        - subject: How do I place a custom order?
+          description: "<p>I want to purchase an assorted set of retail equipment. I’m not able to build my bundle. Can you help me with this purchase? Looking forward to more information!</p>"
+        - subject: How can I get a refund for my order?
+          description: "<p>Hi there,</p><br /><p>I need a refund for the headphones that I purchased last week. My order ID is #53467. The product was damaged when I received it. Can you please tell me how I can get a refund?</p><br /><p>Best,\n<br />Matt.</p>"
+      ecommerce:
+        - subject: Need to change my shipping address
+          description: "Hi,<br><br>
+I have to leave the city for a week and I’m afraid nobody will be there to collect my order (#555) when it arrives.<br><br>
+Is there a way for me I can change my shipping address?<br><br>
+Thanks,<br>
+Anne Richard"
+          replies:
+            - "Hi Anne,<br><br>
+You can change your shipping address as long as your order has not been dispatched for delivery. <br><br>
+Your package is waiting to be picked up for delivery, so go ahead with changing the address.<br><br>
+Follow these steps to change the details of your order - <br>
+1. Go to my orders.<br>
+2. Click on the edit details icon for the order which you’d like to update. <br>
+3. Update the required fields and click save changes.<br>
+4. Click done after you’ve finished.<br><br>
+I hope this was helpful. If you have any further doubts, feel free to reach out to me.<br><br>
+Richard Gere<br>
+Saul's Emporium"
+            - "Hey Richard,<br><br> Thank you so much.<br><br> Anne Richard"
+        - subject: Status of my replacement
+          description: "I requested a replacement on my order (#123) and I was told that it would take two working days to have my request processed. <br><br>
+It’s been four days now, I received no further information on this and I’m growing tired of waiting. Can you tell me what’s going on? <br><br>
+Matt Rogers"
+          replies:
+            - "Hi Matt, <br><br>
+The delay is on us, and we are sorry for the inconvenience caused. However, I checked the status of your request and we’ve got some good news for you. Your order is out for delivery and should reach you tomorrow. <br><br>
+To make up for this and to thank you for being patient, we are giving you a 5$ Saul’s exclusive gift coupon. <br><br>
+Richard Gere <br>
+Saul's Emporium"
+            - "I am glad to hear that. Also, thank you for your fast and prompt response. You’re really kind.<br><br> Matt Rogers"
+        - subject: Email address change
+          description: "Hey,<br><br>
+I use Saul’s often, I love the products you guys offer. <br><br>
+I need to update my email address. I want to know if I’ll be losing access to this account? I’ve added a quite a few products to my cart and I don’t want to go on a hunt to find all of them again, if I ever need it. <br><br>
+It would be great if I could continue using this account with my new email address. Please let me know if that’s possible. <br><br>
+Regards,<br>
+Clarice Boone"
+          replies:
+            - "Hi Clarice, <br><br>
+We’re happy to hear that you love our products. Thank you! :)<br><br>
+When you update your email address or password, you will receive an email from Saul’s to verify that it’s you who is requesting the changes. Once you finish the verification process, you can go back to accessing your account as usual. <br><br>
+You can refer to our solution article on <b>changing account details</b> for further details. <br><br>
+In case any questions pop up, we’re always here to help. For now, I am marking this ticket as resolved. <br><br>
+Thank you. :)<br>
+Richard Gere<br>
+Saul's Emporium"
+        - subject: Adding a new payment method
+          description: "Hey!<br><br>
+I want to link my PayPal account to my Saul’s account. Currently, I have my card added. Will I be presented with an option to choose between the two payment methods? Or is there a default payment method or something? Where can I find more details about this? Please help me. <br><br>
+Phileas Fogg"
+          replies:
+            - "Hi Phileas Fogg,<br><br>
+If you have multiple payment methods set up, you will always be given a choice to choose amongst them before making a payment. There is no default payment. <br><br>
+You can refer to our solution article on <b>adding a payment method</b>, for more information. You can write in your questions, we’re always happy to help. <br><br>
+Regards,<br>
+Mary Sheril<br>
+Saul's Emporium"
+      "software & services":
+        - subject: ogg format seems to be off
+          description: "Hi,<br><br> I tried uploading an .ogg file, to share it with my team. But the action failed?<br><br>
+Clarice Boone"
+          replies:
+            - "Hi Clarice, <br><br>
+We’re sorry but we do not support the .ogg format. However, you can convert it to MP3 and upload it. This should be an easy workaround for you.<br><br>
+If you need some more guidance with this, do let us know. We’re here to help you. <br><br>
+Micheal <br>
+Saul's Inc."
+        - subject: Unable to login
+          description: "I changed my login credentials and now I’m not able to login. Can you help me retrieve my account?<br><br>
+Thanks,<br>
+Sam Osborne"
+          replies:
+            - "Hi Sam,<br><br>
+I checked our logs and looks like you haven’t verified the changes.<br><br>
+Check your mailbox (the updated address), you’ll find one from us with the subject “Verify your email” with a link to verify the new email address. You can refer to our article on <b>changing account details</b> for further clarity. If you have any other doubts, feel free to reach out to us.<br><br>
+Richard Gere<br>
+Saul's Inc."
+            - "Hey, my bad. I missed the email. I verified my account, and I’m able to login in now. Thank you so much.<br><br>
+Sam Osborne"
+        - subject: Issue with storage space
+          description: "Hi,<br><br>
+On the Classic plan, I feel like the storage space provided is too less. Is it possible for us to pay some extra amount to buy more storage?<br><br>
+Thanks,<br>
+Rachel Zane"
+          replies:
+            - "Hi Rachel,<br><br>
+I’m sorry but we don’t have this option as of yet. It’s still in the pipeline. You’ll be sure to know once we roll this out. :) <br><br>
+Thanks,<br>
+Norman<br>
+Saul's Inc"
+        - subject: Cancelling our account
+          description: "Hello team, <br><br>
+We’d like to cancel our account. We’re moving on to another application. It would be great if you could have someone help us out with refunding our unused hours? <br><br>
+On a side note, you guys have been tremendous. Thank you for your support.<br><br>
+Thanks<br>
+Bob Tree"
+          replies:
+            - "Hi Bob,<br><br> We’ll have your account manager get in touch with you shortly. :)<br><br>
+However, it’s sad to know that you’re leaving us. :( <br><br>
+Do let us know if we can help in anyway. <br><br>
+Michael<br>
+Saul's Inc."
+      travel:
+        - subject: Need to cancel my tickets
+          description: "Good morning,<br><br>
+I’d like to cancel my upcoming trip to New York, I’ve something important to wrap up in Seattle. Can you help me with this? My e-ticket ID is 333-445-7645.<br><br>
+Thanks,<br>
+Mark Colbert"
+          replies:
+            - "Hi Mark, <br><br>
+Sure I can put in a request for a cancellation. Would you like us to rebook the same itinerary for a different date? Or would you like a refund for the trip?<br><br>
+Rebecca<br>
+Saul's support"
+            - "Hey Rebecca, <br><br>
+I'll just go with refund this time! <br><br>
+Thanks,<br>
+Mark Colbert."
+        - subject: Baggage restrictions
+          description: "Hi,<br><br>
+Can you tell me the baggage restrictions on international flights for the economy class to India? I’m flying to Mumbai from Tennessee. <br><br>
+Sam Kart"
+          replies:
+            - "Hi Sam,<br><br>
+On the economy class, you can carry one bag upto 23 kgs. For carry-on baggage, one bag upto 8 kgs is permitted. You can refer to our article on <b>baggage restrictions</b> for further clarity.<br><br>
+If you need more details, feel free to reach out to us. Bon voyage! :) <br><br><br>
+Richard Gere<br>
+Saul's support"
+            - "Thank you so much. <br><br>
+Sam Kart"
+        - subject: Change dates on my trip
+          description: "Hey,<br><br>
+I need to change the dates on my trip in May - turns out I have some other things to finish up. My itinerary number is 4456789 and its a trip from May 19-May 25. I’d like to move the return date to May 29. <br><br>
+This was a refundable ticket, so I’m assuming there are no additional charges.<br><br>
+Looking for a prompt response.<br><br>
+Lewis Clarke"
+          replies:
+            - "Hey Lewis,<br><br> Thank you for providing the details. You’d not be charged for changing the itinerary as you’ve opted for a refundable ticket. <br><br>
+We’ll have the dates changed for you and notify you once it’s done. :)<br><br>
+Clark, <br>
+Saul's support"
+        - subject: Caribbean Package deal questions
+          description: "Hi,<br><br>
+I was looking at the spring break Caribbean package deal on your website. I’ve got a few questions - <br><br>
+Do you accommodate vegan meals? Also at Labadee, we’d like to do the rainforest bungee jump instead of the mountain trek on Day 3. Can you guys let us know if we’d be refunded for this activity? We’re a group of ten adults.<br><br>
+Thanks,<br>
+Sarah James"
+          replies:
+            - "Hi Sarah,<br><br>
+Yes, we can accomodate vegan meals. Regarding Labadee though, we can't customize the tours for package deals. I'll have a chat with our vendor and see if we can do anything else. I'll keep you posted. :)<br><br>
+Thanks,<br>
+Rebecca<br>
+Saul's support"
+      fsm_base_tickets:
+        - subject: "Solar Panel Maintenance"
+          description: "The wall battery is not charging enough during the day and I am running out of power at night. Is there a problem with the battery or is it a problem with the solar panel?
+                       For context, I have the Sonne 420 (SM289918) which I bought back in October 2013. The Model number is 12009. Will this service be covered by warranty? I remember the sales rep saying there was a 10-year warranty on the panels. "
+          replies:
+            - "Hey Bob, <br><br>
+              I'm sorry to hear you've been having reliability issues with the power source after sundown. We're dispatching one of our field technicians to take a look at the installation on Monday. From what I see, it could be a problem with: <br>
+              1. The Battery <br>
+              2. The Solar Panel itself <br>
+              3. Connection between the two <br>
+              4. Drain due to a poor device connection somewhere in the circuit. <br>
+              Our field technician will diagnose and let you know what steps we take to solve this as soon as possible."
+          service_tasks:
+            - subject: "Battery Health Diagnosis"
+              description: "Customer is having issues with battery power at night. Check battery health levels as well as solar panel connectivity for issues. Run a solar panel efficiency test just in case. <br>
+                           Possible Battery issue. <br>
+                           Product Details: <br>
+                           Sonne 420 (SM289918) <br>
+                           Model #12009 <br>
+                           Date of Purchase: 12th October 2013 <br>
+                           Battery Warranty: Expired <br>
+                           Panel Warranty: Upto 11th October 2023 "
+
+        - subject: "WiFi disconnected"
+          description: "My wifi has been down for two days now and there has been no response from your team on Twitter. Fix this soon or I'll move to a different ISP. I'm paying 120 dollars a month to be a priority service customer with Fiber connection as well. The router is a Black one from a couple of years back when I originally got the connection and only one of the lights on the router blinks now."
+          replies:
+            - "Hey Emily, <br><br>
+               We apologize for not having responded sooner. One of our senior field techs will be meeting you tomorrow at 3 in the evening to get you back online as soon as possible. <br><br>
+               Thank you for your patience. "
+          service_tasks:
+            - subject: "Router issues"
+              description: "Customer has had no internet connectivity for two days. Contact test shows other apartments in her building are online and functioning but her router is unreachable. Could be a cable problem between the distribution box and her router. <br><br>
+                           Product Details:<br>
+                           Router: Black 9, model #78221<br>
+                           Connection: Fiber - 200m cable<br>
+                           Waiting for 2 days. High priority issue. "
+
+        - subject: "Problem with the washing machine"
+          description: "A few minutes into the washing cycle, my washing machine makes a loud whirring noise and comes to a grinding halt. This has happened a few times. Oddly enough, I've noticed this happening in the evenings. The whirring noise rarely occurs in the morning. Can there be a reason for it? Please send someone to check as soon as you can."
+          replies:
+            - "Hi Johnny, <br><br>
+              Sounds like a drum issue to me, I would have to send a technician to your house to check it out. Could you pls confirm if ​this is your address: 7, Clinton St, Brooklyn Heights <br><br>
+              Our records show that you live in a block of apartments. Can you tell me which floor your apartment is on? We'd like to know if a water pressure test needs to be conducted as well and if that's the case, I'll have to inform the field technician to bring the right equipment to your place to solve that issue. <br><br>
+              Also, please let us know a few timeslots tomorrow when our technician can come visit. <br><br>        ​
+              Thanks."
+          service_tasks:
+            - subject: "Washing machine maintenance / drum replacement"
+              description: "A few minutes into the washing cycle, the washing machine makes a loud whirring noise and comes to a grinding halt. This has happened a few times.<br><br>
+                           Possible drum issue.<br><br>
+                           Product details:<br>
+                           Mogra 360 (MG101121)<br>
+                           Model #23412<br>
+                           Warranty upto June 2020"
