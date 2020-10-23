@@ -3,6 +3,8 @@ require Rails.root.join('spec', 'support', 'user_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 
 class Fdadmin::AccountsControllerTest < ActionController::TestCase
+  include Fdadmin::FeatureMethods
+
   def setup
     super
     before_all
@@ -226,7 +228,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_add_selectable_feature
     stub_validations_for_api_call
-    selectable_feature = Fdadmin::FeatureMethods::SELECTABLE_FEATURES_LIST.first
+    selectable_feature = SELECTABLE_FEATURES_LIST.first
     id = @account.id
     @account.revoke_feature selectable_feature
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
@@ -242,7 +244,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_add_invalid_selectable_feature
     stub_validations_for_api_call
-    setting = Fdadmin::FeatureMethods::INTERNAL_SETTINGS.first
+    setting = INTERNAL_SETTINGS.first
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
                feature_name: setting }
@@ -255,7 +257,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_reenabled_selectable_feature
     stub_validations_for_api_call
-    selectable_feature = Fdadmin::FeatureMethods::SELECTABLE_FEATURES_LIST.first
+    selectable_feature = SELECTABLE_FEATURES_LIST.first
     @account.add_feature selectable_feature
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
@@ -270,7 +272,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_remove_selectable_feature
     stub_validations_for_api_call
-    selectable_feature = Fdadmin::FeatureMethods::SELECTABLE_FEATURES_LIST.first
+    selectable_feature = SELECTABLE_FEATURES_LIST.first
     id = @account.id
     @account.add_feature selectable_feature
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
@@ -285,7 +287,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_remove_invalid_selectable_feature
     stub_validations_for_api_call
-    setting = Fdadmin::FeatureMethods::INTERNAL_SETTINGS.first
+    setting = INTERNAL_SETTINGS.first
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
                feature_name: setting }
@@ -298,7 +300,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_redisabled_selectable_feature
     stub_validations_for_api_call
-    selectable_feature = Fdadmin::FeatureMethods::SELECTABLE_FEATURES_LIST.first
+    selectable_feature = SELECTABLE_FEATURES_LIST.first
     id = @account.id
     @account.revoke_feature selectable_feature if @account.has_feature? selectable_feature
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
@@ -314,7 +316,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_add_launch_party
     stub_validations_for_api_call
-    lp = (Account::LP_FEATURES - Fdadmin::FeatureMethods::BLACKLISTED_LP_FEATURES).first
+    lp = (Account::LP_FEATURES - BLACKLISTED_LP_FEATURES).first
     id = @account.id
     @account.rollback lp
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
@@ -330,7 +332,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_add_invalid_launch_party
     stub_validations_for_api_call
-    lp = Fdadmin::FeatureMethods::BLACKLISTED_LP_FEATURES.first
+    lp = BLACKLISTED_LP_FEATURES.first
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
                feature_name: lp }
@@ -344,7 +346,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_reenable_launch_party
     stub_validations_for_api_call
-    lp = (Account::LP_FEATURES - Fdadmin::FeatureMethods::BLACKLISTED_LP_FEATURES).first
+    lp = (Account::LP_FEATURES - BLACKLISTED_LP_FEATURES).first
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
                feature_name: lp }
@@ -359,7 +361,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_remove_launch_party
     stub_validations_for_api_call
-    lp = (Account::LP_FEATURES - Fdadmin::FeatureMethods::BLACKLISTED_LP_FEATURES).first
+    lp = (Account::LP_FEATURES - BLACKLISTED_LP_FEATURES).first
     id = @account.id
     @account.launch lp
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
@@ -374,7 +376,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_remove_invalid_launch_party
     stub_validations_for_api_call
-    lp = Fdadmin::FeatureMethods::BLACKLISTED_LP_FEATURES.first
+    lp = BLACKLISTED_LP_FEATURES.first
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
                feature_name: lp }
@@ -387,7 +389,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_redisable_launch_party
     stub_validations_for_api_call
-    lp = (Account::LP_FEATURES - Fdadmin::FeatureMethods::BLACKLISTED_LP_FEATURES).first
+    lp = (Account::LP_FEATURES - BLACKLISTED_LP_FEATURES).first
     id = @account.id
     @account.rollback lp if @account.launched? lp
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
@@ -403,8 +405,8 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_add_setting
     stub_validations_for_api_call
-    internal_setting = Fdadmin::FeatureMethods::INTERNAL_SETTINGS.first
-    feature_dependency = Fdadmin::FeatureMethods::SETTINGS_FEATURES[internal_setting]['feature_dependency']
+    internal_setting = (INTERNAL_SETTINGS - BLACKLISTED_SETTINGS).first
+    feature_dependency = SETTINGS_FEATURES[internal_setting]['feature_dependency']
     @account.add_feature feature_dependency
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
@@ -421,7 +423,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_add_invalid_setting
     stub_validations_for_api_call
-    lp = Fdadmin::FeatureMethods::BLACKLISTED_LP_FEATURES.first
+    lp = BLACKLISTED_LP_FEATURES.first
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
                feature_name: lp }
@@ -434,8 +436,8 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_reenable_setting
     stub_validations_for_api_call
-    internal_setting = Fdadmin::FeatureMethods::INTERNAL_SETTINGS.first
-    feature_dependency = Fdadmin::FeatureMethods::SETTINGS_FEATURES[internal_setting]['feature_dependency']
+    internal_setting = (INTERNAL_SETTINGS - BLACKLISTED_SETTINGS).first
+    feature_dependency = SETTINGS_FEATURES[internal_setting]['feature_dependency']
     @account.add_feature feature_dependency
     @account.enable_setting internal_setting
     id = @account.id
@@ -452,8 +454,8 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_remove_setting
     stub_validations_for_api_call
-    internal_setting = Fdadmin::FeatureMethods::INTERNAL_SETTINGS.first
-    feature_dependency = Fdadmin::FeatureMethods::SETTINGS_FEATURES[internal_setting]['feature_dependency']
+    internal_setting = (INTERNAL_SETTINGS - BLACKLISTED_SETTINGS).first
+    feature_dependency = SETTINGS_FEATURES[internal_setting]['feature_dependency']
     @account.add_feature feature_dependency
     @account.enable_setting internal_setting
     id = @account.id
@@ -470,7 +472,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_remove_invalid_setting
     stub_validations_for_api_call
-    lp = Fdadmin::FeatureMethods::BLACKLISTED_LP_FEATURES.first
+    lp = BLACKLISTED_LP_FEATURES.first
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,
                feature_name: lp }
@@ -483,8 +485,8 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
   def test_redisable_setting
     stub_validations_for_api_call
-    internal_setting = Fdadmin::FeatureMethods::INTERNAL_SETTINGS.first
-    feature_dependency = Fdadmin::FeatureMethods::SETTINGS_FEATURES[internal_setting]['feature_dependency']
+    internal_setting = (INTERNAL_SETTINGS - BLACKLISTED_SETTINGS).first
+    feature_dependency = SETTINGS_FEATURES[internal_setting]['feature_dependency']
     @account.add_feature feature_dependency
     id = @account.id
     params = { version: 'v1', account_id: id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil,

@@ -429,7 +429,6 @@
 :selectable_features:
   :redis_display_id: true
   :gamification_enable: false
-  :parent_child_infra: false
   :parent_child_tickets: false
   :link_tickets: false
   :shared_ownership: false

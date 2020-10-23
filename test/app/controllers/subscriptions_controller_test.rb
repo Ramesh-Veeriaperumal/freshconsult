@@ -18,6 +18,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:omni_accounts_present_in_org?).returns(false)
     Subscription.any_instance.stubs(:reseller_paid_account?).returns(false)
     super
+    @account.add_feature :basic_settings_feature
   end
 
   def teardown
@@ -875,7 +876,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.reload
     assert_equal @account.subscription.subscription_plan_id, garden_plan_id
     refute @account.field_service_management_enabled?
-    refute @account.has_feature?(:parent_child_infra)
+    refute @account.parent_child_infra_enabled?
   ensure
     SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
     Subscription.any_instance.unstub(:add_to_crm)
@@ -1056,7 +1057,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.reload
     assert_equal @account.subscription.subscription_plan_id, blossom_plan_id
     refute @account.field_service_management_enabled?
-    refute @account.has_feature?(:parent_child_infra)
+    refute @account.parent_child_infra_enabled?
   ensure
     SAAS::SubscriptionEventActions.any_instance.unstub(:handle_collab_feature)
     Subscription.any_instance.unstub(:add_to_crm)
@@ -1074,7 +1075,7 @@ class SubscriptionsControllerTest < ActionController::TestCase
     @account.reload
     assert_equal @account.subscription.subscription_plan_id, blossom_plan_id
     refute @account.has_feature?(:dynamic_sections)
-    refute @account.has_feature?(:parent_child_infra)
+    refute @account.parent_child_infra_enabled?
   ensure
     unstub_chargebee_requests
   end

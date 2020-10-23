@@ -14,6 +14,8 @@ module Fdadmin::FeatureMethods
 
     BLACKLISTED_LP_FEATURES = [:freshid, :freshid_org_v2, :fluffy, :fluffy_min_level].freeze
 
+    BLACKLISTED_SETTINGS = [:parent_child_infra].freeze
+
     BITMAP_FEATURES_TO_IGNORE = [:support_bot].freeze
 
     LAUNCH_PARTY_ACTIONS = ['add_launch_party', 'remove_launch_party'].freeze
@@ -29,7 +31,7 @@ module Fdadmin::FeatureMethods
       action = params['action']
       if LAUNCH_PARTY_ACTIONS.include?(action) && enableable_lp?(feature_name)
         feature_types << 'launchparty'
-      elsif SETTINGS_ACTIONS.include?(action) && valid_setting?(feature_name)
+      elsif SETTINGS_ACTIONS.include?(action) && enableable_setting?(feature_name)
         feature_types << 'setting'
       elsif SELECTABLE_FEATURES_ACTION.include?(action) && SELECTABLE_FEATURES_LIST.include?(feature_name)
         feature_types << 'bitmap'
@@ -118,6 +120,10 @@ module Fdadmin::FeatureMethods
 
     def enableable_lp?(feature_name)
       (Account::LAUNCHPARTY_FEATURES.keys + Account::LP_FEATURES).uniq.include?(feature_name) && !BLACKLISTED_LP_FEATURES.include?(feature_name)
+    end
+
+    def enableable_setting?(feature_name)
+      !BLACKLISTED_SETTINGS.include?(feature_name) && valid_setting?(feature_name)
     end
 
     def valid_setting?(feature_name)

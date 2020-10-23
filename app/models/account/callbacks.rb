@@ -183,7 +183,7 @@ class Account < ActiveRecord::Base
   end
 
   def toggle_parent_child_infra
-    parent_child_infra_features_present? ? self.set_feature(:parent_child_infra) : self.reset_feature(:parent_child_infra)
+    parent_child_infra_features_present? ? self.set_setting(:parent_child_infra) : self.reset_setting(:parent_child_infra)
   end
 
   def parent_child_infra_features_present?
