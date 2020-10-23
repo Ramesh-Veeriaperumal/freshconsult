@@ -12,6 +12,12 @@ module SolutionsPlatformsTestHelper
     article
   end
 
+  def get_article_without_draft_with_platform_mapping(platform_values = {})
+    article = get_article_without_draft
+    article.parent.create_solution_platform_mapping(chat_platform_params(platform_values, true))
+    article
+  end
+
   def get_article_without_platform_mapping
     article = get_article_with_platform_enabled_in_folder
     article.parent.solution_platform_mapping.destroy if article.parent.solution_platform_mapping.present?
