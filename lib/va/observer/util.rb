@@ -144,11 +144,17 @@ module Va::Observer::Util
       Account.current.observer_condition_fields_from_cache.each_with_object({}) do |field, hash|
         hash[field] = case field
                       when 'last_interaction'
-                        last_interaction_note.id
+                        last_interaction_note_id
                       else
-                        safe_send(field)
+                        evaluate_on.safe_send(field)
                       end
       end
+    end
+
+    def last_interaction_note_id
+      # When a note is added, observer will be enqueued via Ticket::UpdateStatesWorker.
+      # There can be a delay in worker by which time, another note could be added. So, using self instead of querying last_interaction_note
+      self.class == Helpdesk::Note ? id : evaluate_on.last_interaction_note.id
     end
 
     def service_task?
