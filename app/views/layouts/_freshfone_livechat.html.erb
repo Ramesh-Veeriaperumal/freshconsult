@@ -1,0 +1,7 @@
+<div class="chats-container">
+  <%= render :partial => "layouts/chat" %>
+</div>
+
+<% if current_user && current_user.agent? && (chat_activated? && !(is_assumed_user?)) %>
+  <%= stylesheet_link_tag_with_rtl :'cdn/freshfone_livechat' %>
+<% end %>
