@@ -345,4 +345,20 @@ class UserTest < ActiveSupport::TestCase
     Account.any_instance.unstub(:skill_based_round_robin_enabled?)
     User.any_instance.unstub(:skill_ids=)
   end
+
+  def test_user_esv2_json_with_sanitized_phone_fields
+    sample_user = add_new_user(Account.current)
+    sample_phone =  '(044) 1234  567'
+    sample_mobile = '+91 (1234) 567 890'
+    sample_user.phone = sample_phone
+    sample_user.mobile = sample_mobile
+    sample_user.save
+    payload = JSON.parse(sample_user.to_esv2_json)
+    assert_includes payload, 'sanitized_phone'
+    assert_includes payload, 'sanitized_mobile'
+    assert_equal payload['sanitized_phone'], '0441234567'
+    assert_equal payload['sanitized_mobile'], '911234567890'
+  ensure
+    sample_user.destroy
+  end
 end

@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
                       :job_title, :phone, :mobile, :twitter_id, 
                       :time_zone, :deleted, :fb_profile_id, :language, 
                       :blocked, :address, :helpdesk_agent, :unique_external_id ], 
-              methods: [ :user_description, :company_names, :emails, :company_ids, :tag_ids, :parent_id ]
+              methods: [:user_description, :company_names, :emails, :company_ids, :tag_ids, :parent_id, :sanitized_mobile, :sanitized_phone]
             }, true).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
   end
   
@@ -57,7 +57,15 @@ class User < ActiveRecord::Base
   def tag_ids
     tags.map(&:id)
   end
-  
+
+  def sanitized_mobile
+    mobile&.gsub(/[^\d]/, '')
+  end
+
+  def sanitized_phone
+    phone&.gsub(/[^\d]/, '')
+  end
+
   # Tag use callbacks to ES
   def update_user_tags(obj)
     self.tags_updated = true
