@@ -1650,7 +1650,7 @@ module Ember
       end
 
       def test_bulk_update_close_with_secure_text_field
-        Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+        Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
         ::Tickets::VaultDataCleanupWorker.jobs.clear
         ::Tickets::BulkTicketActions.jobs.clear
         name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
@@ -1672,7 +1672,7 @@ module Ember
         Account.reset_current_account
         ::Tickets::BulkTicketActions.jobs.clear
         ::Tickets::VaultDataCleanupWorker.jobs.clear
-        Account.any_instance.unstub(:pci_compliance_field_enabled?)
+        Account.any_instance.unstub(:secure_fields_enabled?)
       end
 
       def test_bulk_execute_scenario_with_read_scope

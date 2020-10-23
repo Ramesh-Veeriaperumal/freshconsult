@@ -44,7 +44,7 @@ class TicketMerge
         close_source_ticket(source_ticket)
         update_header_info(source_ticket.header_info) if source_ticket.header_info
       end
-      Tickets::VaultDataCleanupWorker.perform_async(object_ids: source_tickets.map(&:id), action: 'close') if Account.current.pci_compliance_field_enabled?
+      Tickets::VaultDataCleanupWorker.perform_async(object_ids: source_tickets.map(&:id), action: 'close') if Account.current.secure_fields_enabled?
     end
 
     def close_source_ticket(source_ticket)

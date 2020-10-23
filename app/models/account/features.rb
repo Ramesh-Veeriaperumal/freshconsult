@@ -87,10 +87,10 @@ class Account < ActiveRecord::Base
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,
     :article_versioning, :article_export, :article_approval_workflow, :next_response_sla, :advanced_automations,
     :fb_ad_posts, :suggested_articles_count, :unlimited_multi_product, :freddy_self_service, :freddy_ultimate,
-    :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :pci_compliance_field, :kb_increased_file_limit,
+    :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
-    :whatsapp_channel, :basic_settings_feature, :ticket_filter_increased_companies_limit, :csat_email_scan_compatibility
+    :whatsapp_channel, :basic_settings_feature, :ticket_filter_increased_companies_limit, :csat_email_scan_compatibility, :secure_fields_toggle, :forums, :ticket_summary_feature
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 

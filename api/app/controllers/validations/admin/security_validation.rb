@@ -5,7 +5,7 @@ module Admin
     include Admin::SecurityConstants
 
     attr_accessor :notification_emails, :sso, :whitelisted_ip, :contact_password_policy, :agent_password_policy,
-                  :ip_ranges, :ssl, :allow_iframe_embedding, :secure_attachments_enabled
+                  :ip_ranges, :allow_iframe_embedding, :secure_attachments_enabled, :secure_fields
     validates :notification_emails, data_type: { rules: Array, not_empty: true }, array: {
       data_type: { rules: String },
       custom_format: {
@@ -34,8 +34,12 @@ module Admin
         max_value: WHITELISTED_IP_LIMIT
       }
     }
+
     validates :sso, data_type: { rules: Hash }, hash: SSO_HASH
+
     validate :check_sso_setting_keys, if: -> { sso.present? && errors[:sso].blank? }
+
+    validates :secure_fields, data_type: { rules: 'Boolean' }
 
     def check_sso_setting_keys
       errors[:sso] << :more_than_one_sso_settings_available if (SSO_TYPES.map(&:to_sym) - sso.keys).empty?

@@ -3012,7 +3012,7 @@ module Ember
     end
 
     def test_reply_with_secure_field_and_ticket_params
-      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
       ::Tickets::SendAndSetWorker.clear
       add_privilege(User.current, :view_secure_field)
       add_privilege(User.current, :edit_secure_field)
@@ -3046,11 +3046,11 @@ module Ember
       Account.current.ticket_fields.find_by_name('custom_card_no_test_1').destroy
       remove_privilege(User.current, :view_secure_field)
       remove_privilege(User.current, :edit_secure_field)
-      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+      Account.any_instance.unstub(:secure_fields_enabled?)
     end
 
     def test_reply_with_ticket_params_and_secure_field_without_prefix
-      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
       ::Tickets::SendAndSetWorker.clear
       add_privilege(User.current, :view_secure_field)
       add_privilege(User.current, :edit_secure_field)
@@ -3070,12 +3070,12 @@ module Ember
       Account.current.ticket_fields.find_by_name('custom_card_no_test_1').destroy
       remove_privilege(User.current, :view_secure_field)
       remove_privilege(User.current, :edit_secure_field)
-      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+      Account.any_instance.unstub(:secure_fields_enabled?)
     end
 
     def test_reply_with_ticket_params_and_secure_field_without_privilege
       ::Tickets::SendAndSetWorker.clear
-      Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+      Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
       create_custom_field_dn('custom_card_no_test', 'secure_text')
       ticket = create_ticket(requester_id: User.current.id)
       uuid = SecureRandom.hex
@@ -3090,7 +3090,7 @@ module Ember
       ticket.destroy
       request.unstub(:uuid)
       Account.current.ticket_fields.find_by_name('custom_card_no_test_1').destroy
-      Account.any_instance.unstub(:pci_compliance_field_enabled?)
+      Account.any_instance.unstub(:secure_fields_enabled?)
     end
 
     def test_update_with_public_note_with_read_scope

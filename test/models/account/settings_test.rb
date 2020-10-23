@@ -367,6 +367,26 @@ class Account::SettingsTest < ActiveSupport::TestCase
     is_required_setting_enabled ? @account.add_feature(required_setting) : @account.revoke_feature(required_setting)
   end
 
+  def test_set_setting_without_dependent_feature_with_skip_check
+    # setup
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
+    is_setting_enabled = @account.has_feature?(setting)
+    @account.revoke_feature(setting)
+    assert_equal false, @account.has_feature?(setting)
+    is_required_feature_enabled = @account.has_feature?(required_feature)
+    @account.revoke_feature(required_feature)
+    assert_equal false, @account.has_feature?(required_feature)
+
+    @account.set_setting(setting, true)
+    assert @account.has_feature?(setting)
+    @account.reload
+    refute @account.has_feature?(setting)
+  ensure
+    is_setting_enabled ? @account.add_feature(setting) : @account.revoke_feature(setting)
+    is_required_feature_enabled ? @account.add_feature(required_feature) : @account.revoke_feature(required_feature)
+  end
+
   def test_reset_setting_with_dependent_feature
     # setup
     setting = SIMPLE_SETTINGS.sample
@@ -459,6 +479,26 @@ class Account::SettingsTest < ActiveSupport::TestCase
     is_setting_enabled ? @account.add_feature(setting) : @account.revoke_feature(setting)
     is_required_feature_enabled ? @account.add_feature(required_feature) : @account.revoke_feature(required_feature)
     is_required_setting_enabled ? @account.add_feature(required_setting) : @account.revoke_feature(required_setting)
+  end
+
+  def test_reset_setting_without_dependent_feature_with_skip_check
+    # setup
+    setting = AccountSettings::SettingsConfig.keys.sample.to_sym
+    required_feature = AccountSettings::SettingsConfig[setting][:feature_dependency]
+    is_setting_enabled = @account.has_feature?(setting)
+    @account.add_feature(setting)
+    assert @account.has_feature?(setting)
+    is_required_feature_enabled = @account.has_feature?(required_feature)
+    @account.revoke_feature(required_feature)
+    assert_equal false, @account.has_feature?(required_feature)
+
+    @account.reset_setting(setting, true)
+    refute @account.has_feature?(setting)
+    @account.reload
+    assert @account.has_feature?(setting)
+  ensure
+    is_setting_enabled ? @account.add_feature(setting) : @account.revoke_feature(setting)
+    is_required_feature_enabled ? @account.add_feature(required_feature) : @account.revoke_feature(required_feature)
   end
 
   def test_setting_enabled_method

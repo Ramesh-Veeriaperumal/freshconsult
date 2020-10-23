@@ -576,7 +576,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
 
   def test_create_secure_text_field
     params = ticket_field_common_params(type: 'secure_text')
-    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
     launch_ticket_field_revamp do
       post :create, construct_params({}, params)
       assert_response 201
@@ -584,7 +584,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       match_json(custom_field_response(ticket_field))
     end
   ensure
-    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    Account.any_instance.unstub(:secure_fields_enabled?)
   end
 
   def test_create_secure_text_field_without_feature
@@ -597,7 +597,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
 
   def test_create_secure_text_field_limit_exceeded
     field_type = :secure_text
-    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
     limit = Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING[field_type][2]
     launch_ticket_field_revamp do
       limit.times do |i|
@@ -609,11 +609,11 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       assert_match('You have exceeded the maximum limit for this type of field.', response.body)
     end
   ensure
-    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    Account.any_instance.unstub(:secure_fields_enabled?)
   end
 
   def test_ticket_field_index_with_secure_text_field
-    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
     launch_ticket_field_revamp do
       name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
       secure_text_field = create_custom_field_dn(name, 'secure_text')
@@ -625,11 +625,11 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       assert_equal secure_text_field_in_index_call['type'], "secure_text"
     end
   ensure
-    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    Account.any_instance.unstub(:secure_fields_enabled?)
   end
 
   def test_fetch_non_secure_ticket_fields
-    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
     launch_ticket_field_revamp do
       name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
       secure_text_field = create_custom_field_dn(name, 'secure_text')
@@ -638,7 +638,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
       assert_equal false, non_secure_fields.include?(secure_text_field)
     end
   ensure
-    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    Account.any_instance.unstub(:secure_fields_enabled?)
   end
 
   def test_updating_type_field_in_sprout_plan
@@ -730,7 +730,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
   end
 
   def test_deletion_of_secure_text_field
-    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
     ::Tickets::VaultDataCleanupWorker.jobs.clear
     launch_ticket_field_revamp do
       name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
@@ -744,7 +744,7 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     end
   ensure
     ::Tickets::VaultDataCleanupWorker.jobs.clear
-    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    Account.any_instance.unstub(:secure_fields_enabled?)
   end
 
   def test_updating_source_choice

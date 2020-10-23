@@ -21,4 +21,5 @@ module PciConstants
   ACCOUNT_INFO_URL = SecureFieldConfig['domain'] + 'account'.freeze
   ACCOUNT_UPDATE = 'update'.freeze
   ACCOUNT_ROLLBACK = 'delete'.freeze
+  ALL_FIELDS = ['*'].freeze
 end

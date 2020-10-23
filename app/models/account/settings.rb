@@ -16,12 +16,12 @@ class Account < ActiveRecord::Base
   # Need to modify methods when we move all LPs to Bitmaps and validate settings throw error for invalid settings
   def admin_setting_for_account?(setting)
     settings_hash = AccountSettings::SettingsConfig[setting]
-    settings_hash && !settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
+    settings_hash && !settings_hash[:internal] && safe_send("#{settings_hash[:feature_dependency]}_enabled?")
   end
 
   def internal_setting_for_account?(setting)
     settings_hash = AccountSettings::SettingsConfig[setting]
-    settings_hash && settings_hash[:internal] && has_feature?(settings_hash[:feature_dependency])
+    settings_hash && settings_hash[:internal] && safe_send("#{settings_hash[:feature_dependency]}_enabled?")
   end
 
   def enabled_admin_settings
@@ -47,9 +47,9 @@ class Account < ActiveRecord::Base
   end
 
   # Can remove the valid_setting check once, all settings are migrated from LP to bitmap
-  def set_setting(setting)
+  def set_setting(setting, skip_dependency_check = false)
     if valid_setting(setting)
-      dependencies_enabled?(setting) ? set_feature(setting) : raise_invalid_setting_error(setting)
+      skip_dependency_check || dependencies_enabled?(setting) ? set_feature(setting) : raise_invalid_setting_error(setting)
     end
   end
 
@@ -64,15 +64,15 @@ class Account < ActiveRecord::Base
   end
 
   # Can remove the valid_setting check once, all settings are migrated from LP to bitmap
-  def reset_setting(setting)
+  def reset_setting(setting, skip_dependency_check = false)
     if valid_setting(setting)
-      dependencies_enabled?(setting) ? reset_feature(setting) : raise_invalid_setting_error(setting)
+      skip_dependency_check || dependencies_enabled?(setting) ? reset_feature(setting) : raise_invalid_setting_error(setting)
     end
   end
 
   def dependencies_enabled?(setting)
     settings_hash = AccountSettings::SettingsConfig[setting]
-    if settings_hash.present? && has_feature?(settings_hash[:feature_dependency])
+    if settings_hash.present? && safe_send("#{settings_hash[:feature_dependency]}_enabled?")
       return settings_hash[:settings_dependency].blank? || self.safe_send("#{settings_hash[:settings_dependency]}_enabled?")
     else
       return false

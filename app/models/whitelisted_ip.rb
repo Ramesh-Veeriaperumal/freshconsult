@@ -8,7 +8,7 @@ class WhitelistedIp < ActiveRecord::Base
   serialize :ip_ranges, Array
 
 	after_commit :clear_whitelisted_ip_cache
-  after_commit :send_data_to_vault_service, if: -> { Account.current.pci_compliance_field_enabled? }
+  after_commit :send_data_to_vault_service, if: -> { Account.current.secure_fields_enabled? }
 
 	attr_accessible :applies_only_to_agents, :ip_ranges, :enabled
 
@@ -19,6 +19,10 @@ class WhitelistedIp < ActiveRecord::Base
 		@current_ip = IPAddress current_ip
 		@current_ip_version = @current_ip.ipv4? ? "ipv4?" : "ipv6?"
 	end
+
+  def configured?
+    enabled? && ip_ranges.present?
+  end
 
 	private
 

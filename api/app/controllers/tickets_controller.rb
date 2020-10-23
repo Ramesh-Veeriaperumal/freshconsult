@@ -134,7 +134,7 @@ class TicketsController < ApiApplicationController
 
     def secure_field_accessible?
       @secure_field_methods = JWT::SecureFieldMethods.new
-      render_request_error :bad_request, 400 unless current_account.pci_compliance_field_enabled? && @secure_field_methods.secure_fields_from_cache.present?
+      render_request_error :bad_request, 400 unless current_account.secure_fields_enabled? && @secure_field_methods.secure_fields_from_cache.present?
     end
 
     def feature_name

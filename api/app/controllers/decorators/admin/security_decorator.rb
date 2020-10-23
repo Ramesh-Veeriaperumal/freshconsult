@@ -7,7 +7,9 @@ module Admin
     extend ActsAsApi::Base
     acts_as_api
 
-    delegate :whitelisted_ip, :help_widget_secret, :notification_emails, :contact_password_policy, :agent_password_policy, :sso_options, :shared_secret, :sso_enabled, :current_sso_type, :freshdesk_sso_enabled?, :allow_iframe_embedding, to: :record
+    delegate :whitelisted_ip, :help_widget_secret, :notification_emails, :contact_password_policy,
+             :agent_password_policy, :sso_options, :shared_secret, :sso_enabled, :current_sso_type,
+             :freshdesk_sso_enabled?, :allow_iframe_embedding, :secure_fields_enabled?, to: :record
 
     def to_hash
       if private_api?
@@ -25,6 +27,7 @@ module Admin
       u.add :agent_password_policy_hash, if: proc { |obj| obj.show_agent_password_policy? }, as: :agent_password_policy
       u.add :allow_iframe_embedding
       u.add :secure_attachments_enabled, if: proc { Account.current.security_new_settings_enabled? && Account.current.dependencies_enabled?(:secure_attachments) }
+      u.add :secure_fields_enabled?, if: proc { Account.current.secure_fields_toggle_enabled? }, as: :secure_fields
     end
 
     api_accessible :private_api, extend: :security_api do |u|
@@ -102,7 +105,7 @@ module Admin
     end
 
     def show_agent_password_policy?
-      !Account.current.freshid_integration_enabled? && Account.current.custom_password_policy_enabled? && Account.current.agent_password_policy.present?
+      !current_account.freshid_integration_enabled? && current_account.custom_password_policy_enabled? && current_account.agent_password_policy.present?
     end
   end
 end

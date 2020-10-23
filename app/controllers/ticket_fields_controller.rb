@@ -5,8 +5,8 @@ class TicketFieldsController < CustomFieldsController
 
   def index
     @hipaa_enabled = current_account.falcon_and_encrypted_fields_enabled?
-    @pci_enabled = current_account.pci_compliance_field_enabled?
-    @ticket_fields = @hipaa_enabled || @pci_enabled ? current_portal.ticket_fields_including_nested_fields : current_portal.ticket_fields_including_nested_fields(:non_encrypted_ticket_fields)
+    @secure_fields_enabled = current_account.secure_fields_enabled?
+    @ticket_fields = @hipaa_enabled || @secure_fields_enabled ? current_portal.ticket_fields_including_nested_fields : current_portal.ticket_fields_including_nested_fields(:non_encrypted_ticket_fields)
     @section_data = current_account.sections
     @fsm_fields = fsm_custom_field_to_reserve
     support_groups = current_account.groups_from_cache.select{ |group| group.group_type == GroupType.group_type_id(GroupConstants::SUPPORT_GROUP_NAME)}

@@ -226,10 +226,10 @@ module Admin::TicketFieldHelper
       (type.present? && type.is_a?(String) && type.to_sym == :secure_text)
     end
 
-    def pci_compliance_enabled?
-      unless current_account.pci_compliance_field_enabled?
-        errors[:pci_compliance_field] << :require_feature
-        error_options[:pci_compliance_field] = { feature: :pci_compliance_field, code: :access_denied }
+    def secure_fields_enabled?
+      unless current_account.secure_fields_enabled?
+        errors[:secure_fields] << :require_feature
+        error_options[:secure_fields] = { feature: :secure_fields, code: :access_denied }
       end
     end
 end

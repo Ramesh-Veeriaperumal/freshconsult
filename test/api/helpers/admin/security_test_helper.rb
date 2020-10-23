@@ -14,7 +14,9 @@ module Admin
       { sso: { type: 'simple', simple: { login_url: 'hai', logout_url: 'bye' } } },
       { sso: { type: 'simple', simple: { logout_url: 'bye' } } },
       { allow_iframe_embedding: true },
-      { secure_attachments_enabled: true }
+      { secure_attachments_enabled: true },
+      { secure_fields: true },
+      { secure_fields: false }
     ].freeze
     INVALID_SECURITY_SETTINGS = [
       { notification_emails: 1 }, # 0
@@ -56,12 +58,15 @@ module Admin
       { sso: { saml: { login_url: nil } } }, # 27
       { sso: { saml: { saml_cert_fingerprint: nil } } },
       { allow_iframe_embedding: 1 },
-      { allow_iframe_embedding: nil },
+      { allow_iframe_embedding: nil }, # 30
       { secure_attachments_enabled: 1 },
-      { secure_attachments_enabled: nil }
+      { secure_attachments_enabled: nil },
+      { secure_fields: 'true' }, # 33
+      { secure_fields: nil },
+      { secure_fields: 1 }
     ].freeze
 
-    def whitelisted_ip
+    def whitelisted_ip_attributes
       {
         'enabled' => true,
         'applies_only_to_agents' => true,
@@ -79,7 +84,7 @@ module Admin
       ['test@test.com', 'test2@test.com']
     end
 
-    def agent_password_policy
+    def agent_password_policy_attributes
       {
         'user_type' => 2,
         'policies' => ['minimum_characters', 'cannot_contain_user_name', 'password_expiry'],
@@ -106,6 +111,7 @@ module Admin
         settings[:contact_password_policy] = contact_password_policy_hash if Account.current.custom_password_policy_enabled?
         settings[:agent_password_policy] = agent_password_policy_hash if show_agent_password_policy?
         settings[:allow_iframe_embedding] = Account.current.allow_iframe_embedding
+        settings[:secure_fields] = Account.current.secure_fields_enabled? if Account.current.secure_fields_toggle_enabled?
       end
     end
 

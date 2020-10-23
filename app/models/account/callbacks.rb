@@ -78,6 +78,8 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.perform_custom_objects_operations }, on: :create, if: -> { symphony_enabled? && custom_objects_feature_toggled? }
   after_commit ->(obj) { obj.perform_custom_objects_operations }, on: :update, if: -> { symphony_enabled? && custom_objects_feature_toggled? }
 
+  after_commit :enqueue_vault_account_worker, if: :secure_fields_feature_toggled?
+
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: -> { freshid_integration_signup_allowed? && !domain_already_exists? }
   after_rollback :signup_completed, on: :create
 
@@ -756,5 +758,10 @@ class Account < ActiveRecord::Base
 
     def remove_nr_email_notifications
       email_notifications.where(notification_type: [ EmailNotification::NEXT_RESPONSE_SLA_REMINDER, EmailNotification::NEXT_RESPONSE_SLA_VIOLATION ]).destroy_all
+    end
+
+    def enqueue_vault_account_worker
+      action = secure_fields_enabled? ? PciConstants::ACCOUNT_UPDATE : PciConstants::ACCOUNT_ROLLBACK
+      Vault::AccountWorker.perform_async(action: action)
     end
 end

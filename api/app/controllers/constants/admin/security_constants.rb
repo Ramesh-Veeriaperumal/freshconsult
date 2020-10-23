@@ -6,44 +6,56 @@ module Admin::SecurityConstants
   SSO_TYPES = ['simple', 'saml'].freeze
   VALIDATION_CLASS = 'Admin::SecurityValidation'
   DELEGATOR_CLASS = 'Admin::SecurityDelegator'
-  UPDATE_SECURITY_FIELDS = ['whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy', 'allow_iframe_embedding', 'sso', 'secure_attachments_enabled'].freeze
+  UPDATE_SECURITY_FIELDS = [
+    'whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy',
+    'allow_iframe_embedding', 'sso', 'secure_attachments_enabled', 'secure_fields'
+  ].freeze
   WHITELISTED_IP_NOT_CONFIGURED = {
     enabled: false
   }.freeze
   SSO_COEXIST_PERMITTED_PARAMS = [:enabled].freeze
-  WHITELISTED_SECURITY_FIELDS = [
+  ALLOWED_SECURITY_FIELDS = [
     :notification_emails,
+    {
+      whitelisted_ip: [
+        :enabled,
+        :applies_only_to_agents,
+        ip_ranges: [:start_ip, :end_ip].freeze
+      ].freeze
+    },
+    {
+      agent_password_policy: [
+        :minimum_characters,
+        :cannot_be_same_as_past_passwords,
+        :have_mixed_case,
+        :cannot_contain_user_name,
+        :have_special_character,
+        :atleast_an_alphabet_and_number,
+        :password_expiry
+      ].freeze
+    },
+    {
+      contact_password_policy: [
+        :minimum_characters,
+        :cannot_be_same_as_past_passwords,
+        :have_mixed_case,
+        :cannot_contain_user_name,
+        :have_special_character,
+        :atleast_an_alphabet_and_number,
+        :password_expiry
+      ].freeze
+    },
     :allow_iframe_embedding,
+    {
+      sso: [
+        :enabled,
+        :type,
+        simple: [:login_url, :logout_url].freeze,
+        saml: [:login_url, :logout_url, :saml_cert_fingerprint].freeze
+      ].freeze
+    },
     :secure_attachments_enabled,
-    whitelisted_ip: [
-      :enabled,
-      :applies_only_to_agents,
-      ip_ranges: [:start_ip, :end_ip].freeze
-    ].freeze,
-    agent_password_policy: [
-      :minimum_characters,
-      :cannot_be_same_as_past_passwords,
-      :have_mixed_case,
-      :cannot_contain_user_name,
-      :have_special_character,
-      :atleast_an_alphabet_and_number,
-      :password_expiry
-    ].freeze,
-    contact_password_policy: [
-      :minimum_characters,
-      :cannot_be_same_as_past_passwords,
-      :have_mixed_case,
-      :cannot_contain_user_name,
-      :have_special_character,
-      :atleast_an_alphabet_and_number,
-      :password_expiry
-    ].freeze,
-    sso: [
-      :enabled,
-      :type,
-      simple: [:login_url, :logout_url].freeze,
-      saml: [:login_url, :logout_url, :saml_cert_fingerprint].freeze
-    ].freeze
+    :secure_fields
   ].freeze
 
   SECURITY_NEW_SETTINGS = [:secure_attachments_enabled].freeze
@@ -69,6 +81,9 @@ module Admin::SecurityConstants
     agent_password_policy: {
       enabled: ['custom_password_policy'].freeze,
       disabled: ['freshid', 'freshid_org_v2'].freeze
+    },
+    secure_fields: {
+      enabled: ['secure_fields_toggle', 'ticket_field_revamp'].freeze
     }
   }.freeze
 
@@ -85,7 +100,7 @@ module Admin::SecurityConstants
       data_type: { rules: String, allow_nil: false }.freeze
     }.freeze,
     logout_url: {
-      data_type: { rules: String }.freeze
+      data_type: { rules: String, allow_nil: true }.freeze
     }.freeze
   }.freeze
 
@@ -94,7 +109,7 @@ module Admin::SecurityConstants
       data_type: { rules: String, allow_nil: false }.freeze
     }.freeze,
     logout_url: {
-      data_type: { rules: String }.freeze
+      data_type: { rules: String, allow_nil: true }.freeze
     }.freeze,
     saml_cert_fingerprint: {
       data_type: { rules: String, allow_nil: false }.freeze
@@ -104,7 +119,7 @@ module Admin::SecurityConstants
   SSO_HASH = {
     enabled: { data_type: { rules: 'Boolean' } }.freeze,
     type: {
-      data_type: { rules: String }.freeze,
+      data_type: { rules: String, allow_nil: true }.freeze,
       custom_inclusion: { in: SSO_TYPES }.freeze
     }.freeze,
     simple: {
@@ -162,4 +177,6 @@ module Admin::SecurityConstants
     enabled: { data_type: { rules: 'Boolean' } }.freeze,
     applies_only_to_agents: { data_type: { rules: 'Boolean' } }.freeze
   }.freeze
+
+  SETTINGS_TO_IGNORE = ['secure_fields'].freeze
 end

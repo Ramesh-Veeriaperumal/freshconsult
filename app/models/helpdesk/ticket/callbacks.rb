@@ -1260,7 +1260,7 @@ private
   end
 
   def vault_data_cleanup_required?
-    Account.current.pci_compliance_field_enabled? && @model_changes.key?(:status) && status == CLOSED && !bulk_updation
+    Account.current.secure_fields_enabled? && @model_changes.key?(:status) && status == CLOSED && !bulk_updation
   end
 
   def cleanup_vault_data

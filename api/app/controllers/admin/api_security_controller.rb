@@ -34,7 +34,7 @@ module Admin
       end
 
       def validate_params
-        @item.security_new_settings_enabled? ? cname_params.permit(*WHITELISTED_SECURITY_FIELDS) : cname_params.permit(*(WHITELISTED_SECURITY_FIELDS - SECURITY_NEW_SETTINGS))
+        @item.security_new_settings_enabled? ? cname_params.permit(*ALLOWED_SECURITY_FIELDS) : cname_params.permit(*(ALLOWED_SECURITY_FIELDS - SECURITY_NEW_SETTINGS))
         security_validation = validation_klass.new(cname_params, @item, string_request_params?)
         render_custom_errors(security_validation, true) unless security_validation.valid?(action_name.to_sym)
       end
@@ -50,14 +50,14 @@ module Admin
       end
 
       def toggle_settings_from_params
-        setting_params = AccountSettings::SettingsConfig.keys & cname_params.keys
+        setting_params = (AccountSettings::SettingsConfig.keys & cname_params.keys) - SETTINGS_TO_IGNORE
         setting_params.each do |setting|
           cname_params[setting] ? @item.enable_setting(setting.to_sym) : @item.disable_setting(setting.to_sym)
         end
       end
 
       def validate_settings
-        setting_params = AccountSettings::SettingsConfig.keys & cname_params.keys
+        setting_params = (AccountSettings::SettingsConfig.keys & cname_params.keys) - SETTINGS_TO_IGNORE
         setting_params.each do |setting|
           return render_request_error(:require_feature, 403, feature: setting) unless @item.dependencies_enabled?(setting.to_sym)
         end

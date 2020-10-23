@@ -393,7 +393,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
       !(!default? && !current_account.custom_ticket_fields_enabled?) &&
       !(company_field? && !current_account.multiple_user_companies_enabled?) &&
       !(product_field? && current_account.products_from_cache.empty?) && (parent_id.nil?) &&
-      !(secure_field? && !current_account.pci_compliance_field_enabled?) && true
+      !(secure_field? && !current_account.secure_fields_enabled?) && true
   end
 
   def sort_by_position_excluding_section_field(ticket_field)
