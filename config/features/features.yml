@@ -427,6 +427,7 @@
       :kbase_spam_whitelist: 423
       :csat_email_scan_compatibility: 424
       :secure_fields_toggle: 425
+      :collaborators: 426
 :selectable_features:
   :redis_display_id: true
   :gamification_enable: false

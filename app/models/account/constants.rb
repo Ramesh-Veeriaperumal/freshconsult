@@ -212,7 +212,7 @@ class Account < ActiveRecord::Base
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
-    recalculate_daypass: false,
+    recalculate_daypass: false, light_agents: false, collaborator_privileges: false,
     attachment_redirect_expiry: false,
     requester_privilege: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
