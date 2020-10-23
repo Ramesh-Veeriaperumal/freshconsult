@@ -948,4 +948,19 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     @account.unstub(:omni_channel_routing_enabled?)
     @account.unstub(:omni_agent_availability_dashboard_enabled?)
   end
+
+  def test_occasional_agent_day_pass_used_count
+    freshdesk_user = add_test_agent(@account, role: Role.where(name: 'Agent').first.id)
+    agent = freshdesk_user.agent
+    agent.occasional = true
+    agent.save
+    freshdesk_user.reload
+    freshdesk_user.account.day_pass_usages.create(granted_on: Time.now.utc, user: freshdesk_user)
+    get :index, controller_params(version: 'private', state: 'occasional')
+    assert_response 200
+    output = JSON.parse response.body
+    assert output.select { |s| s['id'] == freshdesk_user.id }.first['day_pass_used'].equal?(1)
+  ensure
+    freshdesk_user.destroy
+  end
 end
