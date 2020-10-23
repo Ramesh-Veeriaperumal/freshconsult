@@ -1181,27 +1181,6 @@ if Integrations::Application.count == 0
     s.application_type = 'google_hangout_chat'
   end
 
-   ticket_summary = Integrations::Application.seed(:name) do |s|
-      s.name = "ticket_summary"
-      s.display_name = "integrations.ticket_summary.label"
-      s.description = "integrations.ticket_summary.desc"
-      s.account_id = Integrations::Constants::SYSTEM_ACCOUNT_ID
-      s.listing_order = 53
-      s.options = {
-        :direct_install => true,
-        :user_specific_auth => true,
-        :before_create => {
-          :clazz => 'Integrations::TicketSummary',
-          :method => 'enable_ticket_summary'
-        },
-        :after_commit_on_destroy => {
-          :clazz => 'Integrations::TicketSummary',
-          :method => 'disable_ticket_summary'
-        }
-      }
-      s.application_type = "ticket_summary"
-    end
-
   Integrations::Application.seed(:name) do |s|
     s.name = 'freshworkscrm'
     s.display_name = 'integrations.freshworkscrm.label'
