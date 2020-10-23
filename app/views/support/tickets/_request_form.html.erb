@@ -142,11 +142,8 @@
           });
       <% end %>
       if( jQBrowser.desktop ){
-        <% if logged_in? %>
-          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'ticket');
-        <% else %>
-          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html');
-        <% end %>
+        var redactor_type = "<%= logged_in? ? 'ticket' : 'anonymous-ticket' %>"
+        invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', redactor_type)
       }
 
         var focus_element = Form.findFirstElement(document.forms[0]);
