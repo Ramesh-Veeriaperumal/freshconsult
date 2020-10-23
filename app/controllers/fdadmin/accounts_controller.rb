@@ -932,6 +932,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result[:reason] =
       if !Account.current.freshid_org_v2_enabled?
         'Freshid org v2 not enabled.'
+      elsif !freshid_org_admin_present?
+        'Freshid org admin is not available.'
       elsif !freshchat_and_freshcaller_integrated?
         if Account.current.omni_accounts_present_in_org?
           'Freshcaller or Freshchat or both are present in organization but not integrated.'
@@ -951,6 +953,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   rescue StandardError => e
     Rails.logger.error "Error when checking eligibility for omni upgrade for account #{Account.current.id} :  Message :: #{e.message} :: Backtrace :: #{e.backtrace[0..20]}"
     result[:status] = 'failure'
+    result[:reason] = 'Unknown error found'
   ensure
     Account.reset_current_account
     render json: result

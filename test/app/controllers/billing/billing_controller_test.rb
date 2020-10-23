@@ -136,6 +136,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     old_plan_name = @account.plan_name.to_s
     stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
     @account.launch(:chargebee_omni_upgrade)
+    setup_freshid_org_admin
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
     ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
     post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
@@ -144,7 +145,27 @@ class Billing::BillingControllerTest < ActionController::TestCase
   ensure
     unstub_subscription_settings
     @account.rollback(:chargebee_omni_upgrade)
+    teardown_freshid_org_admin
     ChargeBee::Customer.any_instance.unstub(:auto_collection)
+    ChargeBee::Subscription.any_instance.unstub(:status)
+  end
+
+  def test_subscription_changed_event_chargebee_omni_upgrade_without_freshid_org_admin
+    old_plan_name = @account.plan_name.to_s
+    stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
+    @account.launch(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_setup(true, true)
+    setup_freshid_org_admin(true)
+    ChargeBee::Subscription.any_instance.unstub(:plan_id)
+    ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
+    post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
+    assert_response 200
+    assert_equal @account.reload.plan_name.to_s, old_plan_name
+  ensure
+    unstub_subscription_settings
+    @account.rollback(:chargebee_omni_upgrade)
+    chargebee_omni_pre_requisites_teardown
+    teardown_freshid_org_admin
     ChargeBee::Subscription.any_instance.unstub(:status)
   end
 
@@ -153,6 +174,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
     @account.launch(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_setup(true, false)
+    setup_freshid_org_admin
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
     ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
     post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
@@ -162,6 +184,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     unstub_subscription_settings
     @account.rollback(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_teardown
+    teardown_freshid_org_admin
     ChargeBee::Subscription.any_instance.unstub(:status)
   end
 
@@ -170,6 +193,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
     @account.launch(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_setup(false, true)
+    setup_freshid_org_admin
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
     ChargeBee::Subscription.any_instance.stubs(:status).returns('active')
     post :trigger, event_type: 'subscription_changed', content: omni_upgrade_event_content, format: 'json'
@@ -179,6 +203,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     unstub_subscription_settings
     @account.rollback(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_teardown
+    teardown_freshid_org_admin
     ChargeBee::Subscription.any_instance.unstub(:status)
   end
 
@@ -191,6 +216,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     create_organisation_account_mapping(org.id)
     metadata = { page_number: 1, page_size: 2, has_more: false }
     fcl_domain = @account.freshcaller_account.domain
+    setup_freshid_org_admin
     freshid_response = org_freshid_response(create_sample_account_details('localhost.freshpori.net', fcl_domain), metadata)
     Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
@@ -203,6 +229,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     delete_organisation(org.id) if org
     @account.rollback(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_teardown
+    teardown_freshid_org_admin
     Freshid::V2::Models::Account.unstub(:organisation_accounts)
     ChargeBee::Subscription.any_instance.unstub(:status)
   end
@@ -216,6 +243,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     create_organisation_account_mapping(org.id)
     metadata = { page_number: 1, page_size: 2, has_more: false }
     fch_domain = @account.freshchat_account.domain
+    setup_freshid_org_admin
     freshid_response = org_freshid_response(create_sample_account_details(fch_domain, 'localhost.freshcaller.net'), metadata)
     Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
     ChargeBee::Subscription.any_instance.unstub(:plan_id)
@@ -228,6 +256,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     delete_organisation(org.id) if org
     @account.rollback(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_teardown
+    teardown_freshid_org_admin
     Freshid::V2::Models::Account.unstub(:organisation_accounts)
     ChargeBee::Subscription.any_instance.unstub(:status)
   end
@@ -236,13 +265,19 @@ class Billing::BillingControllerTest < ActionController::TestCase
     old_plan_name = @account.plan_name.to_s
     stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
     @account.launch(:chargebee_omni_upgrade)
-    fch_agent_emails = ['sample@freshchat.com']
+    fch_agent_emails = [
+      {
+        email: 'sample@freshchat.com',
+        is_deactivated: false
+      }
+    ]
     chargebee_omni_pre_requisites_setup(true, true)
     org = create_organisation(12_345, @account.full_domain)
     create_organisation_account_mapping(org.id)
     metadata = { page_number: 1, page_size: 2, has_more: false }
     fch_domain = @account.freshchat_account.domain
     fcl_domain = @account.freshcaller_account.domain
+    setup_freshid_org_admin
     freshid_response = org_freshid_response(create_sample_account_details(fch_domain, fcl_domain), metadata)
     Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
     Faraday::Connection.any_instance.stubs(:get).returns(Faraday::Response.new(status: 200, body: sample_freshchat_agents_response(fch_agent_emails)))
@@ -256,6 +291,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     delete_organisation(org.id) if org
     @account.rollback(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_teardown
+    teardown_freshid_org_admin
     Freshid::V2::Models::Account.unstub(:organisation_accounts)
     Faraday::Connection.any_instance.unstub(:get)
     ChargeBee::Subscription.any_instance.unstub(:status)
@@ -266,14 +302,25 @@ class Billing::BillingControllerTest < ActionController::TestCase
     stub_subscription_settings(plan_id: 'estate_omni_jan_20_monthly')
     @account.launch(:chargebee_omni_upgrade)
     fch_agent = add_test_agent(@account)
-    fch_agent_emails = [fch_agent.email]
-    fcl_agent_emails = ['sample@freshcaller.com']
+    fch_agent_emails = [
+      {
+        email: fch_agent.email,
+        is_deactivated: false
+      }
+    ]
+    fcl_agent_emails = [
+      {
+        email: 'sample@freshcaller.com',
+        deleted: false
+      }
+    ]
     chargebee_omni_pre_requisites_setup(true, true)
     org = create_organisation(12_345, @account.full_domain)
     create_organisation_account_mapping(org.id)
     metadata = { page_number: 1, page_size: 2, has_more: false }
     fch_domain = @account.freshchat_account.domain
     fcl_domain = @account.freshcaller_account.domain
+    setup_freshid_org_admin
     freshid_response = org_freshid_response(create_sample_account_details(fch_domain, fcl_domain), metadata)
     Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
     Faraday::Connection.any_instance.stubs(:get).returns(Faraday::Response.new(status: 200, body: sample_freshchat_agents_response(fch_agent_emails)))
@@ -289,6 +336,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     delete_organisation(org.id) if org
     @account.rollback(:chargebee_omni_upgrade)
     chargebee_omni_pre_requisites_teardown
+    teardown_freshid_org_admin
     Freshid::V2::Models::Account.unstub(:organisation_accounts)
     Faraday::Connection.any_instance.unstub(:get)
     HTTParty::Request.any_instance.unstub(:perform)
@@ -303,22 +351,40 @@ class Billing::BillingControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:save)
     @account.launch(:chargebee_omni_upgrade)
     fch_agent = add_test_agent(@account)
-    fch_agent_emails = [fch_agent.email]
+    fch_agent_emails = [
+      {
+        email: fch_agent.email,
+        is_deactivated: false
+      },
+      {
+        email: 'deactivated@freshchat.com',
+        is_deactivated: true
+      }
+    ]
     fcl_agent1 = add_test_agent(@account)
     fcl_agent2 = add_test_agent(@account)
-    fcl_agent_emails = [fcl_agent1.email, fcl_agent2.email]
+    fcl_agent_emails = [
+      {
+        email: fcl_agent1.email,
+        deleted: false
+      },
+      {
+        email: fcl_agent2.email,
+        deleted: false
+      },
+      {
+        email: 'deleted@freshcaller.com',
+        deleted: true
+      }
+    ]
     chargebee_omni_pre_requisites_setup(true, true)
     org = create_organisation(12_345, @account.full_domain)
     create_organisation_account_mapping(org.id)
     metadata = { page_number: 1, page_size: 2, has_more: false }
     fch_domain = @account.freshchat_account.domain
     fcl_domain = @account.freshcaller_account.domain
+    setup_freshid_org_admin
     freshid_response = org_freshid_response(create_sample_account_details(fch_domain, fcl_domain), metadata)
-    Freshid::V2::Models::Account.stubs(:find_by_domain).returns(Freshid::V2::Models::Account.new(id: Faker::Number.number(5)))
-    user = @account.technicians.first
-    org_admin_response = org_admin_users_response
-    org_admin_response[:users][0][:email] = user.email
-    Freshid::V2::Models::User.stubs(:account_users).returns(org_admin_response)
     Freshid::V2::Models::Account.stubs(:organisation_accounts).returns(freshid_response)
     Faraday::Connection.any_instance.stubs(:get).returns(Faraday::Response.new(status: 200, body: sample_freshchat_agents_response(fch_agent_emails)))
     HTTParty::Request.any_instance.stubs(:perform).returns(sample_freshcaller_agents_response(fcl_agent_emails))
@@ -341,8 +407,7 @@ class Billing::BillingControllerTest < ActionController::TestCase
     @account.destroy
     Account.unstub(:current)
     unstub_subscription_settings
-    Freshid::V2::Models::Account.unstub(:find_by_domain)
-    Freshid::V2::Models::User.unstub(:account_users)
+    teardown_freshid_org_admin
     Freshid::V2::Models::Account.unstub(:organisation_accounts)
     Faraday::Connection.any_instance.unstub(:get)
     HTTParty::Request.any_instance.unstub(:perform)

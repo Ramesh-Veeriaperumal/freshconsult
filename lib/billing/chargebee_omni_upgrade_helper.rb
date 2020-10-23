@@ -48,8 +48,16 @@ module Billing::ChargebeeOmniUpgradeHelper
     end
 
     def org_pre_conditions_satisfied?
-      Account.current.freshid_org_v2_enabled? && freshchat_and_freshcaller_integrated? &&
+      Account.current.freshid_org_v2_enabled? && freshid_org_admin_present? && freshchat_and_freshcaller_integrated? &&
         integrated_accounts_present_in_org?
+    end
+
+    def freshid_org_admin_present?
+      @org_admin_user = get_freshid_org_admin_user(Account.current)
+      @org_admin_user.present?
+    rescue StandardError => e
+      Rails.logger.error "Exception in finding org admin user :: Account ID: #{Account.current.id} :: Error message: #{e.message}"
+      false
     end
 
     def integrated_accounts_present_in_org?
@@ -106,7 +114,7 @@ module Billing::ChargebeeOmniUpgradeHelper
     end
 
     def fd_agents_are_superset_of_fcl_agents?(fd_agent_emails)
-      fcl_agent_emails = fetch_freshcaller_agent_emails
+      fcl_agent_emails = fetch_freshcaller_agent_emails(@org_admin_user.email)
       fcl_fd_diff = fcl_agent_emails - fd_agent_emails
       fcl_fd_diff.empty?
     end

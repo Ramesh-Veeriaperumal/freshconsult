@@ -161,6 +161,7 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(false)
     Fdadmin::AccountsController.any_instance.stubs(:freshchat_and_freshcaller_integrated?).returns(false)
     Fdadmin::AccountsController.any_instance.stubs(:integrated_accounts_present_in_org?).returns(false)
+    Fdadmin::AccountsController.any_instance.stubs(:freshid_org_admin_present?).returns(false)
     Fdadmin::AccountsController.any_instance.stubs(:fd_agents_are_superset_of_fch_agents?).returns(false)
     Fdadmin::AccountsController.any_instance.stubs(:fd_agents_are_superset_of_fcl_agents?).returns(false)
 
@@ -173,6 +174,14 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
 
 
     Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
+    params = { version: 'v1', account_id: @account.id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil }
+    get :check_eligibility_for_omni_upgrade, construct_params(params)
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal false, response['status']
+    assert_equal 'Freshid org admin is not available.', response['reason']
+
+    Fdadmin::AccountsController.any_instance.stubs(:freshid_org_admin_present?).returns(true)
     params = { version: 'v1', account_id: @account.id, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil }
     get :check_eligibility_for_omni_upgrade, construct_params(params)
     assert_response 200

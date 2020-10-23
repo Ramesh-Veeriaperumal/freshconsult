@@ -42,16 +42,16 @@ module Freshcaller
       end
     end
 
-    def fetch_freshcaller_agent_emails
+    def fetch_freshcaller_agent_emails(admin_email)
       agent_emails = []
-      agents = fetch_freshcaller_agents
-      agent_emails += agents[:data].map { |agent_data| agent_data[:attributes][:email] }
+      agents = fetch_freshcaller_agents(admin_email)
+      agent_emails += agents[:data].map { |agent_data| agent_data[:attributes][:email] unless agent_data[:attributes][:deleted] }.compact
       agent_emails
     end
 
-    def fetch_freshcaller_agents
+    def fetch_freshcaller_agents(admin_email)
       url = "#{freshcaller_url}/users?paginate=false"
-      fcl_response = freshcaller_request({}, url, :get, email: account.admin_email)
+      fcl_response = freshcaller_request({}, url, :get, email: admin_email)
       (JSON.parse fcl_response.body).deep_symbolize_keys!
     end
 
