@@ -18,7 +18,7 @@ class TicketsDependencyTest < ActionView::TestCase
       :check_compose_feature, :check_trial_outbound_limit, :find_topic, :redirect_merged_topics, :run_on_slave,
       :save_article_filter, :run_on_db, :set_mobile, :normalize_params, :cache_filter_params, :redirect_old_ui_routes,
       :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order,
-      :get_tag_name, :clear_filter, :add_requester_filter, :load_filter_params, :load_article_filter,
+      :get_tag_name, :clear_filter, :add_requester_filter, :load_article_filter,
       :disable_notification, :enable_notification, :set_selected_tab, :filter_params_ids, :validate_bulk_scenario,
       :validate_ticket_close, :scoper_ticket_actions, :set_native_mobile, :load_items, :verify_ticket_permission_by_id,
       :load_ticket, :load_ticket_with_notes, :load_ticket_contact_data, :check_outbound_permission,

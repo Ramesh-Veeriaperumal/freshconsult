@@ -19,7 +19,7 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none,
     :auto_complete_off, :new_ticket_recieved_metric, :ner,
-    :sso_login_expiry_limitation, :old_link_back_url_validation, :es_tickets,
+    :sso_login_expiry_limitation, :old_link_back_url_validation,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
     :ticket_source_revamp,
     :bot_email_channel, :description_by_default, :bot_chat_history,
@@ -242,10 +242,6 @@ class Account < ActiveRecord::Base
 
   def count_public_api_filter_factory_enabled?
     public_api_filter_factory_enabled? && new_es_api_enabled?
-  end
-
-  def count_es_tickets_enabled?
-    es_tickets_enabled?
   end
 
   def customer_sentiment_enabled?
