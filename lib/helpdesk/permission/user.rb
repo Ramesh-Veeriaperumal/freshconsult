@@ -27,14 +27,14 @@ module Helpdesk::Permission
 
     private
       def login_access_denied_message
-        access_denied_message t("flash.login.login_permission_denied")
+        access_denied_with_message(t('flash.login.login_permission_denied'))
       end
 
       def signup_access_denied_message
-        access_denied_message t("flash.login.signup_permission_denied")
+        access_denied_with_message(t('flash.login.signup_permission_denied'))
       end
 
-      def access_denied_message permission_denied
+      def access_denied_with_message(permission_denied)
         "<div align= 'center'> #{permission_denied}. <br> #{t("flash.login.contact_administrator")} </div>"
       end
 
