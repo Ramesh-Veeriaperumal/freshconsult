@@ -36,12 +36,12 @@ module Admin::ApiBusinessCalendarHelper
   def expected_create_response(params)
     params = params.deep_symbolize_keys
     expected_response_pattern = params
-    expected_response_pattern[:channel_business_hours] = params[:channel_business_hours].reject {|channel_hash| ['chat', 'phone'].include?(channel_hash[:channel])}
+    expected_response_pattern[:channel_business_hours] = params[:channel_business_hours].reject { |channel_hash| ['chat', 'phone'].include?(channel_hash[:channel]) }
     expected_response_pattern[:channel_business_hours] = expected_response_pattern[:channel_business_hours] |
-      [
-        {:channel => ApiBusinessCalendarConstants::CHAT_CHANNEL, :sync_status => BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress]},
-        {:channel => ApiBusinessCalendarConstants::PHONE_CHANNEL, :sync_status => BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress]}
-      ]
+                                                         [
+                                                           { channel: ApiBusinessCalendarConstants::CHAT_CHANNEL, sync_status: BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress] },
+                                                           { channel: ApiBusinessCalendarConstants::PHONE_CHANNEL, sync_status: BusinessCalenderConstants::OMNI_SYNC_STATUS[:inprogress] }
+                                                         ]
     expected_response_pattern
   end
 
@@ -107,31 +107,34 @@ module Admin::ApiBusinessCalendarHelper
 
   def caller_channel_business_hours_sample
     @caller_channel_business_hours_sample ||= {
-        channel_business_hours: [dummy_channel_business_hours('phone').first.merge(dummy_business_hours_data(1))]
+      channel_business_hours: [dummy_channel_business_hours('phone').first.merge(dummy_business_hours_data(1))]
     }
   end
 
   def chat_channel_business_hours_sample
     @chat_channel_business_hours_sample ||= {
-        channel_business_hours: [dummy_channel_business_hours('chat').first.merge(dummy_business_hours_data(1))]
+      channel_business_hours: [dummy_channel_business_hours('chat').first
+                                                                   .merge(dummy_business_hours_data(1))
+                                                                   .merge("away_message": 'I am away')]
     }
   end
 
   def chat_channel_business_hours_away_message_sample
     @chat_channel_business_hours_away_message_sample ||= {
-        channel_business_hours: [dummy_channel_business_hours('chat').first.merge(
-          dummy_business_hours_data(1)).merge( "away_message": 'I am away')]
+      channel_business_hours: [dummy_channel_business_hours('chat').first.merge(
+        dummy_business_hours_data(1)
+      ).merge("away_message": 'I am away')]
     }
   end
 
   def chat_channel_business_hours_breaks_sample
-    @chat_channel_business_hours_breaks_sample||= {
-        channel_business_hours: [dummy_channel_business_hours('chat').first.merge(
-          "business_hours": [{ "day": 'sunday', "time_slots": [{ "end_time": '10:30',
-                                                                 "start_time": '00:00' },
-                                                               { "end_time": '11:30',
-                                                                 "start_time": '11:00' }] }]
-        )]
+    @chat_channel_business_hours_breaks_sample ||= {
+      channel_business_hours: [dummy_channel_business_hours('chat').first.merge(
+        "business_hours": [{ "day": 'sunday', "time_slots": [{ "end_time": '10:30',
+                                                               "start_time": '00:00' },
+                                                             { "end_time": '11:30',
+                                                               "start_time": '11:00' }] }]
+      ).merge("away_message": 'I am away')]
     }
   end
 
@@ -157,15 +160,15 @@ module Admin::ApiBusinessCalendarHelper
   end
 
   def stub_chat_create_failure
-    stub_request(:post, chat_create_url).to_return(body: { "errors": ['Invalid data']}.to_json,
+    stub_request(:post, chat_create_url).to_return(body: { "errors": ['Invalid data'] }.to_json,
                                                    status: 422,
                                                    headers: { 'Content-Type' => 'application/json' })
   end
 
   def stub_chat_business_calendar_update_failure(id)
-    stub_request(:post, chat_update_url(id)).to_return(body: { "errors": ['Invalid data']}.to_json,
-                                                   status: 422,
-                                                   headers: { 'Content-Type' => 'application/json' })
+    stub_request(:post, chat_update_url(id)).to_return(body: { "errors": ['Invalid data'] }.to_json,
+                                                       status: 422,
+                                                       headers: { 'Content-Type' => 'application/json' })
   end
 
   def show_chat_business_hours_sample(id)
@@ -176,9 +179,9 @@ module Admin::ApiBusinessCalendarHelper
       time_zone: 'American Samoa',
       default: true,
       holidays: [
-        { name: 'hol 1', date: 'aug 15'},
-        { name: 'hol 2', date: 'may 01'},
-        { name: 'hol 3', date: 'jun 06'}
+        { name: 'hol 1', date: 'aug 15' },
+        { name: 'hol 2', date: 'may 01' },
+        { name: 'hol 3', date: 'jun 06' }
       ],
       channel_business_hours: chat_channel_business_hours_sample[:channel_business_hours]
     }

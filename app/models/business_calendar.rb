@@ -13,6 +13,8 @@ class BusinessCalendar < ActiveRecord::Base
   serialize :holiday_data
   serialize :additional_settings, Hash
 
+  validates :name, uniqueness: { scope: :account_id }, if: :name_changed?
+
   after_find :set_business_time_data
   after_create :set_business_time_data
 
