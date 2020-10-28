@@ -57,7 +57,7 @@ class Account < ActiveRecord::Base
   ].concat(FRONTEND_LP_FEATURES + REDIRECT_OLD_UI_PATH_FEATURES).uniq
 
   BITMAP_FEATURES = [
-    :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
+    :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop, :archive_tickets_api,
     :custom_ticket_views, :supervisor, :archive_tickets, :sitemap,
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
     :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
@@ -95,6 +95,7 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
+    :archive_tickets_api,
     :csat_email_scan_compatibility
   ].freeze
 
@@ -411,6 +412,10 @@ class Account < ActiveRecord::Base
   def launched_central_publish_features
     # intersection of launched features and central publish lp features
     all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES.keys
+  end
+
+  def archive_tickets_api_enabled?
+    launched?(:archive_tickets_api)
   end
 
   def ticket_properties_suggester_enabled?
