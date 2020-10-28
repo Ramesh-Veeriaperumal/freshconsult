@@ -21,7 +21,7 @@ module Helpdesk::Email::NoteMethods
   end
 
   def rsvp_to_fwd?
-    @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(email[:from][:email])) || user.agent?) && reply_to_forward(header_processor.all_message_ids))
+    @rsvp_to_fwd ||= ((Account.current.threading_without_user_check_enabled? || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(email[:from][:email])) || user.agent?) && reply_to_forward(header_processor.all_message_ids))
   end
 
   def note_params

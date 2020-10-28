@@ -145,7 +145,6 @@ class Account < ActiveRecord::Base
     :marketplace => false, :archive_tickets => false,
     :ecommerce => false, :shared_ownership => false,
     :cobrowsing => false,
-    :threading_without_user_check => false,
     :restricted_helpdesk => false, :enable_multilingual => false,
     :activity_revamp => true, :helpdesk_restriction_toggle => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :skill_based_round_robin => false,
@@ -233,7 +232,7 @@ class Account < ActiveRecord::Base
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
     mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false, whatsapp_addon: false,
-    enhanced_freshcaller_search: false
+    enhanced_freshcaller_search: false, threading_without_user_setting: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

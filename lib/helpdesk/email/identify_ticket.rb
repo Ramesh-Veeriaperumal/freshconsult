@@ -70,7 +70,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
   end
 
   def can_be_added_to_ticket?
-    ticket and (valid_user or valid_ticket_contact(ticket) or account.features?(:threading_without_user_check))
+    ticket && (valid_user || valid_ticket_contact(ticket) || account.threading_without_user_check_enabled?)
   end
 
   def valid_user

@@ -455,7 +455,6 @@
   :domain_restricted_access: false
   :ecommerce: false
   :cobrowsing: false
-  :threading_without_user_check: false
   :restricted_helpdesk: false
   :cti: false
   :all_notify_by_custom_server: false

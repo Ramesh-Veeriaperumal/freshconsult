@@ -1,4 +1,8 @@
 settings:
+  :threading_without_user_check:
+    default: false
+    internal: false
+    feature_dependency: :basic_settings_feature
   :es_v2_splqueries:
     default: false
     internal: true

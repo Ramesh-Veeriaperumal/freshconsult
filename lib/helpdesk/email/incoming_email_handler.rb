@@ -1025,9 +1025,9 @@ module Helpdesk
 				end
 			end
 
-			def rsvp_to_fwd?(ticket, from_email, user)
-				@rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(from_email[:email])) || user.agent?) && reply_to_forward(all_message_ids))
-			end
+      def rsvp_to_fwd?(ticket, from_email, user)
+        @rsvp_to_fwd ||= ((Account.current.threading_without_user_check_enabled? || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(from_email[:email])) || user.agent?) && reply_to_forward(all_message_ids))
+      end
 
 			def ticket_cc_emails_hash(ticket, note)
 				to_email   = parse_to_email[:email]
