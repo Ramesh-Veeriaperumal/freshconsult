@@ -92,6 +92,7 @@ class SsoController < ApplicationController
   def facebook
     session["_csrf_token"] ||= SecureRandom.base64(32)
     token = Base64.encode64(session["_csrf_token"])
+    Rails.logger.info "Current account = #{current_account.inspect}"
     redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26portal_type%3D#{params[:portal_type]}%26token=#{token}"
   end
 
@@ -99,6 +100,7 @@ class SsoController < ApplicationController
     session["_csrf_token"] ||= SecureRandom.base64(32)
     token = Base64.encode64(session["_csrf_token"])
     portal_domain = current_portal.host || current_account.full_domain
+    Rails.logger.info "Current account = #{current_account.inspect}"
     redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/twitter?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26portal_type%3D#{params[:portal_type]}&state=portal_domain%3D#{portal_domain}%26at%3D#{token}"
   end
 
