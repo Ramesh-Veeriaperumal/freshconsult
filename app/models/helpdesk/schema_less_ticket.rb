@@ -8,7 +8,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
   attr_reader :schema_less_was
 
-  attr_accessor :retrigger_observer
+  attr_accessor :retrigger_observer, :retry_supervisor_action
 
 	COUNT_COLUMNS_FOR_REPORTS = ["agent_reassigned", "group_reassigned", "reopened", 
                                   "private_note", "public_note", "agent_reply", "customer_reply"]

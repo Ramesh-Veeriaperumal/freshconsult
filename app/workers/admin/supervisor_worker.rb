@@ -37,7 +37,7 @@ module Admin
             tickets_count = 0
             ticket_ids = []
             account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago)
-            .visible.joins(joins).readonly(false).find_each do |ticket|
+                   .visible.joins(joins).readonly(false).preload(:schema_less_ticket).find_each do |ticket|
               next if ticket.service_task?
               tickets_count +=  1
               rule_ids_with_exec_count[rule.id] = tickets_count
@@ -49,17 +49,7 @@ module Admin
               end
               begin
                 next if ticket.sent_for_enrichment?
-                execute_on_db("run_on_master") do
-                  rule.trigger_actions ticket
-                  subscription_changed = (rule.contains_add_watcher_action? && ticket.subscriptions.present?)
-                  properties_changed = ticket.properties_updated?
-                  # Note: if ticket has watcher and rule contains add watcher action, it will execute below method.
-                  properties_changed ||= subscription_changed
-                  ticket.save_ticket! if properties_changed
-                  if !properties_changed && rule.contains_send_email_action?
-                    ticket.manual_publish(['update', RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { system_changes: ticket.system_changes.dup }])
-                  end
-                end
+                execute_actions(rule, ticket)
               rescue Exception => e
                 schedule_error = true
                 log_info(account.id, rule.id, ticket.id) { Va::Logger::Automation.log_error(TICKET_SAVE_ERROR, e) }
@@ -103,6 +93,25 @@ module Admin
 
       def log_file
         @log_file_path ||= "#{Rails.root}/log/supervisor.log"
+      end
+
+      def execute_actions(rule, ticket, skip_manual_publish = false)
+        execute_on_db("run_on_master") do
+          rule.trigger_actions ticket
+
+          subscription_changed = (rule.contains_add_watcher_action? && ticket.subscriptions.present?)
+          properties_changed = ticket.properties_updated?
+          # Note: if ticket has watcher and rule contains add watcher action, it will execute below method.
+          properties_changed ||= subscription_changed
+          ticket.schema_less_ticket.retry_supervisor_action = true if Account.current.retry_ticket_supervisor_actions_enabled?
+          ticket.save_ticket! if properties_changed || ticket.enqueue_va_actions.present?
+          if !properties_changed && rule.contains_send_email_action? && !skip_manual_publish
+            ticket.manual_publish(['update', RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { system_changes: ticket.system_changes.dup }])
+          end
+        end
+      rescue LockVersion::Utility::TicketParallelUpdateException => e
+        Va::Logger::Automation.log(e.message, true)
+        Tickets::RetryTicketSupervisorActionsWorker.perform_async(rule_id: rule.id, ticket_id: ticket.id) if Account.current.retry_ticket_supervisor_actions_enabled?
       end
 
       def logging_format(account,ticket_ids,rule,rule_total_time, conditions, negate_conditions, joins)

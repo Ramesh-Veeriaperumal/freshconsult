@@ -368,3 +368,4 @@
     - update_agent_status_availability
     - central_publish_resync
     - cron_api_triggers
+    - retry_ticket_supervisor_actions_worker

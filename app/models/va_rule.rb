@@ -311,7 +311,7 @@ class VaRule < ActiveRecord::Base
       action_key = action.act_hash[:name]
       ticket = PRIME_TICKETS.include?(association_type) ? associated_ticket(evaluate_on, association_type) : evaluate_on
       if ticket.present?
-        if IRREVERSIBLE_AUTOMATION_ACTIONS.include?(action_key) && Account.current.ticket_observer_race_condition_fix_enabled?
+        if IRREVERSIBLE_AUTOMATION_ACTIONS.include?(action_key) && (Account.current.ticket_observer_race_condition_fix_enabled? || Account.current.retry_ticket_supervisor_actions_enabled?)
           evaluate_on.enqueue_va_actions ||= []
           evaluate_on.enqueue_va_actions.append(action: action, ticket: ticket, doer: doer, triggered_event: triggered_event, only_reversible_actions: false, evaluate_on: evaluate_on)
         else

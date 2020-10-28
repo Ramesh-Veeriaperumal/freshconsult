@@ -8,7 +8,7 @@ module LockVersion::Utility
     begin
       yield
     rescue ActiveRecord::StaleObjectError => e
-      raise TicketParallelUpdateException, e.message if self.retrigger_observer == true && Account.current.ticket_observer_race_condition_fix_enabled?
+      raise TicketParallelUpdateException, e.message if (retrigger_observer == true && Account.current.ticket_observer_race_condition_fix_enabled?) || (retry_supervisor_action == true && Account.current.retry_ticket_supervisor_actions_enabled?)
 
       retry_count += 1
       Rails.logger.info "#{self.class.name} raised StaleObjectError::AccountId::#{account_id}::Ticket::#{ticket_id}::LockVersion::#{int_tc05}::RetryCount::#{retry_count}"
