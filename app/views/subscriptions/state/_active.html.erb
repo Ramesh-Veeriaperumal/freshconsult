@@ -30,7 +30,8 @@
         session_color = 'red-bar'
       end
     end
-    show_annual_savings_banner = @subscription.amount>0 && @subscription.renewal_period != Subscription::ANNUAL_PERIOD && !@subscription.account.omni_bundle_account? && !@offline_subscription && !@reseller_paid_account
+    is_annual_upgrade_launched = current_account.launched?(:show_annual_upgrade)
+    show_annual_savings_banner = is_annual_upgrade_launched && @subscription.amount>0 && @subscription.renewal_period != Subscription::ANNUAL_PERIOD && !@subscription.account.omni_bundle_account? && !@offline_subscription && !@reseller_paid_account
     savings_amount = fetch_savings_on_annual_plan(@subscription, @subscription.currency_name) if show_annual_savings_banner
   %>
 <% if has_feature_gain %>
