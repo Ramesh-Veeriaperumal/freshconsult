@@ -307,7 +307,7 @@ module Ember
       end
 
       def test_merge_with_secure_text_field
-        Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+        Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
         ::Tickets::VaultDataCleanupWorker.jobs.clear
         name = "secure_text_#{Faker::Lorem.characters(rand(5..10))}"
         secure_text_field = create_custom_field_dn(name, 'secure_text')
@@ -324,7 +324,7 @@ module Ember
       ensure
         secure_text_field.destroy
         ::Tickets::VaultDataCleanupWorker.jobs.clear
-        Account.any_instance.unstub(:pci_compliance_field_enabled?)
+        Account.any_instance.unstub(:secure_fields_enabled?)
       end
     end
   end

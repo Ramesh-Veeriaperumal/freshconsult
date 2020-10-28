@@ -134,7 +134,7 @@ module Channel
             conversation_id: 12
           }
           post :create, construct_params({ version: 'channel' }, params_hash)
-          ticket_type_list = 'Question,Incident,Problem,Feature Request,Refund'
+          ticket_type_list = 'Question,Incident,Problem,Feature Request,Refunds and Returns,Bulk orders,Refund'
           service_task = ::Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
           ticket_type_list << ",#{service_task}" if Account.current.picklist_values.map(&:value).include?(service_task)
           match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),

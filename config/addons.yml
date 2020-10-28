@@ -176,3 +176,161 @@ Custom Objects Migration:
   - :custom_objects
 Agent Articles Suggest Migration:
   - :agent_articles_suggest_eligible
+SlaAutomation ThankyouDetector CustomerJourney DynamicSections Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :customer_journey
+  - :dynamic_sections
+SlaAutomation ThankyouDetector CustomerJourney FbAdPosts Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :customer_journey
+  - :fb_ad_posts
+SlaAutomation ThankyouDetector CustomerJourney Forum FbAdPosts Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :customer_journey
+  - :forums
+  - :fb_ad_posts
+SlaAutomation ThankyouDetector CustomerJourney Forum Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :customer_journey
+  - :forums
+SlaAutomation ThankyouDetector CustomerJourney Supervisor Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :customer_journey
+  - :supervisor_custom_status
+SlaAutomation ThankyouDetector CustomerJourney Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :customer_journey
+SlaAutomation ThankyouDetector DynamicSections Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :dynamic_sections
+SlaAutomation ThankyouDetector FbAdPosts Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :fb_ad_posts
+SlaAutomation ThankyouDetector Migration:
+  - :sla_reminder_automation
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+SlaAutomation Supervisor DynamicSections FbAdPosts Forum Migration:
+  - :sla_reminder_automation
+  - :supervisor_custom_status
+  - :dynamic_sections
+  - :fb_ad_posts
+  - :forums
+SlaAutomation Migration:
+  - :sla_reminder_automation
+ThankyouDetector SmartFilter Migration:
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :smart_filter
+UnlimitedMultiProduct AuditLog ThankyouDetector SmartFilter Sandbox Migration:
+  - :unlimited_multi_product
+  - :audit_logs_central_publish
+  - :audit_log_ui
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :smart_filter
+  - :sandbox
+UnlimitedMultiProduct AuditLog ThankyouDetector SmartFilter Whitelisting Migration:
+  - :unlimited_multi_product
+  - :audit_logs_central_publish
+  - :audit_log_ui
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :smart_filter
+  - :whitelisted_ips
+UnlimitedMultiProduct AuditLog ThankyouDetector SmartFilter Migration:
+  - :unlimited_multi_product
+  - :audit_logs_central_publish
+  - :audit_log_ui
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :smart_filter
+UnlimitedMultiProduct AuditLog SmartFilter Migration:
+  - :unlimited_multi_product
+  - :audit_logs_central_publish
+  - :audit_log_ui
+  - :smart_filter
+UnlimitedMultiProduct ThankyouDetector SmartFilter Migration:
+  - :unlimited_multi_product
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :smart_filter
+SlaManagementAutomation ArticleVersioning ThankyouDetector FbAdPosts Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :article_versioning
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :fb_ad_posts
+SlaManagementAutomation ArticleVersioning ThankyouDetector Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :article_versioning
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+SlaManagementAutomation ArticleVersioning DynamicSections ThankyouDetector Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :article_versioning
+  - :dynamic_sections
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+SlaManagementAutomation ArticleVersioning DynamicSections Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :article_versioning
+  - :dynamic_sections
+SlaManagementAutomation ArticleVersioning Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :article_versioning
+SlaManagementAutomation SmartFilter ThankyouDetector ChatRouting Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :smart_filter
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :chat_routing
+SlaManagementAutomation SmartFilter ThankyouDetector CustomSurvey Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :smart_filter
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :custom_survey
+SlaManagementAutomation SmartFilter ThankyouDetector DynamicSections Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :smart_filter
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :dynamic_sections
+SlaManagementAutomation SmartFilter ThankyouDetector FbAdPosts Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :smart_filter
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible
+  - :fb_ad_posts
+SlaManagementAutomation SmartFilter ThankyouDetector Migration:
+  - :sla_management
+  - :sla_reminder_automation
+  - :smart_filter
+  - :detect_thank_you_note
+  - :detect_thank_you_note_eligible

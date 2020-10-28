@@ -38,7 +38,7 @@ module Freshchat
       agents = fetch_freshchat_agents
       agents.deep_symbolize_keys!
       loop do
-        agent_emails += agents[:agents].map { |agent_data| agent_data[:email] }
+        agent_emails += agents[:agents].map { |agent_data| agent_data[:email] unless agent_data[:is_deactivated] }.compact
         break if agents[:links][:next_page].nil?
 
         agents = fetch_freshchat_agents(agents[:links][:next_page][:href])

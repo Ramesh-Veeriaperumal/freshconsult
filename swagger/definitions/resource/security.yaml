@@ -104,4 +104,6 @@ properties:
   secure_attachments:
     type: boolean
     description: Decides whether secure_attachments can be enabled or not
-
+  secure_fields:
+    type: boolean
+    description: A setting for customers to enable using secure ticket fields

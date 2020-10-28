@@ -57,6 +57,14 @@ class Helpdesk::ArchiveTicketDrop < BaseDrop
 		@source.responder.presence
 	end
 
+  def friendly_email_replies?
+    !@source.account.has_feature?(:personalized_email_replies)
+  end
+
+  def primary_email_name
+    @source.product.try(:primary_email_config) ? @source.product.primary_email_config.name : @source.account.primary_email_config.name
+  end
+
 	def status
 		@source.status_name
 	end

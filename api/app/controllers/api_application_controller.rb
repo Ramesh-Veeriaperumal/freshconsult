@@ -91,7 +91,7 @@ class ApiApplicationController < MetalApiController
   after_filter :set_root_key, :set_app_data_version, if: :private_api?
 
   around_filter :handle_notification, if: :import_api?
-
+  after_filter :set_last_active_time, if: :private_api?
  # This should be the last arount filter , can be make available to public as needed
   around_filter :response_cache, only: [:index, :show], if: :private_api?
 

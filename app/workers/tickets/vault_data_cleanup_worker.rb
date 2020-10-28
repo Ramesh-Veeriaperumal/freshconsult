@@ -10,7 +10,7 @@ class Tickets::VaultDataCleanupWorker < BaseWorker
 
     # Setting defaults to be used in different delete scenarios
     @object_ids = args[:object_ids] || [0]
-    field_names = args[:field_names] || ['*']
+    field_names = args[:field_names] || PciConstants::ALL_FIELDS
 
     handle_ticket_close if args[:action] == 'close'
     delete_data(field_names)
@@ -47,7 +47,7 @@ class Tickets::VaultDataCleanupWorker < BaseWorker
     def single_object_delete(field_names)
       jwe = JWT::SecureServiceJWEFactory.new(PciConstants::ACTION[:delete], @object_ids[0], PciConstants::PORTAL_TYPE[:agent_portal], PciConstants::OBJECT_TYPE[:ticket], field_names)
       jwt_payload = jwe.generate_jwe_payload
-      cleanup = Vault::Client.new(PciConstants::DATA_URL, :delete, jwt_payload).delete_vault_data
+      cleanup = Vault::Client.new(PciConstants::DATA_URL, :delete, jwt_payload, BULK_DELETE_TIMEOUT).delete_vault_data
       Rails.logger.error "Vault Data cleanup failed for object id :  #{@object_ids[0]}" unless cleanup
     end
 

@@ -380,7 +380,7 @@
       :unlimited_multi_product: 376
       :help_widget_article_customisation: 377
       :sla_reminder_automation: 378
-      :pci_compliance_field: 379
+      :secure_fields: 379
       :twitter_field_automation: 380
       :triage: 381
       :advanced_freshcaller: 382
@@ -426,10 +426,10 @@
       :fb_msg_realtime: 422
       :kbase_spam_whitelist: 423
       :csat_email_scan_compatibility: 424
+      :secure_fields_toggle: 425
 :selectable_features:
   :redis_display_id: true
   :gamification_enable: false
-  :parent_child_infra: false
   :parent_child_tickets: false
   :link_tickets: false
   :shared_ownership: false

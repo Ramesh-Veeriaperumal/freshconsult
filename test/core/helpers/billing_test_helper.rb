@@ -27,6 +27,23 @@ module BillingTestHelper
     }
   end
 
+  def get_org_admin_response
+    user = @account.technicians.first
+    org_admin_response = org_admin_users_response
+    org_admin_response[:users][0][:email] = user.email
+    org_admin_response
+  end
+
+  def setup_freshid_org_admin(stub_nil = false)
+    Freshid::V2::Models::Account.stubs(:find_by_domain).returns(Freshid::V2::Models::Account.new(id: Faker::Number.number(5)))
+    Freshid::V2::Models::User.stubs(:account_users).returns(stub_nil ? nil : get_org_admin_response)
+  end
+
+  def teardown_freshid_org_admin
+    Freshid::V2::Models::Account.unstub(:find_by_domain)
+    Freshid::V2::Models::User.unstub(:account_users)
+  end
+
   def chargebee_omni_pre_requisites_setup(create_fch = false, create_fcl = false)
     Account.any_instance.stubs(:freshid_org_v2_enabled?).returns(true)
     Account.any_instance.stubs(:freshchat_account_present?).returns(create_fch)
@@ -93,7 +110,7 @@ module BillingTestHelper
     ]
   end
 
-  def create_sample_freshchat_agent_hash(email)
+  def create_sample_freshchat_agent_hash(email, is_deactivated = false)
     {
       id: '2681d294-3460-4f32-b5fb-828958995b5c',
       freshid_uuid: '3081d294-3460-4f32-b5fb-828958995b2c',
@@ -117,7 +134,7 @@ module BillingTestHelper
       ],
       role_id: 'string',
       skill_id: 'string',
-      is_deactivated: false,
+      is_deactivated: is_deactivated,
       locale: 'en-us',
       availability_status: 'AVAILABLE'
     }
@@ -125,12 +142,12 @@ module BillingTestHelper
 
   def sample_freshchat_agents_response(emails)
     {
-      agents: emails.map { |email| create_sample_freshchat_agent_hash(email) },
+      agents: emails.map { |emailobj| create_sample_freshchat_agent_hash(emailobj[:email], emailobj[:is_deactivated]) },
       links: {}
     }
   end
 
-  def create_sample_freshcaller_agent_hash(email)
+  def create_sample_freshcaller_agent_hash(email, deleted = false)
     id = Faker::Number.number(2)
     {
       id: id.to_s,
@@ -140,7 +157,7 @@ module BillingTestHelper
         email: email,
         confirmed: false,
         "email-confirmed": false,
-        deleted: false,
+        deleted: deleted,
         "sip-enabled": false,
         extension: '',
         "extension-enabled": false,
@@ -158,7 +175,7 @@ module BillingTestHelper
   end
 
   def sample_freshcaller_agents_response(emails)
-    agents = emails.map { |email| create_sample_freshcaller_agent_hash(email) }
+    agents = emails.map { |emailobj| create_sample_freshcaller_agent_hash(emailobj[:email], emailobj[:deleted]) }
     response = { sucess: true }
     response.stubs(:body).returns({
       data: agents

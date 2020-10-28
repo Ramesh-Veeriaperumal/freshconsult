@@ -31,7 +31,7 @@ class Support::TicketsController < SupportController
   before_filter :set_date_filter, :only => [:export_csv]  
 
   before_filter :check_ticket_permission, :only => [:create]
-  before_filter :check_pci_feature_validation, only: [:update]
+  before_filter :check_secure_fields_feature_validation, only: [:update]
   skip_before_filter :set_language,:redirect_to_locale, :only => [:check_email]
 
   def show
@@ -71,7 +71,7 @@ class Support::TicketsController < SupportController
       token = nil
       respond_to do |format|
         flash[:notice] = t(:'flash.general.update.success', human_name: cname.humanize.downcase)
-        token = update_secure_fields(custom_fields) if custom_fields && check_pci_feature
+        token = update_secure_fields(custom_fields) if custom_fields && check_secure_fields_feature
         format.json do
           render json: {
             success: true
@@ -137,22 +137,22 @@ class Support::TicketsController < SupportController
       @secure_field_methods.get_jwe_token(custom_fields, @item.id, PciConstants::PORTAL_TYPE[:support_portal]) if @secure_field_methods.secure_fields(custom_fields).present?
     end
 
-    def check_pci_feature_validation
+    def check_secure_fields_feature_validation
       custom_fields = params[:helpdesk_ticket][:custom_field]
       return if custom_fields.blank?
       @visible_ticket_fields = current_portal.ticket_fields(:customer_visible, true).reject { |f| !f.visible_in_view_form? || f.field_type != TicketFieldsConstants::SECURE_TEXT }
       @visible_ticket_fields.each do |field|
         # if the value is empty it should assign any random value, if not it should be empty string
         custom_fields[field.name] = custom_fields.delete(PciConstants::PREFIX + field.name).present? ? DateTime.now.to_i : '' if custom_fields[PciConstants::PREFIX + field.name]
-        if custom_fields[field.name] && !check_pci_feature
+        if custom_fields[field.name] && !check_secure_fields_feature
           render_request_error :bad_request, 400
           flash[:error] = t(:'flash.general.update.failure', human_name: cname.humanize.downcase)
         end
       end
     end
 
-    def check_pci_feature
-      current_account.pci_compliance_field_enabled?
+    def check_secure_fields_feature
+      current_account.secure_fields_enabled?
     end
 
     def cname

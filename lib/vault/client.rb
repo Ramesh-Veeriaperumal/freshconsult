@@ -12,12 +12,12 @@ class Vault::Client
 
   def update_account(payload = nil)
     response_code = execute(payload)
-    SUCCESS.include?(response_code) && !@account.pci_compliance_field_enabled? && @account.add_feature(:pci_compliance_field)
+    SUCCESS.include?(response_code) && !@account.secure_fields_enabled? && @account.enable_setting(:secure_fields)
   end
 
   def delete_account
     execute
-    @account.pci_compliance_field_enabled? && @account.revoke_feature(:pci_compliance_field)
+    @account.secure_fields_enabled? && @account.disable_setting(:secure_fields)
   end
 
   def delete_vault_data

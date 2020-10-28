@@ -15,7 +15,7 @@ class Tickets::ClearTickets::BaseWorker
       tickets.each do |ticket|
         ticket.destroy
       end
-      if @account.pci_compliance_field_enabled?
+      if @account.secure_fields_enabled?
         destroyed_ticket_ids = tickets.map(&:id)
         Tickets::VaultDataCleanupWorker.perform_async(object_ids: destroyed_ticket_ids, action: 'delete')
       end

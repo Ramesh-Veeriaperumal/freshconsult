@@ -7,7 +7,7 @@ class Admin::BcOmniSyncStatusMailer < ActionMailer::Base
     @user_name = user.name
     @action = action
     @business_calendar = business_calendar
-    @business_calendar_url = business_calendar.mint_url
+    @business_calendar_url = business_calendar.edit_mint_url
     subject ||= I18n.t('mailer_notifier_subject.send_sync_status_email', action: action)
     @headers = {
         from:    Account.current.default_friendly_email,

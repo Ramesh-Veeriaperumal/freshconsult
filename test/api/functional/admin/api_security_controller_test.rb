@@ -5,16 +5,16 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
   include Admin::SecurityTestHelper
   include UsersHelper
 
-  def test_whitelisted_ips_not_enabled
+  def test_show_whitelisted_ips_not_enabled
     Account.any_instance.stubs(:whitelisted_ips_enabled?).returns(false)
     get :show, controller_params
     assert_response 200
-    assert_nil JSON.parse(response.body)['whitelisted_ip']
+    refute_includes JSON.parse(response.body), 'whitelisted_ip'
   ensure
     Account.any_instance.unstub(:whitelisted_ips_enabled?)
   end
 
-  def test_whitelisted_ip_enabled
+  def test_show_whitelisted_ip_enabled
     Account.any_instance.stubs(:whitelisted_ips_enabled?).returns(true)
     Account.current.stubs(:whitelisted_ip).returns(nil)
     get :show, controller_params
@@ -24,16 +24,16 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:whitelisted_ips_enabled?)
   end
 
-  def test_help_widget_not_enabled
+  def test_show_help_widget_not_enabled
     Account.any_instance.stubs(:help_widget_enabled?).returns(false)
     get :show, controller_params
     assert_response 200
-    assert_nil JSON.parse(response.body)['help_widget']
+    refute_includes JSON.parse(response.body), 'help_widget'
   ensure
     Account.any_instance.unstub(:help_widget_enabled?)
   end
 
-  def test_custom_password_policy_not_enabled
+  def test_show_custom_password_policy_not_enabled
     Account.any_instance.stubs(:custom_password_policy_enabled?).returns(false)
     get :show, controller_params
     assert_response 200
@@ -43,38 +43,41 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:custom_password_policy_enabled?)
   end
 
-  def test_password_policy_with_freshid_integration_enabled
+  def test_show_password_policy_with_freshid_integration_enabled
     Account.any_instance.stubs(:freshid_integration_enabled?).returns(true)
     get :show, controller_params
     assert_response 200
-    assert_nil JSON.parse(response.body)['agent_password_policy']
+    refute_includes JSON.parse(response.body), 'agent_password_policy'
     assert_equal password_policy.stringify_keys, JSON.parse(response.body)['contact_password_policy']
   ensure
     Account.any_instance.unstub(:freshid_integration_enabled?)
   end
 
-  def test_account_current_ip
+  def test_show_account_current_ip
     get :show, controller_params
     assert_response 200
     assert_equal request.remote_ip, response.api_meta[:current_ip]
   end
 
-  def test_account_current_ip_when_whitelisted_ip_disabled
+  def test_show_account_current_ip_when_whitelisted_ip_disabled
     Account.any_instance.stubs(:whitelisted_ips_enabled?).returns(false)
     get :show, controller_params
     assert_response 200
-    assert_nil response.api_meta[:current_ip]
+    refute_includes response.api_meta, :current_ip
   ensure
     Account.any_instance.unstub(:whitelisted_ips_enabled?)
   end
 
-  def test_account_freshid_migration_not_in_process
+  def test_show_account_freshid_migration_not_in_process
+    Account.current.stubs(:freshid_migration_in_progress?).returns(false)
     get :show, controller_params(version: 'private')
     assert_response 200
-    refute response.api_meta[:freshid_migration_in_progress]
+    assert_equal false, response.api_meta[:freshid_migration_in_progress]
+  ensure
+    Account.current.unstub(:freshid_migration_in_progress)
   end
 
-  def test_account_freshid_migration_in_process
+  def test_show_account_freshid_migration_in_process
     Account.current.stubs(:freshid_migration_in_progress?).returns(true)
     get :show, controller_params(version: 'private')
     assert_response 200
@@ -92,7 +95,38 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.current.unstub(:freshid_sso_enabled)
   end
 
-  def test_security_index_public_api
+  def test_show_settings_secure_fields_toggle_disabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(false)
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    refute_includes JSON.parse(response.body), 'secure_fields'
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+  end
+
+  def test_show_settings_secure_fields_toggle_enabled_and_feature_disabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    Account.current.stubs(:secure_fields_enabled?).returns(false)
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    assert_equal false, JSON.parse(response.body)['secure_fields']
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    Account.current.unstub(:secure_fields_enabled?)
+  end
+
+  def test_show_settings_secure_fields_toggle_enabled_and_feature_enabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    Account.current.stubs(:secure_fields_enabled?).returns(true)
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    assert_equal true, JSON.parse(response.body)['secure_fields']
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    Account.current.unstub(:secure_fields_enabled?)
+  end
+
+  def test_show_security_index_public_api
     stub_account
     CustomRequestStore.stubs(:read).with(:private_api_request).returns(false)
     get :show, controller_params(version: 'v2')
@@ -120,7 +154,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:sso_options)
   end
 
-  def test_security_index_private_api
+  def test_show_security_index_private_api
     stub_account
     get :show, controller_params(version: 'private')
     assert_response 200
@@ -129,7 +163,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     unstub_account
   end
 
-  def test_security_index_private_api_in_non_freshid_v2_accounts_saml
+  def test_show_security_index_private_api_in_non_freshid_v2_accounts_saml
     Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
     Account.any_instance.stubs(:sso_enabled).returns(true)
     sso_option = HashWithIndifferentAccess.new(sso_type: 'saml', saml_login_url: 'saml_url', saml_logout_url: 'logout_url')
@@ -148,7 +182,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:sso_enabled)
   end
 
-  def test_security_index_private_api_in_non_freshid_v2_accounts_simple_sso
+  def test_show_security_index_private_api_in_non_freshid_v2_accounts_simple_sso
     Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
     Account.any_instance.stubs(:sso_enabled).returns(true)
     sso_option = HashWithIndifferentAccess.new(sso_type: 'simple', login_url: 'simple_url', logout_url: 'logout_url')
@@ -167,7 +201,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:sso_enabled)
   end
 
-  def test_security_index_private_api_in_oauth2_accounts
+  def test_show_security_index_private_api_in_oauth2_accounts
     Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
     Account.any_instance.stubs(:sso_enabled).returns(true)
     sso_option = HashWithIndifferentAccess.new(sso_type: 'oauth2', customer_oauth2: true)
@@ -184,7 +218,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:sso_enabled)
   end
 
-  def test_security_index_private_api_in_freshid_saml_accounts
+  def test_show_security_index_private_api_in_freshid_saml_accounts
     Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(true)
     Account.any_instance.stubs(:sso_enabled).returns(true)
     sso_option = HashWithIndifferentAccess.new(sso_type: 'freshid_saml', agent_freshid_saml: true)
@@ -201,7 +235,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:sso_enabled)
   end
 
-  def test_security_index_private_api_in_freshid_v2_sso
+  def test_show_security_index_private_api_in_freshid_v2_sso
     Account.any_instance.stubs(:freshdesk_sso_configurable?).returns(false)
     stub_account
     get :show, controller_params(version: 'private')
@@ -490,7 +524,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     }
     put :update, construct_params(api_security: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern(:agent_password_policy, :unwanted_feature_for_attribute, feature: 'freshid', attribute: 'agent_password_policy')])
+    match_json([bad_request_error_pattern(:agent_password_policy, :action_restricted, action: 'update agent_password_policy', reason: 'freshid enabled')])
   ensure
     Account.any_instance.unstub(:custom_password_policy_enabled?)
     Account.any_instance.unstub(:freshid_enabled?)
@@ -510,7 +544,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     }
     put :update, construct_params(api_security: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern(:agent_password_policy, :unwanted_feature_for_attribute, feature: 'freshid_org_v2', attribute: 'agent_password_policy')])
+    match_json([bad_request_error_pattern(:agent_password_policy, :action_restricted, action: 'update agent_password_policy', reason: 'freshid_org_v2 enabled')])
   ensure
     Account.any_instance.unstub(:custom_password_policy_enabled?)
     Account.any_instance.unstub(:freshid_org_v2_enabled?)
@@ -536,7 +570,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     assert_equal request_params[:whitelisted_ip][:ip_ranges].first.with_indifferent_access, @account.whitelisted_ip.ip_ranges.first
   ensure
     Account.any_instance.unstub(:whitelisted_ips_enabled?)
-    Account.current.whitelisted_ip.destroy
+    Account.current.whitelisted_ip.try(:destroy)
   end
 
   def test_update_whitelisted_ip_v6
@@ -559,7 +593,7 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     assert_equal request_params[:whitelisted_ip][:ip_ranges].first.with_indifferent_access, @account.whitelisted_ip.ip_ranges.first
   ensure
     Account.any_instance.unstub(:whitelisted_ips_enabled?)
-    Account.current.whitelisted_ip.destroy
+    Account.current.whitelisted_ip.try(:destroy)
   end
 
   def test_update_whitelisted_ip_limit_exceeded
@@ -788,6 +822,155 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('whitelisted_ip.base', 'Enter valid IP Address')])
   ensure
     Account.any_instance.unstub(:whitelisted_ips_enabled?)
+  end
+
+  def test_update_set_secure_fields_when_toggle_not_enabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(false)
+    request_params = {
+      secure_fields: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:secure_fields, :require_feature_for_attribute, feature: 'secure_fields_toggle', attribute: 'secure_fields')])
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+  end
+
+  def test_update_set_secure_fields_when_whitelisted_ips_feature_not_enabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ips_enabled?).returns(false)
+    request_params = {
+      secure_fields: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:secure_fields, :action_restricted, action: 'enable secure_fields', reason: 'whitelisted_ip is not enabled')])
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    Account.current.unstub(:whitelisted_ips_enabled?)
+  end
+
+  def test_update_set_secure_fields_when_whitelisted_ips_not_present
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ips_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ip).returns(nil)
+    request_params = {
+      secure_fields: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:secure_fields, :action_restricted, action: 'enable secure_fields', reason: 'whitelisted_ip is not enabled')])
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    Account.current.unstub(:whitelisted_ips_enabled?)
+    Account.current.unstub(:whitelisted_ip)
+  end
+
+  def test_update_set_secure_fields_when_whitelisted_ips_not_enabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ips_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ip).returns(WhitelistedIp.new(enabled: false))
+    request_params = {
+      secure_fields: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:secure_fields, :action_restricted, action: 'enable secure_fields', reason: 'whitelisted_ip is not enabled')])
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    Account.current.unstub(:whitelisted_ips_enabled?)
+    Account.current.unstub(:whitelisted_ip)
+  end
+
+  def test_update_set_secure_fields_when_whitelisted_ips_ip_ranges_empty
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ips_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ip).returns(WhitelistedIp.new(enabled: true, ip_ranges: []))
+    request_params = {
+      secure_fields: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:secure_fields, :action_restricted, action: 'enable secure_fields', reason: 'whitelisted_ip is not enabled')])
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    Account.current.unstub(:whitelisted_ips_enabled?)
+    Account.current.unstub(:whitelisted_ip)
+  end
+
+  def test_update_set_secure_fields_when_ticket_field_revamp_not_enabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ips_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ip).returns(WhitelistedIp.new(whitelisted_ip_attributes))
+    Account.current.stubs(:ticket_field_revamp_enabled?).returns(false)
+    request_params = {
+      secure_fields: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:secure_fields, :require_feature_for_attribute, feature: 'ticket_field_revamp', attribute: 'secure_fields')])
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    Account.current.unstub(:whitelisted_ips_enabled?)
+    Account.current.unstub(:ticket_field_revamp_enabled?)
+    Account.current.unstub(:whitelisted_ip)
+  end
+
+  def test_update_set_secure_fields
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ips_enabled?).returns(true)
+    Account.current.stubs(:whitelisted_ip).returns(WhitelistedIp.new(whitelisted_ip_attributes))
+    Account.current.stubs(:ticket_field_revamp_enabled?).returns(true)
+    ::Vault::AccountWorker.jobs.clear
+    request_params = {
+      secure_fields: true
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert_equal true, JSON.parse(response.body)['secure_fields']
+    assert_equal 1, ::Vault::AccountWorker.jobs.size
+    args = ::Vault::AccountWorker.jobs.first.deep_symbolize_keys[:args][0]
+    assert_equal 'update', args[:action]
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    Account.current.unstub(:whitelisted_ips_enabled?)
+    Account.current.unstub(:whitelisted_ip)
+    Account.current.unstub(:ticket_field_revamp_enabled?)
+    ::Vault::AccountWorker.jobs.clear
+  end
+
+  def test_update_unset_secure_fields
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    ::Vault::AccountWorker.jobs.clear
+    request_params = {
+      secure_fields: false
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert_equal false, JSON.parse(response.body)['secure_fields']
+    assert_equal 1, ::Vault::AccountWorker.jobs.size
+    args = ::Vault::AccountWorker.jobs.first.deep_symbolize_keys[:args][0]
+    assert_equal 'delete', args[:action]
+  ensure
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    ::Vault::AccountWorker.jobs.clear
+  end
+
+  def test_update_disable_whitelisted_ip_when_secure_fields_enabled
+    Account.current.stubs(:whitelisted_ips_enabled?).returns(true)
+    Account.current.stubs(:secure_fields_enabled?).returns(true)
+    @request.env['CLIENT_IP'] = '111.11.00.110'
+    request_params = {
+      whitelisted_ip: {
+        enabled: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:whitelisted_ip, :action_restricted, action: 'disable whitelisted_ip', reason: 'secure_fields is enabled')])
+  ensure
+    Account.current.unstub(:whitelisted_ips_enabled?)
+    Account.current.unstub(:secure_fields_enabled?)
   end
 
   def test_update_security_settings_with_invalid_param
@@ -1218,27 +1401,39 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
       Account.current.stubs(:help_widget_enabled?).returns(true)
       Account.current.stubs(:notification_emails).returns(notification_emails)
       Account.current.stubs(:freshid_integration_enabled?).returns(false)
-      create_whitelisted_ip(whitelisted_ip)
-      create_password_policy(agent_password_policy)
+      Account.current.stubs(:single_session_per_user_toggle_enabled?).returns(true)
+      Account.current.stubs(:single_session_per_user_enabled?).returns(true)
+      Account.current.stubs(:idle_session_timeout_enabled?).returns(true)
+      Account.current.stubs(:idle_session_timeout).returns(900)
+      Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+      Account.current.stubs(:secure_fields_enabled?).returns(true)
+      create_whitelisted_ip(whitelisted_ip_attributes)
+      create_password_policy(agent_password_policy_attributes)
     end
 
     def unstub_account
       Account.current.unstub(:whitelisted_ips_enabled?)
-      Account.any_instance.unstub(:help_widget_enabled?)
+      Account.current.unstub(:help_widget_enabled?)
       Account.current.unstub(:notification_emails)
       Account.current.unstub(:freshid_integration_enabled?)
+      Account.current.unstub(:single_session_per_user_toggle_enabled?)
+      Account.current.unstub(:single_session_per_user_enabled?)
+      Account.current.unstub(:idle_session_timeout)
+      Account.current.unstub(:idle_session_timeout_enabled?)
+      Account.current.unstub(:secure_fields_toggle_enabled?)
+      Account.current.unstub(:secure_fields_enabled?)
       destroy_password_policy
       destroy_whitelisted_ip
     end
 
-    def create_whitelisted_ip(whitelisted_ip)
-      Account.current.whitelisted_ip_attributes = whitelisted_ip
+    def create_whitelisted_ip(whitelisted_ip_attributes)
+      Account.current.whitelisted_ip_attributes = whitelisted_ip_attributes
       Account.current.whitelisted_ip.load_ip_info(User.current.current_login_ip)
       Account.current.whitelisted_ip.save
     end
 
-    def create_password_policy(password_policy)
-      Account.current.build_agent_password_policy(password_policy)
+    def create_password_policy(password_policy_attributes)
+      Account.current.build_agent_password_policy(password_policy_attributes)
       Account.current.agent_password_policy.save
     end
 

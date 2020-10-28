@@ -71,7 +71,7 @@ module Ember
       custom_fields = params[cname][:custom_field]
       return unless validate_and_assign
       if @item.update_ticket_attributes(cname_params)
-        update_secure_fields(custom_fields) if Account.current.pci_compliance_field_enabled? && custom_fields.present?
+        update_secure_fields(custom_fields) if Account.current.secure_fields_enabled? && custom_fields.present?
         render 'ember/tickets/show'
       else
         render_errors(@item.errors)

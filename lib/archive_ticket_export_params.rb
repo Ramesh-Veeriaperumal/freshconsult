@@ -62,7 +62,10 @@ module ArchiveTicketExportParams
   end
 
   def first_response_status
-    first_response_time.nil? ? "" : ((first_response_time < frDueBy) ? I18n.t('export_data.in_sla') : I18n.t('export_data.out_of_sla'))
+    # skipping first response status for service task as frDueBy is null for service tasks
+    return '' if service_task? || first_response_time.nil?
+
+    first_response_time < frDueBy ? I18n.t('export_data.in_sla') : I18n.t('export_data.out_of_sla')
   end
 
   def tag_names

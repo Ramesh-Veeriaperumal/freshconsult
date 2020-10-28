@@ -948,12 +948,13 @@ class TicketTest < ActiveSupport::TestCase
     nested_field_level1.destroy
   end
 
-  def test_resolution_status_for_service_task
+  def test_resolution_status_and_first_response_status_for_service_task
     enable_adv_ticketing([:field_service_management]) do
       begin
         perform_fsm_operations
         fsm_ticket = create_service_task_ticket
         assert_equal '', fsm_ticket.resolution_status
+        assert_equal '', fsm_ticket.first_response_status
       ensure
         fsm_ticket.destroy
         cleanup_fsm

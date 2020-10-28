@@ -155,7 +155,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def ticket_type_list
-    ticket_type = 'Question,Incident,Problem,Feature Request,Refund'
+    ticket_type = 'Question,Incident,Problem,Feature Request,Refunds and Returns,Bulk orders,Refund'
     ticket_type << ",#{SERVICE_TASK_TYPE}" if Account.current.picklist_values.map(&:value).include?(SERVICE_TASK_TYPE)
     ticket_type
   end
@@ -4495,129 +4495,6 @@ class TicketsControllerTest < ActionController::TestCase
     )
   end
 
-  def test_index_with_spam_count_es_enabled
-    Account.any_instance.stubs(:api_es_enabled?).returns(true)
-    t = create_ticket(spam: true)
-    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-    get :index, controller_params(filter: 'spam')
-    assert_response 200
-    param_object = OpenStruct.new
-    pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object))
-    match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:api_es_enabled?)
-  end
-
-  def test_index_with_new_and_my_open_count_es_enabled
-    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-    t = create_ticket(status: 2)
-    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-    get :index, controller_params(filter: 'new_and_my_open')
-    assert_response 200
-    param_object = OpenStruct.new
-    pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object))
-    match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:api_es_enabled?)
-  end
-
-  def test_index_with_stats_with_count_es_enabled
-    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-    t = create_ticket
-    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-    get :index, controller_params(include: 'stats')
-    assert_response 200
-    param_object = OpenStruct.new(:stats => true)
-    pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object))
-    match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:api_es_enabled?)
-  end
-
-  def test_index_with_requester_with_count_es_enabled
-    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-    user = add_new_user(@account)
-    t = create_ticket(requester_id: user.id)
-    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-    get :index, controller_params(requester_id: user.id)
-    assert_response 200
-    param_object = OpenStruct.new
-    pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object))
-    match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:api_es_enabled?)
-  end
-
-  def test_index_with_filter_order_by_with_count_es_enabled
-    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-    t_1 = create_ticket(status: 2, created_at: 10.days.ago)
-    t_2 = create_ticket(status: 3, created_at: 11.days.ago)
-    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
-    get :index, controller_params(order_by: 'status')
-    assert_response 200
-    param_object = OpenStruct.new
-    pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
-    pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
-    match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:api_es_enabled?)
-  end
-
-  def test_index_with_default_filter_order_type_count_es_enabled
-    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-    t_1 = create_ticket(created_at: 10.days.ago)
-    t_2 = create_ticket(created_at: 11.days.ago)
-    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
-    get :index, controller_params(order_type: 'asc')
-    assert_response 200
-    param_object = OpenStruct.new
-    pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
-    pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
-    match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:api_es_enabled?)
-  end
-
-  def test_index_updated_since_count_es_enabled
-    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-    t = create_ticket(updated_at: 2.days.from_now)
-    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-    get :index, controller_params(updated_since: Time.zone.now.iso8601)
-    assert_response 200
-    param_object = OpenStruct.new
-    pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object))
-    match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:api_es_enabled?)
-  end
-
-  def test_index_with_company_count_es_enabled
-    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-    company = create_company
-    user = add_new_user(@account)
-    sidekiq_inline {
-      user.company_id = company.id
-      user.save!
-    }
-    t = create_ticket(requester_id: user.id)
-    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-    get :index, controller_params(company_id: "#{company.id}")
-    assert_response 200
-    param_object = OpenStruct.new
-    pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object))
-    match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:api_es_enabled?)
-  end
-
   def test_index_with_description_in_include_without_description_by_default_feature
     Account.any_instance.stubs(:description_by_default_enabled?).returns(false)
     get :index, controller_params(include: 'description')
@@ -6612,7 +6489,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_jwe_token_for_get_request_without_privilege
     current_account_id = Account.current.id
     acc = Account.find(current_account_id).make_current
-    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
     ticket = create_ticket
     create_custom_field_dn('custom_card_no_test', 'secure_text')
     uuid = SecureRandom.hex
@@ -6623,13 +6500,13 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.destroy
     request.unstub(:uuid)
     acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
-    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    Account.any_instance.unstub(:secure_fields_enabled?)
   end
 
   def test_jwe_token_for_get_request
     current_account_id = Account.current.id
     acc = Account.find(current_account_id).make_current
-    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
     add_privilege(User.current, :view_secure_field)
     ticket = create_ticket
     create_custom_field_dn('custom_card_no_test', 'secure_text')
@@ -6655,12 +6532,12 @@ class TicketsControllerTest < ActionController::TestCase
     request.unstub(:uuid)
     acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
     remove_privilege(User.current, :view_secure_field)
-    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    Account.any_instance.unstub(:secure_fields_enabled?)
   end
 
   def test_jwe_token_generation_for_put_request
     acc = Account.find(Account.current.id).make_current
-    Account.any_instance.stubs(:pci_compliance_field_enabled?).returns(true)
+    Account.any_instance.stubs(:secure_fields_enabled?).returns(true)
     add_privilege(User.current, :view_secure_field)
     add_privilege(User.current, :edit_secure_field)
     create_custom_field_dn('custom_card_no_test', 'secure_text')
@@ -6674,7 +6551,7 @@ class TicketsControllerTest < ActionController::TestCase
     acc.ticket_fields.find_by_name('custom_card_no_test_1').destroy
     remove_privilege(User.current, :view_secure_field)
     remove_privilege(User.current, :edit_secure_field)
-    Account.any_instance.unstub(:pci_compliance_field_enabled?)
+    Account.any_instance.unstub(:secure_fields_enabled?)
   end
 
   def test_index_with_requester_with_public_api_filter_factory_enabled

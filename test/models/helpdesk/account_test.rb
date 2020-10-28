@@ -131,4 +131,34 @@ class AccountTest < ActiveSupport::TestCase
   ensure
     Account.any_instance.unstub(:signup_in_progress?)
   end
+
+  def test_enqueue_vault_account_worker_when_secure_fields_enabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    secure_fields_feature_presence = @account.secure_fields_enabled?
+    @account.disable_setting(:secure_fields)
+    ::Vault::AccountWorker.jobs.clear
+    @account.enable_setting(:secure_fields)
+    assert_equal 1, ::Vault::AccountWorker.jobs.size
+    args = ::Vault::AccountWorker.jobs.first.deep_symbolize_keys[:args][0]
+    assert_equal 'update', args[:action]
+  ensure
+    @account.disable_setting(:secure_fields) unless secure_fields_feature_presence
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    ::Vault::AccountWorker.jobs.clear
+  end
+
+  def test_enqueue_vault_account_worker_when_secure_fields_disabled
+    Account.current.stubs(:secure_fields_toggle_enabled?).returns(true)
+    secure_fields_feature_presence = @account.secure_fields_enabled?
+    @account.enable_setting(:secure_fields)
+    ::Vault::AccountWorker.jobs.clear
+    @account.disable_setting(:secure_fields)
+    assert_equal 1, ::Vault::AccountWorker.jobs.size
+    args = ::Vault::AccountWorker.jobs.first.deep_symbolize_keys[:args][0]
+    assert_equal 'delete', args[:action]
+  ensure
+    @account.enable_setting(:secure_fields) if secure_fields_feature_presence
+    Account.current.unstub(:secure_fields_toggle_enabled?)
+    ::Vault::AccountWorker.jobs.clear
+  end
 end

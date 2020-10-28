@@ -48,6 +48,10 @@ class AccountsControllerTest < ActionController::TestCase
     get :new_signup_free, callback: '', user: { name: Faker::Name.name, email: user_email, time_zone: 'Chennai', language: 'en' }, account: { account_name: account_name, account_domain: domain_name, locale: I18n.default_locale, time_zone: 'Chennai', user_name: 'Support', user_password: 'test1234', user_password_confirmation: 'test1234', user_email: user_email, user_helpdesk_agent: true, new_plan_test: true }, format: 'json'
     assert_response 200
     assert_not_equal AddEventToFreshmarketer.jobs.size, 0
+    assert_not_nil (current_account.tickets.find { |ticket| ticket.subject == 'How much time does it take to get my money back!????' })
+    assert_not_nil (current_account.tickets.find { |ticket| ticket.subject == 'My return was not picked up' })
+    assert_not_nil (current_account.tickets.find { |ticket| ticket.subject == 'How do I place a custom order?' })
+    assert_not_nil (current_account.tickets.find { |ticket| ticket.subject == 'How can I get a refund for my order?' })
   ensure
     unstub_signup_calls
     Account.unstub(:current)

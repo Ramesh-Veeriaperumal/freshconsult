@@ -50,7 +50,6 @@ class SAAS::SubscriptionEventActions
   def change_plan
     
     if plan_changed?
-      remove_old_plan_db_features if old_plan.present?
       reset_plan_features
       remove_chat_feature
       add_new_plan_features_and_settings
@@ -122,13 +121,6 @@ class SAAS::SubscriptionEventActions
   end
 
   private
-
-    def remove_old_plan_db_features
-      old_plan_name = old_plan.subscription_plan.canon_name
-      Rails.logger.debug "old db features removed for account #{account.id} :: #{old_plan_name}"
-      account.remove_features_of(old_plan_name)
-      account.clear_feature_from_cache
-    end
 
     def reset_plan_features
       features_list = account.features_list

@@ -339,6 +339,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   def test_field_agent_trial_before_setting_limit
     setup_common_agents_limit
     Subscription.any_instance.stubs(:trial?).returns(true)
+    @account.add_feature :basic_settings_feature
     @account.add_feature(:field_service_management)
     @account.save!
     get :agents_limit, controller_params(version: 'private')
@@ -351,11 +352,13 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   ensure
     Subscription.any_instance.unstub(:trial?)
     @account.revoke_feature(:field_service_management)
+    @account.revoke_feature :basic_settings_feature
   end
 
   def test_field_agent_active_before_setting_limit
     setup_common_agents_limit
     Subscription.any_instance.stubs(:trial?).returns(false)
+    @account.add_feature :basic_settings_feature
     @account.add_feature(:field_service_management)
     @account.save!
     get :agents_limit, controller_params(version: 'private')
@@ -368,12 +371,14 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
   ensure
     Subscription.any_instance.unstub(:trial?)
     @account.revoke_feature(:field_service_management)
+    @account.revoke_feature :basic_settings_feature
   end
 
   def test_field_agent_trial_after_setting_limit
     setup_common_agents_limit
     Subscription.any_instance.stubs(:trial?).returns(true)
     Subscription.any_instance.stubs(:field_agent_limit).returns(1)
+    @account.add_feature :basic_settings_feature
     @account.add_feature(:field_service_management)
     @account.save!
     agent3 = add_test_agent(@account).agent
@@ -391,12 +396,14 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:trial?)
     Account.any_instance.unstub(:field_agents_count)
     @account.revoke_feature(:field_service_management)
+    @account.revoke_feature :basic_settings_feature
   end
 
   def test_field_agent_active_after_setting_limit
     setup_common_agents_limit
     Subscription.any_instance.stubs(:trial?).returns(false)
     Subscription.any_instance.stubs(:field_agent_limit).returns(1)
+    @account.add_feature :basic_settings_feature
     @account.add_feature(:field_service_management)
     @account.save!
     agent3 = add_test_agent(@account).agent
@@ -414,6 +421,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     Subscription.any_instance.unstub(:trial?)
     Account.any_instance.unstub(:field_agents_count)
     @account.revoke_feature(:field_service_management)
+    @account.revoke_feature :basic_settings_feature
   end
 
   private

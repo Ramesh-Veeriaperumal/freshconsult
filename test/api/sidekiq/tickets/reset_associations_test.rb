@@ -57,7 +57,6 @@ class ResetAssociationsTest < ActionView::TestCase
     enable_adv_ticketing([:link_tickets]) do
       @agent = get_admin if @agent.nil?
       create_linked_tickets
-      create_broadcast_note(@tracker_id)
       Tickets::ResetAssociations.new.perform(ticket_ids: [@tracker_id])
       tracker_ticket = @account.tickets.find_by_display_id(@tracker_id)
       assert_equal tracker_ticket.associates.count, 0

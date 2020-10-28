@@ -40,6 +40,8 @@ module Solution::Feedback
 		def add_watcher
 			return unless current_account.add_watcher_enabled?
 			return unless @article.user.agent? and @article.user.active?
+			return if @ticket.subscriptions.exists?(user_id: @article.user.id)
+
 			subscription = @ticket.subscriptions.create( {:user_id => @article.user.id} )
 			Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher,
 																						@ticket,

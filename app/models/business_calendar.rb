@@ -188,8 +188,8 @@ class BusinessCalendar < ActiveRecord::Base
     @holiday_set ||= holidays.collect { |holiday| "#{holiday.day} #{holiday.mon}" }.to_set.freeze
   end
 
-  def mint_url
-    "#{account.url_protocol}://#{account.host}/a/admin/business_calendars/#{id}"
+  def edit_mint_url
+    "#{account.url_protocol}://#{account.host}/a/admin/business_calendars/#{id}/edit"
   end
 
   def channel_bussiness_hour_data

@@ -10,6 +10,9 @@
          		imageUploadCallback: inlineImageUploadCallback
          	});
          	break;
+        case 'anonymous-ticket':
+           jQuery(element_id).redactor({ clipboardImageUpload:"/tickets_uploaded_images/create_file", convertDivs: false,  autoresize:false, setFontSettings:true, wrapFontSettings:Helpdesk.settings, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+           break;
 			case 'template':
 				jQuery(element_id).redactor({ 
 					focus: false, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/ticket_templates_uploaded_images", clipboardImageUpload:"/ticket_templates_uploaded_images/create_file", setFontSettings:true, wrapFontSettings:Helpdesk.settings, allowTagsInCodeSnippet:true,

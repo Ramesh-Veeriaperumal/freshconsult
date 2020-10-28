@@ -64,7 +64,7 @@ module Ember
       return unless validate_delegator(@item, delegator_hash)
 
       if @ticket_params.nil? || update_ticket_attributes
-        update_secure_fields(custom_fields_in_params) if Account.current.pci_compliance_field_enabled? && custom_fields_in_params.present?
+        update_secure_fields(custom_fields_in_params) if Account.current.secure_fields_enabled? && custom_fields_in_params.present?
         if current_user.enabled_undo_send? && @ticket.schedule_observer.blank?
           save_note_and_respond_later
         else

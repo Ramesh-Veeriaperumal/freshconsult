@@ -69,7 +69,6 @@ module SecurityConcern
     (cname_params[:sso][:type].presence || @item.sso_options[:sso_type]).try(:to_sym)
   end
   # **-------------- Deny iframe --------------** #
-
   def assign_allow_iframe_embedding_settings(allow_iframe = cname_params[:allow_iframe_embedding])
     @item.account_additional_settings.deny_iframe_embedding = !allow_iframe
   end
@@ -78,5 +77,10 @@ module SecurityConcern
 
   def assign_secure_attachments_enabled_settings
     cname_params[:secure_attachments] = cname_params.delete(:secure_attachments_enabled) if cname_params.key?(:secure_attachments_enabled)
+  end
+
+  # **------------ Secure Fields ------------** #
+  def assign_secure_fields_settings(enabled = cname_params[:secure_fields])
+    enabled ? @item.set_setting(:secure_fields, true) : @item.reset_setting(:secure_fields, true)
   end
 end

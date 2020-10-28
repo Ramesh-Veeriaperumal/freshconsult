@@ -340,7 +340,7 @@ class TicketDelegator < BaseDelegator
     end
 
     def secure_field_accessible?
-      Account.current.pci_compliance_field_enabled? && User.current.privilege?(:edit_secure_field)
+      Account.current.secure_fields_enabled? && User.current.privilege?(:edit_secure_field)
     end
 
     # skip shared attachments

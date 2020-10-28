@@ -611,3 +611,5 @@ api_error_messages:
   invalid_range: "Capping limit range should be inclusive of 1..100"
   require_filter_params: "Anyone of the following filter attributes is mandatory: %{attributes}."
   invalid_date_time_period: "Datetime range can only be a maximum of 2 days"
+  #platform v2
+  platform_mismatch: "the article is not present in the given platform"

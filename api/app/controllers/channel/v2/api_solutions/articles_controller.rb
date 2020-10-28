@@ -6,6 +6,7 @@ module Channel::V2::ApiSolutions
     before_filter :channel_client_authentication, only: [:folder_articles, :search, :show, :index,:thumbs_up, :thumbs_down, :hit]
     before_filter :validate_search_query_parameters, only: [:search]
     before_filter :validate_chat_query_parameters, only: [:folder_articles]
+    before_filter :delegator_validation, only: [:hit, :thumbs_down, :thumbs_up]
     
     def self.decorator_name
       ::Solutions::ArticleDecorator
@@ -68,6 +69,13 @@ module Channel::V2::ApiSolutions
 
       def agent?
         current_user && current_user.agent?
+      end
+
+      def delegator_validation
+        if params[:platform].present?
+          @delegator_klass = 'Channel::V2::ApiSolutions::ArticleDelegator'.freeze
+          validate_delegator(@meta, { platform: params[:platform] })
+        end
       end
   end
 end

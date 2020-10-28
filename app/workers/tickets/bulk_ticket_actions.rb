@@ -41,6 +41,6 @@ class Tickets::BulkTicketActions < BaseWorker
   private
 
     def cleanup_vault_data?(params)
-      @account.pci_compliance_field_enabled? && params[:action] == 'update_multiple' && params[:helpdesk_ticket] && params[:helpdesk_ticket]['status'] == CLOSED
+      @account.secure_fields_enabled? && params[:action] == 'update_multiple' && params[:helpdesk_ticket] && params[:helpdesk_ticket]['status'] == CLOSED
     end
 end
