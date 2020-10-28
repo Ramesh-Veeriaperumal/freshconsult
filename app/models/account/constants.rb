@@ -190,7 +190,6 @@ class Account < ActiveRecord::Base
     customer_sentiment: false, logout_logs: false,
     suggest_tickets: false,
     hide_api_key: false,
-    kbase_spam_whitelist: false,
     whitelist_supervisor_sla_limitation: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     dkim: false, dkim_email_service: false, sha1_enabled: false,

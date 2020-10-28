@@ -478,7 +478,6 @@
   :assets: false
   :assets_toggle: false
   :prevent_ticket_creation_for_others: true
-  :kbase_spam_whitelist: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false

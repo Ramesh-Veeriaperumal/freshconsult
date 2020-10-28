@@ -205,6 +205,10 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :kbase_spam_whitelist:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
   :secure_fields:
     default: false
     internal: false
