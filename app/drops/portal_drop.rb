@@ -225,7 +225,6 @@ class PortalDrop < BaseDrop
   end
 
 	def most_viewed_articles
-		return [] unless Account.current.launched?(:most_viewed_articles)
 		@most_viewed_articles ||= begin
 			fetched_articles = MemcacheKeys.fetch(view_key, ARTICLE_CACHE_EXPIRY) {
 				all_articles_ids = Account.current.solution_articles.most_viewed(MAX_ARTICLES_LIMIT).pluck(:parent_id)

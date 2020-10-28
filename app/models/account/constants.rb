@@ -183,7 +183,7 @@ class Account < ActiveRecord::Base
     hide_og_meta_tags: false, api_search_beta: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
     es_down: false, es_v1_enabled: false, email_new_settings: false,
-    gamification_quest_perf: false, lambda_exchange: false, meta_read: false, most_viewed_articles: false,
+    gamification_quest_perf: false, lambda_exchange: false, meta_read: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
