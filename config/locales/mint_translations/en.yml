@@ -4311,6 +4311,9 @@ en:
     freshchat_toggle:
         title: Chat Support
         helpnote: Allow agents to reach Freshdesk support via a chat widget in-product
+    hide_first_response_toggle:
+        title: Hide first response due
+        helpnote: Hide first response due time in tickets for all agents in the helpdesk
     us: MONTH-DAY-YEAR
     gdpr_terms: 'By clicking on Accept , you agree to our'
     gdpr_terms_link: Terms

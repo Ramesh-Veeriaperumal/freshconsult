@@ -469,7 +469,6 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :activity_revamp: true
-  :hide_first_response_due: false
   :fluffy_forest: false
   :fluffy_higher_plan1: false
   :fluffy_higher_plan2: false

@@ -205,6 +205,10 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :hide_first_response_due:
+    default: false
+    internal: false
+    feature_dependency: :sla_management_v2
   :caching:
     default: false
     internal: true

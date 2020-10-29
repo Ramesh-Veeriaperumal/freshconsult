@@ -2651,7 +2651,7 @@ a.mobile_switchBtn {
 	.lead{ font-weight: 400; }
 	label{ margin-bottom:0; }
 	.linkback-url{ margin: 5px 0; }
-	.account-forum-toggle .controls, .account-branding-toggle .controls, .freshchat-toggle .controls, .ticket-summary-toggle .controls{
+	.account-forum-toggle .controls, .account-branding-toggle .controls, .freshchat-toggle .controls, .hide-first-response-toggle .controls, .ticket-summary-toggle .controls{
 	  padding-top: 5px;
     .toggle-button{
     	@include margin-left(0px);
