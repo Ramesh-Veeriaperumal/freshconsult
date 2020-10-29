@@ -101,6 +101,7 @@ class ActionDispatch::IntegrationTest
     set_key(account_key, 500, nil)
     set_key(default_key, 400, nil)
     @account.make_current
+    @agent.make_current
 
     @account.reputation = 1
     @account.save
