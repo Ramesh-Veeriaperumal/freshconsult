@@ -62,7 +62,7 @@ module Ember
           super
           if @only_omni_channel_availability
             @items_count = @parsed_omni_agents_count || 0
-          else
+          elsif User.current.privilege?(:manage_users)
             @day_pass_used_count = day_pass_used_count(@items.select { |i| i.occasional == true }.map(&:user_id))
           end
         end
