@@ -44,5 +44,4 @@ module ControllerTestHelper
     UserSession.find.try(:destroy)
     User.reset_current_user
   end
-  
 end
