@@ -22,6 +22,6 @@ class TwitterCustomstreamCronWorkerTest < ActionView::TestCase
   def test_custom_stream_twitter_enqueue
     Social::CustomTwitterWorker.drain
     CronWebhooks::TwitterCustomStream.new.perform(type: 'trial', task_name: 'scheduler_custom_stream_twitter')
-    assert_equal 1, Social::CustomTwitterWorker.jobs.size
+    refute Social::CustomTwitterWorker.jobs.empty?
   end
 end
