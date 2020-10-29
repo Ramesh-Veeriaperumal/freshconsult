@@ -138,4 +138,21 @@
   :manage_teams: 137
   :view_omni_analytics: 138
   :manage_custom_objects: 139
-:max_value: 139
+  :manage_collaborators: 140
+  :provide_access_via_mentions: 141
+  :create_ticket: 142
+  :update_ticket_with_send_and_set: 143
+  :manage_chats: 144
+  :create_public_note: 145
+  :execute_scenario_automation: 146
+  :manage_parent_child_tickets: 147
+  :manage_linked_tickets: 148
+  :create_service_tasks: 149
+  :update_service_tasks: 150
+  :delete_service_tasks: 151
+  :service_task_assignee: 152
+  :service_task_internal_assignee: 153
+  :convert_to_topic: 154
+  :ticket_assignee: 155
+  :ticket_internal_assignee: 156
+:max_value: 156
