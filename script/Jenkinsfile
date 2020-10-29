@@ -1,4 +1,5 @@
 import groovy.json.*;
+import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException;
 
 node_label = "spot_backend";
 backendImage = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend:ruby-2.3.8"
@@ -39,9 +40,13 @@ timestamps {
             pushLogsToS3() // tar log directory and pushing to s3
             if (currentBuild.result.equals("UNSTABLE") && isPR) { sendEmail() } // send email if build fails
 
+        } catch (FlowInterruptedException interruptEx) {
+            currentBuild.result = 'ABORTED'
+            throw new FlowInterruptedException(Result.ABORTED)
         } catch (e) {
             currentBuild.result = 'FAILURE'
-        } finally {
+        }
+        finally {
             // To persist test random failures
             monitJob = env.TEST_MONIT_JOB_NAME
             if (monitJob?.trim()) {
@@ -78,7 +83,7 @@ def getCategoryRun(category) {
         flow[category] = {
             stage(category) {
                 try {
-                    docker.image(prontoImage).inside("--name $category") {
+                    docker.image(prontoImage).inside("--name $category --init") {
                         println "$category :: container :: " + getContainerID()
                         timeout(time: 60, unit: 'MINUTES') {
                             println "$category :: started :: " + getTimeStamp()
@@ -90,6 +95,9 @@ def getCategoryRun(category) {
                             println "$category :: completed :: " + getTimeStamp()
                         }
                     }
+                } catch (FlowInterruptedException interruptEx) {
+                    currentBuild.result = 'ABORTED'
+                    throw new FlowInterruptedException(Result.ABORTED)
                 } catch (e) {
                     println "pronto :: exception :: " + e
                 }
@@ -99,7 +107,7 @@ def getCategoryRun(category) {
         flow[category] = {
             stage(category) {
                 try {
-                    docker.image(backendImage).inside("--name sandbox") {
+                    docker.image(backendImage).inside("--name sandbox --init") {
                         println "sandbox :: container :: " + getContainerID()
                         timeout(time: 60, unit: 'MINUTES') {
                             println "sandbox :: started :: " + getTimeStamp()
@@ -111,6 +119,9 @@ def getCategoryRun(category) {
                             println "sandbox :: test completed :: " + getTimeStamp()
                         }
                     }
+                } catch (FlowInterruptedException interruptEx) {
+                    currentBuild.result = 'ABORTED'
+                    throw new FlowInterruptedException(Result.ABORTED)
                 } catch (e) {
                     println "Exception :: " + e
                 }
@@ -125,7 +136,7 @@ def getCategoryRun(category) {
                     c[it] = {
                         def sub_category = category + '_' + it
                         try {
-                            docker.image(backendImage).inside("--name $sub_category") {
+                            docker.image(backendImage).inside("--name $sub_category --init") {
                                 println "$sub_category :: container :: " + getContainerID()
 
                                 timeout(time: timeout, unit: 'MINUTES') {
@@ -138,8 +149,10 @@ def getCategoryRun(category) {
                                     executeTestCase(sub_category)
                                     println "$sub_category :: completed :: " + getTimeStamp()
                                 }
-
                             }
+                        } catch (FlowInterruptedException interruptEx) {
+                            currentBuild.result = 'ABORTED'
+                            throw new FlowInterruptedException(Result.ABORTED)
                         } catch (e) {
                             println "$sub_category :: exception :: " + e
                         }
@@ -249,7 +262,7 @@ def buildSetup(category) {
 }
 
 def prepareSuite(category, count) {
-    docker.image(backendImage).inside("--name prepare_suite") {
+    docker.image(backendImage).inside("--name prepare_suite --init") {
         sh """#!/bin/bash
             source /etc/profile.d/rvm.sh
             ruby test/prepare_test_suite.rb $count $category
@@ -276,7 +289,6 @@ def executeTestCase(category) {
                 PRONTO_GITHUB_ACCESS_TOKEN="${env.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=${params.ghprbPullId} pronto run -f github_status github_pr -c origin/falcon-prestaging
             """
         }
-
         if (category.equals('pronto-rails')) {
             sh """#!/bin/bash
                 source /etc/profile.d/rvm.sh
@@ -289,7 +301,6 @@ def executeTestCase(category) {
                 PRONTO_GITHUB_ACCESS_TOKEN="${env.PRONTO_TOKEN}" PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -r=rubocop -f github_status github_pr -c origin/falcon-prestaging
             """
         }
-
         if (category.contains('public') || category.contains('private')) {
             def tmp_file = "temp_${category}_suite.rb"
             def log_file = "test_log/${category}.log"
@@ -317,7 +328,6 @@ def executeTestCase(category) {
                 fi
             """
         }
-
         if (category.equals('sandbox')) {
             def minitest_report_dir = "test/reports/sandbox"
             def coverage_dir = "tmp/coverage/sandbox"
@@ -331,6 +341,9 @@ def executeTestCase(category) {
                 bundle exec ruby test/api/suites/sandbox_test_suite.rb
             """
         }
+    } catch (FlowInterruptedException interruptEx) {
+        currentBuild.result = 'ABORTED'
+        throw new FlowInterruptedException(Result.ABORTED)
     } catch (e) {
         println "$category :: exception in test :: " + getTimeStamp() + " :: " + e
         println "Build UNSTABLE"
@@ -380,7 +393,7 @@ def sonarqubeAnalysis() {
     stage('sonnarqube-analysis') {
         try {
             withEnv(["JAVA_HOME=$SONARQUBE_JAVA_HOME", "SONARQUBE_HOME=$SONARQUBE_SCANNER_HOME"]) {
-                docker.image(backendImage).inside("--name sonarqube --privileged -v $SONARQUBE_JAVA_HOME:$SONARQUBE_JAVA_HOME -v $SONARQUBE_SCANNER_HOME:$SONARQUBE_SCANNER_HOME") {
+                docker.image(backendImage).inside("--name sonarqube --privileged -v $SONARQUBE_JAVA_HOME:$SONARQUBE_JAVA_HOME -v $SONARQUBE_SCANNER_HOME:$SONARQUBE_SCANNER_HOME --init") {
                     withCredentials([string(credentialsId: 'SonarqubeGithubToken', variable: 'githubToken')]) {
                         withSonarQubeEnv('FreshdeskSonarqube') {
                             if(isPR){
@@ -413,8 +426,10 @@ def sonarqubeAnalysis() {
                     }
                 }
             }
+        } catch (FlowInterruptedException interruptEx) {
+            currentBuild.result = 'ABORTED'
+            throw new FlowInterruptedException(Result.ABORTED)
         } catch (e) {
-            // currentBuild.result = 'UNSTABLE'
             println "sonarqube :: exception :: $e"
         }
     }
@@ -435,7 +450,7 @@ def qualityGate() {
 def encryptionCheck() {
     println "encryption check :: " + getTimeStamp()
 
-    docker.image(backendImage).inside("--name encryption_check") {
+    docker.image(backendImage).inside("--name encryption_check --init") {
         sh """#!/bin/bash
             source /etc/profile.d/rvm.sh
             cd /home/jenkins/
