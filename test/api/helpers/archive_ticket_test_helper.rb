@@ -165,8 +165,8 @@ module ArchiveTicketTestHelper
   def modify_params_hash(ticket, params_hash)
     params_hash[:description] = ticket.description
     params_hash[:description_html] = ticket.description_html
-    params_hash[:due_by] = ticket.due_by.to_datetime.try(:utc).to_s
-    params_hash[:frDueBy] = ticket.frDueBy.to_datetime.try(:utc).to_s
+    params_hash[:due_by] = ticket.due_by && ticket.due_by.to_datetime.try(:utc).to_s
+    params_hash[:frDueBy] = ticket.frDueBy && ticket.frDueBy.to_datetime.try(:utc).to_s
     params_hash
   end
 
