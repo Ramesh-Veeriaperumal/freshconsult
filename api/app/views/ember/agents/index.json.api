@@ -6,6 +6,6 @@ if @only_omni_channel_availability
   end.to_json
 else
   @items.map do |agent|
-    @availability_details.present? ? agent.availability_hash(@availability_details[agent.record.user_id]) : (@privilege_filter ? agent.to_privilege_hash : agent.to_hash(@day_pass_used_count))
+    @availability_details.present? ? agent.availability_hash(@availability_details[agent.record.user_id]) : (@privilege_filter ? agent.to_privilege_hash : agent.to_hash)
   end.to_json
 end

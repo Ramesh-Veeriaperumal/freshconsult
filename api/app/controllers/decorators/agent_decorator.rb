@@ -9,11 +9,11 @@ class AgentDecorator < ApiDecorator
     @is_assumed_user = options[:is_assumed_user]
   end
 
-  def to_hash(day_pass_used_count = {})
-    User.current.privilege?(:manage_users) ? agent_hash(day_pass_used_count) : to_restricted_hash
+  def to_hash
+    User.current.privilege?(:manage_users) ? agent_hash : to_restricted_hash
   end
 
-  def agent_hash(day_pass_used_count = {})
+  def agent_hash
     agent_info = {
       available: record.available,
       show_rr_toggle: record.toggle_availability?,
@@ -40,7 +40,6 @@ class AgentDecorator < ApiDecorator
     agent_info[:contribution_group_ids] = record.agent_contribution_group_ids if Account.current.advanced_ticket_scopes_enabled? && !record.field_agent_check_using_cache?
     agent_info[:freshchat_agent] = record.agent_freshchat_enabled? if Account.current.omni_chat_agent_enabled?
     agent_info.merge!(gamification_options)
-    agent_info[:day_pass_used] = day_pass_used_count[record.user_id] if day_pass_used_count.present? && record.occasional
     agent_info
   end
 
