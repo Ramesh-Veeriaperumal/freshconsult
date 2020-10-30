@@ -60,7 +60,11 @@ module Ember
           @items = privilege_scoper
         else
           super
-          @items_count = @parsed_omni_agents_count || 0 if @only_omni_channel_availability
+          if @only_omni_channel_availability
+            @items_count = @parsed_omni_agents_count || 0
+          elsif User.current.privilege?(:manage_users)
+            @day_pass_used_count = day_pass_used_count(@items.select { |i| i.occasional == true }.map(&:user_id))
+          end
         end
       end
 
@@ -117,6 +121,12 @@ module Ember
         return [] if group_ids.empty?
         agent_ids =  agent_groups.select { |ag| group_ids.include?(ag.group_id) }.map(&:user_id).uniq
         scoper.where(user_id: agent_ids)
+      end
+
+      def day_pass_used_count(user_ids)
+        day_passes_map = current_account.day_pass_usages.where(user_id: user_ids).group(:user_id).count(:id)
+        users_with_no_day_passes = (user_ids - day_passes_map.keys).map { |user_id| [user_id, 0] }.to_h
+        day_passes_map.merge!(users_with_no_day_passes)
       end
   end
 end
