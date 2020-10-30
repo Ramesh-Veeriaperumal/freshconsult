@@ -179,7 +179,7 @@ class Account < ActiveRecord::Base
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
 
   LAUNCHPARTY_FEATURES = {
-    hide_og_meta_tags: false, api_search_beta: false, autoplay: false, bi_reports: false,
+    hide_og_meta_tags: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
     es_down: false, es_v1_enabled: false, email_new_settings: false,
     gamification_quest_perf: false, lambda_exchange: false, meta_read: false,

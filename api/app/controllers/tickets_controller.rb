@@ -16,13 +16,12 @@ class TicketsController < ApiApplicationController
   include AssociateTicketsHelper
   include AdvancedTicketScopes
 
-  decorate_views(decorate_objects: [:index, :search])
+  decorate_views(decorate_objects: [:index])
   DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
   DESCRIPTION = :description.to_s.freeze
 
   before_filter :ticket_permission?, only: [:destroy, :vault_token]
   before_filter :secure_field_accessible?, only: [:vault_token]
-  before_filter :check_search_feature, :validate_search_params, only: [:search]
   before_filter :validate_associated_tickets, only: [:create]
   before_filter :ignore_unwanted_fields, only: [:create, :update], if: :remove_unrelated_fields?
   before_filter :check_outbound_limit_exceeded, if: :compose_email?
@@ -72,13 +71,6 @@ class TicketsController < ApiApplicationController
     jwe = JWT::SecureServiceJWEFactory.new(PciConstants::ACTION[:read], @item.id, PciConstants::PORTAL_TYPE[:agent_portal], PciConstants::OBJECT_TYPE[:ticket])
     @token = jwe.generate_jwe_payload(@secure_field_methods)
     response.api_meta = { vault_token: @token } if private_api?
-  end
-
-  def search
-    lookup_and_change_params
-    @items = search_query
-    add_total_entries(@items.total)
-    add_link_header(page: @items.next_page) if @items.next_page.present?
   end
 
   def destroy
@@ -301,14 +293,6 @@ class TicketsController < ApiApplicationController
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
     end
 
-    def validate_search_params
-      name_mapping_txt_fields = searchable_text_ff_fields
-      custom_fields = name_mapping_txt_fields.empty? ? [nil] : name_mapping_txt_fields.keys
-      params.permit(*ApiTicketConstants::SEARCH_ALLOWED_DEFAULT_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS, *custom_fields)
-      @ticket_filter = TicketFilterValidation.new(params.merge(cf: custom_fields))
-      render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
-    end
-
     def description_included?
       !params[:include].nil? && params[:include].include?(DESCRIPTION)
     end
@@ -456,10 +440,6 @@ class TicketsController < ApiApplicationController
       build_cloud_files(@item, @cloud_files) if private_api? && @cloud_files
     end
 
-    def check_search_feature
-      log_and_render_404 unless current_account.launched?(:api_search_beta)
-    end
-
     def build_ticket_body_attributes
       if params[cname][:description]
         ticket_body_hash = { ticket_body_attributes: { description_html: params[cname][:description] } }
@@ -497,18 +477,6 @@ class TicketsController < ApiApplicationController
       return true if super
       allowed_content_types = ApiTicketConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
       allowed_content_types.include?(request.content_mime_type.ref)
-    end
-
-    def search_query
-      es_options = {
-        per_page: params[:per_page] || 30,
-        page: params[:page] || 1,
-        order_entity: params[:order_by] || 'created_at',
-        order_sort: params[:order_type] || 'desc'
-      }
-      neg_conditions = [Helpdesk::Filters::CustomTicketFilter.deleted_condition(true), Helpdesk::Filters::CustomTicketFilter.spam_condition(true)]
-      conditions = params[:search_conditions].collect { |s_c| { 'condition' => s_c.first, 'operator' => 'is_in', 'value' => s_c.last.join(',') } }
-      Search::Tickets::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket', es_options)
     end
 
     def check_outbound_limit_exceeded
