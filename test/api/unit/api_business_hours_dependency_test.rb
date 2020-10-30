@@ -12,10 +12,4 @@ class ApiBusinessHoursDependencyTest < ActionView::TestCase
     actual_filters = Admin::BusinessCalendarsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end
-
-  def test_validations_business_hour
-    actual = BusinessCalendar.validators.map { |x| [x.class, x.attributes, x.options] }
-    expected = [[ActiveModel::Validations::PresenceValidator, [:time_zone, :name], {}]]
-    assert_equal expected, actual
-  end
 end

@@ -68,7 +68,7 @@ module Helpdesk::ProcessByMessageId
       (from_email[:email] == ticket.sender_email) or
       ticket.included_in_cc?(from_email[:email]) or
       belong_to_same_company?(ticket,user) or
-      Account.current.features?(:threading_without_user_check))
+      Account.current.threading_without_user_check_enabled?)
   end
 
   def belong_to_same_company?(ticket,user)

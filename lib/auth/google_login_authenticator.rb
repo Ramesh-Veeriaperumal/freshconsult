@@ -45,6 +45,7 @@ class Auth::GoogleLoginAuthenticator < Auth::Authenticator
 
     def google_signin_enabled?(full_domain)
         flag = false
+        Rails.logger.info "Google Authenticator - Full domain = #{full_domain.inspect}"
         Sharding.select_shard_of(full_domain) do
           account =  Account.find_by_full_domain(full_domain) || Portal.find_by_portal_url(full_domain).account
           account.make_current

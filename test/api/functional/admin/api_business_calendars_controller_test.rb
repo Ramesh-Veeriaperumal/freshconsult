@@ -21,6 +21,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     User.stubs(:current).returns(User.first)
     Account.any_instance.stubs(:multiple_business_hours_enabled?).returns(true)
     @account = Account.current
+    WebMock.enable!
   end
 
   def teardown
@@ -1226,7 +1227,6 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     end
   end
 
-
   def test_update_business_calendar_for_omni_with_invalid_breaks
     enable_emberize_business_hours do
       enable_omni_business_hours do
@@ -1442,6 +1442,112 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     end
   ensure
     WebMock.reset!
+  end
+
+  def test_duplicate_name_on_business_calendar_create
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        params = dummy_business_calendar_default_params.merge(
+          'channel_business_hours' => [
+            ticket_business_hours_sample,
+            caller_channel_business_hours_sample[:channel_business_hours][0],
+            chat_channel_business_hours_sample[:channel_business_hours][0]
+          ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        error_data = [bad_request_error_pattern('name',
+                                                'It should be a unique value',
+                                                code: 'duplicate_value')]
+        assert_response 409
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_duplicate_name_on_business_calendar_update
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        params = {
+          'name': 'Dark web with social engineering'
+        }
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        business_calendar2 = create_business_calendar(name: 'Dark web with social engineering 2')
+        put :update, construct_params({ id: business_calendar2.id }, params)
+        error_data = [bad_request_error_pattern('name',
+                                                'It should be a unique value',
+                                                code: 'duplicate_value')]
+        assert_response 409
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_create_business_calendar_for_omni_with_invalid_away_message_for_chat
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        params = dummy_business_calendar_default_params.merge(
+          'channel_business_hours' => [
+            ticket_business_hours_sample,
+            caller_channel_business_hours_sample[:channel_business_hours][0],
+            chat_channel_business_hours_sample[:channel_business_hours][0].merge(
+              "away_message": nil
+            )
+          ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        error_data = [bad_request_error_pattern('channel_data[:chat][:away_message]',
+                                                "Expecting 'String' but found 'invalid'",
+                                                code: 'invalid_value')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_create_business_calendar_for_omni_with_missing_away_message_attribute_for_chat
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        chat_data = chat_channel_business_hours_sample[:channel_business_hours][0]
+        chat_data.delete(:away_message)
+        params = dummy_business_calendar_default_params.merge(
+          'channel_business_hours' => [
+            ticket_business_hours_sample,
+            caller_channel_business_hours_sample[:channel_business_hours][0],
+            chat_data
+          ]
+        ).merge(dummy_holiday_data)
+        post :create, construct_params(params)
+        error_data = [bad_request_error_pattern('channel_data[:chat]',
+                                                'Mandatory parameters missing: (away_message)',
+                                                code: 'invalid_value')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
+  end
+
+  def test_update_business_calendar_for_omni_with_invalid_away_message_for_chat
+    enable_emberize_business_hours do
+      enable_omni_business_hours do
+        params = {
+          'channel_business_hours' => [
+            ticket_business_hours_sample,
+            caller_channel_business_hours_sample[:channel_business_hours][0],
+            chat_channel_business_hours_sample[:channel_business_hours][0].merge(
+              "away_message": nil
+            )
+          ]
+        }
+        business_calendar = create_business_calendar(name: 'Dark web with social engineering')
+        put :update, construct_params({ id: business_calendar.id }, params)
+        error_data = [bad_request_error_pattern('channel_data[:chat][:away_message]',
+                                                "Expecting 'String' but found 'invalid'",
+                                                code: 'invalid_value')]
+        assert_response 400
+        match_json(description: 'Validation failed', errors: error_data)
+      end
+    end
   end
 
   private

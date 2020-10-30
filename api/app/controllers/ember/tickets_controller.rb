@@ -298,8 +298,6 @@ module Ember
         if use_filter_factory?
           items = FilterFactory::TicketFilterer.filter(params, true).preload(conditional_preload_options)
           paginate_items(items, true)
-        elsif current_account.count_es_tickets_enabled?
-          tickets_from_es
         else
           paginate_items(tickets_filter.preload(conditional_preload_options))
         end

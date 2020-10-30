@@ -427,6 +427,7 @@
       :kbase_spam_whitelist: 423
       :csat_email_scan_compatibility: 424
       :secure_fields_toggle: 425
+      :collaborators: 426
 :selectable_features:
   :redis_display_id: true
   :gamification_enable: false
@@ -454,7 +455,6 @@
   :domain_restricted_access: false
   :ecommerce: false
   :cobrowsing: false
-  :threading_without_user_check: false
   :restricted_helpdesk: false
   :cti: false
   :all_notify_by_custom_server: false
@@ -477,7 +477,6 @@
   :assets: false
   :assets_toggle: false
   :prevent_ticket_creation_for_others: true
-  :kbase_spam_whitelist: false
   :forums_agent_portal: false
   :solutions_agent_portal: false
   :whatsapp_channel: false

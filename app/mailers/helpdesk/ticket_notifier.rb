@@ -109,7 +109,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
        :receips => receips,
        :email_body_plain => plain_version,
        :email_body_html => html_version,
-       :subject => a_s_template.render('ticket' => ticket.to_liquid, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe,
+       :subject => a_s_template.render('ticket' => ticket.to_liquid, 'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe,
        :survey_id => survey_id,
        :disable_bcc_notification => e_notification.bcc_disabled?,
        :private_comment => comment ? comment.private : false,

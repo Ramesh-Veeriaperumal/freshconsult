@@ -34,7 +34,7 @@
   port: 3306
   encoding: utf8
   reconnect: true
-  <% if @is_app_layer %>
+  <% if @is_app_layer && !@is_migration_layer%>
   read_timeout: 20
   connect_timeout: 5
   semian:
@@ -76,7 +76,7 @@
       <% end %>
       not_a_shard: false
       encoding: utf8
-      <% if @is_app_layer %>
+      <% if @is_app_layer && !@is_migration_layer%>
       semian:
         enable: true
         success_threshold: 3

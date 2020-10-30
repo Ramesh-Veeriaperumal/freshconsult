@@ -145,7 +145,6 @@ class Account < ActiveRecord::Base
     :marketplace => false, :archive_tickets => false,
     :ecommerce => false, :shared_ownership => false,
     :cobrowsing => false,
-    :threading_without_user_check => false,
     :restricted_helpdesk => false, :enable_multilingual => false,
     :activity_revamp => true, :helpdesk_restriction_toggle => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :skill_based_round_robin => false,
@@ -182,15 +181,14 @@ class Account < ActiveRecord::Base
   LAUNCHPARTY_FEATURES = {
     hide_og_meta_tags: false, api_search_beta: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
-    es_down: false, es_tickets: false, es_v1_enabled: false, email_new_settings: false,
-    gamification_quest_perf: false, lambda_exchange: false, meta_read: false, most_viewed_articles: false,
+    es_down: false, es_v1_enabled: false, email_new_settings: false,
+    gamification_quest_perf: false, lambda_exchange: false, meta_read: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
     customer_sentiment_ui: false, portal_solution_cache_fetch: false,
     customer_sentiment: false, logout_logs: false,
     suggest_tickets: false,
     hide_api_key: false,
-    kbase_spam_whitelist: false,
     whitelist_supervisor_sla_limitation: false,
     admin_only_mint: false, send_emails_via_fd_email_service_feature: false, user_notifications: false,
     dkim: false, dkim_email_service: false, sha1_enabled: false,
@@ -212,7 +210,7 @@ class Account < ActiveRecord::Base
     freshid_org_v2: false, hide_agent_login: false, ticket_source_revamp: false,
     article_es_search_by_filter: false,
     text_custom_fields_in_etl: false, email_spoof_check: false, disable_email_spoof_check: false,
-    recalculate_daypass: false,
+    recalculate_daypass: false, light_agents: false, collaborator_privileges: false,
     attachment_redirect_expiry: false,
     requester_privilege: false, sso_unique_session: false,
     asset_management: false, sandbox_temporary_offset: false, downgrade_policy: true,
@@ -234,7 +232,7 @@ class Account < ActiveRecord::Base
     twitter_api_compliance: false, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
     mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false, whatsapp_addon: false,
-    enhanced_freshcaller_search: false
+    enhanced_freshcaller_search: false, threading_without_user_setting: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

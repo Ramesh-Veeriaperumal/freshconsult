@@ -6,7 +6,8 @@ module EmailSettingsTestHelper
       'allow_agent_to_initiate_conversation': true,
       'original_sender_as_requester_for_forward': true,
       'skip_ticket_threading': true,
-      'allow_wildcard_ticket_create': true
+      'allow_wildcard_ticket_create': true,
+      'threading_without_user_check': true
     }
   end
 

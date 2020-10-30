@@ -41,8 +41,11 @@ class Auth::TwitterAuthenticator < Auth::Authenticator
 
   private
     def twitter_signin_enabled?(query_string)
+      Rails.logger.info "Twitter Authenticator - Query string = #{query_string.inspect}"
       query = Rack::Utils.parse_query(query_string)
+      Rails.logger.info "Twitter Authenticator - Query = #{query.inspect}"
       account_id = Rack::Utils.parse_query(query["origin"])["id"]
+      Rails.logger.info "Twitter Authenticator - Account ID = #{account_id}"
       flag = false
       Sharding.select_shard_of(account_id) do
         account = Account.find(account_id)

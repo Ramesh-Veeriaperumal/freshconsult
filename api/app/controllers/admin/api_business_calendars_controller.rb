@@ -30,7 +30,7 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
     construct_holiday_data
     @item.holiday_data = [] if @item.holiday_data.blank?
     assign_channel_bc_api_params
-    if @item.save!
+    if @item.save
       render status: Account.current.omni_business_calendar? ? 202 : 201
     else
       render_custom_errors
@@ -42,7 +42,7 @@ class Admin::ApiBusinessCalendarsController < ApiBusinessHoursController
     construct_business_hours_time_data
     construct_holiday_data
     assign_channel_bc_api_params
-    if @item.save!
+    if @item.save
       render status: Account.current.omni_business_calendar? ? 202 : 200
     else
       render_custom_errors

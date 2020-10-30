@@ -187,7 +187,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     assign_uncommited_ticket_states
     ticket_states.save if ticket_states.changed?
     Rails.logger.info "Helpdesk::Ticket::update_ticket_states::#{Time.zone.now.to_f} and schema_less_ticket_object :: #{schema_less_ticket.reports_hash.inspect}"
-    schema_less_ticket.save if Account.current.ticket_observer_race_condition_fix_enabled? || schema_less_ticket_changed?
+    schema_less_ticket.save if Account.current.ticket_observer_race_condition_fix_enabled? || Account.current.retry_ticket_supervisor_actions_enabled? || schema_less_ticket_changed?
   end
 
   def save_sentiment

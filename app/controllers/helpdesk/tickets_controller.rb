@@ -55,7 +55,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :get_tag_name, :clear_filter, :only => [:index, :filter_options]
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
-  before_filter :load_filter_params, :only => [:custom_search], :if => :es_tickets_enabled?
   before_filter :load_article_filter, :only => [:index, :custom_search, :full_paginate]
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
@@ -2118,40 +2117,16 @@ class Helpdesk::TicketsController < ApplicationController
 
   ### Methods for loading tickets from ES ###
   #
-  def es_tickets_enabled?
-    !params[:disable_es] and current_account.launched?(:es_tickets)
-  end
-
-  def load_filter_params
-    cached_filter_data = @cached_filter_data.deep_symbolize_keys
-    @ticket_filter = current_account.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(cached_filter_data)
-    params.merge!(cached_filter_data)
-    load_sort_order
-  end
 
   def fetch_tickets(tkt=nil)
     if collab_filter_enabled_for?(view_context.current_filter)
       fetch_collab_tickets
-    elsif es_tickets_enabled? and params[:html_format]
-      #_Note_: Fetching from ES based on feature and only for web
-      tickets_from_es(params)
+    elsif Account.current.customer_sentiment_ui_enabled?
+      survey_association = Account.current.new_survey_enabled? ? 'custom_survey_results' : 'survey_results'
+      current_account.tickets.preload({ requester: [:avatar] }, :company, :schema_less_ticket, survey_association).permissible(current_user).filter(params: params, filter: 'Helpdesk::Filters::CustomTicketFilter')
     else
-      if Account.current.customer_sentiment_ui_enabled?
-        survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
-        current_account.tickets.preload({requester: [:avatar]}, :company, :schema_less_ticket, survey_association).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      else
-        current_account.tickets.preload({requester: [:avatar]}, :company).permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-      end
+      current_account.tickets.preload({ requester: [:avatar] }, :company).permissible(current_user).filter(params: params, filter: 'Helpdesk::Filters::CustomTicketFilter')
     end
-  end
-
-  def tickets_from_es(params)
-    es_options = {
-      :page         => params[:page] || 1,
-      :order_entity => params[:wf_order],
-      :order_sort   => params[:wf_order_type]
-    }
-    Search::Tickets::Docs.new(@ticket_filter.query_hash.dclone).records('Helpdesk::Ticket', es_options)
   end
 
   def scenario_failure_notification

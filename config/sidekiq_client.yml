@@ -412,6 +412,7 @@ defaults: &defaults
     - [freddy_consumed_session_queue]
     - [channel_reply_messages]
     - [link_omni_account]
+    - [retry_ticket_supervisor_actions_worker]
 
 development:
   <<: *defaults

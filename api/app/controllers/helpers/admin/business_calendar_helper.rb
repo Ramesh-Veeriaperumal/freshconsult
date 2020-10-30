@@ -31,10 +31,20 @@ module Admin::BusinessCalendarHelper
       valid_24x7_business_hours?(channel_data) if errors.blank? && channel_data.key?(:business_hours)
       valid_custom_business_hours?(channel_data[:business_hours]) if errors.blank? && channel_data[:business_hours_type] != ALL_TIME_AVAILABLE
       valid_time_slots_count?(channel_data[:business_hours], channel_data[:channel]) if errors.blank? && ticket_channel_24x7?(channel_data)
+      validate_away_message_attribute?(channel_data)
     end
   end
 
   private
+
+    def validate_away_message_attribute?(channel_data)
+      if errors.blank? && channel_data[:channel] == CHAT_CHANNEL
+        key = :"channel_data[:#{channel_data[:channel]}]"
+        missing_param_error(key, :away_message) unless channel_data.key?(:away_message)
+        invalid_data_type(:"#{key}[:away_message]", :String, :invalid) if channel_data.key?(:away_message) && !channel_data[:away_message].kind_of?(String)
+        blank_value_for_attribute(key, :away_message) if errors.blank?  && channel_data.key?(:away_message) && channel_data[:away_message].blank?
+      end
+    end
 
     def duplicate_holiday_date?(dates)
       duplicate_label_error(:holidays, :date, :duplicate_holiday_date) if dates.size != dates.uniq.size
