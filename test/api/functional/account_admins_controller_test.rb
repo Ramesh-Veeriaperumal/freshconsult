@@ -230,6 +230,58 @@ class AccountAdminsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:omni_agent_availability_dashboard_enabled?)
   end
 
+  def test_feedback_widget_set_attach_file
+    post :preferences=, construct_params(feedback_widget: { attach_file: true })
+    assert_response 204
+    @account.reload
+    assert @account.feedback_widget_attach_file?
+  end
+
+  def test_feedback_widget_attach_fileenabled
+    put :preferences=, construct_params(feedback_widget: { attach_file: false })
+    assert_response 204
+    @account.reload
+    refute @account.feedback_widget_attach_file?
+  end
+
+  def test_feedback_widget_attach_file_wrong_params
+    post :preferences=, construct_params(feedback_widget: { attach_filea: true })
+    assert_response 400
+    match_json(account_admin_bad_request_error_patterns(:attach_filea, 'Unexpected/invalid field in request', code: :invalid_field))
+  end
+
+  def test_feedback_widget_attach_file_wrong_param_type
+    post :preferences=, construct_params(feedback_widget: { attach_file: 'true' })
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field('feedback_widget', 'attach_file', 'It should be a/an Boolean', code: :datatype_mismatch)])
+  end
+
+  def test_feedback_widget_attach_screenshot_disabled
+    post :preferences=, construct_params(feedback_widget: { attach_screenshot: true })
+    assert_response 204
+    @account.reload
+    assert @account.feedback_widget_attach_screenshot?
+  end
+
+  def test_feedback_widget_attach_screenshot_enabled
+    put :preferences=, construct_params(feedback_widget: { attach_screenshot: false })
+    assert_response 204
+    @account.reload
+    refute @account.feedback_widget_attach_screenshot?
+  end
+
+  def test_feedback_widget_attach_screenshot_wrong_params
+    post :preferences=, construct_params(feedback_widget: { attach_screensho: true })
+    assert_response 400
+    match_json(account_admin_bad_request_error_patterns(:attach_screensho, 'Unexpected/invalid field in request', code: :invalid_field))
+  end
+
+  def test_feedback_widget_attach_screenshot_wrong_param_type
+    post :preferences=, construct_params(feedback_widget: { attach_screenshot: 'true' })
+    assert_response 400
+    match_json([bad_request_error_pattern_with_nested_field('feedback_widget', 'attach_screenshot', 'It should be a/an Boolean', code: :datatype_mismatch)])
+  end
+
   private
 
     def set_preferences_in_redis

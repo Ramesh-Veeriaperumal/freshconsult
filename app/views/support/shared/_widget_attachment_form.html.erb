@@ -1,4 +1,6 @@
-<% return if @widget_form && !widget_option(:screenshot) && !widget_option(:attachFile) %>
+<%attach_file = Account.current.feedback_widget_attach_file?%>
+<%attach_screenshot = Account.current.feedback_widget_attach_screenshot?%>
+<% return if @widget_form && !attach_screenshot && !attach_file %>
 <%
   attach_id ||= "ticket"
   nsc_param = nsc_param || "helpdesk_ticket"
@@ -6,17 +8,18 @@
   max_attachment ||= nil
   max_size ||= attachment_size
 %>
-<div class="attach-wrapper single_file row-fluid new-attach <%= "attach-mobile" if !widget_option(:attachFile)%>" id="attachment-type" data-multifile-enable="false">
+
+<div class="attach-wrapper single_file row-fluid new-attach <%= "attach-mobile" if attach_file%>" id="attachment-type" data-multifile-enable="false">
  <div class="span1 attachment-wrapper">
   <% if cloud_files_installed? and (@ticket.present? ? !@ticket.ecommerce? : true)  %>
       <div class="dropdown dropup attachment-dropdown">
-        <a class="dropdown-toggle attach-link tooltip attachment-tooltip" data-original-title="<%=I18n.t('attach')%>" twipsy-content-set="true" data-placement="right" data-toggle="dropdown" href="#">
+        <a class="dropdown-toggle attach-link tooltip attachment-tooltip" data-original-title="<%=I18n.t('attach')%>"twipsy-content-set="true" data-placement="right" data-toggle="dropdown" href="#">
           <span class="ficon-attachment" ></span><b class="caret"></b>
         </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
           <li class="portal-attach">
             <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
-            <% if @widget_form && widget_option(:attachFile) %>
+            <% if @widget_form && attach_file %>
                <%= t('attach_file') %>
             <% end %>
                 <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">
@@ -37,7 +40,7 @@
         </ul>
       </div>
     <% else %>
-    <% if @widget_form && widget_option(:attachFile) %>
+    <% if @widget_form && attach_file %>
     <div class="hidden_upload tooltip attachment-tooltip" data-original-title="<%= t('attach_file') %>" twipsy-content-set="true" data-placement="right">
       <div class="add_attachment">
         <span class="ficon-attachment "></span>
@@ -57,8 +60,8 @@
 
     <% end %>
 </div>
- <% if @widget_form && widget_option(:attachFile) %>
-  <div class="attachment_list_wrapper <%= 'attachment_list_wrapper_sa' if (widget_option(:screenshot) && widget_option(:attachFile)) %>" >
+ <% if @widget_form && attach_file %>
+  <div class="attachment_list_wrapper <%= 'attachment_list_wrapper_sa' if (attach_screenshot && attach_file) %>" >
     <div class="attachments-list-form" id="<%= attach_id %>-container">
       <% total_attachments = original_attachments[:regular].size + original_attachments[:cloud_files].size if original_attachments.present? %>
       <% if total_attachments.to_i > 0 %><div><b><span class="a-count"><%= total_attachments || 0 %></span> <%= t('attachments')%>: </b></div><% end %>
@@ -98,7 +101,7 @@
   <% end %>
 
   <!-- screenshot-->
-  <% if @widget_form && widget_option(:screenshot) %>
+  <% if @widget_form && attach_screenshot %>
     <div class="screenshot_wrapper omega align-right <%= cloud_files_installed? ? 'screenshot-wrapper-20' : 'screenshot-wrapper-30' %>" >
 
         <div class="screenshot-wrap controls">

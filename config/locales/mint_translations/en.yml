@@ -1855,6 +1855,7 @@ en:
         feedbackwidget_offset_placeholder: '235'
         feedbackwidget_form_submit_title: Form Submit Button
         feedbackwidget_search_area: Search Articles
+        feedbackwidget_attach_screenshot: Attach screenshot
         feedbackwidget_use_captcha: Enable CAPTCHA
         feedbackwidget_attach_a_file: Attach a file
         feedbackwidget_popup_code: Popup Widget code
@@ -1882,6 +1883,7 @@ en:
         feedbackwidget_px: px
         feedbackwidget_offset_placeholder: '235'
         feedbackwidget_search_area: Search Articles
+        feedbackwidget_attach_screenshot: Attach screenshot
         feedbackwidget_attach_a_file: Attach a file
         feedbackwidget_popup_code: Popup Widget code
         feedbackwidget_use_https: Use https
@@ -1903,6 +1905,7 @@ en:
         feedbackwidget_px: px
         feedbackwidget_form_submit_title: Form Submit Button
         feedbackwidget_search_area: Search Articles
+        feedbackwidget_attach_screenshot: Attach screenshot
         feedbackwidget_use_captcha: Enable CAPTCHA
         feedbackwidget_attach_a_file: Attach a file
         feedbackwidget_use_https: Use https
@@ -5534,6 +5537,8 @@ en:
     other_categories_info: Categories that are not associated with this portal
     visible_in_portal: Visible in Portal
   flash:
+    attachments_not_enabled: Attachments is not enabled
+    screenshots_not_enabled: Screenshots is not enabled
     customers:
       info_select: Please select at least 1 customer.
     import:
