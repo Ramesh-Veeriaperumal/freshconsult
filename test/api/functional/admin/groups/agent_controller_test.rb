@@ -339,7 +339,7 @@ class Admin::Groups::AgentsControllerTest < ActionController::TestCase
     end
 
     def contact_hash(user)
-      { name: user.name, avatar: avatar_hash(user) }
+      { name: user.name, avatar: avatar_hash(user), email: user.email }
     end
 
     def avatar_hash(user)

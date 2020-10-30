@@ -31,6 +31,7 @@ class Agent < ActiveRecord::Base
 
   before_create :mark_unavailable
   before_save :update_agent_group_change
+  after_commit :push_agent_type_changes_to_search, on: :destroy
   after_commit :enqueue_round_robin_process, on: :update
   after_commit :sync_skill_based_queues, on: :update
   after_commit :sync_agent_availability_to_ocr, on: :update, if: -> { allow_ocr_sync? && !skip_ocr_agent_sync }
@@ -501,6 +502,13 @@ class Agent < ActiveRecord::Base
     self.points = beginner.points
     self.save
     SupportScore.add_agent_levelup_score(self.user, beginner.points)
+  end
+
+  def push_agent_type_changes_to_search
+    # To forcefully trigger user es publish if agent is deleted (Which means agent_type is changed)
+    user.safe_send(:attribute_will_change!, :agent_type)
+    user.instance_variable_set(:@all_changes, user.changes.clone.to_hash)
+    user.publish_update_user_to_rabbitmq
   end
 
   def destroy_achieved_quests

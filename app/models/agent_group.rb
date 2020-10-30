@@ -28,6 +28,7 @@ class AgentGroup < ActiveRecord::Base
   after_commit :add_to_group_capping, on: :create, :if => :capping_enabled?
   after_commit :remove_from_group_capping, on: :destroy, :if => :capping_enabled?
   after_commit :sync_skill_based_user_queues
+  after_commit :push_agent_group_changes_to_search
   before_save :create_model_changes, on: :update
   before_destroy :save_deleted_agent_group_info
 
@@ -102,6 +103,13 @@ class AgentGroup < ActiveRecord::Base
   end
 
   private
+
+    def push_agent_group_changes_to_search
+      # To forcefully trigger user es publish if group_ids, write_access is changed
+      user.safe_send(:attribute_will_change!, :group_ids)
+      user.instance_variable_set(:@all_changes, user.changes.clone.to_hash)
+      user.publish_update_user_to_rabbitmq
+    end
 
     def save_deleted_agent_group_info
       @deleted_model_info = central_publish_payload

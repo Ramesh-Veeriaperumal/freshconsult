@@ -159,7 +159,7 @@ class User < ActiveRecord::Base
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
-                :role_ids_changed, :detect_language, :tag_use_updated, :user_companies_updated, 
+                :role_ids_changed, :detect_language, :tag_use_updated, :user_companies_updated, :agent_type, :group_ids, :contribution_group_ids,
                 :perishable_token_reset, :prev_tags, :latest_tags, :model_changes, :custom_fields_hash, :user_emails_updated, :access_all_agent_groups, :uniqueness_validated
   # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), 

@@ -960,11 +960,14 @@ module Ember
       ticket2 = create_ticket({ status: 2, responder_id: @internal_agent.id })
 
       login_as(@internal_agent)
+      User.any_instance.stubs(:group_ids).returns([@internal_group.id])
       get :index, controller_params(version: 'private', filter: 'shared_with_me')
       assert_response 200
       match_json(private_api_ticket_index_default_filter_pattern('shared_with_me'))
 
       match_default_filter_response_with_es_enabled('shared_with_me')
+    ensure
+      User.any_instance.unstub(:group_ids)
     end
 
     def test_filter_by_internal_agent_with_agent
