@@ -364,25 +364,33 @@ class BusinessCalendar < ActiveRecord::Base
       [channel_sync_success, channel_service_unavailable, channel_response]
     end
 
-    def omni_business_calendar_sync(action)
+    def omni_business_calendar_sync(action, channel = nil, performer_id = nil)
       Rails.logger.info 'Omni Business calendar sync started'
+      if Account.current.present? && User.current.nil? && performer_id.present?
+        user = Account.current.users.find(performer_id)
+        user.make_current if user.present?
+      end
       method_params = { id: id, performed_by_id: User.current.id }
       method_params.merge!(params: safe_send("#{action.to_s}_params")) if [:create, :update].include?(action)
 
       freshcaller_action = channel_action(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, action)
       freshchat_action = channel_action(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, action)
-      caller_job_id = Admin::BusinessCalendar::OmniSyncWorker.perform_async(method_params.merge(
-        channel: ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT,
-        action: freshcaller_action
-      ))
-      chat_job_id = Admin::BusinessCalendar::OmniSyncWorker.perform_async(method_params.merge(
-        channel: ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT,
-        action: freshchat_action
-      ))
+      if channel.nil? || channel.to_s == ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT
+        caller_job_id = Admin::BusinessCalendar::OmniSyncWorker.perform_async(method_params.merge(
+                                                                                channel: ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT,
+                                                                                action: freshcaller_action
+                                                                              ))
+        update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, freshcaller_action, OMNI_SYNC_STATUS[:inprogress]) if action != :delete
+      end
+      reload if action != :delete
+      if channel.nil? || channel.to_s == ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT
+        chat_job_id = Admin::BusinessCalendar::OmniSyncWorker.perform_async(method_params.merge(
+                                                                              channel: ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT,
+                                                                              action: freshchat_action
+                                                                            ))
+        update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, freshchat_action, OMNI_SYNC_STATUS[:inprogress]) if action != :delete
+      end
       Rails.logger.info "caller_job_id #{caller_job_id}, chat_job_id #{chat_job_id}"
-      update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, freshcaller_action, OMNI_SYNC_STATUS[:inprogress])
-      reload
-      update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, freshchat_action, OMNI_SYNC_STATUS[:inprogress])
     rescue StandardError => e
       update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCALLER_PRODUCT, freshcaller_action, OMNI_SYNC_STATUS[:failed])
       update_sync_status_without_callbacks(ApiBusinessCalendarConstants::FRESHCHAT_PRODUCT, freshchat_action, OMNI_SYNC_STATUS[:failed])
@@ -401,8 +409,30 @@ class BusinessCalendar < ActiveRecord::Base
         time_zone: time_zone,
         default: is_default,
         holidays: holiday_data.map { |data| { name: data[1], date: data[0] } },
-        channel_business_hours: channel_bc_api_params
+        channel_business_hours: channel_business_hours_params
       }
+    end
+
+    def channel_business_hours_params
+      channel_bc_params = channel_bc_api_params || []
+      request_channel_names = channel_bc_params.map { |channel_data| channel_data['channel'] }
+      (ApiBusinessCalendarConstants::VALID_CHANNEL_PARAMS_OMNI - request_channel_names).each { |channel| channel_bc_params << default_channel_business_hours(channel) }
+      channel_bc_params
+    end
+
+    def default_channel_business_hours(channel)
+      data = {}.with_indifferent_access
+      data[:channel] = channel
+      data[:business_hours_type] = ApiBusinessCalendarConstants::CUSTOM_AVAILABLE
+      data[:business_hours] = default_business_hours_data
+      data[:away_message] = ApiBusinessCalendarConstants::CHAT_DEFAULT_AWAY_MESSAGE if channel == ApiBusinessCalendarConstants::CHAT_CHANNEL
+      data
+    end
+
+    def default_business_hours_data
+      DEFAULT_SEED_DATA[:weekdays].each_with_object([]) do |day, array|
+        array << { day: BusinessCalenderConstants::WEEKDAY_HUMAN_LIST[day - 1], time_slots: [{ start_time: time_in_24hr_format(DEFAULT_SEED_DATA[:working_hours][day][:beginning_of_workday]), end_time: time_in_24hr_format(DEFAULT_SEED_DATA[:working_hours][day][:end_of_workday]) }] }
+      end
     end
 
     alias_method :update_params, :create_params

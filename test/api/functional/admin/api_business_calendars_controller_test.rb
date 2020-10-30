@@ -1444,6 +1444,61 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     WebMock.reset!
   end
 
+  def test_create_bc_default_for_omni_chat_and_caller
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_omni_success(chat: chat_channel_business_hours_sample, phone: caller_channel_business_hours_sample) do
+          business_calendar = create_business_calendar(is_default: 1)
+          Admin::BusinessCalendar::OmniSyncWorker.drain
+          business_calendar.reload
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], business_calendar.sync_freshcaller_status
+          assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], business_calendar.sync_freshchat_status
+          Account.any_instance.unstub(:omni_business_calendar?)
+          business_calendar.destroy if business_calendar.present?
+        end
+      end
+    end
+  ensure
+    WebMock.reset!
+  end
+
+  def test_create_bc_default_for_omni_chat_failure_and_caller_success
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_caller_bc_create_success(phone: caller_channel_business_hours_sample)
+        stub_chat_create_failure
+        business_calendar = create_business_calendar(is_default: 1)
+        business_calendar.reload
+        Admin::BusinessCalendar::OmniSyncWorker.drain
+        business_calendar.reload
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], business_calendar.sync_freshcaller_status
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed], business_calendar.sync_freshchat_status
+        Account.any_instance.unstub(:omni_business_calendar?)
+        business_calendar.destroy if business_calendar.present?
+      end
+    end
+  ensure
+    WebMock.reset!
+  end
+
+  def test_create_bc_default_for_omni_chat_success_and_caller_failure
+    enable_emberize_business_hours do
+      enable_omni_business_hours_with_sidekiq_fake do
+        stub_bc_create_failure
+        stub_chat_bc_success(chat: chat_channel_business_hours_sample)
+        business_calendar = create_business_calendar(is_default: 1)
+        Admin::BusinessCalendar::OmniSyncWorker.drain
+        business_calendar.reload
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:failed], business_calendar.sync_freshcaller_status
+        assert_equal BusinessCalenderConstants::OMNI_SYNC_STATUS[:success], business_calendar.sync_freshchat_status
+        Account.any_instance.unstub(:omni_business_calendar?)
+        business_calendar.destroy if business_calendar.present?
+      end
+    end
+  ensure
+    WebMock.reset!
+  end
+
   def test_duplicate_name_on_business_calendar_create
     enable_emberize_business_hours do
       enable_omni_business_hours do
