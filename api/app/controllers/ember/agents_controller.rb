@@ -124,11 +124,9 @@ module Ember
       end
 
       def day_pass_used_count(user_ids)
-        day_passes_used = user_ids.map { |user_id| [user_id, 0] }.to_h
-        current_account.day_pass_usages.where(user_id: user_ids).find_in_batches do |day_pass_usages|
-          day_pass_usages.group_by(&:user_id).map { |key, value| day_passes_used[key] += value.length }
-        end
-        day_passes_used
+        day_passes_map = current_account.day_pass_usages.where(user_id: user_ids).group(:user_id).count(:id)
+        users_with_no_day_passes = (user_ids - day_passes_map.keys).map { |user_id| [user_id, 0] }.to_h
+        day_passes_map.merge!(users_with_no_day_passes)
       end
   end
 end
