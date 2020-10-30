@@ -81,6 +81,7 @@ api_error_messages:
   invalid_accept_header: "Accept header is set to %{accept_header}. It should have application/json or */*"
   duplicate_value: "Record already exists."
   can_have_only_one_field: "You can send only one field from '%{list}'"
+  lbrr_not_supported: "load_based_round_robin can not be used when lbrr_by_omniroute is enabled"
 
   duplicate_choices: "Duplicate options present in choices. Please remove duplicates and try again."
   exceeded_limit: "You've exceeded the maximum number of %{field_type} fields you can create."

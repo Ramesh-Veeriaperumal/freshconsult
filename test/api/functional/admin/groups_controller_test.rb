@@ -333,8 +333,10 @@ module Admin
 
         capping_limit_param = assignment_type == :load_based_round_robin ? lbrr_params : sbrr_params
         group_params = capping_limit ? capping_limit_param : group_params
+        Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(false) if assignment_type == :load_based_round_robin
 
         post :create, construct_params({ version: 'private' }, group_params)
+        Account.any_instance.unstub(:lbrr_by_omniroute_enabled?) if assignment_type == :load_based_round_robin
         parsed_response = JSON.parse(response.body)
         p parsed_response
         group_id = parsed_response['id']
@@ -619,6 +621,17 @@ module Admin
       match_json(group_management_v2_pattern(Group.find(group_id)))
     ensure
       Account.current.groups.find_by_id(group_id).destroy
+    end
+
+    def test_update_lbrr_by_omniroute_feature
+      Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(true)
+      Account.current.add_feature(:round_robin)
+      group = create_group(Account.current, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+      put :update, construct_params({ id: group.id }, automatic_agent_assignment: lbrr_params[:automatic_agent_assignment])
+      assert_response 400
+    ensure
+      Account.current.revoke_feature(:round_robin)
+      Account.any_instance.unstub(:lbrr_by_omniroute_enabled?)
     end
 
     # DELETE tests
