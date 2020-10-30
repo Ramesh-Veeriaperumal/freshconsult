@@ -1216,7 +1216,7 @@ module Ember
       assert_response 201
     end
 
-    def test_create_service_task_ticket
+    def test_create_service_task_ticket_as_child_ticket
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
@@ -1292,11 +1292,32 @@ module Ember
       end
     end
 
-    def test_create_service_task_ticket_failure
+    def test_create_service_task_as_independent_ticket_with_launch_feature
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
           Account.first.make_current
+          Account.any_instance.stubs(:independent_service_task_enabled?).returns(true)
+          params = { email: Faker::Internet.email,
+                   description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                   custom_fields: { cf_fsm_contact_name:
+                    "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }  
+          post :create, construct_params({version: 'private'}, params)
+          assert_response 201
+        ensure
+          cleanup_fsm
+          Account.any_instance.unstub(:independent_service_task_enabled?)
+        end 
+      end
+    end
+
+    def test_create_service_task_as_independent_ticket_without_launch_feature
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          Account.first.make_current
+          Account.any_instance.stubs(:independent_service_task_enabled?).returns(false)
           params = { email: Faker::Internet.email,
                    description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
                    priority: 2, status: 2, type: SERVICE_TASK_TYPE,
@@ -1307,6 +1328,7 @@ module Ember
           assert_response 400
         ensure
           cleanup_fsm
+          Account.any_instance.unstub(:independent_service_task_enabled?)
         end
       end
     end

@@ -724,11 +724,12 @@ private
 
   def validate_ticket_type
     service_task = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+    # Remove the complete if check when cleaning up independent service task LP
     if new_record? && self.service_task?
-      self.errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:should_be_child] % {type: service_task}) and return false unless child_ticket?
+      errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:should_be_child] % { type: service_task }) and return false if !Account.current.independent_service_task_enabled? && !child_ticket?
     else
-      self.errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:from_service_task_not_possible]) and return false if @model_changes[:ticket_type].first == service_task
-      self.errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:to_service_task_not_possible]) and return false if @model_changes[:ticket_type].last == service_task
+      errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:from_service_task_not_possible]) and return false if @model_changes[:ticket_type].first == service_task
+      errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:to_service_task_not_possible]) and return false if @model_changes[:ticket_type].last == service_task
     end
   end
 
