@@ -1326,6 +1326,17 @@ module Helpdesk
         end
       end
 
+      def test_parse_cc_in_forward_text
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        req_params[:text] = "This is a forwarded message!\n\n---------- Forwarded message ---------\nFrom: #{@parse_name} <#{@parse_email}>\n"
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        cc_emails = incoming_email_handler.orig_email_from_text
+        incoming_email_handler.expects(:rescue).never
+        assert_not_nil cc_emails
+      end
+
       def test_create_ticket_agent_replies_esp
         req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
         req_params[:in_reply_to] = @in_reply_to
