@@ -1,5 +1,5 @@
 require_relative '../../../test_helper'
-['companies_test_helper.rb', 'users_test_helper.rb'].each { |file| require Rails.root.join('test', 'core', 'helpers', file) }
+['companies_test_helper.rb', 'users_test_helper.rb', 'groups_test_helper.rb'].each { |file| require Rails.root.join('test', 'core', 'helpers', file) }
 ['tag_test_helper.rb'].each { |file| require Rails.root.join('test', 'models', 'helpers', file) }
 
 class ApiSearch::AutocompleteControllerTest < ActionController::TestCase
@@ -7,6 +7,7 @@ class ApiSearch::AutocompleteControllerTest < ActionController::TestCase
   include ModelsCompaniesTestHelper
   include CoreUsersTestHelper
   include TagTestHelper
+  include GroupsTestHelper
   ES_DELAY_TIME = 5
 
   def test_requester_with_complete_name
@@ -311,6 +312,55 @@ class ApiSearch::AutocompleteControllerTest < ActionController::TestCase
     response = parse_response(@response.body).map { |item| item['value'] }
     assert_response 200
     assert_includes response, agent.name
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
+  def test_agents_autocomplete_with_query_param
+    agent = add_test_agent(@account)
+    group = create_group_with_agents(@account, agent_list: [agent.id])
+    sleep ES_DELAY_TIME # Delaying for sidekiq to send to ES
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([agent], total_entries: 1))
+    post :agents, construct_params(version: 'private', term: agent.name[0..3], query: "agent_type: #{agent.agent.agent_type} AND group_ids: #{group.id}")
+    response = parse_response(@response.body).map { |item| item['value'] }
+    assert_response 200
+    assert_includes response, agent.name
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
+  def test_agents_autocomplete_with_invalid_search_term
+    agent = @account.all_agents.first.user
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([agent], total_entries: 1))
+    post :agents, construct_params(version: 'private', name: agent.name[0..3])
+    assert_response 400
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
+  def test_agents_autocomplete_with_invalid_page_value
+    agent = @account.all_agents.first.user
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([agent], total_entries: 1))
+    post :agents, construct_params(version: 'private', term: agent.name[0..3], per_page: 'test')
+    assert_response 400
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
+  def test_agents_autocomplete_with_valid_page_invalid_limit
+    agent = @account.all_agents.first.user
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([agent], total_entries: 1))
+    post :agents, construct_params(version: 'private', term: agent.name[0..3], page: 1, limit: 0)
+    assert_response 400
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
+  def test_agents_autocomplete_with_valid_page_and_max_matches
+    agent = @account.all_agents.first.user
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([agent], total_entries: 1))
+    post :agents, construct_params(version: 'private', term: agent.name[0..3], page: 1, max_matches: 5)
+    assert_response 200
   ensure
     Search::V2::QueryHandler.any_instance.unstub(:query_results)
   end
