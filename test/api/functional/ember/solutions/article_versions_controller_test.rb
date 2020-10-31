@@ -273,7 +273,6 @@ module Ember
         stub_version_session(session) do
           stub_version_content do
             params_hash = { session: session }
-            article_meta = get_article_with_versions.parent
             article_version = article_meta.safe_send('primary_article').solution_article_versions.first
             should_create_version(article) do
               post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
@@ -352,7 +351,6 @@ module Ember
         end
         stub_version_session(session) do
           stub_version_content do
-            article_meta = get_article_with_versions.parent
             article_version = article_meta.safe_send('primary_article').solution_article_versions.second
             params_hash = { session: article_version.session }
             article = article_meta.safe_send('primary_article')
@@ -445,23 +443,25 @@ module Ember
         cloud_file = article.cloud_files.build(:url => 'https://www.dropbox.com/s/7d3z51nidxe358m/GettingStarted.pdf?dl=0',
                                                :application_id => 20,
                                                :filename => 'Getting Started.pdf')
-        cloud_file.save
+        cloud_file.save!
         article.draft.publish! if article.draft
+        article.reload
         create_draft(article: article)
-        article.draft.meta[:deleted_attachments] ||= {}
+        draft = article.reload.draft
+        draft.meta[:deleted_attachments] ||= {}
         deleted_cloud_files = []
         deleted_cloud_files << article.cloud_files.first.id
-        article.draft.meta[:deleted_attachments].merge!({ cloud_files: deleted_cloud_files })
-        article.draft.save
-        article.draft.publish! if article.draft
+        draft.meta[:deleted_attachments].merge!({ cloud_files: deleted_cloud_files })
+        draft.save!
+        draft.publish! if article.reload.draft
         session = Faker::Name.name
         stub_version_session(session) do
           stub_version_content do
-            article_version = article_meta.safe_send('primary_article').solution_article_versions.latest.second
+            article_version = article.reload.solution_article_versions.latest.second
             params_hash = { session: article_version.session }
             should_create_version(article) do
               post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
-              assert_equal article.solution_article_versions.latest.first.meta[:cloud_files].count, 1
+              assert_equal article.reload.solution_article_versions.latest.first.meta[:cloud_files].count, 1
               assert_response 204
             end
           end
