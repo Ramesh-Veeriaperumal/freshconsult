@@ -323,17 +323,6 @@ module Admin
       Account.current.groups.find_by_id(group_id).destroy
     end
 
-    def test_create_group_search_publish_event
-      RabbitmqWorker.clear
-      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: 1,
-                       type: 'support_agent_group', escalate_to: 1, agent_ids: [1], unassigned_for: '30m' }
-      group_params.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
-      post :create, construct_params({ version: 'private' }, group_params)
-      assert_equal RabbitmqWorker.jobs.size, 1
-      assert_equal RabbitmqWorker.jobs[0]['args'][0], 'users'
-      assert_equal JSON.parse(RabbitmqWorker.jobs[0]['args'][1])['user_properties']['id'], 1
-    end
-
     # create all assignment_type settings groups
     ASSIGNMENT_SETTINGS.each_pair do |assignment_type, assignment_payload|
       capping_limit = %i[load_based_round_robin skill_based_round_robin].include?(assignment_type)
@@ -552,17 +541,6 @@ module Admin
       group.destroy
     end
 
-    def test_update_group_add_agent_search_publish_event
-      group = create_group(Account.current, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
-      agent_type_id = Account.current.agent_types.find_by_name(Agent::SUPPORT_AGENT).agent_type_id
-      user = add_test_agent(Account.current, agent_type: agent_type_id)
-      RabbitmqWorker.clear
-      put :update, construct_params({ version: 'private', id: group.id }, agent_ids: [user.id])
-      assert_equal RabbitmqWorker.jobs.size, 2
-      assert_equal RabbitmqWorker.jobs[1]['args'][0], 'users'
-      assert_equal JSON.parse(RabbitmqWorker.jobs[1]['args'][1])['user_properties']['id'], user.id
-    end
-
     def test_update_group_with_invalid_field_values
       Account.current.add_feature :round_robin
       group = create_group(Account.current, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
@@ -682,15 +660,6 @@ module Admin
     ensure
       add_privilege(@agent, :manage_account)
       add_privilege(@agent, :admin_tasks)
-    end
-
-    def test_delete_group_with_agent_search_publish_test
-      group = create_group_with_agents(@account, agent_list: [@account.account_managers.first.id])
-      RabbitmqWorker.clear
-      delete :destroy, construct_params(id: group.id)
-      assert_equal RabbitmqWorker.jobs.size, 1
-      assert_equal RabbitmqWorker.jobs[0]['args'][0], 'users'
-      assert_equal JSON.parse(RabbitmqWorker.jobs[0]['args'][1])['user_properties']['id'], @account.account_managers.first.id
     end
 
     private
