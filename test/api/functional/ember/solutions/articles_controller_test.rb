@@ -3174,6 +3174,7 @@ module Ember
         approver = add_test_agent
         add_privilege(approver, :approve_article)
         User.current.reload
+        clear_approvals(sample_article)
         Solution::ApprovalNotificationWorker.expects(:perform_async).once
         post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
         assert_response 204
@@ -4042,13 +4043,18 @@ module Ember
 
       def test_bulk_update_folder_with_platforms_enabled
         enable_omni_bundle do
-          sample_folder = get_folder_meta_with_platform_mapping(web: false)
           sample_article = get_article_with_platform_mapping
+          lang_hash = { lang_codes: all_account_languages }
+          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+          sample_folder = create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash))
+          sample_folder.parent.create_solution_platform_mapping(chat_platform_params({ web: false }, true))
+          sample_folder.reload
 
-          put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent.id], properties: { folder_id: sample_folder.id })
+          assert_not_equal sample_article.parent.solution_folder_meta_id, sample_folder.parent_id
+          put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent.id], properties: { folder_id: sample_folder.parent_id })
           assert_response 204
           sample_article.reload
-          assert_equal sample_article.parent.solution_folder_meta_id, sample_folder.id
+          assert_equal sample_article.parent.solution_folder_meta_id, sample_folder.parent_id
           assert_equal sample_article.parent.solution_platform_mapping.web, false
         end
       end

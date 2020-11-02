@@ -417,6 +417,7 @@ module Ember
                                                :account_id => article.account_id)
         attachment.save
         article.draft.publish! if article.draft
+        article.reload
         create_draft(article: article)
         article.draft.meta[:deleted_attachments] ||= {}
         deleted_attachment = []
@@ -453,17 +454,13 @@ module Ember
         deleted_cloud_files << article.cloud_files.first.id
         draft.meta[:deleted_attachments].merge!({ cloud_files: deleted_cloud_files })
         draft.save!
-        draft.publish! if article.reload.draft
-        session = Faker::Name.name
-        stub_version_session(session) do
-          stub_version_content do
-            article_version = article.reload.solution_article_versions.latest.second
-            params_hash = { session: article_version.session }
-            should_create_version(article) do
-              post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
-              assert_equal article.reload.solution_article_versions.latest.first.meta[:cloud_files].count, 1
-              assert_response 204
-            end
+        draft.publish!
+        stub_version_content do
+          article_version = article.reload.solution_article_versions.latest.second
+          should_create_version(article) do
+            post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
+            assert_response 204
+            assert_equal article.reload.solution_article_versions.latest.first.meta[:cloud_files].count, 1
           end
         end
       end
