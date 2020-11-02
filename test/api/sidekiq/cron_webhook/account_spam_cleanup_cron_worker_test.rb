@@ -17,12 +17,11 @@ class AccountSpamCleanupCronWorkerTest < ActionView::TestCase
   end
 
   def test_trail_spam_cleanup_enqueue
+    AccountCleanup::DeleteSpamTicketsCleanup.drain
     old_state = @account.subscription.state
     change_account_state(Subscription::TRIAL, @account) unless @account.subscription.trial?
-    AccountCleanup::DeleteSpamTicketsCleanup.clear
-    account_type = 'trial'
-    CronWebhooks::AccountSpamCleanup.new.perform(type: account_type, task_name: 'account_cleanup_accounts_spam_cleanup')
-    assert_equal Account.current_pod.safe_send("#{account_type}_accounts").count, AccountCleanup::DeleteSpamTicketsCleanup.jobs.size
+    CronWebhooks::AccountSpamCleanup.new.perform(type: 'trial', task_name: 'account_cleanup_accounts_spam_cleanup')
+    assert_equal 1, AccountCleanup::DeleteSpamTicketsCleanup.jobs.size
   ensure
     change_account_state(old_state, @account) if @account.present?
   end

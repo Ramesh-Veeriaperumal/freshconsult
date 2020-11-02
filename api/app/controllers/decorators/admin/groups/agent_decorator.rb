@@ -26,7 +26,7 @@ class Admin::Groups::AgentDecorator < ApiDecorator
   private
 
     def contact_hash
-      { name: record.name, avatar: avatar_hash, email: record.email }
+      { name: record.name, avatar: avatar_hash }
     end
 
     def avatar_hash
