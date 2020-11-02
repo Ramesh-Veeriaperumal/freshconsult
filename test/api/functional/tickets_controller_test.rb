@@ -253,38 +253,6 @@ class TicketsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_search_with_feature_enabled_and_invalid_params
-    @account.launch :es_count_writes
-    params = ticket_params_hash.except(:description).merge(custom_field: {})
-    CUSTOM_FIELDS.each do |custom_field|
-      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
-    end
-    t = create_ticket(params)
-    get :search, controller_params(:status => '2,3', :priority => 4, 'test_custom_text' => params[:custom_field]["test_custom_text_#{@account.id}"])
-    assert_response 404
-  end
-
-  def test_search_with_feature_enabled_and_invalid_value
-    @account.launch :es_count_writes
-    params = ticket_params_hash.except(:description).merge(custom_field: {})
-    CUSTOM_FIELDS.each do |custom_field|
-      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
-    end
-    t = create_ticket(params)
-    get :search, controller_params(:status => '2,3,test1', 'test_custom_text' => params[:custom_field]["test_custom_text_#{@account.id}"])
-    assert_response 404
-  end
-
-  def test_search_without_feature_enabled
-    params = ticket_params_hash.except(:description).merge(custom_field: {})
-    CUSTOM_FIELDS.each do |custom_field|
-      params[:custom_field]["test_custom_#{custom_field}_#{@account.id}"] = CUSTOM_FIELDS_VALUES[custom_field]
-    end
-    t = create_ticket(params)
-    get :search, controller_params(:status => '2,3', 'test_custom_text' => params[:custom_field]["test_custom_text_#{@account.id}"])
-    assert_response 404
-  end
-
   def test_create
     params = ticket_params_hash.merge(custom_fields: {}, description: '<b>test</b>')
     CUSTOM_FIELDS.each do |custom_field|
