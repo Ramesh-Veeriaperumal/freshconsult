@@ -137,6 +137,44 @@ class SlaReminderEscalationWorkerTest < ActionView::TestCase
     remove_others_redis_key SLA_TICKETS_LIMIT
   end
 
+  def test_response_escalation_without_sla_management
+    user = add_agent(@account)
+    @account.stubs(:sla_management_enabled?).returns(false)
+    group = create_group @account
+    ticket, sla_policy = create_test_ticket_with_sla(user, group, {})
+    ticket.update_attributes(frDueBy: Time.zone.now - 1.hour)
+    set_others_redis_key(SLA_TICKETS_LIMIT, 1)
+    Admin::Sla::Escalation::Base.new.perform
+    ticket.reload
+    assert ticket.fr_escalated
+  ensure
+    ticket.destroy
+    sla_policy.destroy
+    group.destroy
+    user.destroy
+    @account.unstub(:sla_management_enabled?)
+    remove_others_redis_key SLA_TICKETS_LIMIT
+  end
+
+  def test_resolution_escalation_without_sla_management
+    user = add_agent(@account)
+    @account.stubs(:sla_management_enabled?).returns(false)
+    group = create_group @account
+    ticket, sla_policy = create_test_ticket_with_sla(user, group, {})
+    ticket.update_attributes(due_by: Time.zone.now - 1.hour)
+    set_others_redis_key(SLA_TICKETS_LIMIT, 1)
+    Admin::Sla::Escalation::Base.new.perform
+    ticket.reload
+    assert ticket.isescalated
+  ensure
+    ticket.destroy
+    sla_policy.destroy
+    group.destroy
+    user.destroy
+    @account.unstub(:sla_management_enabled?)
+    remove_others_redis_key SLA_TICKETS_LIMIT
+  end
+
   def test_next_response_escalation
     @account.add_feature(:next_response_sla)
     user = add_agent(@account)
