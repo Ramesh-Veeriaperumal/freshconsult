@@ -453,10 +453,10 @@ module Ember
         deleted_cloud_files = []
         deleted_cloud_files << article.cloud_files.first.id
         draft.meta[:deleted_attachments].merge!({ cloud_files: deleted_cloud_files })
-        draft.save!
         draft.publish!
         stub_version_content do
           article_version = article.reload.solution_article_versions.latest.second
+          assert_not_nil article_version.meta[:cloud_files].first
           should_create_version(article) do
             post :restore, controller_params(version: 'private', article_id: article_meta.id, id: article_version.version_no)
             assert_response 204
