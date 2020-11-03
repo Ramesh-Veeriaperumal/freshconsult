@@ -892,7 +892,7 @@ class User < ActiveRecord::Base
     return false unless ticket.source == Helpdesk::Source::PHONE
     meta_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['meta']).first
     meta = YAML.safe_load(meta_note.body) if meta_note.present?
-    meta.present? && meta['freshcaller'] && meta['created_by'] == id && allow_ticket_restricted_access?(meta['time'])
+    meta.present? && meta['freshcaller'].present? && meta['created_by'] == id && allow_ticket_restricted_access?(meta['time'])
   end
 
   def allow_ticket_restricted_access?(fc_time)

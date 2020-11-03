@@ -60,7 +60,7 @@ class Ember::Freshcaller::Calls::TicketsControllerTest < ActionController::TestC
     ticket.save!
     get :show, controller_params(version: 'private', id: fc_call_id)
     assert_response 200
-    match_json(ticket_show_pattern(ticket))
+    match_json(ticket_show_pattern(ticket.reload))
   ensure
     ticket.destroy
     fc_call.destroy
