@@ -1,5 +1,5 @@
 class AccountCleanup::DeleteAccount < BaseWorker
-  sidekiq_options :queue => :delete_account, :retry => 0, :failures => :exhausted
+  sidekiq_options queue: :delete_account, retry: 0, failures: :exhausted, backtrace: 25
 
   include FreshdeskCore::Model
   include Redis::RedisKeys
@@ -34,10 +34,11 @@ class AccountCleanup::DeleteAccount < BaseWorker
       update_status(deleted_customer, STATUS[:deleted])
     rescue ReplicationLagError => e
       rerun_after(e.lag, account.id) if e.lag > 0
-    rescue Exception => error
-      Rails.logger.info "Account deletion Error sidekiq - #{error}"
+    rescue StandardError => error
+      Rails.logger.info "Account deletion Error sidekiq - account_id #{account.id}, #{error.inspect}, #{error.backtrace}"
       NewRelic::Agent.notice_error(error)             
-      return update_status(deleted_customer, STATUS[:failed])
+      update_status(deleted_customer, STATUS[:failed])
+      raise error
     end
   end
   private 

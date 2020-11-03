@@ -16,9 +16,10 @@ module AccountCleanup
         perform_delete_table_data(account_id)
       end
     rescue StandardError => e
-      msg = "Unable to perform rebalanced account deletion for Shard: #{@shard_name} and Account: #{account_id} --- #{e.inspect}"
+      msg = "Unable to perform rebalanced account deletion for Shard: #{@shard_name} and Account: #{account_id} --- #{e.inspect} -- #{e.backtrace}"
       Rails.logger.info msg
       NewRelic::Agent.notice_error(e, description: msg)
+      raise e
     ensure
       Account.reset_current_account
     end

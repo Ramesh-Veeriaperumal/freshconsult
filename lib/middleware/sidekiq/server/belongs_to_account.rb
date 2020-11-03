@@ -36,20 +36,20 @@ module Middleware
             end
           end
         rescue DomainNotReady => e
-            puts "Just ignoring the DomainNotReady , #{e.inspect}"
+          Rails.logger.error "Just ignoring the DomainNotReady , #{e.inspect}, #{msg['account_id']}"
         rescue ShardNotFound => e
-            puts "Ignoring ShardNotFound, #{e.inspect}, #{msg['account_id']}"
+          Rails.logger.error "Ignoring ShardNotFound, #{e.inspect}, #{msg['account_id']}"
         rescue AccountBlocked => e
-            puts "Ignore AccountBlocked, #{e.inspect}"
+          Rails.logger.error "Ignore AccountBlocked, #{e.inspect}, #{msg['account_id']}"
         rescue ActiveRecord::RecordNotFound => e
-          puts "Ignore ActiveRecord::RecordNotFound, #{e.inspect}, #{msg['account_id']}"
+          Rails.logger.error "Ignore ActiveRecord::RecordNotFound, #{e.inspect}, #{msg['account_id']}"
         rescue ::ActiveRecord::AdapterNotSpecified => e
           NewRelic::Agent.notice_error(e)
           # rescue Exception => e
           #   NewRelic::Agent.notice_error(e)
         rescue Account::RecordNotFound => e
           NewRelic::Agent.notice_error(e)
-          Rails.logger.error "Account not found in shard :: #{e.message}"
+          Rails.logger.error "Account not found in shard :: #{e.message}, #{msg['account_id']}"
         ensure
           Thread.current[:message_uuid] = nil
         end
