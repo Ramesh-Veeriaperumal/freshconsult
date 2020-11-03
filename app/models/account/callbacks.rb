@@ -12,6 +12,7 @@ class Account < ActiveRecord::Base
   before_update :delete_encrypted_fields, if: :disabled_custom_encrypted_fields?
   before_update :toggle_parent_child_infra, :if => :parent_child_dependent_features_changed?
   before_update :clear_ocr_data, if: :ocr_feature_disabled?
+  before_update :toggle_private_inline_feature, if: :secure_attachments_feature_changed?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :make_current, :populate_features, :change_shard_status
@@ -259,6 +260,14 @@ class Account < ActiveRecord::Base
       groups.capping_enabled_groups.each(&:enable_lbrr_by_omniroute)
     else
       groups.omniroute_powered_rr_groups.each(&:turn_off_automatic_ticket_assignment)
+    end
+  end
+
+  def toggle_private_inline_feature
+    if secure_attachments_enabled?
+      self.set_feature(:private_inline)
+    else
+      self.reset_feature(:private_inline)
     end
   end
 

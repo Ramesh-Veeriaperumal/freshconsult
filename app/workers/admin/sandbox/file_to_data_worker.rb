@@ -60,12 +60,18 @@ class Admin::Sandbox::FileToDataWorker < BaseWorker
         sandbox_account = Account.find(@sandbox_account_id).make_current
         reindex_account(sandbox_account)
         post_account_activities(sandbox_account, addition_settings_info)
+        disable_private_inline(sandbox_account)
         sandbox_account.reset_picklist_id
         sandbox_account.reset_ticket_source_id
         freshid_migration(sandbox_account)
       end
     ensure
       Account.reset_current_account
+    end
+
+    # disable private inline feature for attachments
+    def disable_private_inline(sandbox_account)
+      sandbox_account.revoke_feature(:private_inline) if sandbox_account.private_inline_enabled?
     end
 
     def post_account_activities(sandbox_account, addition_settings)
