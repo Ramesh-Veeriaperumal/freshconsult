@@ -60,7 +60,6 @@ module AgentConstants
     :shortcuts_mapping,
     :notification_timestamp,
     :show_onBoarding,
-    :falcon_ui,
     :undo_send,
     :focus_mode,
     :show_loyalty_upgrade,

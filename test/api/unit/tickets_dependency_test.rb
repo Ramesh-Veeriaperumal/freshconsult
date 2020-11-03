@@ -14,7 +14,7 @@ class TicketsDependencyTest < ActionView::TestCase
       :load_ticket_item, :build_note_body_attributes, :build_conversation_for_ticket,
       :check_for_from_email, :kbase_email_included, :set_default_source, :prepare_mobile_note_for_send_set,
       :fetch_note_attachments, :traffic_cop_warning, :check_for_public_notes,
-      :check_reply_trial_customers_limit, :redirect_to_mobile_url, :portal_check, :verify_format_and_tkt_id,
+      :check_reply_trial_customers_limit, :portal_check, :verify_format_and_tkt_id,
       :check_compose_feature, :check_trial_outbound_limit, :find_topic, :redirect_merged_topics, :run_on_slave,
       :save_article_filter, :run_on_db, :set_mobile, :normalize_params, :cache_filter_params, :redirect_old_ui_routes,
       :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature, :load_sort_order,

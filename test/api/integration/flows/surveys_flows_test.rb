@@ -20,7 +20,6 @@ class SurveysFlowsTest < ActionDispatch::IntegrationTest
     Account.any_instance.stubs(:enabled_features_list).returns([:surveys])
     return if @@before_all
     @@before_all = true
-    @account.add_feature(:falcon)
   end
 
   def test_index_without_timestamp

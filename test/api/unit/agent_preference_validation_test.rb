@@ -37,15 +37,6 @@ class AgentPreferencesValidationTest < ActionView::TestCase
     assert_equal({ show_onBoarding: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String } }, agent.error_options)
   end
 
-  def test_falcon_ui_param_value_is_not_boolean
-    controller_params = { falcon_ui: 'true' }
-    agent = Ember::AgentPreferencesValidation.new(controller_params, nil)
-    refute agent.valid?
-    errors = agent.errors.full_messages
-    assert errors.include?('Falcon ui datatype_mismatch'), errors[0]
-    assert_equal({ falcon_ui: { expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String } }, agent.error_options)
-  end
-
   def test_undo_send_param_value_is_not_boolean
     controller_params = { undo_send: 'true' }
     agent = Ember::AgentPreferencesValidation.new(controller_params, nil)

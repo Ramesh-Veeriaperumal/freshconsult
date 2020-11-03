@@ -126,7 +126,7 @@ class AccountDataCleanupTest < ActionView::TestCase
     @account.contact_form.default_fields.find { |tf| tf.name == 'unique_external_id' }.destroy
     @account.reload
 
-    SAAS::AccountDataCleanup.new(@account, ['smart_filter', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'parent_child_tickets', 'multiple_companies_toggle', 'tam_default_fields', 'unique_contact_identifier', 'custom_dashboard', 'disable_old_ui', 'link_tickets_toggle', 'article_versioning'], 'add').perform_cleanup
+    SAAS::AccountDataCleanup.new(@account, ['smart_filter', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'parent_child_tickets', 'multiple_companies_toggle', 'tam_default_fields', 'unique_contact_identifier', 'custom_dashboard', 'link_tickets_toggle', 'article_versioning'], 'add').perform_cleanup
   ensure
     Marketplace::MarketPlaceObject.any_instance.unstub(:get_api)
     Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?

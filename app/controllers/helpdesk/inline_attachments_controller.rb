@@ -4,7 +4,6 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
   
   skip_before_filter :remove_pjax_param
   skip_before_filter :check_privilege
-  skip_before_filter :redirect_to_mobile_url
   skip_before_filter :set_time_zone, :check_day_pass_usage 
   skip_before_filter :set_locale, :force_utf8_params
   skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header

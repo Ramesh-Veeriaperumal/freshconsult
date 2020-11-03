@@ -89,9 +89,7 @@ module Fdadmin::FeatureMethods
 
     def enable_bitmap_feature(feature_name)
       #hack. but couldnt find a better way at the last moment. will remove the check later.
-      if feature_name.to_sym == :falcon
-        @account.enable_falcon_ui
-      elsif feature_name.to_sym.in?(BITMAP_FEATURES_TO_IGNORE)
+      if feature_name.to_sym.in?(BITMAP_FEATURES_TO_IGNORE)
         raise 'Not applicable'
       else
         @account.add_feature(feature_name)

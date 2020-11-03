@@ -17,7 +17,6 @@ class Contacts::MiscControllerTest < ActionController::TestCase
 
   def initial_setup
     return if @@initial_setup_run
-    @account.add_feature(:falcon)
     @account.reload
     @@initial_setup_run = true
   end

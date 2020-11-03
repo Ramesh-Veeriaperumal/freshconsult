@@ -54,7 +54,7 @@ class Agent < ActiveRecord::Base
   validate :check_ticket_permission, :validate_field_agent_state, if: -> { account.field_service_management_enabled? }
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
-  attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled, :field_service, :undo_send, :falcon_ui, :shortcuts_mapping,
+  attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled, :field_service, :undo_send, :shortcuts_mapping,
                   :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings, :focus_mode, :show_onBoarding, :notification_timestamp, :show_loyalty_upgrade, :show_monthly_to_annual_notification
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes,
                 :ocr_update, :misc_changes, :out_of_office_days, :old_agent_availability,

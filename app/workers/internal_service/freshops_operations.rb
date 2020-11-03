@@ -12,12 +12,6 @@ class InternalService::FreshopsOperations < BaseWorker
 
   private
 
-    def trigger_enable_old_ui_service(*)
-      return if @account.nil?
-      return unless @account.disable_old_ui_enabled?
-      invoke_enable_old_ui
-    end
-
     def trigger_daypass_export_service(args)
       return if @account.nil?
       export_daypass_usage(args[:export_duration], args[:user_email])

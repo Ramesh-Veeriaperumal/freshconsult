@@ -48,7 +48,7 @@ class Account < ActiveRecord::Base
                   :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes,
                   :primary_email_config_attributes, :main_portal_attributes, :account_type, :time_zone
 
-  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :disable_old_ui_changed, :is_anonymous_account, :fresh_id_version, :fs_cookie_signup_param, :suppress_freshid_calls
+  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes, :is_anonymous_account, :fresh_id_version, :fs_cookie_signup_param, :suppress_freshid_calls
 
   attr_writer :no_of_ticket_fields_built
 

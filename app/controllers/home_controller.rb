@@ -1,6 +1,5 @@
 class HomeController < ApplicationController
   before_filter :add_security_headers, only: [:index_html]
-  before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter { @hash_of_additional_params = { format: 'html' } }
   before_filter :set_content_scope, :set_mobile, only: [:index]

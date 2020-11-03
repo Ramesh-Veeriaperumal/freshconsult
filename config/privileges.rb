@@ -636,7 +636,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
     resource :"integrations/microsoft_team", :only => [:oauth, :install]
     resource :"integrations/google_hangout_chat", :only => [:oauth, :install]
-    resource :"user", :only => [:enable_falcon_for_all, :disable_old_helpdesk]
     resource :"admin/onboarding"
 
     # Used by API V2

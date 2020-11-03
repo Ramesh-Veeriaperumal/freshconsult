@@ -84,16 +84,6 @@ module Agents
       update_preferences(search_settings: search_settings.deep_symbolize_keys)
     end
 
-    # Helpers for getting and setting falcon_ui
-    def falcon_ui
-      preferences[:falcon_ui]
-    end
-
-    def falcon_ui=(falcon_ui)
-      Rails.logger.info "FALCON HELPER METHOD :: falcon_ui preference :: #{caller[0..2]}"
-      update_preferences(falcon_ui: falcon_ui)
-    end
-
     # Helpers for getting and setting undo_send
     def undo_send
       preferences[:undo_send]
