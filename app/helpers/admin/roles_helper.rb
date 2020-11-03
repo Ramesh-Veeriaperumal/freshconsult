@@ -101,7 +101,7 @@ module Admin::RolesHelper
          { dom_type: 'label', id: 'bots', not_display: (!current_account.support_bot_enabled? && !current_account.autofaq_enabled?),
            children: 
 
-              [{ dom_type: 'check_box', id: 'view_bots', not_display: (!current_account.support_bot_enabled? && !current_account.autofaq_enabled?) }]
+              [{ dom_type: 'check_box', id: 'manage_freddy_answers', not_display: (!current_account.support_bot_enabled? && !current_account.autofaq_enabled?) }]
 
          },
 

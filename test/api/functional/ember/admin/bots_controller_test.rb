@@ -29,7 +29,7 @@ module Ember
       def test_index_without_bot_privileges #neither manage_bots nor view_bots
         enable_bot do
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           get :index, controller_params(version: 'private')
           User.any_instance.unstub(:privilege?)
           assert_response 403
@@ -41,7 +41,7 @@ module Ember
         enable_bot do
           Account.any_instance.stubs(:bot_onboarded?).returns(false)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           product1 = create_product(portal_url: Faker::Internet.domain_name)
           product2 = create_product(portal_url: Faker::Internet.domain_name)
           get :index, controller_params(version: 'private')
@@ -55,7 +55,7 @@ module Ember
         enable_bot do
           Account.any_instance.stubs(:bot_onboarded?).returns(false)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(true)
           product1 = create_product(portal_url: Faker::Internet.domain_name)
           product2 = create_product(portal_url: Faker::Internet.domain_name)
           get :index, controller_params(version: 'private')
@@ -121,7 +121,7 @@ module Ember
 
       def test_new_without_manage_bots_with_view_bots_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(true)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false)
           main_portal = @account.main_portal
           category_ids = 3.times.map do
@@ -136,7 +136,7 @@ module Ember
 
       def test_new_without_view_bots_with_manage_bots_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
           main_portal = @account.main_portal
           category_ids = 3.times.map do
@@ -209,7 +209,7 @@ module Ember
       def test_create_without_manage_bots_with_view_bots_privilege
         enable_bot do
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(true)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
           params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
@@ -224,7 +224,7 @@ module Ember
         enable_bot do
           stub_request(:post, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_return(body: { 'success': true }.to_json, headers: { 'Content-Type' => 'application/json' }, status: 200)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
           params = create_params(portal).merge(avatar: { is_default: true, url: 'https://s3.amazonaws.com/cdn.freshpo.com', avatar_id: 1 })
@@ -238,7 +238,7 @@ module Ember
         enable_bot do
           stub_request(:post, %r{^https://system42-serv-dev.staging.freddyproject.com.*?$}).to_raise(StandardError)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
           params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
@@ -398,7 +398,7 @@ module Ember
       def test_show_without_manage_bot_with_view_bots_privilege
         enable_bot do
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(true)
           bot = create_bot({ product: true})
           category_ids = 3.times.map do
             create_category.id
@@ -414,7 +414,7 @@ module Ember
 
       def test_show_without_view_bot_with_manage_bot_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
           bot = create_bot({ product: true})
           category_ids = 3.times.map do
@@ -431,7 +431,7 @@ module Ember
 
       def test_show_neither_manage_bot_nor_view_bot_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false)
           bot = create_bot({ product: true})
           category_ids = 3.times.map do
@@ -483,7 +483,7 @@ module Ember
       def test_update_without_manage_bots_with_view_bots_privilege
         enable_bot do
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(true)
           Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
           bot = create_bot({ product: true, default_avatar: 1})
           put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 } )
@@ -496,7 +496,7 @@ module Ember
 
       def test_update_without_view_bots_with_manage_bots_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
           Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
           bot = create_bot({ product: true, default_avatar: 1})

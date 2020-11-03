@@ -2598,6 +2598,7 @@ en:
         bots: Bots
         view_bots: View bots tab
         manage_bots: Manage Bots
+        manage_freddy_answers: Manage Freddy Answers
         manage_proactive_outreaches: Manage proactive outreaches
         fieldservice: Field service
         schedule_fsm_dashboard: Access scheduling dashboard
