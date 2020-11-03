@@ -11,7 +11,10 @@ module Ember
           @items = esv2_query_results(esv2_contact_merge_models)
         when 'freshcaller'
           @klasses = ['User']
+          @es_search_term = sanitized_search_term(params[:term])
           @search_context = :ff_contact_by_numfields
+          @search_sort = 'updated_at'
+          @sort_direction = 'desc'
           @items = esv2_query_results(esv2_contact_merge_models)
         when 'filteredContactSearch'
           @klasses = ['User']
@@ -69,6 +72,10 @@ module Ember
             end
           end
           contact_es_params
+        end
+
+        def sanitized_search_term(es_search_term)
+          es_search_term.match(/[[:alpha:]]/) ? es_search_term : es_search_term.gsub(/[^\d]/, '')
         end
     end
   end
