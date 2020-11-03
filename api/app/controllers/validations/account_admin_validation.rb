@@ -39,16 +39,6 @@ class AccountAdminValidation < ApiValidation
         data_type: {
           rules: 'Boolean'
         }
-      },
-      attach_file: {
-        data_type: {
-          rules: 'Boolean'
-        }
-      },
-      attach_screenshot: {
-        data_type: {
-          rules: 'Boolean'
-        }
       }
     }
   end
