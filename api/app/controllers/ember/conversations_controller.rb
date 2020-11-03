@@ -317,8 +317,8 @@ module Ember
       def decorator_options
         options = {}
         options[:sideload_options] = sideload_options
+        options[:parent_id] = fetch_parent_id
         options[:child_conversations_count] = child_conversations_count if parent_conversations?
-        options[:parent_id] = parent_id.to_i if child_conversations?
         options[:send_and_set] = true if @ticket.schedule_observer == true
         options[:ticket_decorator] = TicketDecorator.new(@ticket, ticket_decorator_options)
         super(options)

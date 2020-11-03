@@ -94,6 +94,11 @@ module ConversationsTestHelper
       response_pattern[:survey_result] = feedback_pattern(survey)
     end
 
+    if expected_output[:note_id].present? && expected_output[:threaded_reply]
+      response_pattern.delete(:ticket_id)
+      response_pattern[:parent_id] = expected_output[:note_id]
+    end
+
     response_pattern
   end
 

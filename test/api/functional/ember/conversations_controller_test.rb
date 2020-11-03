@@ -1256,6 +1256,36 @@ module Ember
       match_json([bad_request_error_pattern('attachment_ids', :can_have_only_one_field, list: 'body, attachment_ids')])
     end
 
+    def test_facebook_reply_for_threaded_reply_true
+      ticket = create_ticket_from_fb_post(true)
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post', threaded_reply: true }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id, threaded_reply: true }, params_hash)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_for_threaded_reply_false
+      ticket = create_ticket_from_fb_post(true)
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post', threaded_reply: false }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id, threaded_reply: false }, params_hash)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_facebook_reply_for_invalid_threaded_reply
+      ticket = create_ticket_from_fb_post(true)
+      fb_comment_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['facebook']).first
+      params_hash = { body: Faker::Lorem.paragraph, note_id: fb_comment_note.id, msg_type: 'post', threaded_reply: 'test' }
+      post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id, threaded_reply: 'test' }, params_hash)
+      assert_response 400
+      expected = { description: 'Validation failed', errors: [{ field: 'threaded_reply', message: 'Value set is of type String.It should be a/an Boolean', code: 'datatype_mismatch' }] }
+      assert_equal(expected, JSON.parse(response.body, symbolize_names: true))
+    end
+
     def test_facebook_reply_to_fb_comment_with_attachments
       attachment_ids = []
       file = fixture_file_upload('files/image4kb.png', 'image/png')

@@ -1,7 +1,7 @@
 class FbReplyValidation < ApiValidation
   include Facebook::TicketActions::Util
 
-  attr_accessor :body, :note_id, :agent_id, :msg_type, :attachment_ids, :include_surveymonkey_link
+  attr_accessor :body, :note_id, :agent_id, :msg_type, :attachment_ids, :include_surveymonkey_link, :threaded_reply
 
   validates :note_id, :agent_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
@@ -13,6 +13,7 @@ class FbReplyValidation < ApiValidation
   validates :attachment_ids, data_type: { rules: Array }, array: { data_type: { rules: Integer } }, custom_length: { maximum: 1 }
   validate :either_body_attachment_ids
   validates :include_surveymonkey_link, data_type: { rules: Integer }, inclusion: { in: [0, 1] }, if: -> { include_surveymonkey_link.present? }
+  validates :threaded_reply, data_type: { rules: 'Boolean' }
 
   def initialize(request_params, item, allow_string_param = false)
     @ticket = item

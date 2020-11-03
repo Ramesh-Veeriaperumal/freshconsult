@@ -52,6 +52,10 @@ module ConversationThreadingConcern
       params[:parent_id].present?
     end
 
+    def threaded_reply?
+      current_action?('facebook_reply') && params[:threaded_reply]
+    end
+
     def parent_id
       params[:parent_id]
     end
@@ -68,6 +72,14 @@ module ConversationThreadingConcern
     def fetch_fb_post_ancestry_ids
       @items.each_with_object({}) do |note, h|
         h[format(NOTE_ANCESTRY, ticket_fb_post_id: @ticket.fb_post.id, note_fb_post_id: note.fb_post.id)] = note.id if note.fb_post.present?
+      end
+    end
+
+    def fetch_parent_id
+      if threaded_reply?
+        @note_id
+      elsif child_conversations?
+        parent_id.to_i
       end
     end
 end
