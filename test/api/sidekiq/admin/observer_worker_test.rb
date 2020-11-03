@@ -202,12 +202,10 @@ module Admin
         Tickets::ObserverWorker.new.perform(args)
         Helpdesk::Ticket.any_instance.stubs(:schema_less_ticket).returns(schema_less_ticket)
         Helpdesk::Ticket.any_instance.stubs(:changes).returns(status: [5, 2])
-        Helpdesk::Ticket.any_instance.stubs(:save!).raises(LockVersion::Utility::TicketParallelUpdateException)
         ::Tickets::RetryObserverWorker.jobs.clear
         Tickets::ObserverWorker.new.perform(args)
         assert_equal 1, ::Tickets::RetryObserverWorker.jobs.size
       ensure
-        Helpdesk::Ticket.any_instance.unstub(:save!)
         Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
         Helpdesk::Ticket.any_instance.unstub(:schema_less_ticket)
         Helpdesk::Ticket.any_instance.unstub(:changes)
@@ -266,7 +264,6 @@ module Admin
           original_attributes: {}
         }
         Account.any_instance.stubs(:ticket_observer_race_condition_fix_enabled?).returns(false)
-        Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(false)
         Tickets::ObserverWorker.new.perform(args)
         Helpdesk::Ticket.stubs(:find_by_id).returns(ticket)
         ::Tickets::RetryObserverWorker.jobs.clear
@@ -274,7 +271,6 @@ module Admin
         assert_equal 0, ::Tickets::RetryObserverWorker.jobs.size
       ensure
         Account.any_instance.unstub(:ticket_observer_race_condition_fix_enabled?)
-        Account.any_instance.unstub(:skill_based_round_robin_enabled?)
       end
 
       def test_resolution_due_condition_in_observer

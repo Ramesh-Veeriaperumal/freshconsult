@@ -16,7 +16,7 @@ var WidgetConfig = function () {};
 	WidgetConfig.prototype = {
 		constructor: WidgetConfig,
 
-		IGNORE: ['authenticity_token', 'attachFile', 'screenshot'],
+		IGNORE: ['authenticity_token'],
 		IN_PX: ['offset', 'formHeight'],
 		PLACEHOLDERS: ['offset', 'formHeight', 'buttonText'],
 

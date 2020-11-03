@@ -115,8 +115,6 @@ class Widgets::FeedbackWidgetsController < SupportController
       if ticket_type.present? && ticket_field_values.exclude?(ticket_type)
         render json: { success: false, error: t('helpdesk.flash.invalid_ticket_type') }
       end
-      render json: { success: false, error: t('flash.attachments_not_enabled') } if !current_account.feedback_widget_attach_file? && params[:helpdesk_ticket][:attachments].present?
-      render json: { success: false, error: t('flash.screenshots_not_enabled') } if !current_account.feedback_widget_attach_screenshot? && params[:screenshot].present?
     end
 
     def check_ticket_permission

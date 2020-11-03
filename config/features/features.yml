@@ -77,7 +77,7 @@
       :advanced_search_bulk_actions: 72
       :ticket_activity_export: 73
       :system_observer_events: 74
-      :unused_75: 75
+      :private_inline: 75
       :caching: 77
       :collaboration: 78
       :auto_ticket_export: 79
@@ -436,6 +436,7 @@
   :link_tickets: false
   :shared_ownership: false
   :advanced_search_bulk_actions: false
+  :private_inline: false
   :freshcaller: false
   :freshcaller_widget: false
   :falcon: false
