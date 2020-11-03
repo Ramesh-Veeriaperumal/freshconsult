@@ -4,7 +4,7 @@ module Tickets
     include TicketConcern
     include HelperConcern
 
-    before_filter :archive_disabled?, only: [:bulk_archive]
+    before_filter :archive_disabled?, :setting_enabled?, only: [:bulk_archive]
 
     def bulk_archive
       @validation_klass = 'ArchiveValidation'
@@ -44,8 +44,8 @@ module Tickets
         render_request_error :access_denied, 403 if current_account.disable_archive_enabled?
       end
 
-      def launch_party_name
-        FeatureConstants::ARCHIVE_API
+      def setting_enabled?
+        render_request_error(:require_feature, 403, feature: FeatureConstants::ARCHIVE_API.to_s.titleize) unless current_account.archive_tickets_api_enabled?
       end
 
       def constants_class

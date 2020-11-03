@@ -8,6 +8,7 @@ table_list=(
     accounts
     admin_user_accesses
     agent_types
+    business_calendars
     ca_folders
     chat_settings
     chat_widgets
@@ -29,6 +30,7 @@ table_list=(
     helpdesk_picklist_values
     helpdesk_ticket_fields
     helpdesk_ticket_statuses
+    helpdesk_choices
     oauth_applications
     password_policies
     portal_templates
@@ -39,6 +41,8 @@ table_list=(
     scoreboard_ratings
     service_api_keys
     shard_mappings
+    sla_details
+    sla_policies
     subscription_addons
     subscription_currencies
     subscription_plan_addons

@@ -2878,4 +2878,6 @@ Helpkit::Application.routes.draw do
   
   match '/mobile/welcome'  => 'mobile_app_download#index'
   match '/email_service_spam' => 'email_service#create', via: :post
+
+  post '/mobile/user_auth_token', to: 'freshid#mobile_auth_token'
 end

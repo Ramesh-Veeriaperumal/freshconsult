@@ -7,6 +7,7 @@ module ApiBusinessCalendarConstants
   PERMITTED_PARAMS = %i[id name description time_zone channel_business_hours holidays].freeze
   PHONE_CHANNEL = 'phone'
   CHAT_CHANNEL = 'chat'
+  CHAT_DEFAULT_AWAY_MESSAGE = 'We are away now'
   CREATE_FIELDS = (PERMITTED_PARAMS - %i[id]).freeze
   UPDATE_FIELDS = CREATE_FIELDS
   HOLIDAYS_PERMITTED_PARAMS = %w[date name].freeze

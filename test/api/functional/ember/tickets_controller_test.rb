@@ -5531,6 +5531,7 @@ module Ember
     def test_index_with_company
       company = create_company
       user = add_new_user(@account)
+      sidekiq_inline {
         user.company_id = company.id
         user.save!
       }

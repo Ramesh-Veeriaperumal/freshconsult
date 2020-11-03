@@ -54,17 +54,30 @@
 		    $(this).siblings('[rel=pseudo]').val(this.checked ? '' : 'no');
 			});
 
-			$('.captchapseudoCheckbox').bind('change', function(ev) {
-        var value = !ev.target.checked;
-        var captcha_hash = { disable_captcha: value };
-        var data = JSON.stringify({ feedback_widget:  captcha_hash });
+      $('.captchapseudoCheckbox').bind('change', function(ev) {
+        var widget_settings_hash = { disable_captcha: !ev.target.checked };
+        post_widget_settings(widget_settings_hash);
+      });
+
+      $('#attachScreenshotPseudoCheckbox').bind('change', function(ev) {
+        var widget_settings_hash = { attach_screenshot: ev.target.checked };
+        post_widget_settings(widget_settings_hash);
+      });
+
+      $('#attachFilePseudoCheckbox').bind('change', function(ev) {
+        var widget_settings_hash = { attach_file: ev.target.checked };
+        post_widget_settings(widget_settings_hash);
+      });
+
+      function post_widget_settings(widget_settings_hash) {
+      var data = JSON.stringify({ feedback_widget:  widget_settings_hash });
         $.ajax({
           type: 'PUT',
           contentType: "application/json",
           url: '/api/_/admin/accounts/preferences',
           data: data
         });
-			});
+      }
 
 			$('.codetextarea').on('click', function (ev) {
 				this.select();

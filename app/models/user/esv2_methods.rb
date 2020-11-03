@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
                       :time_zone, :deleted, :fb_profile_id, :language, 
                       :blocked, :address, :helpdesk_agent, :unique_external_id ], 
               methods: [:user_description, :company_names, :emails, :company_ids, :tag_ids, :parent_id, :sanitized_mobile, :sanitized_phone]
-            }, true).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
+            }, true).merge(agent_es_attributes).merge(esv2_custom_attributes).merge(tag_names: es_tag_names).to_json
   end
   
   # V2 columns to be observed for changes
@@ -26,8 +26,8 @@ class User < ActiveRecord::Base
   def esv2_columns
     @@esv2_columns ||= [:account_id, :active, :address, :blocked, :deleted, :description, :email,
                         :fb_profile_id, :helpdesk_agent, :job_title, :language, :mobile, :name,
-                        :phone, :string_uc04, :time_zone, :twitter_id, :tags,
-                        :unique_external_id, :customer_id, :company_ids].concat(esv2_contact_field_data_columns)
+                        :phone, :string_uc04, :time_zone, :twitter_id, :tags, :unique_external_id,
+                        :customer_id, :company_ids, :agent_type, :group_ids, :contribution_group_ids].concat(esv2_contact_field_data_columns)
   end
   
   # V2 custom field columns
@@ -46,6 +46,14 @@ class User < ActiveRecord::Base
 
   def emails
     user_emails.pluck(:email)
+  end
+
+  def agent_es_attributes
+    {
+      agent_type: agent.try(:agent_type),
+      group_ids: agent? ? associated_group_ids : nil,
+      contribution_group_ids: agent? ? read_associated_group_ids : nil
+    }
   end
 
   # Renamed as es_tag_names as tag_names already exists

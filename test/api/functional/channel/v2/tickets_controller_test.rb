@@ -1391,14 +1391,14 @@ module Channel::V2
       request.stubs(:uuid).returns(job_id)
       remove_others_redis_key(resync_rate_limiter_key(CHANNEL_SOURCE))
       start_date = Time.zone.now - 3.days
-      end_date = start_date + 2.days
+      end_date = start_date + (2.days - 5.minutes)
       CentralPublish::ResyncWorker.jobs.clear
       args = { meta: { meta_id: 'abc' }, created_at: date_time_range(start_date, end_date),
                updated_at: date_time_range(start_date, end_date), resolved_at: date_time_range(start_date, end_date),
                closed_at: date_time_range(start_date, end_date) }
       post :sync, construct_params({ version: 'channel' }, args)
-      assert_equal 1, CentralPublish::ResyncWorker.jobs.size
       assert_response 202
+      assert_equal 1, CentralPublish::ResyncWorker.jobs.size
       match_json(tickets_sync_pattern(job_id))
     ensure
       request.unstub(:uuid)

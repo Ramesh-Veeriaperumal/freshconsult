@@ -9,11 +9,11 @@ class Tickets::BulkActionsControllerTest < ActionController::TestCase
 
   def setup
     super
-    @account.launch :archive_tickets_api
+    @account.enable_setting :archive_tickets_api
   end
 
   def rollback
-    @account.rollback :archive_tickets_api
+    @account.disable_setting :archive_tickets_api
   end
 
   def test_archive_with_disable_archive_enabled
@@ -26,7 +26,7 @@ class Tickets::BulkActionsControllerTest < ActionController::TestCase
   end
 
   def test_archive_without_archive_tickets_api
-    @account.rollback :archive_tickets_api
+    @account.disable_setting :archive_tickets_api
     params = {archive_days: 0, ids:[SAMPLE_TICKET_ID]}
     post :bulk_archive, construct_params(params)
     assert_response 403

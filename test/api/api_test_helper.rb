@@ -94,12 +94,14 @@ class ActionDispatch::IntegrationTest
     WebMock.disable_net_connect! # disabling Webmock
 
     begin_gc_deferment
+    activate_authlogic
     get_agent
     set_request_headers
     host!('localhost.freshpo.com')
     set_key(account_key, 500, nil)
     set_key(default_key, 400, nil)
     @account.make_current
+    @agent.make_current
 
     @account.reputation = 1
     @account.save
@@ -111,9 +113,19 @@ class ActionDispatch::IntegrationTest
     Rails.logger.debug "START #{@test_name}"
   end
 
+  def account_wrap(user = nil)
+    yield
+  ensure
+    @account.make_current
+    (user || @agent).make_current
+  end
+
   def teardown
     reconsider_gc_deferment
     super
+    Account.reset_current_account
+    User.reset_current_user
+    reset_request_headers
     clear_instance_variables
     Rails.logger.debug "END #{@test_name}"
   end

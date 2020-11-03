@@ -76,7 +76,6 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.schema_less_note.to_emails = to_email
     note.schema_less_note.from_email = from_email
     note.schema_less_note.save
-    @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.reply(ticket, note, options)
@@ -95,7 +94,6 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.destroy
     ticket.destroy
     agent.destroy
-    @account.revoke_feature(:private_inline)
     @account.unstub(:secure_attachments_enabled?)
   end
 
@@ -115,7 +113,6 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.schema_less_note.to_emails = to_emails
     note.schema_less_note.from_email = from_email
     note.schema_less_note.save
-    @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.forward(ticket, note, options)
@@ -136,7 +133,6 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.destroy
     ticket.destroy
     agent.destroy
-    @account.revoke_feature(:private_inline)
     @account.unstub(:secure_attachments_enabled?)
   end
 
@@ -150,7 +146,6 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.schema_less_note.to_emails = to_email
     note.schema_less_note.from_email = from_email
     note.schema_less_note.save
-    @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.deliver_reply_to_forward(ticket, note)
@@ -171,7 +166,6 @@ class TicketNotifierTest < ActionMailer::TestCase
     note.destroy
     ticket.destroy
     agent.destroy
-    @account.revoke_feature(:private_inline)
     @account.unstub(:secure_attachments_enabled?)
   end
 
@@ -179,7 +173,6 @@ class TicketNotifierTest < ActionMailer::TestCase
     agent = add_test_agent(@account)
     num_of_files = 3
     ticket = create_ticket_with_multiple_attachments(num_of_files: num_of_files, requester_id: agent.id)
-    @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
     Mail::Message.any_instance.expects(:deliver!).once
     mail_message = Helpdesk::TicketNotifier.notify_outbound_email(ticket)
@@ -199,7 +192,6 @@ class TicketNotifierTest < ActionMailer::TestCase
   ensure
     ticket.destroy
     agent.destroy
-    @account.revoke_feature(:private_inline)
     @account.unstub(:secure_attachments_enabled?)
   end
 
@@ -207,7 +199,6 @@ class TicketNotifierTest < ActionMailer::TestCase
     agent = add_test_agent(@account)
     num_of_files = 3
     ticket = create_ticket_with_multiple_attachments(num_of_files: num_of_files, requester_id: agent.id)
-    @account.add_feature(:private_inline)
     @account.stubs(:secure_attachments_enabled?).returns(true)
     params = { :ticket => ticket,
                :notification_type => EmailNotification::NEW_TICKET_CC,
@@ -233,7 +224,6 @@ class TicketNotifierTest < ActionMailer::TestCase
   ensure
     ticket.destroy
     agent.destroy
-    @account.revoke_feature(:private_inline)
     @account.unstub(:secure_attachments_enabled?)
   end
 

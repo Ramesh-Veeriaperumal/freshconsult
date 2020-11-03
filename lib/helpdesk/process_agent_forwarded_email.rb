@@ -84,6 +84,7 @@ module Helpdesk
         # > To: sample@example.com
         # >>> To:sample@example.com <mailto:sample@example.com>
         offset = (t_content[from_index..-1] =~ /\n\n/ or t_content[from_index..-1] =~ /\n>+\s?\n>+/)
+        cc_emails = []
         if offset
           parsed_header_content = t_content[from_index..(from_index + offset + 1)]
           cc_text = "" 
@@ -95,8 +96,9 @@ module Helpdesk
 
           # fetches the full cc and to list
           headers = header_parser(parsed_header_content)
+          cc_emails = merge_to_and_cc_emails(headers['cc'], headers['to']) if headers.present?
         end
-        merge_to_and_cc_emails(headers["cc"], headers["to"])
+        cc_emails
       end
 
       def merge_to_and_cc_emails(cc_text, to_text)

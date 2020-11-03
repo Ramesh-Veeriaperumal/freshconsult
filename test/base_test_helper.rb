@@ -3,6 +3,7 @@
 ENV['RAILS_ENV'] ||= 'test'
 $clean_db = false # load fixtures when we bootstrap. use_transactional_fixtures = true is set to roll back every transaction made in each test.
 
+require_relative 'helpers/simple_cov_setup'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 

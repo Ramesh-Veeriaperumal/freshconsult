@@ -77,7 +77,7 @@
       :advanced_search_bulk_actions: 72
       :ticket_activity_export: 73
       :system_observer_events: 74
-      :private_inline: 75
+      :unused_75: 75
       :caching: 77
       :collaboration: 78
       :auto_ticket_export: 79
@@ -428,6 +428,7 @@
       :csat_email_scan_compatibility: 424
       :secure_fields_toggle: 425
       :collaborators: 426
+      :archive_tickets_api: 427
 :selectable_features:
   :redis_display_id: true
   :gamification_enable: false
@@ -435,7 +436,6 @@
   :link_tickets: false
   :shared_ownership: false
   :advanced_search_bulk_actions: false
-  :private_inline: false
   :freshcaller: false
   :freshcaller_widget: false
   :falcon: false
@@ -468,7 +468,6 @@
   :proactive_spam_detection: true
   :bi_reports: false
   :activity_revamp: true
-  :hide_first_response_due: false
   :fluffy_forest: false
   :fluffy_higher_plan1: false
   :fluffy_higher_plan2: false
@@ -478,6 +477,7 @@
   :assets_toggle: false
   :prevent_ticket_creation_for_others: true
   :forums_agent_portal: false
+  :archive_tickets_api: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
   :csat_email_scan_compatibility: false

@@ -8,6 +8,8 @@ class FreshidController < ApplicationController
 
   ONBOARDING_ROUTE = '/a/getstarted'.freeze
 
+  MOBILE_PKCE_AUTH_KEYS = %w[access_token expires_in id].freeze
+
   skip_before_filter :check_privilege, :verify_authenticity_token, :check_suspended_account, :check_account_state
   skip_before_filter :set_current_account, :redactor_form_builder, :set_time_zone, :check_day_pass_usage,
                      :set_locale, :check_session_timeout, only: :event_callback
@@ -26,6 +28,22 @@ class FreshidController < ApplicationController
       customer_authorize_callback_v2_helper
     else
       customer_authorize_callback_helper
+    end
+  end
+
+  def mobile_auth_token
+    if MOBILE_PKCE_AUTH_KEYS.all? { |s| params.key? s }
+      user = current_account.all_technicians.find_by_freshid_uuid(params[:id])
+      org_domain = current_account.organisation_domain
+      access_token = params[:access_token]
+      refresh_token = params[:refresh_token]
+      expires_in = params[:expires_in]
+      Rails.logger.info "Mobile PKCE login user auth token :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}, organisation domain:#{org_domain}"
+      mobile_auth_failure('User not found') && return if user.nil?
+      activate_user user
+      create_user_session_for_mobile_pkce_login(user, access_token, refresh_token, expires_in)
+    else
+      mobile_auth_failure('Invalid parameters')
     end
   end
 
@@ -54,8 +72,36 @@ class FreshidController < ApplicationController
       end
     end
 
+    def create_user_session_for_mobile_pkce_login(user, access_token = nil, refresh_token = nil, access_token_expires_in = nil)
+      @user_session = current_account.user_sessions.new(user)
+      @user_session.web_session = true
+      if @user_session.save
+        @current_user_session = @user_session
+        @current_user = @user_session.record
+        store_freshid_tokens(access_token, refresh_token, access_token_expires_in) if access_token.present? && refresh_token.present?
+        Rails.logger.info "FRESHID create_user_session (PKCE) :: a=#{current_account.try(:id)}, u=#{@current_user.try(:id)}"
+        perform_after_login if @current_user.agent?
+        set_freshid_session_info_in_cookie if current_account.freshid_org_v2_enabled?
+        mobile_auth_failure('Session creation failed') && return unless grant_day_pass(true)
+        set_cookies_for_mobile if is_native_mobile?
+        mobile_auth_success(@current_user)
+      else
+        cookies['mobile_access_token'] = { value: 'failed', http_only: true } if is_native_mobile?
+        Rails.logger.error "FRESHID MOBILE LOGIN (PKCE) :: Failed :: a=#{current_account.try(:id)}"
+        mobile_auth_failure('Session creation failed')
+      end
+    end
+
     def mobile_and_freshid_v2?(mobile_login = false)
       current_account.freshid_org_v2_enabled? && mobile_login
+    end
+
+    def mobile_auth_success(user)
+      render json: { login_status: 'success', token: user.mobile_auth_token, email: user.email }, status: 200
+    end
+
+    def mobile_auth_failure(message)
+      render json: { login_status: 'failed', message: message }, status: 400
     end
 
     def set_cookies_for_mobile

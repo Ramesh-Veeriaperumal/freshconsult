@@ -17,6 +17,7 @@ module Admin
     # type field is getting override in error_options due to group_type -> type, that's why custom error
     validate :validate_type_field, if: -> { errors.blank? && @automatic_agent_assignment }
     validate :validate_settings, if: -> { errors.blank? && @enabled && @settings }
+    validate :validate_ticket_lbrr_settings, if: -> { errors.blank? && @enabled && @settings && Account.current.lbrr_by_omniroute_enabled? }
 
     def initialize(request_params, item = nil, _allow_string_param = nil, _model_decorator = nil)
       instance_variable_set('@automatic_agent_assignment', request_params[:automatic_agent_assignment])
@@ -81,6 +82,12 @@ module Admin
           false
         end
         true
+      end
+
+      def validate_ticket_lbrr_settings
+        field_name = ERROR_KEY_MAPPINGS[:assignment_type]
+        setting = grouped_settings[CHANNEL_NAMES[:freshdesk].to_sym]&.first
+        setting[:assignment_type] == ASSIGNMENT_TYPE_MAPPINGS[LOAD_BASED_ROUND_ROBIN] && errors[field_name] << :lbrr_not_supported
       end
 
       def grouped_settings

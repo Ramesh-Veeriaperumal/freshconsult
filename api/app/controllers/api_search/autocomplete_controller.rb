@@ -5,6 +5,7 @@ module ApiSearch
     include ApiSearch::AutocompleteConstants
 
     before_filter :validate_query_params, only: [:companies], unless: :private_api?
+    before_filter :validate_body_params, only: [:agents], if: :private_api?
     decorate_views(decorate_objects: [:companies, :companies_search])
     SLAVE_ACTIONS = %w[requesters agents companies tags].freeze
 
@@ -31,16 +32,19 @@ module ApiSearch
     def agents
       @klasses        = ['User']
       @search_context = :agent_autocomplete
+      @query = params[:query]
       @items = []
       search(esv2_autocomplete_models) do |results|
         response.api_meta = { count: results.total_entries } if private_api?
+        agents_list = current_account.all_agents.preload(:freshcaller_agent).where(user_id: results.map(&:id)).group_by { |item| item.user_id }
         results.each do |result|
           @items.concat([{
                           id: result.email,
                           value: result.name,
                           user_id: result.id,
+                          role_ids: result.role_ids,
                           profile_img: result.avatar.nil? ? false : result.avatar.expiring_url(:thumb, 300)
-                        }])
+                        }.merge(agent_channel_information(agents_list[result.id].first))])
         end
       end
       response.api_root_key = :agents if private_api?
@@ -89,6 +93,19 @@ module ApiSearch
         search(esv2_autocomplete_models) do |results|
           response.api_meta = { count: results.total_entries } if private_api?
           @items = results
+        end
+      end
+
+      def construct_es_params
+        super.tap do |es_params|
+          es_params[:query] = @query if @search_context == :agent_autocomplete && @query.present?
+        end
+      end
+
+      def agent_channel_information(agent_info)
+        {}.tap do |hash_body|
+          hash_body[:freshchat_agent] = agent_info.agent_freshchat_enabled? if current_account.freshchat_linked?
+          hash_body[:freshcaller_agent] = agent_info.freshcaller_agent.presence.try(:fc_enabled) & true if current_account.freshcaller_enabled?
         end
       end
 

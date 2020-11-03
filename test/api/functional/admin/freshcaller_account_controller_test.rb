@@ -35,7 +35,8 @@ module Admin
           missed_calls: true,
           abandoned_calls: false,
           connected_calls: true
-        }
+        },
+        search_without_country_code: false
       }
     end
 

@@ -34,7 +34,6 @@ module Helpdesk
 		}
 
 		HELPDESK_PRIVILEGE_MAP = {
-			:delete_ticket => [:spam_ticket],
 			:edit_note => [:edit_private_note],
 			:edit_ticket_properties => [:assign_agent,:assign_group]
 		}

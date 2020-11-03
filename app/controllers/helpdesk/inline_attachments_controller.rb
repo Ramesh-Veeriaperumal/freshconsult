@@ -11,7 +11,7 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
   skip_before_filter :determine_pod
   around_filter :run_on_slave
   before_filter :redirect_to_host, :if => :global_host?
-  before_filter :check_anonymous_user, :if => :private_inline?
+  before_filter :check_anonymous_user
   
   def one_hop_url
     decoded_hash = Helpdesk::Attachment.decode_token(params[:token])
@@ -91,9 +91,5 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
     def redirect_to_host
       redirect_host = referer_host || image_host
       redirect_to "#{redirect_host}#{env_config[:port]}/inline/attachment?token=#{params[:token]}"
-    end
-
-    def private_inline?
-      current_account.private_inline_enabled?
     end
 end

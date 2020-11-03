@@ -833,6 +833,41 @@ class AccountsControllerTest < ActionController::TestCase
     Account.current.add_feature(:ticket_summary_feature)
   end
 
+  def test_enable_hide_first_response_due_setting
+    Account.current.add_feature(:sla_management_v2)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { hide_first_response_due: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert Account.current.has_feature?(:hide_first_response_due)
+  ensure
+    Account.current.disable_setting(:hide_first_response_due)
+  end
+
+  def test_enable_hide_first_response_due_setting_with_dependency_disabled
+    Account.current.revoke_feature(:sla_management_v2)
+    assert_raise RuntimeError do
+      put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { hide_first_response_due: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+      assert Account.current.has_feature?(:ticket_summary), false
+    end
+  ensure
+    Account.current.add_feature(:sla_management_v2)
+  end
+
+  def test_disable_hide_first_response_due_setting
+    Account.current.enable_setting(:hide_first_response_due)
+    put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { hide_first_response_due: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+    assert_equal Account.current.has_feature?(:hide_first_response_due), false
+  end
+
+  def test_disable_hide_first_response_due_setting_with_dependency_disabled
+    Account.current.enable_setting(:hide_first_response_due)
+    Account.current.revoke_feature(:sla_management_v2)
+    assert_raise RuntimeError do
+      put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { hide_first_response_due: 0 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }
+      assert Account.current.has_feature?(:ticket_summary), false
+    end
+  ensure
+    Account.current.add_feature(:sla_management_v2)
+  end
+
   def test_enable_freshchat_setting
     Account.any_instance.stubs(:helpdesk_new_settings_enabled?).returns(true)
     put :update, id: Account.first.id, account: { helpdesk_name: 'Test Account', account_additional_settings_attributes: { date_format: 1, id: 1, supported_languages: [] }, time_zone: 'Casablanca', ticket_display_id: 4, features: { disable_freshchat: 1 }, main_portal_attributes: { id: 1 }, permissible_domains: '' }

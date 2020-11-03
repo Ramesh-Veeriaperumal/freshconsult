@@ -132,7 +132,8 @@ module Sync::Constants
     'Helpdesk::SlaPolicy' => ['conditions', 'escalations'],
     'Helpdesk::Section' => ['options'],
     'Helpdesk::Choice' => ['meta'],
-    'Agent' => ['additional_settings']
+    'Agent' => ['additional_settings'],
+    'Group' => ['additional_settings']
   }.freeze
 
   UNIQUE_MODEL_DATA = {

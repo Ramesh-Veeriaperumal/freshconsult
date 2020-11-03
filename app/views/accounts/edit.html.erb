@@ -35,6 +35,10 @@
 		    jQuery('#accounts_bitmap_disable_freshchat').val(+this.checked);
 		});
 
+        jQuery("#account_hide_first_response_due_enabled").change(function() {
+            jQuery('#accounts_bitmap_hide_first_response_due').val(+this.checked);
+        });
+
 		jQuery("#account_submit").bind('click', function(ev){
 				var language_flag = jQuery.inArray(jQuery("#account_main_portal_attributes_language").val() , jQuery("#account_account_additional_settings_attributes_supported_languages").val() );
 				if(language_flag != -1 ){
@@ -194,6 +198,18 @@
 					        </div>
 					    <% end %>
 
+                        <% if current_account.hide_first_response_due_setting_enabled? &&
+                            current_account.admin_setting_for_account?(:hide_first_response_due) %>
+                            <div class="control-group hide-first-response-toggle">
+                                <%= f.label :account_hide_first_response_due, t('account.hide_first_response_toggle.title'), :class => "control-label" %>
+                                <div class="controls">
+                                    <%= f.feature_check_box :hide_first_response_due, {:id => 'account_hide_first_response_due_enabled', :checked =>Account.current.hide_first_response_due_enabled?}, 1, 0 %>
+                                     <div class="help-block"><%= t('account.hide_first_response_toggle.helpnote') %></div>
+                                    <input type="hidden" name="account[settings][hide_first_response_due]" id="accounts_bitmap_hide_first_response_due" class="text disabled" />
+                              </div>
+                            </div>
+                        <% end %>
+
 					</div>
 			</div>
 		<% end %>
@@ -338,6 +354,10 @@
 
   <% if current_account.launched?(:helpdesk_new_settings) && current_account.admin_setting_for_account?(:disable_freshchat) %>
     jQuery("#account_disable_freshchat_enabled").itoggle();
+  <% end %>
+
+  <% if current_account.hide_first_response_due_setting_enabled? && current_account.admin_setting_for_account?(:hide_first_response_due) %>
+    jQuery("#account_hide_first_response_due_enabled").itoggle();
   <% end %>
 
 	<% if @restricted_helpdesk_launched %>

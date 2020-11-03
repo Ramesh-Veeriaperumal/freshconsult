@@ -51,7 +51,7 @@ module TestClassMethods
   end
 
   def set_request_auth_headers(user = nil)
-    if CustomRequestStore.read(:private_api_request)
+    if CustomRequestStore.read(:private_api_request) || old_ui?
       UserSession.any_instance.stubs(:cookie_credentials).returns([(user || @agent).persistence_token, (user || @agent).id])
     else
       auth = ActionController::HttpAuthentication::Basic.encode_credentials((user || @agent).single_access_token, 'X')
@@ -61,13 +61,21 @@ module TestClassMethods
 
   def set_request_headers
     @headers ||= {}
-    if CustomRequestStore.read(:private_api_request)
+    if CustomRequestStore.read(:private_api_request) || old_ui?
       UserSession.any_instance.stubs(:cookie_credentials).returns([@agent.persistence_token, @agent.id])
     else
       auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, 'X')
       @headers = { 'HTTP_AUTHORIZATION' => auth, 'HTTP_HOST' => 'localhost.freshpo.com' }
     end
     @write_headers = @headers.merge('CONTENT_TYPE' => 'application/json')
+  end
+
+  def reset_request_headers
+    UserSession.any_instance.unstub(:cookie_credentials) if CustomRequestStore.read(:private_api_request) || old_ui?
+  end
+
+  def old_ui?
+    false
   end
 
   def set_custom_auth_headers(headers, part1, part2)
