@@ -57,7 +57,7 @@
         <% elsif @ticket.facebook? && @ticket.is_fb_wall_post? %>
         <div class="ticket-details-twitter">
           <span class="ficon-facebook-setting fsize-16 mr6"></span>
-            <%= link_to(t('ticket.view_facebook'), facebook_link, :id => "ViewConvo", :target => "_blank") %>
+            <%= link_to(t('ticket.view_facebook'), facebook_link, :id => "ViewConvo", :target => "_blank", :rel => "noreferrer noopener") %>
         </div>
         <% end %>
       <% end %>

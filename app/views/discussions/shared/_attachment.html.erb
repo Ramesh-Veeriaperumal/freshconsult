@@ -7,7 +7,7 @@
 	%>
 
 	<div class="attachment-type file-types-<%= attachment_extension(attachment.content_file_name) %>">
-		<%= link_to h(truncate(attachment.content_file_name, :length => 15)), attachment, :target => "_blank", :title => h(attachment.content_file_name) %>
+		<%= link_to h(truncate(attachment.content_file_name, :length => 15)), attachment, :target => "_blank", :title => h(attachment.content_file_name), :rel => "noreferrer noopener"%>
 		<span>(<%= number_to_human_size attachment.content_file_size %>)</span>
 	</div>
 </li>
