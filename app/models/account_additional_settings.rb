@@ -269,18 +269,6 @@ class AccountAdditionalSettings < ActiveRecord::Base
     !additional_settings[:feedback_widget].try(:[], 'disable_captcha')
   end
 
-  def feedback_widget_settings
-    additional_settings.try(:[], :feedback_widget) || {}
-  end
-
-  def feedback_widget_attach_file?
-    feedback_widget_settings['attach_file']
-  end
-
-  def feedback_widget_attach_screenshot?
-    feedback_widget_settings['attach_screenshot']
-  end
-
   def add_feedback_widget_settings(feedback_widget_hash)
     return if self.additional_settings[:feedback_widget] == feedback_widget_hash
 
