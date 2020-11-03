@@ -66,7 +66,7 @@ class Account < ActiveRecord::Base
     :layout_customization, :advanced_reporting, :timesheets, :multiple_emails,
     :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding_feature,
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
-    :ticket_activity_export, :collaboration, :hipaa, :collaborators,
+    :ticket_activity_export, :private_inline, :collaboration, :hipaa, :collaborators,
     :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
     :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,

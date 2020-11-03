@@ -22,6 +22,23 @@ class AccountTest < ActiveSupport::TestCase
     end
   end
 
+  def test_enable_secure_attachments
+    @account.revoke_feature(:private_inline)
+    @account.enable_setting(:secure_attachments)
+    assert @account.private_inline_enabled?
+  ensure
+    @account.disable_setting(:secure_attachments)
+  end
+
+  def test_disable_secure_attachments
+    @account.enable_setting(:secure_attachments)
+    @account.add_feature(:private_inline)
+    @account.disable_setting(:secure_attachments)
+    assert_equal @account.private_inline_enabled?, false
+  ensure
+    @account.revoke_feature(:private_inline)
+  end
+
   def test_update_features_method_with_setting_dependency_disabled
     params = { features: { signup_link: true } }
 
