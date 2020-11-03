@@ -64,7 +64,7 @@ class SAAS::SubscriptionEventActions
       to_be_added = account_add_ons - existing_add_ons
       to_be_removed = existing_add_ons - account_add_ons
       if skipped_features.present?
-        to_be_added.reject! { |feature| skipped_features.include?(feature) }
+        to_be_added.reject! { |feature| account.has_feature?(feature) || skipped_features.include?(feature) }
         to_be_removed.reject! { |feature| skipped_features.include?(feature) }
       end
       
@@ -146,7 +146,7 @@ class SAAS::SubscriptionEventActions
       plan_features.delete(:lbrr_by_omniroute) if account.round_robin_capping_enabled? && !account.lbrr_by_omniroute_enabled?
       settings_dependent_on_feature_list = []
       plan_features.each do |feature|
-        unless skipped_features.include?(feature)
+        unless account.has_feature?(feature) || skipped_features.include?(feature)
           account.set_feature(feature)
           settings_dependent_on_feature_list |= account.settings_to_add_dependent_on_feature(feature)
         end
