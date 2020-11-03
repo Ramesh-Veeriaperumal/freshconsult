@@ -1,7 +1,7 @@
 <div class="features-card self-service-card">
   <h4 class="features-card__title"><%= t('freddy.self_service') %></h4>
   <% SubscriptionsHelper::SELF_SERVICE.each do |feature_item| %>
-  <span class="features-card__features--list"><%= t("features.#{feature_item}").html_safe %></span>
+  <span class="features-card__features--list"><%= t("features.#{feature_item}") %></span>
   <% end %>
   <div class="features-card__features--common"><%= t("session_packs_month").html_safe %></div>
   <div class="features-card__features--common"><%= t("auto_recharge_default").html_safe %></div>
