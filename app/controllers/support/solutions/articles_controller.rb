@@ -80,7 +80,14 @@ class Support::Solutions::ArticlesController < SupportController
   private
 
     def set_interaction_source
+      set_current_portal unless Portal.current
       @article.current_article.set_portal_interaction_source
+    end
+
+    def set_current_portal
+      # FD-65978 to set current portal
+      portal = Portal.fetch_by_url(request.host) || Account.fetch_by_full_domain(request.host).try(:main_portal)
+      portal ? portal.make_current : (Rails.logger.info "Interaction Source NOT present! Host : #{request.host}")
     end
 
     def filter_params
