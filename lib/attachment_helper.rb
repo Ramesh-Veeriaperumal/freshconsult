@@ -49,7 +49,7 @@
       if(page == "cloud_file")
         filename = attached.filename || URI.unescape(attached.url.split('/')[-1])
         tooltip = filename.size > 15 ? "tooltip" : ""
-        output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank",
+        output << link_to( h(filename.truncate(15)), attached.url , :target => "_blank", :rel => "noreferrer noopener",
                            :title => h(filename), :class => "#{tooltip}")
         output << %(<span class="file-size cloud-file"></span>)
       else

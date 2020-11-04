@@ -488,17 +488,6 @@ class User < ActiveRecord::Base
 		phone.blank? ? mobile : phone
 	end
 
-  def toggle_ui_preference
-    new_pref = { :falcon_ui => !self.preferences[:agent_preferences][:falcon_ui] }
-    self.merge_preferences = { :agent_preferences => new_pref }
-    save!
-  end
-
-  def is_falcon_pref?
-    Rails.logger.warn "FALCON HELPER METHOD :: is_falcon_pref? :: #{caller[0..2]}"
-    true
-  end
-
   def old_notes_first?
     if self.preferences[:agent_preferences][:oldest_on_top].to_s.blank?
       nil # will take account settings preference
@@ -892,7 +881,7 @@ class User < ActiveRecord::Base
     return false unless ticket.source == Helpdesk::Source::PHONE
     meta_note = ticket.notes.where(source: Account.current.helpdesk_sources.note_source_keys_by_token['meta']).first
     meta = YAML.safe_load(meta_note.body) if meta_note.present?
-    meta.present? && meta['freshcaller'] && meta['created_by'] == id && allow_ticket_restricted_access?(meta['time'])
+    meta.present? && meta['freshcaller'].present? && meta['created_by'] == id && allow_ticket_restricted_access?(meta['time'])
   end
 
   def allow_ticket_restricted_access?(fc_time)

@@ -25,7 +25,6 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
     @headers.except!('HTTP_AUTHORIZATION')
     return if @@before_all
     @@before_all = true
-    @account.add_feature(:falcon)
   end
 
   def test_throttler_for_valid_request

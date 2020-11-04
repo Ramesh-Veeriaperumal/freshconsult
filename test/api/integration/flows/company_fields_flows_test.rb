@@ -20,7 +20,6 @@ class CompanyFieldsFlowsTest < ActionDispatch::IntegrationTest
   def before_all
     return if @@before_all
     @@before_all = true
-    @account.add_feature(:falcon)
   end
 
   def test_index_without_timestamp

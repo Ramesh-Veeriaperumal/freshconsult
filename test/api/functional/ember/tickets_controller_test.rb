@@ -1216,7 +1216,7 @@ module Ember
       assert_response 201
     end
 
-    def test_create_service_task_ticket
+    def test_create_service_task_ticket_as_child_ticket
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
@@ -1292,11 +1292,32 @@ module Ember
       end
     end
 
-    def test_create_service_task_ticket_failure
+    def test_create_service_task_as_independent_ticket_with_launch_feature
       enable_adv_ticketing([:field_service_management]) do
         begin
           perform_fsm_operations
           Account.first.make_current
+          Account.any_instance.stubs(:independent_service_task_enabled?).returns(true)
+          params = { email: Faker::Internet.email,
+                   description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                   custom_fields: { cf_fsm_contact_name:
+                    "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }  
+          post :create, construct_params({version: 'private'}, params)
+          assert_response 201
+        ensure
+          cleanup_fsm
+          Account.any_instance.unstub(:independent_service_task_enabled?)
+        end 
+      end
+    end
+
+    def test_create_service_task_as_independent_ticket_without_launch_feature
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          Account.first.make_current
+          Account.any_instance.stubs(:independent_service_task_enabled?).returns(false)
           params = { email: Faker::Internet.email,
                    description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
                    priority: 2, status: 2, type: SERVICE_TASK_TYPE,
@@ -1307,6 +1328,7 @@ module Ember
           assert_response 400
         ensure
           cleanup_fsm
+          Account.any_instance.unstub(:independent_service_task_enabled?)
         end
       end
     end
@@ -5431,118 +5453,6 @@ module Ember
       assert_response 200
     ensure
       Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
-    end
-
-    def test_index_with_spam
-      t = create_ticket(spam: true)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-      get :index, controller_params(filter: 'spam')
-      assert_response 200
-      param_object = OpenStruct.new(:stats => true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object))
-      match_json(pattern)
-    end
-
-    def test_index_with_new_and_my_open
-      t = create_ticket(status: 2)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-      get :index, controller_params(filter: 'new_and_my_open')
-      assert_response 200
-      param_object = OpenStruct.new(:stats => true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object))
-      match_json(pattern)
-    end
-
-    def test_index_with_stats
-      t = create_ticket
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-      get :index, controller_params(include: 'stats')
-      assert_response 200
-      param_object = OpenStruct.new(:stats => true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object))
-      match_json(pattern)
-    end
-
-    def test_index_with_description
-      t = create_ticket
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-      get :index, controller_params(include: 'description')
-      assert_response 200
-      param_object = OpenStruct.new(stats: true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
-      match_json(pattern)
-    ensure
-      t.try(:destroy)
-    end
-
-    def test_index_with_requester
-      user = add_new_user(@account)
-      t = create_ticket(requester_id: user.id)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-      get :index, controller_params(requester_id: user.id)
-      assert_response 200
-      param_object = OpenStruct.new(:stats => true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object))
-      match_json(pattern)
-    end
-
-    def test_index_with_filter_order_by
-      t_1 = create_ticket(status: 2, created_at: 10.days.ago)
-      t_2 = create_ticket(status: 3, created_at: 11.days.ago)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
-      get :index, controller_params(order_by: 'status')
-      assert_response 200
-      param_object = OpenStruct.new(:stats => true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
-      pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
-      match_json(pattern)
-    end
-
-    def test_index_with_default_filter_order_type
-      t_1 = create_ticket(created_at: 10.days.ago)
-      t_2 = create_ticket(created_at: 11.days.ago)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
-      get :index, controller_params(order_type: 'asc')
-      assert_response 200
-      param_object = OpenStruct.new(:stats => true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
-      pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
-      match_json(pattern)
-    end
-
-    def test_index_updated_since
-      t = create_ticket(updated_at: 2.days.from_now)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-      get :index, controller_params(updated_since: Time.zone.now.iso8601)
-      assert_response 200
-      param_object = OpenStruct.new(:stats => true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object))
-      match_json(pattern)
-    end
-
-    def test_index_with_company
-      company = create_company
-      user = add_new_user(@account)
-      sidekiq_inline {
-        user.company_id = company.id
-        user.save!
-      }
-      t = create_ticket(requester_id: user.id)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
-      get :index, controller_params(company_id: "#{company.id}")
-      assert_response 200
-      param_object = OpenStruct.new(:stats => true)
-      pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object))
-      match_json(pattern)
     end
 
     def test_update_compose_email_with_subject_and_description

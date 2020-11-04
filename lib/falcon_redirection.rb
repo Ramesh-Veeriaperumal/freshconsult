@@ -59,7 +59,7 @@ class FalconRedirection
     end
 
     def falcon_whitelisted_paths
-      ['/enable_falcon', '/admin/widget_config', '/logout', '/support/login', '/inline/attachment']
+      ['/admin/widget_config', '/logout', '/support/login', '/inline/attachment']
     end
 
     def falcon_whitelisted_re_paths

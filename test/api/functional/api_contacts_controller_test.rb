@@ -17,7 +17,6 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.reload
     return if @@initial_setup_run
     @account.features.multiple_user_companies.create
-    @account.add_feature(:falcon)
     @account.add_feature(:multiple_user_companies)
     @account.add_feature(:multi_timezone)
     @account.add_feature(:multi_language)

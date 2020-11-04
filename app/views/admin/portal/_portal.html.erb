@@ -26,7 +26,7 @@
       <span class="view-portal">
         <span class='ficon-open-in-new-window pr5 fsize-14'></span>
         <span class="tooltip" title="<%= portal.full_url %>">
-          <%= link_to(t("admin.products.product.view_portal"), portal.full_url, { :target => "_blank" }) %>
+          <%= link_to(t("admin.products.product.view_portal"), portal.full_url, { :target => "_blank", :rel => "noreferrer noopener" }) %>
         </span>   
       </span>
         <%= link_to t("admin.products.product.customize_portal").html_safe, admin_portal_template_path(portal), :class => "btn btn-mini" %>

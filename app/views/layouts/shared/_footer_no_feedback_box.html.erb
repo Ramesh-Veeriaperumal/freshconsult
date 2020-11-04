@@ -1,6 +1,6 @@
 <div class="footer-content-centre">
 	<% if current_account.copy_right_enabled? %>
-	  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank") %>
+	  <%= link_to(t('footer.helpdesk_software'), AppConfig['app_website'], :target => "_blank", :rel => "noopener") %>
 	  <%= t('footer.by_freshdesk') %>
 	  <span class="muted"> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; </span>
 	<% end %>
@@ -17,6 +17,6 @@
   <% if current_account.copy_right_enabled? %>
   	<%= link_to(t('footer.browse_community'), "#{AppConfig['support_url']}/support/discussions", :target => "_blank") %>
   	<span class="muted"> &nbsp;&nbsp;&nbsp;| &nbsp;&nbsp;&nbsp;</span>
-  	<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank") %>
+  	<%= link_to(t('footer.privacy_policy'), AppConfig['privacy_policy'], :target => "_blank", :rel => "noopener") %>
   <% end %>
 </div>

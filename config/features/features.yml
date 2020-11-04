@@ -85,7 +85,7 @@
       :user_notifications: 81
       :freshcaller: 82
       :quick_reply: 83
-      :falcon: 84
+      :unnamed_feature1: 84
       :denormalized_flexifields: 85
       :support_bot: 86
       :freshcaller_widget: 87
@@ -165,7 +165,7 @@
       :unused_161: 161 # do not use
       :reverse_notes: 162
       :opt_out_analytics: 163
-      :disable_old_ui: 164
+      :unnamed_feature2: 164
       :omni_channel_routing: 165
       :segments: 166
       :unused_167: 167 # do not use
@@ -439,9 +439,7 @@
   :private_inline: false
   :freshcaller: false
   :freshcaller_widget: false
-  :falcon: false
   :opt_out_analytics: false
-  :disable_old_ui: true
   :chat_enable: false
   :survey_links: true
   :enable_multilingual: false

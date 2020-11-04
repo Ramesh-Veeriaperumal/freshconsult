@@ -349,27 +349,6 @@ class SAAS::AccountDataCleanup
     end
   end
 
-  def handle_disable_old_ui_add_data
-    Rails.logger.info("Adding disable old ui feature for account: #{account.id}, Disable Old Ui Enabled: #{account.disable_old_ui_enabled?}")
-    ::AdvancedTicketingConstants::ADVANCED_TICKETING_APPS.each do |app_name|
-      account.installed_applications.with_name(app_name).each do |app|
-        app.skip_callbacks = true
-        app.destroy
-      end
-    end
-  end
-
-  def handle_disable_old_ui_drop_data
-    Rails.logger.info("Revoking disable old ui feature for account: #{account.id}, Disable Old Ui Enabled: #{account.disable_old_ui_enabled?}")
-    ::AdvancedTicketingConstants::ADVANCED_TICKETING_APPS.each do |app_name|
-      if account.safe_send("#{app_name}_enabled?") && account.installed_applications.with_name(app_name).blank?
-        application = Integrations::Application.available_apps(account.id).find_by_name(app_name)
-        app = Integrations::InstalledApplication.new({ account: account, skip_callbacks: true, application: application })
-        app.save!
-      end
-    end
-  end
-
   def handle_unlimited_multi_product_drop_data
     if account.products.count > MULTI_PRODUCT_LIMIT
       current_products = account.products.sort_by(&:created_at).reverse

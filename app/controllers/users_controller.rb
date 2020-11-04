@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token,
                      :only => [:revert_identity, :profile_image,
-                               :profile_image_no_blank, :enable_falcon,
+                               :profile_image_no_blank,
                                :accept_gdpr_compliance, :enable_undo_send,
                                :disable_undo_send, :set_conversation_preference, :change_focus_mode]
   before_filter :set_ui_preference, :only => [:show]
@@ -18,7 +18,6 @@ class UsersController < ApplicationController
   before_filter(:only => [:assume_identity]) { |c| c.requires_this_feature :assume_identity }
   before_filter :assume_allowed?, :only => [:assume_identity]
   before_filter :load_items, :only => :block
-  before_filter :has_access_to_enable_falcon?, :only => [:enable_falcon_for_all]
   before_filter :req_feature, :only => [:set_conversation_preference]
 
   ##redirect to contacts
@@ -144,24 +143,6 @@ class UsersController < ApplicationController
     redirect_to "/"
   end
 
-  def enable_falcon
-    return unless current_account.falcon_ui_enabled?
-    cookies[:falcon_enabled] = true
-    redirect_to_falcon
-  end
-
-  def enable_falcon_for_all
-    current_account.enable_falcon_ui
-    Rails.logger.info("Falcon for all :: #{User.current.email} :: #{User.current.id} :: #{Account.current.id}")
-    return head :no_content
-  end
-
-  def disable_old_helpdesk
-    current_account.add_feature(:disable_old_ui)
-    Rails.logger.info("Disable OLD UI :: #{User.current.email} :: #{User.current.id} :: #{Account.current.id}")
-    return head :no_content
-  end
-
   def accept_gdpr_compliance
     current_user.remove_gdpr_preference
     success = current_user.save
@@ -227,10 +208,6 @@ class UsersController < ApplicationController
 
     def check_re_routes
       get_re_route(req_referer)
-    end
-
-    def has_access_to_enable_falcon?
-      head(403)
     end
 
     def req_feature

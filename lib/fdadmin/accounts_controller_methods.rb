@@ -168,10 +168,6 @@ module Fdadmin::AccountsControllerMethods
     data.present? ? { limit: data.limit, granularity: data.granularity } : {}
   end
 
-  def trigger_enable_old_ui_action
-    ::InternalService::FreshopsOperations.perform_async(params)
-  end
-
   def trigger_daypass_export_action
   	::InternalService::FreshopsOperations.perform_async(params)
   end

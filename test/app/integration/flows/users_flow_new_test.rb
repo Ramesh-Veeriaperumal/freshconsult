@@ -252,32 +252,6 @@ class UsersFlowTest < ActionDispatch::IntegrationTest
     assert "Sorry, we couldn't find your original user.", flash[:error]
   end
 
-  def test_enable_falcon
-    Account.any_instance.stubs(:falcon_ui_enabled?).returns(true)
-    account_wrap do
-      post '/enable_falcon', {}, 'HTTP_REFERER' => 'http://foo.com'
-    end
-    assert_response 302
-    assert 'true', response.cookies['falcon_enabled']
-  ensure
-    Account.any_instance.unstub(:falcon_ui_enabled?)
-  end
-
-  def test_enable_falcon_for_all_has_access_to_enable_falcon
-    account_wrap do
-      post '/enable_falcon_for_all'
-    end
-    assert_response 403
-  end
-
-  def test_disable_old_helpdesk
-    account_wrap do
-      post '/disable_old_helpdesk'
-    end
-    assert_response 204
-    assert Account.current.disable_old_ui_enabled?
-  end
-
   def test_accept_gdpr_compliance
     user = add_new_user(@account, active: true)
     set_request_auth_headers(user)

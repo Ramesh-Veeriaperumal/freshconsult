@@ -20,7 +20,6 @@ class AccountsController < ApplicationController
   skip_before_filter :set_time_zone, :set_current_account, :check_session_timeout,
     except: [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain, :anonymous_signup_complete]
   skip_before_filter :check_account_state
-  skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, 
     except: [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :anonymous_signup_complete]
   skip_filter :select_shard, 

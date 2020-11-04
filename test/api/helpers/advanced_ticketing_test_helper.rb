@@ -10,7 +10,6 @@ module AdvancedTicketingTestHelper
   end
 
   def enable_fsm
-    Account.current.set_feature(:disable_old_ui)
     Account.current.set_feature(:field_service_management_toggle) unless Account.current.has_feature?(:field_service_management_toggle)
     yield
   ensure
@@ -20,7 +19,6 @@ module AdvancedTicketingTestHelper
   end
 
   def enable_assets
-    Account.current.set_feature(:disable_old_ui)
     Account.current.set_feature(:assets_toggle) unless Account.current.has_feature?(:assets_toggle)
     yield
   ensure

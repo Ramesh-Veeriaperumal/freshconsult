@@ -1,9 +1,5 @@
 <div class="alert-message hide" id="language-message">
   <%= I18n.t("falcon_languages_alert") %>
-  <% if !current_account.disable_old_ui_enabled? %>
-    <br />
-    <%= I18n.t("click_here").html_safe %>
-  <% end %>
 </div>
 
 <script type='text/javascript'>

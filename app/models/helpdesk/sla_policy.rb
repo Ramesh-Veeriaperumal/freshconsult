@@ -153,16 +153,10 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   end  
 
   def escalate_response_overdue(ticket)
-    unless escalation_enabled?(ticket) && escalations.key?(:response)
-      ticket.update_attribute(:fr_escalated, true)
-      return
-    end
-
-    response_escalation = escalations[:response]["1"]
-    if !response_escalation || 
-        escalate_to_agents(ticket, response_escalation, 
-          EmailNotification::FIRST_RESPONSE_SLA_VIOLATION, :frDueBy)
-      ticket.update_attribute(:fr_escalated , true)
+    ticket.update_attribute(:fr_escalated, true)
+    if Account.current.sla_management_enabled? && escalation_enabled?(ticket)
+      response_escalation = escalations[:response].try(:[], "1")
+      escalate_to_agents(ticket, response_escalation, EmailNotification::FIRST_RESPONSE_SLA_VIOLATION, :frDueBy) if response_escalation
     end
   end
 
@@ -305,10 +299,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     end
 
     def escalate_overdue(ticket, params, notification)
-      unless escalation_enabled?(ticket) && escalations.key?(params[:activity])
-        ticket.update_attributes({ params[:level] => params[:max_levels], params[:escalated_field] => true })
-        return
-      end
+      ticket.update_attributes(params[:escalated_field] => true)
+      return unless Account.current.sla_management_enabled? && escalation_enabled?(ticket) && escalations.key?(params[:activity])
 
       (((ticket.safe_send(params[:level]) || 0)+1)..params[:max_levels]).each do |escalation_level|
         escalation = escalations[params[:activity]][escalation_level.to_s]

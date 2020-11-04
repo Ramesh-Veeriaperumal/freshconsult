@@ -71,7 +71,9 @@ module TestClassMethods
   end
 
   def reset_request_headers
-    UserSession.any_instance.unstub(:cookie_credentials) if CustomRequestStore.read(:private_api_request) || old_ui?
+    if CustomRequestStore.read(:private_api_request) || old_ui?
+      UserSession.any_instance.unstub(:cookie_credentials)
+    end
   end
 
   def old_ui?

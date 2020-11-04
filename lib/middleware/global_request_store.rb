@@ -12,7 +12,7 @@ module Middleware
     THREAD_RESET_KEYS = [
       :account, :user, :portal, :shard_selection, :shard_name_payload, :notifications,
       :email_config, :business_hour, :current_ip, :create_sandbox_account, :language,
-      :replica
+      :replica, :disallow_replica
     ].freeze
 
     def initialize(app)

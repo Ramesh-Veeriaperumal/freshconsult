@@ -14,14 +14,14 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES = [
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
-    :scheduled_ticket_export, :ticket_contact_export,
+    :scheduled_ticket_export, :ticket_contact_export, :independent_service_task,
     :falcon_portal_theme, :freshid, :email_new_settings,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none,
     :auto_complete_off, :new_ticket_recieved_metric, :ner,
     :sso_login_expiry_limitation, :old_link_back_url_validation,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
-    :ticket_source_revamp,
+    :ticket_source_revamp, :collaboration_roles,
     :bot_email_channel, :description_by_default, :bot_chat_history,
     :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update, :light_agents, :collaborator_privileges,
@@ -68,10 +68,10 @@ class Account < ActiveRecord::Base
     :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
     :ticket_activity_export, :private_inline, :collaboration, :hipaa, :collaborators,
     :dynamic_sections, :skill_based_round_robin, :auto_ticket_export,
-    :user_notifications, :falcon, :multiple_companies_toggle, :multiple_user_companies,
+    :user_notifications, :multiple_companies_toggle, :multiple_user_companies,
     :denormalized_flexifields, :custom_dashboard, :support_bot, :image_annotation,
     :tam_default_fields, :todos_reminder_scheduler, :smart_filter,
-    :opt_out_analytics, :freshchat, :disable_old_ui, :contact_company_notes,
+    :opt_out_analytics, :freshchat, :contact_company_notes,
     :sandbox, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
@@ -109,32 +109,6 @@ class Account < ActiveRecord::Base
   ]
 
   PODS_FOR_BOT = ['poduseast1'].freeze
-
-  LAUNCH_PARTY_FEATURES_TO_LOG = [
-    :admin_only_mint, :falcon
-  ].freeze
-
-  BITMAP_FEATURES_TO_LOG = [
-    :falcon, :disable_old_ui
-  ].freeze
-
-  def launched?(*feature_name)
-    features_list = feature_name & LAUNCH_PARTY_FEATURES_TO_LOG
-
-    if features_list.present?
-      features_list.each do |feature|
-        log_feature_usage(feature)
-        feature_name.delete(feature)
-      end
-    end
-
-    super
-  end
-
-  def log_feature_usage(feature_name)
-    Rails.logger.warn "FEATURE CHECK USAGE :: #{feature_name} :: #{caller[0..5]}"
-    true
-  end
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -324,17 +298,11 @@ class Account < ActiveRecord::Base
     has_feature?(:freshconnect) && freshconnect_account.present? && freshconnect_account.enabled
   end
 
-  def falcon_ui_enabled?(current_user = :no_user)
-    Rails.logger.warn "FALCON FEATURE METHOD :: falcon_ui_enabled? :: #{caller[0..2]}"
-    return true if current_user
-  end
-
   alias falcon_support_portal_theme_enabled? falcon_portal_theme_enabled?
 
   #this must be called instead of using launchparty in console or from freshops to set all necessary things needed
   def enable_falcon_ui
     set_falcon_redis_keys
-    self.add_feature(:falcon)
   end
 
   def set_falcon_redis_keys

@@ -34,8 +34,6 @@ class ActionController::TestCase
     set_key(account_key, 1000, nil)
     set_key(default_key, 100, nil)
     # Enabling Private API
-    @account.launch(:falcon)
-    @account.add_feature(:falcon)
     if @account.reputation != 1
       @account.reputation = 1
       @account.save

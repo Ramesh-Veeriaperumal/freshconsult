@@ -20,7 +20,7 @@ module ConversationConstants
   CREATE_FIELDS = %w(body private incoming user_id last_note_id).freeze | CREATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   TWEET_FIELDS = %w[body tweet_type twitter_handle_id last_note_id attachment_ids include_surveymonkey_link].freeze
   UPDATE_FIELDS = %w(body).freeze | UPDATE_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
-  FACEBOOK_REPLY_FIELDS = %w[body agent_id note_id last_note_id attachment_ids msg_type include_surveymonkey_link].freeze
+  FACEBOOK_REPLY_FIELDS = %w[body agent_id note_id last_note_id attachment_ids msg_type include_surveymonkey_link threaded_reply].freeze
   ECOMMERCE_REPLY_FIELDS = %w[body agent_id last_note_id attachment_ids].freeze
 
   ORDER_BY = %w[created_at updated_at].freeze
@@ -74,7 +74,7 @@ module ConversationConstants
   AGENT_USER_MAPPING = { user: :agent_id }.freeze
 
   PARAMS_MAPPINGS = { notify_emails: :to_emails, agent_id: :user_id, name: :filename }.freeze
-  PARAMS_TO_SAVE_AND_REMOVE = [:note_id, :cloud_files, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id, :inline_attachment_ids, :msg_type, :reply_ticket_id, :channel_id, :profile_unique_id].freeze
+  PARAMS_TO_SAVE_AND_REMOVE = [:note_id, :cloud_files, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id, :inline_attachment_ids, :msg_type, :reply_ticket_id, :channel_id, :profile_unique_id, :threaded_reply].freeze
   PARAMS_TO_REMOVE = [:body, :full_text].freeze
 
   TICKET_LOAD_REQUIRED = %i[create reply forward reply_to_forward ticket_conversations facebook_reply tweet ecommerce_reply reply_template forward_template latest_note_forward_template broadcast channel_reply].freeze

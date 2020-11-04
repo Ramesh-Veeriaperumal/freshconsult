@@ -167,9 +167,9 @@ module Ember
         end
       end
 
-      def test_index_without_view_bots_privilege
+      def test_index_without_manage_freddy_answers_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false).at_most_once
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false).at_most_once
           get :index, controller_params(version: 'private', id: @bot.id, start_at: DateTime.now.utc - 6, end_at: DateTime.now.utc + 1)
           assert_response 403
           match_json(request_error_pattern(:access_denied))
@@ -238,9 +238,9 @@ module Ember
         match_json(request_error_pattern(:require_feature, feature: 'Support Bot'))
       end
 
-      def test_bulk_delete_without_view_bots_privilege
+      def test_bulk_delete_without_manage_freddy_answers_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
           put :bulk_delete, construct_params({ version: 'private', id: @bot.id}, ids: bot_feedback_ids)
           assert_response 403
@@ -251,7 +251,7 @@ module Ember
 
       def test_bulk_delete_without_publish_solution_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(true)
           User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
           put :bulk_delete, construct_params({ version: 'private', id: @bot.id}, ids: bot_feedback_ids)
@@ -261,10 +261,10 @@ module Ember
         end
       end
 
-      def test_bulk_delete_without_publish_solution_and_view_bots_privileges
+      def test_bulk_delete_without_publish_solution_and_freddy_answers_privileges
         enable_bot do
           User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
           put :bulk_delete, construct_params({ version: 'private', id: @bot.id}, ids: bot_feedback_ids)
           assert_response 403
@@ -309,7 +309,7 @@ module Ember
 
       def test_bulk_map_article_without_publish_solution_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(true)
           User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
           article = create_article(article_params)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
@@ -321,9 +321,9 @@ module Ember
         end
       end
 
-      def test_bulk_map_article_without_view_bots_privilege
+      def test_bulk_map_article_without_manage_freddy_answers_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           article = create_article(article_params)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
           Bot.any_instance.stubs(:category_ids).returns([Solution::CategoryMeta.last.id])
@@ -334,10 +334,10 @@ module Ember
         end
       end
 
-      def test_bulk_delete_without_publish_solution_and_view_bots_privileges
+      def test_bulk_delete_without_publish_solution_and_manage_freddy_answers_privileges
         enable_bot do
           User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           article = create_article(article_params)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
           Bot.any_instance.stubs(:category_ids).returns([Solution::CategoryMeta.last.id])
@@ -458,9 +458,9 @@ module Ember
         end
       end
 
-      def test_create_article_without_view_bots_privilege
+      def test_create_article_without_manage_freddy_answers_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
           post :create_article, construct_params({ version: 'private', id: @bot.id }, article_params.merge(ids: bot_feedback_ids))
           assert_response 403
@@ -471,7 +471,7 @@ module Ember
 
       def test_create_article_without_publish_solution_privilege
         enable_bot do
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(true)
           User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
           post :create_article, construct_params({ version: 'private', id: @bot.id }, article_params.merge(ids: bot_feedback_ids))
@@ -481,10 +481,10 @@ module Ember
         end
       end
 
-      def test_create_article_without_publish_solution_and_view_bots_privileges
+      def test_create_article_without_publish_solution_and_manage_freddy_answers_privileges
         enable_bot do
           User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
-          User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
+          User.any_instance.stubs(:privilege?).with(:manage_freddy_answers).returns(false)
           bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
           post :create_article, construct_params({ version: 'private', id: @bot.id }, article_params.merge(ids: bot_feedback_ids))
           assert_response 403

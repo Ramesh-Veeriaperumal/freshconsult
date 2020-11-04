@@ -35,7 +35,7 @@ module CronWebhooks::SchedulerHelper
   end
 
   def handle_sla(account, name, task_name, class_constant)
-    if account.sla_management_enabled?
+    if name.eql?('sla_escalation') || account.sla_management_enabled?
       if Account.current.launched?(:cron_api_trigger)
         call_cron_api(account, name, task_name)
       else

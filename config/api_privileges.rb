@@ -306,7 +306,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/agent_assist", only: %i[onboard show request_demo]
   end
 
-  view_bots do
+  manage_freddy_answers do
     resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article chat_history]
     resource :"ember/admin/bot", only: %i[index show]
     resource :'ember/freddy'

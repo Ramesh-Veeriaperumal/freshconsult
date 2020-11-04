@@ -165,25 +165,4 @@
 			}
 	    });
 
-		// Admin mint upgrade events
-
-		$('#admin-mint-upgrade').on('click', function() {
-			var target = $(this);
-			target.text(target.data('loading-text') + '...');
-			$.ajax({
-	            url: "/enable_falcon_for_all",
-	            type: "POST",
-	            success: function () {
-	              $('#admin-upgrade-banner').hide();
-	              $('#admin-upgrade-success').fadeIn('slow');
-	            },
-	            error: function() {
-	            	target.text(target.data('default-text'));
-	            	$("#noticeajax").html(target.data('error-text'));
-              		$("#noticeajax").show();
-              		closeableFlash('#noticeajax');
-	            }
-	        });
-		})
-
 }(jQuery));

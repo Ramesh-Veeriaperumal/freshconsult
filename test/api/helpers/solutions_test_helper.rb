@@ -124,14 +124,22 @@ module SolutionsTestHelper
       title: expected_output[:title] || draft.title,
       agent_id: expected_output[:agent_id] || article.user_id,
       type: expected_output[:type] || article.parent.reload.art_type,
-      thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
-      thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
       hits: expected_output[:hits] || article.solution_article_meta.hits,
       status: expected_output[:status] || article.status,
       seo_data: expected_output[:seo_data] || seo_data_info(article),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
+
+    if expected_output[:request_language] && expected_output[:request_language] == true
+      resp.merge!(thumbs_up: expected_output[:thumbs_up] || article.thumbs_up,
+                  thumbs_down: expected_output[:thumbs_down] || article.thumbs_down,
+                  hits: expected_output[:hits] || article.hits)
+    else
+      resp.merge!(thumbs_up: expected_output[:thumbs_up] || article.solution_article_meta.thumbs_up,
+                  thumbs_down: expected_output[:thumbs_down] || article.solution_article_meta.thumbs_down,
+                  hits: expected_output[:hits] || article.solution_article_meta.hits)
+    end
 
     if Account.current.omni_bundle_account? && Account.current.launched?(:kbase_omni_bundle)
       resp[:platforms] = if expected_output[:platforms].present?

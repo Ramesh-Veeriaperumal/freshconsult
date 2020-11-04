@@ -80,14 +80,6 @@ module Mobile::MobileHelperMethods
       Liquid::Template.parse(url).render("params" => params)
     end
 
-    def redirect_to_mobile_url
-      if (!current_user.nil? && current_user.respond_to?('agent?')&& !is_native_mobile? && 
-        current_user.agent? && !current_user.is_falcon_pref? && mobile? and !"mobile".eql?(params[:format]) and
-        mobile_view?)
-         redirect_to mobile_url
-      end
-    end
-
     def mobile_url
       construct_url(MOBILE_VIEWS[controller_name.to_sym][action_name.to_sym], params)
     end

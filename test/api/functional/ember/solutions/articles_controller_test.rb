@@ -714,7 +714,7 @@ module Ember
         put :update, construct_params({ version: 'private', id: article.parent_id }, status: 2,
                                                                                      templates_used: [sample_template1.id, sample_template2.id])
         assert_response 200
-        match_json(private_api_solution_article_pattern(article.reload))
+        match_json(article_pattern(article.reload))
         stm = article.reload.solution_template_mappings
         assert_equal 2, stm.size
         assert_equal article.id, stm[0].article_id
@@ -735,7 +735,7 @@ module Ember
         put :update, construct_params({ version: 'private', id: article.parent_id }, status: 2,
                                                                                      templates_used: [23_111_989])
         assert_response 200
-        match_json(private_api_solution_article_pattern(article.reload))
+        match_json(article_pattern(article.reload))
         assert_equal 0, article.solution_template_mappings.size
       ensure
         Account.any_instance.unstub(:solutions_templates_enabled?)
@@ -845,7 +845,7 @@ module Ember
         put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, tags: tags)
         assert_response 200
         assert_equal sample_article.reload.tags.count, tags.count
-        match_json(private_api_solution_article_pattern(sample_article.reload))
+        match_json(article_pattern(sample_article.reload))
       end
 
       def test_update_article_with_new_tags_without_publish_solution_privilege
@@ -877,7 +877,7 @@ module Ember
         put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, tags: tags)
         assert_response 200
         assert_equal sample_article.reload.tags.count, tags.count
-        match_json(private_api_solution_article_pattern(sample_article.reload))
+        match_json(article_pattern(sample_article.reload))
       end
 
       def test_update_article_with_existing_tags_without_priviledge
@@ -950,7 +950,7 @@ module Ember
         paragraph = '<div data-identifyelement="123"><a data-toggle="tooltip">Click</a></div>'
         put :update, construct_params({ version: 'private', id: sample_article.parent_id }, status: 2, title: 'publish draft title', description: paragraph, agent_id: @agent.id)
         assert_response 200
-        match_json(private_api_solution_article_pattern(sample_article.reload))
+        match_json(article_pattern(sample_article.reload))
         assert_equal paragraph, (parse_response @response.body)['description']
       end
 
@@ -2801,10 +2801,10 @@ module Ember
         User.any_instance.stubs(:privilege?).with(:publish_approved_solution).returns(true)
         User.any_instance.stubs(:privilege?).with(:create_and_edit_article).returns(true)
         User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
-        draft = @account.solution_drafts.last
-        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { status: 2 })
+        article = get_article_with_draft
+        put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { status: 2 })
         assert_response 204
-        assert_equal draft.article.status, 2
+        assert_equal article.reload.status, 2
       ensure
         User.any_instance.unstub(:privilege?)
       end
@@ -3012,7 +3012,7 @@ module Ember
         assert_equal Solution::Article.last.description, paragraph_with_emoji_enabled
         assert_equal Solution::Article.last.desc_un_html, paragraph_desc_un_html
         assert_response 201
-        match_json(private_api_solution_article_pattern(Solution::Article.last))
+        match_json(article_pattern(Solution::Article.last))
       ensure
         Account.current.rollback(:encode_emoji_in_solutions)
       end
@@ -3030,7 +3030,7 @@ module Ember
         assert_equal sample_article.reload.description, paragraph_with_emoji_enabled
         assert_equal sample_article.reload.desc_un_html, paragraph_desc_un_html
         assert_response 200
-        match_json(private_api_solution_article_pattern(sample_article.reload))
+        match_json(article_pattern(sample_article.reload))
       ensure
         Account.current.rollback(:encode_emoji_in_solutions)
       end
@@ -3044,7 +3044,7 @@ module Ember
         paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(paragraph)
         assert_equal Solution::Article.last.draft.description, paragraph_with_emoji_enabled
         assert_response 201
-        match_json(private_api_solution_article_pattern(Solution::Article.last))
+        match_json(article_pattern(Solution::Article.last))
       ensure
         Account.current.rollback(:encode_emoji_in_solutions)
       end
@@ -3059,7 +3059,7 @@ module Ember
         paragraph_with_emoji_enabled = UnicodeSanitizer.utf84b_html_c(paragraph)
         assert_equal sample_article.reload.draft.description, paragraph_with_emoji_enabled
         assert_response 200
-        match_json(private_api_solution_article_pattern(sample_article.reload))
+        match_json(article_pattern(sample_article.reload))
       ensure
         Account.current.rollback(:encode_emoji_in_solutions)
       end
@@ -3075,7 +3075,7 @@ module Ember
         assert_equal Solution::Article.last.description, paragraph_with_emoji_disabled
         assert_equal Solution::Article.last.desc_un_html, paragraph_desc_un_html
         assert_response 201
-        match_json(private_api_solution_article_pattern(Solution::Article.last))
+        match_json(article_pattern(Solution::Article.last))
       end
 
       def test_update_article_with_emoji_content_in_description_and_title_with_encode_emoji_disabled
@@ -3090,7 +3090,7 @@ module Ember
         assert_equal sample_article.reload.description, paragraph_with_emoji_disabled
         assert_equal sample_article.reload.desc_un_html, paragraph_desc_un_html
         assert_response 200
-        match_json(private_api_solution_article_pattern(sample_article.reload))
+        match_json(article_pattern(sample_article.reload))
       end
 
       def test_create_draft_with_emoji_content_in_description_and_title_with_encode_emoji_disabled
@@ -3102,7 +3102,7 @@ module Ember
         paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
         assert_equal Solution::Article.last.draft.description, paragraph_with_emoji_disabled
         assert_response 201
-        match_json(private_api_solution_article_pattern(Solution::Article.last))
+        match_json(article_pattern(Solution::Article.last))
       end
 
       def test_update_draft_with_emoji_content_in_description_and_title_with_encode_emoji_disabled
@@ -3115,7 +3115,7 @@ module Ember
         paragraph_with_emoji_disabled = UnicodeSanitizer.remove_4byte_chars(paragraph)
         assert_equal sample_article.reload.draft.description, paragraph_with_emoji_disabled
         assert_response 200
-        match_json(private_api_solution_article_pattern(sample_article.reload))
+        match_json(article_pattern(sample_article.reload))
       end
 
       def test_article_sanitization_in_drafts
@@ -3126,7 +3126,7 @@ module Ember
         paragraph = '<span> This is a paragraph </span>'
         assert_equal Solution::Article.last.draft.description, paragraph
         assert_response 201
-        match_json(private_api_solution_article_pattern(Solution::Article.last))
+        match_json(article_pattern(Solution::Article.last))
       end
 
       def test_article_sanitization_in_articles
@@ -3137,7 +3137,7 @@ module Ember
         paragraph = '<span> This is a paragraph </span>'
         assert_equal Solution::Article.last.description, paragraph
         assert_response 201
-        match_json(private_api_solution_article_pattern(Solution::Article.last))
+        match_json(article_pattern(Solution::Article.last))
       end
 
       def test_create_article_review_record
@@ -3174,6 +3174,7 @@ module Ember
         approver = add_test_agent
         add_privilege(approver, :approve_article)
         User.current.reload
+        clear_approvals(sample_article)
         Solution::ApprovalNotificationWorker.expects(:perform_async).once
         post :send_for_review, construct_params({ version: 'private', id: sample_article.parent_id }, approver_id: approver.id)
         assert_response 204
@@ -3442,7 +3443,7 @@ module Ember
         put :update, construct_params({ version: 'private', id: sample_article.parent_id }, params_hash)
         assert_response 200
         sample_article.reload
-        match_json(private_api_solution_article_pattern(sample_article))
+        match_json(article_pattern(sample_article))
         assert_no_approval sample_article
       ensure
         Account.any_instance.unstub(:article_approval_workflow_enabled?)
@@ -3804,15 +3805,16 @@ module Ember
         Account.any_instance.stubs(:article_approval_workflow_enabled?).returns(true)
         add_privilege(User.current, :create_and_edit_article)
         User.current.reload
-        sample_article = @account.solution_articles.where(language_id: 6).first
-        create_draft(article: sample_article)
-        draft = sample_article.draft
+        sample_article = create_article(article_params(lang_codes: all_account_languages).merge(status: 2)).primary_article
+        create_draft(article: sample_article) unless sample_article.draft
+        assert_nil sample_article.helpdesk_approval
         approver = add_test_agent
         add_privilege(approver, :approve_article)
-        put :bulk_update, construct_params({ version: 'private' }, ids: [draft.article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
+        put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent_id], properties: { approval_status: 1, approver_id: approver.id })
         assert_response 204
-        approval_record = approval_record(draft.article)
-        approver_mapping = approver_record(draft.article)
+        sample_article.reload
+        approval_record = approval_record(sample_article)
+        approver_mapping = approver_record(sample_article)
         assert approval_record
         assert approver_mapping
         assert_equal approval_record.approval_status, Helpdesk::ApprovalConstants::STATUS_KEYS_BY_TOKEN[:in_review]
@@ -4041,13 +4043,18 @@ module Ember
 
       def test_bulk_update_folder_with_platforms_enabled
         enable_omni_bundle do
-          sample_folder = get_folder_meta_with_platform_mapping(web: false)
           sample_article = get_article_with_platform_mapping
+          lang_hash = { lang_codes: all_account_languages }
+          category = create_category({ portal_id: Account.current.main_portal.id }.merge(lang_hash))
+          sample_folder = create_folder({ visibility: Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], category_id: category.id }.merge(lang_hash))
+          sample_folder.parent.create_solution_platform_mapping(chat_platform_params({ web: false }, true))
+          sample_folder.reload
 
-          put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent.id], properties: { folder_id: sample_folder.id })
+          assert_not_equal sample_article.parent.solution_folder_meta_id, sample_folder.parent_id
+          put :bulk_update, construct_params({ version: 'private' }, ids: [sample_article.parent.id], properties: { folder_id: sample_folder.parent_id })
           assert_response 204
           sample_article.reload
-          assert_equal sample_article.parent.solution_folder_meta_id, sample_folder.id
+          assert_equal sample_article.parent.solution_folder_meta_id, sample_folder.parent_id
           assert_equal sample_article.parent.solution_platform_mapping.web, false
         end
       end
@@ -4085,15 +4092,15 @@ module Ember
         end
 
         def article_pattern(article, expected_output = {}, user = nil)
-          private_api_solution_article_pattern(article, expected_output.merge(request_language: true), true, user)
+          private_api_solution_article_pattern(article.reload, expected_output.merge(request_language: true), true, user)
         end
 
         def article_draft_pattern(article, _draft)
-          private_api_solution_article_pattern(article, request_language: true)
+          private_api_solution_article_pattern(article.reload, request_language: true)
         end
 
         def article_pattern_index(article)
-          private_api_solution_article_pattern(article, exclude_description: true, exclude_attachments: true, exclude_tags: true, request_language: true, exclude_translation_summary: true)
+          private_api_solution_article_pattern(article.reload, exclude_description: true, exclude_attachments: true, exclude_tags: true, request_language: true, exclude_translation_summary: true)
         end
 
         def get_portal_articles(portal_id, language_ids)

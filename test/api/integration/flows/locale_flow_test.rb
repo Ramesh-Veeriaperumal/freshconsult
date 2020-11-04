@@ -6,7 +6,6 @@ class LocaleFlowTest < ActionDispatch::IntegrationTest
   
   def setup
     super
-    @account.add_feature(:falcon)
     TEST_LOCALES.each do |test_locale|
       instance_variable_set("@#{test_locale}_agent", add_test_agent)
       agent_obj = instance_variable_get("@#{test_locale}_agent")

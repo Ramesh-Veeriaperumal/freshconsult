@@ -66,6 +66,9 @@ module SolutionsArticlesTestHelper
   end
 
   def create_draft(options = {})
+    article = options[:article]
+    return article.draft if article.draft
+
     @draft = Solution::Draft.new
     @draft.account = @account
     @draft.article = options[:article]
@@ -75,13 +78,13 @@ module SolutionsArticlesTestHelper
     @draft.keep_previous_author = true if options[:keep_previous_author]
     @draft.user_id = options[:user_id] if options[:user_id]
     @draft.description = '<b>aaa</b>'
-    @draft.save
+    @draft.save!
 
     @draft_body = Solution::DraftBody.new
     @draft_body.draft = @draft
     @draft_body.description = '<b>draft body</b>'
     @draft_body.account = @account
-    @draft_body.save
+    @draft_body.save!
   end
 
   def populate_articles(folder_meta, bulk = false)

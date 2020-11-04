@@ -38,9 +38,6 @@
 
 		<div class="header-wrapper">
 
-	    <% if current_user && account_and_user_in_mint_supported_langs? %>
-	    	<%= link_to t('go_to_new_ui'), enable_falcon_path, :id=>"ui_toggle", :method => :post %>
-	    <% end %>
 
 			<% if current_user then %>
 			  	<div class="header-link-wrapper">

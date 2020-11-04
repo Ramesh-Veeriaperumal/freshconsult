@@ -41,13 +41,13 @@
       <% unless user.twitter_id.blank? %>
         <div class="contact-append">
           <span class="add-on"><span class="ficon-twitter fsize-16"></span></span>
-          <%= link_to h(user.twitter_id), "https://twitter.com/"+user.twitter_id, :target => "_blank"%>
+          <%= link_to h(user.twitter_id), "https://twitter.com/"+user.twitter_id, :target => "_blank", :rel => "noreferrer noopener"%>
         </div>
       <% end %>
       <% unless user.fb_profile_id.blank? %>
         <div class="contact-append">
           <span class="add-on"><span class="ficon-facebook-setting fsize-16"></span></span>
-          <%= link_to h(user.name), "https://facebook.com/"+user.fb_profile_id, :target => "_blank"%>
+          <%= link_to h(user.name), "https://facebook.com/"+user.fb_profile_id, :target => "_blank", :rel => "noreferrer noopener"%>
         </div>
       <% end %>
 

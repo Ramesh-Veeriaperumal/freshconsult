@@ -2,7 +2,7 @@
 
 module CronWebhooks
   class SuspendAccountWebhookWorker < CronWebhooks::CronWebhookWorker
-    sidekiq_options queue: :cron_suspended_accounts, retry: 0, dead: true, backtrace: 10, failures: :exhausted
+    sidekiq_options queue: :cron_suspended_accounts, retry: 0, dead: true, backtrace: 25, failures: :exhausted
 
     include CronWebhooks::Constants
     include Redis::RedisKeys
@@ -52,7 +52,7 @@ module CronWebhooks
 
                 return 0 if stop_execution?
               rescue StandardError => e
-                Rails.logger.info("Exception while processing account - #{account.id} --- #{e.inspect}")
+                Rails.logger.info("SuspendAccountWebhookWorker Exception while processing account - #{account.id} --- #{e.inspect}")
               ensure
                 Account.reset_current_account
               end
@@ -60,7 +60,8 @@ module CronWebhooks
           end
         end
       rescue StandardError => e
-        Rails.logger.info "SuspendAccountWebhookWorker StandardError - #{e.inspect}"
+        Rails.logger.info "SuspendAccountWebhookWorker StandardError - #{e.message} :: #{e.backtrace}"
+        raise e
       ensure
         time_taken = Time.at((@start_time - Time.current).to_i.abs).utc.strftime('%H:%M:%S')
         account_ids = @deleted_accounts.map { |h| h[:account] }

@@ -24,8 +24,6 @@ class Account < ActiveRecord::Base
   after_update :clear_domain_cache, :if => :account_domain_changed?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
-  after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
-  after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
   after_update :update_round_robin_type, if: :lbrr_by_omniroute_feature_changed?
   after_update :advanced_ticket_scopes_feature_removed?, if: :plan_features_changed?
 
@@ -61,7 +59,6 @@ class Account < ActiveRecord::Base
   after_commit :enable_freshid, on: :update, :if => [:sso_disabled_not_freshid_account?, :freshid_migration_not_in_progress?]
 
   after_commit :mark_customize_domain_setup_and_save, on: :create, if: :full_signup?
-  after_commit :update_advanced_ticketing_applications, on: :update, if: :disable_old_ui_changed
 
   after_commit :remove_organisation_account_mapping, on: :destroy, if: :freshid_org_v2_enabled?
   after_commit :update_help_widgets, on: :update, if: [:help_widget_enabled?, :branding_feature_toggled?]
@@ -174,10 +171,6 @@ class Account < ActiveRecord::Base
 
   def update_activity_export
     ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
-  end
-
-  def update_advanced_ticketing_applications
-    NewPlanChangeWorker.perform_async({features: [:disable_old_ui], action: @action})
   end
 
   def parent_child_dependent_features_changed?
@@ -513,7 +506,7 @@ class Account < ActiveRecord::Base
         end
         # Temp for falcon signup
         # Enable falcon UI for helpdesk by default
-        [:falcon, :freshcaller, :freshcaller_widget].each do |feature_key|
+        [:freshcaller, :freshcaller_widget].each do |feature_key|
           bitmap_value = self.set_feature(feature_key)
         end
         self.plan_features = bitmap_value
@@ -686,10 +679,6 @@ class Account < ActiveRecord::Base
       SendDomainChangedMail.perform_async({ account_name: account_name })
     end
 
-    def disable_old_ui_changed?
-      self.changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:disable_old_ui])
-    end
-
     def field_service_management_enabled_changed?
       @all_changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:field_service_management])
     end
@@ -709,10 +698,6 @@ class Account < ActiveRecord::Base
       new_feature = self.changes[:plan_features][1].to_i
       return false if ((old_feature ^ new_feature) & (2**feature_val)).zero?
       @action = (old_feature & (2**feature_val)).zero? ? "add" : "drop"
-    end
-
-    def set_disable_old_ui_changed_now
-      self.disable_old_ui_changed = true
     end
 
     def call_freshvisuals_api?

@@ -18,7 +18,7 @@
         </a>
       </p>
       <p class="tracker_label">
-        <%= t('ticket.link_tracker.linked_to_tracker') %>:  <b><%= link_to(tracker_ticket.try(:subject), helpdesk_ticket_url(tracker_ticket), class: "truncate", target: "_blank") %></b>
+        <%= t('ticket.link_tracker.linked_to_tracker') %>:  <b><%= link_to(tracker_ticket.try(:subject), helpdesk_ticket_url(tracker_ticket), class: "truncate", target: "_blank", :rel => "noreferrer noopener") %></b>
       </p>
       <small class="block tracker_details">
         <%=t('ticket.assigned_agent')%>:

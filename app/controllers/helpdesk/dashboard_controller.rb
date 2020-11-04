@@ -25,7 +25,7 @@ class Helpdesk::DashboardController < ApplicationController
 
   skip_before_filter :check_account_state
   before_filter :redirect_old_ui_routes, only: [:index]
-  before_filter :check_account_state, :redirect_to_mobile_url, :set_mobile, :show_password_expiry_warning, :only => [:index]  
+  before_filter :check_account_state, :set_mobile, :show_password_expiry_warning, :only => [:index]  
   before_filter :check_dashboard_privilege, :set_ui_preference, :only => [:index]
   before_filter :set_selected_tab
   before_filter :round_robin_filter, :only => [:agent_status]

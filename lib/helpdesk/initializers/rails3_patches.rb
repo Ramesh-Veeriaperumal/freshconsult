@@ -213,6 +213,42 @@ module ActiveRecord
   end
 end
 
+# To prevent queries meant for replica from going to primary
+# Need to check this when we upgrade active_record_shards gem
+# Change - disallow_replica is an instance variable(@disallow_slave in older versions, and @disallow_replica in latest versions) in gem
+#   Since on_cx_switch_block is used as a class method, this causes an issue in multi-threaded environments like Sidekiq, Shoryuken
+
+module ActiveRecordShards
+  module ConnectionSwitcher
+    def on_cx_switch_block(which, options = {}, &block)
+      old_options = current_shard_selection.options
+      switch_to_replica = (which == :slave && disallow_replica.zero?)
+      switch_connection(slave: switch_to_replica)
+
+      self.disallow_replica += 1 if which == :master
+
+      # we avoid_readonly_scope to prevent some stack overflow problems, like when
+      # .columns calls .with_scope which calls .columns and onward, endlessly.
+      if self == ActiveRecord::Base || !switch_to_replica || options[:construct_ro_scope] == false
+        yield
+      else
+        readonly.scoping(&block)
+      end
+    ensure
+      self.disallow_replica -= 1 if which == :master
+      switch_connection(old_options)
+    end
+
+    def disallow_replica
+      Thread.current[:disallow_replica] ||= 0
+    end
+
+    def disallow_replica=(value)
+      Thread.current[:disallow_replica] = value
+    end
+  end
+end
+
 #https://github.com/rails/rails/issues/3205, showing exception trace for transacational callbacks
 module Foo
   module CommittedWithExceptions

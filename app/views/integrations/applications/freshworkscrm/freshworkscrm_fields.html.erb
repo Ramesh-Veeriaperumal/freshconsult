@@ -124,12 +124,6 @@
                           options_for_select(deal_fields_list,data.split(",")), { :multiple => true, :class => "select2-fields salesforce-int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
                 </span>
               </div>
-              <% unless current_account.falcon_ui_enabled?(current_user) %>
-                <div class="opportunity-settings mt8 <%= hide %>" id="agent_settings">
-                  <%= check_box(:agent_settings, "value", :checked => agent_settings, :disabled => disabled) %>
-                  <%= content_tag(:span, t("integrations.freshworkscrm.form.deal_settings"), :class => 'checkbox_label') %>
-                </div>
-              <%end%>
             </div>
           </div>
         </div>
