@@ -506,7 +506,7 @@ class Account < ActiveRecord::Base
         end
         # Temp for falcon signup
         # Enable falcon UI for helpdesk by default
-        [:falcon, :freshcaller, :freshcaller_widget].each do |feature_key|
+        [:freshcaller, :freshcaller_widget].each do |feature_key|
           bitmap_value = self.set_feature(feature_key)
         end
         self.plan_features = bitmap_value
