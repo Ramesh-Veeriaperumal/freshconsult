@@ -4,10 +4,12 @@ class Admin::CustomSurveysController < Admin::AdminController
   include Admin::CustomSurveysHelper
 
   before_filter { |c| current_account.new_survey_enabled? }
+  before_filter :check_feature_for_toggle_setting, only: [:toggle_setting]
   before_filter :redirect_to_default_survey,          :if   => :default_survey_feature_enabled?
   around_filter :escape_html_entities_in_json
   before_filter :check_survey_limit,                  :only => [:new,    :create]
-  before_filter :validate_csrf_token, :validate_question_limit, only: [:create, :update]
+  before_filter :validate_csrf_token, only: [:create, :update, :toggle_setting]
+  before_filter :validate_question_limit, only: [:create, :update]
   before_filter :load_survey,                         :only => [:edit,   :update, :destroy, :activate, :deactivate, :test_survey]
   before_filter :load_survey_statuses, only: [:edit], if: :multilingual_csat_enabled?
   before_filter :survey_translation_data, only: [:new, :edit], if: :multilingual_csat_enabled?
@@ -106,6 +108,20 @@ class Admin::CustomSurveysController < Admin::AdminController
     render :json => {inactive: @survey.id}
   end
 
+  def toggle_setting
+    settings = params[:custom_survey]
+    settings.each do |setting, enable|
+      begin
+        enable ? current_account.enable_setting(setting.to_sym) : current_account.disable_setting(setting.to_sym)
+      rescue StandardError
+        return render json: {
+          error: t(:'errors.error_updating_setting')
+        }, status: 400
+      end
+    end
+    render json: {}
+  end
+
   def test_survey
     if current_user.agent?
       Admin::CustomSurveysMailer.send_later(:deliver_preview_email, :survey_id => params[:id], :user_id => current_user.id)
@@ -143,6 +159,16 @@ class Admin::CustomSurveysController < Admin::AdminController
     def redirect_to_default_survey
       default_survey = current_account.custom_surveys.default.first  
       redirect_to :id => default_survey.id, :action => :edit if(params[:id].to_i != default_survey.id)
+    end
+
+    def check_feature_for_toggle_setting
+      unless current_account.csat_email_scan_compatibility_settings_enabled?
+        result_set = {}
+        result_set['redirect_url'] = admin_custom_surveys_path
+        result_set['error_message'] = t('flash.general.access_denied')
+        render json: result_set
+        flash[:error] = t('flash.general.access_denied')
+      end
     end
 
     def default_survey_feature_enabled?

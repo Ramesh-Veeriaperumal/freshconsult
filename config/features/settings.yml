@@ -201,6 +201,10 @@ settings:
     default: false
     interal: true
     feature_dependency: :basic_settings_feature
+  :csat_email_scan_compatibility:
+    default: false
+    interal: false
+    feature_dependency: :custom_survey
   :disable_archive:
     default: false
     internal: true

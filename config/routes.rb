@@ -1086,6 +1086,7 @@ Helpkit::Application.routes.draw do
 
     match '/custom_surveys/activate/:id' => 'custom_surveys#activate' , :via => :post
     match '/custom_surveys/deactivate/:id' => 'custom_surveys#deactivate' , :via => :post
+    match '/custom_surveys/toggle_setting' => 'custom_surveys#toggle_setting', :via => :post
 
     resources :gamification do
       collection do
