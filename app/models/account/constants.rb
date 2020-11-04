@@ -227,7 +227,7 @@ class Account < ActiveRecord::Base
     solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, marketplace_app: false, freshid_sso_sync: true,
     fw_sso_admin_security: false, same_site_none: false,
-    omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
+    omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false, collaboration_threads: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: true, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
