@@ -2,6 +2,7 @@ module SubscriptionTestHelper
   def update_subscription
     subscription = Account.current.subscription
     subscription.card_number = Faker::Number.number(10)
+    subscription.chargebee_event = :subscription_renewed
     subscription.save
   end
 

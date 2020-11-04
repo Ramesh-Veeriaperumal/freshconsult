@@ -63,4 +63,13 @@ class SubscriptionTest < ActiveSupport::TestCase
     Subscription.any_instance.unstub(:state)
     Subscription.any_instance.unstub(:agent_limit)
   end
+
+  def test_publish_when_misc_changes
+    CentralPublisher::Worker.jobs.clear
+    update_subscription
+    assert_equal 1, CentralPublisher::Worker.jobs.size
+    subscription = Account.current.subscription
+    payload = subscription.misc_changes_for_central.to_json
+    payload.must_match_json_expression(chargebee_event: subscription.chargebee_event)
+  end
 end
