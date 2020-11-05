@@ -9,6 +9,9 @@ properties:
   default:
       description: Flag to indicate that its a default role
       type: boolean
+  agent_type:
+      description: Type id of an agent
+      type: integer
   created_at:
       description: Role's created time
       type: string

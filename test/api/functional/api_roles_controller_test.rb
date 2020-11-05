@@ -19,11 +19,35 @@ class ApiRolesControllerTest < ActionController::TestCase
     match_json(pattern.ordered!)
   end
 
+  def test_index_with_collaboration_roles_enabled
+    CustomRequestStore.store[:private_api_request] = false
+    Account.any_instance.stubs(:launched?).returns(true)
+    get :index, controller_params
+    pattern = []
+    Account.current.roles_from_cache.each do |role|
+      pattern << role_pattern(role)
+    end
+    assert_response 200
+    match_json(pattern.ordered!)
+  ensure
+    Account.any_instance.unstub(:launched?)
+  end
+
   def test_show_role
     role = Role.first
     get :show, construct_params(id: role.id)
     assert_response 200
     match_json(role_pattern(role))
+  end
+
+  def test_show_with_collaboration_roles_enabled
+    role = Role.first
+    Account.any_instance.stubs(:launched?).returns(true)
+    get :show, construct_params(id: role.id)
+    assert_response 200
+    match_json(role_pattern(role))
+  ensure
+    Account.any_instance.unstub(:launched?)
   end
 
   def test_handle_show_request_for_missing_role

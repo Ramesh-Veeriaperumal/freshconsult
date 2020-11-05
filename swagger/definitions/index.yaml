@@ -774,7 +774,7 @@ ticket_field_section_response:
     - $ref: ./response/admin/ticket_fields/sections.yaml
 #Roles Private API
 role_response:
-  $ref: ./definitions/response/roles/private_role_response.yaml
+  $ref: ./response/roles/private_role_response.yaml
 role_bulk_update_request:
   $ref: ./request/roles/bulk_update.yaml
 
