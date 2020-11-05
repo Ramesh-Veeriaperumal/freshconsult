@@ -8,6 +8,10 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def captcha_enabled?
+    launched?(:still_enable_captcha)
+  end
+
   # Redis feature check can be removed once Redis key cleanup is done
   def compose_email_enabled?
     !has_feature?(:compose_email) || ismember?(COMPOSE_EMAIL_ENABLED, self.id)

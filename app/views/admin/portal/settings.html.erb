@@ -68,10 +68,16 @@
 			<%= feature_radio_button({
 					:default => t('.logged_in'),
 					:anonymous_tickets => t('.everyone') }) %>
-						<div class="checkbox captcha">
-				<%= f.feature_check_box :captcha, { :id => 'captcha' } %>
-				<%= label_for(t('.captcha'), 'captcha')%>
-			</div>
+					
+					<!-- <div class="checkbox captcha"> -->
+						<%# f.feature_check_box :captcha, { :id => 'captcha' } %>
+						<%# label_for(t('.captcha'), 'captcha')%>
+					<!-- </div> -->
+					
+					<div class="captcha muted">
+					  <span class="ficon ficon-unverified"></span>
+						CAPTCHA is temporarily disabled.
+					</div>
 			<hr>
 			<div class="ticket_for_other">
 				<%= f.feature_check_box :prevent_ticket_creation_for_others, { :id => 'tickets_on_behalf_of_others', :checked => !current_account.features_included?(:prevent_ticket_creation_for_others) }, 0, 1 %>
