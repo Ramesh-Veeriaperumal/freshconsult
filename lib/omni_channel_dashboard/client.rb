@@ -43,7 +43,7 @@ class OmniChannelDashboard::Client
         payload: payload_hash,
         headers: generate_headers
       )
-      Rails.logger.info "touchstone X-Request-ID - #{response.headers['x-touchstone-request-id']}"
+      Rails.logger.info "touchstone X-Request-ID - #{response.headers[:x_touchstone_request_id]}"
       response.code
     rescue StandardError => e
       Rails.logger.error "Failed to update touchstone for AccountId: #{@account.id} , Method: #{@method} URL: #{url} #{e.inspect}"
