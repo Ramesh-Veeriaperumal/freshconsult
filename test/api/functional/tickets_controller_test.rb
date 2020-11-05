@@ -6271,7 +6271,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_link_without_link_tickets_feature
-    disable_adv_ticketing([:link_tickets]) if Account.current.launched?(:link_tickets)
+    disable_adv_ticketing([:link_tickets])
     ticket = create_ticket
     ticket_id = ticket.display_id
     tracker_id = create_tracker_ticket.display_id
@@ -6340,7 +6340,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_unlink_without_link_tickets_feature
     enable_adv_ticketing([:link_tickets]) { create_linked_tickets }
-    disable_adv_ticketing([:link_tickets]) if Account.current.launched?(:link_tickets)
+    disable_adv_ticketing([:link_tickets])
     put :update, construct_params({ id: @ticket_id, tracker_id: nil }, false)
     assert_unlink_failure(@ticket, 400)
     match_json([bad_request_error_pattern('tracker_id', :require_feature_for_attribute,

@@ -119,7 +119,7 @@ class Account < ActiveRecord::Base
 
   }
 
-  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership, :field_service_management, :assets]
+  ADVANCED_FEATURES = [:parent_child_tickets, :shared_ownership, :field_service_management, :assets].freeze
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
   # Features added temporarily to avoid release for all the customers at one shot

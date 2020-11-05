@@ -214,7 +214,6 @@ class SAAS::AccountDataCleanup
   end
 
   def handle_link_tickets_toggle_drop_data
-    account.revoke_feature(:link_tickets)
     account.installed_applications.with_name("link_tickets").destroy_all
     handle_link_tickets_drop_data
   end

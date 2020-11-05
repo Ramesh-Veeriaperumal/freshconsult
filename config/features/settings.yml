@@ -217,6 +217,10 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :link_tickets:
+    default: false
+    internal: false
+    feature_dependency: :link_tickets_toggle
   :kbase_spam_whitelist:
     default: false
     internal: true
