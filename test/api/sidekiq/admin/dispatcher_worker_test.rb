@@ -39,7 +39,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
       options[:operators].each do |operator|
         define_method "test_dispatcher_condition_#{field_name}_#{operator}" do
           Rails.logger.debug "start test_dispatcher_condition_#{field_name}_#{operator}"
-          Account.current.add_feature :shared_ownership
+          Account.current.enable_setting(:shared_ownership)
           initialize_internal_agent_with_default_internal_group
           if CUSTOM_FIELD_TYPES.include?(operator_type)
             field = @account.ticket_fields.find_by_field_type("custom_#{operator_type.to_s}")
@@ -100,7 +100,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
 
   def test_dispatcher_condition_responder_id_is_any
     Rails.logger.debug "start test_dispatcher_condition_responder_id_is_any"
-    Account.current.add_feature :shared_ownership
+    Account.current.enable_setting(:shared_ownership)
     initialize_internal_agent_with_default_internal_group
     rule = Account.current.va_rules.first
     rule.condition_data = { all: [ 
@@ -170,7 +170,7 @@ class Admin::Dispatcher::WorkerTest < ActionView::TestCase
 
   def test_dispatcher_condition_responder_is_unavailable
     Rails.logger.debug "start test_dispatcher_condition_responder_id_is_any"
-    Account.current.add_feature :shared_ownership
+    Account.current.enable_setting(:shared_ownership)
     initialize_internal_agent_with_default_internal_group
     rule = Account.current.va_rules.first
     rule.condition_data = { all: [ 

@@ -23,7 +23,7 @@ class Search::VaRuleSearchTest < ActiveSupport::TestCase
   end
 
   def before_all
-    current_account.add_feature :shared_ownership
+    current_account.enable_setting(:shared_ownership)
     Account.current.instance_variable_set('@ticket_fields_from_cache', nil)
     return if @@before_all_run
     current_account.ticket_fields.custom_fields.each(&:destroy)
@@ -39,7 +39,7 @@ class Search::VaRuleSearchTest < ActiveSupport::TestCase
   end
 
   def teardown
-    current_account.remove_feature :shared_ownership
+    current_account.disable_setting(:shared_ownership)
   end
 
   def test_dispatcher_search_condition_subject

@@ -6,8 +6,8 @@ class ConvertSharedOwnershipFeatureToBitmap < ActiveRecord::Migration
     Account.active_accounts.readonly(false).find_each do |account|
       begin
         account.make_current
-        next unless account.features?(:shared_ownership)
-        account.add_feature(:shared_ownership)
+        next unless account.shared_ownership_enabled?
+        account.enable_setting(:shared_ownership)
       rescue => e
         failed_accounts[account.id] = e.message
       ensure
@@ -22,8 +22,8 @@ class ConvertSharedOwnershipFeatureToBitmap < ActiveRecord::Migration
     Account.active_accounts.find_each do |account|
       begin
         account.make_current
-        next unless account.has_feature?(:shared_ownership)
-        account.features.shared_ownership.create
+        next unless account.account.shared_ownership_enabled?
+        account.enable_setting(:shared_ownership)
       rescue => e
         failed_accounts[account.id] = e.message
       ensure

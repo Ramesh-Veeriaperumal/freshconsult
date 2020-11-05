@@ -16,11 +16,11 @@ module Helpdesk::SharedOwnershipMigrationMethods
   end
 
   def remove_feature(account = Account.current)
-    account.revoke_feature(:shared_ownership)
+    account.disable_setting(:shared_ownership)
   end
 
   def add_feature(account = Account.current)
-    account.add_feature(:shared_ownership)
+    account.enable_setting(:shared_ownership)
   end
 
   def delete_internal_fields(account = Account.current)

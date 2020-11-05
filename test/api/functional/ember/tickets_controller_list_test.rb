@@ -937,7 +937,7 @@ module Ember
     end
 
     def test_tickets_shared_by_internal_agent
-      @account.add_feature :shared_ownership
+      @account.enable_setting(:shared_ownership)
       initialize_internal_agent_with_default_internal_group
 
       ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
@@ -952,7 +952,7 @@ module Ember
     end
 
     def test_tickets_shared_with_internal_agent
-      @account.add_feature :shared_ownership
+      @account.enable_setting(:shared_ownership)
       initialize_internal_agent_with_default_internal_group
 
       ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
@@ -1300,7 +1300,7 @@ module Ember
     end
 
     def test_tickets_internal_agent_group_with_read_scope
-      @account.add_feature :shared_ownership
+      @account.enable_setting(:shared_ownership)
       initialize_internal_agent_with_default_internal_group(2)
       agent_group = @internal_agent.all_agent_groups.where(group_id: @internal_group.id).first
       ticket1 = create_ticket({}, nil, @internal_group)
@@ -1350,7 +1350,7 @@ module Ember
       all_tickets = false
       enable_es_api_load(order_params) do
         User.any_instance.stubs(:access_all_agent_groups).returns(true)
-        @account.add_feature :shared_ownership
+        @account.enable_setting(:shared_ownership)
         initialize_internal_agent_with_default_internal_group(2)
         agent_group = @internal_agent.all_agent_groups.where(group_id: @internal_group.id).first
         ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id, responder_id: @responding_agent.id }, nil, @internal_group)

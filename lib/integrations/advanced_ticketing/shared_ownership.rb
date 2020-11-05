@@ -6,7 +6,7 @@ class Integrations::AdvancedTicketing::SharedOwnership
   def install(inst_app)
     return if current_account.shared_ownership_enabled?
     if fetch_advanced_features(:shared_ownership)
-      add_feature(:shared_ownership)
+      enable_setting(:shared_ownership)
     else
       raise PlanUpgradeError, 'SharedOwnership feature is not available for your plan.'
     end

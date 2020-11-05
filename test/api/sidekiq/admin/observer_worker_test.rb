@@ -55,7 +55,7 @@ module Admin
             options[:operators].each do |operator|
               define_method "test_observer_condition_#{field_name}_#{operator}" do
                 Rails.logger.debug "start test_observer_condition_#{field_name}_#{operator}"
-                Account.current.add_feature :shared_ownership
+                Account.current.enable_setting(:shared_ownership)
                 initialize_internal_agent_with_default_internal_group
                 if CUSTOM_FIELD_TYPES.include?(operator_type)
                   field = @account.ticket_fields.find_by_field_type("custom_#{operator_type.to_s}")

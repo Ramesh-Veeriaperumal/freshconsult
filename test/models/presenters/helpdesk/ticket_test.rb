@@ -888,7 +888,7 @@ class TicketTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_payload_internal_agent_reassigned_flag_is_set_and_internal_group_reassigned_flag_is_set
-    Account.current.add_feature(:shared_ownership)
+    Account.current.enable_setting(:shared_ownership)
     initialize_internal_agent_with_default_internal_group(permission = 3)
     t = create_ticket({ status: @status.status_id, responder_id: nil, internal_agent_id: @internal_agent.id }, nil, @internal_group)
     assert_equal true, t.reports_hash['internal_agent_assigned_flag']
@@ -905,7 +905,7 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal true, t.reports_hash['internal_group_reassigned_flag']
   ensure
     t.destroy
-    Account.current.remove_feature(:shared_ownership)
+    Account.current.disable_setting(:shared_ownership)
   end
 
   def test_central_publish_payload_internal_agent_assigned_flag_is_unset_and_internal_group_assigned_flag_is_unset

@@ -217,6 +217,10 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :shared_ownership:
+    default: false
+    internal: false
+    feature_dependency: :shared_ownership_toggle
   :link_tickets:
     default: false
     internal: false

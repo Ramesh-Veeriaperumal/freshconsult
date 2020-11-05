@@ -119,7 +119,7 @@ class Account < ActiveRecord::Base
 
   }
 
-  ADVANCED_FEATURES = [:parent_child_tickets, :shared_ownership, :field_service_management, :assets].freeze
+  ADVANCED_FEATURES = [:parent_child_tickets, :field_service_management, :assets].freeze
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
   # Features added temporarily to avoid release for all the customers at one shot
@@ -142,7 +142,7 @@ class Account < ActiveRecord::Base
     :call_quality_metrics => false,
     :domain_restricted_access => false,
     :marketplace => false, :archive_tickets => false,
-    :ecommerce => false, :shared_ownership => false,
+    :ecommerce => false,
     :cobrowsing => false,
     :restricted_helpdesk => false, :enable_multilingual => false,
     :activity_revamp => true, :helpdesk_restriction_toggle => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,

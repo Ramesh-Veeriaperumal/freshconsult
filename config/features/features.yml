@@ -432,7 +432,6 @@
 :selectable_features:
   :gamification_enable: false
   :parent_child_tickets: false
-  :shared_ownership: false
   :advanced_search_bulk_actions: false
   :private_inline: false
   :freshcaller: false

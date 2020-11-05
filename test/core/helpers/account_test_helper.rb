@@ -105,13 +105,21 @@ module AccountTestHelper
 
   def enable_feature(feature)
     MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-    @account.add_feature(feature)
+    if AccountSettings::SettingsConfig[feature.to_sym].present?
+      @account.enable_setting(feature)
+    else
+      @account.add_feature(feature)
+    end
     @account.make_current.reload
 
     yield
 
     @account.reload
-    @account.revoke_feature(feature)
+    if AccountSettings::SettingsConfig[feature.to_sym].present?
+      @account.disable_setting(feature)
+    else
+      @account.revoke_feature(feature)
+    end
     @account.make_current.reload
     MixpanelWrapper.unstub(:send_to_mixpanel)
   end

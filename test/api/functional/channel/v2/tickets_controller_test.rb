@@ -1269,7 +1269,7 @@ module Channel::V2
       CustomRequestStore.store[:channel_api_request] = true
       Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
       @channel_v2_api = true
-      @account.add_feature :shared_ownership
+      @account.enable_setting(:shared_ownership)
       initialize_internal_agent_with_default_internal_group(2)
       agent_group = @internal_agent.all_agent_groups.where(group_id: @internal_group.id).first
       ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
