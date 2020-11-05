@@ -265,7 +265,7 @@
   })(jQuery);
 <% end %>
 
-<% if  current_account.features_included?(:prevent_ticket_creation_for_others) && !current_account.has_feature?(:anonymous_tickets)  %>
+<% if  current_account.prevent_ticket_creation_for_others_enabled? && !current_account.has_feature?(:anonymous_tickets)  %>
   <script type="text/javascript">
   	var $helpdeskTicketEmail = document.getElementById("helpdesk_ticket_email");
 	  $helpdeskTicketEmail.readOnly = true;

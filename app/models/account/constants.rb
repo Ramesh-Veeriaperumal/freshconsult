@@ -153,15 +153,14 @@ class Account < ActiveRecord::Base
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES = {
-    :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-    :prevent_ticket_creation_for_others => true
+    :google_signin => true, :twitter_signin => true, :facebook_signin => true
   }
 
   ADMIN_CUSTOMER_PORTAL_SETTINGS = [
     :signup_link, :anonymous_tickets, :captcha, :auto_suggest_solutions,
     :public_ticket_url, :open_solutions, :open_forums, :hide_portal_forums,
     :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts,
-    :helpdesk_tickets_by_product, :solutions_agent_metrics
+    :helpdesk_tickets_by_product, :solutions_agent_metrics, :prevent_ticket_creation_for_others
   ].freeze
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }

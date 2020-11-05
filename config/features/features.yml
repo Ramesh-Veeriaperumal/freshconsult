@@ -473,7 +473,6 @@
   :fluffy_higher_plan4: false
   :assets: false
   :assets_toggle: false
-  :prevent_ticket_creation_for_others: true
   :forums_agent_portal: false
   :archive_tickets_api: false
   :solutions_agent_portal: false

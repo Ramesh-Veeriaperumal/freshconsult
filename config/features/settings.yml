@@ -229,3 +229,7 @@ settings:
     default: false
     internal: false
     feature_dependency: :secure_fields_toggle
+  :prevent_ticket_creation_for_others:
+    default: true
+    internal: false
+    feature_dependency: :basic_settings_feature
