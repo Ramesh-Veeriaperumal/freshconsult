@@ -26,7 +26,7 @@
   password: <%= node[:ymls][:database][:global][:password] %>
   <% end %>
   host: <%= node[:ymls][:database][:global][:host] %>
-  <% if @is_sidekiq_layer %>
+  <% if @is_sidekiq_layer || @is_fc_shoryuken_layer %>
   pool: <%= @pool_size + 1 %>
   <% else %>
   pool: <%= @pool_size %>
