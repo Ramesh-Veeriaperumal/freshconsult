@@ -133,6 +133,10 @@ class TicketDecorator < ApiDecorator
     @sideload_options.include?('custom_fields')
   end
 
+  def associates_allowed?
+    @sideload_options.include?('associates')
+  end
+
   def ticket_states_association
     @ticket_states_association ||= ticket_states
   end
@@ -409,6 +413,7 @@ class TicketDecorator < ApiDecorator
 
     # response_hash[:meta] = meta
     response_hash[:collaboration] = collaboration_hash if include_collab?
+    response_hash[:associated_tickets_list] = record.associates if associates_allowed?
     response_hash[:meta][:secret_id] = generate_secret_id if Account.current.agent_collision_revamp_enabled?
     response_hash[:social_additional_info] = { tweet_type: record.tweet_type } if source == Helpdesk::Source::TWITTER && response_hash[:tweet].blank?
     response_hash[:social_additional_info] = { fb_msg_type: record.fb_msg_type } if source == Helpdesk::Source::FACEBOOK && response_hash[:fb_post].blank?

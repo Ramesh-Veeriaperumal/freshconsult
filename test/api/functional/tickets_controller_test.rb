@@ -3859,6 +3859,12 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(show_ticket_pattern_with_association(ticket, param_object))
   end
 
+  def test_show_with_associates
+    ticket.update_column(:deleted, false)
+    get :show, controller_params(id: ticket.display_id, include: 'associates')
+    assert_response 400
+  end
+
   def test_show_with_company
     t = ticket
     t.update_column(:deleted, false)

@@ -565,6 +565,19 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
+    def test_show_with_associated_list_of_tickets
+      parent_ticket = create_ticket
+      child_ticket = create_ticket
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
+      get :show, controller_params(version: 'private', id: parent_ticket.display_id, include: 'associates')
+      assert_response 200
+      match_json(ticket_show_pattern_with_include_associates(parent_ticket.reload))
+    ensure
+      Helpdesk::Ticket.any_instance.unstub(:associates)
+      child_ticket.try(:destroy)
+      parent_ticket.try(:destroy)
+    end
+
     def test_show_without_survey_enabled
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       ticket = create_ticket

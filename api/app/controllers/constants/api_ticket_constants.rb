@@ -27,7 +27,7 @@ module ApiTicketConstants
   UPDATE_PROPERTIES_CUSTOM_FIELDS = [custom_fields: FSM_FIELDS].freeze
   UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids requester_id company_id inline_attachment_ids email).freeze | AttachmentConstants::CLOUD_FILE_FIELDS | UPDATE_PROPERTIES_CUSTOM_FIELDS
 
-  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey sla_policy).freeze
+  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey sla_policy associates).freeze
   EXCLUDABLE_FIELDS = ['custom_fields'].freeze
   SIDE_LOADING = %w[requester stats company survey description].freeze
   INCLUDE_PRELOAD_MAPPING = { 
