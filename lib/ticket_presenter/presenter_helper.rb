@@ -12,7 +12,7 @@ module TicketPresenter::PresenterHelper
     :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at
   ].freeze
   EMAIL_KEYS = [:cc_emails, :fwd_emails, :bcc_emails, :reply_cc, :tkt_cc].freeze
-  DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at, :first_response_time, :first_assigned_at].freeze
+  DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at, :first_response_time, :first_assigned_at, :assigned_at].freeze
   DONT_CARE_VALUE = '*'.freeze
 
   PRE_COMPUTE_FIELDS = [

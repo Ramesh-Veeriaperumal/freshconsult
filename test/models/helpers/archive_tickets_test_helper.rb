@@ -23,6 +23,7 @@ module ArchiveTicketsTestHelper
       archive_updated_at: ticket.parse_to_date_time(ticket.archive_updated_at).try(:utc).try(:iso8601),
       first_response_time: ticket.parse_to_date_time(ticket.first_response_time).try(:utc).try(:iso8601),
       first_assigned_at: ticket.parse_to_date_time(ticket.first_assigned_at).try(:utc).try(:iso8601),
+      assigned_at: ticket.parse_to_date_time(ticket.assigned_at).try(:utc).try(:iso8601),
       custom_fields: ticket.central_custom_fields_hash,
       company_id: ticket.company_id,
       sla_policy_id: ticket.sla_policy_id,
