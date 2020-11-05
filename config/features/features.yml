@@ -113,7 +113,7 @@
       :hide_portal_forums: 109
       :forum_captcha_disable: 110
       :public_ticket_url: 111
-      :redis_display_id: 112
+      :unused_112: 112
       :chat_enable: 113
       :survey_links: 114
       :unused_115: 115 # do not use
@@ -430,7 +430,6 @@
       :collaborators: 426
       :archive_tickets_api: 427
 :selectable_features:
-  :redis_display_id: true
   :gamification_enable: false
   :parent_child_tickets: false
   :shared_ownership: false

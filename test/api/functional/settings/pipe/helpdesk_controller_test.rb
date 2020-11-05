@@ -48,31 +48,6 @@ module Settings
       assert_response 400
     end
 
-    def test_toggle_fast_ticket_creation_enable
-      Account.current.features.redis_display_id.destroy if Account.current.features?(:redis_display_id)
-      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabled: false})
-      assert Account.current.features?(:redis_display_id)
-      key = TICKET_DISPLAY_ID % { :account_id => Account.current.id }
-      assert_equal(get_display_id_redis_key(key), "#{TicketConstants::TICKET_START_DISPLAY_ID}")
-      Account.current.features.redis_display_id.destroy
-    end  
-
-    def test_toggle_fast_ticket_creation_disable
-      Account.current.features.redis_display_id.create if Account.current.features?(:redis_display_id)
-      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabled: true})
-      assert !Account.current.features?(:redis_display_id)
-      Account.current.features.redis_display_id.destroy
-    end
-
-    def test_toggle_fast_ticket_creation_invalid_param
-      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabledX: true})
-      assert_response 400
-      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabled: "true"})
-      assert_response 400
-      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabledX: 123})
-      assert_response 400
-    end
-
     def test_change_api_v2_limit_non_null
       set_default_limit
       put :change_api_v2_limit, construct_params({ version: 'pipe', limit: 20000})

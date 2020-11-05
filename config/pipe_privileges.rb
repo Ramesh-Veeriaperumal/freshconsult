@@ -18,6 +18,6 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   admin_tasks do
-    resource :"settings/pipe/helpdesk", :only => [:index, :toggle_email, :toggle_fast_ticket_creation, :change_api_v2_limit]
+    resource :"settings/pipe/helpdesk", only: [:index, :toggle_email, :change_api_v2_limit]
   end  
 end

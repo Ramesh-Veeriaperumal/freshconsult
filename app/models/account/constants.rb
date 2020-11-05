@@ -128,7 +128,6 @@ class Account < ActiveRecord::Base
     :bi_reports => false, :custom_dashboard => false,
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
-    :redis_display_id => true,
     :survey_links => true,
     :saml_unspecified_nameid => false,
     :single_session_per_user => false, :marketplace_app => false,

@@ -1095,7 +1095,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
       account = Account.find_by_id(params[:account_id]).make_current
       result = { account_id: account.id, account_name: account.name }
 
-      if account.features?(:redis_display_id) && validate_reset_id
+      if validate_reset_id
           account.ticket_display_id = params[:reset_id].to_i
           result[:status] = account.save ? 'success' : 'error'
           key = format(TICKET_DISPLAY_ID, account_id: account.id)

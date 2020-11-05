@@ -990,7 +990,6 @@ Helpkit::Application.routes.draw do
       resources :helpdesk, controller: 'pipe/helpdesk', only: [:index] do
         collection do
           put :toggle_email
-          put :toggle_fast_ticket_creation
           put :change_api_v2_limit
         end
       end
