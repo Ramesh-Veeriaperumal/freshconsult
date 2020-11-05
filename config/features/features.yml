@@ -270,7 +270,7 @@
       :analytics_knowledge_base: 266
       :analytics_knowledge_base_report: 267
       :allow_huge_ccs: 268
-      :reports_47: 269
+      :falcon_portal_theme: 269
       :reports_48: 270
       :reports_49: 271
       :reports_50: 272
@@ -439,6 +439,7 @@
   :freshcaller: false
   :freshcaller_widget: false
   :opt_out_analytics: false
+  :falcon_portal_theme: false
   :chat_enable: false
   :survey_links: true
   :enable_multilingual: false

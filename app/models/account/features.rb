@@ -77,7 +77,7 @@ class Account < ActiveRecord::Base
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
     :canned_forms, :customize_table_view, :solutions_templates,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
-    :social_tab, :scenario_automation,
+    :social_tab, :scenario_automation, :falcon_portal_theme,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
     :personal_canned_response, :marketplace, :reverse_notes,
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
@@ -95,7 +95,8 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :archive_tickets_api
+    :archive_tickets_api,
+    :falcon_portal_theme
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -295,6 +296,10 @@ class Account < ActiveRecord::Base
 
   def freshconnect_enabled?
     has_feature?(:freshconnect) && freshconnect_account.present? && freshconnect_account.enabled
+  end
+
+  def falcon_portal_theme_enabled?
+    launched?(:falcon_portal_theme)
   end
 
   alias falcon_support_portal_theme_enabled? falcon_portal_theme_enabled?
