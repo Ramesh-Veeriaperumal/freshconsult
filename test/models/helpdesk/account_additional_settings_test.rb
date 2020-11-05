@@ -17,8 +17,6 @@ class AccountAdditionalSettingsTest < ActiveSupport::TestCase
     @account.rollback(:omni_channel_dashboard)
     @account.launch(:omni_bundle_2020)
     @account.launch(:invoke_touchstone)
-    old_subscription_id = @account.try(:subscription).try(:subscription_plan).try(:id)
-    @account.subscription.subscription_plan.id = SubscriptionPlan.omni_channel_plan.map(&:id).first
     additional_settings = AccountAdditionalSettings.last
     @account.account_additional_settings = additional_settings
     @account.save
@@ -33,7 +31,6 @@ class AccountAdditionalSettingsTest < ActiveSupport::TestCase
     assert_equal 2, OmniChannelDashboard::AccountWorker.jobs.size
     assert_equal 'update', OmniChannelDashboard::AccountWorker.jobs.last['args'][0]['action']
   ensure
-    @account.subscription.subscription_plan.id = old_subscription_id
     OmniChannelDashboard::AccountWorker.jobs.clear
     @account.rollback(:omni_bundle_2020)
     @account.rollback(:invoke_touchstone)
