@@ -19,7 +19,7 @@ module SpamDetection
             
             subject = "Suspicious Spam Account id : #{account.id}"
             additional_info = "Customer's admin email domain is restricted: Account activity #{call_location} : Attempted email_address: #{email}"
-            increase_ehawk_spam_score_for_account(4, account, subject, additional_info, ['mail-alerts@freshdesk.com', 'noc@freshdesk.com'])
+            increase_ehawk_spam_score_for_account(4, account, subject, additional_info)
             Rails.logger.info "Suspending account #{account.id}"
             is_spam_email_account = true
             additional_info = "Reason: Sign up email changed to a spam email domain"

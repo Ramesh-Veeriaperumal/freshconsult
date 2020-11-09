@@ -16,6 +16,7 @@ class TicketIncludeValidation < ApiValidation
   end
 
   def allowed_include_params
-    private_api? ? ApiTicketConstants::ALLOWED_INCLUDE_PARAMS : (ApiTicketConstants::ALLOWED_INCLUDE_PARAMS - ['survey'])
+    # TODO: Need to implement include associates for public API
+    private_api? ? ApiTicketConstants::ALLOWED_INCLUDE_PARAMS : (ApiTicketConstants::ALLOWED_INCLUDE_PARAMS - ['survey', 'associates'])
   end
 end

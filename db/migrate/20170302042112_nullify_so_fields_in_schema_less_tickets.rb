@@ -14,7 +14,7 @@ class NullifySoFieldsInSchemaLessTickets < ActiveRecord::Migration
     Account.active_accounts.find_each do |account|
       begin
         account.make_current
-        next unless account.features?(:shared_ownership)
+        next unless account.shared_ownership_enabled?
 
         account.schema_less_tickets.where("#{SLT_INTERNAL_GROUP_COL} is not NULL").find_each {|slt|
           begin

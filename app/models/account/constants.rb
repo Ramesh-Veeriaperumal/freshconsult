@@ -119,7 +119,7 @@ class Account < ActiveRecord::Base
 
   }
 
-  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership, :field_service_management, :assets]
+  ADVANCED_FEATURES = [:parent_child_tickets, :field_service_management, :assets].freeze
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
   # Features added temporarily to avoid release for all the customers at one shot
@@ -128,7 +128,6 @@ class Account < ActiveRecord::Base
     :bi_reports => false, :custom_dashboard => false,
     :report_field_regenerate => false,
     :chat_enable => false, :saml_old_issuer => false,
-    :redis_display_id => true,
     :survey_links => true,
     :saml_unspecified_nameid => false,
     :single_session_per_user => false, :marketplace_app => false,
@@ -143,7 +142,7 @@ class Account < ActiveRecord::Base
     :call_quality_metrics => false,
     :domain_restricted_access => false,
     :marketplace => false, :archive_tickets => false,
-    :ecommerce => false, :shared_ownership => false,
+    :ecommerce => false,
     :cobrowsing => false,
     :restricted_helpdesk => false, :enable_multilingual => false,
     :activity_revamp => true, :helpdesk_restriction_toggle => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
@@ -153,15 +152,14 @@ class Account < ActiveRecord::Base
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES = {
-    :google_signin => true, :twitter_signin => true, :facebook_signin => true,
-    :prevent_ticket_creation_for_others => true
+    :google_signin => true, :twitter_signin => true, :facebook_signin => true
   }
 
   ADMIN_CUSTOMER_PORTAL_SETTINGS = [
     :signup_link, :anonymous_tickets, :captcha, :auto_suggest_solutions,
     :public_ticket_url, :open_solutions, :open_forums, :hide_portal_forums,
     :forum_captcha_disable, :moderate_posts_with_links, :moderate_all_posts,
-    :helpdesk_tickets_by_product, :solutions_agent_metrics
+    :helpdesk_tickets_by_product, :solutions_agent_metrics, :prevent_ticket_creation_for_others
   ].freeze
 
   MAIL_PROVIDER = { :sendgrid => 1, :mailgun => 2 }
@@ -203,7 +201,7 @@ class Account < ActiveRecord::Base
     new_ticket_recieved_metric: false, es_msearch: true,
     attachment_virus_detection: false, old_link_back_url_validation: false,
     bot_email_channel: false, archive_ticket_fields: true,
-    sso_login_expiry_limitation: false, csat_email_scan_compatibility: false, email_deprecated_style_parsing: false,
+    sso_login_expiry_limitation: false, email_deprecated_style_parsing: false,
     saml_ecrypted_assertion: false, quoted_text_parsing_feature: false, description_by_default: false,
     custom_fields_search: true, update_billing_info: false, allow_billing_info_update: false,
     archive_tickets_api: false, bot_agent_response: false, fluffy: false, nested_field_revamp: true,
@@ -226,8 +224,8 @@ class Account < ActiveRecord::Base
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,
     salesforce_sync: false, salesforce_v2: false, marketplace_app: false, freshid_sso_sync: true,
-    fw_sso_admin_security: false, same_site_none: false,
-    omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false,
+    fw_sso_admin_security: false, same_site_none: false, csat_email_scan_compatibility_settings: false,
+    omni_chat_agent: false, emberize_agent_form: false, emberize_agent_list: false, portal_frameworks_update: false, collaboration_threads: false,
     ticket_filters_central_publish: false, auto_refresh_revamp: false, omni_plans_migration_banner: false, kbase_omni_bundle: false,
     twitter_api_compliance: true, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,

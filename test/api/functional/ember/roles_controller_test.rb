@@ -41,10 +41,21 @@ class RolesControllerTest < ActionController::TestCase
     User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
     get :show, construct_params(id: role.id)
     assert_response 200
-    match_json(role_pattern(role))
+    match_json(private_role_pattern(role))
   ensure
     User.unstub(:current)
     User.any_instance.unstub(:privilege?)
+  end
+
+  def test_show_with_collaboration_roles_enabled
+    role = Role.first
+    CustomRequestStore.store[:private_api_request] = true
+    Account.any_instance.stubs(:launched?).returns(true)
+    get :show, construct_params(id: role.id)
+    assert_response 200
+    match_json(private_role_pattern(role))
+  ensure
+    Account.any_instance.unstub(:launched?)
   end
 
   def test_show_roles_agent_without_manage_user_privilege
@@ -94,6 +105,20 @@ class RolesControllerTest < ActionController::TestCase
     end
     assert_response 200
     match_json(pattern.ordered!)
+  end
+
+  def test_index_with_collaboration_roles_enabled
+    CustomRequestStore.store[:private_api_request] = true
+    Account.any_instance.stubs(:launched?).returns(true)
+    get :index, controller_params
+    pattern = []
+    Account.current.roles_from_cache.each do |role|
+      pattern << private_role_pattern(role)
+    end
+    assert_response 200
+    match_json(pattern.ordered!)
+  ensure
+    Account.any_instance.unstub(:launched?)
   end
 
   def test_index_roles_agent_with_manage_user_privilege

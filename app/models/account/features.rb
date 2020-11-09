@@ -33,9 +33,9 @@ class Account < ActiveRecord::Base
     :text_custom_fields_in_etl, :email_spoof_check, :disable_email_spoof_check, :webhook_blacklist_ip,
     :recalculate_daypass, :attachment_redirect_expiry, :contact_company_split,
     :fuzzy_search, :delete_trash_daily,
-    :requester_privilege,
+    :requester_privilege, :collaboration_threads, :csat_email_scan_compatibility_settings,
     :prevent_parallel_update, :sso_unique_session, :delete_trash_daily_schedule, :retrigger_lbrr, :asset_management,
-    :csat_email_scan_compatibility, :mint_portal_applicable, :quoted_text_parsing_feature,
+    :mint_portal_applicable, :quoted_text_parsing_feature,
     :sandbox_temporary_offset, :downgrade_policy, :article_es_search_by_filter,
     :fluffy_min_level, :allow_update_agent, :launch_fsm_geolocation, :geolocation_historic_popup, :helpdesk_new_settings,
     :ticket_field_revamp, :hide_mailbox_error_from_agents, :hide_og_meta_tags, :disable_occlusion_rendering,
@@ -77,7 +77,7 @@ class Account < ActiveRecord::Base
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
     :canned_forms, :customize_table_view, :solutions_templates,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
-    :social_tab, :scenario_automation,
+    :social_tab, :scenario_automation, :falcon_portal_theme,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
     :personal_canned_response, :marketplace, :reverse_notes,
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
@@ -90,13 +90,13 @@ class Account < ActiveRecord::Base
     :help_widget_article_customisation, :agent_assist_lite, :sla_reminder_automation, :article_interlinking, :kb_increased_file_limit,
     :twitter_field_automation, :robo_assist, :triage, :advanced_article_toolbar_options, :advanced_freshcaller, :email_bot, :agent_assist_ultimate, :canned_response_suggest, :robo_assist_ultimate, :advanced_ticket_scopes,
     :custom_objects, :quality_management_system, :triage_ultimate, :autofaq_eligible, :whitelisted_ips, :solutions_agent_metrics_feature, :forums_agent_portal, :solutions_agent_portal,
-    :whatsapp_channel, :basic_settings_feature, :ticket_filter_increased_companies_limit, :csat_email_scan_compatibility, :secure_fields_toggle, :forums, :ticket_summary_feature
+    :whatsapp_channel, :basic_settings_feature, :ticket_filter_increased_companies_limit, :secure_fields_toggle, :forums, :ticket_summary_feature, :link_tickets_toggle, :shared_ownership_toggle
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
     :archive_tickets_api,
-    :csat_email_scan_compatibility
+    :falcon_portal_theme
   ].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -296,6 +296,10 @@ class Account < ActiveRecord::Base
 
   def freshconnect_enabled?
     has_feature?(:freshconnect) && freshconnect_account.present? && freshconnect_account.enabled
+  end
+
+  def falcon_portal_theme_enabled?
+    launched?(:falcon_portal_theme)
   end
 
   alias falcon_support_portal_theme_enabled? falcon_portal_theme_enabled?

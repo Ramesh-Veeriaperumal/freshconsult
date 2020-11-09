@@ -940,6 +940,12 @@ module ApiTicketsTestHelper
     pattern
   end
 
+  def ticket_show_pattern_with_include_associates(ticket)
+    pattern = ticket_show_pattern(ticket)
+    pattern[:associated_tickets_list] = ticket.associates
+    pattern
+  end
+
   def channel_info(ticket)
     {
       id: ticket.channel_id,

@@ -56,6 +56,10 @@ class Subscription < ActiveRecord::Base
     previous_changes.merge(addon_changes_for_central)
   end
 
+  def misc_changes_for_central
+    chargebee_event.present? ? { chargebee_event: chargebee_event } : {}
+  end
+
   def addon_changes_for_central
     model_changes = {}
     old_freddy_sessions = @old_subscription.freddy_sessions

@@ -392,8 +392,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def omni_bundle_plan_enabled?
-    current_account = Account.current
-    current_account.try(:invoke_touchstone_enabled?) && current_account.try(:omni_bundle_2020_enabled?) && SubscriptionPlan.omni_channel_plan.map(&:id).include?(current_account.try(:subscription).try(:subscription_plan).try(:id))
+    account.try(:invoke_touchstone_enabled?) && account.try(:omni_bundle_2020_enabled?)
   end
 
   def invoke_touchstone_account_worker

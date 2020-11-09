@@ -13,13 +13,21 @@ module Integrations::AdvancedTicketing
 
     def add_feature feature
       Rails.logger.info "Enable feautre :: #{feature}"
-      current_account.add_feature(feature)
+      if AccountSettings::SettingsConfig[feature.to_sym].present?
+        current_account.enable_setting(feature)
+      else
+        current_account.add_feature(feature)
+      end
       NewPlanChangeWorker.perform_async({:features => [feature], :action => "add"})
     end
 
     def remove_feature feature
-      Rails.logger.info "Disable feautre :: #{feature}"      
-      current_account.revoke_feature(feature)
+      Rails.logger.info "Disable feautre :: #{feature}"
+      if AccountSettings::SettingsConfig[feature.to_sym].present?
+        current_account.disable_setting(feature)
+      else
+        current_account.revoke_feature(feature)
+      end
       NewPlanChangeWorker.perform_async({:features => [feature], :action => "drop"})
     end
   end

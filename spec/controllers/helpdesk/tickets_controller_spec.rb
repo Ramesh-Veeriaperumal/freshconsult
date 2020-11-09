@@ -179,7 +179,7 @@ RSpec.describe Helpdesk::TicketsController do
   end
 
   it "should show a ticket to a group restricted agent if his internal_group is assigned" do
-    @account.add_feature(:shared_ownership)
+    @account.enable_setting(:shared_ownership)
     status = Helpdesk::TicketStatus.where(:is_default => 0).first
     status.group_ids = "#{@group.id}"
     ticket = create_ticket({:status => status.status_id}, nil, @group)
@@ -194,12 +194,12 @@ RSpec.describe Helpdesk::TicketsController do
     log_in(group_restricted_agent)
     get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
-    @account.revoke_feature(:shared_ownership)
+    @account.disable_setting(:shared_ownership)
     @account.reload
   end
 
   it "should show a ticket to a ticket restricted agent if he is assigned as an internal_agent to the ticket" do
-    @account.add_feature(:shared_ownership)
+    @account.enable_setting(:shared_ownership)
     status = Helpdesk::TicketStatus.where(:is_default => 0).first
     status.group_ids = "#{@group.id}"
     ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
@@ -214,12 +214,12 @@ RSpec.describe Helpdesk::TicketsController do
     log_in(ticket_restricted_agent)
     get :show, :id => ticket.display_id
     response.body.should =~ /#{ticket.description_html}/
-    @account.revoke_feature(:shared_ownership)
+    @account.disable_setting(:shared_ownership)
     @account.reload
   end
 
   it "should not show a ticket to a ticket restricted agent if he is not assigned as an internal_agent to the ticket" do
-    @account.add_feature(:shared_ownership)
+    @account.enable_setting(:shared_ownership)
     status = Helpdesk::TicketStatus.where(:is_default => 0).first
     status.group_ids = "#{@group.id}"
     ticket_restricted_agent = add_agent(@account, {  :name => Faker::Name.name,
@@ -234,7 +234,7 @@ RSpec.describe Helpdesk::TicketsController do
     log_in(ticket_restricted_agent)
     get :show, :id => ticket.display_id
     flash[:notice].should be_eql(I18n.t(:'flash.general.access_denied'))
-    @account.revoke_feature(:shared_ownership)
+    @account.disable_setting(:shared_ownership)
     @account.reload
   end
 

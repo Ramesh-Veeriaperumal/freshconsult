@@ -309,8 +309,6 @@ class Account < ActiveRecord::Base
   end
 
   def max_display_id
-    return get_max_display_id unless self.features?(:redis_display_id)
-
     key = TICKET_DISPLAY_ID % { :account_id => self.id }
     get_display_id_redis_key(key).to_i
   end

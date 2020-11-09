@@ -1,6 +1,6 @@
 module ArchiveTicketExportParams
-  TICKET_STATE_FIELDS = ["resolved_at", "closed_at", "first_response_time", "first_resp_time_by_bhrs", 
-    "resolution_time_by_bhrs", "outbound_count", "inbound_count"]
+  TICKET_STATE_FIELDS = ['resolved_at', 'closed_at', 'first_response_time', 'first_resp_time_by_bhrs',
+                         'resolution_time_by_bhrs', 'outbound_count', 'inbound_count', 'assigned_at'].freeze
   
   def requester_info
     requester.get_info if requester

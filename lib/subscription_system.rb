@@ -76,6 +76,7 @@ module SubscriptionSystem
       (raise ActiveRecord::RecordNotFound and return) unless account
       
       @current_portal = account.main_portal_from_cache
+      @current_portal.make_current if @current_portal
       (raise ActiveRecord::RecordNotFound and return) unless @current_portal
       account
     end

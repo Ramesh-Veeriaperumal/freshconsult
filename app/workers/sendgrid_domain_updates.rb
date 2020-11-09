@@ -154,7 +154,7 @@ class SendgridDomainUpdates < BaseWorker
     else
       FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
             :subject => subject, 
-            :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com", "helpdesk@noc-alerts.freshservice.com"],
+            :recipients => ["mail-alerts@freshdesk.com", "helpdesk@abusenoc.freshservice.com"],
             :additional_info => {:info => additional_info}
           })
     end

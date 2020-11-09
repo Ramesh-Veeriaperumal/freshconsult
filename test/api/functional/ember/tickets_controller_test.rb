@@ -565,6 +565,19 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
+    def test_show_with_associated_list_of_tickets
+      parent_ticket = create_ticket
+      child_ticket = create_ticket
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
+      get :show, controller_params(version: 'private', id: parent_ticket.display_id, include: 'associates')
+      assert_response 200
+      match_json(ticket_show_pattern_with_include_associates(parent_ticket.reload))
+    ensure
+      Helpdesk::Ticket.any_instance.unstub(:associates)
+      child_ticket.try(:destroy)
+      parent_ticket.try(:destroy)
+    end
+
     def test_show_without_survey_enabled
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       ticket = create_ticket
@@ -4997,7 +5010,7 @@ module Ember
     end
 
     def test_link_without_link_tickets_feature
-      disable_adv_ticketing([:link_tickets]) if Account.current.launched?(:link_tickets)
+      disable_adv_ticketing([:link_tickets])
       ticket = create_ticket
       ticket_id = ticket.display_id
       tracker_id = create_tracker_ticket.display_id
@@ -5054,7 +5067,7 @@ module Ember
 
     def test_unlink_without_link_tickets_feature
       enable_adv_ticketing([:link_tickets]) { create_linked_tickets }
-      disable_adv_ticketing([:link_tickets]) if Account.current.launched?(:link_tickets)
+      disable_adv_ticketing([:link_tickets])
       put :update, construct_params({ version: 'private', id: @ticket_id, tracker_id: nil }, false)
       assert_unlink_failure(@ticket, 400)
       match_json([bad_request_error_pattern('tracker_id', :require_feature_for_attribute, {

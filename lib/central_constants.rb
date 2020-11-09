@@ -4,7 +4,7 @@ module CentralConstants
   # In case of any breaking changes, bump the majore version, update from 0.0 to 1.0
   MODEL_PAYLOAD_VERSION = {
     'Account' => '1.5',
-    'Helpdesk::Ticket' => '2.18',
+    'Helpdesk::Ticket' => '2.19',
     'Helpdesk::Note' => '1.2',
     'Solution::Category' => '0.3',
     'Solution::Folder' => '0.4',
@@ -54,7 +54,7 @@ module CentralConstants
     'HelpWidget' => '0.2',
     'Helpdesk::Filters::CustomTicketFilter' => '0.2',
     'Helpdesk::Source' => '0.2',
-    'Helpdesk::ArchiveTicket' => '1.2'
+    'Helpdesk::ArchiveTicket' => '1.3'
   }
 
   HYPERTRAIL_VERSION = '0.0.2'.freeze

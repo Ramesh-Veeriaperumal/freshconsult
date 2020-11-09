@@ -70,4 +70,14 @@ class Support::NotesControllerTest < ActionController::TestCase
     user.destroy
     t1.destroy
   end
+
+  def test_create_access_fail_with_nil_user
+    user1 = add_new_user(Account.current, { active: true })
+    t1 = create_ticket(requester_id: user1.id)
+    Helpdesk::Ticket.stubs(:find_by_param).returns(Account.first.tickets.last)
+    @controller.stubs(:current_user).returns(nil)
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body_html => 'Hi Hello' } }
+    assert_response 302
+    t1.destroy
+  end
 end

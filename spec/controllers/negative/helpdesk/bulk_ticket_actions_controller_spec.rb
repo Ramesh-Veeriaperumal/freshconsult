@@ -117,7 +117,7 @@ describe Helpdesk::BulkTicketActionsController do
 
   describe "Shared ownership tests" do
     before(:all) do
-      @account.add_feature(:shared_ownership)
+      @account.enable_setting(:shared_ownership)
       @account.reload.make_current
       @group_name = "Shared ownership group"
       @internal_group = create_group(@account, {:name => "#{@group_name}+#{Time.now}"})
@@ -134,7 +134,7 @@ describe Helpdesk::BulkTicketActionsController do
     end
 
     after(:all) do
-      @account.revoke_feature(:shared_ownership)
+      @account.disable_setting(:shared_ownership)
       @account.reload.make_current
     end
 

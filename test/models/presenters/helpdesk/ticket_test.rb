@@ -888,7 +888,7 @@ class TicketTest < ActiveSupport::TestCase
   end
 
   def test_central_publish_payload_internal_agent_reassigned_flag_is_set_and_internal_group_reassigned_flag_is_set
-    Account.current.add_feature(:shared_ownership)
+    Account.current.enable_setting(:shared_ownership)
     initialize_internal_agent_with_default_internal_group(permission = 3)
     t = create_ticket({ status: @status.status_id, responder_id: nil, internal_agent_id: @internal_agent.id }, nil, @internal_group)
     assert_equal true, t.reports_hash['internal_agent_assigned_flag']
@@ -905,7 +905,7 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal true, t.reports_hash['internal_group_reassigned_flag']
   ensure
     t.destroy
-    Account.current.remove_feature(:shared_ownership)
+    Account.current.disable_setting(:shared_ownership)
   end
 
   def test_central_publish_payload_internal_agent_assigned_flag_is_unset_and_internal_group_assigned_flag_is_unset
@@ -1032,5 +1032,45 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
     assert_equal 'ticket_create', CentralPublishWorker::ActiveTicketWorker.jobs.last['args'][0]
     payload.must_match_json_expression(cp_ticket_pattern(ticket))
+  end
+
+  def test_central_publish_payload_agent_assigned_at_when_agent_is_assigned
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    group = create_group(@account)
+    t = create_ticket({ responder_id: @agent.id, group_id: group.id }, group)
+    payload = t.central_publish_payload.to_json
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+  end
+
+  def test_central_publish_payload_agent_assigned_at_when_agent_is_assigned_as_update
+    group = create_group(@account)
+    t = create_ticket({ responder_id: nil, group_id: group.id }, group)
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.update_attributes(responder_id: @agent.id)
+    payload = t.central_publish_payload.to_json
+    jobs = CentralPublishWorker::ActiveTicketWorker.jobs
+    assert_equal 3, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 'ticket_update', jobs[0]['args'][0]
+    assert_equal({ 'responder_id' => [nil, @agent.id] }, jobs[0]['args'][1]['model_changes'])
+    assert_equal({ 'first_assigned_at' => [nil, t.first_assigned_at.try(:iso8601)],
+                   'assigned_at' => [nil, t.assigned_at.try(:iso8601)] }, jobs[1]['args'][1]['model_changes'])
+  end
+
+  def test_central_publish_payload_agent_assigned_at_when_agent_is_reassigned
+    reassigned_agent = add_test_agent(@account)
+    t = create_ticket(responder_id: @agent.id)
+    old_assigned_at = t.assigned_at.try(:iso8601)
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t.attributes = { responder_id: reassigned_agent.id }
+    t.save
+    payload = t.central_publish_payload.to_json
+    jobs = CentralPublishWorker::ActiveTicketWorker.jobs
+    assert_equal 3, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 'ticket_update', jobs[1]['args'][0]
+    assert_equal({ 'responder_id' => [@agent.id, reassigned_agent.id] }, jobs[0]['args'][1]['model_changes'])
+    assert_equal({ 'assigned_at' => [old_assigned_at, t.assigned_at.try(:iso8601)] }, jobs[1]['args'][1]['model_changes'])
   end
 end

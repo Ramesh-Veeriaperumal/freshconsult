@@ -98,7 +98,7 @@ class Subscription < ActiveRecord::Base
   after_commit :enqueue_omni_account_creation_workers, if: [:omni_plan_conversion?, :enqueue_omni_account_creation?]
   after_commit :enqueue_omni_account_updation_workers, if: :chargebee_omni_upgrade?
 
-  attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start, :lock_old_addons, :chargebee_omni_upgrade_response
+  attr_accessor :creditcard, :address, :billing_cycle, :subscription_term_start, :lock_old_addons, :chargebee_omni_upgrade_response, :chargebee_event
   attr_reader :response
   serialize :additional_info, Hash
 

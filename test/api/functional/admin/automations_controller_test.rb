@@ -29,7 +29,7 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
   def before_all
     return if @@before_all_run
 
-    Account.current.add_feature(:shared_ownership)
+    Account.current.enable_setting(:shared_ownership)
     Account.current.ticket_fields.custom_fields.each(&:destroy)
     get_all_custom_fields
     create_products(Account.current)
@@ -41,7 +41,7 @@ class Admin::AutomationsControllerTest < ActionController::TestCase
     get_custom_company_fields
     @account = Account.current || Account.first.make_current
     initialize_internal_agent_with_default_internal_group
-    Account.current.remove_feature(:shared_ownership)
+    Account.current.disable_setting(:shared_ownership)
     @@before_all_run = true
   end
 

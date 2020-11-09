@@ -116,7 +116,7 @@ class Account < ActiveRecord::Base
   end
 
   def update_redis_display_id
-    if features?(:redis_display_id) && @all_changes.key?(:ticket_display_id)
+    if @all_changes.key?(:ticket_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => self.id }
       display_id_increment = @all_changes[:ticket_display_id][1] - get_display_id_redis_key(key).to_i - 1
       if display_id_increment > 0
@@ -155,7 +155,7 @@ class Account < ActiveRecord::Base
 
     # Temp for falcon signup
     # Enable customer portal by default
-    self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
+    enable_setting(:falcon_portal_theme) unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME) # Falcon customer portal
 
     if freshid_integration_signup_allowed?
       freshid_v2_signup? ? launch_freshid_with_omnibar(true) : launch_freshid_with_omnibar

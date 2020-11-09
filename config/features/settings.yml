@@ -201,6 +201,10 @@ settings:
     default: false
     interal: true
     feature_dependency: :basic_settings_feature
+  :csat_email_scan_compatibility:
+    default: false
+    interal: false
+    feature_dependency: :custom_survey
   :disable_archive:
     default: false
     internal: true
@@ -213,6 +217,14 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :shared_ownership:
+    default: false
+    internal: false
+    feature_dependency: :shared_ownership_toggle
+  :link_tickets:
+    default: false
+    internal: false
+    feature_dependency: :link_tickets_toggle
   :kbase_spam_whitelist:
     default: false
     internal: true
@@ -221,3 +233,7 @@ settings:
     default: false
     internal: false
     feature_dependency: :secure_fields_toggle
+  :prevent_ticket_creation_for_others:
+    default: true
+    internal: false
+    feature_dependency: :basic_settings_feature

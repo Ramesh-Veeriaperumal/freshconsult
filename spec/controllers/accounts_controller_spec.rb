@@ -31,15 +31,7 @@ describe AccountsController do
     new_account.admin_email.should match(admin_email)
   end
 
-  it 'should get account data on edit without redis_display_id feature' do
-    get :edit
-    @account.features.redis_display_id.destroy
-    assigns[:supported_languages_list].should be_eql(@account.account_additional_settings.supported_languages)
-    assigns[:ticket_display_id].should be_eql(@account.get_max_display_id)
-  end
-
   it 'should get updated ticket display id with redis_display_id feature' do
-    @account.features.redis_display_id.create
     controller.remove_key "TICKET_DISPLAY_ID:#{@account.id}"
     Account.any_instance.stubs(:get_max_display_id).returns(0)
     new_display_id = (10000..1000000).to_a.sample
@@ -47,8 +39,6 @@ describe AccountsController do
     
     get :edit
     assigns[:ticket_display_id].should be_eql(new_display_id - 1)
-
-    @account.features.redis_display_id.destroy
   end  
 
   it 'should update account details' do

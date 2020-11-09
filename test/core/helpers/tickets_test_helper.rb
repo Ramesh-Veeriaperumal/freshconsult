@@ -36,12 +36,7 @@ module CoreTicketsTestHelper
   end
 
   def enable_adv_ticketing(features = [], &block)
-    settings_list = AccountSettings::SettingsConfig.keys
-    if features.is_a?(Array)
-      features.each { |f| settings_list.include?(f) ? Account.current.enable_setting(f) : Account.current.add_feature(f) }
-    else
-      settings_list.include?(features) ? Account.current.enable_setting(features) : Account.current.add_feature(features)
-    end
+    features.is_a?(Array) ? features.each { |f| add_feature(f) } : add_feature(features)
     if block_given?
       yield
       disable_adv_ticketing(features)
@@ -49,11 +44,22 @@ module CoreTicketsTestHelper
   end
 
   def disable_adv_ticketing(features = [])
-    settings_list = AccountSettings::SettingsConfig.keys
-    if features.is_a?(Array)
-      features.each { |f| settings_list.include?(f) ? Account.current.disable_setting(f) : Account.current.revoke_feature(f) }
+    features.is_a?(Array) ? features.each { |f| remove_feature(f) } : remove_feature(features)
+  end
+
+  def add_feature(feature)
+    if AccountSettings::SettingsConfig[feature.to_sym].present?
+      Account.current.enable_setting(feature)
     else
-      settings_list.include?(features) ? Account.current.disable_setting(features) : Account.current.revoke_feature(features)
+      Account.current.add_feature(feature)
+    end
+  end
+
+  def remove_feature(feature)
+    if AccountSettings::SettingsConfig[feature.to_sym].present?
+      Account.current.disable_setting(feature)
+    else
+      Account.current.revoke_feature(feature)
     end
   end
 

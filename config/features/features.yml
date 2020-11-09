@@ -113,7 +113,7 @@
       :hide_portal_forums: 109
       :forum_captcha_disable: 110
       :public_ticket_url: 111
-      :redis_display_id: 112
+      :unused_112: 112
       :chat_enable: 113
       :survey_links: 114
       :unused_115: 115 # do not use
@@ -270,7 +270,7 @@
       :analytics_knowledge_base: 266
       :analytics_knowledge_base_report: 267
       :allow_huge_ccs: 268
-      :reports_47: 269
+      :falcon_portal_theme: 269
       :reports_48: 270
       :reports_49: 271
       :reports_50: 272
@@ -430,16 +430,14 @@
       :collaborators: 426
       :archive_tickets_api: 427
 :selectable_features:
-  :redis_display_id: true
   :gamification_enable: false
   :parent_child_tickets: false
-  :link_tickets: false
-  :shared_ownership: false
   :advanced_search_bulk_actions: false
   :private_inline: false
   :freshcaller: false
   :freshcaller_widget: false
   :opt_out_analytics: false
+  :falcon_portal_theme: false
   :chat_enable: false
   :survey_links: true
   :enable_multilingual: false
@@ -474,9 +472,7 @@
   :fluffy_higher_plan4: false
   :assets: false
   :assets_toggle: false
-  :prevent_ticket_creation_for_others: true
   :forums_agent_portal: false
   :archive_tickets_api: false
   :solutions_agent_portal: false
   :whatsapp_channel: false
-  :csat_email_scan_compatibility: false

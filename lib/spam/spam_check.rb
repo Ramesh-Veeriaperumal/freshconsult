@@ -80,7 +80,7 @@ module Spam
       Rails.logger.info "Spam template found for account: #{account_id} subject: #{subject} message: #{message}"
       FreshdeskErrorsMailer.error_email(nil, { domain_name: account.full_domain }, nil, {
         subject: "Spam template found for account: #{account_id}", 
-        recipients: [ 'mail-alerts@freshdesk.com', 'noc@freshdesk.com', 'helpdesk@noc-alerts.freshservice.com' ],
+        recipients: [ 'mail-alerts@freshdesk.com', 'helpdesk@abusenoc.freshservice.com'],
         additional_info: { info: 'Spam template found in an account' }
       })
     end
@@ -315,7 +315,7 @@ module Spam
         params, 
         nil, 
         {:subject => "Spam detected in ticket notifications",
-         :recipients => ["dev-ops@freshdesk.com","helpdesk@noc-alerts.freshservice.com"]}
+         :recipients => ["dev-ops@freshdesk.com","helpdesk@abusenoc.freshservice.com"]}
       ) if is_spam?(result)
     end
     

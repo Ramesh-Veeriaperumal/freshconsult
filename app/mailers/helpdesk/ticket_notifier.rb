@@ -770,7 +770,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     def notify_spam_threshold_crossed(account)
        FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
                   :subject => "Outgoing Spam Threshold Crossed for Acc ID:#{account.id} ", 
-                  :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"],
+                  :recipients => ["mail-alerts@freshdesk.com", "helpdesk@abusenoc.freshservice.com"],
                   :additional_info => {:info => "Account ID: #{account.id} has sent more outgoing emails . Check for spam in this account "}
                   })
     end

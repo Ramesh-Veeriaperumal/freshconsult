@@ -153,6 +153,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
         
       end
       @account.launch(:downgrade_policy)
+      @account.subscription.chargebee_event = :subscription_renewed
       @account.subscription.update_attributes(@subscription_data)
       if redis_key_exists?(card_expiry_key)
         value = { 'next_renewal' => @subscription_data[:next_renewal_at] }

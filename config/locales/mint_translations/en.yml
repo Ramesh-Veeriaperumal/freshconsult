@@ -3025,6 +3025,7 @@ en:
     type: Type
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   errors:
+    error_updating_setting: Unable to enable the feature, please try again later. If the problem persists, contact support@freshdesk.com
     invalid_domain:
       may_be_this_is_still_fresh: ' May be this is still fresh!  '
       claim_it_now: You can claim it now at
