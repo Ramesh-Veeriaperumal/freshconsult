@@ -58,6 +58,17 @@
 <% end %>
 
 <%= javascript_tag do %>
+    jQuery(document).on('focus', '.redactor_editor', function() {
+       jQuery('#helpdesk_ticket_ticket_body_attributes_description_html-error').css({'display':'none'})
+       jQuery('#helpdesk_ticket_ticket_body_attributes_description_html-error').parents('.control-group').removeClass('error-group')
+    });
+    jQuery(document).on('blur', '.redactor_editor', function() {
+      if(!jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').data('redactor').isNotEmpty()){
+        jQuery('#helpdesk_ticket_ticket_body_attributes_description_html-error').css({'display':'block'})
+        jQuery('#helpdesk_ticket_ticket_body_attributes_description_html-error').parents('.control-group').addClass('error-group')
+      }
+    });
+
   (function($){
     var populateRequestForm = function(){
       var requester_input = $('#helpdesk_ticket_email');
