@@ -87,6 +87,12 @@ module AgentsTestHelper
     agent_hash.merge!(availability: expected_output[:availability]) if expected_output[:availability].present?
   end
 
+  def private_api_with_roles_pattern(agent, expected_output = {})
+    agent_hash = private_api_agent_pattern(expected_output, agent)
+    agent_roles = agent.user.roles.map { |role| { id: role.id, name: role.name } }
+    agent_hash.merge!(roles: expected_output[:roles] || agent_roles)
+  end
+
   def private_api_privilege_agent_pattern(user)
     {
       id: user.id,

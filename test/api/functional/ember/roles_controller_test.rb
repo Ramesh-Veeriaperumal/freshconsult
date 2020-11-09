@@ -107,6 +107,12 @@ class RolesControllerTest < ActionController::TestCase
     match_json(pattern.ordered!)
   end
 
+  def test_index_with_count
+    get :index, controller_params(version: 'private')
+    assert_response 200
+    assert_not_nil response.api_meta[:count]
+  end
+
   def test_index_with_collaboration_roles_enabled
     CustomRequestStore.store[:private_api_request] = true
     Account.any_instance.stubs(:launched?).returns(true)

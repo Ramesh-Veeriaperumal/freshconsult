@@ -2690,6 +2690,18 @@ class ApiAgentsControllerTest < ActionController::TestCase
     @account.unstub(:agent_statuses_enabled?)
   end
 
+  def test_agent_index_with_include_roles_filter
+    AgentFilterValidation.any_instance.stubs(:private_api?).returns(false)
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    get :index, controller_params(include: 'roles')
+    assert_response 400
+    match_json([bad_request_error_pattern('include', :not_included, list: 'user_info')])
+  ensure
+    AgentFilterValidation.any_instance.unstub(:private_api?)
+  end
+
   private
 
     def enable_advanced_ticket_scopes

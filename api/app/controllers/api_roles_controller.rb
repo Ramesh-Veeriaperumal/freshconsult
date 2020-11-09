@@ -6,6 +6,11 @@ class ApiRolesController < ApiApplicationController
 
   before_filter :validate_bulk_update_params, only: [:bulk_update]
 
+  def index
+    super
+    response.api_meta = { count: @items_count }
+  end
+
   def bulk_update
     fetch_objects
     validate_and_bulk_update

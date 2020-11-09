@@ -4,7 +4,7 @@ class AgentDecorator < ApiDecorator
 
   def initialize(record, options)
     super(record)
-    @user_info = options[:include]
+    @include_params = options[:include]&.split(',') || []
     @group_mapping_ids = options[:group_mapping_ids]
     @is_assumed_user = options[:is_assumed_user]
   end
@@ -37,6 +37,7 @@ class AgentDecorator < ApiDecorator
     if Account.current.freshcaller_enabled?
       agent_info[:freshcaller_agent] = record.freshcaller_agent.present? ? record.freshcaller_agent.try(:fc_enabled) : false
     end
+    agent_info[:roles] = record.user.roles.map { |role| { id: role.id, name: role.name } } if @include_params.include?(PRIVATE_ALLOWED_INCLUDE_PARAMS[0])
     agent_info[:contribution_group_ids] = record.agent_contribution_group_ids if Account.current.advanced_ticket_scopes_enabled? && !record.field_agent_check_using_cache?
     agent_info[:freshchat_agent] = record.agent_freshchat_enabled? if Account.current.omni_chat_agent_enabled?
     agent_info.merge!(gamification_options)
@@ -73,7 +74,7 @@ class AgentDecorator < ApiDecorator
       group_ids: group_ids,
       type: type
     }
-    restricted_hash[:contact].merge!(ContactDecorator.new(record.user, {}).to_hash) if @user_info
+    restricted_hash[:contact].merge!(ContactDecorator.new(record.user, {}).to_hash) if @include_params.include?(ALLOWED_INCLUDE_PARAMS[0])
     restricted_hash
   end
 
