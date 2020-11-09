@@ -99,7 +99,7 @@ module CronWebhooks
 
       def delete_account_on_shard(account, shard_name)
         if shard_mapping_exist?(account.id, shard_name)
-          job_id = AccountCleanup::DeleteAccount.perform_async(account_id: account.id) unless @dryrun
+          job_id = AccountCleanup::AccountDeleteWorker.perform_async(account_id: account.id, shard_name: shard_name) unless @dryrun
           @deleted_accounts << { account: account.id, shard: shard_name, rebalanced: false }
         else
           job_id = AccountCleanup::RebalancedAccountDeleteWorker.perform_async(account_id: account.id, shard_name: shard_name) unless @dryrun
