@@ -2414,7 +2414,15 @@
             "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:/0hay1VzxMOGNs9Xlg8vYZC/oDf7WK5r:na593n1PjUaBxueYSpGJx5hiJ/pyasYftMA=]",
             "_slave2_host": "shard40slave2.internal.poduseast1.freshdesk.com",
             "_slave1_host": "shard40slave1.internal.poduseast1.freshdesk.com"
-          }
+          },
+          "shard_41": {
+             "_database": "helpkit_shard_41",
+             "_username": "dbuser",
+             "_host": "shard41.internal.poduseast1.freshdesk.com",
+             "password": "EJ[1:jx8zAIGILIDQoiQwLaNYE7o+Mj1voPjXfcUX8iq6GS0=:/0hay1VzxMOGNs9Xlg8vYZC/oDf7WK5r:na593n1PjUaBxueYSpGJx5hiJ/pyasYftMA=]",
+             "_slave2_host": "shard41slave1.internal.poduseast1.freshdesk.com",
+             "_slave1_host": "shard41slave2.internal.poduseast1.freshdesk.com"
+            }
         },
         "semian": {
           "global": {
