@@ -48,7 +48,7 @@ class Solution::KbserviceClearCacheWorker < BaseWorker
           req.body = payload
         end
       end
-      if response.status == 204
+      if response.status == 200
         Rails.logger.error "KBService Cache Cleared:: For domains #{payload}"
       else
         Rails.logger.error "KBService API Error Response :: #{response.status}"

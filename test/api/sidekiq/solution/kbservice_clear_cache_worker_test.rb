@@ -21,7 +21,7 @@ class KbserviceClearCacheWorkerTest < ActionView::TestCase
   def test_clear_cache
     Account.any_instance.stubs(:omni_bundle_account?).returns(true)
     Account.current.launch(:kbase_omni_bundle)
-    stub_kb_service_cache_clear_endpoint_204
+    stub_kb_service_cache_clear_endpoint_200
     stub_connection
     Sidekiq::Testing.inline! do
       Solution::KbserviceClearCacheWorker.perform_async(entity: 'article')
@@ -88,16 +88,16 @@ class KbserviceClearCacheWorkerTest < ActionView::TestCase
     Solution::KbserviceClearCacheWorker.any_instance.unstub(:kbservice_connection)
   end
 
-  def stub_kb_service_cache_clear_endpoint_204
-    stubs.post('/solutions/api/v2/accounts/clear-cache') do |env|
-      [204, {}, {
-        status_code: 204
+  def stub_kb_service_cache_clear_endpoint_200
+    stubs.post('/solutions/api/v2/accounts/clear_cache') do |env|
+      [200, {}, {
+        status_code: 200
       }.to_json]
     end
   end
 
   def stub_kb_service_cache_clear_endpoint_500
-    stubs.post('/solutions/api/v2/accounts/clear-cache') do |env|
+    stubs.post('/solutions/api/v2/accounts/clear_cache') do |env|
       [500, {}, {
         status_code: 500
       }.to_json]

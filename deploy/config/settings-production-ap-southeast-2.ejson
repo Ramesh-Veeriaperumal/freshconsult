@@ -1412,7 +1412,7 @@
       },
       "kbservice": {
         "secret_key": "EJ[1:+B6g+IwK/Ifs38VYDPzIyUhVF3/QDzQyIe0QtqY6nGM=:g9pHl1AnhmG3KEigtcZbvkjt2g4LgOHW:0YNJgcd47zzG3Ej3t12tdhu0g5DcjZYNZMnPzPOYwvSQ7YuQBfOo+++h6rsgDTj6]",
-        "_clear_cache_path": "/solutions/api/v2/accounts/clear-cache",
+        "_clear_cache_path": "/solutions/api/v2/accounts/clear_cache",
         "_api_endpoint": "https://%{domain}",
         "_domain": "%{domain}"
       },
