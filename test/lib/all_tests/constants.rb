@@ -15,7 +15,6 @@ INTEGRATION_TESTS = [
   'test/api/integration/flows/surveys_flows_test.rb',
   'test/api/integration/flows/sla_flow_test.rb',
   'test/api/integration/flows/action_dispatch_cookies_flows_test.rb',
-  'test/api/integration/flows/support_login_flow_test.rb',
   'test/api/integration/flows/api_search/automations_controller_new_test.rb'
 ].freeze
 
