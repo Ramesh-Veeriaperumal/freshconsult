@@ -3,7 +3,7 @@
     <%= @ticket.try(:class) == String ? profile_image(@current_user) : @ticket.responder_id? ? profile_image(@ticket.responder) : preview_profile_image  %>
   </div>
   <div class='introduction-text'>
-    <%= t('support.canned_form.hey')%> <%= @current_user.present? ? "#{@current_user.name}" : ""%><img src='/images/emojis/wave.png' alt=':D'>
+    <%= t('support.canned_form.hey')%> <%= @current_user.present? ? "#{@current_user.name}" : ""%>
   </div>
   <div class='welcome-text'>
     <p>
