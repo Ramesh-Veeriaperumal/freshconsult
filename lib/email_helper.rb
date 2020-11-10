@@ -172,10 +172,6 @@ module EmailHelper
     Fdadmin::APICalls.make_api_request_to_global( :post, url_params, "/api/v1/activity/create_activity", "freshopsadmin.freshdesk.com")
   end
 
-  def antispam_enabled? account
-    account.proactive_spam_detection_enabled?
-  end
-
   def collab_email_reply? email_subject
     COLLAB_STR_ARRAY.any? { |s| email_subject.include?(s) } ? true : false
   end

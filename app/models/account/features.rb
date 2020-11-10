@@ -81,7 +81,7 @@ class Account < ActiveRecord::Base
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
     :personal_canned_response, :marketplace, :reverse_notes,
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
-    :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq, :proactive_spam_detection,
+    :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
     :agent_articles_suggest, :agent_articles_suggest_eligible, :email_articles_suggest, :customer_journey, :botflow,
     :help_widget, :help_widget_appearance, :help_widget_predictive, :portal_article_filters, :supervisor_custom_status, :lbrr_by_omniroute,

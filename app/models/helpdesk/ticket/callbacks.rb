@@ -1138,8 +1138,7 @@ private
   end
 
   def update_spam_detection_service
-    if (Account.current.proactive_spam_detection_enabled? && @model_changes.include?(:spam) &&
-     self.source.eql?(Helpdesk::Source::EMAIL))
+    if @model_changes.include?(:spam) && source.eql?(Helpdesk::Source::EMAIL)
       type = @model_changes[:spam][1] ? :spam : :ham
       SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id,
         :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})

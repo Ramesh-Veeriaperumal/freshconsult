@@ -208,7 +208,7 @@
       :ticket_volume_report: 204
       :omni_channel: 205
       :personal_canned_response: 206
-      :proactive_spam_detection: 207
+      :unused_207: 207
       :api_v2: 208
       :bi_reports: 209
       :XX_unused_210: 210 # do not use
@@ -462,7 +462,6 @@
   :saml_old_issuer: false
   :saml_unspecified_nameid: false
   :single_session_per_user: false
-  :proactive_spam_detection: true
   :bi_reports: false
   :activity_revamp: true
   :fluffy_forest: false

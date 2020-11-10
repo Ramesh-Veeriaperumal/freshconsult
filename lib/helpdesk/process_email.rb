@@ -1208,7 +1208,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         ticket.spam = true
         Rails.logger.info 'Skip notification set and ticket marked as spam due to CUSTOM_BOT_ATTACK'
       end
-      if !ticket.nil? && !ticket.account.nil? && antispam_enabled?(ticket.account)
+      if !ticket.nil? && !ticket.account.nil?
         begin
           ticket.spam_score = params[:spam_info]['score']
           ticket.spam = true if params[:spam_info]['spam'] == true

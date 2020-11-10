@@ -451,8 +451,7 @@ class Helpdesk::ConversationsController < ApplicationController
       end 
 
       def learn_valid_ticket_data
-        if (current_account.proactive_spam_detection_enabled? && @parent.notes.count.zero? &&
-         @parent.source.eql?(Helpdesk::Source::EMAIL) && !@parent.spam?)
+        if @parent.notes.count.zero? && @parent.source.eql?(Helpdesk::Source::EMAIL) && !@parent.spam?
           SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => @parent.id, 
             :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[:ham]})
           Rails.logger.info "Enqueued job to sidekiq to learn ticket"
