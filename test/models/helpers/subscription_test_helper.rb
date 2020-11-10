@@ -258,4 +258,137 @@ module SubscriptionTestHelper
     new_subscription_request.save
     new_subscription_request
   end
+
+  def update_hosted_page_params_hash
+    {
+      hosted_page: {
+        created_at: 1_517_506_680,
+        embed: true,
+        expires_at: 1_517_506_685,
+        id: '1',
+        object: 'hosted_page',
+        resource_version: 1_517_506_020_000,
+        state: 'created',
+        type: 'update_payment_method',
+        updated_at: 1_517_506_720,
+        url: 'https://freshpo-test.chargebee.com/pages/v2/1/update_payment_method'
+      }
+    }
+  end
+
+  def stub_addon_params_hash
+    {
+      addon: {
+        charge_type: 'recurring',
+        enabled_in_portal: true,
+        id: 'field_service_management',
+        name: 'field_service_management',
+        object: 'addon',
+        period: 1,
+        period_unit: 'month',
+        price: 750,
+        status: 'active',
+        taxable: true,
+        type: 'on_off'
+      }
+    }
+  end
+
+  def stub_customer_update_hash
+    {
+      customer: {
+        account_credits: 0,
+        allow_direct_debit: false,
+        auto_collection: 'on',
+        card_status: 'no_card',
+        created_at: 1_517_506_685,
+        excess_payments: 0,
+        first_name: 'Ethan hunt',
+        id: 1,
+        last_name: 'Ethan hunt',
+        object: 'customer',
+        refundable_credits: 0,
+        taxability: 'taxable'
+      }
+    }
+  end
+
+  def stub_chargebee_common_requests(account_id)
+    chargebee_update = ChargeBee::Result.new(stub_update_params(account_id))
+    ChargeBee::Subscription.stubs(:update).returns(chargebee_update)
+    chargebee_estimate = ChargeBee::Result.new(stub_estimate_params)
+    ChargeBee::Estimate.stubs(:update_subscription).returns(chargebee_estimate)
+    chargebee_coupon = ChargeBee::Result.new(stub_chargebee_coupon)
+    ChargeBee::Coupon.stubs(:retrieve).returns(chargebee_coupon)
+    chargebee_plan = ChargeBee::Result.new(stub_chargebee_plan)
+    ChargeBee::Plan.stubs(:retrieve).returns(chargebee_plan)
+    ChargeBee::Subscription.stubs(:retrieve).returns(chargebee_update)
+  end
+
+  def unstub_chargebee_common_requests
+    ChargeBee::Subscription.unstub(:update)
+    ChargeBee::Estimate.unstub(:update_subscription)
+    ChargeBee::Subscription.unstub(:retrieve)
+    ChargeBee::Plan.unstub(:retrieve)
+    ChargeBee::Coupon.unstub(:retrieve)
+  end
+
+  def stub_chargebee_create_subscription(account_id)
+    chargebee_update = ChargeBee::Result.new(stub_update_params(account_id))
+    ChargeBee::Subscription.stubs(:create).returns(chargebee_update)
+  end
+
+  def unstub_chargebee_create_subscription
+    ChargeBee::Subscription.unstub(:create)
+  end
+
+  def stub_chargebee_update_customer
+    chargebee_update_customer = ChargeBee::Result.new(stub_customer_update_hash)
+    ChargeBee::Customer.stubs(:update).returns(chargebee_update_customer)
+  end
+
+  def unstub_chargebee_update_customer
+    ChargeBee::Customer.unstub(:update)
+  end
+
+  def stub_estimate_create_subscription
+    chargebee_estimate = ChargeBee::Result.new(stub_estimate_params)
+    ChargeBee::Estimate.stubs(:create_subscription).returns(chargebee_estimate)
+  end
+
+  def unstub_estimate_create_subscription
+    ChargeBee::Estimate.unstub(:create_subscription)
+  end
+
+  def stub_chargebee_addon
+    chargebee_addon = ChargeBee::Result.new(stub_addon_params_hash)
+    ChargeBee::Addon.stubs(:retrieve).returns(chargebee_addon)
+  end
+
+  def unstub_chargebee_addon
+    ChargeBee::Addon.unstub(:retrieve)
+  end
+
+  def stub_chargebee_update_payment
+    chargebee_update_hosted_page = ChargeBee::Result.new(update_hosted_page_params_hash)
+    ChargeBee::HostedPage.stubs(:update_payment_method).returns(chargebee_update_hosted_page)
+  end
+
+  def unstub_chargebee_update_payment
+    ChargeBee::HostedPage.unstub(:update_payment_method)
+  end
+
+  def stub_chargebee_cancel_subscription(account_id)
+    chargebee_cancel = ChargeBee::Result.new(stub_cancel_params(account_id))
+    ChargeBee::Subscription.stubs(:cancel).returns(chargebee_cancel)
+    # @account.make_current
+    chargebee_reactivate = ChargeBee::Result.new(stubs_reactivate_params(account_id))
+    ChargeBee::Subscription.stubs(:reactivate).returns(chargebee_reactivate)
+  end
+
+  def unstub_chargebee_cancel_subscription
+    ChargeBee::Subscription.unstub(:cancel)
+    ChargeBee::Subscription.unstub(:reactivate)
+    Subscription.any_instance.unstub(:active?)
+  end
 end
