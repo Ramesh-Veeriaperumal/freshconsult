@@ -397,10 +397,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/sidekiq_sober.git
-  revision: 7af845b1de453d636aed6cf8af3e3f9cca1d32f9
-  tag: v1.0.0
+  revision: 785607f9014f0a34515aa3dd5eeb4089aa6688ca
+  tag: v1.1.0
   specs:
-    sidekiq_sober (1.0.0)
+    sidekiq_sober (1.1.0)
       sidekiq (>= 3.5)
 
 GIT
