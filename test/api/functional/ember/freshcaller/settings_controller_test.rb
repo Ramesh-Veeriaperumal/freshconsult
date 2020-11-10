@@ -26,6 +26,7 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
 
   def test_fetch_settings_with_freshcaller_account
     Account.current.add_feature(:freshcaller)
+    Account.current.add_feature(:freshcaller_widget)
     # @controller.stubs(:requires_feature).with(:freshcaller).returns(true)
     # As all the accounts are moved to falcon, freshcaller & freshcaller widget is enabled to accounts during signup.
     # account/callbacks.rb:499
@@ -37,6 +38,7 @@ class Ember::Freshcaller::SettingsControllerTest < ActionController::TestCase
   ensure
     delete_freshcaller_account
     Account.current.revoke_feature(:freshcaller)
+    Account.current.revoke_feature(:freshcaller_widget)
   end
 
   def test_fetch_settings_with_freshcaller_enabled_agent

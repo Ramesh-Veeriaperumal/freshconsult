@@ -401,6 +401,8 @@ module TicketConstants
 
   LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
 
+  CC_EMAIL_FIELDS = [:cc_emails, :fwd_emails].freeze
+
   RR_ACTIVE_ATTRIBUTES = [:deleted, :spam, :status]
 
   DATE_TIME_FIELD = 'date_time'.freeze

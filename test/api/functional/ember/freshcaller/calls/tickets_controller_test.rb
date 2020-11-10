@@ -52,6 +52,8 @@ class Ember::Freshcaller::Calls::TicketsControllerTest < ActionController::TestC
 
   def test_show_with_valid_fc_call_id_and_with_associated_ticket
     Account.stubs(:current).returns(Account.first)
+    initial_crs = CustomRequestStore.read(:private_api_request)
+    CustomRequestStore.store[:private_api_request] = true
     fc_call_id = Faker::Number.number(3).to_i
     fc_call = Account.current.freshcaller_calls.new(fc_call_id: fc_call_id)
     fc_call.save!
@@ -62,6 +64,7 @@ class Ember::Freshcaller::Calls::TicketsControllerTest < ActionController::TestC
     assert_response 200
     match_json(ticket_show_pattern(ticket.reload))
   ensure
+    CustomRequestStore.store[:private_api_request] = initial_crs
     ticket.destroy
     fc_call.destroy
     Account.unstub(:current)
