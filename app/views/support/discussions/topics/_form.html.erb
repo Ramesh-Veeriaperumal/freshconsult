@@ -62,13 +62,21 @@
 		</div>
 	</div>
 	<%end%>
-	<% if @topic.new_record? && !current_account.features_included?(:forum_captcha_disable)%>
+
+	<% if @topic.new_record? && current_account.launched?(:still_enable_captcha) && !current_account.forum_captcha_disable_enabled? %>
 		<div class="control-group"> 
 	    	<div class="controls recaptcha-control">
-	    		<%= recaptcha_tags :display => { :theme => "white" } %>
+	    		<iframe 
+	              src="/support/recaptcha#<%= ENV["RECAPTCHA_SITE_KEY"] %>"
+	              class="recaptcha-frame"
+	              id="recaptcha-frame"
+	              height="100px"
+	              width="320px">
+	            </iframe>
 	    	</div>
 	  	</div>
   	<% end %>
+	
 	<div class="form-actions">
 		<input type="submit" class="btn btn-primary" value=<%= t('save') %> />
 		<a href="javascript:history.back()" class="btn"><%= t('cancel') %></a>

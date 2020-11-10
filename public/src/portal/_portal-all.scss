@@ -33,9 +33,11 @@
 
 //Avatar related styles
 @import "../avatar";
+@import "../recaptcha_hackz.scss";
 
 /*for multifile template*/
 @import "lib/multifile-attachments";
 
 /* For encrypted fields */
 @import "hipaa-encryption"
+

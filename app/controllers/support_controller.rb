@@ -7,7 +7,7 @@ class SupportController < ApplicationController
   before_filter :strip_url_locale
   before_filter :check_sitemap_feature, only: [:sitemap]
   before_filter :set_language
-  before_filter :redirect_to_locale, :except => [:sitemap, :robots]
+  before_filter :redirect_to_locale, :except => [:sitemap, :robots, :recaptcha]
   around_filter :run_on_slave, only: [:index, :show, :filter],
                                if: proc { |controller|
                                      path = controller.controller_path
@@ -53,6 +53,10 @@ class SupportController < ApplicationController
                           :label => t('portal.preview.view_on_helpdesk'),
                           :icon => "preview" } if privilege?(priv)
     @agent_actions
+  end
+
+  def recaptcha
+    render :layout => false
   end
 
   def robots

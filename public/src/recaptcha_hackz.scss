@@ -1,0 +1,8 @@
+// recaptcha hackz
+.recaptcha-frame {
+  border: none;
+  overflow: auto;
+  // for frame resizable max limits
+  max-width: 350px;
+  max-height: 500px;
+}

@@ -20,3 +20,4 @@
 //= require portal/portal-compatibility.js
 //= require util-dates.js
 //= require frameworks/plugins/layzr.js
+//= require recaptcha_hackz.js

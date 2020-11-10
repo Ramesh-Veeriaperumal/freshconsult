@@ -36,7 +36,13 @@
   <% if show_captcha?(current_account.captcha_enabled?) %>
     <div class="control-group">
         <div class="controls recaptcha-control">
-          <%= recaptcha_tags :display => { :theme => "white" } %>
+          <iframe 
+            src="/support/recaptcha#<%= ENV["RECAPTCHA_SITE_KEY"] %>"
+            class="recaptcha-frame"
+            id="recaptcha-frame"
+            height="100px"
+            width="320px">
+          </iframe>
         </div>
     </div>
   <% end %>

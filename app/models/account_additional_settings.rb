@@ -266,7 +266,8 @@ class AccountAdditionalSettings < ActiveRecord::Base
   end
 
   def feedback_widget_captcha_allowed?
-    !additional_settings[:feedback_widget].try(:[], 'disable_captcha')
+    # [FD-68175] overriding settings to temporarily disable captcha with LP
+    Account.current.launched?(:still_enable_captcha) && !additional_settings[:feedback_widget].try(:[], 'disable_captcha')
   end
 
   def add_feedback_widget_settings(feedback_widget_hash)

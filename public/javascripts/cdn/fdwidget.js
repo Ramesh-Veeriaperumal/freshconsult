@@ -17,3 +17,4 @@
 //= require frameworks/plugins/jquery.form.js
 //= require feedback_widget_form.js
 //= require security.js
+//= require recaptcha_hackz.js
