@@ -22,6 +22,7 @@ module Ember
         if current_user.active_freshid_agent?
           current_user.reset_persistence_token!
         end
+        response.headers['Mobile-Auth-Token'] = @item.mobile_auth_token if mobile_app_request?
         head 204
       rescue StandardError
         render_errors(@item.errors) if @item.errors.present?

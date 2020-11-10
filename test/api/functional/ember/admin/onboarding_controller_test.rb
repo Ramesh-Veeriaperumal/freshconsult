@@ -205,6 +205,15 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     User.any_instance.unstub(:active_freshid_agent?)
   end
 
+  def test_update_activation_email_with_mobile_request
+    User.any_instance.stubs(:mobile_auth_token).returns('test_auth_token')
+    new_email = Faker::Internet.email
+    @request.user_agent = 'Freshdesk_Native_Android'
+    put :update_activation_email, construct_params(version: 'private', new_email: new_email)
+    assert_response 204
+    assert_equal response.headers['Mobile-Auth-Token'], 'test_auth_token'
+  end
+
   def test_update_activation_email_with_invalid_email
     put :update_activation_email, construct_params(version: 'private', new_email: Faker::Lorem.word)
     assert_response 400

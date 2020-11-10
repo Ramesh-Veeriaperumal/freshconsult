@@ -188,6 +188,10 @@ class ApiApplicationController < MetalApiController
     Thread.current[:app_integration].present?
   end
 
+  def mobile_app_request?
+    request.user_agent.present? && (request.user_agent[/#{AppConfig['app_name']}_Native_Android/] || request.user_agent[/#{AppConfig['app_name']}_Native_iOS/])
+  end
+
   protected
 
     def requires_feature(*f) # Should be from cache. Need to revisit.
