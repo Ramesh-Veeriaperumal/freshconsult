@@ -294,6 +294,8 @@ class Support::Discussions::TopicsController < SupportController
     end
 
     def cleared_captcha
+      return true unless current_account.launched?(:still_enable_captcha)
+      
       current_account.features_included?(:forum_captcha_disable) || 
         verify_recaptcha(model: @topic,
                          message: t('captcha_verify_message'),

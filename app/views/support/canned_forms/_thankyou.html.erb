@@ -5,7 +5,7 @@
     <div class="agent_avatar_thankyou">
       <%= @ticket ? profile_image(@ticket.responder) : preview_profile_image%>
     </div>
-    <div class="thank-you-holder"><%= t('support.canned_form.thank_you_text')  %> <img src='/images/emojis/laughing.png' alt=':D'></div>
+    <div class="thank-you-holder"><%= t('support.canned_form.thank_you_text')  %></div>
     <div class="thankyou-text"><%=@form.thankyou_text%></div>
   </div>
 </body>

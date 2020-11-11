@@ -54,6 +54,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :check_parallel_transaction, if: :prevent_parallel_update_enabled?
 
+  before_save :check_cc_email_parallel_transaction, if: -> { Account.current.prevent_cc_email_parallel_update_enabled? }
+
   before_save :nullify_group_id
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
@@ -1037,6 +1039,19 @@ private
     end
   end
 
+  def check_cc_email_parallel_transaction
+    live_ticket = account.tickets.find_by_id(id)
+    if live_ticket.present? && live_ticket.cc_email_hash.present?
+      CC_EMAIL_FIELDS.each do |type|
+        self.cc_email = Helpdesk::Ticket.default_cc_hash if self.cc_email_hash.nil?
+        next if self.cc_email_hash[type].sort == live_ticket.cc_email_hash[type].sort
+
+        self.cc_email[type] |= live_ticket.cc_email_hash[type]
+        Rails.logger.debug "Resetting #{type} in check_cc_email_parallel_transaction"
+      end
+    end
+  end
+
   def trigger_observer_events
     filter_observer_events(true)
   end
@@ -1123,8 +1138,7 @@ private
   end
 
   def update_spam_detection_service
-    if (Account.current.proactive_spam_detection_enabled? && @model_changes.include?(:spam) &&
-     self.source.eql?(Helpdesk::Source::EMAIL))
+    if @model_changes.include?(:spam) && source.eql?(Helpdesk::Source::EMAIL)
       type = @model_changes[:spam][1] ? :spam : :ham
       SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id,
         :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})

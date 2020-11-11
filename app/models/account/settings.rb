@@ -2,15 +2,21 @@
 
 class Account < ActiveRecord::Base
 
+  PORTAL_CAPTCHA_FEATURES = [:captcha, :feedback_widget_captcha]
+
   AccountSettings::SettingsConfig.each do |setting, config|
     define_method "#{setting}_enabled?" do
       dependencies_enabled?(setting.to_sym) && has_feature?(setting.to_sym)
     end
   end
 
-  def captcha_enabled?
-    launched?(:still_enable_captcha)
+  # [FD-68175] overriding features to temporarily disable captcha with LP
+  PORTAL_CAPTCHA_FEATURES.each do |feature|
+    define_method "#{feature.to_s}_enabled?" do
+      launched?(:still_enable_captcha) && has_feature?(feature.to_sym)
+    end
   end
+
 
   # Redis feature check can be removed once Redis key cleanup is done
   def compose_email_enabled?

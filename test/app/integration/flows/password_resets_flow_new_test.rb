@@ -10,6 +10,7 @@ class PasswordResetsFlowNewTest < ActionDispatch::IntegrationTest
 
   def setup
     super
+    reset_request_headers
   end
 
   def teardown

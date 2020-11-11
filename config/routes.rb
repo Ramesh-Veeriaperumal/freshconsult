@@ -188,6 +188,7 @@ Helpkit::Application.routes.draw do
   get '/a/', to: 'home#index_html'
   match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
   match "/robots" => "support#robots", :format => "text", :as => :robots, :via => :get
+  match "support/recaptcha" => "support#recaptcha", :as => :recaptcha, :via => :get
 
   match '/visitor/load/:id.:format' => 'chats#load', :via => :get
   match '/images/helpdesk/attachments/:id(/:style(.:format))' => 'helpdesk/attachments#show', :via => :get

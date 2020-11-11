@@ -207,7 +207,7 @@ class Ember::AgentsControllerTest < ActionController::TestCase
         login_as(agent)
         get :index, controller_params(version: 'private', type: 'field_agent', include: 'dummy')
         assert_response 400
-        match_json([bad_request_error_pattern('include', :not_included, list: 'user_info')])
+        match_json([bad_request_error_pattern('include', :not_included, list: 'roles, user_info')])
       ensure
         role.try(:destroy)
         agent.try(:destroy)
@@ -962,5 +962,27 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     assert output.select { |s| s['id'] == freshdesk_user.id }.first['day_pass_used'].equal?(1)
   ensure
     freshdesk_user.destroy
+  end
+
+  def test_agent_index_with_include_roles_filter
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    get :index, controller_params(version: 'private', include: 'roles')
+    assert_response 200
+    agents = @account.agents.order('users.name').limit(30)
+    pattern = agents.map { |agent| private_api_with_roles_pattern(agent) }
+    match_json(pattern.ordered)
+  end
+
+  def test_agent_index_with_include_roles_and_user_info_filter
+    3.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    get :index, controller_params(version: 'private', include: 'roles,user_info')
+    assert_response 200
+    agents = @account.agents.order('users.name').limit(30)
+    pattern = agents.map { |agent| private_api_with_roles_pattern(agent) }
+    match_json(pattern.ordered)
   end
 end

@@ -25,6 +25,7 @@ module AgentConstants
   AGENT_CHANNELS = { ticket_assignment: 'ticket_assignment', chat: 'live_chat' }.freeze
   ALLOWED_ONLY_PARAMS = %w[available available_count with_privilege availability].freeze
   ALLOWED_INCLUDE_PARAMS = %w[user_info].freeze
+  PRIVATE_ALLOWED_INCLUDE_PARAMS = %w[roles].freeze | ALLOWED_INCLUDE_PARAMS
   FIELD_MAPPINGS = { :"user.primary_email.email" => :email, :"user.base" => :email }.freeze
   IGNORE_PARAMS = %w[shortcuts_enabled ticket_assignment].freeze
   DELEGATOR_CLASS = 'AgentDelegator'.freeze

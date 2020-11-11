@@ -145,17 +145,23 @@ class AccountAdminsControllerTest < ActionController::TestCase
   end
 
   def test_feedback_widget_set_captcha_disabled
+    Account.current.launch(:still_enable_captcha)
     post :preferences=, construct_params(feedback_widget: { disable_captcha: true })
     assert_response 204
     @account.reload
     refute @account.feedback_widget_captcha_allowed?
+  ensure
+    Account.current.rollback(:still_enable_captcha)
   end
 
   def test_feedback_widget_set_captcha_enabled
+    Account.current.launch(:still_enable_captcha)
     put :preferences=, construct_params(feedback_widget: { disable_captcha: false })
     assert_response 204
     @account.reload
     assert @account.feedback_widget_captcha_allowed?
+  ensure
+    Account.current.rollback(:still_enable_captcha)
   end
 
   def test_feedback_widget_set_captcha_wrong_params

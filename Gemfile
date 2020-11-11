@@ -229,7 +229,7 @@ gem "fluffy", git: 'git@github.com:freshdesk/api-gateway.git', tag: 'v1.0.2', gl
 gem 'central-publisher', git: 'git@github.com:freshdesk/central-publisher.git', tag: 'v2.0.22'
 gem 'formserv-gem', git: 'git@github.com:freshdesk/formserv-gem.git', tag: 'v0.11.3'
 gem 'optar', git: 'git@github.com:freshdesk/optar.git', tag: 'v1.1.4'
-gem 'sidekiq_sober', git: 'git@github.com:freshdesk/sidekiq_sober.git', tag: 'v1.0.0'
+gem 'sidekiq_sober', git: 'git@github.com:freshdesk/sidekiq_sober.git', tag: 'v1.1.0'
 
 # Vendor gems
 gem 'add_pod_support', path: '#{File.expand_path(__FILE__)}/../vendor/gems/add_pod_support-0.0.1'

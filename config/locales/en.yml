@@ -853,7 +853,7 @@ en:
       next: Next
       form_submit: Submit
       thank_you_text: Thank you
-      hey: Hey
+      hey: Hello
       move_to_form_field: or press enter
   gamification:
     levels:

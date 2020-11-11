@@ -10,13 +10,6 @@ class AccountsControllerTest < ActionController::TestCase
     assert_account_created_with_given_email(email)
   end
 
-  def test_email_signup_with_spam_detection_feature
-    email = Faker::Internet.email
-    post :email_signup, email_signup_params(email: email)
-    assert_response 200
-    assert_account_created_with_feature(:proactive_spam_detection)
-  end
-
   def test_email_signup_with_same_email_id_and_without_force
     email = Faker::Internet.email
     post :email_signup, email_signup_params({:email => email})

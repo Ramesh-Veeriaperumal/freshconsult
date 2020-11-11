@@ -1,4 +1,5 @@
 class ApiSlaPoliciesController < ApiApplicationController
+  before_filter(except: [:index, :show]) { |c| c.requires_this_feature :sla_management_v2 }
   decorate_views(decorate_objects: [:index], decorate_object: [:create, :update])
 
   def index

@@ -81,7 +81,8 @@ class MailerCallbacksTest < ActiveSupport::TestCase
     monitor = topic.monitorships.first
 
     I18n.locale = 'en'
-    Account.any_instance.stubs(:language).returns('en')
+    Account.current.stubs(:language).returns('en')
+    Portal.current.stubs(:language).returns('en') if Portal.current
     assert_equal nil, recipient.language
     mail_message = TopicMailer.send_email(:stamp_change_email, recipient, recipient.email, topic, topic.user, topic.stamp, topic.type_name, monitor.portal, *monitor.sender_and_host)
     assert_equal recipient.email, mail_message.to.first
@@ -91,7 +92,8 @@ class MailerCallbacksTest < ActiveSupport::TestCase
 
 
     I18n.locale = 'de'
-    Account.any_instance.stubs(:language).returns('de')
+    Account.current.stubs(:language).returns('de')
+    Portal.current.stubs(:language).returns('de') if Portal.current
     assert_equal nil, recipient.language
     mail_message = TopicMailer.send_email(:stamp_change_email, recipient, recipient.email, topic, topic.user, topic.stamp, topic.type_name, monitor.portal, *monitor.sender_and_host)
     assert_equal recipient.email, mail_message.to.first
@@ -100,7 +102,8 @@ class MailerCallbacksTest < ActiveSupport::TestCase
     assert_equal :de, I18n.locale
   ensure
     recipient.unstub(:language)
-    Account.any_instance.unstub(:language)
+    Account.current.unstub(:language)
+    Portal.current.unstub(:language) if Portal.current
     I18n.locale = 'en'
   end
 
@@ -129,6 +132,7 @@ class MailerCallbacksTest < ActiveSupport::TestCase
 
   def test_send_email_to_group
     Account.current.stubs(:language).returns('de')
+    Portal.current.stubs(:language).returns('de') if Portal.current
     recipient1 = add_agent(@account)
     recipient2 = 'test@email.random'
     to_emails = [recipient1.email, recipient2]
@@ -137,6 +141,7 @@ class MailerCallbacksTest < ActiveSupport::TestCase
     assert_equal mail_message['en'].first, recipient1.email
   ensure
     Account.current.unstub(:language)
+    Portal.current.unstub(:language) if Portal.current
     recipient1.destroy
   end
 

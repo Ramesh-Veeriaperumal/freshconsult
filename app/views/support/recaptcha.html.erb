@@ -1,0 +1,103 @@
+<%# HACK:
+  Loading recaptcha in iframe to avoid prototype conflict with google recaptcha JS
+  * This iframe sends message to parent via messagechannel broker ports for the following,
+      * To send token for captcha verification
+      * Observe's the captcha bubble dom and sends message to parent for resizing
+      * And also on other states expiry, error
+
+  https://developers.google.com/recaptcha/docs/display#render_param
+%>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+
+<body>
+  <%# recaptcha dom %>
+  <div id="recaptcha"></div>
+
+  <script src='https://www.google.com/recaptcha/api.js'></script>
+  <script type="text/javascript" id="executable-script">
+    var parentPort = null;
+
+    // get port from parent
+    window.addEventListener('message', initPort);
+
+    function initPort(e) {
+      if (e.origin === window.location.origin) { // to prevent messages from google captcha
+        parentPort = e.ports[0]
+      }
+    }
+
+    window.onload = function () {
+      // get site key
+      var $element = document.getElementById('recaptcha')
+      var sitekey = window.location.hash.replace('#', '')
+
+      // render captcha
+      grecaptcha.render($element, {
+        'sitekey': sitekey,
+        'callback': function (response) {
+          parentPort.postMessage({
+            type: 'token',
+            token: response
+          })
+        },
+        'expired-callback': function () {
+          createObsever()
+        },
+        'error-callback': function () {
+          parentPort.postMessage({
+            type: 'minimize',
+          })
+          createObsever()
+        },
+        'theme': 'light'
+      })
+
+      // observer to resize the iframe
+      function createObserver() {
+        if ("MutationObserver" in window) {
+          function addObserver() {
+            window.setTimeout(function () {
+              var $bubbleParent = document.getElementById("executable-script");
+              var $captchaBubble = $bubbleParent.nextElementSibling
+              if (!$captchaBubble) { // recurse till we get the bubble element
+                addObserver()
+                return true
+              }
+
+              var observerCallback = function () {
+                if ($captchaBubble.style.visibility === "visible") {
+                  parentPort.postMessage({
+                    type: 'expand'
+                  })
+                } else if ($captchaBubble.style.visibility === "hidden") {
+                  parentPort.postMessage({
+                    type: 'minimize'
+                  })
+                }
+              }
+
+              var observer = new MutationObserver(observerCallback);
+              observer.observe($captchaBubble, {
+                attributes: true
+              });
+
+            }, 300)
+          }
+
+          addObserver()
+        }
+      }
+
+      createObserver()
+    }
+  </script>
+</body>
+
+</html>

@@ -92,7 +92,13 @@
   <div class="control-group">
     <div class="controls recaptcha-control">
       <div id="captcha_wrap">
-        <%= recaptcha_tags :display => { :theme => "white" , :size => "compact"} %>
+         <iframe 
+            src="/support/recaptcha#<%= ENV["RECAPTCHA_SITE_KEY"] %>"
+            class="recaptcha-frame"
+            id="recaptcha-frame"
+            height="100px"
+            width="320px">
+          </iframe>
         <div class="recaptcha-error-message hide" id="helpdesk_ticket_captcha-error">
           <%= t("recaptcha_require_message") %>
         </div>

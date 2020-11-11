@@ -782,15 +782,13 @@ module Helpdesk
 						Rails.logger.info "Skip notification set and ticket marked as spam due to CUSTOM_BOT_ATTACK"
 					end
 
-					if (antispam_enabled?(ticket.account))
-						begin
-							ticket.spam_score = spam_data['score']
-							ticket.spam = true if spam_data['is_spam'] == true
-							Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{spam_data['rules'].inspect}"
-						rescue => e
-							Rails.logger.info e.message
-						end
-					end
+          begin
+					  ticket.spam_score = spam_data['score']
+						ticket.spam = true if spam_data['is_spam'] == true
+						Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{spam_data['rules'].inspect}"
+          rescue => e
+					  Rails.logger.info e.message
+          end
 				end
 				begin
 					if Account.current.email_spoof_check_feature?

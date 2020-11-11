@@ -447,8 +447,9 @@ module Ember
 
     def test_dummy_id_generated_with_undo_send
       @account.add_feature(:undo_send)
+      User.current.toggle_undo_send(false)
       user = other_user
-      user.preferences[:agent_preferences][:undo_send] = true
+      user.toggle_undo_send(true)
       params_hash = reply_note_params_hash
       old_count = Helpdesk::Note.count
       params_hash[:user_id] = user.id
@@ -456,7 +457,8 @@ module Ember
       new_count = Helpdesk::Note.count
       assert_response 201
       assert_equal old_count + 1, new_count
-      user.preferences[:agent_preferences][:undo_send] = false
+    ensure
+      user.toggle_undo_send(false)
       @account.revoke_feature(:undo_send)
     end
 

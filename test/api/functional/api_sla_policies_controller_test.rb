@@ -12,6 +12,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     @group = nil
     @account.stubs(:segments_enabled?).returns(true)
     @account.stubs(:sla_management_enabled?).returns(true)
+    @account.add_feature(:sla_management_v2)
   end
 
   after(:all) do
@@ -25,6 +26,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     @account.unstub(:segments_enabled?)
     @account.unstub(:sla_management_enabled?)
     Language.unstub(:current)
+    @account.revoke_feature(:sla_management_v2)
   end
 
   def wrap_cname(params)
@@ -1594,18 +1596,6 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
 # ********************************************************* sources Validation for create
 
-  def test_create_source_sla_policies
-    source_list = Hash[TicketConstants.source_names]
-    sla_target = create_sla_target
-    source = 3
-    params_hash = {name: Faker::Lorem.word, applicable_to: { sources: [source] },sla_target:sla_target}
-    post :create, construct_params(params_hash)
-    assert_response 201
-    response = parse_response @response.body
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
-    Helpdesk::SlaPolicy.last.delete
-  end
-
   def test_create_with_invalid_source
     post :create, construct_params({ name: Faker::Lorem.word , applicable_to: { sources: [300] }})
     assert_response 400
@@ -2417,20 +2407,6 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:next_response_sla_enabled?)
   end
 
-  def test_create_escalation_next_response_empty
-    @account.stubs(:next_response_sla_enabled?).returns(true)
-    get_agents
-    params_hash = create_sla_params_hash_with_company
-    params_hash = params_hash.merge({ "escalation": { "next_response": {} } })
-    post :create, construct_params(params_hash)
-    assert_response 201
-    sla_policy = parse_response @response.body
-    assert_equal sla_policy.size, 11
-    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
-    Helpdesk::SlaPolicy.last.delete
-    Account.any_instance.unstub(:next_response_sla_enabled?)
-  end
-
   def test_create_escalation_reminder_next_response_without_escalation_time
     @account.stubs(:next_response_sla_enabled?).returns(true)
     get_agents
@@ -2788,5 +2764,37 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_response 400
     response = parse_response @response.body
     match_json([bad_request_error_pattern('sources', :invalid_list, list: '125')])
+  end
+
+  def test_index_load_sla_policies_without_feature
+    @account.revoke_feature(:sla_management_v2)
+    get :index, controller_params
+    pattern = []
+    Account.current.sla_policies.each do |sp|
+      pattern << sla_policy_pattern(sp)
+    end
+    assert_response 200
+    match_json(pattern.ordered!)
+  ensure
+    @account.add_feature(:sla_management_v2)
+  end
+
+  def test_create_sla_policy_without_feature
+    @account.revoke_feature(:sla_management_v2)
+    params_hash = create_sla_params_hash_with_company
+    post :create, construct_params(params_hash)
+    assert_response 403
+  ensure
+    @account.add_feature(:sla_management_v2)
+  end
+
+  def test_update_company_sla_policies_without_feature
+    @account.revoke_feature(:sla_management_v2)
+    @sla_policy = quick_create_sla_policy
+    company = create_company
+    put :update, construct_params({ id: @sla_policy.id }, applicable_to: { company_ids: [company.id] })
+    assert_response 403
+  ensure
+    @account.add_feature(:sla_management_v2)
   end
 end

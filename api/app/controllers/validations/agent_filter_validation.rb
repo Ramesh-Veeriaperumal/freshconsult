@@ -14,7 +14,8 @@ class AgentFilterValidation < FilterValidation
   validates :type, allow_nil: false, custom_inclusion: { in: proc { |x| x.account_agent_types }, data_type: { rules: String } }
   validates :group_id, allow_nil: false, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, unless: :only_availability?
   validates :group_id, allow_nil: false, data_type: { rules: String }, if: :only_availability?
-  validates :include, custom_inclusion: { in: AgentConstants::ALLOWED_INCLUDE_PARAMS }, data_type: { rules: String }
+  validates :include, data_type: { rules: String }
+  validate :validate_include, if: -> { errors[:include].blank? && include }
   validates :order_by, custom_inclusion: { in: AgentConstants::AGENTS_ORDER_BY }
   validates :order_type, custom_inclusion: { in: AgentConstants::AGENTS_ORDER_TYPE }
   validate :validate_privilege
@@ -81,5 +82,17 @@ class AgentFilterValidation < FilterValidation
       feature: feature,
       code: :inaccessible_field
     }
+  end
+
+  def validate_include
+    include_array = include.split(',').map!(&:strip)
+    if include_array.blank? || (include_array - allowed_include_params).present?
+      errors[:include] << :not_included
+      (self.error_options ||= {}).merge!(include: { list: allowed_include_params.join(', ') })
+    end
+  end
+
+  def allowed_include_params
+    private_api? ? AgentConstants::PRIVATE_ALLOWED_INCLUDE_PARAMS : AgentConstants::ALLOWED_INCLUDE_PARAMS
   end
 end

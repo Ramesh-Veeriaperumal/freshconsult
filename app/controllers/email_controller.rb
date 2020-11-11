@@ -87,7 +87,7 @@ class EmailController < ApplicationController
       Sharding.run_on_slave do
         account = Account.find_by_id(account_id).make_current
         subscription_type = account.email_subscription_state
-        render :json => { :status => 200, :created_at => account.created_at, :account_domain => account.full_domain, :account_verified => account.verified?, :subscription_type => subscription_type, :mrr => account.subscription.cmrr, :signup_score => account.ehawk_reputation_score, :antispam_enabled => (antispam_enabled?(account))}
+        render :json => { :status => 200, :created_at => account.created_at, :account_domain => account.full_domain, :account_verified => account.verified?, :subscription_type => subscription_type, :mrr => account.subscription.cmrr, :signup_score => account.ehawk_reputation_score, :antispam_enabled => true }
       end
     end
   rescue => e
