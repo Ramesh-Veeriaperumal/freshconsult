@@ -237,3 +237,7 @@ settings:
     default: true
     internal: false
     feature_dependency: :basic_settings_feature
+  :archive_tickets_api:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature

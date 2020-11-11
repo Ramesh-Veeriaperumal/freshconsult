@@ -472,6 +472,5 @@
   :assets: false
   :assets_toggle: false
   :forums_agent_portal: false
-  :archive_tickets_api: false
   :solutions_agent_portal: false
   :whatsapp_channel: false

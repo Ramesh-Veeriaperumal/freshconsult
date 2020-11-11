@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
     :bot_email_channel, :description_by_default, :bot_chat_history,
     :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update, :light_agents, :collaborator_privileges,
-    :native_apps, :archive_tickets_api, :bot_agent_response,
+    :native_apps, :bot_agent_response,
     :id_for_choices_write, :fluffy, :fluffy_email, :fluffy_email_signup, :session_logs, :nested_field_revamp,
     :ticket_field_limit_increase, :join_ticket_field_data,
     :disable_simple_outreach, :supervisor_text_field, :disable_mint_analytics,
@@ -57,7 +57,7 @@ class Account < ActiveRecord::Base
   ].concat(FRONTEND_LP_FEATURES + REDIRECT_OLD_UI_PATH_FEATURES).uniq
 
   BITMAP_FEATURES = [
-    :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop, :archive_tickets_api,
+    :custom_survey, :requester_widget, :split_tickets, :add_watcher, :traffic_cop,
     :custom_ticket_views, :supervisor, :archive_tickets, :sitemap,
     :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
     :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
@@ -95,7 +95,6 @@ class Account < ActiveRecord::Base
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :archive_tickets_api,
     :falcon_portal_theme
   ].freeze
 
@@ -384,10 +383,6 @@ class Account < ActiveRecord::Base
   def launched_central_publish_features
     # intersection of launched features and central publish lp features
     all_launched_features & CENTRAL_PUBLISH_LAUNCHPARTY_FEATURES.keys
-  end
-
-  def archive_tickets_api_enabled?
-    launched?(:archive_tickets_api)
   end
 
   def ticket_properties_suggester_enabled?
