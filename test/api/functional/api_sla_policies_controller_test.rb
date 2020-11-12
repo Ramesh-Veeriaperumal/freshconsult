@@ -1615,6 +1615,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     ticket_type = "Question"
     params_hash = {name: Faker::Lorem.word ,applicable_to: { ticket_types: ["#{ticket_type}"] },sla_target:create_sla_target}
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     response = parse_response @response.body
     match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
@@ -2315,6 +2316,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       }
     })
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
