@@ -7,6 +7,7 @@ module Ember::Search
     include UsersTestHelper
     include CompaniesTestHelper
     include SearchTestHelper
+    include ::Freshcaller::TestHelper
 
     def test_results_without_user_access
       @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
@@ -77,13 +78,13 @@ module Ember::Search
         User.update(contact.id, phone: '(044) 1234  567', mobile: '+91 (1234) 567 890')
         add_avatar_to_user(contact)
         stub_private_search_response([contact]) do
-          post :results, construct_params(version: 'private', context: 'freshcaller', term: contact.phone, limit: 3)
+          post :results, construct_params(version: 'private', context: 'freshcaller', term: '0441234567', limit: 3)
         end
         assert_response 200
         match_json([private_search_contact_pattern(contact)])
 
         stub_private_search_response([contact]) do
-          post :results, construct_params(version: 'private', context: 'freshcaller', term: contact.mobile, limit: 3)
+          post :results, construct_params(version: 'private', context: 'freshcaller', term: '+911234567890', limit: 3)
         end
         assert_response 200
         match_json([private_search_contact_pattern(contact)])
@@ -104,7 +105,7 @@ module Ember::Search
           sleep 1 # delay introduced so that contacts are not updated at the same time. Fractional seconds are ignored in tests.
         end
         stub_private_search_response(contacts.reverse) do
-          post :results, construct_params(version: 'private', context: 'freshcaller', term: contacts[0].phone, limit: 3)
+          post :results, construct_params(version: 'private', context: 'freshcaller', term: '0441234567', limit: 3)
         end
         assert_response 200
         pattern = []
@@ -113,6 +114,68 @@ module Ember::Search
         end
         match_json(pattern.ordered!)
       end
+    end
+
+    def test_results_with_freshcaller_context_search_without_country_code_without_enhanced_freshcaller_search_feature
+      Account.any_instance.stubs(:enhanced_freshcaller_search_enabled?).returns(false)
+      enable_multiple_user_companies do
+        companies = [create_company, create_company]
+        companies.each { |company| add_avatar_to_company(company) }
+        contact = create_contact_with_other_companies(@account, companies.map(&:id))
+        User.update(contact.id, mobile: '(1234) 567 890')
+        add_avatar_to_user(contact)
+        stub_private_search_response([]) do
+          post :results, construct_params(version: 'private', context: 'freshcaller', term: '+911234567890', country_code: '+91', limit: 3)
+        end
+        assert_response 200
+        assert JSON.parse(response.body).blank?
+      end
+    ensure
+      Account.any_instance.stubs(:enhanced_freshcaller_search_enabled?).returns(true)
+    end
+
+    def test_results_with_freshcaller_context_search_without_country_code_with_enhanced_freshcaller_search_feature_with_toggle_enabled
+      Account.any_instance.stubs(:enhanced_freshcaller_search_enabled?).returns(true)
+      Freshcaller::Account.any_instance.stubs(:settings).returns(search_without_country_code: true)
+      create_freshcaller_account unless Account.current.freshcaller_account
+      enable_multiple_user_companies do
+        companies = [create_company, create_company]
+        companies.each { |company| add_avatar_to_company(company) }
+        contact = create_contact_with_other_companies(@account, companies.map(&:id))
+        User.update(contact.id, mobile: '(1234) 567 890')
+        add_avatar_to_user(contact)
+        stub_private_search_response([contact]) do
+          post :results, construct_params(version: 'private', context: 'freshcaller', term: '+911234567890', country_code: '+91', limit: 3)
+        end
+        assert_response 200
+        match_json([private_search_contact_pattern(contact)])
+      end
+    ensure
+      delete_freshcaller_account
+      Freshcaller::Account.any_instance.unstub(:settings)
+      Account.any_instance.stubs(:enhanced_freshcaller_search_enabled?).returns(false)
+    end
+
+    def test_results_with_freshcaller_context_search_without_country_code_with_enhanced_freshcaller_search_feature_with_toggle_disabled
+      Account.any_instance.stubs(:enhanced_freshcaller_search_enabled?).returns(true)
+      Freshcaller::Account.any_instance.stubs(:settings).returns(search_without_country_code: false)
+      create_freshcaller_account unless Account.current.freshcaller_account
+      enable_multiple_user_companies do
+        companies = [create_company, create_company]
+        companies.each { |company| add_avatar_to_company(company) }
+        contact = create_contact_with_other_companies(@account, companies.map(&:id))
+        User.update(contact.id, mobile: '(1234) 567 890')
+        add_avatar_to_user(contact)
+        stub_private_search_response([]) do
+          post :results, construct_params(version: 'private', context: 'freshcaller', term: '+911234567890', country_code: '+91', limit: 3)
+        end
+        assert_response 200
+        assert JSON.parse(response.body).blank?
+      end
+    ensure
+      delete_freshcaller_account
+      Freshcaller::Account.any_instance.unstub(:settings)
+      Account.any_instance.stubs(:enhanced_freshcaller_search_enabled?).returns(false)
     end
 
     def test_results_with_filteredContactSearch_context

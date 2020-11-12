@@ -16,6 +16,8 @@ module Ember
           @search_sort = 'updated_at'
           @sort_direction = 'desc'
           @items = esv2_query_results(esv2_contact_merge_models)
+          country_code = params[:country_code]
+          @items = freshcaller_search_without_country_code(country_code) if @items.empty? && country_code && search_without_country_code_enabled?
         when 'filteredContactSearch'
           @klasses = ['User']
           @search_context = :filtered_contact_search
@@ -76,6 +78,15 @@ module Ember
 
         def sanitized_search_term(es_search_term)
           es_search_term.match(/[[:alpha:]]/) ? es_search_term : es_search_term.gsub(/[^\d]/, '')
+        end
+
+        def search_without_country_code_enabled?
+          Account.current.enhanced_freshcaller_search_enabled? && (Account.current.freshcaller_account.settings || {})[:search_without_country_code]
+        end
+
+        def freshcaller_search_without_country_code(country_code)
+          @es_search_term.sub!(country_code.gsub(/[^\d]/, ''), '')
+          esv2_query_results(esv2_contact_merge_models)
         end
     end
   end
