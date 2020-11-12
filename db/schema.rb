@@ -1679,6 +1679,7 @@ ActiveRecord::Schema.define(version: 20200827174934) do
   create_table "forum_moderators", :force => true do |t|
     t.integer "account_id",   :limit => 8
     t.integer "moderator_id", :limit => 8
+    t.integer 'portal_id', :limit => 8
   end
 
   add_index "forum_moderators", ["account_id", "moderator_id"], :name => "index_forum_moderators_on_account_id_and_moderator_id", :unique => true
@@ -3220,12 +3221,15 @@ ActiveRecord::Schema.define(version: 20200827174934) do
     t.text     "preferences"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "solution_category_id", :limit => 8
-    t.integer  "forum_category_id",    :limit => 8
     t.string   "language",                          :default => "en"
     t.boolean  "main_portal",                       :default => false
     t.boolean  "ssl_enabled",                       :default => false
     t.string   "elb_dns_name"
+    t.boolean 'enabled', default: false
+    t.text     'supported_languages'
+    t.text     'ticket_preferences'
+    t.text     'knowledge_base_preferences'
+    t.text     'forum_preferences'
   end
 
   add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"

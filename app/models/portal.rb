@@ -29,7 +29,6 @@ class Portal < ActiveRecord::Base
   before_save :downcase_portal_url
   after_save :update_chat_widget
   after_commit :update_site_language, :publish_account_central_payload, :if => :main_portal_language_changes?
-  before_save :update_portal_forum_categories
   before_save :save_route_info
   after_destroy :destroy_route_info
 
@@ -406,13 +405,6 @@ class Portal < ActiveRecord::Base
             attributes: { language: language }
           )
         end
-      end
-    end
-
-    def update_portal_forum_categories
-      if forum_category_id_changed?
-        portal_forum_categories.first.delete if !portal_forum_categories.empty?
-        portal_forum_categories.build(:forum_category_id => forum_category_id) if forum_category_id?
       end
     end
 
