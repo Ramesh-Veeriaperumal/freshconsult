@@ -10,6 +10,8 @@ module BulkApiJobsHelper
     'PARTIAL' => 2001,
     'FAILED' => 4000
   }.freeze
+  BULK_API_JOB_STATUS_CODE_MAPPING = BULK_API_JOB_STATUSES.invert
+  INTERMEDIATE_STATES = ['QUEUED', 'IN_PROGRESS'].freeze
   BULK_API_ARRAY_KEYS = %w[group_ids role_ids skill_ids attachment_ids].freeze
   BULK_API_INTEGER_KEYS = %w[ticket_scope agent_type agent_level_id folder_id visibility].freeze
 

@@ -1,0 +1,6 @@
+# frozen_string_literal: true
+
+{
+  id: @job['request_id'],
+  status: @job['status']
+}.to_json

@@ -1,1 +1,3 @@
+# frozen_string_literal: true
+
 { job_id: @job_id, href: @job_link }.to_json

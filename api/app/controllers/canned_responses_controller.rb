@@ -21,7 +21,7 @@ class CannedResponsesController < ApiApplicationController
     @job_id = request.uuid
     initiate_bulk_job(CannedResponseConstants::BULK_API_JOBS_CLASS, params[cname][:canned_responses], @job_id, action_name)
     @job_link = current_account.bulk_job_url(@job_id)
-    render('canned_responses/create_multiple', status: 202) if @errors.blank?
+    render('bulk_api_jobs/response', status: 202) if @errors.blank?
   end
 
   def folder_responses

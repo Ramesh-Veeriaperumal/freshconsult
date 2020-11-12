@@ -5,6 +5,7 @@ defaults: &defaults
   :logfile: ./log/sidekiq.log
   :timeout: 30
   :queues:
+    - [bulk_api_jobs]
     - [account_creation_fixtures]
     - [select_all_tickets]
     - [select_all_batcher]

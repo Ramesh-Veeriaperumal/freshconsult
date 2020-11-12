@@ -25,7 +25,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/marketplace_app", only: [:index]
     resource :'admin/canned_form', only: [:index, :show, :create_handle]
     resource :"tickets/bot_response", only: %i[show update]
-    resource :"tickets/bulk_action", only: %i[bulk_archive]
+    resource :"tickets/bulk_action", only: [:bulk_archive, :bulk_delete]
     resource :"tickets/subscription"
 
     resource :"ember/agent", only: %i[index me achievements update]
