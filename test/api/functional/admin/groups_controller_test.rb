@@ -510,6 +510,56 @@ module Admin
       existing_group.destroy
     end
 
+    def test_update_ocr_and_lbrr_feature_valid
+      Account.current.add_feature :round_robin
+      Account.current.add_feature :skill_based_round_robin
+      Account.current.add_feature :lbrr_by_omniroute
+      Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true)
+
+      existing_group = create_group(Account.current, ticket_assign_type: 3, capping_limit: 2)
+      put :update, construct_params({ version: 'private', id: existing_group.id }, ASSIGNMENT_SETTINGS[:lbrr_by_omniroute])
+      assert_response 200
+      existing_group.reload
+      match_json(group_management_v2_lbrr_by_omni_pattern(existing_group))
+    ensure
+      Account.current.revoke_feature :round_robin
+      Account.current.revoke_feature :skill_based_round_robin
+      Account.current.revoke_feature :lbrr_by_omniroute
+      Account.any_instance.unstub(:omni_channel_routing_enabled?)
+      existing_group.destroy
+    end
+
+    def test_update_ocr_and_lbrr_feature_invalid
+      Account.current.add_feature :round_robin
+      Account.current.add_feature :skill_based_round_robin
+      Account.current.add_feature :lbrr_by_omniroute
+      Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(false)
+
+      existing_group = create_group(Account.current, ticket_assign_type: 3, capping_limit: 2)
+      put :update, construct_params({ version: 'private', id: existing_group.id }, ASSIGNMENT_SETTINGS[:lbrr_by_omniroute])
+      assert_response 400
+      match_json([bad_request_error_pattern('automatic_agent_assignment[:settings][:assignment_type]', :require_feature, feature: 'omni_channel_routing'.titleize, code: :require_feature)])
+    ensure
+      Account.current.revoke_feature :round_robin
+      Account.current.revoke_feature :skill_based_round_robin
+      Account.current.revoke_feature :lbrr_by_omniroute
+      Account.any_instance.unstub(:omni_channel_routing_enabled?)
+      existing_group.destroy
+    end
+
+    def test_update_ocr_and_lbrr_feature_invalid_with_round_robin_and_assigment_type_error
+      Account.current.revoke_feature :round_robin
+      Account.current.revoke_feature :skill_based_round_robin
+
+      existing_group = create_group(Account.current, ticket_assign_type: 2, capping_limit: 2)
+      put :update, construct_params({ version: 'private', id: existing_group.id }, automatic_agent_assignment: sbrr_params[:automatic_agent_assignment])
+      assert_response 400
+      match_json([bad_request_error_pattern('round_robin_type', :not_included, list: ASSIGNMENT_TYPE_MAPPINGS.values.join(', '), code: :not_included),
+                  bad_request_error_pattern('automatic_agent_assignment[:settings][:assignment_type]', :require_feature, feature: 'round_robin'.titleize, code: :require_feature)])
+    ensure
+      existing_group.destroy
+    end
+
     def test_update_support_group_with_field_agent
       Account.current.add_feature(:field_service_management)
       create_field_agent_type
