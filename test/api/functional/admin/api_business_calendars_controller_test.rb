@@ -1651,6 +1651,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
       Account.any_instance.stubs(:omni_bundle_id).returns(123)
       Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Admin::BcOmniSyncStatusMailer.any_instance.stubs(:send_sync_status_email).returns(true)
       User.any_instance.stubs(:freshid_authorization).returns(
           User.first.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: SecureRandom.uuid))
       AgentObserver.any_instance.stubs(:freshchat_domain).returns('api.freshchat.com')
@@ -1666,6 +1667,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       Account.any_instance.unstub(:freshcaller_enabled?)
       Account.any_instance.unstub(:omni_business_calendar?)
       Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Admin::BcOmniSyncStatusMailer.any_instance.unstub(:send_sync_status_email)
       User.any_instance.unstub(:freshid_authorization)
       AgentObserver.any_instance.unstub(:freshchat_domain)
     end

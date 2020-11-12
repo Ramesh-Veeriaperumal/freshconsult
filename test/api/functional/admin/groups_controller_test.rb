@@ -323,27 +323,36 @@ module Admin
       Account.current.groups.find_by_id(group_id).destroy
     end
 
+    def test_create_group_search_publish_event
+      RabbitmqWorker.clear
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: 1,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+      group_params.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
+      post :create, construct_params({ version: 'private' }, group_params)
+      assert_equal RabbitmqWorker.jobs.size, 1
+      assert_equal RabbitmqWorker.jobs[0]['args'][0], 'users'
+      assert_equal JSON.parse(RabbitmqWorker.jobs[0]['args'][1])['user_properties']['id'], Account.current.agents.first.user_id
+    end
+
     # create all assignment_type settings groups
     ASSIGNMENT_SETTINGS.each_pair do |assignment_type, assignment_payload|
       capping_limit = %i[load_based_round_robin skill_based_round_robin].include?(assignment_type)
       define_method "test_create_#{assignment_type}_valid" do
-        group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
-                         type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
-        group_params.merge!(assignment_payload)
+        groups_assignment_type_stubs(assignment_type) do
+          group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                           type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+          group_params.merge!(assignment_payload)
 
-        capping_limit_param = assignment_type == :load_based_round_robin ? lbrr_params : sbrr_params
-        group_params = capping_limit ? capping_limit_param : group_params
-        Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(false) if assignment_type == :load_based_round_robin
+          group_params[:automatic_agent_assignment][:settings][0][:assignment_type_settings][:capping_limit] = 2 if capping_limit
 
-        post :create, construct_params({ version: 'private' }, group_params)
-        Account.any_instance.unstub(:lbrr_by_omniroute_enabled?) if assignment_type == :load_based_round_robin
-        parsed_response = JSON.parse(response.body)
-        p parsed_response
-        group_id = parsed_response['id']
-        assert_response(201)
-        pattern = safe_send("group_management_#{METHOD_NAME_MAPPINGS[assignment_type]}_pattern", Group.find(group_id))
-        match_json(pattern)
-        Account.current.groups.find_by_id(group_id).destroy
+          post :create, construct_params({ version: 'private' }, group_params)
+          parsed_response = JSON.parse(response.body)
+          group_id = parsed_response['id']
+          assert_response(201)
+          pattern = safe_send("group_management_#{METHOD_NAME_MAPPINGS[assignment_type]}_pattern", Group.find(group_id))
+          match_json(pattern)
+          Account.current.groups.find_by_id(group_id).destroy
+        end
       end
     end
 
@@ -541,6 +550,26 @@ module Admin
       group.destroy
     end
 
+    def test_update_group_add_agent_search_publish_event
+      group = create_group(Account.current, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+      agent_type_id = Account.current.agent_types.find_by_name(Agent::SUPPORT_AGENT).agent_type_id
+      user = add_test_agent(Account.current, agent_type: agent_type_id)
+      RabbitmqWorker.clear
+      put :update, construct_params({ version: 'private', id: group.id }, agent_ids: [user.id])
+      assert_equal RabbitmqWorker.jobs.size, 2
+      assert_equal RabbitmqWorker.jobs[1]['args'][0], 'users'
+      assert_equal JSON.parse(RabbitmqWorker.jobs[1]['args'][1])['user_properties']['id'], user.id
+    end
+
+    def test_update_group_add_agent_with_worker_execution
+      group = create_group(Account.current, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
+      agent_type_id = Account.current.agent_types.find_by_name(Agent::SUPPORT_AGENT).agent_type_id
+      user = add_test_agent(Account.current, agent_type: agent_type_id)
+      RabbitmqWorker.clear
+      Sidekiq::Testing.inline! { put :update, construct_params({ version: 'private', id: group.id }, agent_ids: [user.id]) }
+      assert_equal RabbitmqWorker.jobs.size, 0
+    end
+
     def test_update_group_with_invalid_field_values
       Account.current.add_feature :round_robin
       group = create_group(Account.current, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph)
@@ -662,6 +691,15 @@ module Admin
       add_privilege(@agent, :admin_tasks)
     end
 
+    def test_delete_group_with_agent_search_publish_test
+      group = create_group_with_agents(@account, agent_list: [@account.account_managers.first.id])
+      RabbitmqWorker.clear
+      delete :destroy, construct_params(id: group.id)
+      assert_equal RabbitmqWorker.jobs.size, 1
+      assert_equal RabbitmqWorker.jobs[0]['args'][0], 'users'
+      assert_equal JSON.parse(RabbitmqWorker.jobs[0]['args'][1])['user_properties']['id'], @account.account_managers.first.id
+    end
+
     private
 
       def create_support_agent_groups(count)
@@ -686,6 +724,23 @@ module Admin
         group.capping_limit = options[:capping_limit] if options[:capping_limit]
         group.save!
         group
+      end
+
+      def groups_assignment_type_stubs(assignment_type)
+        Account.any_instance.stubs(:features?).with(:round_robin).returns(true)
+        Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(false) if assignment_type == :load_based_round_robin
+        Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(true)
+        Account.any_instance.stubs(:round_robin_capping_enabled?).returns(true) if assignment_type == :load_based_round_robin
+        Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(true) if assignment_type == :lbrr_by_omniroute
+        Account.any_instance.stubs(:omni_channel_routing_enabled?).returns(true) if [:lbrr_by_omniroute, :omni_channel_routing].include?(assignment_type)
+        yield
+      ensure
+        Account.any_instance.unstub(:features?)
+        Account.any_instance.unstub(:lbrr_by_omniroute_enabled?) if assignment_type == :load_based_round_robin
+        Account.any_instance.unstub(:skill_based_round_robin_enabled?)
+        Account.any_instance.unstub(:round_robin_capping_enabled?) if assignment_type == :load_based_round_robin
+        Account.any_instance.unstub(:lbrr_by_omniroute_enabled?) if assignment_type == :lbrr_by_omniroute
+        Account.any_instance.unstub(:omni_channel_routing_enabled?) if [:lbrr_by_omniroute, :omni_channel_routing].include?(assignment_type)
       end
   end
 end
