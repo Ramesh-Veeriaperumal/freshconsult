@@ -1937,12 +1937,13 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def check_trial_customers_limit
-      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) && (Freemail.free?(current_account.admin_email)))
-        if (@item.source == Helpdesk::Source::OUTBOUND_EMAIL || @item.source == Helpdesk::Source::PHONE)
-          if max_to_cc_threshold_crossed?
-              flash[:error] = t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )
-              redirect_to :back
-          end
+      if current_account.id > get_spam_account_id_threshold &&
+         current_account.subscription.trial? &&
+         !ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id) &&
+         (@item.source == Helpdesk::Source::OUTBOUND_EMAIL || @item.source == Helpdesk::Source::PHONE)
+        if max_to_cc_threshold_crossed?
+          flash[:error] = t(:'flash.general.recipient_limit_exceeded', limit: get_trial_account_max_to_cc_threshold)
+          redirect_to :back
         end
       end
     end

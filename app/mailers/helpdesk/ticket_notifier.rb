@@ -728,8 +728,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     def check_spam_email(ticket, note = nil)
       account = ticket.account
       if ((ticket.account_id > get_spam_account_id_threshold) &&
-          (account.subscription.state.downcase == "trial") && 
-          (Freemail.free_or_disposable?(account.admin_email)) &&
+          (account.subscription.state.downcase == 'trial') &&
           (ticket.source == Helpdesk::Source::OUTBOUND_EMAIL || ticket.source == Helpdesk::Source::PHONE))
         if note.present?
           to_emails = validate_emails(note.to_emails, note)
