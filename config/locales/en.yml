@@ -71,14 +71,14 @@ en:
     subscription_cancel_request_failure: An error occurred while cancelling subscription change request.
     cancel_request_failure: Error occurred while cancelling request. Please try after sometime.       
   freshdesk_freshsales_bundle:
-    try_freshsales: Try Freshsales CRM
-    buy_freshsales: Buy Freshsales CRM
+    try_freshsales: Try Freshworks CRM
+    buy_freshsales: Buy Freshworks CRM
     invite_sales_team: Invite Sales Team
-    integrate_freshsales: Integrate Freshsales
+    integrate_freshsales: Integrate Freshworks CRM
     invite_teammates: Invite Teammates
-    discount_text_1: Pay 40% less for better support + sales
-    discount_text_2: Get 40% off on Freshsales CRM if you buy in the next 21 days
-    discount_text_3: What's better than a seamless interaction between support and sales? Getting a CRM at 40% off.
+    discount_text_1: Pay 20% less for better support + sales
+    discount_text_2: Get 20% off on Freshworks CRM if you buy in the next 21 days
+    discount_text_3: What's better than a seamless interaction between support and sales? Getting a CRM at 20% off.
   common_js_translations:
     new: new
     remove_quoted_text: "Remove quoted text"

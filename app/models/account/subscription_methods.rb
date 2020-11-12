@@ -207,12 +207,16 @@ class Account < ActiveRecord::Base
     fs_account_info = { state: '', url: '' }
     return unless account_additional_settings.additional_settings[:freshdesk_freshsales_bundle]
 
-    freshsales_app = installed_applications.with_name(Integrations::Application::APP_NAMES[:freshsales]).first
-    if freshsales_app
-      status, response = fetch_freshsales_account_info(freshsales_app)
+    freshsales_app = installed_applications.with_name(Integrations::Application::APP_NAMES[:freshsales])
+    integrated_app = freshsales_app.first || installed_applications.with_name(Integrations::Application::APP_NAMES[:freshworkscrm]).first
+
+    is_fs_app = freshsales_app.present?
+    subscription_url = is_fs_app ? FRESHSALES_SUBSCRIPTION_URL : FRESHWORKSCRM_SUBSCRIPTION_URL
+    if integrated_app
+      status, response = fetch_freshsales_account_info(integrated_app)
       if status == 200
-        freshsales_domain = response[:accounts].try(:[], 0).try(:[], :full_domain)
-        fs_account_info[:url] = format(FRESHSALES_SUBSCRIPTION_URL, domain: freshsales_domain) if freshsales_domain.present?
+        freshsales_domain = is_fs_app ? response[:accounts].try(:[], 0).try(:[], :full_domain) : response[:accounts].try(:[], 0).try(:[], :organisation).try(:[], :domain)
+        fs_account_info[:url] = format(subscription_url, domain: freshsales_domain) if freshsales_domain.present?
         fs_account_info[:state] = response[:accounts].try(:[], 0).try(:[], :subscription_state)
       end
     else

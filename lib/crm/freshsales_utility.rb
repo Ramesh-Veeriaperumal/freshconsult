@@ -49,7 +49,8 @@ class CRM::FreshsalesUtility
   end
 
   def request_account_info(domain, auth_token)
-    config = { rest_url: '/sessions.json?include=account', method: 'get', domain: domain, auth_token: auth_token }
+    rest_url = '/sessions.json?include=account'
+    config = { rest_url: rest_url, method: 'get', domain: domain, auth_token: auth_token }
     request_freshsales(config)
   end
 
