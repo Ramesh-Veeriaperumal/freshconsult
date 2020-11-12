@@ -70,17 +70,28 @@ class ApiAgentsControllerTest < ActionController::TestCase
 
   def test_agent_filter_type
     field_agent_type = AgentType.create_agent_type(@account, 'field_agent')
+    collaborator_agent_type = AgentType.create_agent_type(@account, 'collaborator')
     3.times do
       add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id })
+    end
+    2.times do
+      add_test_agent(@account, role: Role.find_by_name('Agent').id, agent_type: collaborator_agent_type.agent_type_id)
     end
     Account.stubs(:current).returns(Account.first)
     get :index, controller_params(type: field_agent_type.name.to_s)
     assert_response 200
     response = parse_response @response.body
     assert response.size == Agent.where(agent_type: field_agent_type.agent_type_id).count
+
+    get :index, controller_params(type: collaborator_agent_type.name.to_s)
+    assert_response 200
+    response = parse_response @response.body
+    assert response.size == Agent.where(agent_type: collaborator_agent_type.agent_type_id).count
   ensure
     Account.current.agents.where(agent_type: field_agent_type.agent_type_id).destroy_all
+    Account.current.agents.where(agent_type: collaborator_agent_type.agent_type_id).destroy_all
     field_agent_type.destroy
+    collaborator_agent_type.destroy
     Account.unstub(:current)
   end
 
@@ -464,43 +475,6 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
-  def test_update_field_agent_from_group_scope_to_restricted_scope
-    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
-    field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
-    agent = add_test_agent(@account, { role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] })
-    params = { ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] }
-    Account.stubs(:current).returns(Account.first)
-    put :update, construct_params({ id: agent.id }, params)
-    assert_response 200
-    assert JSON.parse(response.body)["ticket_scope"] == Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
-  ensure
-    agent.destroy
-    field_agent_type.destroy
-    field_tech_role.destroy
-    Account.any_instance.unstub(:field_service_management_enabled?)
-    Account.unstub(:current)
-  end
-
-
-  def test_update_field_agent_from_group_scope_to_restricted_scope
-    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
-    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
-    field_tech_role = @account.roles.create(name: 'Field technician', default_role: true)
-    agent = add_test_agent(@account, { role: Role.find_by_name('Field technician').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] })
-    params = { ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] }
-    Account.stubs(:current).returns(Account.first)
-    put :update, construct_params({ id: agent.id }, params)
-    assert_response 200
-    assert JSON.parse(response.body)["ticket_scope"] == Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
-  ensure
-    agent.destroy
-    field_agent_type.destroy
-    field_tech_role.destroy
-    Account.any_instance.unstub(:field_service_management_enabled?)
-    Account.unstub(:current)
-  end
-
   def test_update_field_agent_from_restricted_to_group_scope
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
@@ -598,6 +572,24 @@ class ApiAgentsControllerTest < ActionController::TestCase
     group_type.destroy
     field_tech_role.destroy
     Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_update_collaborator_with_support_agent_type_group
+    Account.any_instance.stubs(:collaborators_enabled?).returns(true)
+    collaborator_agent_type = AgentType.create_agent_type(@account, Agent::COLLABORATOR)
+    agent = add_test_agent(@account, role: Role.find_by_name('Agent').id, agent_type: collaborator_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+    group = create_group(@account)
+    params = { group_ids: [group.id] }
+    Account.stubs(:current).returns(Account.first)
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+    assert JSON.parse(response.body)['group_ids'].include?(group.id)
+  ensure
+    agent.destroy
+    group.destroy
+    collaborator_agent_type.destroy
+    Account.any_instance.unstub(:collaborators_enabled?)
     Account.unstub(:current)
   end
 

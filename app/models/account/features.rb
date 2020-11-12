@@ -409,6 +409,10 @@ class Account < ActiveRecord::Base
     omni_bundle_account? && launched?(:omni_channel_team_dashboard)
   end
 
+  def collaborators_enabled?
+    launched?(:light_agents) && has_feature?(:collaborators)
+  end
+
   def features
     Account::ProxyFeature::ProxyFeatureAssociation.new(self)
   end

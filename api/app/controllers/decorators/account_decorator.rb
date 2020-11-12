@@ -60,6 +60,7 @@ class AccountDecorator < ApiDecorator
     {
       support_agent: available_agents_count(:support_agent),
       field_agent: record.field_service_management_enabled? ? available_agents_count(:field_agent) : nil,
+      collaborator: record.collaborators_enabled? ? available_agents_count(:collaborator) : nil,
       day_passes_available: available_passes
     }
   end
@@ -156,8 +157,9 @@ class AccountDecorator < ApiDecorator
 
     def agents_hash
       field_service_mgmt_enabled = record.field_service_management_enabled?
+      collaborators_enabled = record.collaborators_enabled?
       record.account_agent_details_from_cache.map do |agent|
-        type_name =  field_service_mgmt_enabled ? agent_types[agent[AgentConstants::AGENTS_USERS_DETAILS[:agent_type]]] : :support_agent
+        type_name =  field_service_mgmt_enabled || collaborators_enabled ? agent_types[agent[AgentConstants::AGENTS_USERS_DETAILS[:agent_type]]] : :support_agent
         data = { id: agent[AgentConstants::AGENTS_USERS_DETAILS[:user_id]] }
         data[:contact] = {
           name: agent[AgentConstants::AGENTS_USERS_DETAILS[:user_name]],

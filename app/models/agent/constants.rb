@@ -25,7 +25,8 @@ class Agent < ActiveRecord::Base
 
   AGENT_TYPES = [
     [:support_agent, 1],
-    [:field_agent, 2]
+    [:field_agent, 2],
+    [:collaborator, 3]
   ].freeze
 
   AGENT_LOGIN_LOGOUT_ACTIONS = [
@@ -81,6 +82,7 @@ class Agent < ActiveRecord::Base
   SUPPORT_AGENT = 'support_agent'
   FIELD_AGENT = 'field_agent'
   DELETED_AGENT = 'deleted'
+  COLLABORATOR = 'collaborator'.freeze
   
   AGENT_GROUP_TYPE_MAPPING = GroupConstants::GROUPS_AGENTS_MAPPING.invert
   ALLOWED_PERMISSION_FOR_FIELD_AGENT = [PERMISSION_KEYS_BY_TOKEN[:assigned_tickets], PERMISSION_KEYS_BY_TOKEN[:group_tickets]].freeze
