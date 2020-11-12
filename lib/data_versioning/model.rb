@@ -6,7 +6,7 @@ module DataVersioning
     include Redis::OthersRedis
 
     included do
-      after_commit :update_version_timestamp
+      after_commit :update_version_timestamp, if: :valid_version_changes?
     end
 
     def version_entity_key
@@ -16,6 +16,10 @@ module DataVersioning
     def update_version_timestamp
       Rails.logger.info "Account version update :: #{self.try(:account_id)} :: #{self.class.name} :: #{version_entity_key}"
       set_others_redis_hash_set(version_key, version_entity_key, Time.now.utc.to_i)
+    end
+
+    def valid_version_changes?
+      true
     end
   end
 end

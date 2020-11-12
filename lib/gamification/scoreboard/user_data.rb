@@ -15,7 +15,9 @@ module Gamification
           total_score = @user.support_scores.sum(:score)
         end
         unless (@user.agent.points.eql? total_score)
-          @user.agent.update_attribute(:points, total_score)
+          agent = @user.agent
+          agent.gamification_update = true
+          agent.update_attribute(:points, total_score)
         end
       end
     end

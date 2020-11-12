@@ -55,4 +55,21 @@ class AgentTest < ActiveSupport::TestCase
   ensure
     Account.current.revoke_feature :round_robin
   end
+
+  def test_update_version_timestamp
+    agent = Agent.first
+    agent.update_attribute(:points, rand(100))
+    mock = Minitest::Mock.new
+    mock.expect(:call, true, ["Account version update :: #{agent.account_id} :: Agent :: AGENTS_GROUPS_LIST"])
+  end
+
+  def test_update_version_timestamp_for_gamification_update
+    agent = Agent.first
+    agent.gamification_update = true
+    agent.update_attribute(:points, rand(100))
+    mock = Minitest::Mock.new
+    mock.expect(:call, false, ["Account version update :: #{agent.account_id} :: Agent :: AGENTS_GROUPS_LIST"])
+  ensure
+    agent.gamification_update = false
+  end
 end

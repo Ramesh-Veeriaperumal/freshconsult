@@ -59,7 +59,7 @@ class Agent < ActiveRecord::Base
                   :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type, :search_settings, :focus_mode, :show_onBoarding, :notification_timestamp, :show_loyalty_upgrade, :show_monthly_to_annual_notification
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes,
                 :ocr_update, :misc_changes, :out_of_office_days, :old_agent_availability,
-                :return_old_agent_availability, :freshchat_enabled, :skip_ocr_agent_sync, :user_avatar_changes
+                :return_old_agent_availability, :freshchat_enabled, :skip_ocr_agent_sync, :user_avatar_changes, :gamification_update
 
   scope :with_conditions, -> (conditions) { where(conditions) } 
   scope :full_time_support_agents, -> { 
@@ -461,6 +461,10 @@ class Agent < ActiveRecord::Base
   def publish_update_central_payload(model_changes)
     @model_changes = model_changes
     self.manual_publish_to_central(nil, :update, nil, false)
+  end
+
+  def valid_version_changes?
+    !gamification_update
   end
 
   protected
