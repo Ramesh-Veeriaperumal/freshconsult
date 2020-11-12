@@ -42,7 +42,7 @@ class Account < ActiveRecord::Base
     :jira_onpremise_reporter, :encode_emoji_in_solutions,
     :agent_shifts, :mailbox_google_oauth, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
-    :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log,
+    :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log, :auto_response_detector_lp,
     :requester_widget_timeline, :sprout_trial_onboarding, :threading_without_user_setting,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
@@ -79,7 +79,7 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :scenario_automation, :falcon_portal_theme,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
-    :personal_canned_response, :marketplace, :reverse_notes,
+    :personal_canned_response, :marketplace, :reverse_notes, :auto_response_detector,
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
     :auto_article_order, :detect_thank_you_note, :detect_thank_you_note_eligible, :autofaq,
     :ticket_properties_suggester, :ticket_properties_suggester_eligible,
@@ -299,6 +299,14 @@ class Account < ActiveRecord::Base
 
   def falcon_portal_theme_enabled?
     launched?(:falcon_portal_theme)
+  end
+
+  def auto_response_detector_lp_enabled?
+    redis_key_exists?(AUTO_RESPONSE_DETECTOR_ENABLED) && launched?(:auto_response_detector_lp)
+  end
+
+  def auto_response_detector_enabled?
+    auto_response_detector_lp_enabled? && has_feature?(:auto_response_detector)
   end
 
   alias falcon_support_portal_theme_enabled? falcon_portal_theme_enabled?

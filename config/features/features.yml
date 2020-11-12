@@ -429,6 +429,7 @@
       :secure_fields_toggle: 425
       :collaborators: 426
       :archive_tickets_api: 427
+      :auto_response_detector: 428
 :selectable_features:
   :gamification_enable: false
   :parent_child_tickets: false
