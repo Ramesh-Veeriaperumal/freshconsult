@@ -181,7 +181,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     # misc_changes contain updates to tag if added/removed by user
     # system_changes contain updates to tag and watcher if added/removed by system
     changes = @system_changes.present? ? system_changes_to_array_fields : self.misc_changes
-    (@model_changes || {}).merge(transform_array_fields(changes))
+    (manual_publish_model_changes.presence || @model_changes || {}).merge(transform_array_fields(changes))
   end
 
   def system_changes_to_array_fields

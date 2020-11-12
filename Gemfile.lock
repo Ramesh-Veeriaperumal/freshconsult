@@ -765,6 +765,9 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.6)
+    credit_card_sanitizer (0.6.8)
+      luhn_checksum (~> 0.1)
+      tracking_number (~> 0.10.3)
     css_parser (1.7.1)
       addressable
     cucumber (2.99.0)
@@ -1106,6 +1109,7 @@ GEM
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
+    luhn_checksum (0.1.1)
     mail (2.5.5)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -1481,6 +1485,7 @@ GEM
     tilt (1.4.1)
     timecop (0.8.1)
     tnef (1.0.2)
+    tracking_number (0.10.5)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
@@ -1595,6 +1600,7 @@ DEPENDENCIES
   connection_pool
   country_select!
   coverband (= 1.5.4)
+  credit_card_sanitizer (~> 0.6.8)
   cucumber-rails
   cucumber_statistics (= 2.3.0)
   curb (~> 0.8.5)

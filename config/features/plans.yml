@@ -596,6 +596,7 @@
       - :custom_objects
       - :triage
       - :secure_fields_toggle
+      - :redaction
     :inherits:
       - :estate_jan_20
     :exclude: [:analytics_knowledge_base_report]

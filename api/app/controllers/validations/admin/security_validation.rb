@@ -5,7 +5,7 @@ module Admin
     include Admin::SecurityConstants
 
     attr_accessor :notification_emails, :sso, :whitelisted_ip, :contact_password_policy, :agent_password_policy,
-                  :ip_ranges, :allow_iframe_embedding, :secure_attachments_enabled, :secure_fields
+                  :ip_ranges, :allow_iframe_embedding, :secure_attachments_enabled, :secure_fields, :redaction
     validates :notification_emails, data_type: { rules: Array, not_empty: true }, array: {
       data_type: { rules: String },
       custom_format: {
@@ -34,6 +34,8 @@ module Admin
         max_value: WHITELISTED_IP_LIMIT
       }
     }
+
+    validates :redaction, data_type: { rules: Hash, not_empty: true }, hash: REDACTION_HASH
 
     validates :sso, data_type: { rules: Hash }, hash: SSO_HASH
 

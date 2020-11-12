@@ -185,6 +185,9 @@ gem 'dogstatsd-ruby'
 gem 'rbtrace', require: false
 gem 'prometheus_exporter', git: 'git@github.com:freshdesk/prometheus_exporter.git', tag: 'v1.1.0'
 
+# redaction
+gem 'credit_card_sanitizer', '~> 0.6.8'
+
 # Gems for Distributed Tracing
 group :production, :staging, :test, :development do
   # TODO: In Rails 4 modify the syntax to use `glob` attribute like below example:

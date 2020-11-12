@@ -4,7 +4,7 @@ module AccountAdditionalSettings::AdditionalSettings
   include Onboarding::OnboardingRedisMethods
 
   ONBOARDING_VERSION_MAXIMUM_RETRY = 5
-  
+
   def email_template_settings
     (self.additional_settings.is_a?(Hash) and self.additional_settings[:email_template]) ? 
         self.additional_settings[:email_template] : DEFAULTS_FONT_SETTINGS[:email_template]
@@ -75,11 +75,23 @@ module AccountAdditionalSettings::AdditionalSettings
     onboarding_types.first
   end
 
+  def redaction
+    additional_settings.try(:[], :redaction) || {}
+  end
+
+  def redaction=(value)
+    self.additional_settings ||= {}
+    self.additional_settings[:redaction] = (redaction || {}).merge(HashWithIndifferentAccess.new(value))
+  end
   def deny_iframe_embedding=(value)
     (self.additional_settings[:security] ||= {})[:deny_iframe_embedding] = value
   end
 
   def allow_iframe_embedding
     security.present? && security.key?(:deny_iframe_embedding) ? !security[:deny_iframe_embedding] : true
+  end
+
+  def active_redaction_configs
+    redaction.select { |key, value| value }
   end
 end

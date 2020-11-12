@@ -15,6 +15,7 @@ module Admin
       { sso: { type: 'simple', simple: { logout_url: 'bye' } } },
       { allow_iframe_embedding: true },
       { secure_attachments_enabled: true },
+      { redaction: { credit_card_number: true } },
       { secure_fields: true },
       { secure_fields: false }
     ].freeze
@@ -53,7 +54,7 @@ module Admin
       { sso: { type: 'saml', simple: { saml_cert_fingerprint: nil } } },
       { sso: { type: 'saml', simple: { login_url: 'hai' }, saml: { login_url: 'url', saml_cert_fingerprint: 'print' } } },
       { sso: { type: 'simple' } }, # 24
-      { sso: { simple: { login_url: 's' }, saml: { login_url: 's'} } },
+      { sso: { simple: { login_url: 's' }, saml: { login_url: 's' } } },
       { sso: { simple: { login_url: nil } } },
       { sso: { saml: { login_url: nil } } }, # 27
       { sso: { saml: { saml_cert_fingerprint: nil } } },
@@ -61,8 +62,10 @@ module Admin
       { allow_iframe_embedding: nil }, # 30
       { secure_attachments_enabled: 1 },
       { secure_attachments_enabled: nil },
-      { secure_fields: 'true' }, # 33
-      { secure_fields: nil },
+      { redaction: { credit_card_number: 1 } }, # 33
+      { redaction: { credit_card_number: 'abc' } },
+      { secure_fields: 'true' },
+      { secure_fields: nil }, # 36
       { secure_fields: 1 }
     ].freeze
 
@@ -110,6 +113,7 @@ module Admin
         settings[:notification_emails] = Account.current.notification_emails
         settings[:contact_password_policy] = contact_password_policy_hash if Account.current.custom_password_policy_enabled?
         settings[:agent_password_policy] = agent_password_policy_hash if show_agent_password_policy?
+        settings[:redaction] = Account.current.redaction if Account.current.redaction_enabled?
         settings[:allow_iframe_embedding] = Account.current.allow_iframe_embedding
         settings[:secure_fields] = Account.current.secure_fields_enabled? if Account.current.secure_fields_toggle_enabled?
       end
@@ -121,8 +125,8 @@ module Admin
 
     def show_whitelisted_ip
       {
-        enabled: Account.current.whitelisted_ip.enabled,
-        applies_only_to_agents: Account.current.whitelisted_ip.applies_only_to_agents,
+        enabled: Account.current.whitelisted_ip.enabled || false,
+        applies_only_to_agents: Account.current.whitelisted_ip.applies_only_to_agents || false,
         ip_ranges: Account.current.whitelisted_ip.ip_ranges
       }
     end

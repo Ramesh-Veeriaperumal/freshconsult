@@ -739,6 +739,55 @@ module Ember
       Account.current.rollback(:html_to_plain_text)
     end
 
+    def test_create_with_credit_card_number_redaction
+      Account.any_instance.stubs(:redaction_enabled?).returns(true)
+      AccountAdditionalSettings.any_instance.stubs(:redaction).returns(credit_card_number: true)
+      description = '<div><div>test</div><div>hello MasterCard  5500 0000 0000 0004</div><div>hi</div><div><br></div></div>'
+      params_hash = ticket_params_hash.merge!(description: description)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      created_ticket = Helpdesk::Ticket.last
+      assert created_ticket.description_html.include?('XXXX XXXX XXXX 0004')
+      assert created_ticket.description.include?('XXXX XXXX XXXX 0004')
+      refute created_ticket.description_html.include?('5500 0000 0000 00044')
+      refute created_ticket.description.include?('5500 0000 0000 00044')
+    ensure
+      Account.any_instance.unstub(:redaction_enabled?)
+      AccountAdditionalSettings.any_instance.unstub(:redaction)
+    end
+
+    def test_create_with_credit_card_number_redaction_agent
+      Account.any_instance.stubs(:redaction_enabled?).returns(true)
+      Account.any_instance.stubs(:redaction).returns(credit_card_number: true)
+      agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      description = '<div><div>test</div><div>hello MasterCard  5500 0000 0000 0004</div><div>hi</div><div><br></div></div>'
+      params_hash = ticket_params_hash.merge!(description: description, requester_id: agent.id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      created_ticket = Helpdesk::Ticket.last
+      assert created_ticket.description_html.include?('5500 0000 0000 0004')
+      assert created_ticket.description.include?('5500 0000 0000 0004')
+    ensure
+      Account.any_instance.unstub(:redaction_enabled?)
+      AccountAdditionalSettings.any_instance.unstub(:redaction)
+    end
+
+    def test_create_with_credit_card_number_redaction_turned_off
+      Account.any_instance.stubs(:redaction_enabled?).returns(true)
+      AccountAdditionalSettings.any_instance.stubs(:redaction).returns(credit_card_number: false)
+      agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      description = '<div><div>test</div><div>hello MasterCard  5500 0000 0000 0004</div><div>hi</div><div><br></div></div>'
+      params_hash = ticket_params_hash.merge!(description: description, requester_id: agent.id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      created_ticket = Helpdesk::Ticket.last
+      assert created_ticket.description_html.include?('5500 0000 0000 0004')
+      assert created_ticket.description.include?('5500 0000 0000 0004')
+    ensure
+      Account.any_instance.unstub(:redaction_enabled?)
+      AccountAdditionalSettings.any_instance.unstub(:redaction)
+    end
+
     def test_create_ticket_with_file_field
       attachment = create_file_ticket_field_attachment
       custom_field = create_custom_field_dn('test_file_field', 'file')
@@ -4031,9 +4080,7 @@ module Ember
         ticket = Helpdesk::Ticket.last
         params_hash = ticket_params_hash.merge(related_ticket_ids: [ticket.display_id])
         post :create, construct_params({ version: 'private' }, params_hash)
-        assert_response 400
-        match_json([bad_request_error_pattern('email', nil, append_msg: I18n.t('ticket.tracker_agent_error'))])
-        assert !ticket.related_ticket?
+        assert_response 201
       end
     end
 
@@ -6749,7 +6796,7 @@ module Ember
       group.destroy if group.present?
       agent.destroy if agent.present?
     end
-    
+
     def test_latest_note_ticket_with_public_note_with_read_scope
       agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
       group = create_group_with_agents(@account, agent_list: [agent.id])

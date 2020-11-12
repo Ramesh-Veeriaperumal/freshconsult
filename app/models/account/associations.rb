@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
   delegate :supported_languages, :secret_keys, :max_template_limit, :max_skills_per_account,
-           :feedback_widget_captcha_allowed?, :allow_iframe_embedding,
+           :feedback_widget_captcha_allowed?,
            to: :account_additional_settings_from_cache
   has_one  :whitelisted_ip
   has_one :contact_password_policy, :class_name => 'PasswordPolicy',
@@ -330,7 +330,8 @@ class Account < ActiveRecord::Base
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter,
            :pass_through_enabled, :api_limit, :webhook_limit, :reset_ocr_account_id,
-           :ocr_account_id, to: :account_additional_settings
+           :ocr_account_id, :redaction=, :allow_iframe_embedding, :redaction,
+           :active_redaction_configs, to: :account_additional_settings, allow_nil: true
 
   has_many :subscription_events
 

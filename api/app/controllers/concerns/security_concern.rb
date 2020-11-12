@@ -83,4 +83,10 @@ module SecurityConcern
   def assign_secure_fields_settings(enabled = cname_params[:secure_fields])
     enabled ? @item.set_setting(:secure_fields, true) : @item.reset_setting(:secure_fields, true)
   end
+
+  # **--------------- Redaction ---------------** #
+
+  def assign_redaction_settings(redaction = cname_params[:redaction])
+    @item.redaction = redaction
+  end
 end
