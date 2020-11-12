@@ -1605,6 +1605,37 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_launch_rollback_of_omni_business_calendar
+    Account.current.launch(:omni_business_calendar)
+    assert_equal 1, LaunchPartyActionWorker.jobs.size
+    args = LaunchPartyActionWorker.jobs.first.deep_symbolize_keys[:args][0]
+    LaunchPartyActionWorker.jobs.clear
+
+    LaunchPartyActionWorker.new.perform(args)
+    assert_equal 2, ChannelFeatureSyncWorker.jobs.size
+    args = ChannelFeatureSyncWorker.jobs.first.deep_symbolize_keys[:args][0]
+    ChannelFeatureSyncWorker.jobs.clear
+
+    ChannelFeatureSyncWorker.new.perform(args.merge(channel: :freshchat))
+    ChannelFeatureSyncWorker.new.perform(args.merge(channel: :freshcaller))
+
+    Account.current.rollback(:omni_business_calendar)
+    assert_equal 1, LaunchPartyActionWorker.jobs.size
+    args = LaunchPartyActionWorker.jobs.first.deep_symbolize_keys[:args][0]
+    LaunchPartyActionWorker.jobs.clear
+    ChannelFeatureSyncWorker.jobs.clear
+
+    LaunchPartyActionWorker.new.perform(args)
+    assert_equal 2, ChannelFeatureSyncWorker.jobs.size
+    args = ChannelFeatureSyncWorker.jobs.first.deep_symbolize_keys[:args][0]
+    ChannelFeatureSyncWorker.new.perform(args.merge(channel: :freshchat))
+    ChannelFeatureSyncWorker.new.perform(args.merge(channel: :freshcaller))
+
+    ChannelFeatureSyncWorker.new.perform(args)
+  ensure
+    Account.current.rollback(:omni_business_calendar)
+  end
+
   private
 
     def enable_omni_business_calendar_destroy

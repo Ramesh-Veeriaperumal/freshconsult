@@ -1,9 +1,11 @@
-class Omni::FreshchatBcSync < Omni::BusinessCalendarSync
+# frozen_string_literal: true
+
+class Omni::FreshchatBcSync < Omni::ChannelSync
   include Freshchat::JwtAuthentication
-  BC_PATH = 'v2/business_hours'.freeze
+  BC_PATH = 'v2/business_hours'
 
   def send_channel_request
-    Rails.logger.info "#{klass_name} send_channel_request"
+    super
     create_connection.safe_send(method) do |request|
       request.body = safe_send("#{action.to_s}_params")
       Rails.logger.info "#{klass_name} Request:: #{request.inspect} for Account #{current_account.id}"
