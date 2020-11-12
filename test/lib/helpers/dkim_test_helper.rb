@@ -61,6 +61,12 @@ module DkimTestHelper
     domain.reload
   end
 
+  def update_email_config_category(email_config, category_id)
+    email_config.category = category_id
+    email_config.save!
+    email_config.reload
+  end
+
   def email_service_configure_hash
     {
       'accountId' => 1,
@@ -213,5 +219,110 @@ module DkimTestHelper
         }
       }
     ]
+  end
+
+  def email_service_fetch_domain_hash_fdm
+    {
+      'accountId' => 1,
+      'default' => false,
+      'RequestId' => '3de5294b-5d15-448a-97b2-70192dbdffd2',
+      'records' => {
+        'dkim' => [
+          {
+            'host' => 'fd._domainkey.newpainters.xyz',
+            'verified' => false,
+            'type' => 'CNAME',
+            'value' => 'wl613232s1.domainkey.email-stag.com'
+          },
+          {
+            'host' => 'fd2._domainkey.newpainters.xyz',
+            'verified' => false,
+            'type' => 'CNAME',
+            'value' => 'wl613232s2.domainkey.email-stag.com'
+          },
+          {
+            'host' => 'fdm._domainkey.newpainters.xyz',
+            'verified' => false,
+            'type' => 'CNAME',
+            'value' => 'wl613232s3.domainkey.email-stag.com'
+          }
+        ],
+        'spfmx' => {
+          'host' => 'fddkim.newpainters.xyz',
+          'verified' => false,
+          'type' => 'CNAME',
+          'value' => 'spfmx1.domainkey.email-stag.com'
+        }
+      },
+      'domain' => 'newpainters.xyz',
+      'verified' => true,
+      'subdomain' => 'fddkim',
+      'id' => 611
+    }.to_json
+  end
+
+  def email_service_fetch_domain_failure
+    {
+      'Status' => 'Failure',
+      'RequestId' => '9620bb41-2c69-4e83-aedc-d98875625c6b',
+      'errorMessage' => 'Whitelabel not found!',
+      'action' => 'getWhitelabel',
+      status: 400
+    }
+  end
+
+  def sg_data
+    {
+      sg_id: 141,
+      sg_user_id: 449,
+      sg_category_id: 31,
+      account_id: 1,
+      customer_record: 1,
+      sg_type: 'mail_server',
+      record_type: 'mx',
+      host_name: 'fddkim.fresh.com',
+      host_value: 'mx.sendgrid.net.',
+      status: 1
+    }
+  end
+
+  def email_service_fetch_domain_hash_m1
+    {
+      'accountId' => 1,
+      'default' => false,
+      'RequestId' => '3de5294b-5d15-448a-97b2-70192dbdffd2',
+      'records' => {
+        'dkim' => [
+          {
+            'host' => 's1._domainkey.newpainters.xyz',
+            'verified' => false,
+            'type' => 'CNAME',
+            'value' => 'wl613232s1.domainkey.email-stag.com'
+          },
+          {
+            'host' => 's2._domainkey.newpainters.xyz',
+            'verified' => false,
+            'type' => 'CNAME',
+            'value' => 'wl613232s2.domainkey.email-stag.com'
+          },
+          {
+            'host' => 'm1._domainkey.newpainters.xyz',
+            'verified' => false,
+            'type' => 'CNAME',
+            'value' => 'wl613232s3.domainkey.email-stag.com'
+          }
+        ],
+        'spfmx' => {
+          'host' => 'fddkim.newpainters.xyz',
+          'verified' => false,
+          'type' => 'CNAME',
+          'value' => 'spfmx1.domainkey.email-stag.com'
+        }
+      },
+      'domain' => 'newpainters.xyz',
+      'verified' => true,
+      'subdomain' => 'fddkim',
+      'id' => 611
+    }.to_json
   end
 end

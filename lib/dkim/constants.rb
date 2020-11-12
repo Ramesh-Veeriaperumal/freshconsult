@@ -81,6 +81,16 @@ module Dkim::Constants
     ['CREATE',   'CNAME',   "build_domain_key('fd2acc'+Account.current.id.to_s)", "build_domain_key('fd2freshdeskdkim')",           true,  true,  'dkim2',        false] 
   ]
 
+  MIGRATED_ACCOUNTS_R53_ACTIONS = {
+    0 => ['CNAME', "build_domain_key('acc'+Account.current.id.to_s)"],
+    1 => ['CNAME', "build_domain_key('fdacc'+Account.current.id.to_s)"],
+    2 => ['CNAME', "build_domain_key('fd2acc'+Account.current.id.to_s)"]
+  }.freeze
+
+  FDM_SELECTORS = ['fdm', 'm1'].freeze
+  FD_SELECTORS = ['fd', 's1'].freeze
+  FD2_SELECTORS = ['fd2', 's2'].freeze
+
   FD_EMAIL_SERVICE = YAML.load_file(File.join(Rails.root, 'config', 'fd_email_service.yml'))[Rails.env]
   EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE['key']
   EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE['dkim_host']
@@ -88,6 +98,7 @@ module Dkim::Constants
   EMAIL_SERVICE_CONFIGURE_DOMAIN = FD_EMAIL_SERVICE['configure_domain']
   EMAIL_SERVICE_VERIFY_DOMAIN = FD_EMAIL_SERVICE['verify_domain']
   EMAIL_SERVICE_REMOVE_DOMAIN = FD_EMAIL_SERVICE['remove_domain']
+  EMAIL_SERVICE_GET_DOMAIN = FD_EMAIL_SERVICE['fetch_domain']
   EMAIL_SERVICE_RESPONSE_CODE = {
     success: 200,
     delete_success: 204
@@ -96,6 +107,7 @@ module Dkim::Constants
     get_domains: :get_domains,
     configure_domain: :configure_domain,
     verify_domain: :verify_domain,
-    remove_domain: :remove_domain
+    remove_domain: :remove_domain,
+    fetch_domain: :fetch_domain
   }.freeze
 end

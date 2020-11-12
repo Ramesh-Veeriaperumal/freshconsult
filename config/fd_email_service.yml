@@ -14,6 +14,7 @@ defaults: &defaults
   configure_domain: "api/v1/whitelabel/configure"
   verify_domain: "api/v1/whitelabel/domains/verify"
   remove_domain: "api/v1/whitelabel/domains"
+  fetch_domain: "api/v1/whitelabel/domains"
   ip_pool_category : "35"
   incoming_email_api_key1: "sESov8gFIU03kFEUAZS7ikilAU5Ip2"
   incoming_email_api_key2: "e7d6Gee5HkF6VjD7kIhpu7QmNkDeC6"
