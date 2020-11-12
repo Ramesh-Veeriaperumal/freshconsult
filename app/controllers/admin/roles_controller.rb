@@ -1,16 +1,20 @@
 class Admin::RolesController < Admin::AdminController
+  include Admin::RolesHelper
   
   REQUIRED_PRIVILEGE = {
     manage_account: [:admin_task, :manage_account]
   }.freeze
 
   before_filter { |c| c.requires_feature :custom_roles }
+  before_filter :check_limit, only: [:new, :create]
   before_filter :load_object, :only => [ :show, :edit, :update, :destroy, :update_agents ]
   before_filter :check_default, :only => [ :update, :destroy ]
   before_filter :check_users, :only => :destroy
 
   def index
-    @roles = scoper.all.paginate(:page => params[:page], :per_page => 30)
+    all_roles = scoper.all
+    @total_roles = all_roles.size
+    @roles = all_roles.paginate(:page => params[:page], per_page: 30)
     respond_to do |format|
       format.html
       format.any(:xml, :json) { render request.format.to_sym => @roles }
@@ -142,6 +146,11 @@ class Admin::RolesController < Admin::AdminController
         flash[:notice] = t(:'flash.roles.delete.not_allowed')
         redirect_to :back
       end
+    end
+
+    def check_limit
+      @total_roles = scoper.count
+      redirect_to admin_roles_url if max_limit_reached?
     end
 
     def check_user_privilege

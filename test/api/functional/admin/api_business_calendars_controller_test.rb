@@ -74,7 +74,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
 
   def test_index_business_hour_without_multiple_business_hours
     enable_emberize_business_hours do
-      Account.any_instance.stubs(:multiple_business_hours_enabled?).returns(false)
+      Account.current.stubs(:multiple_business_hours_enabled?).returns(false)
       get :index, controller_params
       pattern = []
       Account.current.business_calendar.order(:name).where(is_default: true).each do |bc|
@@ -82,7 +82,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       end
       assert_response 200
       match_json(pattern.ordered!)
-      Account.any_instance.stubs(:multiple_business_hours_enabled?).returns(true)
+      Account.current.stubs(:multiple_business_hours_enabled?).returns(true)
     end
   end
 

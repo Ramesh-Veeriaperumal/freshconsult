@@ -2865,7 +2865,9 @@ en:
           agents when you create or edit their profile by clicking on the Agents
           icon under the admin tab.
         info5: Learn more about roles and privileges
+        info_limit: You can have up to %{limit} roles in your account.
       role_description: Description
+      limit_message: You can’t add more custom roles. You’ve reached the maximum number of roles (%{limit}) that can be added to your account.
       cancel_label: Cancel
       done_label: Done
       title: Agent Roles

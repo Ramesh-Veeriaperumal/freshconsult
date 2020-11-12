@@ -9,7 +9,7 @@ class ApiRolesDependencyTest < ActionView::TestCase
                         :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_same_site_enabled, :set_last_active_time, :reset_language,
                         :set_affiliate_cookie, :verify_authenticity_token, :set_selected_tab, :load_object,
                         :unset_thread_variables, :check_default, :check_users, :ensure_proper_sts_header, :record_query_comment, :log_csrf, :remove_session_data,
-                        :check_session_timeout]
+                        :check_session_timeout, :check_limit]
     actual_filters = Admin::RolesController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

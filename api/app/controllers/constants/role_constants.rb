@@ -31,4 +31,5 @@ module RoleConstants
   RESTRICTED_PRIVILEGES = [:manage_account].freeze
   QMS_ADMIN_PRIVILEGES = [:manage_scorecards, :manage_teams, :view_scores].freeze
   QMS_AGENT_PRIVILEGES = [:view_scores, :view_scorecards].freeze
+  MAX_ROLES_LIMIT = 100
 end.freeze
