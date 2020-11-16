@@ -60,7 +60,7 @@ module UsersHelper
     acc_subscription.save
   end
 
-  def add_new_user(account, options={})
+  def add_new_user(account = Account.current, options={})
 
     if options[:email]
       user = User.find_by_email(options[:email])
