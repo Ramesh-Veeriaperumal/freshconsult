@@ -3,8 +3,10 @@ class Middleware::ApiRequestInterceptor
 
   CONTENT_TYPE_REQUIRED_METHODS = ['POST', 'PUT'].freeze
   RESPONSE_HEADERS = { 'Content-Type' => 'application/json' }.freeze
+  XML_RESPONSE_HEADERS = { 'Content-Type' => 'application/xml' }.freeze
   INVALID_CONTENT_TYPE = 'invalid_content_type'.freeze
   INVALID_JSON = 'invalid_json'.freeze
+  INVALID_XML = 'invalid_xml'.freeze
   INTERNAL_ERROR = 'internal_error'.freeze
   INVALID_ENCODING = 'invalid_encoding'.freeze
   INVALID_ACCEPT_HEADER = 'invalid_accept_header'.freeze
@@ -17,28 +19,30 @@ class Middleware::ApiRequestInterceptor
   def call(env)
     @resource = env['PATH_INFO']
     @host = env['HTTP_HOST']
-    unless api_request?
-      @status, @headers, @response = @app.call(env)
-    else
-      valid_content_type = valid_accept_header = true
-      extract_request_attributes(env)
-      if content_type_required_method?
-        valid_content_type = validate_content_type
-      elsif ['GET', 'DELETE'].include?(@method)
-        env['CONTENT_TYPE'] = env['Content-Type'] = nil
-      end
-      valid_accept_header = validate_accept_header if @accept_header
-      begin
+    begin
+      if api_request?
+        valid_content_type = valid_accept_header = true
+        extract_request_attributes(env)
+        if content_type_required_method?
+          valid_content_type = validate_content_type
+        elsif %w[GET DELETE].include?(@method)
+          env['CONTENT_TYPE'] = env['Content-Type'] = nil
+        end
+        valid_accept_header = validate_accept_header if @accept_header
         @status, @headers, @response = @app.call(env) if valid_content_type && valid_accept_header
-      rescue ArgumentError => error
-        # If url query string has invalid encoding like '%' symbol, argument error will be thrown from ruby side.
-        # Hence gracefully handling this issue.
-        error.message.starts_with?('invalid %-encoding') ? invalid_encoding_error(error) : respond_500(error, env)
-      rescue MultiJson::ParseError => error
-        invalid_json_error(error, env)
-      rescue StandardError => error
-        respond_500(error, env)
+      else
+        @status, @headers, @response = @app.call(env)
       end
+    rescue ArgumentError => e
+      # If url query string has invalid encoding like '%' symbol, argument error will be thrown from ruby side.
+      # # Hence gracefully handling this issue.
+      e.message.starts_with?('invalid %-encoding') ? invalid_encoding_error(e) : respond_500(e, env)
+    rescue MultiJson::ParseError => e
+      invalid_json_error(e, env)
+    rescue Nokogiri::XML::SyntaxError => e
+      invalid_xml_error(e)
+    rescue StandardError => e
+      respond_500(e, env)
     end
     [@status, @headers, @response]
   end
@@ -51,6 +55,12 @@ class Middleware::ApiRequestInterceptor
     Rails.logger.error("API MultiJson::ParseError :: Host: #{@host}, #{env['rack.input'].read} \n#{error.message}\n#{error.backtrace.join("\n")}")
     message =  { code: INVALID_JSON, message: ErrorConstants::ERROR_MESSAGES[:invalid_json] }
     set_response(400, RESPONSE_HEADERS, message)
+  end
+
+  def invalid_xml_error(error)
+    Rails.logger.error("API Nokogiri::XML::SyntaxError :: Host: #{@host},  #{error.message}, #{error.backtrace[0..10].inspect}")
+    message = { code: INVALID_XML, message: ErrorConstants::ERROR_MESSAGES[:invalid_xml] }
+    set_response(400, XML_RESPONSE_HEADERS, message)
   end
 
   def respond_500(error, env)

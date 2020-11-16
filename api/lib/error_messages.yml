@@ -66,6 +66,7 @@ api_error_messages:
   password_expired: "Password expired. Please reset the password via portal and use the same in API"
   password_lockout: "Maximum failed login attempts %{max_count}, reached."
   invalid_json: "Request body has invalid json format"
+  invalid_xml: "Request body has invalid xml format"
   validation_failure: "Validation failed"
   due_by_validation: "It should not be blank if fr_due_by is given"
   fr_due_by_validation: "It should not be blank if due_by is given"
