@@ -369,3 +369,4 @@
     - central_publish_resync
     - cron_api_triggers
     - retry_ticket_supervisor_actions_worker
+    - channel_feature_sync

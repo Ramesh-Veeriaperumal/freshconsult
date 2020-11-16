@@ -131,7 +131,7 @@ module Ember
     def dalli_client_stub
       Dalli::Client.any_instance.stubs(:get).returns(nil)
       Dalli::Client.any_instance.stubs(:delete).returns(true)
-      Dalli::Client.any_instance.stubs(:set).returns(true)      
+      Dalli::Client.any_instance.stubs(:set).returns(true)
     end
 
     def test_create_with_incorrect_attachment_type
@@ -341,6 +341,39 @@ module Ember
       assert_equal latest_note.body, Helpdesk::HTMLToPlain.plain(body)
     ensure
       Account.current.rollback(:html_to_plain_text)
+    end
+
+    def test_reply_with_body_redacted
+      AccountAdditionalSettings.any_instance.stubs(:redaction).returns(credit_card_number: true)
+      Helpdesk::Note.any_instance.stubs(:redactable?).returns(true)
+      body = 'hello MasterCard  5500 0000 0000 0004 . Sample cards 4111 1111 1111 1111 MasterCard  5500 0000 0000 0004 American Express  3400 0000 0000 009 Diners Club  3000 0000 0000 04 Carte Blanche   3000 0000 0000 04 Discover  6011 0000 0000 0004'
+      params_hash = reply_note_params_hash.merge(body: body)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      redacted_body = 'hello MasterCard  XXXX XXXX XXXX 0004 . Sample cards XXXX XXXX XXXX 1111 MasterCard  XXXX XXXX XXXX 0004 American Express  XXXX XXXX XXX0 009 Diners Club  XXXX XXXX XX00 04 Carte Blanche   XXXX XXXX XX00 04 Discover  XXXX XXXX XXXX 0004'
+      assert latest_note.body_html.include?(redacted_body)
+      assert latest_note.body.include?(redacted_body)
+    ensure
+      AccountAdditionalSettings.any_instance.unstub(:redaction)
+      Helpdesk::Note.any_instance.unstub(:redactable?)
+    end
+
+    def test_reply_with_full_text_redacted
+      AccountAdditionalSettings.any_instance.stubs(:redaction).returns(credit_card_number: true)
+      Helpdesk::Note.any_instance.stubs(:redactable?).returns(true)
+      full_text = 'hello MasterCard  5500 0000 0000 0004 . Sample cards 4111 1111 1111 1111 MasterCard  5500 0000 0000 0004 American Express  3400 0000 0000 009 Diners Club  3000 0000 0000 04 Carte Blanche   3000 0000 0000 04 Discover  6011 0000 0000 0004'
+      params_hash = reply_note_params_hash.merge(full_text: full_text)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      p response.body
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      redacted_body = 'hello MasterCard  XXXX XXXX XXXX 0004 . Sample cards XXXX XXXX XXXX 1111 MasterCard  XXXX XXXX XXXX 0004 American Express  XXXX XXXX XXX0 009 Diners Club  XXXX XXXX XX00 04 Carte Blanche   XXXX XXXX XX00 04 Discover  XXXX XXXX XXXX 0004'
+      assert latest_note.full_text.include?(redacted_body)
+      assert latest_note.full_text_html.include?(redacted_body)
+    ensure
+      AccountAdditionalSettings.any_instance.unstub(:redaction)
+      Helpdesk::Note.any_instance.unstub(:redactable?)
     end
 
     def test_reply_with_ticket_params
@@ -762,7 +795,7 @@ module Ember
       note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, note))
       match_json(private_note_pattern({}, note))
-      assert_equal inline_attachment_ids.size, note.inline_attachments.size 
+      assert_equal inline_attachment_ids.size, note.inline_attachments.size
     end
 
     def test_reply_with_invalid_inline_attachment_ids
@@ -2114,7 +2147,7 @@ module Ember
       Helpdesk::Ticket.any_instance.unstub(:current_cc_emails)
       Helpdesk::Ticket.any_instance.unstub(:reply_to_all_emails)
     end
-    
+
     def test_note_forward_template_with_empty_signature
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
       notification_template = '<div>{{ticket.id}}</div>'
@@ -2306,7 +2339,7 @@ module Ember
         assert_response 201
         note = Helpdesk::Note.last
         match_json(private_note_pattern({}, note))
-        assert_equal inline_attachment_ids.size, note.inline_attachments.size 
+        assert_equal inline_attachment_ids.size, note.inline_attachments.size
       end
     end
 

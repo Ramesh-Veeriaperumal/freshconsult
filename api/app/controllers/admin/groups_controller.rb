@@ -129,7 +129,8 @@ module Admin
 
       def set_custom_errors(item = @item)
         item = assignment_type_error_message(item) if item.errors[:round_robin_type].present?
-        ErrorHelper.rename_error_fields(ERROR_KEY_MAPPINGS, item)
+        @error_options_mappings = item.errors[:assignment_type].present? ? ERROR_KEY_MAPPINGS.except(:round_robin_type) : ERROR_KEY_MAPPINGS
+        ErrorHelper.rename_error_fields(@error_options_mappings, item)
       end
 
       # overriding error message from base validations
@@ -140,7 +141,7 @@ module Admin
       end
 
       def error_options_mappings
-        ERROR_KEY_MAPPINGS
+        @error_options_mappings ||= ERROR_KEY_MAPPINGS
       end
   end
 end

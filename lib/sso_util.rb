@@ -46,6 +46,11 @@ module SsoUtil
   COMPANY_NAME_STRS = [:organization, :company].freeze
   TITLE_STRS = [:title, :job_title].freeze
   EXTERNAL_ID_STRS = [:unique_id].freeze
+  MOBILE_NO_STRS = [:mobile].freeze
+  TWITTER_ID_STRS = [:twitter_id].freeze
+  TIMEZONE_STRS = [:time_zone].freeze
+  LANGUAGE_STRS = [:language].freeze
+  DESCRIPTION_STRS = [:about, :description].freeze
   SAML_CUSTOM_FIELDS_PREFIX = 'custom_field_'.freeze
   ALLOWED_USER_DEFAULT_FIELDS = %w(name unique_external_id email company_name job_title time_zone language mobile phone).freeze
   SSO_USER_CUSTOM_FIELD_MAPPING = {

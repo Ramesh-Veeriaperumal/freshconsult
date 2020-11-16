@@ -105,6 +105,7 @@ module AccountConstants
 
   WIDGET_COUNT_FOR_PLAN = { sprout: 1, non_sprout: 10 }.freeze
   FRESHSALES_SUBSCRIPTION_URL = 'https://%{domain}/subscription'.freeze
+  FRESHWORKSCRM_SUBSCRIPTION_URL = 'https://%{domain}/subscriptions'.freeze
   DEFAULT_SKILL_LIMIT = 180
   MULTI_PRODUCT_LIMIT = 5
   IGNORE_SIGNUP_PARAMS = ['company_name'].freeze

@@ -188,7 +188,9 @@ class AgentsControllerTest < ActionController::TestCase
     login_admin
     @user = Account.current.account_managers.first.make_current
     field_agent_type = AgentType.create_agent_type(@account, 'field_agent')
+    collaborator_agent_type = AgentType.create_agent_type(@account, 'collaborator')
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    Account.any_instance.stubs(:collaborators_enabled?).returns(true)
     Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
 
     role_id = Account.current.roles.find_by_name("Agent").id
@@ -247,15 +249,30 @@ class AgentsControllerTest < ActionController::TestCase
                         :language => "en",
                         :role_ids => ["#{role_id}"],
                         :agent_type => 1 }
-    assert_response 200      
+    assert_response 200
+
+    User.any_instance.stubs(:signup!).returns(false)
+    role_id = Account.current.roles.find_by_name('Agent').id
+    post :create, user: { name: Faker::Name.name,
+                          email: Faker::Internet.email,
+                          active: 1,
+                          role: 1,
+                          agent: 1,
+                          ticket_permission: 1,
+                          language: 'en',
+                          role_ids: [role_id.to_s],
+                          agent_type: 3 }
+    assert_response 200
     subscription = Account.current.subscription
     subscription.agent_limit = nil
     subscription.state = "trial"
-    subscription.save                
+    subscription.save
     User.any_instance.unstub(:signup!)
     Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.any_instance.unstub(:collaborators_enabled?)
     Account.current.unstub(:skill_based_round_robin_enabled?)
     field_agent_type.destroy
+    collaborator_agent_type.destroy
     log_out
   end
 

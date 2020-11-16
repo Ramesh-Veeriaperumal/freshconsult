@@ -8,12 +8,15 @@ module Admin::SecurityConstants
   DELEGATOR_CLASS = 'Admin::SecurityDelegator'
   UPDATE_SECURITY_FIELDS = [
     'whitelisted_ip', 'notification_emails', 'contact_password_policy', 'agent_password_policy',
-    'allow_iframe_embedding', 'sso', 'secure_attachments_enabled', 'secure_fields'
+    'allow_iframe_embedding', 'sso', 'secure_attachments_enabled', 'secure_fields', 'redaction'
   ].freeze
   WHITELISTED_IP_NOT_CONFIGURED = {
     enabled: false
   }.freeze
   SSO_COEXIST_PERMITTED_PARAMS = [:enabled].freeze
+  DEFAULT_REDACTION_CONFIG = {
+    credit_card_number: false
+  }.freeze
   ALLOWED_SECURITY_FIELDS = [
     :notification_emails,
     {
@@ -55,7 +58,12 @@ module Admin::SecurityConstants
       ].freeze
     },
     :secure_attachments_enabled,
-    :secure_fields
+    :secure_fields,
+    {
+      redaction: [
+        :credit_card_number
+      ]
+    }
   ].freeze
 
   SECURITY_NEW_SETTINGS = [:secure_attachments_enabled].freeze
@@ -84,6 +92,9 @@ module Admin::SecurityConstants
     },
     secure_fields: {
       enabled: ['secure_fields_toggle', 'ticket_field_revamp'].freeze
+    },
+    redaction: {
+      enabled: ['redaction']
     }
   }.freeze
 
@@ -179,4 +190,8 @@ module Admin::SecurityConstants
   }.freeze
 
   SETTINGS_TO_IGNORE = ['secure_fields'].freeze
+
+  REDACTION_HASH = {
+    credit_card_number: { data_type: { rules: 'Boolean' } }.freeze
+  }.freeze
 end

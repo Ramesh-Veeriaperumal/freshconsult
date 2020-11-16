@@ -1,5 +1,5 @@
 {
   id: @job['request_id'],
-  status: @job['status_id'].to_i,
+  status: @job['status'],
   data: @job['payload'].each { |agent| agent['id'] = agent['id'].to_i }
 }.to_json

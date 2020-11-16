@@ -30,7 +30,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
 
-  has_one :ticket_body, class_name: 'Helpdesk::TicketBody', dependent: :destroy
+  has_one :ticket_body, class_name: 'Helpdesk::TicketBody', dependent: :destroy, inverse_of: :ticket
   accepts_nested_attributes_for :ticket_body, update_only: true
 
   has_one :schema_less_ticket, class_name: 'Helpdesk::SchemaLessTicket', dependent: :destroy

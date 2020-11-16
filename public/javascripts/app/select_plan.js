@@ -144,7 +144,7 @@ window.App = window.App || {};
     tryFreshsalesEvent: function(isInvite) {
       var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
         detail: {
-          productName: 'freshsales',
+          productName: 'freshworks crm',
           invite: isInvite
         }
       });

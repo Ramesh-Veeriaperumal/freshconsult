@@ -5,6 +5,7 @@ module Freddy
     SUCCESS = 200
     PRODUCT = 'freshdesk'.freeze
     ACTION = 'ticket_reopen'.freeze
+    RESPONSE_KEYS = [:confidence, :reopen].freeze
 
     def perform(args)
       args.symbolize_keys!
@@ -20,9 +21,9 @@ module Freddy
       Rails.logger.debug http_response.inspect.to_s
       parsed_response = http_response.parsed_response
       if (parsed_response.is_a? Hash) && (http_response.code == SUCCESS)
-        @note.schema_less_note.thank_you_note = parsed_response.symbolize_keys
+        @note.schema_less_note.thank_you_note = parsed_response.symbolize_keys.slice(*RESPONSE_KEYS)
         @note.schema_less_note.save!
-        thank_you_note = { note_id: @note.id, response: parsed_response.symbolize_keys }
+        thank_you_note = { note_id: @note.id, response: parsed_response.symbolize_keys.slice(*RESPONSE_KEYS) }
         (@ticket.schema_less_ticket.thank_you_notes ||= []).push(thank_you_note)
         @ticket.schema_less_ticket.save!
       end

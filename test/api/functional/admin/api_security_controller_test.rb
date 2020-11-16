@@ -247,6 +247,48 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:freshdesk_sso_configurable?)
   end
 
+  def test_security_index_redaction_not_configured
+    Account.any_instance.stubs(:redaction_enabled?).returns(true)
+    Account.any_instance.stubs(:redaction).returns(nil)
+    stub_account
+    expected_response = { 'credit_card_number' => false }
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal expected_response, response_body['redaction']
+  ensure
+    unstub_account
+    Account.any_instance.unstub(:redaction_enabled?)
+    Account.any_instance.unstub(:redaction)
+  end
+
+  def test_security_index_redaction_with_redaction_configured
+    Account.any_instance.stubs(:redaction_enabled?).returns(true)
+    redaction_data = { 'credit_card_number' => true }.with_indifferent_access
+    Account.any_instance.stubs(:redaction).returns(redaction_data)
+    stub_account
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal redaction_data, response_body['redaction']
+  ensure
+    unstub_account
+    Account.any_instance.unstub(:redaction_enabled?)
+    Account.any_instance.unstub(:redaction)
+  end
+
+  def test_security_index_redaction_with_redaction_disabled
+    Account.any_instance.stubs(:redaction_enabled?).returns(false)
+    stub_account
+    get :show, controller_params(version: 'private')
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    refute response_body.key?(:redaction)
+  ensure
+    unstub_account
+    Account.any_instance.unstub(:redaction_enabled?)
+  end
+
   def test_update_notification_emails
     AccountConfiguration.any_instance.stubs(:update_billing).returns(true)
     agent = add_test_agent(Account.current)
@@ -1392,6 +1434,48 @@ class Admin::ApiSecurityControllerTest < ActionController::TestCase
     put :update, construct_params(api_security: request_params)
     assert_response 200
     assert_equal false, Account.current.allow_iframe_embedding
+  end
+
+  def test_update_redaction
+    Account.any_instance.stubs(:redaction_enabled?).returns(true)
+    request_params = {
+      redaction: {
+        credit_card_number: true
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert_equal true, Account.current.redaction['credit_card_number']
+  ensure
+    Account.any_instance.unstub(:redaction_enabled?)
+  end
+
+  def test_update_redaction_turn_off
+    Account.any_instance.stubs(:redaction_enabled?).returns(true)
+    request_params = {
+      redaction: {
+        credit_card_number: false
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 200
+    assert_equal false, Account.current.redaction['credit_card_number']
+  ensure
+    Account.any_instance.unstub(:redaction_enabled?)
+  end
+
+  def test_update_redaction_without_feature
+    Account.any_instance.stubs(:redaction_enabled?).returns(false)
+    request_params = {
+      redaction: {
+        credit_card_number: true
+      }
+    }
+    put :update, construct_params(api_security: request_params)
+    assert_response 400
+    match_json([bad_request_error_pattern(:redaction, :require_feature_for_attribute, feature: 'redaction', attribute: 'redaction')])
+  ensure
+    Account.any_instance.unstub(:redaction_enabled?)
   end
 
   private

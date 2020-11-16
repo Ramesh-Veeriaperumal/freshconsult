@@ -429,6 +429,8 @@
       :secure_fields_toggle: 425
       :collaborators: 426
       :archive_tickets_api: 427
+      :auto_response_detector: 428
+      :redaction: 429
 :selectable_features:
   :gamification_enable: false
   :parent_child_tickets: false
@@ -472,6 +474,5 @@
   :assets: false
   :assets_toggle: false
   :forums_agent_portal: false
-  :archive_tickets_api: false
   :solutions_agent_portal: false
   :whatsapp_channel: false

@@ -27,4 +27,12 @@ class AgentTypeTest < ActionView::TestCase
     AgentType.create_support_agent_type(@account)
     assert_equal old_count, AgentType.count
   end
+
+  def test_create_duplicate_agent_type_returns_agent_type
+    old_agent_type = AgentType.create_support_agent_type(@account)
+    old_count = AgentType.count
+    new_agent_type = AgentType.create_support_agent_type(@account)
+    assert_equal old_agent_type, new_agent_type
+    assert_equal old_count, AgentType.count
+  end
 end

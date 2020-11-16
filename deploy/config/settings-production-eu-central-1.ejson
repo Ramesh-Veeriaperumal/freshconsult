@@ -168,6 +168,7 @@
         "_configure_domain_url": "api/v1/whitelabel/configure",
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
+        "_fetch_domain_url": "api/v1/whitelabel/domains",
         "_lang_detect_path": "api/v1/detect/lang",
         "_dkim_host": "https://mailserviceeuc.freshdesk.com",
         "envoy_egress": {

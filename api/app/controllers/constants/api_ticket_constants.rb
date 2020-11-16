@@ -144,4 +144,6 @@ module ApiTicketConstants
   TICKET_DELETE_DAYS = 30
   TICKET_DELETE_MESSAGE_TYPE = 'ticket_delete_message_type'.freeze
   TICKET_DELETE_SCHEDULER_TYPE = 'ticket_delete_scheduler_type'.freeze
+
+  BULK_API_JOBS_CLASS = 'Ticket'.freeze
 end.freeze

@@ -482,6 +482,10 @@ class Helpdesk::Note < ActiveRecord::Base
     note_body && note_body.full_text_html
   end
 
+  def redactable?
+    Account.current.redaction_enabled? && Account.current.active_redaction_configs.present? && user.customer?
+  end
+
   protected
 
     def send_reply_email

@@ -11,8 +11,6 @@ class Portal < ActiveRecord::Base
     g.add :product_id
     g.add :account_id
     g.add :portal_url
-    g.add :solution_category_id
-    g.add :forum_category_id
     g.add :language
     g.add :main_portal
     g.add :ssl_enabled

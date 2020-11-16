@@ -258,6 +258,10 @@ module Admin::RolesHelper
     end.to_s.html_safe #ul
   end
 
+  def max_limit_reached?
+    @total_roles >= RoleConstants::MAX_ROLES_LIMIT
+  end
+
   private
 
     def build_element(element, parent, disabled)

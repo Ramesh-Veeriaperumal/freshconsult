@@ -3,7 +3,8 @@ class AgentType < ActiveRecord::Base
   # If we need to craete custom agent types, we need to offset agent_type_id to some higervalues, so that we can have our default types without collision.
   DEFAULT_AGENT_TYPE_LIST = {
     support_agent: [:support_agent, 'support_agent', 1],
-    field_agent: [:field_agent, 'field_agent', 2]
+    field_agent: [:field_agent, 'field_agent', 2],
+    collaborator: [:collaborator, 'collaborator', 3]
   }
 
   # not meant to be used outside of this class. use agent_type_id instead
@@ -61,6 +62,9 @@ class AgentType < ActiveRecord::Base
   end
 
   def self.create_agent_type_with(agent_type_details, account)
+    agent_type = Account.current.agent_types.find_by_name(agent_type_details[0])
+    return agent_type if agent_type
+
     agent_type = account.agent_types.create(
       name: agent_type_details[0],
       label: agent_type_details[1],

@@ -147,6 +147,7 @@ class AgentValidationTest < ActionView::TestCase
     Account.current.stubs(:multi_timezone_enabled?).returns(false)
     Account.current.stubs(:field_service_management_enabled?).returns(false)
     Account.current.stubs(:features?).with(:multi_language).returns(false)
+    valid_agent_type_ids = Agent::AGENT_TYPES.map { |r| r[1] }.join(',')
     agent_item = Agent.new
     agent_item.user = User.new
     agent = AgentValidation.new({ name: Faker::Lorem.characters(15), email: Faker::Internet.email, ticket_scope: 2, agent_type: 100, time_zone: 'Central Time (US & Canada)', occasional: false }, agent_item, false)
@@ -154,7 +155,7 @@ class AgentValidationTest < ActionView::TestCase
     errors = agent.errors.sort.to_h
     error_options = agent.error_options.sort.to_h
     assert_equal({ agent_type: :not_included }, errors)
-    assert_equal({ agent_type: { list: '1,2' }, email: {}, language: {}, name: {}, occasional: {}, role_ids: {}, ticket_scope: {}, time_zone: {} }, error_options)
+    assert_equal({ agent_type: { list: valid_agent_type_ids }, email: {}, language: {}, name: {}, occasional: {}, role_ids: {}, ticket_scope: {}, time_zone: {} }, error_options)
   ensure
     Account.current.unstub(:freshid_integration_enabled?)
     Account.current.unstub(:multi_timezone_enabled?)

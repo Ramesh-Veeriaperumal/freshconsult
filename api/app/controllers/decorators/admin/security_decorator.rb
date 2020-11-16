@@ -9,7 +9,7 @@ module Admin
 
     delegate :whitelisted_ip, :help_widget_secret, :notification_emails, :contact_password_policy,
              :agent_password_policy, :sso_options, :shared_secret, :sso_enabled, :current_sso_type,
-             :freshdesk_sso_enabled?, :allow_iframe_embedding, :secure_fields_enabled?, to: :record
+             :freshdesk_sso_enabled?, :allow_iframe_embedding, :secure_fields_enabled?, :redaction, to: :record
 
     def to_hash
       if private_api?
@@ -25,6 +25,7 @@ module Admin
       u.add :notification_emails
       u.add :contact_password_policy_hash, if: proc { Account.current.custom_password_policy_enabled? }, as: :contact_password_policy
       u.add :agent_password_policy_hash, if: proc { |obj| obj.show_agent_password_policy? }, as: :agent_password_policy
+      u.add :redaction_hash, if: proc { Account.current.redaction_enabled? }, as: :redaction
       u.add :allow_iframe_embedding
       u.add :secure_attachments_enabled, if: proc { Account.current.security_new_settings_enabled? && Account.current.dependencies_enabled?(:secure_attachments) }
       u.add :secure_fields_enabled?, if: proc { Account.current.secure_fields_toggle_enabled? }, as: :secure_fields
@@ -83,8 +84,8 @@ module Admin
 
     def show_whitelisted_ip
       {
-        enabled: whitelisted_ip.enabled,
-        applies_only_to_agents: whitelisted_ip.applies_only_to_agents,
+        enabled: whitelisted_ip.enabled || false,
+        applies_only_to_agents: whitelisted_ip.applies_only_to_agents || false,
         ip_ranges: whitelisted_ip.ip_ranges
       }
     end
@@ -106,6 +107,10 @@ module Admin
 
     def show_agent_password_policy?
       !current_account.freshid_integration_enabled? && current_account.custom_password_policy_enabled? && current_account.agent_password_policy.present?
+    end
+
+    def redaction_hash
+      redaction.presence || DEFAULT_REDACTION_CONFIG
     end
   end
 end

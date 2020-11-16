@@ -98,6 +98,12 @@ properties:
         minimum: 1
         maximum: 5
         description: Value should be set as nil for removing this policy
+  redaction:
+    type: object
+    properties:
+      credit_card_number:
+        type: boolean
+        description: Credit card number redaction can be turned on/off
   allow_iframe_embedding:
     type: boolean
     description: Decides whether portal can be embedded in iframe

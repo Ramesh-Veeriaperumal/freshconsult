@@ -120,6 +120,79 @@ module Freshid::V2::EventProcessorExtensions
     update_accounts(payload)
   end
 
+  def user_meta_info_event_callback
+    Rails.logger.info "user_info for account is: #{@user_metadata.inspect} acc_id: #{Account.current.id}"
+    return if @user_metadata[:userType] != 'CONTACT'
+
+    user_info = @user_metadata[:userInfo]
+    if user_info.class == String
+      return unless valid_json?(user_info)
+
+      user_info = JSON.parse(user_info).deep_symbolize_keys
+    end
+    assign_freshid_attributes_from_usermeta(formatted_user_data(user_info))
+    @user.save if @user.changed? || @user.user_companies.any?(&:changed?)
+  end
+
+  def formatted_user_data(user_info)
+    freshid_user_data = {}
+    user_info.each_pair do |k, val|
+      freshid_user_data[k] = (val.class == Array) ? val[0] : val
+    end
+    freshid_user_data
+  end
+
+  def assign_freshid_attributes_from_usermeta(freshid_user_data)
+    first_name = get_first_match(freshid_user_data, SsoUtil::FIRST_NAME_STRS)
+    last_name = get_first_match(freshid_user_data, SsoUtil::LAST_NAME_STRS)
+    phone = get_first_match(freshid_user_data, SsoUtil::PHONE_NO_STRS)
+    mobile = get_first_match(freshid_user_data, SsoUtil::MOBILE_NO_STRS)
+    job_title = get_first_match(freshid_user_data, SsoUtil::TITLE_STRS)
+    company = get_first_match(freshid_user_data, SsoUtil::COMPANY_NAME_STRS)
+    # twitter_id = get_first_match(freshid_user_data, SsoUtil::TWITTER_ID_STRS)
+    external_id = get_first_match(freshid_user_data, SsoUtil::EXTERNAL_ID_STRS)
+    description = get_first_match(freshid_user_data, SsoUtil::DESCRIPTION_STRS)
+    language = get_first_match(freshid_user_data, SsoUtil::LANGUAGE_STRS)
+    time_zone = get_first_match(freshid_user_data, SsoUtil::TIMEZONE_STRS)
+
+    name = "#{first_name} #{last_name}".strip
+    @user.name = name if name.present?
+    @user.phone = phone if phone.present?
+    @user.mobile = mobile if mobile.present?
+    @user.job_title = job_title if job_title.present?
+    # @user.twitter_id = twitter_id if twitter_id.present?
+    @user.assign_external_id(external_id) if external_id.present?
+    @user.description = description if description.present?
+    @user.assign_company(company) if company.present?
+    @user.language = language if language.present? && (ContactConstants::LANGUAGES.include? language)
+    @user.time_zone = time_zone if time_zone.present? && (ContactConstants::TIMEZONES.include? time_zone)
+  end
+
+  def get_first_match(freshid_user_data, keys)
+    keys.each do |key|
+      return freshid_user_data[key] if freshid_user_data.key?(key)
+    end
+    nil
+  end
+
+  def valid_json?(data)
+    begin
+      JSON.parse(data)
+      return true
+    rescue JSON::ParserError => e
+      Rails.logger.info "Invalid data string in user_meta_info_event_callback acc_id: #{Account.current.id}"
+      return false
+    end
+  end
+
+  def fetch_user_for_update_events
+    if @user_metadata.present? && @event_type == 'USER_META_INFO' && @user_metadata[:userType] == 'CONTACT' && @user_metadata[:email].present?
+      Freshid.account_class.current.users.where(email: @user_metadata[:email]).first || Account.current.users.new(email: @user_metadata[:email])
+    else
+      Freshid::V2::LoginUtil.fetch_user_by_uuid(@user_uuid)
+    end
+  end
+
   def self.prepended(base)
     class << base
       prepend ClassMethods

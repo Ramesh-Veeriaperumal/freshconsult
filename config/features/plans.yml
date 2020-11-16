@@ -75,6 +75,7 @@
       - :branding_feature
       - :ticket_summary_feature
       - :undo_send
+      - :auto_response_detector
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -238,6 +239,7 @@
       - :branding_feature
       - :ticket_summary_feature
       - :undo_send
+      - :auto_response_detector
     :inherits:
       - :sprout_jan_19
     :exclude: []
@@ -459,6 +461,7 @@
       - :branding_feature
       - :ticket_summary_feature
       - :undo_send
+      - :auto_response_detector
     :inherits:
       - :sprout_jan_20
     :exclude: []
@@ -593,6 +596,7 @@
       - :custom_objects
       - :triage
       - :secure_fields_toggle
+      - :redaction
     :inherits:
       - :estate_jan_20
     :exclude: [:analytics_knowledge_base_report]

@@ -2,6 +2,7 @@
 	<p><%=t('admin.roles.helpcard.info1').html_safe%></p>
   <p><%=t('admin.roles.helpcard.info2').html_safe%></p>
   <p><%=t('admin.roles.helpcard.info3').html_safe%></p>
+  <p><%=t('admin.roles.helpcard.info_limit', limit: RoleConstants::MAX_ROLES_LIMIT)%></p>
 	<h3 class="title"><%=t('admin.roles.helpcard.title2').html_safe%></h3>
 	<p><%=t('admin.roles.helpcard.info4').html_safe%></p>
   <p> <%= link_to t('admin.roles.helpcard.info5').html_safe, "https://support.freshdesk.com/solution/articles/96909", target: "_top" %>

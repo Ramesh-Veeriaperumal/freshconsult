@@ -39,6 +39,10 @@ module AgentsHelper
     current_account.subscription.trial? && support_agent_license_available < 0 ? nil : support_agent_license_available
   end
 
+  def available_collaborator_licenses
+    5000 # will be changed in subsequent PR.
+  end
+
   def available_field_agent_licenses
     field_agent_license_available = ((current_account.subscription.field_agent_limit || 0) - current_account.field_agents_count)
     is_initial_state = current_account.subscription.field_agent_limit.nil? && current_account.field_agents_count.zero?
@@ -128,6 +132,9 @@ module AgentsHelper
       occasional = true
     when :field_agent
       agent_type = AgentType.agent_type_id(Agent::FIELD_AGENT)
+      occasional = false
+    when :collaborator
+      agent_type = AgentType.agent_type_id(Agent::COLLABORATOR)
       occasional = false
     else
       agent_type = AgentType.agent_type_id(Agent::SUPPORT_AGENT)

@@ -85,6 +85,50 @@ class Admin::RolesControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:current)
   end
 
+  def test_new_role_when_max_limit_reached
+    stub_const(RoleConstants, 'MAX_ROLES_LIMIT', 1) do
+      get :new, format: 'html'
+      assert_response 302
+      assert_equal true, Account.current.roles.count.positive?
+      assert_includes response.redirect_url, '/admin/roles'
+    end
+  end
+
+  def test_new_role_when_max_limit_not_reached
+    get :new, format: 'html'
+    assert_response 200
+    assert_equal true, Account.current.roles.count < RoleConstants::MAX_ROLES_LIMIT
+  end
+
+  def test_index_when_max_limit_reached
+    stub_const(RoleConstants, 'MAX_ROLES_LIMIT', 1) do
+      get :index, format: 'html'
+      assert_response 200
+      assert_equal true, Account.current.roles.count.positive?
+      assert_equal true, @controller.safe_send(:max_limit_reached?)
+    end
+  end
+
+  def test_index_when_max_limit_not_reached
+    get :index, format: 'html'
+    assert_response 200
+    assert_equal true, Account.current.roles.count < RoleConstants::MAX_ROLES_LIMIT
+    assert_equal false, @controller.safe_send(:max_limit_reached?)
+  end
+
+  def test_create_when_max_limit_reached
+    stub_const(RoleConstants, 'MAX_ROLES_LIMIT', 1) do
+      name = "Test Role Param - #{Time.now.utc}"
+      post :create, construct_params(roles_params(name: name))
+      assert_response 302
+      role = Account.current.roles.find_by_name(name)
+      assert_equal false, role.present?
+      assert_includes response.redirect_url, '/admin/roles'
+      assert_equal true, Account.current.roles.count.positive?
+      assert_equal true, @controller.safe_send(:max_limit_reached?)
+    end
+  end
+
   private
 
     def roles_params(args = {})

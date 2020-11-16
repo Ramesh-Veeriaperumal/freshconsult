@@ -1,17 +1,19 @@
 module TicketHelper
-  def create_ticket(params = {}, group = nil, internal_group = nil)
+  def create_ticket(params = {}, group = nil, internal_group = nil, add_description_html = false, assign_email = false)
     requester_id = params[:requester_id] # || User.find_by_email("rachel@freshdesk.com").id
     unless requester_id
-      user = add_new_user(@account)
-      requester_id = user.id
-      user.user_companies.create(company_id: params[:company_id], default: true) if params[:company_id]
+      unless assign_email
+        user = add_new_user(@account)
+        requester_id = user.id
+        user.user_companies.create(company_id: params[:company_id], default: true) if params[:company_id]
+      end
     end
     cc_emails = params[:cc_emails] || []
     fwd_emails = params[:fwd_emails] || []
     subject = params[:subject] || Faker::Lorem.words(10).join(' ')
     account_id =  group ? group.account_id : @account.id
     test_ticket = FactoryGirl.build(:ticket, :status => params[:status] || 2,
-                                         :display_id => params[:display_id], 
+                                         :display_id => params[:display_id],
                                          :requester_id =>  requester_id,
                                          :subject => subject,
                                          :priority => params[:priority] || 1,
@@ -34,7 +36,14 @@ module TicketHelper
                                          channel_id: params[:channel_id],
                                          channel_profile_unique_id: params[:profile_unique_id],
                                          channel_message_id: params[:channel_message_id])
-    test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
+    body = {}.tap do |ticket_body|
+      if add_description_html
+        ticket_body[:description_html] = params[:description_html]
+      else
+        ticket_body[:description] = params[:description] || Faker::Lorem.paragraph
+      end
+    end
+    test_ticket.build_ticket_body(body)
     if params[:attachments]
       attachment_params = params[:attachments].is_a?(Array) ? params[:attachments] : [params[:attachments]]
       attachment_params.each do |attach|
@@ -61,6 +70,7 @@ module TicketHelper
     test_ticket.group_id = group ? group.id : nil
     test_ticket.skip_sbrr_assigner = params[:skip_sbrr_assigner] if params[:skip_sbrr_assigner]
     test_ticket.skill = params[:skill] if params[:skill]
+    test_ticket.email = params[:email] if assign_email
     test_ticket.save_ticket
     test_ticket
   end

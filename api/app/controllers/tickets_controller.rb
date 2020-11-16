@@ -498,8 +498,11 @@ class TicketsController < ApiApplicationController
     end
 
     def recipients_limit_exceeded?
-      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)) && (Freemail.free?(current_account.admin_email)))
-        return max_cc_threshold_crossed? if @item.source == Helpdesk::Source::OUTBOUND_EMAIL || @item.source == Helpdesk::Source::PHONE
+      if current_account.id > get_spam_account_id_threshold &&
+         current_account.subscription.trial? &&
+         !ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id) &&
+         (@item.source == Helpdesk::Source::OUTBOUND_EMAIL || @item.source == Helpdesk::Source::PHONE)
+        return max_cc_threshold_crossed?
       end
       return false
     end

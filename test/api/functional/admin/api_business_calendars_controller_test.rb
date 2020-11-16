@@ -74,7 +74,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
 
   def test_index_business_hour_without_multiple_business_hours
     enable_emberize_business_hours do
-      Account.any_instance.stubs(:multiple_business_hours_enabled?).returns(false)
+      Account.current.stubs(:multiple_business_hours_enabled?).returns(false)
       get :index, controller_params
       pattern = []
       Account.current.business_calendar.order(:name).where(is_default: true).each do |bc|
@@ -82,7 +82,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       end
       assert_response 200
       match_json(pattern.ordered!)
-      Account.any_instance.stubs(:multiple_business_hours_enabled?).returns(true)
+      Account.current.stubs(:multiple_business_hours_enabled?).returns(true)
     end
   end
 
@@ -1605,6 +1605,37 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_launch_rollback_of_omni_business_calendar
+    Account.current.launch(:omni_business_calendar)
+    assert_equal 1, LaunchPartyActionWorker.jobs.size
+    args = LaunchPartyActionWorker.jobs.first.deep_symbolize_keys[:args][0]
+    LaunchPartyActionWorker.jobs.clear
+
+    LaunchPartyActionWorker.new.perform(args)
+    assert_equal 2, ChannelFeatureSyncWorker.jobs.size
+    args = ChannelFeatureSyncWorker.jobs.first.deep_symbolize_keys[:args][0]
+    ChannelFeatureSyncWorker.jobs.clear
+
+    ChannelFeatureSyncWorker.new.perform(args.merge(channel: :freshchat))
+    ChannelFeatureSyncWorker.new.perform(args.merge(channel: :freshcaller))
+
+    Account.current.rollback(:omni_business_calendar)
+    assert_equal 1, LaunchPartyActionWorker.jobs.size
+    args = LaunchPartyActionWorker.jobs.first.deep_symbolize_keys[:args][0]
+    LaunchPartyActionWorker.jobs.clear
+    ChannelFeatureSyncWorker.jobs.clear
+
+    LaunchPartyActionWorker.new.perform(args)
+    assert_equal 2, ChannelFeatureSyncWorker.jobs.size
+    args = ChannelFeatureSyncWorker.jobs.first.deep_symbolize_keys[:args][0]
+    ChannelFeatureSyncWorker.new.perform(args.merge(channel: :freshchat))
+    ChannelFeatureSyncWorker.new.perform(args.merge(channel: :freshcaller))
+
+    ChannelFeatureSyncWorker.new.perform(args)
+  ensure
+    Account.current.rollback(:omni_business_calendar)
+  end
+
   private
 
     def enable_omni_business_calendar_destroy
@@ -1651,6 +1682,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
       Account.any_instance.stubs(:omni_bundle_id).returns(123)
       Account.any_instance.stubs(:omni_chat_agent_enabled?).returns(true)
+      Admin::BcOmniSyncStatusMailer.any_instance.stubs(:send_sync_status_email).returns(true)
       User.any_instance.stubs(:freshid_authorization).returns(
           User.first.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: SecureRandom.uuid))
       AgentObserver.any_instance.stubs(:freshchat_domain).returns('api.freshchat.com')
@@ -1666,6 +1698,7 @@ class Admin::ApiBusinessCalendarsControllerTest < ActionController::TestCase
       Account.any_instance.unstub(:freshcaller_enabled?)
       Account.any_instance.unstub(:omni_business_calendar?)
       Account.any_instance.unstub(:omni_chat_agent_enabled?)
+      Admin::BcOmniSyncStatusMailer.any_instance.unstub(:send_sync_status_email)
       User.any_instance.unstub(:freshid_authorization)
       AgentObserver.any_instance.unstub(:freshchat_domain)
     end

@@ -2865,7 +2865,9 @@ en:
           agents when you create or edit their profile by clicking on the Agents
           icon under the admin tab.
         info5: Learn more about roles and privileges
+        info_limit: You can have up to %{limit} roles in your account.
       role_description: Description
+      limit_message: You can’t add more custom roles. You’ve reached the maximum number of roles (%{limit}) that can be added to your account.
       cancel_label: Cancel
       done_label: Done
       title: Agent Roles
@@ -8037,18 +8039,18 @@ en:
   per_field_agent_per_month: /field technician/month
   freshdesk_discount:
     fdfsbundle:
-      discount_title_text: As a Freshsales customer, you're eligible for a 20% discount*. Claim within %{time} days.
+      discount_title_text: As a Freshworks CRM customer, you're eligible for a 20% discount*. Claim within %{time} days.
       discount_subtitle_text: '*Applicable on Garden, Estate, and Forest Annual plans'
   freshdesk_freshsales_bundle:
     invite_sales_team: Invite Sales Team
-    buy_freshsales: Buy Freshsales CRM
-    discount_text_1: Pay 40% less for better support + sales
+    buy_freshsales: Buy Freshworks CRM
+    discount_text_1: Pay 20% less for better support + sales
     discount_text_3: >-
       What's better than a seamless interaction between support and sales?
-      Getting a CRM at 40% off.
-    try_freshsales: Try Freshsales CRM
-    discount_text_2: Get 40% off on Freshsales CRM if you buy in the next 21 days
-    integrate_freshsales: Integrate Freshsales
+      Getting a CRM at 20% off.
+    try_freshsales: Try Freshworks CRM
+    discount_text_2: Get 20% off on Freshworks CRM if you buy in the next 21 days
+    integrate_freshsales: Integrate Freshworks CRM
   annual_save:
     primary_text: Save %{amount}/year on your subscription.
     primary_link: Switch to annual billing.

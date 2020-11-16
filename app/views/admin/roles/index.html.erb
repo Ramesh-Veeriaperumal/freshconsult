@@ -6,10 +6,15 @@
   <div class="list-page-header">
     <div class="row-fluid">
     		<div class="span6"><h3 class="lead"><%= t('admin.roles.title')%></h3></div>
-    		<div class="span6 pull-right pagination-right">
-            <b><%= link_to t('admin.roles.new'), new_admin_role_path(), :class => "btn btn-primary"  %></b>
-        </div>
+        <% unless max_limit_reached? %>
+          <div class="span6 pull-right pagination-right">
+              <b><%= link_to t('admin.roles.new'), new_admin_role_path(), :class => "btn btn-primary"  %></b>
+          </div>
+        <% end %>
     </div>
+    <% if max_limit_reached? %>
+      <div class="alert ml0 mt0" rel="permanent"><%= t('admin.roles.limit_message', limit: RoleConstants::MAX_ROLES_LIMIT)%></div>
+    <% end %>
   </div>
   <div class="list-page-body">
     <% unless @roles.blank? %>

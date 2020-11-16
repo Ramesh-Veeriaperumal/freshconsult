@@ -390,13 +390,17 @@ module FreshdeskCore::Model
     end
 
     def delete_files(account)
-      account.attachments.find_in_batches do |attachments|
+      account.attachments.find_in_batches(batch_size: 30) do |attachments|
         attachments.each do |attachment|
-          prefix = "data/helpdesk/attachments/#{Rails.env}/#{attachment.id}/"
-          objects = AwsWrapper::S3.find_with_prefix(S3_CONFIG[:bucket], prefix)
+          begin
+            prefix = "data/helpdesk/attachments/#{Rails.env}/#{attachment.id}/"
+            objects = AwsWrapper::S3.find_with_prefix(S3_CONFIG[:bucket], prefix)
 
-          objects.each do |object|
-            object.delete if object.key.include?(attachment.content_file_name)
+            objects.each do |object|
+              object.delete if object.key.include?(attachment.content_file_name)
+            end
+          rescue StandardError => e
+            Rails.logger.info "Unable to delete attachment data from S3. #{e.message}, #{e.backtrace}"
           end
         end
       end
@@ -447,6 +451,8 @@ module FreshdeskCore::Model
       if account.try(:subscription).try(:card_number).present?
         Billing::Subscription.new.remove_credit_card(account.id)
       end
+    rescue ChargeBee::InvalidRequestError => e
+      Rails.logger.info("ChargeBee Card deletion failed #{e.message}, #{e.backtrace}")
     end
 
     def remove_addon_mapping(account)

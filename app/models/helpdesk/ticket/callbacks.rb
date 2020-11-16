@@ -59,7 +59,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_save :nullify_group_id
   before_update :update_isescalated, :if => :check_due_by_change
   before_update :update_fr_escalated, :if => :check_frdue_by_change
-  before_update :update_nr_escalated, if: -> { Account.current.next_response_sla_enabled? && check_nr_due_by_change } 
+  before_update :update_nr_escalated, if: -> { Account.current.next_response_sla_enabled? && check_nr_due_by_change }
 
   before_destroy :save_deleted_ticket_info
 
@@ -108,6 +108,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include AdvancedTicketScopes
 
   spam_watcher_callbacks user_column: 'requester_id', import_column: 'import_id'
+
+  def populate_requester
+    if requester
+      self.requester = requester.parent if requester.parent_id? && requester.parent.present?
+      return
+    end
+    self.requester_id = nil
+    populate_name_and_email if email.present?
+    assign_agent_requester if tracker_ticket?
+    self.requester ||= fetch_requester
+
+    create_requester unless requester
+  end
 
   def trigger_va_actions
     self.enqueue_va_actions.each do |action_params|
@@ -666,10 +679,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def trigger_ticket_properties_suggester_feedback
     begin
       trigger_feedback = false
-      ticket_properties_suggester_hash = schema_less_ticket.ticket_properties_suggester_hash                                        
+      ticket_properties_suggester_hash = schema_less_ticket.ticket_properties_suggester_hash
       suggested_fields = ticket_properties_suggester_hash[:suggested_fields]
-      
-      TicketPropertiesSuggester::Util::ML_FIELDS_TO_PRODUCT_FIELDS_MAP.each do |field, value|        
+
+      TicketPropertiesSuggester::Util::ML_FIELDS_TO_PRODUCT_FIELDS_MAP.each do |field, value|
         if model_changes.key?(field) && suggested_fields[value.to_sym].present?
           suggested_fields[value.to_sym][:updated] = true
           trigger_feedback = true
@@ -818,31 +831,6 @@ private
                                                   self.requester.company_ids.length < 2)
   end
 
-  def populate_requester
-    if requester
-      self.requester = requester.parent if requester.parent_id? && requester.parent.present?
-      return
-    end
-    self.requester_id = nil
-    unless email.blank?
-      name_email = parse_email email  #changed parse_email to return a hash
-      self.email = name_email[:email]
-      self.name ||= name_email[:name]
-      @requester_name ||= self.name # for MobiHelp
-    end
-
-    assign_agent_requester if tracker_ticket?
-
-    self.requester ||= account.all_users.find_by_an_unique_id({
-      :email => self.email,
-      :twitter_id => twitter_id,
-      :external_id => external_id,
-      :fb_profile_id => facebook_id,
-      :phone => phone,
-      :unique_external_id => unique_external_id })
-    create_requester unless requester
-  end
-
   def assign_agent_requester
     agent_requester = account.technicians.find_by_email(email)
     if agent_requester.present?
@@ -850,6 +838,23 @@ private
     else
       errors.add(:email, t('ticket.tracker_agent_error'))
     end
+  end
+
+  def populate_name_and_email
+    name_email = parse_email email # changed parse_email to return a hash
+    self.email = name_email[:email]
+    self.name ||= name_email[:name]
+    @requester_name ||= self.name # for MobiHelp
+  end
+
+  def fetch_requester
+    account.all_users.find_by_an_unique_id(
+      email: email,
+      twitter_id: twitter_id,
+      external_id: external_id,
+      fb_profile_id: facebook_id,
+      phone: phone,
+      unique_external_id: unique_external_id)
   end
 
   def create_requester
@@ -1214,7 +1219,7 @@ private
 
   def ticket_properties_suggester_feedback_required?
     account.ticket_properties_suggester_enabled? && model_changes.slice(*ml_suggested_fields).present? &&
-      ml_suggestions_present? && performed_by_agent? && !all_predicted_fields_updated?      
+      ml_suggestions_present? && performed_by_agent? && !all_predicted_fields_updated?
   end
 
   def ml_suggested_fields

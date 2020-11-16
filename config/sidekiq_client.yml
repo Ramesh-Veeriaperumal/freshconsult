@@ -5,6 +5,7 @@ defaults: &defaults
   :logfile: ./log/sidekiq.log
   :timeout: 30
   :queues:
+    - [bulk_api_jobs]
     - [account_creation_fixtures]
     - [select_all_tickets]
     - [select_all_batcher]
@@ -413,6 +414,7 @@ defaults: &defaults
     - [channel_reply_messages]
     - [link_omni_account]
     - [retry_ticket_supervisor_actions_worker]
+    - [channel_feature_sync]
 
 development:
   <<: *defaults

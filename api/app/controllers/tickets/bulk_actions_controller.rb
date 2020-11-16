@@ -1,8 +1,10 @@
 module Tickets
   class BulkActionsController < ApiApplicationController
     include BulkActionConcern
+    include BulkApiJobsHelper
     include TicketConcern
     include HelperConcern
+    include Redis::RedisKeys
 
     before_filter :archive_disabled?, :setting_enabled?, only: [:bulk_archive]
 
@@ -13,6 +15,17 @@ module Tickets
 
       archive_tickets
       head 204
+    end
+
+    def bulk_delete
+      return render_request_error :missing_param, 400 if params[cname].blank? || params[cname].empty?
+
+      return unless validate_bulk_action_params
+
+      @job_id = request.uuid
+      initiate_bulk_job(ApiTicketConstants::BULK_API_JOBS_CLASS, params[cname], @job_id, action_name)
+      @job_link = current_account.bulk_job_url(@job_id)
+      render('bulk_api_jobs/response', status: 202) if @errors.blank?
     end
 
     private

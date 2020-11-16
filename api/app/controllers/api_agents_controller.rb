@@ -109,7 +109,7 @@ class ApiAgentsController < ApiApplicationController
     @job_id = request.uuid
     initiate_bulk_job(AgentConstants::BULK_API_JOBS_CLASS, params[cname][:agents], @job_id, action_name)
     @job_link = current_account.bulk_job_url(@job_id)
-    render('api_agents/create_multiple', status: 202) unless @errors.present?
+    render('bulk_api_jobs/response', status: 202) if @errors.blank?
   end
 
   def update_multiple
@@ -118,7 +118,7 @@ class ApiAgentsController < ApiApplicationController
     @job_id = request.uuid
     initiate_bulk_job(AgentConstants::BULK_API_JOBS_CLASS, params[cname][:agents], @job_id, action_name)
     @job_link = current_account.bulk_job_url(@job_id)
-    render('api_agents/update_multiple', status: 202) unless @errors.present?
+    render('bulk_api_jobs/response', status: 202) if @errors.blank?
   end
 
   def destroy

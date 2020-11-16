@@ -6,6 +6,7 @@ Helpkit::Application.routes.draw do
         post :bulk_archive, to: 'tickets/bulk_actions#bulk_archive'
         put :bulk_watch, to: 'tickets/subscriptions#bulk_watch'
         put :bulk_unwatch, to: 'tickets/subscriptions#bulk_unwatch'
+        post :bulk_delete, to: 'tickets/bulk_actions#bulk_delete'
       end
       member do
         put :restore

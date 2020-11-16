@@ -1512,6 +1512,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_create_sla_policy_product_and_comapany
     params_hash = create_sla_params_hash_with_company_and_product
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     response = parse_response @response.body
     assert_equal 11, response.size
@@ -1614,6 +1615,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     ticket_type = "Question"
     params_hash = {name: Faker::Lorem.word ,applicable_to: { ticket_types: ["#{ticket_type}"] },sla_target:create_sla_target}
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     response = parse_response @response.body
     match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
@@ -1769,6 +1771,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
     params_hash = params_hash.merge(sla_target)
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
@@ -1830,6 +1833,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     }}
     params_hash = params_hash.merge(sla_target)
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
@@ -1919,6 +1923,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     get_agents
     params_hash = params_hash.merge({ "escalation":  { "reminder_response": { escalation_time:-3600, agent_ids:[@agent_1.user_id] } }})
     post :create, construct_params(params_hash) 
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
@@ -1931,6 +1936,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     get_agents
     params_hash = params_hash.merge({ "escalation":  { "reminder_resolution": { escalation_time: -3600, agent_ids:[@agent_1.user_id] } }})
     post :create, construct_params(params_hash) 
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
@@ -2310,6 +2316,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       }
     })
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size,11
@@ -2357,6 +2364,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
       }
     })
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size, 11
@@ -2371,6 +2379,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     params_hash = create_sla_params_hash_with_company
     params_hash = params_hash.merge({ "escalation": { "reminder_next_response": { escalation_time: -3600, agent_ids:[@agent_1.user_id] } }})
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size, 11
@@ -2385,6 +2394,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     params_hash = create_sla_params_hash_with_company
     params_hash = params_hash.merge({ "escalation": { "next_response": { escalation_time: 0, agent_ids:[@agent_1.user_id] } }})
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     sla_policy = parse_response @response.body
     assert_equal sla_policy.size, 11
@@ -2731,6 +2741,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     assert_equal source_choice.account_choice_id, account_choice_id
     params_hash = { name: Faker::Lorem.word, applicable_to: { sources: [account_choice_id] }, sla_target: create_sla_target }
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     response = parse_response @response.body
     match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))

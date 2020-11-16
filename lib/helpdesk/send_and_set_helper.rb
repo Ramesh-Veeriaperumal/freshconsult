@@ -137,7 +137,7 @@ module Helpdesk::SendAndSetHelper
   def check_reply_trial_customers_limit
     return unless @note.source == Account.current.helpdesk_sources.note_source_keys_by_token["email"]
     if ((current_account.id > get_spam_account_id_threshold) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
-      if (current_account.subscription.trial?) && Freemail.free?(current_account.admin_email) && max_to_cc_threshold_crossed?
+      if current_account.subscription.trial? && max_to_cc_threshold_crossed?
         respond_to do |format|
           format.js { render :file => "helpdesk/notes/inline_error.rjs", :locals => { :msg => t(:'flash.general.recipient_limit_exceeded', :limit => get_trial_account_max_to_cc_threshold )} }
         end

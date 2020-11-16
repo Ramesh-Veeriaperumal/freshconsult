@@ -7,6 +7,7 @@ module Helpdesk
 
       def save_ticket
         process_save_ticket do
+          populate_requester
           build_ticket_and_sanitize
           UnicodeSanitizer.encode_emoji(self.ticket_body, "description")
           self.save
@@ -15,6 +16,7 @@ module Helpdesk
 
       def save_ticket!
         process_save_ticket do
+          populate_requester
           build_ticket_and_sanitize
           UnicodeSanitizer.encode_emoji(self.ticket_body, "description")
           self.save!
@@ -61,6 +63,7 @@ module Helpdesk
 
       def build_ticket_and_sanitize
         build_ticket_body unless ticket_body
+        ticket_body.redact_content
         sanitize_body_and_unhtml_it(ticket_body,"description") if ticket_body
       end
       

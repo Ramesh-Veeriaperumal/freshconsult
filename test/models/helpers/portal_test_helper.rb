@@ -7,8 +7,6 @@ module PortalTestHelper
       product_id: portal.product_id,
       account_id: portal.account_id,
       portal_url: portal.portal_url,
-      solution_category_id: portal.solution_category_id,
-      forum_category_id: portal.forum_category_id,
       language: portal.language,
       main_portal: portal.main_portal,
       ssl_enabled: portal.ssl_enabled,

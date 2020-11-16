@@ -50,7 +50,8 @@ class Integrations::Marketplace::SignupControllerTest < ActionController::TestCa
     account_name = Faker::Lorem.word
     user_email = Faker::Internet.email
     user_name = Faker::Name.name
-    get :create_account, call_back: '', user: { email: user_email, remote_id: 'awgbejs.org.za', name: user_name, phone: '' }, utc_offset: '', account: { google_domain: '', name: account_name, domain: 'wbjs' }, request_params: { app_name: 'google', operation: 'onboarding_google', email_not_reqd: '' }, session_json: '', first_referrer: '', first_landing_url: '', first_search_engine: '', first_search_query: ''
+    remote_id = "#{Faker::Lorem.word}.org.aa"
+    get :create_account, call_back: '', user: { email: user_email, remote_id: remote_id, name: user_name, phone: '' }, utc_offset: '', account: { google_domain: '', name: account_name, domain: Faker::Lorem.word }, request_params: { app_name: 'google', operation: 'onboarding_google', email_not_reqd: '' }, session_json: '', first_referrer: '', first_landing_url: '', first_search_engine: '', first_search_query: ''
     assert_response 302
   ensure
     Signup.any_instance.unstub(:freshid_v2_signup_allowed?)

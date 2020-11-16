@@ -898,6 +898,7 @@
         "_configure_domain_url": "api/v1/whitelabel/configure",
         "_verify_domain_url": "api/v1/whitelabel/domains/verify",
         "_remove_domain_url": "api/v1/whitelabel/domains",
+        "_fetch_domain_url": "api/v1/whitelabel/domains",
         "_lang_detect_path": "api/v1/detect/lang",
         "_dkim_host": "https://mailservice.freshpo.com",
         "envoy_egress": {
@@ -1386,10 +1387,10 @@
             "_timeout": 60
           },
           "key": {
-            "parent": "EJ[1:2dtUesApf/WhbywyYPd7X6n+/NQpKJyQNIluQQW0niA=:C0rkIW1ZDIOjsNjsIGfAoW3xw1gq7rFX:V3kC5gRd8TjIq/7Z9tz7A5tCUKcG6vQdBRBZgl4ICXxbd/Dngdy/jOpgPgpSuu7DvT/sLbBKHgQAA3UgNx7oONOzMgZLgUbOLtOoQ/oniE0F0JdCOg==]",
+            "parent": "EJ[1:tzNaHALevKXZ7Fcxg/g3m6szZwKm4ZI65ShOEZZDyWU=:Cy+HpWvd9h+Rc43buFK9PYBzXRQ2SgVn:v5Btxn0ZScBTMzh1XVre3h3qd+TZj+hJOjPD/s4Sxvmp2d59bTp7B6K9C32Svd4CDGwgJRIXLpiKdQwj1YAZENmLMpwKJF8MI2t0SHKtUNzkYy3OlQ==]",
             "sub_users": {
-              "default-user": "EJ[1:2dtUesApf/WhbywyYPd7X6n+/NQpKJyQNIluQQW0niA=:O35j1NfuiMSIdHvVzA2qex6cCCt+A0Zg:H0DMQA+iD/eLvHQb6Nd986iE1F2NLZ9avCk2gah19GF6rlYwS7v7jcim2AbO0y74bxe1/8x8bdNfedcrwRJhlLUb+0eFKQ78JY06dJqjvLfXtkeMJw==]",
-              "free-user": "EJ[1:2dtUesApf/WhbywyYPd7X6n+/NQpKJyQNIluQQW0niA=:m8BjepgTsnTFZtHeGy2jYKN6+wRcVXb7:/p++aAHQMW2g754q3uwDOffsUE4nSq7tb81es0rkukLUSv1bjj1wn68DNYFEdde94zhae0l5vom/PKCPJuvBTCvR5D8EgJteu1b904M+nv79j6Z0Rw==]"
+              "default-user": "EJ[1:nJe1SnQ4wmLAoFDh4K9FlRxDJ7CeJyk+NpnIQ2Svlj0=:B6Dd0HRpkXVCeP0DHIAOQGQuMjAVQe8z:avPUsLuuEu/4E9kI6RdyMwVog+uyyLwYR7SJREHaCjLO+5YS4cnBWrhUQ4zNW+HcLflbp11ZqqI88cmkwW5qtdFrxFjwlsX6nniewjF9lHBHe3/Mag==]",
+              "free-user": "EJ[1:nJe1SnQ4wmLAoFDh4K9FlRxDJ7CeJyk+NpnIQ2Svlj0=:btVhWr5PsG9sjncT3rGrmC5Lryl7GLg5:J0Yi212DDhJM/9NUTC2+xm6H7M6geyFn7KhanHLNNSzU7qq2zps5eGpqpjAMxJ2UzLHmCjhIHmqaaJlavwfhF2dUQ0D42S+nZjo1Fh25wbBrCqqMKA==]"
             },
             "user1": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:K0Ekx6pWhsdro7h4jzpZGWiJiPBj/Cmj:vKv6Ec4Uci99u0CckRhoNfxWhbwpHL7tU3PWQbwubo8V/m0aFKZpbGZ1rddXem5EI/i07SmxYUh6pMrtcvvbqzPaIVNM/lv5N5B29jBYnRWxPorL8A==]",
             "user2": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JCdsufg+7UT2CerRlgPhefT7AlHyotPk:pOARH35uy3p+RTfvmCEjr0pyS63gdoHj6tY6QyKo0C2qsodi0hPd4zPkQFUanqom+jeDoURLO0fZsaMeB3RUm8moTMu8mwpT+uh1qTHDjkfzx2Nyfg==]"

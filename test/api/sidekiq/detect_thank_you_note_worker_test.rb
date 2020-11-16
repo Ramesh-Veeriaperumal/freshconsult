@@ -62,11 +62,14 @@ class DetectThankYouNoteWorkerTest < ActionView::TestCase
     note.user_id = user.id
     note.save!
     args = { ticket_id: @ticket.id, note_id: note.id }
-    response_stub = ResponseStub.new({ 'reopen' => 0, 'confidence' => 99.77472623583164 }, 200)
+    response_stub = ResponseStub.new({ 'reopen' => 0, 'confidence' => 99.77472623583164, 'text' => 'sample text' }, 200)
     HTTParty.stubs(:post).returns(response_stub)
     ::Freddy::DetectThankYouNoteWorker.new.perform(args) if detect_thank_you_note?(note)
     note.reload
+    @ticket.reload
     assert_equal true, note.schema_less_note.thank_you_note.present?
+    note.schema_less_note.thank_you_note.must_match_json_expression('reopen' => 0, 'confidence' => 99.77472623583164)
+    @ticket.schema_less_ticket.thank_you_notes[0][:response].must_match_json_expression('reopen' => 0, 'confidence' => 99.77472623583164)
     WebMock.disable_net_connect!
   ensure
     Account.unstub(:current)

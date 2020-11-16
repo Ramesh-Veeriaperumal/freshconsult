@@ -64,8 +64,8 @@ class Organisation < ActiveRecord::Base
       Rails.logger.info "Response from Freshid, Product: #{products.inspect}"
       if products.present? && freshid_accounts.present?
         freshid_accounts[:accounts].each do |freshid_account|
-          product_name = products['productList'].find { |product| product['id'] == freshid_account[:product_id] }['name']
-          if product_name == FRESHSALES
+          product = products['productList'].find { |product| product['id'] == freshid_account[:product_id] }
+          if product && product['name'] == FRESHSALES
             freshsales_url = freshid_account[:domain]
             break
           end

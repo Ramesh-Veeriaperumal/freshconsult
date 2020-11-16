@@ -1,9 +1,9 @@
-class Omni::FreshcallerBcSync < Omni::BusinessCalendarSync
+class Omni::FreshcallerBcSync < Omni::ChannelSync
   include Freshcaller::Endpoints
   include Freshcaller::JwtAuthentication
 
   def send_channel_request
-    Rails.logger.info("#{klass_name} send_channel_request")
+    super
     params.merge!(generate_request_id)
     freshcaller_request(safe_send("#{action}_params"), safe_send("#{action.to_s}_url"), method)
   end

@@ -73,7 +73,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
     :custom_fields_hash, :thank_you_note_id, :perform_post_observer_actions, :prime_ticket_args, :current_note_id,
     :bulk_updation, :old_last_interaction_id, :old_tag_ids, :return_old_tag_ids, :sla_time_changes,
-    :enqueue_va_actions
+    :enqueue_va_actions, :manual_publish_model_changes
 
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
@@ -358,6 +358,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def agent_availability=(available)
     agent.available = available if agent.present?
+  end
+
+  def redactable?
+    Account.current.redaction_enabled? && Account.current.active_redaction_configs.present? && requester.customer?
   end
 
   class << self # Class Methods
@@ -1369,8 +1373,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       time_now = Time.zone.now
       self.update_column(:updated_at, time_now) # update_column can't be invoked in new record.
       self.sqs_manual_publish
-      self.model_changes = { updated_at: [prev_updated_at, time_now] }
+      self.manual_publish_model_changes = { updated_at: [prev_updated_at, time_now] }
       self.manual_publish_to_central(nil, :update, {}, true)
+      self.manual_publish_model_changes = nil
     end
     @touched ||= true
   end
