@@ -10,7 +10,8 @@ class TicketDecorator < ApiDecorator
            :internal_agent_id, :association_type, :associates, :associated_ticket?,
            :can_be_associated?, :description_html, :tag_names, :attachments,
            :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id,
-           :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, :tweet_type, :fb_msg_type, :channel_id, :channel_profile_unique_id, :channel_message_id, to: :record
+           :subsidiary_tkts_count, :import_id, :id, :nr_escalated, :nr_due_by, :tweet_type, :fb_msg_type, :channel_id,
+           :channel_profile_unique_id, :channel_message_id, :outbound_email?, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -367,6 +368,7 @@ class TicketDecorator < ApiDecorator
       fwd_emails: cc_email.try(:[], :fwd_emails),
       reply_cc_emails: cc_email.try(:[], :reply_cc),
       ticket_cc_emails: cc_email.try(:[], :tkt_cc),
+      ticket_bcc_emails: outbound_email? ? cc_email.try(:[], :tkt_bcc) : [],
       fr_escalated: fr_escalated,
       spam: spam,
       email_config_id: email_config_id,

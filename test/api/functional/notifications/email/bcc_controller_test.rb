@@ -60,13 +60,17 @@ class Notifications::Email::BccControllerTest < ActionController::TestCase
     match_json(emails: [])
   end
 
-  def test_show_bcc_email
+  def test_show_bcc_email_with_manage_tickets_privilege
+    User.any_instance.stubs(:privilege?).with(:manage_email_settings).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
     @account_settings = @account.account_additional_settings
     @account_settings.bcc_email = create_valid_update_params[:emails].join(',')
     @account_settings.save!
     get :show, controller_params
     assert_response 200
     match_json(create_valid_update_params)
+  ensure
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_update_bcc_without_privilege
@@ -88,12 +92,12 @@ class Notifications::Email::BccControllerTest < ActionController::TestCase
   end
 
   def test_show_bcc_without_privilege
-    User.any_instance.stubs(:privilege?).with(:manage_email_settings).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
     get :show, controller_params
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   ensure
-    User.any_instance.stubs(:privilege?).with(:manage_email_settings).returns(true)
+    User.any_instance.unstub(:privilege?)
   end
 
   def teardown

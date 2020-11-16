@@ -115,7 +115,7 @@ module Proactive
           ParamsHelper.assign_checkbox_value(@email_action_params[:custom_fields], checkbox_names) # check this func
         end
 
-        params_to_be_deleted = [:cc_emails]
+        params_to_be_deleted = [:cc_emails, :bcc_emails]
         ParamsHelper.clean_params(params_to_be_deleted, @email_action_params)
 
         # Assign original fields from api params and clean api params.

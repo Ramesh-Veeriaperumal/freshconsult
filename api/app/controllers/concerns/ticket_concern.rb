@@ -180,8 +180,10 @@ module TicketConcern
     def process_email_params
       # Assign cc_emails serialized hash & collect it in instance variables as it can't be built properly from params
       cc_emails =  ticket_update_params[:cc_emails]
+      bcc_emails = ticket_update_params[:bcc_emails]
       # Using .dup as otherwise its stored in reference format(&id0001 & *id001).
       @cc_emails = { cc_emails: cc_emails.dup, fwd_emails: [], reply_cc: cc_emails.dup, tkt_cc: cc_emails.dup } unless cc_emails.nil?
+      @cc_emails.merge!(bcc_emails: bcc_emails.dup, tkt_bcc: bcc_emails.dup) unless bcc_emails.nil?
     end
 
     def remove_ticket_params

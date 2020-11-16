@@ -5246,6 +5246,36 @@ module Ember
       assert_response 201
     end
 
+    def test_compose_email_with_bcc_emails
+      email_config = fetch_email_config
+      bcc_emails = [Faker::Internet.email, Faker::Internet.email]
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id, bcc_emails: bcc_emails)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      t = Helpdesk::Ticket.last
+      assert_response 201
+      assert_equal t.cc_email[:tkt_bcc], bcc_emails
+      assert_equal t.source, Helpdesk::Source::OUTBOUND_EMAIL
+      match_json(ticket_show_pattern(t))
+    end
+
+    def test_compose_email_with_bcc_emails_exceeding_max_limit
+      email_config = fetch_email_config
+      bcc_emails = Array.new(51) { Faker::Internet.email }
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id, bcc_emails: bcc_emails)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('bcc_emails', 'Has 51 values, it can have maximum of 49 values', code: :invalid_value)])
+    end
+
+    def test_compose_email_with_invalid_bcc_emails
+      email_config = fetch_email_config
+      bcc_emails = [Faker::Name.name]
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id, bcc_emails: bcc_emails)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('bcc_emails', "It should contain elements that are in the 'valid email address' format", code: :invalid_value)])
+    end
+
     def test_compose_email_with_invalid_source
       email_config = fetch_email_config
       params = ticket_params_hash.except(:product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)

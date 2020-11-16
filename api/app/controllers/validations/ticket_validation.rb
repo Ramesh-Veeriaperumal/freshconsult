@@ -14,7 +14,7 @@ class TicketValidation < ApiValidation
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
                 :related_ticket_ids, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text,
-                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id, :version, :enforce_mandatory, :fc_call_id
+                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id, :version, :enforce_mandatory, :fc_call_id, :bcc_emails
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -197,9 +197,9 @@ class TicketValidation < ApiValidation
   validates :email, data_type: { rules: String, allow_nil: true }
   validates :email, custom_format: { with: proc { AccountConstants.email_validator }, accepted: :'valid email address', allow_nil: true }
   validates :email, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-  validates :cc_emails, data_type: { rules: Array }, array: { custom_format: { with: proc { AccountConstants.named_email_validator }, allow_nil: true, accepted: :'valid email address' } }
+  validates :cc_emails, :bcc_emails, data_type: { rules: Array }, array: { custom_format: { with: proc { AccountConstants.named_email_validator }, allow_nil: true, accepted: :'valid email address' } }
 
-  validates :cc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: { element_type: :values } }
+  validates :cc_emails, :bcc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: { element_type: :values } }
 
   # Tags validations
   validates :tags, data_type: { rules: Array }, array: { data_type: { rules: String, allow_nil: true }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }

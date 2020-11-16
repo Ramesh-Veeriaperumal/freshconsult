@@ -60,6 +60,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :api_agent, only: [:fetch_availability, :update_availability]
     resource :account_admin, only: [:preferences]
     resource :'admin/group', only: [:index]
+    resource :'notifications/email/bcc', only: [:show]
   end
 
   view_secure_field do
@@ -81,7 +82,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/api_email_notification"
     resource :"email/setting", only: %i[show update]
     resource :"email/mailbox"
-    resource :"notifications/email/bcc", only: %i[update show]
+    resource :'notifications/email/bcc', only: [:update]
     resource :"ember/email/mailbox"
   end
 

@@ -575,7 +575,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       to_email = validate_emails(ticket.from_email, ticket)
       return if from_email.empty? || to_email.empty?
       cc_emails = validate_emails(ticket.cc_email[:cc_emails], ticket)
-      bcc_emails = validate_emails(account_bcc_email(ticket), ticket)
+      bcc_emails = validate_emails(ticket.cc_email[:tkt_bcc], ticket)
 
       #Store message ID in Redis for outbound email to improve threading
       message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@outbound-email.freshdesk.com"

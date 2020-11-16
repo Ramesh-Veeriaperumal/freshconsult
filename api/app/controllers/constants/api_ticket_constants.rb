@@ -1,6 +1,6 @@
 module ApiTicketConstants
   # ControllerConstants
-  ARRAY_FIELDS = %w(tags cc_emails attachments attachment_ids related_ticket_ids inline_attachment_ids).freeze
+  ARRAY_FIELDS = %w[tags cc_emails attachments attachment_ids related_ticket_ids inline_attachment_ids bcc_emails].freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
   IGNORE_PARAMS = %w[skip_close_notification parent_template_id child_template_ids topic_id].freeze | AttachmentConstants::CLOUD_FILE_FIELDS
@@ -130,7 +130,7 @@ module ApiTicketConstants
     bulk_unspam: :unspam
   }.freeze
 
-  PARAMS_TO_REMOVE = [:cc_emails, :description, :parent_id].freeze
+  PARAMS_TO_REMOVE = [:cc_emails, :description, :parent_id, :bcc_emails].freeze
   PARAMS_MAPPINGS = { custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type, tracker_id: :tracker_ticket_id }.freeze
   PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification, :parent_template_id, :child_template_ids, :inline_attachment_ids, :topic_id, :fc_call_id].freeze
 

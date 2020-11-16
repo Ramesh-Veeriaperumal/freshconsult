@@ -280,6 +280,7 @@ module ApiTicketsTestHelper
       fwd_emails: expected_output[:fwd_emails] || ticket.cc_email && ticket.cc_email[:fwd_emails],
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email && ticket.cc_email[:reply_cc],
       ticket_cc_emails:  expected_output[:ticket_cc_emails] || ticket.cc_email && ticket.cc_email[:tkt_cc],
+      ticket_bcc_emails: ticket.outbound_email? ? expected_output[:ticket_bcc_emails] || ticket.cc_email && ticket.cc_email[:tkt_bcc] : [],
       description: description_html || description_info(ticket)[:description],
       description_text: description_info(ticket)[:description_text],
       id: expected_output[:display_id] || ticket.display_id,
@@ -310,9 +311,11 @@ module ApiTicketsTestHelper
       due_by: expected_output[:due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.due_by.try(:utc).try(:iso8601),
       fr_due_by: expected_output[:fr_due_by].try(:to_time).try(:utc).try(:iso8601) || ticket.frDueBy.try(:utc).try(:iso8601)
     }
+
     if Account.current.advanced_ticket_scopes_enabled? 
       ticket_hash[:write_access] = User.current.present? ? agent_has_write_access?(ticket, User.current.associated_group_ids) : true
     end
+
     if @account.shared_ownership_enabled?
       ticket_hash.merge!( :internal_group_id => expected_output[:internal_group_id] || ticket.internal_group_id,
                           :internal_agent_id => expected_output[:internal_agent_id] || ticket.internal_agent_id)
@@ -339,7 +342,7 @@ module ApiTicketsTestHelper
     if @private_api
       ticket_hash
     else
-      ticket_hash.except(:skill_id, :associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
+      ticket_hash.except(:skill_id, :associated_tickets_count, :association_type, :can_be_associated, :email_failure_count, :ticket_bcc_emails)
     end
   end
 

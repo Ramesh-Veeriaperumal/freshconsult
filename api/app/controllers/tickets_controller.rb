@@ -333,7 +333,7 @@ class TicketsController < ApiApplicationController
       end
       sanitize_cloud_files(params[cname][:cloud_files]) if private_api?
 
-      params_to_be_deleted = [:cc_emails]
+      params_to_be_deleted = [:cc_emails, :bcc_emails]
       [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if params[cname][key].nil? }
       ParamsHelper.clean_params(params_to_be_deleted, params[cname])
 
