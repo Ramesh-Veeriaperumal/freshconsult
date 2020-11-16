@@ -3342,7 +3342,7 @@ ActiveRecord::Schema.define(version: 20200827174934) do
     t.integer  "agent_type",                       :default => 1
   end
 
-  add_index "roles", ["account_id", "name"], :name => "index_roles_on_account_id_and_name", :unique => true
+  add_index "roles", ["account_id", "agent_type", "name"], :name => "index_roles_on_account_id_and_agent_type_and_name", :unique => true
 
   create_table "scheduled_tasks", :force => true do |t|
     t.integer  "account_id",           :limit => 8
