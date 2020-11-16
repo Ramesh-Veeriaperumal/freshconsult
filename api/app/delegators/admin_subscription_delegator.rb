@@ -1,14 +1,18 @@
 class AdminSubscriptionDelegator < BaseDelegator
+  include OmniChannel::Util
+
   attr_accessor :plan_id, :currency
   validate :validate_plan_id, on: :update, if: -> { @plan_id.present? }
   validate :validate_estimate_on_free_plan, on: :estimate, if: -> { @plan_id.present? }
   validate :validate_renewal_period_based_on_plan, on: :estimate
   validate :validate_subscription_state, on: :update, if: -> { @currency.present? }
+  validate :validate_org_admin_presence, on: :update, if: :omni_upgrade?
 
   def initialize(item, options = {})
+    @account = Account.current
     @plan_id = options[:plan_id]
     @currency = options[:currency]
-    @subscription = Account.current.subscription
+    @subscription = @account.subscription
     super(item, options)
   end
 
@@ -31,4 +35,17 @@ class AdminSubscriptionDelegator < BaseDelegator
       error_options[:currency] = { account_state: @subscription.state }
     end
   end
+
+  def validate_org_admin_presence
+    get_freshid_org_admin_user(@account)
+  rescue StandardError => e
+    Rails.logger.error "Exception occurred while fetching org admin #{e.inspect}"
+    errors[:plan_id] << :org_admin_not_present
+  end
+
+  private
+
+    def omni_upgrade?
+      @account.launched?(:explore_omnichannel_feature) && @plan_id.present? && SubscriptionPlan.cached_current_plans.select(&:omni_plan?).map(&:id).include?(@plan_id)
+    end
 end

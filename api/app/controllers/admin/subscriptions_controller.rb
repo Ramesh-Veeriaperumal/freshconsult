@@ -1,5 +1,6 @@
 class Admin::SubscriptionsController < ApiApplicationController
   include HelperConcern
+
   decorate_views(decorate_objects: [:plans], decorate_object: [:estimate, :update_payment, :fetch_plan])
   before_filter :validate_query_params, only: [:plans, :estimate, :estimate_feature_loss, :fetch_plan]
   before_filter -> { validate_delegator(nil, cname_params) }, only: [:update]

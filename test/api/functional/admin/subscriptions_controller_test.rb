@@ -505,6 +505,37 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:auto_recharge_eligible_enabled?)
   end
 
+  def test_omni_plan_upgrade_with_explore_omnichannel_feature_errors_when_no_org_admin_is_present
+    omni_plan = SubscriptionPlan.new(name: 'Forest Omni Jan 20')
+    omni_plan.id = 1
+    mock_plans = [omni_plan]
+    SubscriptionPlan.stubs(:cached_current_plans).returns(mock_plans)
+    SubscriptionPlan.stubs(:current).returns(mock_plans)
+    freshid_user_response = {
+      users: [{
+        email: '1'
+      }]
+    }
+    Freshid::V2::Models::Account.stubs(:find_by_domain).returns(Freshid::V2::Models::Account.new)
+    Freshid::V2::Models::User.stubs(:account_users).returns(freshid_user_response)
+    stub_auto_recharge_request
+    account = Account.current
+    prev_lp_state = account.launched?(:explore_omnichannel_feature)
+    account.launch(:explore_omnichannel_feature) unless prev_lp_state
+    put :update, construct_params({ version: 'private', plan_id: 1 }, {})
+    account.reload
+    assert_response 400
+    match_json([bad_request_error_pattern('plan_id', :org_admin_not_present, code: :invalid_value)])
+  ensure
+    unstub_auto_recharge_request
+    SubscriptionPlan.unstub(:omni_channel_plan)
+    SubscriptionPlan.unstub(:cached_current_plans)
+    SubscriptionPlan.unstub(:current)
+    Freshid::V2::Models::Account.unstub(:find_by_domain)
+    Freshid::V2::Models::User.unstub(:account_users)
+    Account.current.rollback(:explore_omnichannel_feature) unless prev_lp_state
+  end
+
   private
 
     def sprout_plan_id
@@ -619,6 +650,7 @@ class Admin::SubscriptionsControllerTest < ActionController::TestCase
         mock_subscription_plan.expect :name, plan_name
         mock_subscription_plan.expect :id, id
         mock_subscription_plan.expect :nil?, false
+        mock_subscription_plan.expect :day_pass_amount, 100
       }
       mock_subscription_plan
     end

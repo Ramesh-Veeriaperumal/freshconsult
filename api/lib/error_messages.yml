@@ -408,6 +408,7 @@ api_error_messages:
   not_active_account: 'Account is not in active state'
   invalid_plan_id: 'plan id is invalid'
   cannot_apply_renewal_period: 'Renewal period cannot be applied for sprout plan'
+  org_admin_not_present: 'Unable to upgrade the account as your organization does not have an organization admin. Please contact support.'
   cannot_estimate_free_plan: "Cannot estimate free plan"
   toggle_availability_error: "Toggle availability not allowed"
   toggle_availability_not_allowed_for_this_user: "Toggle availability not allowed for this user"
