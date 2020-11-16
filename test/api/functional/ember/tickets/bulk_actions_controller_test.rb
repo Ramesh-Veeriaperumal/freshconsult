@@ -1691,6 +1691,7 @@ module Ember
         login_as(agent)
         scenario_id = create_scn_automation_rule(scn_automation_params).id
         post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id, ids: ticket_ids)
+        p "response.body :: #{response.body.inspect}" if response.status != 202
         assert_response 202
         failures = {}
         failure_ticket_ids = [ticket1.display_id]

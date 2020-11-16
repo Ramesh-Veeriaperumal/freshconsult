@@ -1,7 +1,11 @@
+require 'newrelic_rpm'
+
 module Middleware
   module Shoryuken
     module Server
       class Logs
+        include NewRelic::Agent::Instrumentation::ControllerInstrumentation
+
         def call(worker_instance, _queue, _sqs_msg, _body)
           # Supress SQL logs
           worker_name = worker_instance.class.name
