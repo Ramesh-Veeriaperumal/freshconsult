@@ -1583,7 +1583,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def custom_field_value(field_name)
-    safe_send(field_name)
+    respond_to?(field_name) ? safe_send(field_name) : nil
   end
 
   def threading_enabled?

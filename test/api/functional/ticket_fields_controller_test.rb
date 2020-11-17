@@ -847,6 +847,17 @@ class TicketFieldsControllerTest < ActionController::TestCase
       })
   end
 
+  def test_accessing_deleted_ticket_field
+    field = create_custom_field('test_custom_publish_text', 'text')
+    field.deleted = 1
+    field.save
+    t = Account.current.tickets.last
+    assert_equal JSON.parse(t.to_esv2_json)[field.column_name], nil
+    assert_equal t.custom_field_value(field.name), nil
+  ensure
+    field.destroy
+  end
+
   # def test_delete_a_section_along_with_section_fields
   #   flexifield_def_id = @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id
   #   ff_def_entry = FactoryGirl.build(:flexifield_def_entry, 
