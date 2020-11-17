@@ -25,7 +25,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/marketplace_app", only: [:index]
     resource :'admin/canned_form', only: [:index, :show, :create_handle]
     resource :"tickets/bot_response", only: %i[show update]
-    resource :"tickets/bulk_action", only: [:bulk_archive, :bulk_delete]
+    resource :"tickets/bulk_action", only: [:bulk_archive, :bulk_delete, :bulk_update]
     resource :"tickets/subscription"
 
     resource :"ember/agent", only: %i[index me achievements update]
@@ -89,7 +89,7 @@ Authority::Authorization::PrivilegeList.build do
   reply_ticket do
     resource :"ember/conversation", only: %i[reply facebook_reply tweet ecommerce_reply reply_template broadcast undo_send channel_reply]
     resource :"ember/tickets/draft", only: %i[save_draft show_draft clear_draft]
-    resource :"ember/tickets/bulk_action", only: [:bulk_update]
+    resource :"tickets/bulk_action", only: [:bulk_update]
     resource :"ember/agent", only: [:enable_undo_send, :disable_undo_send]
   end
 
@@ -215,7 +215,7 @@ Authority::Authorization::PrivilegeList.build do
 
   edit_ticket_properties do
     resource :"ember/ticket", only: %i[update update_properties]
-    resource :"ember/tickets/bulk_action", only: [:bulk_update]
+    resource :"tickets/bulk_action", only: [:bulk_update]
   end
 
   view_time_entries do

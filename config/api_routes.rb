@@ -668,7 +668,7 @@ Helpkit::Application.routes.draw do
         put :bulk_spam, to: 'ember/tickets/delete_spam#bulk_spam'
         put :bulk_restore, to: 'ember/tickets/delete_spam#bulk_restore'
         put :bulk_unspam, to: 'ember/tickets/delete_spam#bulk_unspam'
-        post :bulk_update, to: 'ember/tickets/bulk_actions#bulk_update'
+        post :bulk_update, to: 'tickets/bulk_actions#bulk_update'
         post :bulk_execute_scenario, to: 'ember/tickets/bulk_actions#bulk_execute_scenario'
         put :bulk_link, to: 'ember/tickets/bulk_actions#bulk_link'
         put :bulk_unlink, to: 'ember/tickets/bulk_actions#bulk_unlink'
