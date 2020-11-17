@@ -48,15 +48,15 @@ class Admin::RolesController < Admin::AdminController
   end
   
   def update
-    update_role if role_privilege
-  	if @role.update_attributes(params[:role])
+  	if role_privilege && @role.update_attributes(params[:role])
+      update_role
       flash[:notice] = t(:'flash.roles.update.success', :name => @role.name)
   		respond_to do |format|
         format.html { redirect_to admin_roles_url }
       end
   	else
   		respond_to do |format|
-        format.html { render :action => :new }
+        format.html { render :edit }
       end
   	end
   end

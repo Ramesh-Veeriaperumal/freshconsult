@@ -16,7 +16,7 @@ class ApiRolesDependencyTest < ActionView::TestCase
 
   def test_validations_role
     actual = Role.validators.map { |x| [x.class, x.attributes, x.options] }
-    expected = [[ActiveModel::Validations::PresenceValidator, [:name], {}], [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: true, scope: :account_id }]]
+    expected = [[ActiveModel::Validations::PresenceValidator, [:name], {}], [ActiveRecord::Validations::UniquenessValidator, [:name], { case_sensitive: false, scope: :account_id }]]
     assert_equal expected, actual
   end
 end

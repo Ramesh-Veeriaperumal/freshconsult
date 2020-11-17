@@ -24,7 +24,9 @@ class Role < ActiveRecord::Base
   has_many :users, through: :user_roles, class_name: 'User', autosave: true
 
   validates_presence_of :name
-  validates_uniqueness_of :name, :scope => :account_id
+  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
+  validate :validate_privileges_for_agent_type
+  validate :validate_agent_type_not_changed, on: :update
 
   attr_accessible :name, :description
 
@@ -170,5 +172,25 @@ class Role < ActiveRecord::Base
       elsif privilege?(:delete_company)
         self.privileges = (privileges.to_i & ~(1 << PRIVILEGES[:delete_company])).to_s
       end
+    end
+
+    def validate_privileges_for_agent_type
+      return true unless account&.collaboration_roles_enabled? && errors.blank? && privileges_changed?
+
+      privileges_list = privilege_list
+      # skipping the new non-ui privileges mapped to the added ui privilege
+      (privileges_list.dup & Helpdesk::PrivilegesMap::MIGRATION_MAP.keys).each { |privilege| privileges_list -= Helpdesk::PrivilegesMap::MIGRATION_MAP[privilege] }
+      unless (privileges_list - Helpdesk::AgentTypes::AGENT_TYPE_ID_PRIVILEGE_MAPPING[agent_type]).empty?
+        errors[:permissions] << '- ' + I18n.t('admin.roles.errors.invalid_privileges_for_agent_type')
+        return false
+      end
+      true
+    end
+
+    def validate_agent_type_not_changed
+      return true unless account&.collaboration_roles_enabled? && errors.blank? && agent_type_changed?
+
+      errors[:agent_type] << I18n.t('admin.roles.errors.cannot_change_agent_type_for_existing_roles')
+      false
     end
 end

@@ -2886,6 +2886,9 @@ en:
         view_omni_analytics: View Omnichannel analytics
         manage_custom_objects: Manage Custom Objects
         manage_solution_templates: Manage article templates
+      errors:
+        cannot_change_agent_type_for_existing_roles: cannot be changed for existing roles
+        invalid_privileges_for_agent_type: Some of the selected privileges are not available for the selected agent type
     help_image_alt:
       helpdesk_arcarde: Helpdesk Arcade
     mobihelp:
