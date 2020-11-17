@@ -219,4 +219,28 @@ class ApiRolesControllerTest < ActionController::TestCase
     assert !Account.current.roles.map(&:name).include?('Coach')
     match_json(pattern.ordered!)
   end
+
+  def test_index_without_feature
+    Account.current.revoke_feature(:sla_management_v2)
+    CustomRequestStore.store[:private_api_request] = false
+    get :index, controller_params
+    pattern = []
+    Account.current.roles_from_cache.each do |role|
+      pattern << role_pattern(role)
+    end
+    assert_response 200
+    match_json(pattern.ordered!)
+  ensure
+    Account.current.add_feature(:sla_management_v2)
+  end
+
+  def test_show_role_without_feature
+    Account.current.revoke_feature(:sla_management_v2)
+    role = Role.first
+    get :show, construct_params(id: role.id)
+    assert_response 200
+    match_json(role_pattern(role))
+  ensure
+    Account.current.add_feature(:sla_management_v2)
+  end
 end

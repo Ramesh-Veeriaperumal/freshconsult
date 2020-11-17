@@ -4,6 +4,7 @@ class ApiRolesController < ApiApplicationController
 
   decorate_views
 
+  before_filter(except: [:index, :show]) { |c| c.requires_this_feature :custom_roles }
   before_filter :validate_bulk_update_params, only: [:bulk_update]
 
   def index
