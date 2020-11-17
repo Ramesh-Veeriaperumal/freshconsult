@@ -441,8 +441,9 @@
       },
       "tracing": {
         "_service_name": "freshdesk_helpkit",
-        "_tracing_host_port": 6831,
-        "_span_batch_size": 20,
+        "_tracing_host_port": 55681,
+        "_otlp_tracing_path": "/v1/trace",
+        "_span_batch_size": 512,
         "_sampler_probability": 0
       },
       "redshift": {
