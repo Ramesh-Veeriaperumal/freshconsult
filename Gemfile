@@ -65,7 +65,7 @@ gem 'gemoji-parser', '~> 1.3.1'
 gem 'premailer', '1.11.1'
 gem 'html_to_plain_text', '1.0.5'
 gem 'recaptcha', '~> 4.14.0', require: 'recaptcha/rails'
-gem 'gon', '~> 6.2.0' # For Passing Data to JavaScript
+gem 'gon', '~> 6.4.0' # For Passing Data to JavaScript
 gem 'dnsruby', '1.60.2' # dkim to check dns records
 gem 'rugged', '0.28.5'
 gem 'clearbit'

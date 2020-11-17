@@ -1014,8 +1014,9 @@ GEM
     gnip-rule (1.0.0)
       json (>= 1.8, < 3)
       rest-client (>= 1.6, < 3)
-    gon (6.2.1)
-      actionpack (>= 3.0)
+    gon (6.4.0)
+      actionpack (>= 3.0.20)
+      i18n (>= 0.7)
       multi_json
       request_store (>= 1.0)
     google-api-client (0.7.1)
@@ -1645,7 +1646,7 @@ DEPENDENCIES
   gmail_xoauth (~> 0.4.2)
   gnip!
   gnip-rule (= 1.0.0)
-  gon (~> 6.2.0)
+  gon (~> 6.4.0)
   google-api-client (~> 0.7.0)
   has_flexiblefields!
   has_no_table!
