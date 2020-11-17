@@ -18,6 +18,6 @@ class Channel::MessageWorker < BaseWorker
     Rails.logger.error "Exception in sending messages to Multiplexer \
       service: acc_id: #{Account.current.id}, user_id: #{User.current.id}, \
       Exception: #{e.message}, #{e.backtrace}"
-    raise e
+    raise e unless e.is_a?(Faraday::TimeoutError)
   end
 end

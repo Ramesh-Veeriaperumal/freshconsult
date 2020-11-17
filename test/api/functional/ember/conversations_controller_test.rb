@@ -134,6 +134,15 @@ module Ember
       Dalli::Client.any_instance.stubs(:set).returns(true)
     end
 
+    def draft_attachments(count = 1)
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      (1..count).each do
+        attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      end
+      attachment_ids
+    end
+
     def test_create_with_incorrect_attachment_type
       attachment_ids = %w(A B C)
       params_hash = create_note_params_hash.merge(attachment_ids: attachment_ids)
@@ -3297,6 +3306,36 @@ module Ember
       assert_response 201
       latest_note = Account.current.notes.last
       match_json(private_note_pattern(params_hash, latest_note))
+    end
+
+    def test_channel_reply_with_attachments
+      attachment_ids = draft_attachments(2)
+      params_hash = {
+        body: Faker::Lorem.paragraph,
+        channel_id: 889_712, profile_unique_id: '+348989888',
+        attachment_ids: attachment_ids
+      }
+      post :channel_reply, construct_params({ version: 'private', id: whatsapp_source_ticket.display_id }, params_hash)
+      assert_response 201
+      latest_note = Account.current.notes.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      assert latest_note.attachments.size == attachment_ids.size
+    end
+
+    def test_channel_reply_with_invalid_attachment_size
+      attachment_ids = draft_attachments
+      params_hash = {
+        body: Faker::Lorem.paragraph,
+        channel_id: 889_712, profile_unique_id: '+348989888',
+        attachment_ids: attachment_ids
+      }
+      invalid_attachment_limit = @account.attachment_limit + 1
+      Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
+      post :channel_reply, construct_params({ version: 'private', id: whatsapp_source_ticket.display_id }, params_hash)
+      match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
+      assert_response 400
+    ensure
+      Helpdesk::Attachment.any_instance.unstub(:content_file_size)
     end
 
     def test_channel_reply_to_throw_validaiton_error

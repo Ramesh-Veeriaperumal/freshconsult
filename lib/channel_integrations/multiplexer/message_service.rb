@@ -4,7 +4,7 @@ module ChannelIntegrations::Multiplexer
   module MessageService
     include Iam::AuthToken
     MULTIPLEXER_MESSAGE_API_PATH = '/api/v2/channels/%{channel_id}/messages'
-    TIMEOUT_IN_SEC = 3
+    TIMEOUT_IN_SEC = 120
 
     def post_message(user, params)
       response = multiplexer.post do |req|
@@ -19,18 +19,25 @@ module ChannelIntegrations::Multiplexer
 
     def multiplexer
       Faraday.new(AppConfig['microservices']['internal_endpoint']) do |faraday|
-        faraday.request(:retry, max: 3, interval: 1, backoff_factor: 2)
         faraday.response :json, content_type: /\bjson$/
         faraday.adapter Faraday.default_adapter
       end
     end
 
     def payload(params)
+      note = Account.current.notes.find_by_id(params[:note_id])
       {
         profile_unique_id: params[:profile_unique_id],
         body: params[:body],
-        ticket_id: params[:ticket_id]
+        ticket_id: params[:ticket_id],
+        attachments: (note.present? ? attachments_array(note) : [])
       }.to_json
+    end
+
+    def attachments_array(note)
+      note.attachments.each_with_object([]) do |attachment, result|
+        result << { file_name: attachment.content_file_name, url: attachment.attachment_url_for_api }
+      end
     end
   end
 end

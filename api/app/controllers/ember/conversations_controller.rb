@@ -163,12 +163,15 @@ module Ember
       build_object
       assign_note_attributes
       @delegator_klass = 'ChannelReplyDelegator'
-      return unless validate_delegator(@item)
+      return unless validate_delegator(@item, attachment_ids: @attachment_ids, shared_attachments: shared_attachments)
+
+      draft_attachments = @delegator.draft_attachments
+      @item.attachments = @item.attachments + draft_attachments if draft_attachments
 
       if @item.save_note
         Channel::MessageWorker.perform_async(body: params[:body], channel_id: params[:channel_id],
                                              profile_unique_id: params[:profile_unique_id],
-                                             ticket_id: @ticket.display_id)
+                                             ticket_id: @ticket.display_id, note_id: @item.id)
         render_response(true)
       else
         render_response(false)

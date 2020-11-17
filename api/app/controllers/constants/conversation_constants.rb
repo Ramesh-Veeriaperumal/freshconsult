@@ -26,7 +26,7 @@ module ConversationConstants
   ORDER_BY = %w[created_at updated_at].freeze
   DEFAULT_ORDER_BY = 'created_at'.freeze
 
-  CHANNEL_REPLY_FIELDS = %w[body channel_id last_note_id profile_unique_id].freeze
+  CHANNEL_REPLY_FIELDS = %w[body channel_id last_note_id profile_unique_id attachment_ids].freeze
   MAX_INCLUDE = 10
   TYPE_FOR_ACTION = {
     'create' => Helpdesk::Source.note_source_keys_by_token['note'],
