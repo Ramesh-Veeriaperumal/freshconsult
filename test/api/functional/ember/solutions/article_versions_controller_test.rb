@@ -474,6 +474,7 @@ module Ember
         attachment.save
 
         create_draft(article: article)
+        article.reload
         article.draft.meta[:deleted_attachments] ||= {}
 
         deleted_attachment = article.draft.meta[:deleted_attachments].key?(:attachments) ? article.draft.meta[:deleted_attachments][:attachments] : []

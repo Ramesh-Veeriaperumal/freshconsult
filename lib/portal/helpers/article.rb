@@ -155,18 +155,28 @@ HTML
   def common_properties(meta)
     properties = {
       title: meta['title'],
-      url: meta['canonical'],
-      description: meta['short_description']
+      url: meta['canonical']
     }
+    properties['description'] = meta['short_description'] if meta['short_description'] && !meta['short_description'].empty?
     properties['image'] = meta['image_url'] if meta['image_url']
     properties
   end
 
   def og_properties(meta)
     og_properties = common_properties(meta)
-    og_properties[:site_name] = Account.current.main_portal.name || Account.current.main_portal.product.name || Account.current.name
+    portal = Portal.current || Account.current.main_portal
+    og_properties[:site_name] = trim_string(portal.name) || trim_string(portal.product.name) || Account.current.name
     og_properties[:type] = 'article'
     og_properties
+  end
+
+  def trim_string(str)
+    if str.nil?
+      return nil
+    elsif !str.strip.empty?
+      return str.strip
+    end
+    nil
   end
 
   def twitter_properties(meta)
