@@ -5,7 +5,7 @@ require_relative '../../../api_test_helper'
 ['automations_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 
 module ApiSearch
-  class AutomationsControllerTest < ActionDispatch::IntegrationTest
+  class AutomationsControllerFlowTest < ActionDispatch::IntegrationTest
     include AutomationTestHelper
     include SearchTestHelper
 

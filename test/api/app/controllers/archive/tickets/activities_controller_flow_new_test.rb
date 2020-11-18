@@ -3,7 +3,7 @@
 require_relative '../../../../api_test_helper'
 ['automations_test_helper.rb', 'archive_ticket_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 
-class Archive::Tickets::ActivitiesControllerFlowNewTest < ActionDispatch::IntegrationTest
+class Archive::Tickets::ActivitiesControllerFlowTest < ActionDispatch::IntegrationTest
   include ArchiveTicketTestHelper
   include ApiTicketsTestHelper
   include TicketHelper
@@ -33,6 +33,7 @@ class Archive::Tickets::ActivitiesControllerFlowNewTest < ActionDispatch::Integr
   end
 
   def test_activity_for_unavailable_ticket
+    add_privilege(@agent, :manage_tickets)
     get '/api/_/tickets/archived/-10000/activities', { version: 'private' }, @write_headers
     assert_response 404
   end
@@ -47,6 +48,7 @@ class Archive::Tickets::ActivitiesControllerFlowNewTest < ActionDispatch::Integr
   end
 
   def test_activity_thrift_failure
+    add_privilege(@agent, :manage_tickets)
     Archive::Tickets::ActivitiesController.any_instance.stubs(:fetch_activities).returns(false)
     get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, @write_headers
     assert_response 500
@@ -55,6 +57,7 @@ class Archive::Tickets::ActivitiesControllerFlowNewTest < ActionDispatch::Integr
   end
 
   def test_property_update_activity
+    add_privilege(@agent, :manage_tickets)
     stub_data = property_update_activity
     Archive::Tickets::ActivitiesController.any_instance.stubs(:fetch_activities).returns(stub_data)
     get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, @write_headers
@@ -64,6 +67,7 @@ class Archive::Tickets::ActivitiesControllerFlowNewTest < ActionDispatch::Integr
   end
 
   def test_activity_with_restricted_hash
+    add_privilege(@agent, :manage_tickets)
     stub_data = property_update_activity
     remove_privilege(@agent, :view_contacts)
     Archive::Tickets::ActivitiesController.any_instance.stubs(:fetch_activities).returns(stub_data)
@@ -76,6 +80,7 @@ class Archive::Tickets::ActivitiesControllerFlowNewTest < ActionDispatch::Integr
   end
 
   def test_invalid_fields_activity
+    add_privilege(@agent, :manage_tickets)
     stub_data = invalid_fields_activity
     Archive::Tickets::ActivitiesController.any_instance.stubs(:fetch_activities).returns(stub_data)
     get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, @write_headers

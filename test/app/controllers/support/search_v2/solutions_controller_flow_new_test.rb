@@ -1,23 +1,15 @@
 # frozen_string_literal: true
 
-require_relative '../../../../../api/api_test_helper'
+require_relative '../../../../api/api_test_helper'
 ['solutions_helper.rb', 'solution_builder_helper.rb', 'user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['search_test_helper.rb', 'privileges_helper.rb', 'test_class_methods.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
-class Support::SearchV2::SolutionsControllerTest < ActionDispatch::IntegrationTest
+class Support::SearchV2::SolutionsControllerFlowTest < ActionDispatch::IntegrationTest
   include SolutionsHelper
   include SolutionBuilderHelper
   include SearchTestHelper
   include PrivilegesHelper
   include UsersHelper
   include TestClassMethods
-
-  def setup
-    super
-  end
-
-  def teardown
-    super
-  end
 
   def test_related_articles_with_results
     set_redis_keys

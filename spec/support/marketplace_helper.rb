@@ -34,6 +34,10 @@ module MarketplaceHelper
     FreshRequest::Response.new(Response.new(body))
   end
 
+  def request_with_error_response
+    FreshRequest::Response.new(Response.new(nil, 503))
+  end
+
   def extension_details
     body = { 
               "extension_id" => 1,
@@ -70,7 +74,12 @@ module MarketplaceHelper
   end
 
   def install_status
-    body = { "installed" => false }
+    body = { 'installed' => false }
+    FreshRequest::Response.new(Response.new(body))
+  end
+
+  def auto_suggestion
+    body = [{ 'suggest_term' => 'Google Plug', 'extension_id' => 1 }]
     FreshRequest::Response.new(Response.new(body))
   end
 
@@ -111,8 +120,21 @@ module MarketplaceHelper
     FreshRequest::Response.new(Response.new(body))
   end
 
-  def auto_suggestion
-    body = [{ suggest_term: "Google Plug", extension_id: 1 }]
+  def custom_apps
+    body = [{
+      'id' => 1,
+      'name' => 'google_plug',
+      'display_name' => 'Google Plug',
+      'description' => 'desc',
+      'cover_art' => { 'thumb' => 'https://d3h0owdjgzys62.cloudfront.net/images/custom_apps/cover_art/thumb/no_icon.png', 'thumb2x' => 'https://d3h0owdjgzys62.cloudfront.net/images/custom_apps/cover_art/thumb2x/no_icon.png' },
+      'categories' => ['Agent Productivity'],
+      'type' => 1,
+      'install_count' => 0,
+      'options' => nil,
+      'overview' => 'Auto timer app with timer deactivation on transition',
+      'pricing' => false,
+      'published_at' => nil
+    }]
     FreshRequest::Response.new(Response.new(body))
   end
 
@@ -160,6 +182,66 @@ module MarketplaceHelper
       'options' => nil,
       'published_date' => 'over 1 year',
       'addon' => nil,
+      'platform_details' => {
+        '1.0' => [1],
+        '2.0' => [3]
+      },
+      'version_id' => 3,
+      'placeholders' => {
+        'ticket_sidebar' => {
+          'url' => 'https://dummy.cloudfront.net/app-assets/1/app/template.html',
+          'icon_url' => 'https://dummy.cloudfront.net/app-assets/1/app/logo.png'
+        }
+      },
+      'features' => ['backend'],
+      'events' => { },
+      'has_config' => false,
+      'app_version' => '3.0',
+      'whats_new' => 'Updated to use the latest Google script'
+    }
+    FreshRequest::Response.new(Response.new(body))
+  end
+
+  def extension_details_v2_with_addons
+    body = {
+      'extension_id' => 1,
+      'type' => 1,
+      'app_type' => 1,
+      'account' => 'Freshdesk',
+      'name' => 'google_plug',
+      'display_name' => 'Google Plug',
+      'description' => 'Dummy Desription',
+      'instructions' => nil,
+      'cover_art' => {
+        'thumb' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb/40.png',
+        'thumb2x' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb2x/40.png'
+      },
+      'screenshots' => [
+        {
+          'large' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large/1360x850_Hangouts.png',
+          'large2x' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large2x/1360x850_Hangouts.png'
+        }
+      ],
+      'categories' => [
+        {
+          'id' => 7,
+          'name' => 'Google Apps'
+        }
+      ],
+      'contact_details' => {
+        'support_email' => 'support@freshdesk.com',
+        'support_url' => 'https://support.freshdesk.com'
+      },
+      'options' => nil,
+      'published_date' => 'over 1 year',
+      'addons' => [
+        {
+          'currency_code' => 'USD',
+          'trial_period' => 10,
+          'price' => '10.0',
+          'addon_id' => 1
+        }
+      ],
       'platform_details' => {
         '1.0' => [1],
         '2.0' => [3]
@@ -247,9 +329,9 @@ module MarketplaceHelper
   class Response
     attr_reader :body, :status, :response_headers
 
-    def initialize(body)
+    def initialize(body, status = 200)
       @body = body
-      @status = 200
+      @status = status
       @response_headers = {}
     end
   end

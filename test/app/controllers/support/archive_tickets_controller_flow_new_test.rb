@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative '../../../../api/api_test_helper'
+require_relative '../../../api/api_test_helper'
 ['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['tickets_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 ['archive_ticket_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['company_helper.rb'].each { |file| require "#{Rails.root}/test/lib/helpers/#{file}" }
 
-class Support::ArchiveTicketsControllerFlowNewTest < ActionDispatch::IntegrationTest
+class Support::ArchiveTicketsControllerFlowTest < ActionDispatch::IntegrationTest
   include CoreTicketsTestHelper
   include UsersHelper
   include ArchiveTicketTestHelper

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../../../api_test_helper'
+require_relative '../../../../api_test_helper'
 
 module Ember::Search
-  class LoggerControllerTest < ActionDispatch::IntegrationTest
+  class LoggerControllerFlowTest < ActionDispatch::IntegrationTest
     include PrivilegesHelper
 
     def test_log_click_without_user_access
