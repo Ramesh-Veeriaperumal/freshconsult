@@ -627,6 +627,7 @@ en:
     assign_group: Associate Groups
     role_assign_error: You are not allowed to perform this action
     field_agent: Field technician
+    support_agent: Support agent
     role_assign_field_agent_error: You are not allowed to pass role_ids for field_agent
     field_agents: Field technicians
     group_access: Group Access
@@ -2875,6 +2876,7 @@ en:
       manage_label: Manage
       add_label: Add
       no_agent_label: No Agent
+      agent_type_info: Agent type cannot be changed once you save a role
       privilege:
         manage_service_task_automation_rules: Manage automation rules for service tasks
         view_secure_field: View secure information

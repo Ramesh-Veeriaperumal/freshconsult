@@ -13,6 +13,7 @@ module Admin::RolesHelper
                           children:
                             [{ dom_type: 'radio_button', id: 'view_analytics' },
                              { dom_type: 'radio_button', id: 'view_omni_analytics', :class => "default" }] }.freeze
+  DOM_TYPES = { check_box: 'check_box', radio: 'radio_button', hidden: 'hidden_field' }.freeze
 
   def role_sections
       [
@@ -29,9 +30,9 @@ module Admin::RolesHelper
                :privilege => "0", :class => "nested permanent_disable",
                :children =>
 
-                [{ :dom_type => "radio_button", :id => "edit_note" },
+                [{ dom_type: 'radio_button', id: 'edit_note', class: 'edit_note' },
                  { :dom_type => "radio_button", :id => "edit_note_false",
-                   :privilege => "0", :class => "default" }]
+                   privilege: '0', class: 'default edit_note' }]
              },
              { :dom_type => "check_box", :id => "edit_conversation"  },
              { :dom_type => "check_box", :id => "merge_or_split_ticket" },
@@ -223,7 +224,7 @@ module Admin::RolesHelper
               if section[:children].last[:children] and section[:children].last[:children].last[:id] == "manage_account" and !current_user.privilege?(:manage_account)
                 section[:children].last[:children].last.merge!(disabled: true, class: 'option_permanent_disabled')
               end
-              value += process_children(section[:children], section[:id], false)
+              value += process_children(section[:children], section[:id], false, false)
             end
             value
           end
@@ -233,8 +234,7 @@ module Admin::RolesHelper
     form.html_safe
   end
 
-
-  def process_children(children, parent, disabled)
+  def process_children(children, parent, disabled, nested_child)
     content_tag(:ul, :class => "nested-ul") do
       children.map do |child| 
         unless child[:not_display] 
@@ -243,13 +243,13 @@ module Admin::RolesHelper
               content_tag(:label, :class => "#{child[:dom_type]} #{style(child[:dom_type])}") do
                 case child[:dom_type]
                 when "check_box", "radio_button"
-                  build_element(child, parent, child[:disabled] || disabled)
+                  build_element(child, parent, child[:disabled] || disabled, nested_child)
                 when "hidden_field"
-                  build_hidden(child, parent, disabled)
+                  build_hidden(child, parent, disabled, nested_child)
                 end
               end # label
               if child[:children]
-                element += process_children(child[:children], child[:id], true)
+                element += process_children(child[:children], child[:id], true, true)
               end
               element.html_safe
           end.to_s.html_safe # li
@@ -264,13 +264,16 @@ module Admin::RolesHelper
 
   private
 
-    def build_element(element, parent, disabled)
+    def build_element(element, parent, disabled, nested_child)
       privilege = element[:privilege] || element[:id]
-      name = (element[:dom_type] == "radio_button") ? "role[privilege_list][#{parent}][]" : "role[privilege_list][]"
-
-      html = eval "#{element[:dom_type]}_tag('#{name}', '#{privilege}',
-      #{@role.abilities.include?(privilege.to_sym)}, { :class => '#{parent} #{element[:class]}',
-      :id => '#{element[:id]}', :disabled => #{disabled}})"
+      case element[:dom_type]
+      when DOM_TYPES[:check_box]
+        name = 'role[privilege_list][]'
+        html = check_box_tag(name, privilege, @role.abilities.include?(privilege.to_sym), build_options(parent, element, privilege, disabled, nested_child))
+      when DOM_TYPES[:radio]
+        name = "role[privilege_list][#{parent}][]"
+        html = radio_button_tag(name, privilege, @role.abilities.include?(privilege.to_sym), build_options(parent, element, privilege, disabled, nested_child))
+      end
       content_desc = if AUTOMATION_ROLES.include?(element[:id].to_sym)
                        AUTOMATION_MANAGE_ROLE_MAP[element[:id].to_sym]
                      else
@@ -280,11 +283,9 @@ module Admin::RolesHelper
       (html + t("admin.roles.privilege.#{content_desc}")).html_safe
     end
 
-    def build_hidden(element, parent, disabled)
+    def build_hidden(element, parent, disabled, nested_child)
       privilege = element[:privilege] || element[:id]
-      hidden_field_tag("role[privilege_list][]", privilege,
-            { :class => "#{parent} #{element[:class]}", :id => element[:id],
-              :disabled => !(@role.abilities.include?(privilege.to_sym) || !disabled) })
+      hidden_field_tag('role[privilege_list][]', privilege, build_options(parent, element, privilege, disabled, nested_child))
     end
 
     def style(dom)
@@ -296,5 +297,23 @@ module Admin::RolesHelper
       else
         ""
       end
+    end
+
+    def edit?
+      action_name == 'edit'
+    end
+
+    def build_options(parent, element, privilege, disabled, nested_child)
+      options = {}
+      classes = [parent, element[:class]]
+      if current_account.launched?(:collaboration_roles)
+        classes << 'role-privilege'
+        classes << 'nested-child' if nested_child
+      else
+        options[:disabled] = element[:dom_type] == DOM_TYPES[:hidden] ? !(@role.abilities.include?(privilege.to_sym) || !disabled) : disabled
+      end
+      options[:id] = element[:id]
+      options[:class] = classes.join(' ')
+      options
     end
 end

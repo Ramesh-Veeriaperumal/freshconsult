@@ -10,7 +10,7 @@
     </div>
 </h3>
 <%= generate_breadcrumbs(params, role_form) %>
-  <%= render :partial => 'form', :locals => { :role_form => role_form} %>
+  <%= render 'form', role_form: role_form, role: @role %>
 <% end %>
 <input type="hidden" value="<%= @role.id %>" id="roleid">
 

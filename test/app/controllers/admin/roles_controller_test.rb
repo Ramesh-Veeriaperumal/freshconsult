@@ -85,6 +85,49 @@ class Admin::RolesControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:current)
   end
 
+  def test_agent_type_dropdown_rendered_when_lp_is_enabled
+    Account.any_instance.stubs(:current).returns(@account)
+    Account.current.launch(:collaboration_roles)
+    field_agent_type = AgentType.create_agent_type(@account, 'field_agent')
+    get :new
+    assert_select '#agent-type' do
+      assert_select '[value=?]', 1
+    end
+  ensure
+    field_agent_type.destroy
+    Account.current.rollback(:collaboration_roles)
+    Account.any_instance.unstub(:current)
+  end
+
+  def test_agent_type_dropdown_is_not_rendered_when_lp_is_not_enabled
+    Account.any_instance.stubs(:current).returns(@account)
+    get :new
+    assert_select '#agent-type', false, 'Agent type drodown does not exist'
+  ensure
+    Account.any_instance.unstub(:current)
+  end
+
+  def test_agent_type_dropdown_is_disabled_for_edit
+    Account.any_instance.stubs(:current).returns(@account)
+    Account.current.launch(:collaboration_roles)
+    field_agent_type = AgentType.create_agent_type(@account, 'field_agent')
+    name = "Test Role Param - #{Time.now.utc}"
+    role_save_params = roles_params(name: name)
+    roles = @account.roles.build(role_save_params[:role])
+    roles.save
+    get :edit, id: roles.id
+    assert_select '#agent-type', 1
+    assert_select '#agent-type' do |elements|
+      elements.each do |element|
+        assert element.match attributes: { disabled: true }
+      end
+    end
+  ensure
+    field_agent_type.destroy
+    Account.current.rollback(:collaboration_roles)
+    Account.any_instance.unstub(:current)
+  end
+
   def test_create_role_with_invalid_privilege_mapping_for_the_field_agent_type_with_collaboration_roles_lp_enabled
     # setup
     @account.launch(:collaboration_roles)

@@ -4832,6 +4832,16 @@ $adm-bdr:#F0F0F0;
   .label-info-text{
     font-weight: bold;
   }
+  .agent-type-info {
+	font-size: 12px;
+  }
+  .agent-type-select {
+	margin-bottom: 5px;
+	.select2-container {
+		width: 100%;
+		padding-right: 1%;
+	}
+  }
 }
 .manage-agent{
 	.no-agent{

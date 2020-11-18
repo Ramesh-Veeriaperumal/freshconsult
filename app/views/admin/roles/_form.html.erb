@@ -1,4 +1,10 @@
 <% remove_manage_availability = !current_account.features?(:round_robin) %>
+<% edit_action = edit?
+agent_type_options = Account.current.agent_types_from_cache.map do |agent_type| [t("agent." + agent_type.label), agent_type.agent_type_id, {class: "agent-type-" + agent_type.agent_type_id.to_s}] end
+agent_privileges = Helpdesk::AgentTypes::AGENT_TYPE_ID_PRIVILEGE_MAPPING
+default_agent_type = Helpdesk::AgentTypes::SUPPORT_AGENT_ID
+default_privileges = Helpdesk::AgentTypes::AGENT_TYPE_ID_PRIVILEGE_MAPPING[default_agent_type]
+collaboration_roles_enabled = current_account.collaboration_roles_enabled? %>
 <%= error_messages_for :role %>
 <div class="row-fluid new-role">
 	<div>
@@ -15,6 +21,24 @@
 					<%= role_form.text_area :description , :class => "text", :cols => "40", :rows => "5", 						:placeholder => t('admin.roles.role_description')%>
 				</div>
 			</li>
+      <% if collaboration_roles_enabled %>
+        <% if agent_type_options.length > 1 %>
+          <li class="row-fluid">
+            <%= role_form.label :agent_type, ("<b>"+t('agent.type')+"</b>").html_safe, :class =>'control-label span2' %>
+            <div class="span10 agent-type-select">
+            <%= select_tag "role[agent_type]", options_for_select(agent_type_options, role.agent_type), class: "select2", id: "agent-type", disabled: edit_action %>
+            </div>
+          </li>
+          <li class="row-fluid">
+            <div class="span2"></div>
+            <div class="span10">
+              <p class="agent-type-info"><%= t('admin.roles.agent_type_info') %></p>
+            </div>
+          </li>
+        <% else %>
+          <%= hidden_field_tag "role[agent_type]", role.agent_type || default_agent_type %>
+        <% end %>
+      <% end %>
       <li class="row-fluid">
         <%= role_form.label :agents, ("<b>"+t('agents')+"</b>").html_safe, :class =>'control-label span2' %>
         <div class="span10">
@@ -99,7 +123,7 @@
           // special case, edit notes
           if(!($(this).hasClass('permanent_disable')))
           {
-            this.disabled = !status;
+            this.disabled = !(status === true && hasPrivilege(this.id))
           }
           if(status == false)
           {
@@ -128,6 +152,66 @@
 
         });
     };
+
+    /* Load the default values for radio button groups on page load */
+    let assignDefaultsForRadioBtns = function (resetDefaults = false) {
+      var radio_groups = {}
+      $(":radio").each(function(){
+        radio_groups[this.name] = true;
+      })
+
+      for(group in radio_groups){
+        checked = resetDefaults ? true : !$(":radio[name='"+group+"']:checked").length;
+        if(checked)
+        {
+          $(":radio[name='" + group + "'].default").prop('checked', true);
+        }
+      }
+    };
+
+    let hasPrivilege = function (id) {
+      if (<%= !collaboration_roles_enabled %>) {
+        return true;
+      }
+      let allPrivileges = JSON.parse('<%= raw(default_privileges.to_json) %>');
+      let agentTypePrivileges = JSON.parse('<%= raw(agent_privileges.to_json) %>');
+      let selectedAgentType = $("#agent-type").val() || <%= default_agent_type %>;
+      return allPrivileges.includes(id) ?  agentTypePrivileges[selectedAgentType].includes(id) : true;
+    };
+
+    let checkAgentTypePrivileges = function (edit) {
+      $(".role-privilege").each(function() {
+        if (hasPrivilege(this.id)) {
+          if ($(this).attr('disabled')) {
+              $(this).removeAttr('disabled');
+          }
+        } else {
+          $(this).attr('disabled', true);
+        }
+        if (this.checked && !edit) {
+          $(this).prop('checked', false);
+        }
+      });
+    };
+
+    let disableNestedChilds = function () {
+      $(".nested-child").each(function(){
+        if (!$(this).hasClass('edit_note')) {
+          $(this).attr('disabled', true);
+        }
+      });
+      $(".permanent_disable").each(function() {
+         this.disabled = true;
+         this.checked = true;
+      });
+    }
+
+    let onAgentTypeChange = function (edit, initialLoad) {
+      let newRole = initialLoad && !edit;
+      checkAgentTypePrivileges(edit);
+      assignDefaultsForRadioBtns(newRole);
+      disableNestedChilds();
+    }
 
     $('#role_form').submit( function(ev) {
 
@@ -178,21 +262,14 @@
             $('input.' + this.id).prop('disabled', false);
       });
 
-      /* Load the default values for radio button groups
-         on page load */
-
-      var radio_groups = {}
-      $(":radio").each(function(){
-        radio_groups[this.name] = true;
-      })
-
-      for(group in radio_groups){
-        checked = !$(":radio[name='"+group+"']:checked").length;
-        if(checked)
-        {
-          $(":radio[name='" + group + "'].default").prop('checked', true);
-        }
-      }
+      <% if collaboration_roles_enabled %>
+        $("#agent-type").change(function() {
+          onAgentTypeChange(<%= edit_action %>, false);
+        });
+        onAgentTypeChange(<%= edit_action %>, true);
+      <% else %>
+        assignDefaultsForRadioBtns();
+      <% end %>
 
     });
 
