@@ -1,6 +1,7 @@
 class Middleware::TrustedIp
 
-  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login"] 
+  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner", "signup", "email", "login"]
+  SKIPPED_URL_PATHS = ['/api/cron/trigger_cron_api'].freeze
 
   def initialize(app)
     @app = app
@@ -14,6 +15,9 @@ class Middleware::TrustedIp
     env['SHARD'] ||= ShardMapping.lookup_with_domain(env["SERVER_NAME"])
     # Skip valid ip check if the request is for nil shard.
     return execute_request(env) if (env['SHARD'].nil? or PodConfig['CURRENT_POD'] != env['SHARD'].pod_info) && !Rails.env.development?
+
+    # Skip valid ip check if the request is for cron api.
+    return execute_request(env) if SKIPPED_URL_PATHS.include?(req_path)
 
     # All requests other than api has to execute to set the user_credentials_id env var. Set by authlogic.
     # So that whitelisting can happen accordingly.
