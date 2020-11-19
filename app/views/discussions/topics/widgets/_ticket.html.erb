@@ -1,7 +1,11 @@
-<div class="widget break-word">
-  <% if topic.ticket.nil? || topic.ticket.deleted %>
-    <strong><%= link_to t('discussions.topics.convert_to_ticket'), '/a/tickets/new', target: '_top', id: 'new-topic-ticket' %></strong>
-  <% else %>
+<% if topic.ticket.nil? || topic.ticket.deleted %>
+  <% if current_user.launch_party_based_privilege?(:collaborator_privileges, :create_ticket) %>
+    <div class="widget break-word">
+      <strong><%= link_to t('discussions.topics.convert_to_ticket'), '/a/tickets/new', target: '_top', id: 'new-topic-ticket' %></strong>
+    </div>
+  <% end %>
+<% else %>
+  <div class="widget break-word">
     <div class="muted"><%= t('.title') %></div>
       <strong><%= link_to topic.ticket, "/a/tickets/#{topic.ticket.display_id}", target: '_top', id: 'topic-ticket-link' %></strong>
     <div>
@@ -14,8 +18,8 @@
         <abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>
       </div>
     </div>
-  <% end %>
-</div>
+  </div>
+<% end %>
 
 <% content_for :onload_script do %>
   <% if topic.ticket.nil? || topic.ticket.deleted %>

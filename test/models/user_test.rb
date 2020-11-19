@@ -361,4 +361,35 @@ class UserTest < ActiveSupport::TestCase
   ensure
     sample_user.destroy
   end
+
+  def test_launch_party_based_privilege_with_privilege
+    user = add_new_user(@account)
+    Account.any_instance.stubs(:launched?).with(:collaborator_privileges).returns(true)
+    User.any_instance.stubs(:privilege?).with(:create_ticket).returns(true)
+    privilege = user.launch_party_based_privilege?(:collaborator_privileges, :create_ticket)
+    assert_equal privilege, true
+  ensure
+    Account.any_instance.unstub(:launched?)
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_launch_party_based_privilege_without_privilege
+    user = add_new_user(@account)
+    Account.any_instance.stubs(:launched?).with(:collaborator_privileges).returns(true)
+    User.any_instance.stubs(:privilege?).with(:create_ticket).returns(false)
+    privilege = user.launch_party_based_privilege?(:collaborator_privileges, :create_ticket)
+    assert_equal privilege, false
+  ensure
+    Account.any_instance.unstub(:launched?)
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_launch_party_based_privilege_without_launch_party
+    user = add_new_user(@account)
+    Account.any_instance.stubs(:launched?).with(:collaborator_privileges).returns(false)
+    privilege = user.launch_party_based_privilege?(:collaborator_privileges, :create_ticket)
+    assert_equal privilege, true
+  ensure
+    Account.any_instance.unstub(:launched?)
+  end
 end

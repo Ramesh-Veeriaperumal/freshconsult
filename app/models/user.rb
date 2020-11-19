@@ -1352,6 +1352,14 @@ class User < ActiveRecord::Base
     super
   end
 
+  def launch_party_based_privilege?(launch_party, privilege)
+    if account.launched?(launch_party)
+      privilege?(privilege)
+    else
+      true
+    end
+  end
+
   def twitter_requester_fields
     {
       'twitter_profile_status'  => twitter_profile_status,
