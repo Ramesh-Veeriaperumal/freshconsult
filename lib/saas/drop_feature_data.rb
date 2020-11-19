@@ -168,8 +168,8 @@ module SAAS::DropFeatureData
   end
 
   def handle_custom_password_policy_drop_data
-    account.agent_password_policy.reset_policies.save!
-    account.contact_password_policy.reset_policies.save!
+    account.agent_password_policy&.reset_policies&.save!
+    account.contact_password_policy&.reset_policies&.save!
   end
 
   def handle_personal_canned_response_drop_data

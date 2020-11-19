@@ -146,6 +146,38 @@ class AccountDataCleanupTest < ActionView::TestCase
     assert_nil non_deleted_custom_statuses
   end
 
+  def test_handle_custom_password_policy_drop_data
+    @account = Account.first || create_new_account("#{Faker::Lorem.word}#{rand(10_000)}", Faker::Internet.email)
+    @account.make_current
+    Account.any_instance.stubs(:agent_password_policy).returns(nil)
+    account_data_cleanup = SAAS::AccountDataCleanup.new(Account.current, ['custom_password_policy'], 'drop')
+    account_data_cleanup.perform_cleanup
+    @account.agent_password_policy&.reload
+    account_data_cleanup.expects(:rescue).never
+  ensure
+    Account.any_instance.unstub(:agent_password_policy)
+    puts Account.first == Account.last
+    @account.try(:destroy) unless Account.first
+    Account.reset_current_account
+  end
+
+  def test_handle_custom_password_policy_drop_data_with_agent_password_policy
+    @account = Account.first || create_new_account("#{Faker::Lorem.word}#{rand(10_000)}", Faker::Internet.email)
+    @account.make_current
+    @account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]).save!
+    account_data_cleanup = SAAS::AccountDataCleanup.new(Account.current, ['custom_password_policy'], 'drop')
+    account_data_cleanup.perform_cleanup
+
+    @account.agent_password_policy.reload
+    account_data_cleanup.expects(:rescue).never
+    policy = @account.agent_password_policy
+    assert_equal policy.configs, FDPasswordPolicy::Constants::DEFAULT_CONFIGS
+  ensure
+    @account.agent_password_policy.destroy
+    @account.try(:destroy) unless Account.first
+    Account.reset_current_account
+  end
+
   def test_handle_article_approval_workflow_drop_data
     @account = Account.first
     @account.make_current
