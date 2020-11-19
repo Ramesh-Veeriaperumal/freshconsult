@@ -219,7 +219,7 @@ class Account < ActiveRecord::Base
     topic_editor_with_html: false, remove_image_attachment_meta_data: false,
     ticket_field_revamp: true, new_timeline_view: false,
     requester_widget_timeline: false, sprout_trial_onboarding: false,
-    enable_secure_login_check: false, auto_response_detector_lp: true,
+    enable_secure_login_check: false, auto_response_detector_lp: false,
     marketplace_gallery: false, facebook_public_api: false, twitter_public_api: false,
     fb_message_echo_support: false, portal_prototype_update: false,
     solutions_dashboard: false, article_versioning_redis_lock: false,

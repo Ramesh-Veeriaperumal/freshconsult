@@ -158,6 +158,8 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:allow_wildcard_ticket_create_enabled?).returns(true)
     Account.any_instance.stubs(:skip_ticket_threading_enabled?).returns(true)
     Account.any_instance.stubs(:threading_without_user_check_enabled?).returns(true)
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(true)
+    Account.any_instance.stubs(:auto_response_detector_toggle_enabled?).returns(true)
     get :show, controller_params
     assert_response 200
     match_json(all_features_params)
@@ -171,6 +173,8 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:threading_without_user_check_enabled?)
     Account.current.rollback(:email_new_settings)
     Account.current.launch(:threading_without_user_setting)
+    Account.any_instance.unstub(:auto_response_detector_enabled?)
+    Account.any_instance.unstub(:auto_response_detector_toggle_enabled?)
   end
 
   # This can be removed after LP cleanup
@@ -181,6 +185,9 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:disable_agent_forward_enabled?).returns(false)
     Account.any_instance.stubs(:compose_email_enabled?).returns(true)
     Account.any_instance.stubs(:personalized_email_replies_enabled?).returns(true)
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(true)
+    Account.any_instance.stubs(:auto_response_detector_toggle_enabled?).returns(true)
+
     get :show, controller_params
     assert_response 200
     match_json(all_features_params.slice(*EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS.map(&:to_sym)))
@@ -189,6 +196,51 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:disable_agent_forward_enabled?)
     Account.any_instance.unstub(:compose_email_enabled?)
     Account.any_instance.unstub(:personalized_email_replies_enabled?)
+    Account.any_instance.unstub(:auto_response_detector_enabled?)
+    Account.any_instance.unstub(:auto_response_detector_toggle_enabled?)
+  end
+
+  def test_show_auto_response_detector_toggle_not_available_if_plan_feature_not_enabled
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(false)
+    get :show, controller_params
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal response_body.key?('auto_response_detector_toggle'), false
+  ensure
+    Account.any_instance.unstub(:auto_response_detector_enabled?)
+  end
+
+  def test_show_auto_response_detector_toggle_is_available_if_plan_feature_enabled
+    get :show, controller_params
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal response_body['auto_response_detector_toggle'], false
+  end
+
+  def test_update_with_auto_response_detector_toggle_throw_bad_request_if_plan_feature_not_enabled
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(false)
+    params = { auto_response_detector_toggle: false }
+    put :update, construct_params({}, params)
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: params.keys.first))
+  ensure
+    Account.any_instance.unstub(:auto_response_detector_enabled?)
+  end
+
+  def test_successful_update_with_auto_response_detector_toggle_if_plan_feature_enabled
+    params = { auto_response_detector_toggle: true }
+    put :update, construct_params({}, params)
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal response_body['auto_response_detector_toggle'], true
+    assert_equal Account.current.auto_response_detector_toggle_enabled?, true
+
+    params = { auto_response_detector_toggle: false }
+    put :update, construct_params({}, params)
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal response_body['auto_response_detector_toggle'], false
+    assert_equal Account.current.auto_response_detector_toggle_enabled?, false
   end
 
   def test_show_auto_response_detector_toggle_not_available_if_plan_feature_not_enabled

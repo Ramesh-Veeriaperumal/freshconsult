@@ -297,10 +297,6 @@ class Account < ActiveRecord::Base
     has_feature?(:freshconnect) && freshconnect_account.present? && freshconnect_account.enabled
   end
 
-  def auto_response_detector_lp_enabled?
-    redis_key_exists?(AUTO_RESPONSE_DETECTOR_ENABLED) && launched?(:auto_response_detector_lp)
-  end
-
   def auto_response_detector_enabled?
     auto_response_detector_lp_enabled? && has_feature?(:auto_response_detector)
   end

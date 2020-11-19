@@ -60,6 +60,7 @@ class AccountsControllerTest < ActionController::TestCase
   def test_default_account_settings_when_new_signup_with_feature_based_settings_enabled
     stub_signup_calls
     Signup.any_instance.unstub(:save)
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(true)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
     user_email = "#{Faker::Lorem.word}#{rand(1_000)}@testemail.com"
@@ -81,14 +82,17 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.has_feature?(:field_service_geolocation), false
     assert_equal account.has_feature?(:branding), true
     assert_equal account.has_feature?(:filter_factory), false
+    assert_equal account.has_feature?(:auto_response_detector_toggle), true
   ensure
     Account.find(resp['account_id']).destroy if resp && resp['account_id']
+    Account.unstub(:auto_response_detector_enabled?)
     unstub_signup_calls
   end
 
   def test_default_account_settings_when_new_signup_with_feature_based_settings_disabled
     stub_signup_calls
     Account.any_instance.stubs(:launched?).with(:feature_based_settings).returns(false)
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(false)
     Signup.any_instance.unstub(:save)
     account_name = Faker::Lorem.word
     domain_name = Faker::Lorem.word
@@ -111,8 +115,10 @@ class AccountsControllerTest < ActionController::TestCase
     assert_equal account.has_feature?(:field_service_geolocation), false
     assert_equal account.solutions_agent_metrics_enabled?, false
     assert_equal account.has_feature?(:filter_factory), false
+    assert_equal account.has_feature?(:auto_response_detector_toggle), false
   ensure
     Account.find(resp['account_id']).destroy if resp && resp['account_id']
+    Account.unstub(:auto_response_detector_enabled?)
     unstub_signup_calls
   end
 
