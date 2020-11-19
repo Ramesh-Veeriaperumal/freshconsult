@@ -16,9 +16,15 @@ REDIS_CONFIG_KEYS = ['host', 'port', 'password', 'namespace'].freeze
 
 redis_config = config.slice(*REDIS_CONFIG_KEYS).merge(tcp_keepalive: config['keepalive'], network_timeout: sidekiq_config['timeout'])
 
+$namespace = redis_config['namespace']
+
 DUP_SIDEKIQ_CONFIG = redis_config.dup
 
+TENANT_REDIS_CONFIG = redis_config.dup
+
 pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
+
+TenantRateLimiter::Iterable::RedisSortedSet.bootstrap
 
 sidekiq_client_redis_pool_size = (pool_size / 2).to_i
 sidekiq_client_redis_pool_size = pool_size if sidekiq_client_redis_pool_size.zero?
@@ -43,6 +49,7 @@ Sidekiq.configure_client do |config|
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
       "WebhookV1Worker",
+      'WebhookV2Worker',
       "SendSignupActivationMail",
       "DevNotificationWorker",
       "PodDnsUpdate",
@@ -181,6 +188,7 @@ Sidekiq.configure_server do |config|
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
       "WebhookV1Worker",
+      'WebhookV2Worker',
       "SendSignupActivationMail",
       "DevNotificationWorker",
       "PodDnsUpdate",
@@ -288,6 +296,7 @@ Sidekiq.configure_server do |config|
       "Ecommerce::EbayUserWorker",
       "PasswordExpiryWorker",
       "WebhookV1Worker",
+      'WebhookV2Worker',
       "SendSignupActivationMail",
       "DevNotificationWorker",
       "PodDnsUpdate",

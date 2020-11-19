@@ -31,7 +31,12 @@ module Va::Webhook::Trigger
       webhook_validation_enabled: Account.current.webhook_blacklist_ip_enabled?
     }
     
-    ::WebhookV1Worker.perform_async(throttler_args)
-    
+    if Account.current.webhook_worker_revamp_enabled?
+      Rails.logger.debug("Invoking WebhookV2Worker for Account #{Account.current.id}")
+      ::WebhookV2Worker.perform_async(throttler_args)
+    else
+      Rails.logger.debug("Invoking WebhookV1Worker for Account #{Account.current.id}")
+      ::WebhookV1Worker.perform_async(throttler_args)
+    end
   end
 end

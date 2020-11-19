@@ -71,6 +71,7 @@ defaults: &defaults
     - [bulk_scenario]
     - [github]
     - [webhook_v1_worker]
+    - [account_webhook_worker]
     - [report_export_queue]
     - [update_users_company_id]
     - [update_tickets_company_id]
