@@ -203,12 +203,14 @@ protected
       params[:user].delete(:helpdesk_agent)
       params[:user].delete(:role_ids)
       params[:user].delete(:email)
+      params[:user].delete(:group_ids)
       validate_phone_field_params @user
     end
     if params[:agent]
       params[:agent].delete(:user_id)
       params[:agent].delete(:occasional)
       params[:agent].delete(:ticket_permission)
+      params[:agent].delete(:group_ids)
     end
   end
 
