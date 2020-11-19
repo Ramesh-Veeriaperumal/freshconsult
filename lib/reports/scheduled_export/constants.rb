@@ -56,4 +56,6 @@ module Reports::ScheduledExport::Constants
 
   ACTIVITY_EXPORT_API = "https://%{domain}.freshdesk.com/api/v2/export/ticket_activities" 
 
+  PROPERTY_EXPORT_ACTIONS = [:new, :create, :show, :destroy, :download_file, :clone_schedule].freeze
+  ACTIVITY_EXPORT_ACTIONS = [:edit_activity, :update_activity].freeze
 end

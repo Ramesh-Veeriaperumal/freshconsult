@@ -11,13 +11,12 @@ class Reports::ScheduledExportsController < ApplicationController
 
   before_filter :set_selected_tab
   before_filter :access_denied, :unless => :require_feature_and_privilege
-  before_filter :access_denied, :unless => :has_properties_export?, :only => [:new, :create, :show, :destroy, :download_file, :clone_schedule]
+  before_filter :disallow_export, if: :no_export_access?
   before_filter :load_object, :only => [:show, :destroy, :download_file,:clone_schedule]
   before_filter :check_download_permission, :only => :download_file
   before_filter :check_schedule_owner_permission, :only => [:show, :destroy, :clone_schedule]
   before_filter :load_config, :generate_id, :only => [:new, :clone_schedule]
   before_filter :set_filter_data, :set_fields_data, :set_type_and_email_recipients, :only => :create
-  before_filter :access_denied, :unless => :has_activity_export?, :only => [:edit_activity, :update_activity]
   before_filter :load_activity_export, :only => [:edit_activity, :update_activity]
 
   def index
@@ -226,5 +225,12 @@ class Reports::ScheduledExportsController < ApplicationController
 
     def has_properties_export?
       current_account.auto_ticket_export_enabled? && privilege?(:admin_tasks)
+    end
+
+    alias disallow_export access_denied
+
+    def no_export_access?
+      (ACTIVITY_EXPORT_ACTIONS.include?(action) && !has_activity_export?) ||
+        (PROPERTY_EXPORT_ACTIONS.include?(action) && !has_properties_export?)
     end
 end
