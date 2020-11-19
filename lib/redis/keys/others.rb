@@ -3,6 +3,7 @@ module Redis::Keys::Others
   PREVIEW_URL                             = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}".freeze
   EMAIL_TICKET_ID                         = "EMAIL_TICKET_ID:%{account_id}:%{message_id}".freeze
   MINT_PREVIEW_KEY                        = "MINT_PREVIEW_KEY:%{account_id}:%{user_id}:%{portal_id}"
+  SUPPORT_THEME_VERSION                   = "SUPPORT_THEME_VERSION".freeze
   MIGRATED_EMAIL_TICKET_ID                = "MIGRATED_EMAIL_TICKET_ID:%{account_id}:%{email_config_id}:%{message_id}".freeze
   ADMIN_ROUND_ROBIN_FILTER                = "ADMIN_ROUND_ROBIN_FILTER:%{account_id}:%{user_id}".freeze
   ACCOUNT_ONBOARDING_PENDING              = "ACCOUNT_ONBOARDING_PENDING:%{account_id}".freeze

@@ -132,7 +132,7 @@ module ApplicationHelper
     else
       query_string = "#{current_portal.template.updated_at.to_i}"
     end
-    "/support/#{stylesheet_name}?v=#{query_string}"
+    "/support/#{stylesheet_name}?v=#{support_theme_version}&d=#{query_string}"
   end
 
   def facebook_theme_url
@@ -2102,6 +2102,14 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       current_template = current_portal.template
       !current_portal.falcon_portal_enable? && current_template.header.blank? && current_template.footer.blank? &&  current_template.custom_css.blank? && current_template.layout.blank? && current_template.pages.size == 0
     end
+  end
+
+  def support_theme_version
+    # NOTE : When SUPPORT_THEME_VERSION version is incremented, page cache version should also be incremented
+    # SUPPORT_THEME_VERSION is global theme(css) cache version
+    # APP_CACHE_VERSION is global page cache version
+    # PORTAL_CACHE_VERSION is account_level page cache version
+    get_others_redis_key(SUPPORT_THEME_VERSION)
   end
 
   def mint_preview_key
