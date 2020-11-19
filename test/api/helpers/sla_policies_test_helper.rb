@@ -72,7 +72,7 @@ module SlaPoliciesTestHelper
     company = create_company
     sla_targets = private_api_request ? create_sla_target_new_format : create_sla_target
     company_ids = private_api_request ? [company.name || Account.current.companies.last.name] : [company.id || Account.current.companies.last.id]
-    {name: Faker::Lorem.word,applicable_to:{company_ids: company_ids},sla_target: sla_targets}
+    { name: Faker::Lorem.sentence(3), applicable_to: { company_ids: company_ids }, sla_target: sla_targets }
   end
 
   def create_sla_params_hash_with_company_and_product(private_api_request = false)
@@ -80,8 +80,7 @@ module SlaPoliciesTestHelper
     product = create_product
     sla_targets = private_api_request ? create_sla_target_new_format : create_sla_target
     company_ids = private_api_request ? [company.name || Account.current.companies.last.name] : [company.id || Account.current.companies.last.id]
-    {name: Faker::Lorem.word,applicable_to:{company_ids: company_ids,product_ids:[product.id]},sla_target: sla_targets}
-
+    { name: Faker::Lorem.sentence(3), applicable_to: { company_ids: company_ids, product_ids: [product.id] }, sla_target: sla_targets }
   end
 
   def create_sla_target

@@ -469,6 +469,7 @@ module Ember
         article_meta = get_article_with_versions.parent
         article = article_meta.safe_send('primary_article')
         article.draft.publish! if article.draft
+        article.reload
 
         attachment = article.attachments.build(content: fixture_file_upload('/files/attachment.txt', 'text/plain', :binary), description: Faker::Name.first_name, account_id: article.account_id)
         attachment.save

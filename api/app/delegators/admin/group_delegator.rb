@@ -8,13 +8,19 @@ module Admin
     def initialize(item, options = {})
       @agent_ids = options[:agent_ids]
       @name = options[:name]
+      @item = item
       super(item, options)
     end
 
     private
 
       def validate_name
-        duplicate_group_name_error(name) if Account.current.groups.where(name: @name).first
+        # For validations using cache to reduce DB queries
+        group = Account.current.groups_from_cache.find { |gr| gr.name == @name }
+        if group.present? && (validation_context == :create || (validation_context == :update && @item.id != group.id))
+          errors[:name] << :duplicate_group_name
+          (error_options[:name] ||= {}).merge!(name: name)
+        end
       end
 
       def validate_agent_ids
@@ -27,11 +33,6 @@ module Admin
 
       def invalid_users(agent_list)
         (agent_list - Account.current.agents_details_from_cache.map(&:id))
-      end
-
-      def duplicate_group_name_error(name)
-        errors[:name] << :duplicate_group_name
-        (error_options[:name] ||= {}).merge!(name: name)
       end
   end
 end

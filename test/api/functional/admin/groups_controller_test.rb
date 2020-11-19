@@ -441,6 +441,26 @@ module Admin
       existing_group.destroy
     end
 
+    def test_update_group_with_existing_group_name_for_same_group
+      existing_group = create_group(@account)
+      put :update, construct_params({ version: 'private', id: existing_group.id }, name: existing_group.name)
+      assert_response 200
+      match_json(group_management_v2_pattern(existing_group))
+    ensure
+      existing_group.destroy
+    end
+
+    def test_update_group_with_existing_group_name_for_different_group
+      group1 = create_group(@account)
+      group2 = create_group(@account)
+      put :update, construct_params({ version: 'private', id: group1.id }, name: group2.name)
+      assert_response 400
+      match_json([bad_request_error_pattern('name', nil, name: group2.name, prepend_msg: :duplicate_group_name)])
+    ensure
+      group1.destroy
+      group2.destroy
+    end
+
     def test_update_omni_channel_routing_valid
       Account.current.add_feature :omni_channel_routing
       existing_group = create_group(@account)

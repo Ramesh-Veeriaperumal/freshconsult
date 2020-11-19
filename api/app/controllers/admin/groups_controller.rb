@@ -29,7 +29,7 @@ module Admin
       def validate_and_save
         assign_uniqueness_validated
         group_delegator = delegator_klass.new(@item, cname_params)
-        if group_delegator.valid?
+        if group_delegator.valid?(action_name.to_sym)
           build_attributes
           yield
         else

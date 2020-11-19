@@ -1390,7 +1390,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_update_name_sla_policy
     @sla_policy = quick_create_sla_policy
-    put :update, construct_params({ id: @sla_policy.id }, name: Faker::Lorem.word )
+    put :update, construct_params({ id: @sla_policy.id }, name: Faker::Lorem.sentence(3))
     assert_response 200
     match_json(sla_policy_pattern(@sla_policy.reload))
   end
@@ -1528,7 +1528,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_invalid_company_ids_data_type
-    post :create, construct_params(name: Faker::Lorem.word , applicable_to: { company_ids: '1,2' },sla_target:create_sla_target)
+    post :create, construct_params(name: Faker::Lorem.sentence(3), applicable_to: { company_ids: '1,2' }, sla_target: create_sla_target)
     assert_response 400
     match_json([bad_request_error_pattern('company_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
   end
@@ -1543,8 +1543,9 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_create_group_sla_policies
     group = create_group(@account)
     sla_target = create_sla_target
-    params_hash = {name: Faker::Lorem.word, applicable_to: { group_ids: [group.id] },sla_target: sla_target}
+    params_hash = { name: Faker::Lorem.sentence(3), applicable_to: { group_ids: [group.id] }, sla_target: sla_target }
     post :create, construct_params(params_hash)
+    p response.body
     assert_response 201
     response = parse_response @response.body
     match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
@@ -1570,7 +1571,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
   def test_create_product_sla_policies
     product = create_product
     sla_target = create_sla_target
-    params_hash = {name: Faker::Lorem.word, applicable_to: { product_ids: [product.id] },sla_target:sla_target}
+    params_hash = { name: Faker::Lorem.sentence(3), applicable_to: { product_ids: [product.id] }, sla_target: sla_target }
     post :create, construct_params(params_hash)
     response = parse_response @response.body
     assert_response 201
@@ -1613,7 +1614,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
   def test_create_ticket_types_sla_policies
     ticket_type = "Question"
-    params_hash = {name: Faker::Lorem.word ,applicable_to: { ticket_types: ["#{ticket_type}"] },sla_target:create_sla_target}
+    params_hash = { name: Faker::Lorem.sentence(3), applicable_to: { ticket_types: [ticket_type.to_s] }, sla_target: create_sla_target }
     post :create, construct_params(params_hash)
     p response.body
     assert_response 201
@@ -1641,7 +1642,7 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
     def test_create_sla_policy_with_contact_segment
       contact_segment = create_contact_segment
-      params_hash = { name: Faker::Lorem.word, applicable_to: { contact_segments: [contact_segment.id] }, sla_target:create_sla_target }
+      params_hash = { name: Faker::Lorem.sentence(3), applicable_to: { contact_segments: [contact_segment.id] }, sla_target: create_sla_target }
       post :create, construct_params(params_hash)
       assert_response 201
       response = parse_response @response.body
@@ -1668,8 +1669,9 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
 
     def test_create_sla_policy_with_company_segment
       company_segment = create_company_segment
-      params_hash = { name: Faker::Lorem.word, applicable_to: { company_segments: [company_segment.id] }, sla_target: create_sla_target }
+      params_hash = { name: Faker::Lorem.sentence(3), applicable_to: { company_segments: [company_segment.id] }, sla_target: create_sla_target }
       post :create, construct_params(params_hash)
+      p response.body
       assert_response 201
       response = parse_response @response.body
       match_json(sla_policy_pattern(Helpdesk::SlaPolicy.last))
