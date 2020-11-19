@@ -431,6 +431,7 @@
       :archive_tickets_api: 427
       :auto_response_detector: 428
       :redaction: 429
+      :auto_response_detector_toggle: 430
 :selectable_features:
   :gamification_enable: false
   :parent_child_tickets: false

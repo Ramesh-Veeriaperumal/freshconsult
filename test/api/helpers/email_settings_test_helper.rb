@@ -7,7 +7,8 @@ module EmailSettingsTestHelper
       'original_sender_as_requester_for_forward': true,
       'skip_ticket_threading': true,
       'allow_wildcard_ticket_create': true,
-      'threading_without_user_check': true
+      'threading_without_user_check': true,
+      'auto_response_detector_toggle': false
     }
   end
 

@@ -241,3 +241,7 @@ settings:
     default: false
     internal: true
     feature_dependency: :basic_settings_feature
+  :auto_response_detector_toggle:
+    default: false
+    internal: false
+    feature_dependency: :auto_response_detector

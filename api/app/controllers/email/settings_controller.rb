@@ -96,6 +96,7 @@ module Email
           @item[:skip_ticket_threading] = current_account.skip_ticket_threading_enabled?
         end
         @item[:threading_without_user_check] = current_account.threading_without_user_check_enabled? if current_account.threading_without_user_setting_enabled?
+        @item[:auto_response_detector_toggle] = current_account.auto_response_detector_toggle_enabled? if current_account.auto_response_detector_enabled?
       end
   end
 end

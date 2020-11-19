@@ -3,6 +3,15 @@ require_relative '../../test_helper'
 class Email::SettingsControllerTest < ActionController::TestCase
   include EmailSettingsTestHelper
 
+  def setup
+    super
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(true)
+  end
+
+  def teardown
+    Account.any_instance.unstub(:auto_response_detector_enabled?)
+  end
+
   def wrap_cname(params)
     params
   end
@@ -180,6 +189,49 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:disable_agent_forward_enabled?)
     Account.any_instance.unstub(:compose_email_enabled?)
     Account.any_instance.unstub(:personalized_email_replies_enabled?)
+  end
+
+  def test_show_auto_response_detector_toggle_not_available_if_plan_feature_not_enabled
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(false)
+    get :show, controller_params
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal response_body.key?('auto_response_detector_toggle'), false
+  ensure
+    Account.any_instance.unstub(:auto_response_detector_enabled?)
+  end
+
+  def test_show_auto_response_detector_toggle_is_available_if_plan_feature_enabled
+    get :show, controller_params
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal response_body['auto_response_detector_toggle'], false
+  end
+
+  def test_update_with_auto_response_detector_toggle_throw_bad_request_if_plan_feature_not_enabled
+    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(false)
+    params = { auto_response_detector_toggle: false }
+    put :update, construct_params({}, params)
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: params.keys.first))
+  ensure
+    Account.any_instance.unstub(:auto_response_detector_enabled?)
+  end
+
+  def test_successful_update_with_auto_response_detector_toggle_if_plan_feature_enabled
+    params = { auto_response_detector_toggle: true }
+    put :update, construct_params({}, params)
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal response_body['auto_response_detector_toggle'], true
+    assert_equal Account.current.auto_response_detector_toggle_enabled?, true
+
+    params = { auto_response_detector_toggle: false }
+    put :update, construct_params({}, params)
+    assert_response 200
+    response_body = JSON.parse(response.body)
+    assert_equal response_body['auto_response_detector_toggle'], false
+    assert_equal Account.current.auto_response_detector_toggle_enabled?, false
   end
 
   def test_show_without_privilege

@@ -55,4 +55,12 @@ class Email::SettingsValidationTest < ActionView::TestCase
     errors = config.errors.full_messages
     assert errors.include?('Allow wildcard ticket create datatype_mismatch')
   end
+
+  def test_auto_response_detector_toggle_with_invalid_value
+    params = { 'auto_response_detector_toggle': 'invalid_value' }
+    config = Email::SettingsValidation.new(params)
+    refute config.valid?(:update)
+    errors = config.errors.full_messages
+    assert errors.include?('Auto response detector toggle datatype_mismatch')
+  end
 end
