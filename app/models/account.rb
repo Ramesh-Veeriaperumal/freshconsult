@@ -1016,6 +1016,10 @@ class Account < ActiveRecord::Base
     Account.current.launched?(:omni_bundle_2020) && omni_bundle_id.present?
   end
 
+  def omni_groups?
+    Account.current.omni_bundle_account? && Account.current.omni_groups_enabled?
+  end
+
   def omni_business_calendar?
     omni_business_calendar_enabled? && omni_bundle_account?
   end

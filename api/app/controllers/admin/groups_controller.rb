@@ -18,6 +18,12 @@ module Admin
       end
     end
 
+    def show
+      if Account.current.omni_groups?
+        render_errors(@item.errors) unless @item.find_freshid_usergroup_by_id
+      end
+    end
+
     private
 
       def validate_and_save
@@ -125,6 +131,7 @@ module Admin
       def build_attributes
         agent_ids = cname_params[:agent_ids]
         @item.build_agent_groups_attributes(agent_ids.join(',')) if agent_ids.present?
+        @item.automatic_agent_assignment_settings = cname_params[:automatic_agent_assignment] if cname_params[:automatic_agent_assignment].present?
       end
 
       def set_custom_errors(item = @item)
@@ -135,6 +142,7 @@ module Admin
 
       # overriding error message from base validations
       def assignment_type_error_message(item)
+        return item if item.error_options[:round_robin_type].present? && item.error_options[:round_robin_type][:code] == :require_feature
         item.errors[:round_robin_type] = :not_included
         item.error_options[:round_robin_type] = { list: ASSIGNMENT_TYPE_MAPPINGS.values.join(', '), code: :not_included }
         item

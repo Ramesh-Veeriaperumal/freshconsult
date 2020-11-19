@@ -203,6 +203,38 @@ module GroupsTestHelper
                                                        settings: [{ channel: 'ticket', assignment_type: 'lbrr_by_omniroute' }] } }
   }.freeze
 
+  OMNI_ASSIGNMENT_SETTINGS = {
+    round_robin: { automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                 settings: [{ channel: 'ticket', assignment_type: 'round_robin' },
+                                                                 channel: 'chat', assignment_type: 'intelli_assign',
+                                                                 assignment_type_settings: { reassign_conversation_of_inactive_agent: true }] } },
+    load_based_round_robin: { automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                            settings: [{ channel: 'ticket', assignment_type: 'load_based_round_robin',
+                                                                         assignment_type_settings: { capping_limit: Integer } },
+                                                                 channel: 'chat', assignment_type: 'intelli_assign',
+                                                                 assignment_type_settings: { reassign_conversation_of_inactive_agent: true }] } },
+    skill_based_round_robin: { automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                             settings: [{ channel: 'ticket', assignment_type: 'skill_based_round_robin',
+                                                                          assignment_type_settings: { capping_limit: Integer } },
+                                                                 channel: 'chat', assignment_type: 'intelli_assign',
+                                                                 assignment_type_settings: { reassign_conversation_of_inactive_agent: true }] } },
+    lbrr_by_omniroute: { automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                       settings: [{ channel: 'ticket', assignment_type: 'lbrr_by_omniroute' },
+                                                                 channel: 'chat', assignment_type: 'intelli_assign',
+                                                                 assignment_type_settings: { reassign_conversation_of_inactive_agent: true }] } }
+  }.freeze
+
+  CHAT_ASSIGNMENT_SETTINGS = {
+    intelli_assign: { automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                    settings: [{ channel: 'ticket', assignment_type: 'round_robin' },
+                                                                 channel: 'chat', assignment_type: 'intelli_assign',
+                                                                 assignment_type_settings: { reassign_conversation_of_inactive_agent: true }] } },
+    intelli_assign_invalid: { automatic_agent_assignment: { enabled: true, type: 'channel_specific',
+                                                    settings: [{ channel: 'ticket', assignment_type: 'round_robin' },
+                                                                 channel: 'chat', assignment_type: 'intelli',
+                                                                 assignment_type_settings: { reassign_conversation_of_inactive_agent: true }] } }
+  }.freeze
+
   def lbrr_params
     { name: 'sbrr group test', description: 'testing group', business_calendar_id: 1,
       type: 'support_agent_group', escalate_to: 1, agent_ids: [1], unassigned_for: '30m',
@@ -221,6 +253,24 @@ module GroupsTestHelper
         settings: [{ channel: 'ticket', assignment_type: 'skill_based_round_robin',
                      assignment_type_settings: { capping_limit: 2 } }]
       } }
+  end
+
+  def duplicate_channel_params
+    { name: 'sbrr group test', description: 'testing group', business_calendar_id: 1,
+      type: 'support_agent_group', escalate_to: 1, agent_ids: [1], unassigned_for: '30m',
+      automatic_agent_assignment: {
+        enabled: true, type: 'channel_specific',
+        settings: [{ channel: 'ticket', assignment_type: 'skill_based_round_robin',
+                     assignment_type_settings: { capping_limit: 2 } },
+                   { channel: 'ticket', assignment_type: 'round_robin'} ]
+      } }
+  end
+
+  def chat_params
+    { channel: 'chat',
+      assignment_type: 'intelli_assign',
+      assignment_type_settings: { reassign_conversation_of_inactive_agent: true }
+    }
   end
 
   METHOD_NAME_MAPPINGS = {
@@ -247,6 +297,12 @@ module GroupsTestHelper
       allow_agents_to_change_availability: false
     }
     result.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
+    result
+  end
+
+  def omni_group_pattern(group)
+    result = group_management_v2_pattern(group).except(:automatic_agent_assignment)
+    result.merge!(CHAT_ASSIGNMENT_SETTINGS[:intelli_assign])
     result
   end
 

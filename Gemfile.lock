@@ -352,8 +352,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/platforms-sdk-ruby.git
-  revision: 5443d3135db0ec9aaa0d704adce64105e69f7c01
-  tag: 1.2.1
+  revision: cf3994da6912ad5cbc1a5074faaf4bcc0605520c
+  tag: 1.2.2
   glob: gems/freshid-sdk/freshid-sdk.gemspec
   specs:
     freshid-sdk (0.1.0)

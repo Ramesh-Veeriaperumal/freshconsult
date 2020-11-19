@@ -15,12 +15,14 @@ class Group < ActiveRecord::Base
   include GroupConstants
   include MemcacheKeys
 
-  concerned_with :round_robin_methods, :skill_based_round_robin, :presenter, :constants
+  concerned_with :round_robin_methods, :skill_based_round_robin, :presenter, :constants, :freshid_methods
 
   publishable on: [:create, :update, :destroy]
   
   before_save :reset_toggle_availability, :create_model_changes
   before_save :set_default_type_if_needed, on: [:create]
+  before_save :freshid_usergroup_operation, if: -> { Account.current.omni_groups? }
+  before_destroy :delete_freshid_usergroup, if: -> { Account.current.omni_groups? }
   before_destroy :backup_user_ids, :save_deleted_group_info
   validate :support_group_agent_validation, :auto_ticket_assign_validation, if: -> { Account.current.field_service_management_enabled? }
 
@@ -70,7 +72,7 @@ class Group < ActiveRecord::Base
   :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes,
   :capping_limit, :group_type
 
-  attr_accessor :capping_enabled, :agent_changes, :uniqueness_validated
+  attr_accessor :capping_enabled, :agent_changes, :uniqueness_validated, :automatic_agent_assignment_settings, :freshchat_settings
 
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
 
@@ -316,5 +318,9 @@ class Group < ActiveRecord::Base
         return false
       end
       true
+    end
+
+    def freshid_usergroup_operation
+      create_freshid_usergroup if transaction_include_action?(:create)
     end
   end

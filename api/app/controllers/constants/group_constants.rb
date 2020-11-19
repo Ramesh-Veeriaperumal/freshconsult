@@ -91,11 +91,19 @@ module GroupConstants
     LBRR_BY_OMNIROUTE => 'lbrr_by_omniroute'
   }.freeze
 
+  ASSIGNMENT_TYPES_WITH_CAPPING_LIMIT = %w[load_based_round_robin skill_based_round_robin]
+
+  CHAT_ASSIGNMENT_TYPE = %w[intelli_assign].freeze
+
+  OMNI_GROUP_ASSIGNMENT_TYPE = { ticket: ASSIGNMENT_TYPE_MAPPINGS.values, chat: CHAT_ASSIGNMENT_TYPE }.freeze
+
   OMNI_CHANNEL = 'omni_channel'.freeze
 
   CHANNEL_SPECIFIC = 'channel_specific'.freeze
 
   CHANNEL_NAMES = { freshdesk: 'ticket' }.freeze
+
+  OMNI_GROUP_CHANNEL_NAMES = { freshdesk: 'ticket', freshchat: 'chat' }.freeze
 
   GROUP_V2_NEGATE_FIELDS = %w[business_hour_id assignment_type group_type include auto_assignment round_robin_type capping_limit].freeze
 
@@ -120,6 +128,7 @@ module GroupConstants
     round_robin_type: :'automatic_agent_assignment[:settings][:assignment_type]',
     capping_limit: :'automatic_agent_assignment[:settings][:assignment_type_settings][:capping_limit]',
     settings: :'automatic_agent_assignment[:settings]',
-    enabled: :'automatic_agent_assignment[:enabled]'
+    enabled: :'automatic_agent_assignment[:enabled]',
+    channel_assignment_type: :'automatic_agent_assignment[:settings][:assignment_type]'
   }.freeze
 end.freeze

@@ -59,7 +59,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent_status, only: [:index]
     resource :api_agent, only: [:fetch_availability, :update_availability]
     resource :account_admin, only: [:preferences]
-    resource :'admin/group', only: [:index]
     resource :'notifications/email/bcc', only: [:show]
   end
 
@@ -161,6 +160,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :api_role, only: [:index, :show]
     resource :api_business_hour, :only => [:index, :show]
     resource :"admin/groups/agent", only: [:index]
+    resource :'admin/freshcaller_account', only: [:show]
   end
 
   delete_ticket do

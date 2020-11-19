@@ -28,6 +28,7 @@ module Admin
           settings = []
           result = { enabled: true, type: CHANNEL_SPECIFIC }
           settings << ticket_settings_hash(ticket_assign_type, (record.capping_limit || 0))
+          settings << record.freshchat_settings if Account.current.omni_groups? && record.freshchat_settings.present?
           result.merge!(settings: settings)
           result
         end

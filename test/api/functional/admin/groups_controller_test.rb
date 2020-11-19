@@ -554,7 +554,7 @@ module Admin
       existing_group = create_group(Account.current, ticket_assign_type: 2, capping_limit: 2)
       put :update, construct_params({ version: 'private', id: existing_group.id }, automatic_agent_assignment: sbrr_params[:automatic_agent_assignment])
       assert_response 400
-      match_json([bad_request_error_pattern('round_robin_type', :not_included, list: ASSIGNMENT_TYPE_MAPPINGS.values.join(', '), code: :not_included),
+      match_json([bad_request_error_pattern('round_robin_type', :require_feature, feature: 'skill_based_round_robin'.titleize, code: :require_feature),
                   bad_request_error_pattern('automatic_agent_assignment[:settings][:assignment_type]', :require_feature, feature: 'round_robin'.titleize, code: :require_feature)])
     ensure
       existing_group.destroy
@@ -741,6 +741,199 @@ module Admin
       add_privilege(@agent, :admin_tasks)
     end
 
+    # create omni group tests
+
+    def test_create_omni_group_invalid
+      omni_group_stub
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+      group_params.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
+      Freshid::V2::Models::Usergroup.stubs(:create).returns(nil)
+      post :create, construct_params({ version: 'private' }, group_params)
+      assert_response 400
+    ensure
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:create)
+    end
+
+    def test_create_omni_group_valid
+      omni_group_stub
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+      group_params.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
+
+      freshid_user_group = Freshid::V2::Models::Usergroup.new(create_omni_group_param(group_params))
+      Freshid::V2::Models::Usergroup.stubs(:create).returns(freshid_user_group)
+      post :create, construct_params({ version: 'private' }, group_params)
+      assert_response 201
+      group_id = JSON.parse(response.body)['id']
+      match_json(group_management_v2_pattern(Group.find(group_id)))
+    ensure
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:create)
+
+      Account.current.groups.find_by_id(group_id).destroy
+    end
+
+    # create all assignment_type settings groups
+    OMNI_ASSIGNMENT_SETTINGS.each_pair do |assignment_type, assignment_payload|
+      capping_limit = %i[load_based_round_robin skill_based_round_robin].include?(assignment_type)
+      define_method "test_create_omni_group_with_#{assignment_type}_valid" do
+        omni_group_stub
+        group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                         type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+        group_params.merge!(assignment_payload)
+
+        capping_limit_param = assignment_type == :load_based_round_robin ? lbrr_params : sbrr_params
+        capping_limit_param[:automatic_agent_assignment][:settings].push chat_params
+        Account.any_instance.stubs(:lbrr_by_omniroute_enabled?).returns(false) if assignment_type == :load_based_round_robin
+
+        group_params[:automatic_agent_assignment][:settings][0][:assignment_type_settings][:capping_limit] = 2 if capping_limit
+        freshid_user_group = Freshid::V2::Models::Usergroup.new(create_omni_group_param(group_params))
+        Freshid::V2::Models::Usergroup.stubs(:create).returns(freshid_user_group)
+        groups_assignment_type_stubs(assignment_type.to_sym) do
+          post :create, construct_params({ version: 'private' }, group_params)
+        end
+        group_id = JSON.parse(response.body)['id']
+        assert_response 201
+        pattern = safe_send("group_management_#{METHOD_NAME_MAPPINGS[assignment_type]}_pattern", Group.find(group_id))
+        match_json(pattern)
+        Account.any_instance.unstub(:lbrr_by_omniroute_enabled?) if assignment_type == :load_based_round_robin
+        omni_group_unstub
+        Freshid::V2::Models::Usergroup.unstub(:create)
+        Account.current.groups.find_by_id(group_id).destroy
+      end
+    end
+
+    def test_create_omni_group_with_omni_channel_routing_invalid
+      omni_group_stub
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+      group_params.merge!(ASSIGNMENT_SETTINGS[:omni_channel_routing])
+      groups_assignment_type_stubs(:omni_channel_routing) do
+        post :create, construct_params({ version: 'private' }, group_params)
+      end
+      assert_response 400
+      match_json([bad_request_error_pattern('automatic_agent_assignment[:type]', :not_included, code: :invalid_value, list: 'channel_specific')])
+    ensure
+      omni_group_unstub
+    end
+
+    def test_create_omni_group_with_chat_assignment_invalid
+      omni_group_stub
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+      group_params.merge!(CHAT_ASSIGNMENT_SETTINGS[:intelli_assign_invalid])
+      freshid_user_group = Freshid::V2::Models::Usergroup.new(create_omni_group_param(group_params))
+      Freshid::V2::Models::Usergroup.stubs(:create).returns(freshid_user_group)
+      groups_assignment_type_stubs(:round_robin) do
+        post :create, construct_params({ version: 'private' }, group_params)
+      end
+      assert_response 400
+      match_json([bad_request_error_pattern('automatic_agent_assignment[:settings][:assignment_type]', :not_included, code: :invalid_value, list: 'intelli_assign')])
+    ensure
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:create)
+    end
+
+    def test_create_omni_group_with_invalid_chat_assignment_capping_limit
+      omni_group_stub
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+      intelli_assign_params = CHAT_ASSIGNMENT_SETTINGS[:intelli_assign]
+      intelli_assign_params[:automatic_agent_assignment][:settings][1][:assignment_type_settings].merge!(capping_limit: 3)
+      group_params.merge!(CHAT_ASSIGNMENT_SETTINGS[:intelli_assign])
+      freshid_user_group = Freshid::V2::Models::Usergroup.new(create_omni_group_param(group_params))
+      Freshid::V2::Models::Usergroup.stubs(:create).returns(freshid_user_group)
+      groups_assignment_type_stubs(:round_robin) do
+        post :create, construct_params({ version: 'private' }, group_params)
+      end
+      assert_response 400
+      match_json([bad_request_error_pattern('automatic_agent_assignment[:settings][:assignment_type_settings][:capping_limit]', :invalid_field)])
+    ensure
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:create)
+    end
+
+    def test_create_omni_group_with_chat_assignment_valid
+      omni_group_stub
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+      group_params.merge!(CHAT_ASSIGNMENT_SETTINGS[:intelli_assign])
+      freshid_user_group = Freshid::V2::Models::Usergroup.new(create_omni_group_param(group_params))
+      Freshid::V2::Models::Usergroup.stubs(:create).returns(freshid_user_group)
+
+      groups_assignment_type_stubs(:round_robin) do
+        post :create, construct_params({ version: 'private' }, group_params)
+      end
+      group_id = JSON.parse(response.body)['id']
+      assert_response(201)
+    ensure
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:create)
+      Account.current.groups.find_by_id(group_id).try(:destroy)
+    end
+
+    # show omni group test
+
+    def test_show_invalid_omni_group_id
+      omni_group_stub
+      get :show, controller_params(version: 'private', id: 199_991)
+      assert_response 404
+    ensure
+      omni_group_unstub
+    end
+
+    def test_show_invalid_omni_group_without_uid
+      group = create_group(Account.current, agent_ids: [Account.current.agents.first.user_id])
+      omni_group_stub
+      get :show, controller_params(version: 'private', id: group.id)
+      assert_response 400
+    ensure
+      Account.current.groups.find(group.id).destroy
+      omni_group_unstub
+    end
+
+    def test_show_invalid_omni_group_with_invalid_uid
+      group = create_group(Account.current, agent_ids: [Account.current.agents.first.user_id], uid: "22446688224466006688")
+      Freshid::V2::Models::Usergroup.stubs(:find_by_id).returns(nil)
+      omni_group_stub
+      get :show, controller_params(version: 'private', id: group.id)
+      assert_response 400
+    ensure
+      Account.current.groups.find(group.id).destroy
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:find_by_id)
+    end
+
+     def test_show_omni_group_valid
+      group = create_group(Account.current, agent_ids: [Account.current.agents.first.user_id], uid: "22446688224466006688")
+      freshid_group = Freshid::V2::Models::Usergroup.new({ name: group.name, description: group.description, id: group.uid, config: {}.to_json } )
+      Freshid::V2::Models::Usergroup.stubs(:find_by_id).returns(freshid_group)
+      omni_group_stub
+      get :show, controller_params(version: 'private', id: group.id)
+      assert_response 200
+      match_json(group_management_v2_pattern(Group.find(group.id)))
+    ensure
+      Account.current.groups.find(group.id).destroy
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:find_by_id)
+    end
+
+    def test_show_omni_group_valid_with_assignment_settings
+      group = create_group(Account.current, ticket_assign_type: 1, agent_ids: [Account.current.agents.first.user_id], uid: "22446688224466006688")
+      freshid_group = Freshid::V2::Models::Usergroup.new({ name: group.name, description: group.description, id: group.uid, config: CHAT_ASSIGNMENT_SETTINGS[:intelli_assign].to_json } )
+      Freshid::V2::Models::Usergroup.stubs(:find_by_id).returns(freshid_group)
+      omni_group_stub
+      get :show, controller_params(version: 'private', id: group.id)
+      assert_response 200
+      match_json(omni_group_pattern(Group.find(group.id)))
+    ensure
+      Account.current.groups.find(group.id).destroy
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:find_by_id)
+    end
+
     def test_delete_group_with_agent_search_publish_test
       group = create_group_with_agents(@account, agent_list: [@account.account_managers.first.id])
       RabbitmqWorker.clear
@@ -748,6 +941,24 @@ module Admin
       assert_equal RabbitmqWorker.jobs.size, 1
       assert_equal RabbitmqWorker.jobs[0]['args'][0], 'users'
       assert_equal JSON.parse(RabbitmqWorker.jobs[0]['args'][1])['user_properties']['id'], @account.account_managers.first.id
+    end
+
+    def test_delete_omni_group
+      omni_group_stub
+      group_params = { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, business_calendar_id: Account.current.business_calendar.first.id,
+                       type: 'support_agent_group', escalate_to: Account.current.account_managers.first.id, agent_ids: [Account.current.agents.first.user_id], unassigned_for: '30m' }
+      group_params.merge!(ASSIGNMENT_SETTINGS[:no_assignment])
+      freshid_user_group = Freshid::V2::Models::Usergroup.new(create_omni_group_param(group_params))
+      Freshid::V2::Models::Usergroup.stubs(:create).returns(freshid_user_group)
+      post :create, construct_params({ version: 'private' }, group_params)
+      group_id = JSON.parse(response.body)['id']
+      delete :destroy, construct_params(id: group_id)
+      assert_equal ' ', @response.body
+      assert_response 204
+      assert_nil Group.find_by_id(group_id)
+    ensure
+      omni_group_unstub
+      Freshid::V2::Models::Usergroup.unstub(:create)
     end
 
     private
@@ -772,8 +983,45 @@ module Admin
         group.ticket_assign_type = options[:ticket_assign_type] if options[:ticket_assign_type]
         group.ticket_assign_type = options[:round_robin_type] if options[:round_robin_type]
         group.capping_limit = options[:capping_limit] if options[:capping_limit]
+        group.uid = options[:uid] if options[:uid]
         group.save!
         group
+      end
+
+      def create_omni_group_param(group_params)
+        {
+          organisation_identifier: { domain: Account.current.organisation_from_cache.try(:domain) },
+          usergroup: {
+            id: '178040553263975512',
+            name: group_params[:name],
+            description: group_params[:description],
+            account_id: @account.id.to_s,
+            bundle_id: @account.omni_bundle_id.to_s,
+            config: {
+              business_calendar_id: group_params[:business_calendar_id],
+              automatic_agent_assignment: group_params[:automatic_agent_assignment]
+            }.to_json
+          },
+          members: []
+        }
+      end
+
+      def omni_group_stub
+        Account.any_instance.stubs(:omni_bundle_account?).returns(true)
+        Account.any_instance.stubs(:omni_groups?).returns(true)
+        Account.any_instance.stubs(:omni_bundle_id).returns('178040553247198292')
+        Account.any_instance.stubs(:organisation_from_cache).returns(Organisation.new(id: 178040553184283730, domain: 'sme.freshworks.com'))
+        user = @account.agents.first.user
+        freshid_authorization = user.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: 79797)
+        User.any_instance.stubs(:freshid_authorization).returns(freshid_authorization)
+      end
+
+      def omni_group_unstub
+        Account.any_instance.unstub(:omni_bundle_account?)
+        Account.any_instance.unstub(:omni_groups?)
+        Account.any_instance.unstub(:omni_bundle_id)
+        Account.any_instance.unstub(:organisation_from_cache)
+        User.any_instance.unstub(:freshid_authorization)
       end
 
       def groups_assignment_type_stubs(assignment_type)

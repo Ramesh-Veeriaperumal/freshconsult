@@ -366,6 +366,7 @@ api_error_messages:
   duplicate_condition_set_name: "Duplicate condition set name - %{name}"
   cannot_be_blank: "'%{name}' can't be blank"
   missing_or_blank: "Field is missing/blank"
+  invalid_channels: "Expected channels: '%{list}'"
   any_value_error: 'No other values allowed when any is present'
 
   ticket_association_type_not_allowed: "'ticket_association_type' is not allowed in actions without being present in conditions"
@@ -612,7 +613,10 @@ api_error_messages:
   duplicate_group_name: "A group already exists with name - '%{name}'"
   missing_channel_settings: "At least 1 channel settings required."
   invalid_range: "Capping limit range should be inclusive of 1..100"
+  capping_limit_is_missing: "Capping limit key is missing"
   require_filter_params: "Anyone of the following filter attributes is mandatory: %{attributes}."
   invalid_date_time_period: "Datetime range can only be a maximum of 2 days"
+  freshid_group_api_failure: "Error in omni group '%{action}' API. Please contact support"
+  
   #platform v2
   platform_mismatch: "the article is not present in the given platform"
