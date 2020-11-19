@@ -2,9 +2,11 @@
 
 require_relative '../test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'note_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
 
 class ObserverUtilTest < ActiveSupport::TestCase
   include NoteTestHelper
+  include CoreTicketsTestHelper
 
   def setup
     super
@@ -44,6 +46,17 @@ class ObserverUtilTest < ActiveSupport::TestCase
     create_last_interaction_observer_rule
     res = note.safe_send(:original_ticket_attributes)
     assert_equal res['last_interaction'], note.id
+  ensure
+    Account.current.rollback(:observer_race_condition_fix)
+  end
+
+  def test_original_ticket_attributes_for_last_interaction_observer_rule_on_ticket_update_with_observer_race_condition_feature
+    Account.current.launch(:observer_race_condition_fix)
+    ticket = create_ticket
+    create_last_interaction_observer_rule
+    res = ticket.safe_send(:original_ticket_attributes)
+    # Last interaction must be null as we haven't created note and should not throw exception
+    assert_equal res['last_interaction'], nil
   ensure
     Account.current.rollback(:observer_race_condition_fix)
   end

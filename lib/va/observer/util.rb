@@ -154,7 +154,7 @@ module Va::Observer::Util
     def last_interaction_note_id
       # When a note is added, observer will be enqueued via Ticket::UpdateStatesWorker.
       # There can be a delay in worker by which time, another note could be added. So, using self instead of querying last_interaction_note
-      self.class == Helpdesk::Note ? id : evaluate_on.last_interaction_note.id
+      self.class == Helpdesk::Note ? id : evaluate_on.last_interaction_note.try(:id)
     end
 
     def service_task?
