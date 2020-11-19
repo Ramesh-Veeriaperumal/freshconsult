@@ -1435,7 +1435,7 @@ class TicketsControllerTest < ActionController::TestCase
         assert_response 201
         t = Helpdesk::Ticket.last
         Helpdesk::Ticket.any_instance.stubs(:update_sla).returns(true)
-        assert_not t.update_dueby?
+        assert !t.update_dueby?
       ensure
         Helpdesk::Ticket.any_instance.unstub(:update_sla)
         parent_ticket.destroy
