@@ -33,14 +33,13 @@ class Archive::Tickets::ActivitiesControllerFlowTest < ActionDispatch::Integrati
   end
 
   def test_activity_for_unavailable_ticket
-    add_privilege(@agent, :manage_tickets)
-    get '/api/_/tickets/archived/-10000/activities', { version: 'private' }, @write_headers
+    get '/api/_/tickets/archived/-10000/activities', { version: 'private' }, 'HTTP_HOST' => 'localhost.freshpo.com', 'CONTENT_TYPE' => 'application/json'
     assert_response 404
   end
 
   def test_activity_without_privilege
     remove_privilege(@agent, :manage_tickets)
-    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, @write_headers
+    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, 'HTTP_HOST' => 'localhost.freshpo.com', 'CONTENT_TYPE' => 'application/json'
     assert_response 403
   ensure
     @account.make_current
@@ -48,30 +47,27 @@ class Archive::Tickets::ActivitiesControllerFlowTest < ActionDispatch::Integrati
   end
 
   def test_activity_thrift_failure
-    add_privilege(@agent, :manage_tickets)
     Archive::Tickets::ActivitiesController.any_instance.stubs(:fetch_activities).returns(false)
-    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, @write_headers
+    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, 'HTTP_HOST' => 'localhost.freshpo.com', 'CONTENT_TYPE' => 'application/json'
     assert_response 500
   ensure
     Archive::Tickets::ActivitiesController.unstub(:fetch_activities)
   end
 
   def test_property_update_activity
-    add_privilege(@agent, :manage_tickets)
     stub_data = property_update_activity
     Archive::Tickets::ActivitiesController.any_instance.stubs(:fetch_activities).returns(stub_data)
-    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, @write_headers
+    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, 'HTTP_HOST' => 'localhost.freshpo.com', 'CONTENT_TYPE' => 'application/json'
     assert_response 200
   ensure
     Archive::Tickets::ActivitiesController.unstub(:fetch_activities)
   end
 
   def test_activity_with_restricted_hash
-    add_privilege(@agent, :manage_tickets)
     stub_data = property_update_activity
     remove_privilege(@agent, :view_contacts)
     Archive::Tickets::ActivitiesController.any_instance.stubs(:fetch_activities).returns(stub_data)
-    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, @write_headers
+    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, 'HTTP_HOST' => 'localhost.freshpo.com', 'CONTENT_TYPE' => 'application/json'
     assert_response 200
   ensure
     @account.make_current
@@ -80,10 +76,9 @@ class Archive::Tickets::ActivitiesControllerFlowTest < ActionDispatch::Integrati
   end
 
   def test_invalid_fields_activity
-    add_privilege(@agent, :manage_tickets)
     stub_data = invalid_fields_activity
     Archive::Tickets::ActivitiesController.any_instance.stubs(:fetch_activities).returns(stub_data)
-    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, @write_headers
+    get "/api/_/tickets/archived/#{@archive_ticket.display_id}/activities", { version: 'private' }, 'HTTP_HOST' => 'localhost.freshpo.com', 'CONTENT_TYPE' => 'application/json'
     assert_response 200
   ensure
     Archive::Tickets::ActivitiesController.unstub(:fetch_activities)
