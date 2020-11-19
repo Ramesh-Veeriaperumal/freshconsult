@@ -17,46 +17,18 @@ class Email::SettingsControllerTest < ActionController::TestCase
   end
 
   def test_successful_updation_of_all_settings
-    Account.current.launch(:email_new_settings)
-    Account.current.launch(:threading_without_user_setting)
     Redis.any_instance.stubs(:perform_redis_op).returns('OK')
     params = all_features_params
     put :update, params.merge(construct_params({ action: 'update', controller: 'email/settings' }, params))
     assert_response 200
     match_json(params)
-  ensure
-    Account.current.rollback(:email_new_settings)
-    Account.current.rollback(:threading_without_user_setting)
   end
 
   def test_successful_updation_of_selected_settings
-    Account.current.launch(:email_new_settings)
-    Account.current.launch(:threading_without_user_setting)
     params = all_features_params.except(:allow_agent_to_initiate_conversation, :original_sender_as_requester_for_forward)
     put :update, construct_params({}, params)
     assert_response 200
     match_json(all_features_params)
-  ensure
-    Account.current.rollback(:email_new_settings)
-    Account.current.rollback(:threading_without_user_setting)
-  end
-
-  # This can be removed after LP cleanup
-  def test_successful_updation_of_old_settings_without_feature
-    Redis.any_instance.stubs(:perform_redis_op).returns('OK')
-    params = all_features_params.slice(*EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS.map(&:to_sym))
-    put :update, params.merge(construct_params({ action: 'update', controller: 'email/settings' }, params))
-    assert_response 200
-    match_json(params)
-  end
-
-  # This can be removed after LP cleanup
-  def test_update_new_settings_without_feature
-    new_setting = (EmailSettingsConstants::UPDATE_FIELDS - EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS)[0]
-    params = { new_setting => true}
-    put :update, construct_params({}, params)
-    assert_response 400
-    match_json([bad_request_error_pattern(new_setting, :invalid_field, code: :invalid_field)])
   end
 
   def test_update_disable_agent_forward_and_compose_email_setting
@@ -91,8 +63,7 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('invalid_field', :invalid_field, code: :invalid_field)])
   end
 
-  def test_update_without_manage_email_settings_privileg_email_new_settings_lp_enabled
-    Account.current.launch(:email_new_settings)
+  def test_update_without_manage_email_settings_privilege
     params = all_features_params
     User.any_instance.stubs(:privilege?).with(:manage_email_settings).returns(false)
     put :update, construct_params({}, params)
@@ -100,7 +71,6 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:access_denied))
   ensure
     User.any_instance.unstub(:privilege?)
-    Account.current.rollback(:email_new_settings)
   end
 
   def test_update_redis_key_for_compose_email_setting
@@ -126,17 +96,13 @@ class Email::SettingsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_invalid_value_for_threading_without_user_check
-    Account.current.launch(:threading_without_user_setting)
     params = { 'threading_without_user_check': 'invalid_value' }
     put :update, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern('threading_without_user_check', 'Value set is of type String.It should be a/an Boolean', code: :datatype_mismatch)])
-  ensure
-    Account.current.rollback(:threading_without_user_setting)
   end
 
   def test_update_threading_without_user_check_when_dependent_feature_disabled
-    Account.current.launch(:threading_without_user_setting)
     params = { threading_without_user_check: true }
     dependent_feature = AccountSettings::SettingsConfig[:threading_without_user_check][:feature_dependency]
     Account.any_instance.stubs(:has_feature?).with(dependent_feature).returns(false)
@@ -145,12 +111,9 @@ class Email::SettingsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:require_feature, feature: params.keys.first))
   ensure
     Account.any_instance.unstub(:has_feature?)
-    Account.current.rollback(:threading_without_user_setting)
   end
 
   def test_show_email_settings
-    Account.current.launch(:email_new_settings)
-    Account.current.launch(:threading_without_user_setting)
     Account.any_instance.stubs(:reply_to_based_tickets_enabled?).returns(true)
     Account.any_instance.stubs(:disable_agent_forward_enabled?).returns(false)
     Account.any_instance.stubs(:compose_email_enabled?).returns(true)
@@ -171,31 +134,6 @@ class Email::SettingsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:allow_wildcard_ticket_create_enabled?)
     Account.any_instance.unstub(:skip_ticket_threading_enabled?)
     Account.any_instance.unstub(:threading_without_user_check_enabled?)
-    Account.current.rollback(:email_new_settings)
-    Account.current.launch(:threading_without_user_setting)
-    Account.any_instance.unstub(:auto_response_detector_enabled?)
-    Account.any_instance.unstub(:auto_response_detector_toggle_enabled?)
-  end
-
-  # This can be removed after LP cleanup
-  def test_show_email_settings_without_feature
-    Account.current.rollback(:email_new_settings) if Account.current.email_new_settings_enabled?
-    Account.current.rollback(:threading_without_user_setting)
-    Account.any_instance.stubs(:reply_to_based_tickets_enabled?).returns(true)
-    Account.any_instance.stubs(:disable_agent_forward_enabled?).returns(false)
-    Account.any_instance.stubs(:compose_email_enabled?).returns(true)
-    Account.any_instance.stubs(:personalized_email_replies_enabled?).returns(true)
-    Account.any_instance.stubs(:auto_response_detector_enabled?).returns(true)
-    Account.any_instance.stubs(:auto_response_detector_toggle_enabled?).returns(true)
-
-    get :show, controller_params
-    assert_response 200
-    match_json(all_features_params.slice(*EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS.map(&:to_sym)))
-  ensure
-    Account.any_instance.unstub(:reply_to_based_tickets_enabled?)
-    Account.any_instance.unstub(:disable_agent_forward_enabled?)
-    Account.any_instance.unstub(:compose_email_enabled?)
-    Account.any_instance.unstub(:personalized_email_replies_enabled?)
     Account.any_instance.unstub(:auto_response_detector_enabled?)
     Account.any_instance.unstub(:auto_response_detector_toggle_enabled?)
   end

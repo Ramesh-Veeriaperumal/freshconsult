@@ -55,24 +55,7 @@ module Email
       end
 
       def validate_params
-        # If block can be removed after LP cleanup
-        if !current_account.email_new_settings_enabled? || !current_account.threading_without_user_setting_enabled?
-          field = fetch_permitted_fields
-          params[cname].permit(*field)
-          @validator = SettingsValidation.new(params[cname], nil, string_request_params?)
-          valid = @validator.valid?(action_name.to_sym)
-          render_custom_errors(@validator, true) unless valid
-          valid
-        else
-          validate_body_params
-        end
-      end
-
-      def fetch_permitted_fields
-        permitted_fields = EmailSettingsConstants::UPDATE_FIELDS_WITHOUT_NEW_SETTINGS
-        permitted_fields += %w[allow_wildcard_ticket_create skip_ticket_threading] if current_account.email_new_settings_enabled?
-        permitted_fields += %w[threading_without_user_check] if current_account.threading_without_user_setting_enabled?
-        permitted_fields
+        validate_body_params
       end
 
       def validate_settings
@@ -89,13 +72,11 @@ module Email
           personalized_email_replies: current_account.personalized_email_replies_enabled?,
           create_requester_using_reply_to: current_account.reply_to_based_tickets_enabled?,
           allow_agent_to_initiate_conversation: current_account.compose_email_enabled?,
-          original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?
+          original_sender_as_requester_for_forward: !current_account.disable_agent_forward_enabled?,
+          allow_wildcard_ticket_create: current_account.allow_wildcard_ticket_create_enabled?,
+          skip_ticket_threading: current_account.skip_ticket_threading_enabled?,
+          threading_without_user_check: current_account.threading_without_user_check_enabled?
         }
-        if current_account.email_new_settings_enabled?
-          @item[:allow_wildcard_ticket_create] = current_account.allow_wildcard_ticket_create_enabled?
-          @item[:skip_ticket_threading] = current_account.skip_ticket_threading_enabled?
-        end
-        @item[:threading_without_user_check] = current_account.threading_without_user_check_enabled? if current_account.threading_without_user_setting_enabled?
         @item[:auto_response_detector_toggle] = current_account.auto_response_detector_toggle_enabled? if current_account.auto_response_detector_enabled?
       end
   end

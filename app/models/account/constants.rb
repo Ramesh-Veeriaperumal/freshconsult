@@ -179,7 +179,7 @@ class Account < ActiveRecord::Base
   LAUNCHPARTY_FEATURES = {
     hide_og_meta_tags: false, autoplay: false, bi_reports: false,
     disable_old_sso: false, enable_old_sso: false, es_count_writes: false, feature_based_settings: false,
-    es_down: false, es_v1_enabled: false, email_new_settings: false,
+    es_down: false, es_v1_enabled: false,
     gamification_quest_perf: false, lambda_exchange: false, meta_read: false,
     new_footer_feedback_box: false, periodic_login_feature: false, restricted_helpdesk: false,
     support_new_ticket_cache: false, synchronous_apps: false, skip_hidden_tkt_identifier: false,
@@ -230,8 +230,7 @@ class Account < ActiveRecord::Base
     twitter_api_compliance: true, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, whatsapp_ticket_source: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
     mailbox_ms365_oauth: false, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false, whatsapp_addon: false,
-    enhanced_freshcaller_search: false, threading_without_user_setting: false, hide_first_response_due_setting: false,
-    omni_groups: false, webhook_worker_revamp: false
+    enhanced_freshcaller_search: false, omni_groups: false, webhook_worker_revamp: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

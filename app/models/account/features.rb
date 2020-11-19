@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
   LP_FEATURES = [
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
     :scheduled_ticket_export, :ticket_contact_export, :independent_service_task,
-    :falcon_portal_theme, :freshid, :email_new_settings,
+    :falcon_portal_theme, :freshid,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none,
     :auto_complete_off, :new_ticket_recieved_metric, :ner,
@@ -43,7 +43,7 @@ class Account < ActiveRecord::Base
     :agent_shifts, :mailbox_google_oauth, :migrate_euc_pages_to_us, :agent_collision_revamp, :topic_editor_with_html,
     :remove_image_attachment_meta_data, :automated_private_notes_notification,
     :sane_restricted_helpdesk, :hiding_confidential_logs, :help_widget_log, :auto_response_detector_lp,
-    :requester_widget_timeline, :sprout_trial_onboarding, :threading_without_user_setting,
+    :requester_widget_timeline, :sprout_trial_onboarding,
     :out_of_office, :enable_secure_login_check, :public_api_filter_factory, :marketplace_gallery,
     :translations_proxy, :facebook_public_api, :twitter_public_api, :emberize_agent_form, :disable_beamer, :fb_message_echo_support, :portal_prototype_update,
     :bot_banner, :idle_session_timeout, :solutions_dashboard, :block_spam_user, :same_site_none,
@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :whatsapp_ticket_source, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
     :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
     :launch_kbase_omni_bundle, :cron_api_trigger, :whatsapp_addon, :enhanced_freshcaller_search, :auto_recharge_eligible,
-    :retry_ticket_supervisor_actions, :hide_first_response_due_setting, :prevent_cc_email_parallel_update, :omni_groups,
+    :retry_ticket_supervisor_actions, :prevent_cc_email_parallel_update, :omni_groups,
     :redaction_lp, :escalate_without_sla_management, :webhook_worker_revamp
   ].concat(FRONTEND_LP_FEATURES + REDIRECT_OLD_UI_PATH_FEATURES).uniq
 
