@@ -12,7 +12,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
-ActiveRecord::Schema.define(version: 20200827174934) do
+ActiveRecord::Schema.define(version: 20201119083850) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -4291,6 +4291,15 @@ ActiveRecord::Schema.define(version: 20200827174934) do
 
   add_index "ticket_form_fields", ["account_id", "form_id", "ticket_field_id"], :name => "index_form_tkt_fields_on_acc_id_and_form_id_and_field_id", :unique => true
   add_index "ticket_form_fields", ["account_id", "form_id"], :name => "index_ticket_form_fields_on_account_id_and_form_id"
+
+  create_table 'ticket_private_note_count', force: true do |t|
+    t.integer 'account_id', limit: 8
+    t.integer 'ticket_id', limit: 8
+    t.integer 'third_party_note_count', limit: 8
+    t.integer 'existing_private_note_count', limit: 8
+    t.integer 'updated_private_note_count', limit: 8
+    t.boolean 'migrated', default: false
+  end
 
   create_table "ticket_templates", :force => true do |t|
     t.integer  "account_id",            :limit => 8
