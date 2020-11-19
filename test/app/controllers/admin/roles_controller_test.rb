@@ -214,7 +214,7 @@ class Admin::RolesControllerTest < ActionController::TestCase
     @account.launch(:collaboration_roles)
     Account.any_instance.stubs(:current).returns(@account)
     role_name = "Test Role - #{Time.now.utc}"
-    role_save_params = roles_params(name: role_name, list: ['manage_tickets'], agent_type: Helpdesk::AgentTypes::FIELD_AGENT_ID)
+    role_save_params = roles_params(name: role_name, agent_type: Helpdesk::AgentTypes::FIELD_AGENT_ID, list: ['manage_tickets'])
     roles = @account.roles.build(role_save_params[:role])
     roles.save
     role_name_update = "Updated Role - #{Time.now.utc}"
@@ -374,8 +374,8 @@ class Admin::RolesControllerTest < ActionController::TestCase
         role: {
           name: args[:name],
           description: 'A Sample Test Role',
-          privilege_list: args[:list] || [+'admin_tasks', +'manage_account', +'manage_users'],
-          agent_type: args[:agent_type] || Helpdesk::AgentTypes::SUPPORT_AGENT_ID
+          agent_type: args[:agent_type] || Helpdesk::AgentTypes::SUPPORT_AGENT_ID,
+          privilege_list: args[:list] || [+'admin_tasks', +'manage_account', +'manage_users']
         },
         add_user_ids: '',
         delete_user_ids: ''

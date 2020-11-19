@@ -10,6 +10,7 @@ class Admin::RolesController < Admin::AdminController
   before_filter :load_object, :only => [ :show, :edit, :update, :destroy, :update_agents ]
   before_filter :check_default, :only => [ :update, :destroy ]
   before_filter :check_users, :only => :destroy
+  before_filter :sanitize_params, only: [:create, :update]
 
   def index
     all_roles = scoper.all
@@ -30,7 +31,7 @@ class Admin::RolesController < Admin::AdminController
   end
   
   def create
-    if role_privilege and build_and_save 
+    if role_privilege and build_and_save
       flash[:notice] = t(:'flash.roles.create.success', :name => @role.name)
       update_role
       respond_to do |format|
@@ -101,6 +102,12 @@ class Admin::RolesController < Admin::AdminController
   end
 
   private
+
+    def sanitize_params
+      # reording the request param hash
+      # reason this is required is to ensure agent_type is set in the setter of privilege_list in the role model
+      params[:role][:privilege_list] = params[:role].delete(:privilege_list) if params[:role][:agent_type].present?
+    end
 
     def scoper
       current_account.roles

@@ -57,6 +57,7 @@ class Role < ActiveRecord::Base
       Helpdesk::PrivilegesMap::MIGRATION_MAP.each do |key,value|
           privilege_data.concat(value) if privilege_data.include?(key)
       end
+      privilege_data = assign_conditional_privileges(privilege_data)
     end
     self.privileges = Role.privileges_mask(privilege_data.uniq).to_s
   end
@@ -192,5 +193,20 @@ class Role < ActiveRecord::Base
 
       errors[:agent_type] << I18n.t('admin.roles.errors.cannot_change_agent_type_for_existing_roles')
       false
+    end
+
+    def assign_conditional_privileges(privilege_data)
+      Helpdesk::PrivilegesMap::CONDITION_BASED_PRIVILEGES.each do |parent_privilege, condition_array|
+        next unless privilege_data.include?(parent_privilege)
+
+        condition_array.each do |conditions|
+          privilege_data.concat(conditions[:privilege]) if privilege_condition_matches?(conditions)
+        end
+      end
+      privilege_data
+    end
+
+    def privilege_condition_matches?(conditions)
+      conditions[:condition_values].include?(safe_send(conditions[:condition_key]))
     end
 end
