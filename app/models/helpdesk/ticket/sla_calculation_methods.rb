@@ -176,7 +176,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby?
-    update_sla || common_updation_condition || (status_changed? && calculate_dueby_and_frdueby?) && !service_task?
+    (update_sla || common_updation_condition || (status_changed? && calculate_dueby_and_frdueby?)) && !service_task?
   end
 
   def update_on_state_time

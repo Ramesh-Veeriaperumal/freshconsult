@@ -300,6 +300,20 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 201
   end
 
+  def test_create_ticket_sla_calculation
+    params = { email: Faker::Internet.email, status: 2, priority: 2, subject: Faker::Name.name, description: Faker::Lorem.paragraph }
+    post :create, construct_params({}, params)
+    t = Helpdesk::Ticket.last
+    match_json(ticket_pattern(params, t))
+    match_json(ticket_pattern({}, t))
+    assert_equal t.requester.email, params[:email]
+    assert_response 201
+    Helpdesk::Ticket.any_instance.stubs(:update_sla).returns(true)
+    assert t.update_dueby?
+  ensure
+    Helpdesk::Ticket.any_instance.unstub(:update_sla)
+  end
+
   # test coverage for ticket creation without default mandatory fields other than for subject, description and requester with skip_mandatory_checks enabled for current user having :admin_tasks privilege thorough public API only
 
   def test_create_ticket_without_status_with_skip_mandatory_checks_enabled
@@ -1403,6 +1417,31 @@ class TicketsControllerTest < ActionController::TestCase
         cleanup_fsm
         Account.unstub(:current)
 
+      end
+    end
+  end
+
+  def test_service_task_ticket_sla_calculation
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        parent_ticket = create_ticket
+        params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                   description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE,
+                   custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test' } }
+        post :create, construct_params(params)
+        assert_response 201
+        t = Helpdesk::Ticket.last
+        Helpdesk::Ticket.any_instance.stubs(:update_sla).returns(true)
+        assert_not t.update_dueby?
+      ensure
+        Helpdesk::Ticket.any_instance.unstub(:update_sla)
+        parent_ticket.destroy
+        t.destroy
+        cleanup_fsm
+        Account.unstub(:current)
       end
     end
   end
