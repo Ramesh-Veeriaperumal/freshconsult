@@ -37,7 +37,7 @@ module Helpdesk
     HELPDESK_PRIVILEGE_MAP = {
       edit_note: [:edit_private_note],
       edit_ticket_properties: [:assign_agent, :assign_group],
-      manage_tickets: [:spam_ticket, :create_public_note, :service_task_assignee, :service_task_internal_assignee],
+      manage_tickets: [:spam_ticket, :create_public_note, :service_task_assignee, :service_task_internal_assignee, :update_service_task_properties],
       manage_users: [:manage_collaborators, :provide_access_via_mentions]
     }.freeze
 

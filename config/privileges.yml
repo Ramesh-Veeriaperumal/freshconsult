@@ -148,7 +148,7 @@
   :manage_parent_child_tickets: 147
   :manage_linked_tickets: 148
   :create_service_tasks: 149
-  :update_service_tasks: 150
+  :update_service_task_properties: 150
   :delete_service_tasks: 151
   :service_task_assignee: 152
   :service_task_internal_assignee: 153

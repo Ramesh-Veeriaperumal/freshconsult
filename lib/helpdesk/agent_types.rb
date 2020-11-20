@@ -63,7 +63,7 @@ module Helpdesk
       :service_task_assignee,
       :service_task_internal_assignee,
       :create_service_tasks,
-      :update_service_tasks,
+      :update_service_task_properties,
       :delete_service_tasks
     ].freeze
 
