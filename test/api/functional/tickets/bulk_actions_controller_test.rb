@@ -499,7 +499,6 @@ module Tickets
     end
 
     def test_bulk_update_fsm_tickets_with_required_for_closure_outside_section
-      skip('ticket tests failing - Owner Sridhar DD')
       setup_field_service_management_feature do
         begin
           ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
@@ -507,12 +506,12 @@ module Tickets
           fsm_ticket = create_service_task_ticket
           assert_not_nil fsm_ticket
           properties_hash = { status: 5, skip_close_notification: false }
-          params_hash = { ids: [fsm_ticket.id], properties: properties_hash }
+          params_hash = { ids: [fsm_ticket.display_id], properties: properties_hash }
           Sidekiq::Testing.inline! do
             post :bulk_update, construct_params({ version: 'private' }, params_hash)
           end
           assert_response 202
-          match_json(partial_success_response_pattern([fsm_ticket.id], {}))
+          match_json(partial_success_response_pattern([fsm_ticket.display_id], {}))
         ensure
           ticket_field.update_attribute(:required_for_closure, false)
           fsm_ticket.try(:destroy)
@@ -1521,19 +1520,19 @@ module Tickets
     end
 
     def test_bulk_update_skill_id_with_privilege
-      skip('ticket tests failing - Owner Sridhar DD')
       Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
       user = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
       login_as(user)
       group = create_group(@account, ticket_assign_type: 2)
       ticket = create_ticket({}, group)
       ticket_ids = [ticket.display_id]
-      params_hash = { ids: ticket_ids, properties: { skill_id: 1 } }
+      skill = @account.skills.create(name: Faker::Lorem.words(3).join(' '), match_type: 'all')
+      params_hash = { ids: ticket_ids, properties: { skill_id: skill.id } }
       post :bulk_update, construct_params({ version: 'private' }, params_hash)
       assert_response 202
       sidekiq_jobs = ::Tickets::BulkTicketActions.jobs
       assert_equal 1, sidekiq_jobs.size
-      assert_equal 1, sidekiq_jobs.first['args'][0]['helpdesk_ticket']['skill_id']
+      assert_equal skill.id, sidekiq_jobs.first['args'][0]['helpdesk_ticket']['skill_id']
       ::Tickets::BulkTicketActions.jobs.clear
       Account.current.unstub(:skill_based_round_robin_enabled?)
     end
