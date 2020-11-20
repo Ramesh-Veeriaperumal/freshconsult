@@ -752,6 +752,34 @@ module Ember
       assert_response 400
     end
 
+    def test_reply_with_restricted_attachments
+      email_config = create_email_config
+
+      agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets])
+      agent.stubs(:privilege?).with(:manage_tickets).returns(false)
+      agent.stubs(:has_ticket_permission?).returns(false)
+      @controller.stubs(:current_user).returns(agent)
+
+      admin_agent = add_test_agent(@account, role: Role.where(name: 'Agent').first.id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets])
+
+      admin_ticket = create_ticket(responder_id: admin_agent.id)
+      admin_ticket_note = create_note(user_id: admin_agent.id, ticket_id: admin_ticket.id, source: 2)
+
+      agent_ticket = create_ticket(responder_id: agent.id)
+
+      attachment_ids = []
+      attachment_ids << create_attachment(attachable_type: 'Helpdesk::Note', attachable_id: admin_ticket_note.id).id
+      params_hash = reply_note_params_hash.merge(attachment_ids: attachment_ids, from_email: agent_ticket.reply_email)
+      stub_attachment_to_io do
+        post :reply, construct_params({ version: 'private', id: agent_ticket.display_id }, params_hash)
+      end
+      assert_response 403
+    ensure
+      agent.unstub(:privilege?)
+      agent.unstub(:has_ticket_permission?)
+      @controller.unstub(:current_user)
+    end
+
     def test_reply_with_invalid_attachment_size
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = reply_note_params_hash.merge(attachment_ids: [attachment_id])

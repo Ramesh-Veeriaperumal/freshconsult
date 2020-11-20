@@ -28,7 +28,7 @@ module Ember
     before_filter :link_tickets_enabled?, only: [:broadcast]
     before_filter :validate_attachments_permission, only: [:create, :update]
     before_filter :check_enabled_undo_send, only: [:undo_send]
-    before_filter :check_for_ticket_param, only: [:reply]
+    before_filter :check_for_ticket_param, :sanitize_and_validate, :validate_attachments_permission, only: [:reply]
 
     SINGULAR_RESPONSE_FOR = %w[reply create update tweet facebook_reply broadcast ecommerce_reply channel_reply].freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
@@ -55,22 +55,25 @@ module Ember
     end
 
     def reply
-      @post_to_forum_topic = params[cname][:post_to_forum_topic]
-      @last_note_id = params[:last_note_id].to_i
-      custom_fields_in_params = @ticket_params[:custom_fields] if @ticket_params
-      @last_note_id = @ticket.notes.last.try(:id) if @last_note_id == 1
-      return unless validate_params
-      sanitize_and_build
-      return unless validate_delegator(@item, delegator_hash)
-
       if @ticket_params.nil? || update_ticket_attributes
-        update_secure_fields(custom_fields_in_params) if Account.current.secure_fields_enabled? && custom_fields_in_params.present?
+        update_secure_fields(@custom_fields_in_params) if Account.current.secure_fields_enabled? && @custom_fields_in_params.present?
         if current_user.enabled_undo_send? && @ticket.schedule_observer.blank?
           save_note_and_respond_later
         else
           save_note_and_respond
         end
       end
+    end
+
+    def sanitize_and_validate
+      @post_to_forum_topic = params[cname][:post_to_forum_topic]
+      @last_note_id = params[:last_note_id].to_i
+      @custom_fields_in_params = @ticket_params[:custom_fields] if @ticket_params
+      @last_note_id = @ticket.notes.last.try(:id) if @last_note_id == 1
+      return unless validate_params
+
+      sanitize_and_build
+      return unless validate_delegator(@item, delegator_hash)
     end
 
     def undo_send
