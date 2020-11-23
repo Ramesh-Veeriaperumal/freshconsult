@@ -8,14 +8,12 @@ module Ember
     def setup
       super
       Account.current.stubs(:ticket_source_revamp_enabled?).returns(true)
-      Account.current.launch(:whatsapp_ticket_source)
       before_all
     end
 
     def teardown
       super
       Account.current.unstub(:ticket_source_revamp_enabled?)
-      Account.current.rollback(:whatsapp_ticket_source)
     end
 
     @@before_all_run = false

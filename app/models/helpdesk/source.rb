@@ -7,19 +7,11 @@ class Helpdesk::Source < Helpdesk::Choice
 
   class << self
     def default_ticket_source_keys_by_token
-      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
-        SOURCE_KEYS_BY_TOKEN
-      else
-        SOURCE_KEYS_BY_TOKEN.except(:whatsapp)
-      end
+      SOURCE_KEYS_BY_TOKEN
     end
 
     def default_ticket_source_token_by_key
-      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
-        SOURCE_TOKENS_BY_KEY
-      else
-        SOURCE_TOKENS_BY_KEY.except(13)
-      end
+      SOURCE_TOKENS_BY_KEY
     end
 
     def ticket_sources_for_language_detection
@@ -49,9 +41,9 @@ class Helpdesk::Source < Helpdesk::Choice
         FEEDBACK_WIDGET => note_sources['email'],
         OUTBOUND_EMAIL => note_sources['email'],
         ECOMMERCE => note_sources['ecommerce'],
+        WHATSAPP => note_sources['whatsapp'],
         nil => note_sources['canned_form']
       }
-      ret_hash[WHATSAPP] = note_sources['whatsapp'] if default_ticket_source_keys_by_token[:whatsapp].present?
       ret_hash
     end
 
@@ -75,11 +67,7 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def api_unpermitted_sources_for_update
-      if Account.current && Account.current.launched?(:whatsapp_ticket_source)
-        API_UPDATE_EXCLUDED_VALUES
-      else
-        API_UPDATE_EXCLUDED_VALUES - [13]
-      end
+      API_UPDATE_EXCLUDED_VALUES
     end
 
     def note_exclude_sources
@@ -127,19 +115,11 @@ class Helpdesk::Source < Helpdesk::Choice
     end
 
     def default_ticket_sources
-      if Account.current&.launched?(:whatsapp_ticket_source)
-        TICKET_SOURCES
-      else
-        TICKET_SOURCES.reject { |i| i[0] == :whatsapp }
-      end
+      TICKET_SOURCES
     end
 
     def default_ticket_source_names_by_key
-      if Account.current&.launched?(:whatsapp_ticket_source)
-        SOURCE_NAMES_BY_KEY
-      else
-        SOURCE_NAMES_BY_KEY.except(13)
-      end
+      SOURCE_NAMES_BY_KEY
     end
 
     def visible_sources

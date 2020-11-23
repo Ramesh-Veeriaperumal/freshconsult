@@ -37,7 +37,6 @@ class Channel::V2::SubscriptionsControllerTest < ActionController::TestCase
   def test_update_subscription_to_add_and_remove_addon
     set_jwt_auth_header('multiplexer')
     stub_chargebee_requests
-    @account.launch :whatsapp_addon
     add_params = build_params
     add_params[:addons][:add] << { name: 'Native Whatsapp' }
     put :update, construct_params({ version: 'channel' }, add_params)
@@ -52,14 +51,12 @@ class Channel::V2::SubscriptionsControllerTest < ActionController::TestCase
     assert_equal old_addon_count - 1, new_addons_count
     assert_response 200
   ensure
-    @account.rollback :whatsapp_addon
     unstub_chargebee_requests
   end
 
   def test_update_subscription_when_existing_addon_added
     set_jwt_auth_header('multiplexer')
     stub_chargebee_requests
-    @account.launch :whatsapp_addon
     add_params = build_params
     add_params[:addons][:add] << { name: 'Native Whatsapp' }
     put :update, construct_params({ version: 'channel' }, add_params)
@@ -70,42 +67,36 @@ class Channel::V2::SubscriptionsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('addon', format(ErrorConstants::ERROR_MESSAGES[:duplicate_addon], addon: 'Native Whatsapp'))])
   ensure
-    @account.rollback :whatsapp_addon
     unstub_chargebee_requests
   end
 
   def test_update_subscription_when_nonexisting_addon_removed
     set_jwt_auth_header('multiplexer')
     stub_chargebee_requests
-    @account.launch :whatsapp_addon
     remove_params = build_params
     remove_params[:addons][:remove] << { name: 'Native Whatsapp' }
     put :update, construct_params({ version: 'channel' }, remove_params)
     assert_response 400
     match_json([bad_request_error_pattern('addon', format(ErrorConstants::ERROR_MESSAGES[:missing_addon], addon: 'Native Whatsapp'))])
   ensure
-    @account.rollback :whatsapp_addon
     unstub_chargebee_requests
   end
 
   def test_update_subscription_when_invalid_addon_added
     set_jwt_auth_header('multiplexer')
     stub_chargebee_requests
-    @account.launch :whatsapp_addon
     add_params = build_params
     add_params[:addons][:add] << { name: 'Dummy' }
     put :update, construct_params({ version: 'channel' }, add_params)
     assert_response 400
     match_json([bad_request_error_pattern('addon', format(ErrorConstants::ERROR_MESSAGES[:invalid_addon], addon: 'Dummy'))])
   ensure
-    @account.rollback :whatsapp_addon
     unstub_chargebee_requests
   end
 
   def test_update_subscription_when_invalid_addon_for_plan_added
     set_jwt_auth_header('multiplexer')
     stub_chargebee_requests
-    @account.launch :whatsapp_addon
     add_params = build_params
     add_params[:addons][:add] << { name: 'Chat' }
     put :update, construct_params({ version: 'channel' }, add_params)
@@ -113,7 +104,6 @@ class Channel::V2::SubscriptionsControllerTest < ActionController::TestCase
     plan = @account.subscription.subscription_plan
     match_json([bad_request_error_pattern('addon', format(ErrorConstants::ERROR_MESSAGES[:addon_not_applicable], addon: 'Chat', plan: plan.name))])
   ensure
-    @account.rollback :whatsapp_addon
     unstub_chargebee_requests
   end
 

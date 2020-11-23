@@ -892,7 +892,7 @@ class Subscription < ActiveRecord::Base
       self.agent_limit = params[:agent_seats] if params[:agent_seats]
       # If in future when we get the addon params in this subscription api, we have to handle the addons
       updated_addons = update_billing_based_addon(self.addons, self.renewal_period) || self.addons
-      if account.launched?(:whatsapp_addon) && params['addons'].present?
+      if params['addons'].present?
         updated_addons.push(add_addons(params))
         updated_addons.delete(delete_addons(params))
       end

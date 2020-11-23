@@ -55,8 +55,7 @@ module Channel::V2
     end
 
     def sources
-      ticket_sources = super | [Helpdesk::Source::FACEBOOK, Helpdesk::Source::TWITTER]
-      ticket_sources << Helpdesk::Source::WHATSAPP if Account.current.launched?(:whatsapp_ticket_source)
+      ticket_sources = super | [Helpdesk::Source::FACEBOOK, Helpdesk::Source::TWITTER, Helpdesk::Source::WHATSAPP]
       ticket_sources
     end
 

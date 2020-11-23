@@ -35,7 +35,6 @@ module Ember
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.find(Account.current.id).make_current
       Account.any_instance.stubs(:advanced_ticket_scopes_enabled?).returns(true)
-      Account.current.launch :whatsapp_ticket_source
       Social::CustomTwitterWorker.stubs(:perform_async).returns(true)
       @twitter_handle = get_twitter_handle
       @default_stream = @twitter_handle.default_stream
