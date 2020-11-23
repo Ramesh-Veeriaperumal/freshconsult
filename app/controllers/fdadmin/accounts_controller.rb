@@ -84,6 +84,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:bundle_account] = account.launched?(:omni_bundle_2020) && account.omni_bundle_id.present?
     account_summary[:freshchat_url] = account.freshchat_account.try(:domain) if account.freshchat_account_present?
     account_summary[:freshcaller_url] = account.freshcaller_account.try(:domain) if account.freshcaller_account_present?
+    account_summary[:organisation_id] = account.organisation.organisation_id if account.organisation.present?
     respond_to do |format|
       format.json do
         render :json => account_summary
