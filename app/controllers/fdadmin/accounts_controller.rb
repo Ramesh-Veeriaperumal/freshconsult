@@ -610,7 +610,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def change_url
     result = {}
     old_url = params[:domain_name]
-    new_url = params[:new_url]
+    new_url = params[:new_url].strip
     new_account = DomainMapping.find_by_domain(new_url)
     render :json => {status: "notice"} and return unless new_account.nil?
     begin

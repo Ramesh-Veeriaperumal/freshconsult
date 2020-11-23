@@ -155,6 +155,19 @@ class Fdadmin::AccountsControllerTest < ActionController::TestCase
     FreshopsSubdomains.unstub(:include?)
   end
 
+  def test_account_detail_with_spaces_in_domain
+    stub_validations_for_api_call
+    domain_name = @account.full_domain
+    new_domain_name = 'localhost.freshpo.com '
+    params = { version: 'v1', domain_name: domain_name, new_url: new_domain_name, digest: 'xyz', name_prefix: 'fdadmin_', path_prefix: nil }
+    post :change_url, construct_params(params)
+    assert_response 200
+    @account.reload
+    assert_equal @account.full_domain, new_domain_name.strip
+  ensure
+    unstub_validations_for_api_call
+  end
+
   def test_check_eligibility_for_omni_upgrade
     stub_validations_for_api_call
     domain_name = @account.full_domain
