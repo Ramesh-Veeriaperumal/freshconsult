@@ -584,6 +584,7 @@ api_error_messages:
   invalid_ticket_reply: "Something went wrong while replying. Please refresh the page."
   default_business_hour_destroy_not_allowed: 'You are not allowed to delete the default business calendar'
   contribution_group_not_allowed_fsm: "Contribution group is not allowed for FSM agent"
+  contribution_group_not_allowed_collaborators: "Contribution group is not allowed for Collaborators"
   contribution_group_is_not_available_for_global_access: "Contribution group is only present for group access"
   uniq_group_and_contribution_error_message: "The same group cannot have both read and write access for an agent"
   group_ids_already_used: "These ids are already present in primary group - '%{list}'"

@@ -119,6 +119,47 @@ class AgentValidationTest < ActionView::TestCase
     field_agent_type.destroy
   end
 
+  def test_create_collaborator_valid
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:collaborators_enabled?).returns(true)
+    Account.current.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+    Account.current.stubs(:multi_timezone_enabled?).returns(false)
+    Account.current.stubs(:features?).with(:multi_language).returns(false)
+    collaborator_agent_type = AgentType.create_agent_type(Account.current, 'collaborator')
+    agent_item = Agent.new
+    agent_item.user = User.new
+    agent = AgentValidation.new({ name: Faker::Lorem.characters(15), email: Faker::Internet.email, ticket_scope: 2, agent_type: collaborator_agent_type.agent_type_id, time_zone: 'Central Time (US & Canada)' }, agent_item, false)
+    assert agent.valid?(:create)
+  ensure
+    Account.current.unstub(:collaborators_enabled?)
+    Account.current.unstub(:advanced_ticket_scopes_enabled?)
+    Account.current.unstub(:multi_timezone_enabled?)
+    Account.current.unstub(:features?)
+    collaborator_agent_type.destroy
+  end
+
+  def test_create_collaborator_invalid
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:collaborators_enabled?).returns(true)
+    Account.current.stubs(:advanced_ticket_scopes_enabled?).returns(true)
+    Account.current.stubs(:multi_timezone_enabled?).returns(false)
+    Account.current.stubs(:features?).with(:multi_language).returns(false)
+    collaborator_agent_type = AgentType.create_agent_type(Account.current, 'collaborator')
+    agent_item = Agent.new
+    agent_item.user = User.new
+    group_id = Account.current.groups.first
+    agent = AgentValidation.new({ name: Faker::Lorem.characters(15), email: Faker::Internet.email, ticket_scope: 2, agent_type: collaborator_agent_type.agent_type_id, time_zone: 'Central Time (US & Canada)', contribution_group_ids: [group_id] }, agent_item, false)
+    refute agent.valid?(:create)
+    errors = agent.errors.sort.to_h
+    assert_equal({ contribution_group_ids: :contribution_group_not_allowed_collaborators }, errors)
+  ensure
+    Account.current.unstub(:collaborators_enabled?)
+    Account.current.unstub(:multi_timezone_enabled?)
+    Account.current.unstub(:advanced_ticket_scopes_enabled?)
+    Account.current.unstub(:features?)
+    collaborator_agent_type.destroy
+  end
+
   def test_create_max_support_agent_limit_reached
     Account.stubs(:current).returns(Account.first)
     Account.current.stubs(:freshid_integration_enabled?).returns(false)

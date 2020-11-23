@@ -1,5 +1,6 @@
 class AgentValidation < ApiValidation
   include Gamification::GamificationUtil
+  include Agents::CollaboratorHelper
   attr_accessor :name, :phone, :mobile, :email, :time_zone, :language, :occasional, :signature, :ticket_scope,
                 :role_ids, :group_ids, :job_title, :id, :avatar_id, :search_settings, :agent_type, :focus_mode,
                 :shortcuts_enabled, :skill_ids, :ticket_assignment, :agent_level_id, :freshcaller_agent, :freshchat_agent,
@@ -50,7 +51,7 @@ class AgentValidation < ApiValidation
 
   # validate contribution group related check
   validates :contribution_group_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, if: -> { instance_variable_defined?(:@contribution_group_ids) }
-  validate :contribution_for_fsm_agent?, if: -> { instance_variable_defined?(:@contribution_group_ids) && fsm_agent? }
+  validate :contribution_for_fsm_agent_or_collaborator?, if: -> { instance_variable_defined?(:@contribution_group_ids) }
   validate :advanced_ticket_scopes?, if: -> { instance_variable_defined?(:@contribution_group_ids) }
   validate :valid_ticket_scope_for_contribution_group?, if: -> { instance_variable_defined?(:@contribution_group_ids) }
   validate :uniq_group_and_contrubution_group_ids?, if: lambda {
@@ -161,8 +162,9 @@ class AgentValidation < ApiValidation
     end
   end
 
-  def contribution_for_fsm_agent?
-    errors[:contribution_group_ids] << :contribution_group_not_allowed_fsm
+  def contribution_for_fsm_agent_or_collaborator?
+    errors[:contribution_group_ids] << :contribution_group_not_allowed_fsm if fsm_agent?
+    errors[:contribution_group_ids] << :contribution_group_not_allowed_collaborators if collaborator?(agent_type || db_agent_type)
   end
 
   def valid_ticket_scope_for_contribution_group?
