@@ -65,7 +65,7 @@ class FreshidController < ApplicationController
         set_cookies_for_mobile if is_native_mobile?
         mobile_and_freshid_v2?(mobile_login) ? redirect_to_mobile_freshid_login(@current_user, mobile_scheme) : redirect_back_or_default(default_return_url)
       else
-        cookies['mobile_access_token'] = { :value => 'failed', :http_only => true } if is_native_mobile?
+        cookies['mobile_access_token'] = { value: 'failed', httponly: true, secure: true } if is_native_mobile?
         redirect_to login_url && return unless mobile_and_freshid_v2?(mobile_login)
         Rails.logger.error "FRESHID MOBILE LOGIN :: Failed :: a=#{current_account.try(:id)}"
         redirect_to Freshid::V2::UrlGenerator.mobile_login_url(current_account.full_domain, login: 'failed', scheme: mobile_scheme)
@@ -86,7 +86,7 @@ class FreshidController < ApplicationController
         set_cookies_for_mobile if is_native_mobile?
         mobile_auth_success(@current_user)
       else
-        cookies['mobile_access_token'] = { value: 'failed', http_only: true } if is_native_mobile?
+        cookies['mobile_access_token'] = { value: 'failed', httponly: true, secure: true } if is_native_mobile?
         Rails.logger.error "FRESHID MOBILE LOGIN (PKCE) :: Failed :: a=#{current_account.try(:id)}"
         mobile_auth_failure('Session creation failed')
       end
@@ -105,8 +105,8 @@ class FreshidController < ApplicationController
     end
 
     def set_cookies_for_mobile
-      cookies['mobile_access_token'] = { :value => @current_user.mobile_auth_token, :http_only => true }
-      cookies['fd_mobile_email'] = { :value => @current_user.email, :http_only => true }
+      cookies['mobile_access_token'] = { value: @current_user.mobile_auth_token, httponly: true, secure: true }
+      cookies['fd_mobile_email'] = { value: @current_user.email, httponly: true, secure: true }
     end
 
     def redirect_to_mobile_freshid_login(user, scheme)
