@@ -31,6 +31,7 @@ class SidekiqConfigStandard
   ARCHIVE_SIDEKIQ          = 'sidekiq-archive-'.freeze
   EXTERNAL_SIDEKIQ         = 'sidekiq-external-'.freeze
   LONG_RUNNING             = 'sidekiq-longrunning-'.freeze
+  DATAEXPORT_SIDEKIQ       = 'sidekiq-dataexport-'.freeze
 
   def self.get_pool(node)
     utility_name = node[:opsworks][:instance][:hostname]
@@ -50,6 +51,7 @@ class SidekiqConfigStandard
     archive                  = ['common', 'central_realtime']
     external                 = ['external']
     long_running             = ['long_running']
+    account_data_export      = ['data_export']
 
     common_pool              = [[all_sidekiq_jobs, common_pool_worker_count]]
 
@@ -63,6 +65,7 @@ class SidekiqConfigStandard
     archive_pool             = [[archive, 6]]
     external_pool            = [[external, 6]]
     longrunning_pool         = [[long_running, 6]]
+    dataexport_pool          = [[account_data_export, 6]]
 
     case
     when utility_name.include?(REALTIME_SIDEKIQ)
@@ -82,6 +85,8 @@ class SidekiqConfigStandard
       external_pool
     when utility_name.include?(LONG_RUNNING)
       longrunning_pool
+    when utility_name.include?(DATAEXPORT_SIDEKIQ)
+      dataexport_pool
     # when utility_name.include?(FALCON_COMMON_SIDEKIQ)
     #   FALCON_COMMON_POOL
     when utility_name.include?(COMMON_SIDEKIQ)

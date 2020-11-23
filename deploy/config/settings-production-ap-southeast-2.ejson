@@ -1734,6 +1734,8 @@
           "_others": 4
         },
         "dedicated": {
+          "_fc-bg-sidekiq-dataexport-green": 2,
+          "_fc-bg-sidekiq-dataexport-blue": 2,
           "_fc-bg-sidekiq-archive": 3,
           "_fc-bg-sidekiq-occasional": 3,
           "_fc-bg-sidekiq-central-realtime": 3,
