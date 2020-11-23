@@ -23744,6 +23744,18 @@
         "original_sender_as_requester_for_forward": {
           "type": "boolean",
           "description": "When an agent forwards an email from their mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
+        },
+        "allow_wildcard_ticket_create": {
+          "type": "boolean",
+          "description": "If yes, users would be able to create tickets by sending emails to any variation of the support email address *@yourcompany.freshdesk.com. If no, users can create tickets by sending emails only to the support addresses which have been configured."
+        },
+        "skip_ticket_threading": {
+          "type": "boolean",
+          "description": "If yes, every reply from a requester would create a new ticket(responses would not be threaded)."
+        },
+        "threading_without_user_check": {
+          "type": "boolean",
+          "description": "If yes, requester checks are not considered while threading a customer response to an existing ticket."
         }
       }
     },
