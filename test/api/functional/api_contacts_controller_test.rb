@@ -1317,6 +1317,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = add_new_user(@account)
     role_ids = Role.limit(2).pluck(:id)
     group_ids = [create_group(@account).id]
+    Subscription.any_instance.stubs(:trial?).returns(false)
     Subscription.any_instance.stubs(:agent_limit).returns(@account.full_time_support_agents.count - 1)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     params = { occasional: false, signature: Faker::Lorem.paragraph, ticket_scope: 2, role_ids: role_ids, group_ids: group_ids }
@@ -1324,6 +1325,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:occasional, :max_agents_reached, code: :incompatible_value, max_count: (@account.full_time_support_agents.count - 1))])
     assert_response 400
   ensure
+    Subscription.any_instance.unstub(:trial?)
     Subscription.any_instance.unstub(:agent_limit)
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
@@ -1372,11 +1374,14 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_make_agent_out_of_a_user_beyond_agent_limit
+    Subscription.any_instance.stubs(:trial?).returns(false)
     @account.subscription.update_column(:agent_limit, 1)
     sample_user = add_new_user(@account)
     put :make_agent, construct_params(id: sample_user.id)
     assert_response 403
     match_json(request_error_pattern(:max_agents_reached, max_count: 1))
+  ensure
+    Subscription.any_instance.unstub(:trial?)
   end
 
   def test_make_agent_out_of_a_user_without_email_and_beyond_agent_limit

@@ -162,6 +162,7 @@ class AgentValidationTest < ActionView::TestCase
 
   def test_create_max_support_agent_limit_reached
     Account.stubs(:current).returns(Account.first)
+    Subscription.any_instance.stubs(:trial?).returns(false)
     Account.current.stubs(:freshid_integration_enabled?).returns(false)
     Account.current.stubs(:multi_timezone_enabled?).returns(false)
     Account.current.stubs(:field_service_management_enabled?).returns(false)
@@ -180,6 +181,7 @@ class AgentValidationTest < ActionView::TestCase
     Account.current.unstub(:field_service_management_enabled?)
     Account.current.unstub(:features?)
     Account.current.unstub(:support_agent_limit_reached?)
+    Subscription.any_instance.unstub(:trial?)
   end
 
   def test_create_with_invalid_agent_type

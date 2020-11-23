@@ -309,7 +309,7 @@ class Admin::ApiAccountsControllerTest < ActionController::TestCase
     puts "Response---  #{json_response.inspect}"
     assert_equal json_response['support_agent']['full_time_agent_count'], 2
     assert_equal json_response['support_agent']['occasional_agent_count'], 1
-    assert_equal json_response['support_agent']['license_available'], 1
+    assert_equal json_response['support_agent']['license_available'], nil
   ensure
     Subscription.any_instance.unstub(:agent_limit)
     Subscription.any_instance.unstub(:trial?)

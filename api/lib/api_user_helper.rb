@@ -6,7 +6,7 @@ class ApiUserHelper
     end
 
     def agent_limit_reached?(occasional = false)
-      return false if occasional
+      return false if occasional || Account.current.subscription.trial?
 
       agent_limit = Account.current.subscription.agent_limit
       [Account.current.support_agent_limit_reached?(agent_limit), agent_limit]

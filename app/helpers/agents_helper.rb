@@ -36,7 +36,7 @@ module AgentsHelper
   
   def available_support_agent_licenses
     support_agent_license_available = ((current_account.subscription.agent_limit || 0) - current_account.full_time_support_agents.size)
-    current_account.subscription.trial? && support_agent_license_available < 0 ? nil : support_agent_license_available
+    current_account.subscription.trial? ? nil : support_agent_license_available
   end
 
   def available_collaborator_licenses
