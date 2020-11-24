@@ -121,8 +121,19 @@ module SocialTicketsCreationHelper
   def create_mention_stream(handle_id)
     stream = FactoryGirl.build(:seed_mention_twitter_stream)
     stream.account_id = Account.current.id
+    stream.social_id = handle_id
     stream.save
+    stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
     stream
+  end
+
+  def create_new_custom_stream(twitter_handle)
+    twitter_stream = FactoryGirl.build(:seed_twitter_stream)
+    twitter_stream.account_id = @account.id
+    twitter_stream.social_id = twitter_handle.id
+    twitter_stream.save!
+    twitter_stream.populate_accessible(Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all])
+    twitter_stream
   end
 
   def create_twitter_ticket(options = {})
