@@ -58,10 +58,10 @@ SurveyMonkey.prototype = {
 				use_placeholders: true,
 				on_success: function(resData) {
 					sm.load_survey_list(resData);
-				},
+				}.bind(this),
 				on_failure: function() {
 					alert("Error loading list of surveys. Please refresh the page and try again. Contact support of problem persists.");
-				}
+				}.bind(this)
 			})
 		]
 
