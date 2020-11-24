@@ -11,6 +11,7 @@ class SikroadTicketExportTest < ActionView::TestCase
   include ContactFieldsTestHelper
   include CompanyFieldsTestHelper
   include TagTestHelper
+  include TicketConstants
   include Silkroad::Constants::Base
   include Silkroad::Constants::Ticket
 
@@ -23,11 +24,9 @@ class SikroadTicketExportTest < ActionView::TestCase
   end
 
   def test_build_request_body_with_valid_params
-    export_params = get_valid_export_params
-    transformed_export_params = Silkroad::Export::Ticket.new.build_request_body(export_params)
-    actual_ticket_fields = JSON.parse(transformed_export_params).deep_symbolize_keys
-    required_ticket_fields = get_valid_transformed_params
-    assert_equal required_ticket_fields, actual_ticket_fields
+    request_body = Silkroad::Export::Ticket.new.build_request_body(get_valid_export_params)
+    request_body_hash = JSON.parse(request_body).deep_symbolize_keys
+    assert_equal get_valid_transformed_params, request_body_hash
   end
 
   def test_date_range_with_different_timezones
@@ -307,7 +306,8 @@ class SikroadTicketExportTest < ActionView::TestCase
 
   def test_build_request_body
     request_body = Silkroad::Export::Ticket.new.build_request_body(sample_export_params)
-    assert_equal expected_body, request_body
+    request_body_hash = JSON.parse(request_body).deep_symbolize_keys
+    assert_equal expected_body, request_body_hash
   end
 
   def test_build_request_body_with_translation
@@ -315,7 +315,8 @@ class SikroadTicketExportTest < ActionView::TestCase
     User.current.save!
     @account.launch(:silkroad_multilingual)
     request_body = Silkroad::Export::Ticket.new.build_request_body(sample_export_params)
-    assert_equal expected_body_fr, request_body
+    request_body_hash = JSON.parse(request_body).deep_symbolize_keys
+    assert_equal expected_body_fr, request_body_hash
   ensure
     User.current.language = 'en'
     User.current.save!
@@ -386,20 +387,7 @@ class SikroadTicketExportTest < ActionView::TestCase
               '3': 'Élevée',
               '4': 'Urgent'
             },
-            'source': {
-              '1': 'E-mail',
-              '2': 'Portail',
-              '3': 'Téléphone',
-              '4': 'Forum',
-              '5': 'Twitter',
-              '6': 'Facebook',
-              '7': 'Chat',
-              '8': 'MobiHelp',
-              '9': 'Widget commentaire',
-              '10': 'E-mail sortant',
-              '11': 'E-commerce',
-              '12': 'Bot'
-            },
+            'source': TicketConstants.source_list.stringify_keys,
             'association_type': {
               '1': 'Parent',
               '2': 'Enfant',
@@ -416,7 +404,7 @@ class SikroadTicketExportTest < ActionView::TestCase
             }
           }
         }
-      }.to_json
+      }.deep_symbolize_keys
     end
 
     def expected_body
@@ -480,20 +468,7 @@ class SikroadTicketExportTest < ActionView::TestCase
               '3': 'High',
               '4': 'Urgent'
             },
-            'source': {
-              '1': 'Email',
-              '2': 'Portal',
-              '3': 'Phone',
-              '4': 'Forum',
-              '5': 'Twitter',
-              '6': 'Facebook',
-              '7': 'Chat',
-              '8': 'MobiHelp',
-              '9': 'Feedback Widget',
-              '10': 'Outbound Email',
-              '11': 'Ecommerce',
-              '12': 'Bot'
-            },
+            'source': TicketConstants.source_list.stringify_keys,
             'association_type': {
               '1': 'Parent',
               '2': 'Child',
@@ -510,7 +485,7 @@ class SikroadTicketExportTest < ActionView::TestCase
             }
           }
         }
-      }.to_json
+      }.deep_symbolize_keys
     end
 
     def sample_export_params
@@ -598,20 +573,7 @@ class SikroadTicketExportTest < ActionView::TestCase
                 '3': 'High',
                 '4': 'Urgent'
               },
-              'source': {
-                '1': 'Email',
-                '2': 'Portal',
-                '3': 'Phone',
-                '4': 'Forum',
-                '5': 'Twitter',
-                '6': 'Facebook',
-                '7': 'Chat',
-                '8': 'MobiHelp',
-                '9': 'Feedback Widget',
-                '10': 'Outbound Email',
-                '11': 'Ecommerce',
-                '12': 'Bot'
-              },
+              'source': TicketConstants.source_list.stringify_keys,
               'association_type': {
                 '1': 'Parent',
                 '2': 'Child',
@@ -628,7 +590,7 @@ class SikroadTicketExportTest < ActionView::TestCase
               }
             }
           }
-        }
+        }.deep_symbolize_keys
       end
     end
 
