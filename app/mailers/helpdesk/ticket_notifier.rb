@@ -661,12 +661,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   private
     def add_attachments
+      # Hack for eml outgoing attachments to be visible in outlook
       @attachment_files.each do |a|
-        attachments[a.content_file_name] = {
-          encoding: 'base64',
-          content: Mail::Encodings::Base64.encode(Paperclip.io_adapters.for(a.content).read),
-          mime_type: a.content_content_type
-        }
+        attachments[a.content_file_name] = if a.content_content_type == 'message/rfc822'
+                                             {
+                                               mime_type: a.content_content_type,
+                                               content: Paperclip.io_adapters.for(a.content).read
+                                             }
+                                           else
+                                             {
+                                               encoding: 'base64',
+                                               content: Mail::Encodings::Base64.encode(Paperclip.io_adapters.for(a.content).read),
+                                               mime_type: a.content_content_type
+                                             }
+                                           end
       end
     end
 

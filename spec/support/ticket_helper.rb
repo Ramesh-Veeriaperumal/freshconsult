@@ -139,6 +139,15 @@ module TicketHelper
       file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
       attachments << { resource: file }
     end
+    add_eml_attachment(params, attachments) if params[:eml_file_count].present?
     create_ticket(params.merge(attachments: attachments))
+  end
+
+  def add_eml_attachment(params, attachments)
+    params[:eml_file_count].times do
+      file = File.new(Rails.root.join("test/api/fixtures/files/attachment.eml"))
+      attachments << { resource: file }
+    end
+    params
   end
 end

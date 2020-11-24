@@ -298,4 +298,26 @@ class TicketNotifierTest < ActionMailer::TestCase
     mail_message = Helpdesk::TicketNotifier.notify_outbound_email(ticket)
     assert_equal mail_message.to.first, agent.email
   end
+
+  def test_add_attachments_method
+    agent = add_test_agent(@account)
+    num_of_files = 3
+    ticket = create_ticket_with_multiple_attachments(num_of_files: num_of_files, requester_id: agent.id, eml_file_count: 1)
+    @account.add_feature(:private_inline)
+    @account.stubs(:secure_attachments_enabled?).returns(false)
+    params = { ticket: ticket,
+               notification_type: EmailNotification::NEW_TICKET_CC,
+               receips: agent.email,
+               email_body_plain: Faker::Lorem.characters(10),
+               email_body_html: Faker::Lorem.characters(10),
+               subject: Faker::Lorem.characters(10),
+               attachments: ticket.attachments }
+    mail_message = Helpdesk::TicketNotifier.email_notification(params)
+    assert_equal mail_message.attachments.size, 4
+  ensure
+    ticket.destroy
+    agent.destroy
+    @account.revoke_feature(:private_inline)
+    @account.unstub(:secure_attachments_enabled?)
+  end
 end
