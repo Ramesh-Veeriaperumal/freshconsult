@@ -395,7 +395,7 @@ def sonarqubeAnalysis() {
             withEnv(["JAVA_HOME=$SONARQUBE_JAVA_HOME", "SONARQUBE_HOME=$SONARQUBE_SCANNER_HOME"]) {
                 docker.image(backendImage).inside("--name sonarqube --privileged -v $SONARQUBE_JAVA_HOME:$SONARQUBE_JAVA_HOME -v $SONARQUBE_SCANNER_HOME:$SONARQUBE_SCANNER_HOME --init") {
                     withCredentials([string(credentialsId: 'SonarqubeGithubToken', variable: 'githubToken')]) {
-                        withSonarQubeEnv('FreshdeskSonarqube') {
+                        withSonarQubeEnv('FreshworksSonarqube') {
                             if(isPR){
                                 sh  """#!/bin/bash
                                     echo "export LANG='en_US.UTF-8'" >> ~/.profile
