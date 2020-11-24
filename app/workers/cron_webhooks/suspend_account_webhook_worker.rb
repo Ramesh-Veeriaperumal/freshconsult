@@ -8,7 +8,6 @@ module CronWebhooks
     include Redis::RedisKeys
     include Redis::OthersRedis
 
-    SUSPENSION_BASE_DATE = "'2019-01-01'"
     DEFAULT_BATCH_SIZE_TO_DELETE = 1000
     ACCOUNT_MAX_DELETION_ATTEMPT_COUNT = 10
     WORKER_STOP_KEY = 'SUSPENDED_ACCOUNT_CLEAN_UP_WORKER_STOP'
@@ -33,7 +32,7 @@ module CronWebhooks
         @processing_accounts = {}
         @shards.each { |sh| @processing_accounts[sh] = { account_id: 0, attempt_count: 0 } }
         @account_skip_list = get_all_members_in_a_redis_set(ACCOUNTS_SKIP_LIST_KEY).to_set
-        @base_date = get_others_redis_key(ACCOUNTS_SUSPENDED_BASE_DATE_KEY) || SUSPENSION_BASE_DATE
+        @base_date = get_others_redis_key(ACCOUNTS_SUSPENDED_BASE_DATE_KEY) || 7.months.ago.strftime('%Y-%m-%d')
       end
 
       def perform_deletion
@@ -71,7 +70,7 @@ module CronWebhooks
 
       def fetch_next_account_from_shard(shard_name)
         processing_account_id = @processing_accounts[shard_name][:account_id]
-        account = Account.joins(:subscription).where("accounts.id >= #{processing_account_id} AND subscriptions.state = 'suspended' AND subscriptions.updated_at < #{@base_date}").order('accounts.id asc').limit(1).first
+        account = Account.joins(:subscription).where('accounts.id >= ? AND subscriptions.state = ? AND subscriptions.updated_at < ?', processing_account_id, 'suspended', @base_date).order('accounts.id asc').limit(1).first
         if account.nil?
           delete_shard(shard_name)
           Rails.logger.info("No suspended account present on shard #{shard_name}")
