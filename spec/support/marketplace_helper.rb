@@ -97,8 +97,9 @@ module MarketplaceHelper
     FreshRequest::Response.new(Response.new(body))
   end
 
-  def account_configs
+  def account_configs(oauth_params = false)
     body = { "UserName" => "User's Name", "Country" => "IN"}
+    body.merge!({ 'oauth_iparams' => { 'UserName' => "User's Name", 'Country' => 'IN'}}) if oauth_params
     FreshRequest::Response.new(Response.new(body))
   end
 
@@ -115,9 +116,16 @@ module MarketplaceHelper
     ]
   end
 
-  def success_response
+  def success_response(status = 200)
     body = " "
-    FreshRequest::Response.new(Response.new(body))
+    FreshRequest::Response.new(Response.new(body, status))
+  end
+
+  def response_with_simple_hash(status = 200)
+    body = {
+      'success' => true
+    }
+    FreshRequest::Response.new(Response.new(body, status))
   end
 
   def custom_apps
@@ -323,6 +331,193 @@ module MarketplaceHelper
               'enabled' => 1,
               'configs' => nil
             }]
+    FreshRequest::Response.new(Response.new(body))
+  end
+
+  def extension_details_v2_with_configs(version_id = 3)
+    body = {
+      'extension_id' => 1,
+      'type' => 1,
+      'app_type' => 1,
+      'account' => 'Freshdesk',
+      'name' => 'google_plug',
+      'display_name' => 'Google Plug',
+      'description' => 'Dummy Desription',
+      'instructions' => nil,
+      'cover_art' => {
+        'thumb' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb/40.png',
+        'thumb2x' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb2x/40.png'
+      },
+      'screenshots' => [
+        {
+          'large' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large/1360x850_Hangouts.png',
+          'large2x' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large2x/1360x850_Hangouts.png'
+        }
+      ],
+      'categories' => [
+        {
+          'id' => 7,
+          'name' => 'Google Apps'
+        }
+      ],
+      'contact_details' => {
+        'support_email' => 'support@freshdesk.com',
+        'support_url' => 'https://support.freshdesk.com'
+      },
+      'options' => nil,
+      'published_date' => 'over 1 year',
+      'addon' => nil,
+      'platform_details' => {
+        '1.0' => [1],
+        '2.0' => [3]
+      },
+      'version_id' => version_id,
+      'placeholders' => {
+        'ticket_sidebar' => {
+          'url' => 'https://dummy.cloudfront.net/app-assets/1/app/template.html',
+          'icon_url' => 'https://dummy.cloudfront.net/app-assets/1/app/logo.png'
+        }
+      },
+      'features' => ['backend'],
+      'events' => { },
+      'has_config' => true,
+      'configs_url' => 'https://dummy.cloudfront.net/app-assets/1/config/iparams_iframe.html',
+      'app_version' => '3.0',
+      'whats_new' => 'Updated to use the latest Google script'
+    }
+    FreshRequest::Response.new(Response.new(body))
+  end
+
+  def extension_details_v2_with_configs_and_addons(version_id = 3)
+    body = {
+      'extension_id' => 1,
+      'type' => 1,
+      'app_type' => 1,
+      'account' => 'Freshdesk',
+      'name' => 'google_plug',
+      'display_name' => 'Google Plug',
+      'description' => 'Dummy Desription',
+      'instructions' => nil,
+      'cover_art' => {
+        'thumb' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb/40.png',
+        'thumb2x' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb2x/40.png'
+      },
+      'screenshots' => [
+        {
+          'large' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large/1360x850_Hangouts.png',
+          'large2x' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large2x/1360x850_Hangouts.png'
+        }
+      ],
+      'categories' => [
+        {
+          'id' => 7,
+          'name' => 'Google Apps'
+        }
+      ],
+      'contact_details' => {
+        'support_email' => 'support@freshdesk.com',
+        'support_url' => 'https://support.freshdesk.com'
+      },
+      'options' => nil,
+      'published_date' => 'over 1 year',
+      'addon' => [
+        {
+          'currency_code' => 'USD',
+          'trial_period' => 10,
+          'price' => '10.0',
+          'addon_id' => 1
+        }
+      ],
+      'addons' => [
+        {
+          'currency_code' => 'USD',
+          'trial_period' => 10,
+          'price' => '10.0',
+          'addon_id' => 1
+        }
+      ],
+      'platform_details' => {
+        '1.0' => [1],
+        '2.0' => [3]
+      },
+      'version_id' => version_id,
+      'placeholders' => {
+        'ticket_sidebar' => {
+          'url' => 'https://dummy.cloudfront.net/app-assets/1/app/template.html',
+          'icon_url' => 'https://dummy.cloudfront.net/app-assets/1/app/logo.png'
+        }
+      },
+      'features' => ['backend'],
+      'events' => { },
+      'has_config' => true,
+      'configs_url' => 'https://dummy.cloudfront.net/app-assets/1/config/iparams_iframe.html',
+      'app_version' => '3.0',
+      'whats_new' => 'Updated to use the latest Google script'
+    }
+    FreshRequest::Response.new(Response.new(body))
+  end
+
+  def extension_details_v2_agent_oauth_with_configs(features = ['backend', 'agent_oauth'])
+    body = {
+      'extension_id' => 1,
+      'type' => 1,
+      'app_type' => 1,
+      'account' => 'Freshdesk',
+      'name' => 'google_plug',
+      'display_name' => 'Google Plug',
+      'description' => 'Dummy Desription',
+      'instructions' => nil,
+      'cover_art' => {
+        'thumb' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb/40.png',
+        'thumb2x' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb2x/40.png'
+      },
+      'screenshots' => [
+        {
+          'large' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large/1360x850_Hangouts.png',
+          'large2x' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large2x/1360x850_Hangouts.png'
+        }
+      ],
+      'categories' => [
+        {
+          'id' => 7,
+          'name' => 'Google Apps'
+        }
+      ],
+      'contact_details' => {
+        'support_email' => 'support@freshdesk.com',
+        'support_url' => 'https://support.freshdesk.com'
+      },
+      'options' => nil,
+      'published_date' => 'over 1 year',
+      'addon' => nil,
+      'platform_details' => {
+        '1.0' => [1],
+        '2.0' => [3]
+      },
+      'version_id' => 3,
+      'placeholders' => {
+        'ticket_sidebar' => {
+          'url' => 'https://dummy.cloudfront.net/app-assets/1/app/template.html',
+          'icon_url' => 'https://dummy.cloudfront.net/app-assets/1/app/logo.png'
+        }
+      },
+      'features' => features,
+      'events' => { },
+      'has_config' => true,
+      'configs_url' => 'https://dummy.cloudfront.net/app-assets/1/config/iparams_iframe.html',
+      'oauth_iparams_url' => 'https://dummy.cloudfront.net/app-assets/1/config/iparams_iframe.html',
+      'app_version' => '3.0',
+      'whats_new' => 'Updated to use the latest Google script'
+    }
+    FreshRequest::Response.new(Response.new(body))
+  end
+
+  def iframe_configs(include_url = true)
+    body = {
+      'url' => include_url ? 'https://local.freshpipe.io/app/settings?fd=ext.hxzBKU-by8wqdrlPmVkStjKrgDIzJ-B_HLyb_VYi-WnyNn4xbQ3jrzCkM1vpjXWc-def-ZJf9n3ZKfXEcdOEHviMdSIH2nM2d79hDayzSwW-vfr-SKkxue3Zt49Q.4RUN-_VZ9ge39ZjZ9_HoKg.9ZS-gvh-huhj-Pz3euIG_84CUEgvQ5XEkLP_yX3yKVTyOe2zx_i6JAZsqQQkyE0nfgPhmbR1-UvAdBvLMviH72Xm4Hm4aZFl2R8DFx2M3gfX-gKLKWYP5Mds_45OShYbtkorrX_R5A1NB_IS6i88nf5gmRvULW0X5WfahwcgEyCLgAnAIHBHrvkE.s-rGHHMXm9bKJoiP0ZxRFg' : '',
+      'key' => "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAngXJ6W24dWfC5MsLwLBU\nPunhOx723eOT+oXkklbEkm3E+4UXWfh4IxiCMPkfqw0gnrIHH2vo5mswGvJ4foQW\n7yKPyrpfc7ZXb39jC9H03YSg3Dbfn6U1S3wVaGbNoEvszAgPSXHY0tiQK3WlUbav\nrU7KdEe65unnhFJpR7XpnOqXXOFPq0mKm2UVsa/Jj1Ao0eEdXhvmhmxoZ5xBUwjU\nJM9GUfdnW9i7tHCAbGDW8GfWg2j8MJLw1QEn78rSLkPnrJdXqms+OMSjJZ3ZhP5I\nvV1u4TCZgPqSnrb5zVIhUC6US3qD8wk5nbMl1Itj+bcX+5jt3UQp3YHqKz5et51+\njQIDAQAB\n-----END PUBLIC KEY-----\n",
+      'params' => ['user_name', 'account_time_zone']
+    }
     FreshRequest::Response.new(Response.new(body))
   end
 
