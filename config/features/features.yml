@@ -440,7 +440,6 @@
   :freshcaller: false
   :freshcaller_widget: false
   :opt_out_analytics: false
-  :falcon_portal_theme: false
   :chat_enable: false
   :survey_links: true
   :enable_multilingual: false

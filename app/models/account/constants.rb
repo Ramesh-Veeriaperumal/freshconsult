@@ -193,7 +193,7 @@ class Account < ActiveRecord::Base
     auto_ticket_export: false,
     ticket_contact_export: false,
     api_jwt_auth: false, collaboration_roles: false,
-    falcon_portal_theme: false, image_annotation: false, email_actions: false, ner: false,
+    image_annotation: false, email_actions: false, ner: false,
     freshid: false, security_new_settings: false,
     incoming_attachment_limit_25: false, outgoing_attachment_limit_25: false,
     whitelist_sso_login: false, va_any_field_without_none: false,

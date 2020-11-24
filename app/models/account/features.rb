@@ -14,8 +14,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES = [
     :suggest_tickets, :customer_sentiment_ui, :dkim, :dkim_email_service, :feature_based_settings,
-    :scheduled_ticket_export, :ticket_contact_export, :independent_service_task,
-    :falcon_portal_theme, :freshid,
+    :scheduled_ticket_export, :ticket_contact_export, :independent_service_task, :freshid,
     :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
     :whitelist_sso_login, :admin_only_mint, :customer_notes_s3, :va_any_field_without_none,
     :auto_complete_off, :new_ticket_recieved_metric, :ner,
@@ -79,7 +78,7 @@ class Account < ActiveRecord::Base
     :custom_encrypted_fields, :custom_translations, :parent_child_infra, :custom_source,
     :canned_forms, :customize_table_view, :solutions_templates,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
-    :social_tab, :scenario_automation, :falcon_portal_theme,
+    :social_tab, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2,
     :personal_canned_response, :marketplace, :reverse_notes, :auto_response_detector,
     :freshreports_analytics, :disable_old_reports, :article_filters, :adv_article_bulk_actions,
@@ -96,9 +95,7 @@ class Account < ActiveRecord::Base
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
   # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
-  LP_TO_BITMAP_MIGRATION_FEATURES = [
-    :falcon_portal_theme
-  ].freeze
+  LP_TO_BITMAP_MIGRATION_FEATURES = [].freeze
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
@@ -302,8 +299,6 @@ class Account < ActiveRecord::Base
   def auto_response_detector_enabled?
     auto_response_detector_lp_enabled? && has_feature?(:auto_response_detector)
   end
-
-  alias falcon_support_portal_theme_enabled? falcon_portal_theme_enabled?
 
   #this must be called instead of using launchparty in console or from freshops to set all necessary things needed
   def enable_falcon_ui

@@ -89,6 +89,8 @@ class Account < ActiveRecord::Base
     end
   end
 
+  alias falcon_support_portal_theme_enabled? falcon_portal_theme_enabled?
+
   private
 
     # Can be removed once all settings are migrated from LP to bitmap

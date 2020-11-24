@@ -245,3 +245,7 @@ settings:
     default: true
     internal: false
     feature_dependency: :auto_response_detector
+  :falcon_portal_theme:
+    default: false
+    internal: true
+    feature_dependency: :basic_settings_feature
