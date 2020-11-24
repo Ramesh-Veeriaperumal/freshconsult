@@ -1,9 +1,9 @@
 # frozen_string_literal:true
 
-require_relative '../../../api/api_test_helper'
+require_relative '../../api/api_test_helper'
 require Rails.root.join('test', 'models', 'helpers', 'subscription_test_helper.rb')
 
-class SubscriptionControllerFlowNewTest < ActionDispatch::IntegrationTest
+class SubscriptionControllerFlowTest < ActionDispatch::IntegrationTest
   include UsersHelper
   include SubscriptionTestHelper
 

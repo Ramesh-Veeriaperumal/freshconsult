@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../../../../test/api/api_test_helper'
-['solutions_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['solutions_helper.rb', 'user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['solutions_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 require Rails.root.join('test', 'models', 'helpers', 'solutions_test_helper.rb')
 
@@ -9,6 +9,7 @@ class Support::SolutionsFlowTest < ActionDispatch::IntegrationTest
   include SolutionsHelper
   include CoreSolutionsTestHelper
   include ModelsSolutionsTestHelper
+  include UsersHelper
 
   def test_index
     term = 'test'
@@ -97,6 +98,54 @@ class Support::SolutionsFlowTest < ActionDispatch::IntegrationTest
     assert_response 404
   ensure
     Account.any_instance.unstub(:multilingual?)
+  end
+
+  def test_index_solution_home_success
+    user = add_new_user(@account, active: true)
+    set_request_auth_headers(user)
+    Portal.any_instance.stubs(:multilingual?).returns(true)
+    url = 'en/support/solutions'
+    get url, url_locale: 'en'
+    assert_response 200
+    assert_equal true, response.body.include?(url)
+  ensure
+    Portal.any_instance.unstub(:multilingual?)
+  end
+
+  def test_show_solution_category_success_without_feature
+    user = add_new_user(@account, active: true)
+    new_category = create_category
+    set_request_auth_headers(user)
+    Account.any_instance.stubs(:falcon_support_portal_theme_enabled?).returns(false)
+    Support::SolutionsController.any_instance.stubs(:on_mint_preview).returns(false)
+    Portal.any_instance.stubs(:falcon_portal_enable?).returns(false)
+    Portal.any_instance.stubs(:multilingual?).returns(true)
+    url = "en/support/solutions/#{new_category.id}"
+    get url, url_locale: 'en'
+    assert_response 200
+    assert_equal true, response.body.include?(url)
+  ensure
+    Account.any_instance.unstub(:falcon_support_portal_theme_enabled?)
+    Support::SolutionsController.any_instance.unstub(:on_mint_preview)
+    Portal.any_instance.unstub(:falcon_portal_enable?)
+    Portal.any_instance.unstub(:multilingual?)
+  end
+
+  def test_show_solution_category_success_mint_preview_false
+    user = add_new_user(@account, active: true)
+    new_category = create_category
+    set_request_auth_headers(user)
+    Support::SolutionsController.any_instance.stubs(:preview?).returns(true)
+    Support::SolutionsController.any_instance.stubs(:on_mint_preview).returns(false)
+    Portal.any_instance.stubs(:multilingual?).returns(true)
+    url = "en/support/solutions/#{new_category.id}"
+    get url, url_locale: 'en'
+    assert_response 200
+    assert_equal true, response.body.include?(url)
+  ensure
+    Support::SolutionsController.any_instance.unstub(:preview?)
+    Support::SolutionsController.any_instance.unstub(:on_mint_preview)
+    Portal.any_instance.unstub(:multilingual?)
   end
 
   private

@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require_relative '../../../../../test/api/api_test_helper'
+require_relative '../../../api/api_test_helper'
 ['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
-class Support::SignupsControllerFlowNewTest < ActionDispatch::IntegrationTest
+class Support::SignupsControllerFlowTest < ActionDispatch::IntegrationTest
   include UsersHelper
 
   def test_new_signup_when_logged_in
     @account.add_feature(:signup_link)
     user = add_new_user(@account, active: true)
-    Support::SignupsControllerFlowNewTest.any_instance.stubs(:old_ui?).returns(true)
+    Support::SignupsControllerFlowTest.any_instance.stubs(:old_ui?).returns(true)
     set_request_auth_headers(user)
     get 'support/signup/new'
     assert_redirected_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -17,7 +17,7 @@ class Support::SignupsControllerFlowNewTest < ActionDispatch::IntegrationTest
   ensure
     @account.make_current
     @account.revoke_feature(:signup_link)
-    Support::SignupsControllerFlowNewTest.any_instance.unstub(:old_ui?)
+    Support::SignupsControllerFlowTest.any_instance.unstub(:old_ui?)
   end
 
   def test_new_signup_when_logged_out

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../api/api_test_helper'
+require_relative '../../api/api_test_helper'
 ['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-class FreshidControllerFlowNewTest < ActionDispatch::IntegrationTest
+class FreshidControllerFlowTest < ActionDispatch::IntegrationTest
   include UsersHelper
 
   def setup

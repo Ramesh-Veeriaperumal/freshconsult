@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative '../../../api/api_test_helper'
+require_relative '../../api/api_test_helper'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 ['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require 'webmock/minitest'
-class PasswordResetsFlowNewTest < ActionDispatch::IntegrationTest
+class PasswordResetsFlowTest < ActionDispatch::IntegrationTest
   include UsersHelper
   include AccountTestHelper
 
@@ -13,21 +13,17 @@ class PasswordResetsFlowNewTest < ActionDispatch::IntegrationTest
     reset_request_headers
   end
 
-  def teardown
-    super
-  end
-
   def test_password_resets_for_logged_in_user
     user = add_new_user(@account, active: true)
     params = { email: user.email }
-    PasswordResetsFlowNewTest.any_instance.stubs(:old_ui?).returns(true)
+    PasswordResetsFlowTest.any_instance.stubs(:old_ui?).returns(true)
     set_request_auth_headers(user)
     post '/password_resets', params
     assert_equal I18n.t(:'flash.general.login_not_needed'), flash[:notice]
     assert_redirected_to root_url
   ensure
     @account.make_current
-    PasswordResetsFlowNewTest.any_instance.unstub(:old_ui?)
+    PasswordResetsFlowTest.any_instance.unstub(:old_ui?)
     user.destroy
   end
 

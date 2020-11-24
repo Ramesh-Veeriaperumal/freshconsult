@@ -1,9 +1,9 @@
 # frozen_string_literal:true
 
-require_relative '../../../../../test/api/api_test_helper'
+require_relative '../../../api/api_test_helper'
 ['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
-class SupportLoginFlowTest < ActionDispatch::IntegrationTest
+class Support::LoginControllerFlowTest < ActionDispatch::IntegrationTest
   include UsersHelper
 
   def test_support_login_when_session_timed_out_for_customer
@@ -38,7 +38,7 @@ class SupportLoginFlowTest < ActionDispatch::IntegrationTest
     user = add_agent(@account, active: true)
     reset_request_headers
     @account.launch(:freshid)
-    SupportLoginFlowTest.any_instance.stubs(:old_ui?).returns(true)
+    Support::LoginControllerFlowTest.any_instance.stubs(:old_ui?).returns(true)
     set_request_auth_headers(user)
     User.any_instance.stubs(:active_freshid_agent?).returns(true)
     get "/support/login?new_account_signup=true&signup_email=#{user.email}"
@@ -47,7 +47,7 @@ class SupportLoginFlowTest < ActionDispatch::IntegrationTest
     assert_equal true, response.body.include?(expected_login_message)
     assert_response 302
   ensure
-    SupportLoginFlowTest.any_instance.unstub(:old_ui?)
+    Support::LoginControllerFlowTest.any_instance.unstub(:old_ui?)
     User.any_instance.unstub(:active_freshid_agent?)
   end
 

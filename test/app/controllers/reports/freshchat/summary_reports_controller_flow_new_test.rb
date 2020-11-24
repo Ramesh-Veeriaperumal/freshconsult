@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../../../../../test/api/api_test_helper'
+require_relative '../../../../api/api_test_helper'
 ['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-class Reports::Freshchat::SummaryReportsControllerFlowNewTest < ActionDispatch::IntegrationTest
+class Reports::Freshchat::SummaryReportsControllerFlowTest < ActionDispatch::IntegrationTest
   include UsersHelper
 
   def test_index_summary_reports
