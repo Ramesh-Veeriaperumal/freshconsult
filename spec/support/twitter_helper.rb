@@ -122,6 +122,17 @@ module TwitterHelper
     }
   end
 
+  def sample_follow_params(to_follow_handle, handle)
+    {
+      user: {
+        to_follow: to_follow_handle.screen_name,
+        screen_name: handle.screen_name,
+        search_type: SEARCH_TYPE[:saved]
+      },
+      format: 'js'
+    }
+  end
+
   def dynamo_update_attributes(tweet_id)
     {
       attributes: {
