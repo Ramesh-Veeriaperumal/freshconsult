@@ -599,6 +599,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
   def test_lp_and_bitmap_enable_with_enable_settings
     # setup
     feature = Account::LP_TO_BITMAP_MIGRATION_FEATURES.sample
+    skip('No feature on the migration') if feature.nil?
+
     is_launched = @account.launched?(feature)
     @account.rollback(feature)
     bitmap_enabled = @account.has_feature?(feature)
@@ -609,6 +611,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
     assert @account.launched?(feature)
     assert @account.has_feature?(feature)
   ensure
+    skip('No feature on the migration') if feature.nil?
+
     is_launched ? @account.launch(feature) : @account.rollback(feature)
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
   end
@@ -616,6 +620,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
   def test_lp_and_bitmap_disable_with_disable_settings
     # setup
     feature = Account::LP_TO_BITMAP_MIGRATION_FEATURES.sample
+    skip('No feature on the migration') if feature.nil?
+
     is_launched = @account.launched?(feature)
     @account.launch(feature)
     bitmap_enabled = @account.has_feature?(feature)
@@ -626,6 +632,8 @@ class Account::SettingsTest < ActiveSupport::TestCase
     assert_equal @account.launched?(feature), false
     assert_equal @account.has_feature?(feature), false
   ensure
+    skip('No feature on the migration') if feature.nil?
+
     is_launched ? @account.launch(feature) : @account.rollback(feature)
     bitmap_enabled ? @account.add_feature(feature) : @account.revoke_feature(feature)
   end
