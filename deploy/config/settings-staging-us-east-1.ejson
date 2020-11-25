@@ -1782,7 +1782,7 @@
           "internal": "EJ[1:1OhYe10U7UQ+qbVTM7NY+Kw4yxJMOYeVssA/ajFLF1Y=:LeXn19PQLPmZGFUHGDaiEpUmJmrUtyrG:DgELdqz050wfvR0GxdPIFyjatiUstTZKArB8WD2hXZfEXJwmKlvpaKUddE8+O95FUrQuYg==]"
         },
         "flowserv": {
-          "_host": "https://api.intfreshbots.com/rest/api/v2/",
+          "_host": "https://api.preprodfreshbots.com/rest/api/v2/",
           "secret": "EJ[1:E5RER8b/2BzkmNOdJZSKRAiudmvMwaropMRSZNGLqVA=:P0hCnRHD7zbcsLAVFus+kBZ3nYDC6qGM:b90JhTgULRwJUlILchPZ2XGDqPZK58V+kxFRrQ==]",
           "_timeout": 10,
           "_service": "bot-admin",
