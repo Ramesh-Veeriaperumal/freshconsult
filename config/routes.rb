@@ -366,7 +366,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :profiles do
+  resources :profiles, except: [:index] do
     collection do
       post :reset_api_key
       put :notification_read
