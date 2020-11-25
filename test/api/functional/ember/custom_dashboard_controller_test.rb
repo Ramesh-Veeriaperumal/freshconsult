@@ -2530,5 +2530,15 @@ module Ember
       User.any_instance.unstub(:privilege?)
       remove_request_stub(request_stub)
     end
+
+    def test_get_widget_data_for_agent_without_access
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+      dashboard = create_dashboard_with_widgets({ access_type: 2, group_ids: @@group.id }, 1, 0)
+      get :widgets_data, controller_params(version: 'private', type: 'scorecard', id: dashboard.id)
+      assert_response 403
+    ensure
+      User.any_instance.unstub(:privilege?)
+    end
   end
 end

@@ -106,7 +106,8 @@ module CustomDashboardConcern
     return true if dashboard_accessible_type == DASHBOARD_ACCESS_TYPE[:all] || current_user.agent.all_ticket_permission && dashboard_admin?
 
     user_group_ids = current_user.agent_groups.pluck(:group_id)
-    @item[:group_ids].present? && @item[:group_ids].any? { |x| user_group_ids.include?(x) }
+    allowed_group_ids = @item[:group_ids].presence || @item.group_accesses.map(&:group_id)
+    allowed_group_ids.any? { |x| user_group_ids.include?(x) }
   end
 
   def dashboard_admin?

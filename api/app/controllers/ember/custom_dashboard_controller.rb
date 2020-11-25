@@ -37,6 +37,8 @@ module Ember
     def index; end
 
     def widgets_data
+      return access_denied unless dashboard_accessible?
+
       begin    
         safe_send(params['type']) if validate_type
       rescue SearchService::Errors::InvalidJsonException
