@@ -17395,6 +17395,9 @@
         },
         "company_name": {
           "type": "string"
+        },
+        "address": {
+          "type": "string"
         }
       }
     },

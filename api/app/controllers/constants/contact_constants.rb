@@ -10,7 +10,7 @@ module ContactConstants
                    ['other_companies' => ALLOWED_OTHER_COMPANIES_FIELDS]
   MAKE_AGENT_FIELDS = %w[occasional group_ids role_ids ticket_scope signature type].freeze
   STATES = %w(verified unverified deleted blocked).freeze
-  QUICK_CREATE_FIELDS = %w(name email phone company_name).freeze
+  QUICK_CREATE_FIELDS = %w[name email phone company_name address].freeze
 
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field).freeze
 

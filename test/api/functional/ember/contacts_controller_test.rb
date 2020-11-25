@@ -1261,6 +1261,20 @@ module Ember
       assert_equal User.last.language, @account.language
     end
 
+    def test_quick_create_with_address
+      create_test_account unless Account.first.present?
+      Account.stubs(:current).returns(Account.first)
+      params = { name: Faker::Lorem.characters(10), email: Faker::Internet.email, address: Faker::Address.street_address }
+      post :quick_create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      created_contact = User.where(email: params[:email]).first
+      assert_equal true, created_contact.address.present?
+      assert_equal true, created_contact.address.eql?(params[:address])
+    ensure
+      created_contact.destroy
+      Account.unstub(:current)
+    end
+
     # Show User
     def test_show_a_contact
       sample_user = add_new_user(@account)
