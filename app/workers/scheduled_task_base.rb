@@ -40,10 +40,20 @@ class ScheduledTaskBase < BaseWorker
 
   def execute_on_account_scope
     return if params[:account_id].blank?
-    Sharding.select_shard_of(params[:account_id]) do
-      Account.find(params[:account_id]).make_current
-      self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a? Fixnum
-      yield
+    begin
+      Sharding.select_shard_of(params[:account_id]) do
+        Account.find(params[:account_id]).make_current
+        self.task = Helpdesk::ScheduledTask.find_by_id(params[:task_id]) if params[:task_id].is_a? Fixnum
+        yield
+      end
+    rescue DomainNotReady => e
+      Rails.logger.error "Ignoring DomainNotReady , #{e.inspect}, Params: #{params.inspect}"
+    rescue ShardNotFound => e
+      Rails.logger.error "Ignoring ShardNotFound, #{e.inspect}, Params: #{params.inspect}"
+    rescue AccountBlocked => e
+      Rails.logger.error "Ignore AccountBlocked, #{e.inspect}, Params: #{params.inspect}"
+    rescue ActiveRecord::RecordNotFound => e
+      Rails.logger.error "Ignore ActiveRecord::RecordNotFound, #{e.inspect}, Params: #{params.inspect}"
     end
   end
 
