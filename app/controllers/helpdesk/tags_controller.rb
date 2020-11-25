@@ -5,7 +5,7 @@ class Helpdesk::TagsController < ApplicationController
 
   include HelpdeskControllerMethods
 
-  TAGS_PER_PAGE_LIMIT = 30
+  TAGS_PER_PAGE_LIMIT = 10
 
   def create
     tag_name = params[:name]
