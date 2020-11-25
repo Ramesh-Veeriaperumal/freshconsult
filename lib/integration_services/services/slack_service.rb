@@ -335,11 +335,12 @@ module IntegrationServices::Services
 
       def handle_error e
         @logger.debug("slack_service error #{e.message}")
-        NewRelic::Agent.notice_error(e, {
-          :custom_params => { :account_id => Account.current.id, :payload => @payload.to_json }
-        })
+        NewRelic::Agent.notice_error(e, custom_params: { account_id: Account.current.id, payload: @payload.to_json }) unless skip_newrelic_notification?(e)
         {:error => true, :error_message => e.message}
       end
 
+      def skip_newrelic_notification?(error)
+        error.instance_of?(RatelimitError) || error.instance_of?(TokenRevokedError)
+      end
   end
 end

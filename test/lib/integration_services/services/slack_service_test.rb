@@ -2,6 +2,7 @@ require_relative '../../../api/unit_test_helper'
 require Rails.root.join('test', 'lib', 'helpers', 'contact_segments_test_helper.rb')
 class SlackServiceTest < ActionView::TestCase
   include ::ContactSegmentsTestHelper
+  include IntegrationServices::Errors
   def setup
     account = Account.first || create_test_account
     Account.stubs(:current).returns(account)
@@ -180,8 +181,93 @@ class SlackServiceTest < ActionView::TestCase
   def test_receive_users_list_err
     app = Integrations::InstalledApplication.new
     IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:list).raises(StandardError.new('exception'))
+    NewRelic::Agent.expects(:notice_error).once
     list = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_users_list
     assert_equal true, list[:error]
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
+  end
+
+  def test_receive_users_list_with_ratelimit_err
+    app = Integrations::InstalledApplication.new
+    response = { ok: false, error: 'ratelimited' }.to_json
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 429
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:slack_token).returns('token')
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:http_get).returns(response_mock)
+    list = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_users_list
+    assert_equal 'Error message: ratelimited', list[:error_message]
+    assert_equal true, list[:error]
+  ensure
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:slack_token)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:http_get)
+  end
+
+  def test_receive_users_list_with_token_revoked_err
+    app = Integrations::InstalledApplication.new
+    response = { ok: false, error: 'token_revoked' }.to_json
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:slack_token).returns('token')
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:http_get).returns(response_mock)
+    list = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_users_list
+    assert_equal 'Error message: token_revoked', list[:error_message]
+    assert_equal true, list[:error]
+  ensure
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:slack_token)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:http_get)
+  end
+
+  def test_receive_users_list_with_remote_err
+    app = Integrations::InstalledApplication.new
+    response = { ok: false, error: 'remote_error' }.to_json
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 400
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:slack_token).returns('token')
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:http_get).returns(response_mock)
+    NewRelic::Agent.expects(:notice_error).once
+    list = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_users_list
+    assert_equal true, list[:error]
+  ensure
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:slack_token)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:http_get)
+  end
+
+  def test_receive_users_list_with_unhandled_err
+    app = Integrations::InstalledApplication.new
+    response = { ok: false, error: 'unhandled_error' }.to_json
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:slack_token).returns('token')
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:http_get).returns(response_mock)
+    NewRelic::Agent.expects(:notice_error).once
+    list = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_users_list
+    assert_equal true, list[:error]
+  ensure
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:slack_token)
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:http_get)
+  end
+
+  def test_receive_users_list_with_ratelimit_err_should_not_push_to_newrelic
+    app = Integrations::InstalledApplication.new
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:list).raises(RatelimitError.new('exception'))
+    NewRelic::Agent.expects(:notice_error).never
+    list = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_users_list
+    assert_equal true, list[:error]
+  ensure
+    IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
+  end
+
+  def test_receive_users_list_with_token_revoked_err_should_not_push_to_newrelic
+    app = Integrations::InstalledApplication.new
+    IntegrationServices::Services::Slack::UserResource.any_instance.stubs(:list).raises(TokenRevokedError.new('exception'))
+    NewRelic::Agent.expects(:notice_error).never
+    list = ::IntegrationServices::Services::SlackService.new(app, { type: 'test' }, {}).receive_users_list
+    assert_equal true, list[:error]
+  ensure
     IntegrationServices::Services::Slack::UserResource.any_instance.unstub(:list)
   end
 

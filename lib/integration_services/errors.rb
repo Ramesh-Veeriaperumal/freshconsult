@@ -44,5 +44,11 @@ module IntegrationServices
 
     class TimeoutError < Timeout::Error
     end
+
+    class RatelimitError < Error
+    end
+
+    class TokenRevokedError < Error
+    end
   end
 end
