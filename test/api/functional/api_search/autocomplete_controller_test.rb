@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../../test_helper'
 ['companies_test_helper.rb', 'users_test_helper.rb', 'groups_test_helper.rb'].each { |file| require Rails.root.join('test', 'core', 'helpers', file) }
 ['tag_test_helper.rb'].each { |file| require Rails.root.join('test', 'models', 'helpers', file) }
@@ -325,6 +327,37 @@ class ApiSearch::AutocompleteControllerTest < ActionController::TestCase
     response = parse_response(@response.body).map { |item| item['value'] }
     assert_response 200
     assert_includes response, agent.name
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
+  def test_agents_autocomplate_with_include_param
+    agent = @account.account_managers.first
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([agent], total_entries: 1))
+    post :agents, construct_params(version: 'private', term: agent.name[0..3], include: 'roles')
+    response = parse_response(@response.body)
+    assert_response 200
+    assert_equal response.first.deep_symbolize_keys[:roles], (agent.roles.map { |role| { id: role.id, name: role.name } })
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
+  def test_agents_autocomplete_without_include_param
+    agent = @account.account_managers.first
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([agent], total_entries: 1))
+    post :agents, construct_params(version: 'private', term: agent.name[0..3])
+    response = parse_response(@response.body)
+    assert_response 200
+    assert_equal response.first.deep_symbolize_keys[:roles] == agent.roles.map { |role| { id: role.id, name: role.name } }, false
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+
+  def test_agents_autocomplate_with_invalid_include_param
+    agent = @account.account_managers.first
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([agent], total_entries: 1))
+    post :agents, construct_params(version: 'private', term: agent.name[0..3], include: 'rolestest')
+    assert_response 400
   ensure
     Search::V2::QueryHandler.any_instance.unstub(:query_results)
   end

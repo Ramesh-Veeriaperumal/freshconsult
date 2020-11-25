@@ -105,6 +105,37 @@ class Admin::Groups::AgentsControllerTest < ActionController::TestCase
     end
   end
 
+  def test_groups_index_with_include_option
+    enable_group_management_v2 do
+      begin
+        agent1 = add_test_agent(Account.current)
+        group = create_group_private_api(Account.current, agent_ids: [agent1.id])
+        get :index, controller_params(id: group.id, include: 'roles')
+        assert_response 200
+        response = JSON.parse(@response.body)
+        match_json(group_agent_list_pattern(response, include_option = 'roles'))
+      ensure
+        group.destroy if group.present?
+        agent1.destroy if agent1.present?
+      end
+    end
+  end
+
+  def test_groups_index_with_invalid_include_option
+    enable_group_management_v2 do
+      begin
+        agent1 = add_test_agent(Account.current)
+        group = create_group_private_api(Account.current, agent_ids: [agent1.id])
+        get :index, controller_params(id: group.id, include: 'asysgdt')
+        assert_response 400
+        match_json([bad_request_error_pattern('include', :not_included, list: AgentConstants::GROUP_AGENT_INCLUDE_PARAMS.join(', '))])
+      ensure
+        group.destroy if group.present?
+        agent1.destroy if agent1.present?
+      end
+    end
+  end
+
   def test_index_public_for_group_agents_without_feature_enabled
     agent1 = add_test_agent(Account.current)
     group = create_group_private_api(Account.current, agent_ids: [agent1.id])
@@ -326,13 +357,14 @@ class Admin::Groups::AgentsControllerTest < ActionController::TestCase
       Account.current.rollback :group_management_v2
     end
 
-    def group_agent_list_pattern(response)
+    def group_agent_list_pattern(response, include_option = nil)
       pattern = []
       response.each do |agent_details|
         agent = Account.current.users.where(id: agent_details['id']).first.agent
         agent_hash = { id: Integer, ticket_scope: Integer, write_access: agent_details['write_access'], role_ids: agent.user.roles.map(&:id), contact: contact_hash(agent.user), created_at: String, updated_at: String }
-        agent_hash[:freshcaller_agent] = agent_details['freshcaller_agent'] if agent.agent_freshcaller_enabled?
-        agent_hash[:freshchat_agent] = agent_details['freshchat_agent'] if agent.agent_freshchat_enabled?
+        agent_hash[:freshcaller_agent] = agent_details['freshcaller_agent'] if Account.current.freshcaller_enabled?
+        agent_hash[:freshchat_agent] = agent_details['freshchat_agent'] if Account.current.omni_chat_agent_enabled?
+        agent_hash[:roles] = agent.user.roles.map { |role| { id: role.id, name: role.name } } if AgentConstants::GROUP_AGENT_INCLUDE_PARAMS.include?(include_option)
         pattern << agent_hash
       end
       pattern

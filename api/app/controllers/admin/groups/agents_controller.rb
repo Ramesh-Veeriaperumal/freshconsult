@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 class Admin::Groups::AgentsController < ApiApplicationController
   include HelperConcern
+  include AgentConstants
   decorate_views
   ALLOWED_FIELDS = [:agents].freeze
 
@@ -49,10 +52,6 @@ class Admin::Groups::AgentsController < ApiApplicationController
       end
     end
 
-    def decorator_options
-      super({ write_access_user_ids: (Account.current.agent_groups_ids_only_from_cache[:groups][@group.id] || []) })
-    end
-
     def load_group
       @group = current_account.groups_from_cache.find { |group| group.id == params[:id].to_i }
     end
@@ -61,7 +60,8 @@ class Admin::Groups::AgentsController < ApiApplicationController
       load_group
       return if @group.blank?
 
-      @group.agents
+      # Prloading agent, avatar and freshcaller_agent to reduce N+1 query in views
+      @group.agents.includes([{ agent: :freshcaller_agent }, :avatar])
     end
 
     def load_objects(items = scoper, paginate = true)
@@ -82,5 +82,22 @@ class Admin::Groups::AgentsController < ApiApplicationController
 
     def validation_class
       'Admin::Groups::AgentsValidation'.constantize
+    end
+
+    def validate_filter_params(additional_fields = INDEX_QUERY_PARAMS)
+      super
+      validator_klass = validation_class.new(params, @item, {})
+      render_custom_errors(validator_klass, true) if validator_klass.invalid?(params[:action].to_sym)
+    end
+
+    def include_options
+      {
+        include: params[:include],
+        write_access_user_ids: Account.current.agent_groups_ids_only_from_cache[:groups][@group.id] || []
+      }
+    end
+
+    def decorator_options(options = include_options)
+      super
     end
 end

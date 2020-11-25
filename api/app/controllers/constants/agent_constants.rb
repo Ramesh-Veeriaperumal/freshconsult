@@ -2,6 +2,7 @@ module AgentConstants
   LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send update_multiple search_in_freshworks verify_agent_privilege availability_count].freeze
   STATES = %w[occasional fulltime].freeze
   AVAILABILITY_PARAMS = %w[channel search_term available_in].freeze
+  INDEX_QUERY_PARAMS = %w[include].freeze
   INDEX_FIELDS = %w[state email phone mobile only type privilege group_id include order_type order_by].freeze | AVAILABILITY_PARAMS
   UPDATE_ARRAY_FIELDS = %w[group_ids role_ids contribution_group_ids].freeze
   TICKET_SEARCH_SETTINGS = [:include_subject, :include_description, :include_other_properties, :include_notes, :include_attachment_names, :archive].freeze
@@ -25,6 +26,7 @@ module AgentConstants
   AGENT_CHANNELS = { ticket_assignment: 'ticket_assignment', chat: 'live_chat' }.freeze
   ALLOWED_ONLY_PARAMS = %w[available available_count with_privilege availability].freeze
   ALLOWED_INCLUDE_PARAMS = %w[user_info].freeze
+  GROUP_AGENT_INCLUDE_PARAMS = %w[roles].freeze
   PRIVATE_ALLOWED_INCLUDE_PARAMS = %w[roles].freeze | ALLOWED_INCLUDE_PARAMS
   FIELD_MAPPINGS = { :"user.primary_email.email" => :email, :"user.base" => :email }.freeze
   IGNORE_PARAMS = %w[shortcuts_enabled ticket_assignment].freeze

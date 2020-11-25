@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApiSearch
   class AutocompleteController < ApiApplicationController
     include HelperConcern
@@ -9,7 +11,7 @@ module ApiSearch
     decorate_views(decorate_objects: [:companies, :companies_search])
     SLAVE_ACTIONS = %w[requesters agents companies tags].freeze
 
-    SEARCH_AUTOCOMPLETE_CONSTANTS_CLASS = 'ApiSearch::AutocompleteConstants'.freeze
+    SEARCH_AUTOCOMPLETE_CONSTANTS_CLASS = 'ApiSearch::AutocompleteConstants'
 
     def requesters
       @klasses        = ['User']
@@ -33,18 +35,22 @@ module ApiSearch
       @klasses        = ['User']
       @search_context = :agent_autocomplete
       @query = params[:query]
+      @include = params[:include]&.split(',')&.map!(&:strip) || []
       @items = []
       search(esv2_autocomplete_models) do |results|
         response.api_meta = { count: results.total_entries } if private_api?
-        agents_list = current_account.all_agents.preload(:freshcaller_agent).where(user_id: results.map(&:id)).group_by { |item| item.user_id }
+        agents_list = current_account.all_agents.preload(:freshcaller_agent).where(user_id: results.map(&:id)).group_by(&:user_id)
         results.each do |result|
           @items.concat([{
-                          id: result.email,
-                          value: result.name,
-                          user_id: result.id,
-                          role_ids: result.role_ids,
-                          profile_img: result.avatar.nil? ? false : result.avatar.expiring_url(:thumb, 300)
-                        }.merge(agent_channel_information(agents_list[result.id].first))])
+            id: result.email,
+            value: result.name,
+            user_id: result.id,
+            profile_img: result.avatar.nil? ? false : result.avatar.expiring_url(:thumb, 300)
+          }.merge(
+            agent_include_params(result)
+          ).merge(
+            agent_channel_information(agents_list[result.id].first)
+          )])
         end
       end
       response.api_root_key = :agents if private_api?
@@ -106,6 +112,13 @@ module ApiSearch
         {}.tap do |hash_body|
           hash_body[:freshchat_agent] = agent_info.agent_freshchat_enabled? if current_account.freshchat_linked?
           hash_body[:freshcaller_agent] = agent_info.freshcaller_agent.presence.try(:fc_enabled) & true if current_account.freshcaller_enabled?
+        end
+      end
+
+      def agent_include_params(user)
+        {}.tap do |hash_body|
+          hash_body[:role_ids] = user.user_roles_from_cache.map(&:id) if @include.include?(AGENT_AUTOCOMPLETE_INCLUDE_PARAMS[0])
+          hash_body[:roles] = user.user_roles_from_cache.map { |role| { id: role.id, name: role.name } } if @include.include?(AGENT_AUTOCOMPLETE_INCLUDE_PARAMS[0])
         end
       end
 

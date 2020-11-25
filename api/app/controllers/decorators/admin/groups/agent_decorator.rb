@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 class Admin::Groups::AgentDecorator < ApiDecorator
   delegate :id, :roles, :agent, to: :record
 
   def initialize(record, options)
     super(record)
     @write_access_user_ids = options[:write_access_user_ids]
+    @include_options = options[:include]&.split(',') || []
   end
 
   def to_hash
@@ -11,11 +14,12 @@ class Admin::Groups::AgentDecorator < ApiDecorator
       id: record.id,
       ticket_scope: agent.ticket_permission,
       write_access: @write_access_user_ids.include?(record.id),
-      role_ids: roles.map(&:id),
+      role_ids: record.user_roles_from_cache.map(&:id),
       contact: contact_hash,
       created_at: agent.created_at,
       updated_at: agent.updated_at
     }
+    agent_info[:roles] = record.user_roles_from_cache.map { |role| { id: role.id, name: role.name } } if @include_options.include?(AgentConstants::GROUP_AGENT_INCLUDE_PARAMS[0])
     if Account.current.freshcaller_enabled?
       agent_info[:freshcaller_agent] = agent.freshcaller_agent.present? ? agent.freshcaller_agent.try(:fc_enabled) : false
     end

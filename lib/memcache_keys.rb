@@ -29,6 +29,8 @@ module MemcacheKeys
 
   ACCOUNT_ROLES = "v1/ACCOUNT_ROLES:%{account_id}"
 
+  ACCOUNT_USER_ROLES = 'v1/ACCOUNT_USER_ROLES:%{account_id}:%{user_id}'.freeze
+
   ACCOUNT_SUBSCRIPTION = "ACCOUNT_SUBSCRIPTION:%{account_id}"
 
   ACCOUNT_GROUPS = "v6/ACCOUNT_GROUPS:%{account_id}"
