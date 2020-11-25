@@ -137,6 +137,7 @@ class AccountConfiguration < ActiveRecord::Base
         else
           account.model_changes.merge!(account_configuration_changes(previous_changes))
         end         
+        Rails.logger.info "Account manual update model changes - #{account.id} - #{account.model_changes.inspect}"
         account.manual_publish_to_central(nil, :update, nil, false)
         account.model_changes.delete(:account_configuration)
       end

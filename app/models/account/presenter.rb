@@ -52,7 +52,7 @@ class Account < ActiveRecord::Base
       @model_changes[:rts_account_secret].map! { |x| EncryptorDecryptor.new(RTSConfig['db_cipher_key']).decrypt(x) if x.present? }
       @model_changes[:rts_account_secret].map! { |x| encrypt_for_central(x, 'account_additional_settings') if x.present? }
     end
-    if @model_changes.present? && @model_changes.key?(:all_languages)
+    if @model_changes.present? && @model_changes.key?(:all_languages) && @model_changes[:all_languages].is_a?(Array) && @model_changes[:all_languages].count == 2
       all_languages_model_changes = { added: [], removed: [] }
       all_languages_model_changes[:added] = language_details(@model_changes[:all_languages][1] - @model_changes[:all_languages][0])
       all_languages_model_changes[:removed] = language_details(@model_changes[:all_languages][0] - @model_changes[:all_languages][1])
