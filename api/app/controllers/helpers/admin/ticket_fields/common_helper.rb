@@ -66,7 +66,7 @@ module Admin::TicketFields::CommonHelper
     def field_name(label)
       encrypted_field = cname_params[:type].in?(ENCRYPTED_FIELDS.stringify_keys.keys)
       existing_label = Helpdesk::TicketField.construct_label(label, encrypted_field)
-      exist = current_account.ticket_fields_from_cache.any? { |tf| tf.name == "cf_#{existing_label}_#{current_account.id}" }
+      exist = current_account.all_ticket_fields_with_nested_fields_from_cache.any? { |tf| tf.name == "cf_#{existing_label}_#{current_account.id}" }
       Helpdesk::TicketField.field_name(label, current_account.id, exist, encrypted_field)
     end
 

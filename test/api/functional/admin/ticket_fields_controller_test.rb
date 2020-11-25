@@ -172,6 +172,24 @@ class Admin::TicketFieldsControllerTest < ActionController::TestCase
     end
   end
 
+  Helpdesk::Ticketfields::Constants::FIELD_COLUMN_MAPPING.except(*[:encrypted_text, :file, :date_time, :secure_text].concat(PICKLIST_TYPE_FIELDS)).each do |field_type, details|
+    define_method("test_validate_#{field_type}_creation_with_same_archive_field_name") do
+      label = "archive_field_testing_#{field_type}"
+      params = ticket_field_common_params(type: "custom_#{field_type}", label: label)
+      launch_ticket_field_revamp do
+        @account.launch :archive_ticket_fields
+        post :create, construct_params({}, params)
+        assert_response 201
+        tf = @account.ticket_fields_with_nested_fields.find(json_response(response)[:id])
+        tf.deleted = true
+        tf.save
+        post :create, construct_params({}, params)
+        assert_response 201
+        @account.rollback :archive_ticket_fields
+      end
+    end
+  end
+
   def test_deletion_of_archived_field
     launch_ticket_field_revamp do
       name = "dropdown_#{Faker::Lorem.characters(rand(1..5))}"
