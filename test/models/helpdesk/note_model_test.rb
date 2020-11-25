@@ -77,7 +77,7 @@ class NoteModelTest < ActiveSupport::TestCase
     email = Faker::Internet.email
     user.email = email
     user.save!
-    note = create_note(ticket_id: ticket.id, source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'], incoming: false)
+    note = create_note(ticket_id: ticket.id, source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'], incoming: false, user_id: user.id)
     ticket.reload
     assert_equal email, note.notable.sender_email
     assert_equal email, ticket.from_email

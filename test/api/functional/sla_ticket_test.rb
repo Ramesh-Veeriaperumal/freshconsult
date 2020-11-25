@@ -612,4 +612,104 @@ class TicketsControllerTest < ActionController::TestCase
       assert_equal ticket_dueby, ticket.due_by
     end
   end
+
+  def test_response_violated
+    Account.current.stubs(:next_response_sla_enabled?).returns(true)
+    sla_policy
+    freeze_time_now(get_datetime('10:00', '5 Nov 2020')) do
+      params = ticket_params_hash_sla
+      post :create, construct_params({}, params)
+    end
+    ticket = @account.tickets.last
+    ticket.priority = 2
+    assert_nil ticket.nr_due_by
+    agent = add_agent(@account)
+    freeze_time_now(get_datetime('11:00', '5 Nov 2020')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: agent.id,
+        created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
+      ticket.save
+      assert_nil ticket.nr_due_by
+      assert_nil note.schema_less_note.response_violated
+    end
+    freeze_time_now(get_datetime('12:00', '5 Nov 2020')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: ticket.requester_id,
+        created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
+      ticket.save
+      assert_not_nil ticket.nr_due_by
+      assert_nil note.schema_less_note.response_violated
+    end
+    freeze_time_now(get_datetime('13:00', '5 Nov 2020')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: agent.id,
+        created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
+      ticket.save
+      assert_nil ticket.nr_due_by
+      assert_equal false, note.schema_less_note.response_violated
+    end
+    freeze_time_now(get_datetime('14:00', '5 Nov 2020')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: agent.id,
+        created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
+      ticket.save
+      assert_nil ticket.nr_due_by
+      assert_nil note.schema_less_note.response_violated
+    end
+    freeze_time_now(get_datetime('15:00', '5 Nov 2020')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: ticket.requester_id,
+        created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
+      ticket.save
+      assert_not_nil ticket.nr_due_by
+      assert_nil note.schema_less_note.response_violated
+    end
+    freeze_time_now(get_datetime('19:00', '11 Nov 2020')) do
+      params_hash = {
+        ticket_id: ticket.id,
+        user_id: agent.id,
+        created_at: Time.zone.now
+      }
+      note = create_note params_hash
+      ticket.current_note_id = note.id
+      note.save_response_time
+      ticket.update_dueby
+      ticket.save
+      assert_nil ticket.nr_due_by
+      assert_equal true, note.schema_less_note.response_violated
+    end
+  ensure
+    Account.current.unstub(:next_response_sla_enabled?)
+    ticket.destroy
+  end
 end
