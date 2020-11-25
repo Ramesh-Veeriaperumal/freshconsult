@@ -66,7 +66,7 @@ module Integrations
       @extension = extn_details.body
 
       params.merge!(paid_app_params) if ['install', 'uninstall'].include?(method)
-
+      params.merge!(contact_details) if should_add_contact_details?(method, app_name)
       params.merge!({
         :configs => configs,
         :enabled => ::Marketplace::Constants::EXTENSION_STATUS[:enabled]
@@ -91,8 +91,18 @@ module Integrations
       set_or_add_marketplace_ni_extension_details(Account.current.id, app_name, installed_extension_id)
     end
 
+    def contact_details
+      {
+        contact_details: { emails: User.current.emails }
+      }
+    end
+
     def should_verify_billing?
       Account.current.marketplace_gallery_enabled? && NATIVE_PAID_APPS.include?(application.name)
+    end
+
+    def should_add_contact_details?(method, app_name)
+      Account.current.marketplace_gallery_enabled? && method == 'install' && NATIVE_PAID_APPS.include?(app_name)
     end
   end
 end
