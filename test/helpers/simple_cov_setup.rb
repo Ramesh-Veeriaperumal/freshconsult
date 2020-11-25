@@ -31,7 +31,8 @@ module SimpleCovSetup
     'lib/import/forums.rb',
     'lib/import/zendesk_data.rb',
     'app/controllers/support/search_controller.rb',
-    'app/controllers/search/search_controller.rb'
+    'app/controllers/search/search_controller.rb',
+    'app/controllers/admin/va_rules_controller.rb'
   ].freeze
 
   IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb
