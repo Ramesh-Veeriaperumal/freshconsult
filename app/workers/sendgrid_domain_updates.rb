@@ -147,7 +147,7 @@ class SendgridDomainUpdates < BaseWorker
   end
 
   def notify_spam_account_detection(account, additional_info, is_spam_email_account = false)
-    subject = "Detected suspicious spam account :#{account.id} "
+    subject = "Detected suspicious spam : Account :#{account.id} ,Domain : #{account.full_domain} "
     if is_spam_email_account
       notify_account_blocks(account, subject, additional_info)
       update_freshops_activity(account, "Outgoing emails blocked due to high spam score", "block_outgoing_email")

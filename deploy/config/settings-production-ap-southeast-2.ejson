@@ -841,7 +841,7 @@
         "microsoft_outlook_secret": "EJ[1:Vi3++Q3c6o5vIaLSWm1yHwEOEy0sEQidvtzHmZWcYUg=:AGBiEwLbLwhyoVfx5wOXfVWwO+JSU2Ex:aRiV6S/LXvPNBOZLFz0VhImuWMi4UbZN7191ZmJ/7nTvGR5ztYi/Jo56las0fTLkKfE=]"
       },
       "spam_watcher": {
-        "_email": "dev-ops@freshdesk.com,helpdesk@noc-alerts.freshservice.com"
+        "_email": "dev-ops@freshdesk.com,helpdesk@abusenoc.freshservice.com"
       },
       "riak": {
         "node1": {

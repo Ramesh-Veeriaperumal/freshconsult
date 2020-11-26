@@ -222,7 +222,7 @@ module EmailHelper
   end
 
   def notify_outgoing_block(account, rules)
-    subject = "Detected suspicious spam account :#{account.id}" #should be called only when account object is set
+    subject = "Detected suspicious spam : Account :#{account.id}, Domain : #{account.full_domain}" # should be called only when account object is set
     additional_info = "Emails sent by the account has suspicious content . Contains content blacklisted by rule : #{rules} ."
     additional_info << "Outgoing emails blocked!!" if !(Account.current.subscription.active?)
     notify_account_blocks(account, subject, additional_info)

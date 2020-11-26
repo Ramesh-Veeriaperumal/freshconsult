@@ -36,7 +36,7 @@ class Solution::CheckContentForSpam < BaseWorker
     end
     Rails.logger.info "Article is spam? #{spam_content}"
     if spam_content
-      subject = "Detected suspicious solution spam account :#{Account.current.id} "
+      subject = "Detected suspicious solution spam : Account id : #{Account.current.id}, Account state : #{Account.current.subscription.state}, Article id : #{article_id}, Domain : #{Account.current.full_domain}"
       additional_info = "Suspicious article in Account ##{Account.current.id} with ehawk_reputation_score: #{Account.current.ehawk_reputation_score} , Article id : #{article_id}"
       increase_ehawk_spam_score_for_account(4, @account, subject, additional_info)
       Rails.logger.info ":::::: Kbase spam content encountered - increased spam reputation for article ##{article_id} in account ##{@account.id}  :::::::"

@@ -38,8 +38,8 @@ class SpamWatcherRedisMethods
     def spam_alert(account,user,table_name,operation,subject,deleted_flag)
       hit_count = current_hit_count account, user, table_name
       subscription = account.subscription
-      subject = subject.blank? ? "New Spam Watcher Abnormal load in #{table_name} : Spam Count #{hit_count}" : "#{subject} Abnormal load #{table_name} : Spam Count #{hit_count}"
-      subject << ": Account #{account.id} : State #{subscription.state} : MRR #{subscription.amount}"
+      subject = subject.blank? ? "NSW ALH_#{table_name} : Spam Count #{hit_count}" : "#{subject} ALH_#{table_name} : Spam Count #{hit_count}"
+      subject << ": Account #{account.id} : State #{subscription.state} : MRR #{subscription.amount} : Domain #{account.full_domain}"
       subject << " : Agent #{user.helpdesk_agent}" if user.present?
       FreshdeskErrorsMailer.deliver_spam_watcher(
         {
@@ -61,11 +61,11 @@ class SpamWatcherRedisMethods
       SubscriptionNotifier.send_email(:deliver_admin_spam_watcher_blocked, account.admin_email, account)
       FreshdeskErrorsMailer.deliver_spam_blocked_alert(
         {
-          :subject          => "Blocked Account with id #{account.id} Due to heavy creation of solution articles",
-          :additional_info  => {
-            :account_id  => account.id,
-            :full_domain  => account.full_domain,
-            :signature => "Spam Watcher"
+          subject:  "Notification - Blocked Account Heavy creation of solution articles : Account id : #{account.id}, Domain : #{account.full_domain}",
+          additional_info:   {
+            account_id:  account.id,
+            full_domain:  account.full_domain,
+            signature:  'Spam Watcher'
           }
         }
       )
@@ -94,11 +94,11 @@ class SpamWatcherRedisMethods
 
         spam_alert(account, user, table_name, SPAM_NOTICED, nil, 0)
       elsif (subscription.free? || subscription.active?) && user.agent?
-        subject = 'Spam Watcher - Detected Suspicious'
+        subject = 'SW - DS'
         spam_alert(account, user, table_name, SPAM_NOTICED, subject, 0)
       else
         block_spam_user(user) if account.block_spam_user_enabled?
-        subject = 'Spam Watcher - Blocked Suspicious'
+        subject = 'SW - Blocked Suspicious'
         spam_alert(account, user, table_name, SPAM_BLOCKED, subject, account.block_spam_user_enabled? ? 1 : 0)
       end
     end
@@ -188,11 +188,11 @@ class SpamWatcherRedisMethods
       SubscriptionNotifier.send_email(:deliver_admin_spam_watcher_blocked, account.admin_email, account)
       FreshdeskErrorsMailer.deliver_spam_blocked_alert(
         {
-          :subject          => "Blocked Account with id #{account.id} Due to spike in incoming email immediately after signup",
-          :additional_info  => {
-            :account_id  => account.id,
-            :full_domain  => account.full_domain,
-            :signature => "Spam Watcher"
+          subject:  "Notification - Blocked Account Email Spike After Signup :  Account id : #{account.id} , Domain : #{account.full_domain}",
+          additional_info:  {
+            account_id:  account.id,
+            full_domain:  account.full_domain,
+            signature:  'Spam Watcher'
           }
         }
       )

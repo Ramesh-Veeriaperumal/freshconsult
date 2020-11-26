@@ -902,7 +902,7 @@
         "microsoft_outlook_secret": "EJ[1:VL29hIMD4R+osZnE7IrS8nM/Mfp+bQJJtbVCr5t91nA=:+SRQ5feTf5SXY8TDrk8UVhMUzcng9Rk5:2kKGx6x6AAGnhoRL5oWMqNsgPxEtO6vEk2ivIMXi5DXe/WfFeGuQ3uUhNQkn0L3HOao=]"
       },
       "spam_watcher": {
-        "_email": "dev-ops@freshdesk.com,helpdesk@noc-alerts.freshservice.com"
+        "_email": "dev-ops@freshdesk.com,helpdesk@abusenoc.freshservice.com"
       },
       "riak": {
         "node1": {

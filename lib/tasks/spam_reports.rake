@@ -77,7 +77,7 @@ def blacklist_account(account)
   account.enable_setting(:spam_blacklist_feature)
   Rails.logger.info "Blacklisted suspicious spam account: #{account.id}"
   FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
-      :subject => "Blacklisted suspicious spam account :#{account.id} ", 
+      :subject => "Notification - Blacklisted suspicious spam : Account id : #{account.id}, Domain : #{account.domain}",
       :recipients => ["mail-alerts@freshdesk.com", "helpdesk@abusenoc.freshservice.com"],
       :additional_info => {:info => "Too many spam reports for the account"}
     })

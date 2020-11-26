@@ -583,7 +583,7 @@ class Solution::Article < ActiveRecord::Base
 
         if (self.title =~ article_spam_regex).present? || check_seo_data_for_spam(article_spam_regex) || (stripped_title =~ article_phone_number_spam_regex).present? || (self.title =~ article_content_spam_char_regex).present? || !self.account.active?
           errors.add(:title, "Possible spam content")
-          subject = "Detected suspicious solution spam account :#{self.account_id} "
+          subject = "Detected suspicious solution spam : Account id : #{account_id}, Account state : #{account.subscription.state}, Domain : #{account.full_domain} "
           additional_info = "Suspicious article title in Account ##{self.account_id} with ehawk_reputation_score: #{self.account.ehawk_reputation_score} : #{self.title}"
           increase_ehawk_spam_score_for_account(4, self.account, subject, additional_info)
           Rails.logger.info ":::::: Kbase spam content encountered - increased spam reputation for article ##{self.id} in account ##{self.account.id}  :::::::"

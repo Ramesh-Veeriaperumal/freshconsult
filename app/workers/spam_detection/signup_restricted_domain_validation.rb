@@ -17,13 +17,13 @@ module SpamDetection
         domain = email.split("@").last
         if ismember?(SIGNUP_RESTRICTED_EMAIL_DOMAINS, domain)
             
-            subject = "Suspicious Spam Account id : #{account.id}"
-            additional_info = "Customer's admin email domain is restricted: Account activity #{call_location} : Attempted email_address: #{email}"
-            increase_ehawk_spam_score_for_account(4, account, subject, additional_info)
-            Rails.logger.info "Suspending account #{account.id}"
-            is_spam_email_account = true
-            additional_info = "Reason: Sign up email changed to a spam email domain"
-            SendgridDomainUpdates.new().blacklist_spam_account account, is_spam_email_account, additional_info
+          subject = "Notification - Suspicious Spam Account id : #{account.id}, Account state : #{account.subscription.state}, Domain : #{account.domain}"
+          additional_info = "Customer's admin email domain is restricted: Account activity #{call_location} : Attempted email_address: #{email}"
+          increase_ehawk_spam_score_for_account(4, account, subject, additional_info)
+          Rails.logger.info "Suspending account #{account.id}"
+          is_spam_email_account = true
+          additional_info = 'Reason: Sign up email changed to a spam email domain'
+          SendgridDomainUpdates.new.blacklist_spam_account account, is_spam_email_account, additional_info
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e, {:args => {:account => account,:email => email,:call_location => call_location}})

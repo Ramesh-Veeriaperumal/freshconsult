@@ -11,7 +11,7 @@ module Forum::CheckSpamContent
     return false if post.blank?
     spam_status = check_post_content_for_spam(post.body)
     if spam_status
-      subject = "Detected suspicious forum post created in Account:#{Account.current.id}"
+      subject = "Detected suspicious forum post created in : Account:#{Account.current.id}, Account state : #{Account.current.subscription.state}, Post ID : #{post_id}"
       additional_info = "Suspicious forum post in Account ##{Account.current.id} with ehawk_reputation_score: #{Account.current.ehawk_reputation_score} , Post id : #{post_id} , Topic id : #{topic_id}"
       increase_ehawk_spam_score_for_account(4,Account.current, subject, additional_info)
     end

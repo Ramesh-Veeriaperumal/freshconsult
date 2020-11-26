@@ -79,7 +79,7 @@ module Spam
       account_id = account.id
       Rails.logger.info "Spam template found for account: #{account_id} subject: #{subject} message: #{message}"
       FreshdeskErrorsMailer.error_email(nil, { domain_name: account.full_domain }, nil, {
-        subject: "Spam template found for account: #{account_id}", 
+        subject: "Spam template found for account: Account : #{account_id}, Account state : #{Account.current.subscription.state}, Domain : #{Account.current.full_domain}", 
         recipients: [ 'mail-alerts@freshdesk.com', 'helpdesk@abusenoc.freshservice.com'],
         additional_info: { info: 'Spam template found in an account' }
       })
@@ -310,12 +310,13 @@ module Spam
     end
     
     def notify_spam(result, params)
+      shard_info = ShardMapping.fetch_by_account_id(Account.current.id)
       Object.const_get(:FreshdeskErrorsMailer).error_email(
         nil, 
         params, 
         nil, 
-        {:subject => "Spam detected in ticket notifications",
-         :recipients => ["dev-ops@freshdesk.com","helpdesk@abusenoc.freshservice.com"]}
+        { subject: "Spam detected in ticket notifications : Account id : #{Account.current.id}, POD info : #{shard_info.pod_info}, Shard info : #{shard_info.shard_name}",
+          recipients: ['dev-ops@freshdesk.com', 'helpdesk@abusenoc.freshservice.com'] }
       ) if is_spam?(result)
     end
     
