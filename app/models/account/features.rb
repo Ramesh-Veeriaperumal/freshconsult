@@ -53,8 +53,7 @@ class Account < ActiveRecord::Base
     :dashboard_java_fql_performance_fix, :emberize_business_hours, :chargebee_omni_upgrade, :ticket_observer_race_condition_fix, :csp_reports, :show_omnichannel_nudges, :chatbot_ui_revamp, :response_time_null_fix, :cx_feedback, :export_ignore_primary_key, :archive_ticket_central_publish,
     :archive_on_missing_associations, :mailbox_ms365_oauth, :pre_compute_ticket_central_payload, :security_revamp, :channel_command_reply_to_sidekiq, :ocr_to_mars_api, :forward_to_phone, :html_to_plain_text, :freshcaller_ticket_revamp, :get_associates_from_db,
     :launch_kbase_omni_bundle, :cron_api_trigger, :enhanced_freshcaller_search, :auto_recharge_eligible,
-    :retry_ticket_supervisor_actions, :prevent_cc_email_parallel_update, :omni_groups,
-    :redaction_lp, :escalate_without_sla_management, :webhook_worker_revamp
+    :retry_ticket_supervisor_actions, :prevent_cc_email_parallel_update, :omni_groups, :redaction_lp, :escalate_without_sla_management, :webhook_worker_revamp, :nokogiri_huge_parsing
   ].concat(FRONTEND_LP_FEATURES + REDIRECT_OLD_UI_PATH_FEATURES).uniq
 
   BITMAP_FEATURES = [

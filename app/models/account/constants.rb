@@ -230,7 +230,7 @@ class Account < ActiveRecord::Base
     twitter_api_compliance: true, omni_agent_availability_dashboard: false, explore_omnichannel_feature: false, hide_omnichannel_toggle: false,
     chargebee_omni_upgrade: false, csp_reports: false, show_omnichannel_nudges: false, cx_feedback: false, export_ignore_primary_key: false, archive_ticket_central_publish: false,
     mailbox_ms365_oauth: true, pre_compute_ticket_central_payload: false, channel_command_reply_to_sidekiq: false, cron_api_trigger: false, portal_new_settings: false,
-    enhanced_freshcaller_search: false, omni_groups: false, webhook_worker_revamp: false
+    enhanced_freshcaller_search: false, omni_groups: false, webhook_worker_revamp: false, nokogiri_huge_parsing: false
   }.freeze
 
   BLOCK_GRACE_PERIOD = 90.days

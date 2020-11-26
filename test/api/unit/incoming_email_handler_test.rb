@@ -1565,6 +1565,24 @@ module Helpdesk
           assert_equal @parse_email, ticket_requestor.email
         end
       end
+
+      def test_email_ticket_creation_for_huge_file
+        req_params = default_params(Faker::Lorem.characters(50), Faker::Company.bs)
+        req_params[:in_reply_to] = @in_reply_to
+        req_params[:from] = @agent_email
+        test_name = Faker::Name.name
+        req_params[:text] = "this is a sample test mail.Regards,V\nOn Thu, Apr 9, 2020 at 6:57 PM #{@parse_name} \n<#{@parse_email}> wrote:\nTesting 5, reply 1\nOn Thu, Apr 9, 2020 at 6:57 PM Rio <palermo@gmail.com> wrote:\ncheck 1. testing 5"
+        req_params[:html] = "<div>#{'a' * 999_999}</div>"
+        Account.any_instance.stubs(:nokogiri_huge_parsing_enabled?).returns(true)
+        Account.any_instance.stubs(:allow_wildcard_ticket_create_enabled?).returns(true)
+        incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(req_params)
+        ticket_creation_status = incoming_email_handler.perform(@parsed_to_email)
+        Sharding.select_shard_of(@parsed_to_email[:domain]) do
+          ticket = @account.tickets.where(id: ticket_creation_status[:ticket_id]).first
+          ticket_description_html = ticket.description_html
+          assert_equal ticket_description_html, "<div>#{'a' * 999_999}</div>\n"
+        end
+      end
     end
   end
 end

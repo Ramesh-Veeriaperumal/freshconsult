@@ -706,9 +706,9 @@ module Helpdesk
 							if (!params[:sanitize_done].nil? && params[:sanitize_done].to_s.downcase == "true")
 								result = params[:html]
 							else
-								params[:html] = Nokogiri::HTML(params[:html]).to_html if params[:html].present?
+								params[:html] = nokogiri_converting_to_html if params[:html].present?
 								result = Helpdesk::HTMLSanitizer.clean params[:html]
-								result = Nokogiri::HTML.parse(result).css('body').inner_html
+								result = nokogiri_parsing_to_html(result).css('body').inner_html
 							end
 						rescue SystemStackError => e
 							result = handle_system_stack_error e
@@ -1167,6 +1167,19 @@ module Helpdesk
 				((get_email_parsing_redis_flag == "1") or Account.current.launched?(:quoted_text_parsing_feature))
 			end
 
+      private
+
+        def huge_file_parsing(html)
+          Account.current.nokogiri_huge_parsing_enabled? && html.length > 3.kilobytes
+        end
+
+        def nokogiri_converting_to_html
+          huge_file_parsing(params[:html]) ? Nokogiri::HTML(params[:html], &:huge).to_html : Nokogiri::HTML(params[:html]).to_html
+        end
+
+        def nokogiri_parsing_to_html(result)
+          huge_file_parsing(result) ? Nokogiri::HTML.parse(result, &:huge) : Nokogiri::HTML.parse(result)
+        end
 		end
 
 
