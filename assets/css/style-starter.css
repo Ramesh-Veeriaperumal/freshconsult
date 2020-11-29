@@ -10581,6 +10581,11 @@ h4.sub-title {
   color: #fff;
   position: relative; }
 
+.box16 {
+  width: 300px;
+  height: 300px;
+}
+
 .locations-1 .box16 .box-content, .locations-1 .box16:after {
   width: 100%;
   position: absolute;
