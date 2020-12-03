@@ -132,6 +132,10 @@ Author URL: http://w3layouts.com
   -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1)";
   transform: scale(1, -1); }
 
+.title_set_color {
+  color: #ffffff;
+}
+
 :root .fa-rotate-90,
 :root .fa-rotate-180,
 :root .fa-rotate-270,
