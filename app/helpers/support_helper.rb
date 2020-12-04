@@ -123,6 +123,13 @@ module SupportHelper
                 <span> #{ I18n.t('header.new_support_ticket') } </span>
               </a>
             </div>)
+      if Account.current.fresh_consult_enabled?
+        output << %( <div>
+                <a href="#{ portal['new_consultation_ticket_url'] }" class="mobile-icon-nav-newticket new-ticket ellipsis" title="#{ I18n.t('header.new_consultation_ticket') }">
+                  <span> #{ I18n.t('header.new_consultation_ticket') } </span>
+                </a>
+              </div>)
+      end
     else
       if portal['can_signup_feature']
         output << content_tag(:div,

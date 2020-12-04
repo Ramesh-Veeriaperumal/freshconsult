@@ -473,6 +473,22 @@ class Helpdesk::TicketField < ActiveRecord::Base
     field_type == 'nested_field'
   end
 
+  def consult_name?
+    name == 'cf_your_contact_name_' + account_id.to_s
+  end
+
+  def consult_contact_detail?
+    name == 'cf_your_phone_number_' + account_id.to_s
+  end
+
+  def consult_com_type?
+    name == 'cf_preffered_communication_type_' + account_id.to_s
+  end
+
+  def consult_app_type?
+    name == 'cf_preffered_appointment_duration_' + account_id.to_s
+  end
+
   def self.default_field_order
     Account.current.shared_ownership_enabled? ?
       TicketConstants::SHARED_DEFAULT_FIELDS_ORDER.keys : TicketConstants::DEFAULT_FIELDS_ORDER

@@ -46,6 +46,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :reset_assoc_tkts, :if => :remove_associations?
 
+  before_update :generate_meeting_url, :if => :fsm_enabled?
+
   after_update :start_recording_timestamps, :unless => :model_changes?
 
   before_save :update_on_state_time, :if => Proc.new { update_on_state_time? }
@@ -106,8 +108,42 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
   include AdvancedTicketScopes
+  include PaypalPayments
 
   spam_watcher_callbacks user_column: 'requester_id', import_column: 'import_id'
+
+  def generate_meeting_url
+    appointment_time_field = "cf_fsm_appointment_start_time_#{account_id}"
+    return if safe_send(appointment_time_field).nil? || schema_less_ticket.reports_hash.key?('meeting_url')
+
+    zoom_client = Zoomclient::Client.new(auth_token: ZOOM_AUTH_TOKEN)
+
+    request_body = ZOOM_BODY_PARAMS.merge(
+      start_time: safe_send(appointment_time_field),
+      duration: (Admin::AdvancedTicketing::FieldServiceManagement::Constant::TIME_TO_SECONDS_MAPPING[safe_send("cf_appointment_duration_#{account_id}").to_sym] / 60) || 30
+    )
+
+    parsed_response = zoom_client.user_create_meeting(request_body).deep_symbolize_keys
+    schema_less_ticket.set_meeting_url(parsed_response[:start_url]) if parsed_response[:start_url].present?
+    schema_less_ticket.set_payment_link(payment_url) if safe_send("cf_fsm_payment_details_#{account_id}")
+    note = notes.build(
+      user_id: Account.current.users.find_by_email(Account.current.admin_email).id,
+      private: false, source: 2,
+      note_body_attributes: { body_html: consultation_note_template_html }
+    )
+    note.save_note
+  end
+
+  def consultation_note_template_html
+    data_hash = schema_less_ticket.reports_hash
+    """<div style='font-family:-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; font-size:14px'>
+    <div dir='ltr'>Hi Customer,</div>
+    <div dir='ltr'>Your meeting is scheduled with our consultant at #{safe_send('cf_fsm_appointment_start_time_' + Account.current.id.to_s).localtime},</div>
+    <div dir='ltr'>Please pay in advance to make the process smooth,</div>
+    <div dir='ltr'>Payment URL: <a href='#{data_hash['payment_url']}' target='_blank'>Click Here for Payment</a></div>
+    <div dir='ltr'>Meeting Link: <a href='#{data_hash['meeting_url']}' target='_blank'>Click here to join</a></div>
+    </div>"""
+  end
 
   def populate_requester
     if requester

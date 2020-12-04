@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
     :auto_complete_off, :new_ticket_recieved_metric, :ner,
     :sso_login_expiry_limitation, :old_link_back_url_validation,
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,:year_in_review_and_share,
-    :ticket_source_revamp, :collaboration_roles,
+    :ticket_source_revamp, :collaboration_roles, :fresh_consult,
     :bot_email_channel, :description_by_default, :bot_chat_history,
     :archive_ticket_fields, :custom_fields_search, :disable_rabbitmq_iris,
     :update_billing_info, :allow_billing_info_update, :light_agents, :collaborator_privileges,

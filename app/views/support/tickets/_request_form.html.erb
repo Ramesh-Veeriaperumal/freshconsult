@@ -9,7 +9,7 @@
 
   <% enable_fragment_cache(:support_new_ticket, skip_frag_cache) do %>
     <% current_portal.customer_editable_ticket_fields(true).each do |field|
-        next if field.section_field? || field.exclude_encrypted_field? || field.field_type.eql?('custom_file') || field.secure_field?
+        next if field.section_field? || field.exclude_encrypted_field? || field.field_type.eql?('custom_file') || field.secure_field? || ((field.consult_name? || field.consult_contact_detail? || field.consult_com_type? || field.consult_app_type?) && @consult_enabled.nil?)
       %>
       <div class="control-group <%= " hide company_container" if field.field_type == "default_company" %>" >
         <%= ticket_field_container f,:helpdesk_ticket, field,

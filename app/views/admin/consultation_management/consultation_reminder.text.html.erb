@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+<p> <%= I18n.t('consult_remind.email.user', user_name: @user_name)%> </p>
+<p>
+  <%= I18n.t('consult_remind.email.message', appointment: @appointment) %>.
+</p>
+<p>
+  <%= I18n.t('consult_remind.email.link', link: @meeting_url) %>.
+</p>
+</body>
+</html>

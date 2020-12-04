@@ -33,6 +33,18 @@ module TicketConstants
     receiver.extend ClassMethods
   end
 
+  ZOOM_AUTH_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImVQMmNxRy1RVFRlUThaV25SZUg4ZEEiLCJleHAiOjE2MDc0NzMzNzUsImlhdCI6MTYwNjg2ODU3NX0.at50mXMtWKOES0SIqNF599Wz3YsIN4DeBA7QswotM9M'.freeze
+
+  ZOOM_USER_ID = 'RoM200W_TWSJ_mBEX-Qd5g'.freeze
+
+  ZOOM_BODY_PARAMS = {
+    host_id: ZOOM_USER_ID,
+    topic: "Consultation Meeting",
+    type: 2,
+    password: '',
+    agenda: "Consultation Meeting"
+  }.freeze
+
   FSM_DATE_TIME_FIELDS = { start_time: 'cf_fsm_appointment_start_time', end_time: 'cf_fsm_appointment_end_time' }.freeze
 
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}

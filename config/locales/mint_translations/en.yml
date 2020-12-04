@@ -3003,6 +3003,11 @@ en:
       message: "The changes made to %{business_calendar_name} has failed"
       action: "If the issue persists, please contact support"
       association: "Please modify your configuration here: %{business_calendar_url}"
+  consult_remind:
+    email:
+      user: "Hi %{user_name},"
+      message: "Your Consultation Appointment will start at %{appointment}, Please be available on time"
+      link: "Meeting Link: %{link}"
   bot_training_completed:
     email:
       info3: Let's start supporting!
@@ -7542,6 +7547,7 @@ en:
     assumed_text: You are viewing as
     help_center: How can we help you today?
     new_support_ticket: New support ticket
+    new_consultation_ticket: "New Consultation ticket"
     check_ticket_status: Check ticket status
     goto_customer_portal: Go to Customer Portal
     goto_agent_portal: Agent Portal
@@ -7910,6 +7916,7 @@ en:
     cloud_log_email_to_app: 'Freshdesk to %{app_name} Log'
     monitor_email_subject: '[New Reply] in %{post_topic}'
     email_rate_limit_exceeded: "Delay in email processing for %{account_url}"
+    consultation_reminder: 'Reminder for Your Upcoming Consultation'
   downgrade_policy_subject:
     downgrade_in_days: 'Your freshdesk subscription will be modified in %{days} days'
     downgrade_final_message: Your freshdesk subscription will be modified tomorrow

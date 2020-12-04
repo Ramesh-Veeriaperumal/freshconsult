@@ -84,6 +84,10 @@ class PortalDrop < BaseDrop
     @new_ticket_url ||= new_support_ticket_path(url_options)
   end
 
+  def new_consultation_ticket_url
+    @new_consultation_ticket_url ||= new_support_ticket_path(url_options) + '?type=consult'
+  end
+
   def helpdesk_url
     @helpdesk_url ||= root_path
   end

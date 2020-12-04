@@ -18,6 +18,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def perform_fsm_operations(enable_options = {})
         Rails.logger.info "Started adding FSM artifacts for Account - #{Account.current.id}"
+        Account.current.launch :fresh_consult
         @fsm_signup_flow = enable_options[:fsm_signup_flow].presence || false
         add_required_features_for_lower_plans
         create_field_tech_role
@@ -29,11 +30,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         fsm_fields_to_be_created = fetch_fsm_fields_to_be_created
         reserve_fsm_custom_fields(fsm_fields_to_be_created)
         create_fsm_section
+        create_default_automation_rule
         create_fsm_dashboard
         enable_fsm_default_settings
         generate_fsm_seed_data
         expire_cache
         Rails.logger.info "Completed adding FSM artifacts for Account - #{Account.current.id}"
+        Tickets::ConsultationReminderWorker.perform_async(account_id: Account.current.id)
       rescue StandardError => e
         log_operation_failure('Enable', e)
       end
@@ -90,12 +93,12 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def create_service_task_field_type
-        return if Account.current.ticket_types_from_cache.map(&:value).include?(SERVICE_TASK_TYPE)
+        return if Account.current.ticket_types_from_cache.map(&:value).include?(CONSULTATION_TASK)
 
         type_field = Account.current.ticket_fields.find_by_field_type('default_ticket_type')
         picklist_values = type_field.picklist_values
         picklist_choices = picklist_values.map { |picklist| { value: picklist.value, id: picklist.id, position: picklist.position, _destroy: 0 } }
-        picklist_choices.push(value: SERVICE_TASK_TYPE, position: picklist_choices.size + 1, _destroy: 0)
+        picklist_choices.push(value: CONSULTATION_TASK, position: picklist_choices.size + 1, _destroy: 0)
 
         type_field_options = {
           choices: picklist_choices,
@@ -106,12 +109,60 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         raise "Couldn't create a new ticket type for service task" unless type_field.update_attributes(type_field_options)
       end
 
+      def create_default_automation_rule
+        return if Account.current.va_rules.find_by_name(CONSULT_AUTOMATION_RULE[:name]).present?
+
+        condition_data = CONSULT_AUTOMATION_RULE[:condition_data]
+        condition_data[:all][0][:name] = "cf_preffered_communication_type_#{Account.current.id}"
+        condition_data[:all][1][:name] = "cf_preffered_appointment_duration_#{Account.current.id}"
+        rule = Account.current.va_rules.new(
+          name: CONSULT_AUTOMATION_RULE[:name],
+          description: CONSULT_AUTOMATION_RULE[:description],
+          active: CONSULT_AUTOMATION_RULE[:active],
+          rule_type: CONSULT_AUTOMATION_RULE[:rule_type],
+          action_data: CONSULT_AUTOMATION_RULE[:action_data]
+        )
+        rule.condition_data = condition_data
+        rule.save!
+      end
+
       # Reserve the required FSM custom fields. refer: CUSTOM_FIELDS_TO_RESERVE
       def reserve_fsm_custom_fields(fields_to_be_created)
         last_occupied_position = ticket_fields.count + 1
         fields_to_be_created.each_with_index do |custom_field, index|
           payload = custom_field_generator(custom_field.merge(position: last_occupied_position + index))
           create_fsm_field(payload, Account.current)
+        end
+        CONSULTATION_DROPDOWN_FIELDS.each_with_index do |custom_field, index|
+          next if Account.current.ticket_fields.find_by_label(custom_field[:label]).present?
+
+          payload = custom_field_generator(custom_field.merge(position: last_occupied_position + index))
+          payload[:field_options].delete(:fsm)
+          ff_def_entry = FlexifieldDefEntry.new ff_meta_data(payload, Account.current, { alias_present: true, signup_flow: @fsm_signup_flow })
+
+          payload.merge!(flexifield_def_entry_details(ff_def_entry))
+
+          ticket_field = ticket_fields.build(payload)
+          ticket_field.name = "#{custom_field[:name]}_#{Account.current.id}"
+          ticket_field.flexifield_def_entry = ff_def_entry
+          ticket_field.save!
+          create_choices_for_fsm_dropdown(ticket_field, custom_field[:choices])
+          ticket_field.insert_at(payload[:position]) if payload[:position].present?
+        end
+
+        last_occupied_position = ticket_fields.count + 1
+        CUSTOMER_SELECT_FIELDS.each_with_index do |custom_field, index|
+          next if Account.current.ticket_fields.find_by_label(custom_field[:label]).present?
+
+          payload = normal_ticket_field_generator(custom_field.merge(position: last_occupied_position + index))
+          ff_def_entry = FlexifieldDefEntry.new ff_meta_data(payload, Account.current, { alias_present: true, signup_flow: @fsm_signup_flow })
+
+          payload.merge!(flexifield_def_entry_details(ff_def_entry))
+          ticket_field = ticket_fields.build(payload)
+          ticket_field.name = "#{custom_field[:name]}_#{Account.current.id}"
+          ticket_field.flexifield_def_entry = ff_def_entry
+          ticket_field.save!
+          create_choices_for_fsm_dropdown(ticket_field, custom_field[:choices]) if custom_field[:choices].present?
         end
       end
 
@@ -130,6 +181,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         ticket_field.save!
         Rails.logger.info("FSM field #{field_name} created")
         ticket_field.insert_at(field_details[:position]) if field_details[:position].present?
+      end
+
+      def create_choices_for_fsm_dropdown(ticket_field, choices)
+        choices.each_with_index do |choice, index|
+          pick = ticket_field.picklist_values.new(value: choice, position: index + 1)
+          pick.save!
+        end
       end
 
       def ticket_fields
@@ -156,6 +214,26 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         }
       end
 
+      def normal_ticket_field_generator(options)
+        {
+          type: options[:type],
+          label: options[:label],
+          field_type: options[:field_type],
+          position: options[:position],
+          name: "#{options[:name]}_#{Account.current.id}",
+          label_in_portal: options[:label_in_portal],
+          field_options: {}.with_indifferent_access,
+          description: '',
+          active: true,
+          required: options[:required] || false,
+          required_for_closure: false,
+          visible_in_portal: options[:visible_in_portal],
+          editable_in_portal: options[:visible_in_portal],
+          required_in_portal: options[:required] || false,
+          flexifield_alias: options[:flexifield_alias]
+        }
+      end
+
       # create a dynamic section named "Service Task" and attach the reserved custom fields to them.
       def create_fsm_section
         Rails.logger.info("Processing fsm section operations for Account - #{Account.current.id}")
@@ -167,13 +245,13 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         end
 
         # Build Section picklist_mappings
-        service_task_picklist = ticket_type_field.picklist_values.find_by_value(SERVICE_TASK_TYPE)
+        service_task_picklist = ticket_type_field.picklist_values.find_by_value(CONSULTATION_TASK)
         picklist_id = service_task_picklist.id
         parent_ticket_field_id = service_task_picklist.pickable_id
-        service_task_section = Account.current.sections.find_by_label(SERVICE_TASK_SECTION)
+        service_task_section = Account.current.sections.find_by_label(CONSULTATION_TASK)
         if service_task_section.blank?
           service_task_section = ticket_type_field.sections.build
-          service_task_section.label = SERVICE_TASK_SECTION
+          service_task_section.label = CONSULTATION_TASK
           service_task_section.ticket_field_id = ticket_type_field.id
           service_task_section.options = { 'fsm' => true }.with_indifferent_access
           service_task_section.section_picklist_mappings.build(picklist_value_id: picklist_id, picklist_id: service_task_picklist.picklist_id)
@@ -184,7 +262,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         end
 
         # Build Section fields
-        fields_to_be_created = fsm_custom_field_to_reserve
+        fields_to_be_created = fsm_custom_field_to_reserve + CONSULTATION_DROPDOWN_FIELDS
         section_fields_ticket_field_ids = service_task_section.section_fields.map(&:ticket_field_id)
         fields_to_be_created.each_with_index do |custom_field, index|
           field_data = Account.current.ticket_fields_with_archived_fields_only.where(name: "#{custom_field[:name]}_#{Account.current.id}").first
@@ -233,7 +311,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       def add_widgets_to_fsm_dashboard(dashboard_object)
         trends_x_position = 0
         scorecard_x_postion = 0
-        picklist_id = ticket_type_picklist_id(SERVICE_TASK_TYPE)
+        picklist_id = ticket_type_picklist_id(CONSULTATION_TASK)
         WIDGETS_NAME_TO_TYPE_MAP.each do |widget_name, type|
           if type == WIDGET_MODULE_TOKEN_BY_NAME[SCORE_CARD]
             position = { x: scorecard_x_postion, y: Y_AXIS_POSITION[:scorecard] }
@@ -266,6 +344,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def cleanup_fsm
         Rails.logger.info "Started disabling FSM feature for Account - #{Account.current.id}"
+        Account.current.rollback :fresh_consult
         remove_fsm_addon_and_reset_agent_limit
         destroy_field_tech_role
         destroy_field_agent
@@ -361,7 +440,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def fsm_custom_fields_to_validate
-        fsm_section = Account.current.sections.preload(:section_fields).find_by_label(SERVICE_TASK_SECTION)
+        fsm_section = Account.current.sections.preload(:section_fields).find_by_label(CONSULTATION_SECTION)
         return [] if fsm_section.blank?
 
         fsm_field_ids = fsm_section.section_fields.map(&:ticket_field_id)

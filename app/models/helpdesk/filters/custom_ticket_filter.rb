@@ -35,7 +35,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def self.service_task_type_condition
-    { 'condition' => 'ticket_type', 'operator' => 'is_in', 'value' => Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE }
+    { 'condition' => 'ticket_type', 'operator' => 'is_in', 'value' => Admin::AdvancedTicketing::FieldServiceManagement::Constant::CONSULTATION_TASK }
   end
 
   def on_hold_filter
@@ -56,7 +56,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def self.fetch_appointment_time
     appointment_time = {}
     appointment_time[:start_time] = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}" }
-    appointment_time[:end_time] = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}" }
+    appointment_time[:end_time] = Account.current.custom_date_time_fields_from_cache.find { |x| x.name == TicketFilterConstants::FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}" }
     appointment_time
   end
 

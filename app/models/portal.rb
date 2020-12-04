@@ -364,7 +364,6 @@ class Portal < ActiveRecord::Base
 
     def filter_fields(f_list, conditions)
       to_ret = []
-
       f_list.each { |field| to_ret.push(field) if conditions.fetch(field.name, true) }
       to_ret
     end

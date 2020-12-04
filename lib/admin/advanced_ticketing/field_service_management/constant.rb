@@ -6,61 +6,112 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     CUSTOMER_SIGNATURE = 'cf_fsm_customer_signature'.freeze
     FSM_DEFAULT_TICKET_FIELDS = [
       {
-        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_contact_name'),
-        type: 'text',
-        field_type: 'custom_text',
-        label_in_portal: 'Contact',
-        name: 'cf_fsm_contact_name',
-        required: true,
-        flexifield_alias: 'fsm_contact_name'
-      },
-      {
-        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_phone_number'),
-        type: 'text',
-        field_type: 'custom_text',
-        label_in_portal: 'Customer phone number',
-        name: 'cf_fsm_phone_number',
-        required: true,
-        flexifield_alias: 'fsm_phone_number'
-      },
-      {
-        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_service_location'),
-        type: 'text',
-        field_type: 'custom_text',
-        label_in_portal: 'Service location',
-        name: 'cf_fsm_service_location',
-        required: true,
-        flexifield_alias: 'fsm_service_location'
-      },
-      {
-        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_appointment_start_time'),
+        label: 'Appointment time',
         type: 'date_time',
         field_type: 'custom_date_time',
-        label_in_portal: 'Appointment start time',
+        label_in_portal: 'Appointment time',
         name: 'cf_fsm_appointment_start_time',
         flexifield_alias: 'fsm_appointment_start_time'
       },
       {
-        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_appointment_end_time'),
-        type: 'date_time',
-        field_type: 'custom_date_time',
-        label_in_portal: 'Appointment end time',
-        name: 'cf_fsm_appointment_end_time',
-        flexifield_alias: 'fsm_appointment_end_time'
-      },
-      {
-        label: I18n.t('ticket_fields.field_service_fields.cf_fsm_customer_signature'),
-        type: 'file',
-        field_type: 'custom_file',
-        label_in_portal: "Customer's signature",
-        name: CUSTOMER_SIGNATURE,
-        required: false,
-        flexifield_alias: 'fsm_customer_signature'
+        label: 'Add Payment',
+        type: 'checkbox',
+        field_type: 'custom_checkbox',
+        label_in_portal: 'Add Payment',
+        name: 'cf_fsm_payment_details',
+        flexifield_alias: 'fsm_payment_details'
       }
     ].freeze
 
+    CONSULTATION_DROPDOWN_FIELDS = [
+      {
+        label: 'Appointment Duration',
+        type: 'dropdown',
+        field_type: 'custom_dropdown',
+        label_in_portal: 'Appointment Duration',
+        name: 'cf_appointment_duration',
+        flexifield_alias: 'appointment_duration',
+        choices: ['15 minutes', '30 minutes', '45 minutes', '1 hour', '1 hour 15 minutes', '1 hour 30 minutes', '2 hours']
+      }
+    ].freeze
+
+    CUSTOMER_SELECT_FIELDS = [
+      {
+        label: 'Your Name',
+        type: 'text',
+        field_type: 'custom_text',
+        label_in_portal: 'Your Name',
+        name: 'cf_your_contact_name',
+        required: true,
+        visible_in_portal: true,
+        flexifield_alias: 'your_contact_name'
+      },
+      {
+        label: 'Your contact details (Mobile Number)',
+        type: 'text',
+        field_type: 'custom_text',
+        label_in_portal: 'Your contact details (Mobile Number)',
+        name: 'cf_your_phone_number',
+        visible_in_portal: true,
+        flexifield_alias: 'your_phone_number'
+      },
+      {
+        label: 'Preffered Communication Type',
+        type: 'dropdown',
+        field_type: 'custom_dropdown',
+        label_in_portal: 'Preffered Communication Type',
+        name: 'cf_preffered_communication_type',
+        visible_in_portal: true,
+        flexifield_alias: 'preffered_communication_type',
+        choices: ['Voice Call', 'Video Call']
+      },
+      {
+        label: 'Preffered Appointment Duration',
+        type: 'dropdown',
+        field_type: 'custom_dropdown',
+        label_in_portal: 'Preffered Appointment Duration',
+        name: 'cf_preffered_appointment_duration',
+        flexifield_alias: 'preffered_appointment_duration',
+        visible_in_portal: true,
+        choices: ['15 minutes', '30 minutes', '45 minutes', '1 hour', '1 hour 15 minutes', '1 hour 30 minutes', '2 hours']
+      }
+    ].freeze
+
+    TIME_TO_SECONDS_MAPPING = {
+      '15 minutes': 900,
+      '30 minutes': 1800,
+      '45 minutes': 2700,
+      '1 hour': 3600,
+      '1 hour 15 minutes': 4500,
+      '1 hour 30 minutes': 5400,
+      '2 hours': 7200
+    }.freeze
+
+    CONSULT_AUTOMATION_RULE = {
+      name: 'Consultation Ticket Creation Rule',
+      description: 'Consultation Ticket Creation Rule',
+      active: 1,
+      rule_type: 1,
+      action_data: [{ name: 'ticket_type', value: 'Consultation' }],
+      condition_data: {
+        all: [
+          {
+            evaluate_on: :ticket,
+            name: "cf_preffered_communication_type_1",
+            operator: "in", value: ["Video Call", "Voice Call"]
+          },
+          {
+            evaluate_on: :ticket,
+            name: "cf_preffered_appointment_duration_1",
+            operator: "in", value: ["15 minutes", "30 minutes", "45 minutes", "1 hour", "1 hour 15 minutes", "1 hour 30 minutes", "2 hours"]
+          }
+        ]
+      }
+    }.freeze
+
     FSM_FEATURE = :field_service_management
     SERVICE_TASK_TYPE = 'Service Task'
+    CONSULTATION_TASK = 'Consultation'
     FIELD_AGENT = :field_agent
     FSM_FIELDS_PREFIX = 'cf_fsm_'.freeze
     SUPPORT_AGENT_TYPE = 1
@@ -69,6 +120,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     FSM_APPOINTMENT_START_TIME = 'cf_fsm_appointment_start_time'.freeze
     FSM_APPOINTMENT_END_TIME = 'cf_fsm_appointment_end_time'.freeze
     SERVICE_TASK_SECTION = 'Service task section'.freeze
+    CONSULTATION_SECTION = 'Consultation'.freeze
     FIELD_SERVICE_MANAGER_ROLE_NAME = 'Field service manager'.freeze
     FIELD_SERVICE_MANAGER_ROLE_PRIVILEGES = Helpdesk::Roles::AGENT + [:schedule_fsm_dashboard, :access_to_map_view]
 
@@ -95,8 +147,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     }.freeze
 
     FIELD_SERVICE_PARAMS_SETTINGS_MAPPING = {
-        geo_location_enabled: :field_service_geolocation,
-        location_tagging_enabled: :location_tagging
+      geo_location_enabled: :field_service_geolocation,
+      location_tagging_enabled: :location_tagging
     }.freeze
 
     SETTINGS_LAUNCH_PARTY_MAPPING = {

@@ -175,6 +175,14 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     self.reports_hash.merge!('first_assign_group_id' => group_id)
   end
 
+  def set_meeting_url(url)
+    self.reports_hash.merge!('meeting_url' => url)
+  end
+
+  def set_payment_link(url)
+    self.reports_hash.merge!('payment_url' => url)
+  end
+
   def scheduler_trace_id
     additional_info[:scheduler_trace_id]
   end

@@ -13,7 +13,10 @@ module SupportTicketControllerMethods
     end
   end
 
-  def new    
+  def new
+    if params[:type] == 'consult'
+      @consult_enabled = true
+    end
     respond_to do |format|
       format.html { set_portal_page :submit_ticket }
     end

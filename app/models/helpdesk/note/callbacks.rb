@@ -54,6 +54,14 @@ class Helpdesk::Note < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
 
+  def add_meeting_url
+    meeting_url = notable.schema_less_ticket.reports_hash["meeting_url"]
+    if meeting_url.present?
+      note_body.body.concat("\nMeeting URL = #{meeting_url}")
+      note_body.body_html = note_body.body_html + "<p/><div>Meeting URL = #{meeting_url}</div>"
+    end
+  end
+  
   def load_full_text
     note_body.full_text = note_body.body if (note_body.body.present? && !note_body.full_text_changed?)
     note_body.full_text_html = note_body.body_html if (note_body.body_html.present? && !note_body.full_text_html_changed?)
